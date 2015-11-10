@@ -1,0 +1,9 @@
+
+/build/
+/node_modules/
+/*.module/
+
+*.user
+*.suo
+*.sdf
+/npm-debug.log

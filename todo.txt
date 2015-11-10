@@ -1,0 +1,46 @@
+- implement ffmpegcpp wrapper
+V	- list devices/muxers
+V	- list codecs
+V	- list cameras
+		- open camera, select resolution/fps
+V	- list audio devices
+		- open audio device, select sample rate and channel configuration
+	- grab mat configuration for camera
+	- grab mat configuraiton for audio
+		- grab an image into mat
+		- grab an audio sample into mat
+	- open output
+		- encode image
+		- encode audio
+		- mux image/audio
+	- close and reopen
+		
+- implement opencv
+	- mat
+	- camera calibration
+	- 
+- implement openbr
+	- face recognition
+	- age estimation
+	- gender estimation
+- implement tesseract
+	- recognize text, any language
+- implement OMR library - ZXing 
+
+-implement uv_queue_work instead of uv_async_send for logger
+	- implement log pulling/clearing functions so the messages will be more localized to calling functions
+		- might cause problems in multi context environments, but great for debugging
+
+
+- tests
+	- test camera
+	- test audio
+	- test encoding
+	- test decoding
+	- test rtp
+
+
+Low Priority:
+- Fix debug build, it seems that LTCG is preventing the build from completing, it could also 
+	be a Debug only option that makes the linker verify all the references and prevents it from compiling properly.
+	

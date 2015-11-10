@@ -1,0 +1,1 @@
+node-gyp configure -Dtarget_arch=x64 -DOS=linux -Duse_system_yasm=1 -Dos_posix=1 -Dmsan=0 build

@@ -1,0 +1,37 @@
+{
+  "name": "node-alvision",
+  "description": "Node Vision for FFMPEG,OpenCV and OpenBR",
+  "author": "Dror Gluska <drorgl@yahoo.com>",
+  "dependencies": {
+    "buffers": "0.1.1",
+    "nan": "^1.4.0"
+  },
+  "version": "1.0.0",
+  "devDependencies": {
+    "tape": "^3.0.0",
+	"async" : "^1.5.0",
+	"colors": "^1.1.2",
+	"nan" : "^1.4.0"
+  },
+  "license": "MIT",
+  "scripts": {
+    "install" : "echo Please build the package with node-gyp arm/linux/windows",
+	"windows" : "build_windows_alvision.bat",
+	"arm" : "build_android_alvision"
+	"linux" : "build_linux_alvision"
+    "test": "node test/unit.js"
+  },
+  "keywords": [
+    "opencv",
+    "ffmpeg",
+    "openbr"
+  ],
+  "main": "lib/bindings.js",
+  "_repository": {
+    "type": "git",
+    "url": "https://github.com/drorgl/node-alvision.git"
+  },
+  "engines": {
+    "node": ">=0.10"
+  }
+}
