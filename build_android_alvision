@@ -70,5 +70,5 @@ export LINKER_OPTS="--sysroot=$SYSROOT "
 
 export LDFLAGS="-L$LIBPATH -L$LIBPATH1 -lgnustl_shared --sysroot=$SYSROOT " 
 
-node-gyp --loglevel=silly --make=make clean configure  -f make-linux -Dtarget_arch=arm -DOS=android -Dos_posix=1 -Dmsan=0 -Duse_system_yasm=1 -Darm_neon=1 build 
+$NODE_GYP_PATH  --nodedir=../node.test --loglevel=silly --make=make --arch=arm clean configure  -f make -Dtarget_arch=arm -DOS=android -Dos_posix=1 -Dmsan=0 -Duse_system_yasm=1 -Darm_neon=1 -Dopenssl_fips= build --jobs=5
 
