@@ -4,8 +4,8 @@
 
 namespace alvision{
 
-	v8::Persistent<FunctionTemplate> ffmpeg::constructor;
-	v8::Persistent<Function> ffmpeg::_logger;
+	Nan::Persistent<FunctionTemplate> ffmpeg::constructor;
+	Nan::Persistent<v8::Function> ffmpeg::_logger;
 	threadsafe_queue<ffmpeg::log_message> ffmpeg::_log_messages;
 
 	std::shared_ptr<uvasync> ffmpeg::_logger_async;
@@ -21,46 +21,48 @@ namespace alvision{
 		}
 	}
 
-	void
-		ffmpeg::Init(Handle<Object> target) {
-		NanScope();
+	NAN_MODULE_INIT(ffmpeg::Init) {
 
 		//Class
-		Local<FunctionTemplate> ctor = NanNew<FunctionTemplate>(ffmpeg::New);
-		NanAssignPersistent(constructor, ctor);
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(ffmpeg::New);
+		constructor.Reset(ctor);
+		//NanAssignPersistent(constructor, ctor);
+		//constructor.reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
-		ctor->SetClassName(NanNew("ffmpeg"));
+		ctor->SetClassName(Nan::New("ffmpeg").ToLocalChecked());
 
 		// Prototype
-		NODE_SET_METHOD(ctor, "ListInputFormats", ListInputFormats);
-		NODE_SET_METHOD(ctor, "ListOutputFormats", ListOutputFormats);
+		Nan::SetMethod(ctor, "ListInputFormats", ListInputFormats);
+		Nan::SetMethod(ctor, "ListOutputFormats", ListOutputFormats);
 
-		NODE_SET_METHOD(ctor, "SetLogger", SetLogger);
+		Nan::SetMethod(ctor, "SetLogger", SetLogger);
 
-		NODE_SET_METHOD(ctor, "ListCodecs", ListCodecs);
-		NODE_SET_METHOD(ctor, "ListDevices", ListDevices);
-		NODE_SET_METHOD(ctor, "ListFilters", ListFilters);
+		Nan::SetMethod(ctor, "ListCodecs", ListCodecs);
+		Nan::SetMethod(ctor, "ListDevices", ListDevices);
+		Nan::SetMethod(ctor, "ListFilters", ListFilters);
 
-		NODE_SET_METHOD(ctor, "OpenAsInput", OpenAsInput);
-		NODE_SET_METHOD(ctor, "OpenAsOutput", OpenAsOutput);
-		NODE_SET_METHOD(ctor, "OpenAsOutputBuffer", OpenAsOutputBuffer);
+		Nan::SetMethod(ctor, "OpenAsInput", OpenAsInput);
+		Nan::SetMethod(ctor, "OpenAsOutput", OpenAsOutput);
+		Nan::SetMethod(ctor, "OpenAsOutputBuffer", OpenAsOutputBuffer);
 
-		NODE_SET_PROTOTYPE_METHOD(ctor, "getNextBufferSizes", getNextBufferSizes);
-		NODE_SET_PROTOTYPE_METHOD(ctor, "getNextBuffer", getNextBuffer);
+	
 
-		NODE_SET_PROTOTYPE_METHOD(ctor, "GetSDP", GetSDP);
+		Nan::SetPrototypeMethod(ctor, "getNextBufferSizes", getNextBufferSizes);
+		Nan::SetPrototypeMethod(ctor, "getNextBuffer", getNextBuffer);
 
-		NODE_SET_PROTOTYPE_METHOD(ctor, "Close", Close);
+		Nan::SetPrototypeMethod(ctor, "GetSDP", GetSDP);
 
-		NODE_SET_PROTOTYPE_METHOD(ctor, "GetStreams", GetStreams);
-		NODE_SET_PROTOTYPE_METHOD(ctor, "AddStream", AddStream);
+		Nan::SetPrototypeMethod(ctor, "Close", Close);
 
-		NODE_SET_PROTOTYPE_METHOD(ctor, "WriteHeader", WriteHeader);
+		Nan::SetPrototypeMethod(ctor, "GetStreams", GetStreams);
+		Nan::SetPrototypeMethod(ctor, "AddStream", AddStream);
 
-		NODE_SET_PROTOTYPE_METHOD(ctor, "WritePacket", WritePacket);
-		NODE_SET_PROTOTYPE_METHOD(ctor, "ReadPacket", ReadPacket);
+		Nan::SetPrototypeMethod(ctor, "WriteHeader", WriteHeader);
 
-		target->Set(NanNew("ffmpeg"), ctor->GetFunction());
+		Nan::SetPrototypeMethod(ctor, "WritePacket", WritePacket);
+		Nan::SetPrototypeMethod(ctor, "ReadPacket", ReadPacket);
+
+		Nan::Set(target, Nan::New("ffmpeg").ToLocalChecked(), ctor->GetFunction());
 
 		_logger_async = std::make_shared<uvasync>(_async_logger_callback);
 
@@ -68,10 +70,9 @@ namespace alvision{
 
 	};
 
-	NAN_METHOD(ffmpeg::New) {
-		NanScope();
-		if (!args.IsConstructCall())
-			return NanThrowTypeError("Cannot call constructor as function");
+	NAN_METHOD( ffmpeg::New ) {
+		if (!info.IsConstructCall())
+			return Nan::ThrowTypeError("Cannot call constructor as function");
 
 		/*if (args.This()->InternalFieldCount() == 0)
 			NanThrowTypeError("Cannot instantiate without new");*/
@@ -79,8 +80,8 @@ namespace alvision{
 		ffmpeg *fm;
 		fm = new ffmpeg;
 
-		fm->Wrap(args.This());
-		return args.This();
+		fm->Wrap(info.This());
+		info.GetReturnValue().Set(info.This());
 	}
 
 
@@ -88,36 +89,38 @@ namespace alvision{
 		_ffmpeg = std::make_shared<ffmpegcpp::ffmpeg>();
 	}
 
-	NAN_METHOD(ffmpeg::SetLogger){
-		NanScope();
+	
+	NAN_METHOD(ffmpeg::SetLogger)
+	{
 
-		Local<Function> cb = Local<Function>::Cast(args[0]);
+		auto cb = info[0].As<v8::Function>();
+		//Local<Function> cb = info. Local<Function>::Cast(args[0]);
 
 		//if we already have a logger, release it
 		if (!_logger.IsEmpty()){
-			NanDisposePersistent(_logger);
+			_logger.Reset();
 		}
 
-		if (args.Length() > 0 && args[0]->IsFunction()){
-			NanAssignPersistent(_logger, cb);
+		if (info.Length() > 0 && info[0]->IsFunction()){
+			_logger.Reset(cb);
 		}
 
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::Undefined());
 	}
 
 	void ffmpeg::_async_logger_callback(uv_async_t *handle, int status /*UNUSED*/)
 	{
-		NanScope();
+		
 		log_message lm;
-		NanCallback *callback = new NanCallback(_logger);
+		Nan::Callback *callback = new Nan::Callback(Nan::New(_logger));
 
 		while (_log_messages.dequeue(lm))
 		{
 			if (!callback->IsEmpty() && !_logger.IsEmpty() && _logger_async != nullptr && _logger_async->isActive()){
 				v8::Local<v8::Value> argv[] = {
-					NanNew(lm.module),
-					NanNew(lm.level),
-					NanNew(lm.message)
+					Nan::New(lm.module).ToLocalChecked(),
+					Nan::New(lm.level),
+					Nan::New(lm.message).ToLocalChecked()
 				};
 				callback->Call(3, argv);
 			}
@@ -129,35 +132,34 @@ namespace alvision{
 
 	Local<Object> ffmpeg::fromFFMpegOptions(std::vector<ffmpegcpp::option> &options)
 	{
-		//NanScope();
-		Local<Array> retoptions = NanNew<Array>();
+		Local<Array> retoptions = Nan::New<Array>();
 		int i = 0;
 		for (auto option : options)
 		{
-			Local<Object> opt = NanNew<Object>();
-			opt->Set(NanNew("name"), NanNew(option.name));
-			opt->Set(NanNew("help"), NanNew(option.help));
-			opt->Set(NanNew("type"), NanNew(ffmpegcpp::getOptionTypeName(option.type)));
+			Local<Object> opt = Nan::New<Object>();
+			opt->Set(Nan::New("name").ToLocalChecked(), Nan::New(option.name).ToLocalChecked());
+			opt->Set(Nan::New("help").ToLocalChecked(), Nan::New(option.help).ToLocalChecked());
+			opt->Set(Nan::New("type").ToLocalChecked(), Nan::New(ffmpegcpp::getOptionTypeName(option.type)).ToLocalChecked());
 			switch (option.default_val.source_type())
 			{
 			case ffmpegcpp::variant_source_type::dbl:
-				opt->Set(NanNew("default_val"), NanNew(option.default_val.todbl()));
+				opt->Set(Nan::New("default_val").ToLocalChecked(), Nan::New(option.default_val.todbl()));
 				break;
 			case ffmpegcpp::variant_source_type::i64:
 				//TODO: this may throw if indeed int64 is returned, need to convert to string??
-				opt->Set(NanNew("default_val"), NanNew(safe_cast<int>(option.default_val.toi64())));
+				opt->Set(Nan::New("default_val").ToLocalChecked(), Nan::New(safe_cast<int>(option.default_val.toi64())));
 				break;
 			case ffmpegcpp::variant_source_type::q:
-				opt->Set(NanNew("default_val"), NanNew(option.default_val.todbl()));
+				opt->Set(Nan::New("default_val").ToLocalChecked(), Nan::New(option.default_val.todbl()));
 				break;
 			case ffmpegcpp::variant_source_type::str:
-				opt->Set(NanNew("default_val"), NanNew(option.default_val.tostr()));
+				opt->Set(Nan::New("default_val").ToLocalChecked(), Nan::New(option.default_val.tostr()).ToLocalChecked());
 				break;
 			}
-			opt->Set(NanNew("min"), NanNew(option.min));
-			opt->Set(NanNew("max"), NanNew(option.max));
-			opt->Set(NanNew("flags"), NanNew(option.flags));
-			opt->Set(NanNew("unit"), NanNew(option.unit));
+			opt->Set(Nan::New("min")  .ToLocalChecked(), Nan::New(option.min));
+			opt->Set(Nan::New("max")  .ToLocalChecked(), Nan::New(option.max));
+			opt->Set(Nan::New("flags").ToLocalChecked(), Nan::New(option.flags));
+			opt->Set(Nan::New("unit") .ToLocalChecked(), Nan::New(option.unit).ToLocalChecked());
 
 			retoptions->Set(i, opt);
 			i++;
@@ -168,24 +170,24 @@ namespace alvision{
 
 	Local<Object> ffmpeg::fromFFMpegComponent(ffmpegcpp::component comp)
 	{
-		//NanScope();
-		Local<Object> ret = NanNew<Object>();
+		//
+		Local<Object> ret = Nan::New<Object>();
 
-		ret->Set(NanNew("name"), NanNew(comp.name));
-		ret->Set(NanNew("long_name"), NanNew(comp.long_name));
-		ret->Set(NanNew("extensions"), NanNew(comp.extensions));
-		ret->Set(NanNew("mime_type"), NanNew(comp.mime_type));
-		ret->Set(NanNew("flags"), NanNew(ffmpegcpp::getComponentFlags(comp.flags)));
-		ret->Set(NanNew("options"), fromFFMpegOptions(comp.options));
+		ret->Set(Nan::New("name")		.ToLocalChecked(), Nan::New(comp.name).ToLocalChecked());
+		ret->Set(Nan::New("long_name")	.ToLocalChecked(), Nan::New(comp.long_name).ToLocalChecked());
+		ret->Set(Nan::New("extensions")	.ToLocalChecked(), Nan::New(comp.extensions).ToLocalChecked());
+		ret->Set(Nan::New("mime_type")	.ToLocalChecked(), Nan::New(comp.mime_type).ToLocalChecked());
+		ret->Set(Nan::New("flags")		.ToLocalChecked(), Nan::New(ffmpegcpp::getComponentFlags(comp.flags)).ToLocalChecked());
+		ret->Set(Nan::New("options")	.ToLocalChecked(), fromFFMpegOptions(comp.options));
 
 		//return NanEscapeScope(ret);
 		return ret;
 	}
 
-	class ffmpeg::AsyncListInputFormatsWorker : public NanAsyncWorker{
+	class ffmpeg::AsyncListInputFormatsWorker : public Nan::AsyncWorker{
 	public:
-		AsyncListInputFormatsWorker(NanCallback *callback)
-			: NanAsyncWorker(callback), _inputFormats(){}
+		AsyncListInputFormatsWorker(Nan::Callback *callback)
+			: Nan::AsyncWorker(callback), _inputFormats(){}
 		~AsyncListInputFormatsWorker() {}
 
 		void Execute() {
@@ -209,9 +211,9 @@ namespace alvision{
 		// this function will be run inside the main event loop
 		// so it is safe to use V8 again
 		void HandleOKCallback() {
-			NanScope();
+			
 
-			Local<Array> res = NanNew<Array>();
+			Local<Array> res = Nan::New<Array>();
 			try{
 				int i = 0;
 
@@ -225,7 +227,7 @@ namespace alvision{
 				//stacktrace::getstacktrace(err);
 
 				v8::Local<v8::Value> argv[] = {
-					v8::Exception::Error(NanNew<v8::String>(ex.what()))
+					v8::Exception::Error(Nan::New<v8::String>(ex.what()).ToLocalChecked())
 				};
 				callback->Call(1, argv);
 				return;
@@ -233,14 +235,14 @@ namespace alvision{
 
 		{
 			Local<Value> argv[] = {
-				NanNull()
+				Nan::Null()
 				, res
 			};
 
-			TryCatch try_catch;
+			Nan::TryCatch try_catch;
 			callback->Call(2, argv);
 			if (try_catch.HasCaught()) {
-				FatalException(try_catch);
+				Nan::FatalException(try_catch);
 			}
 		}
 		}
@@ -250,20 +252,18 @@ namespace alvision{
 	};
 
 	NAN_METHOD(ffmpeg::ListInputFormats){
-		NanScope();
+		auto cb = info[0].As<Function>();
 
-		REQ_FUN_ARG(0, cb);
+		Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
+		Nan::AsyncQueueWorker(new AsyncListInputFormatsWorker(callback));
 
-		NanCallback *callback = new NanCallback(cb.As<Function>());
-		NanAsyncQueueWorker(new AsyncListInputFormatsWorker(callback));
-
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::Undefined());
 	}
 
-	class ffmpeg::AsyncListOutputFormatsWorker : public NanAsyncWorker{
+	class ffmpeg::AsyncListOutputFormatsWorker : public Nan::AsyncWorker{
 	public:
-		AsyncListOutputFormatsWorker(NanCallback *callback)
-			: NanAsyncWorker(callback), _outputFormats(){}
+		AsyncListOutputFormatsWorker(Nan::Callback *callback)
+			: Nan::AsyncWorker(callback), _outputFormats(){}
 		~AsyncListOutputFormatsWorker() {}
 
 		void Execute() {
@@ -287,9 +287,9 @@ namespace alvision{
 		// this function will be run inside the main event loop
 		// so it is safe to use V8 again
 		void HandleOKCallback() {
-			NanScope();
+			
 
-			Local<Array> res = NanNew<Array>();
+			Local<Array> res = Nan::New<Array>();
 			try{
 				int i = 0;
 
@@ -303,7 +303,7 @@ namespace alvision{
 				//stacktrace::getstacktrace(err);
 
 				v8::Local<v8::Value> argv[] = {
-					v8::Exception::Error(NanNew<v8::String>(ex.what()))
+					v8::Exception::Error(Nan::New<v8::String>(ex.what()).ToLocalChecked())
 				};
 				callback->Call(1, argv);
 				return;
@@ -311,14 +311,14 @@ namespace alvision{
 
 		{
 			Local<Value> argv[] = {
-				NanNull()
+				Nan::Null()
 				, res
 			};
 
-			TryCatch try_catch;
+			Nan::TryCatch try_catch;
 			callback->Call(2, argv);
 			if (try_catch.HasCaught()) {
-				FatalException(try_catch);
+				Nan::FatalException(try_catch);
 			}
 		}
 		}
@@ -328,56 +328,56 @@ namespace alvision{
 	};
 
 	NAN_METHOD(ffmpeg::ListOutputFormats){
-		NanScope();
+		
 
 		REQ_FUN_ARG(0, cb);
 
-		NanCallback *callback = new NanCallback(cb.As<Function>());
-		NanAsyncQueueWorker(new AsyncListOutputFormatsWorker(callback));
+		Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
+		Nan::AsyncQueueWorker(new AsyncListOutputFormatsWorker(callback));
 
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::Undefined());
 	}
 
 
 	NAN_METHOD(ffmpeg::ListCodecs){
-		NanScope();
+		
 		REQ_FUN_ARG(0, cb);
-		NanCallback *callback = new NanCallback(cb.As<Function>());
+		Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
 		ffmpegcpp::ffmpeg ffm;
 		auto codecs = ffmpegcpp::codec::listCodecs();
 
-		auto retval = NanNew<Array>();
+		auto retval = Nan::New<Array>();
 
 		try{
 			int i = 0;
 
 			for (auto cod : codecs){
-				auto cobj = NanNew<Object>();
-				cobj->Set(NanNew("name"), NanNew(cod.name));
-				cobj->Set(NanNew("long_name"), NanNew(cod.long_name));
-				cobj->Set(NanNew("is_encoder"), NanNew(cod.isEncoder));
-				cobj->Set(NanNew("is_decoder"), NanNew(cod.isDecoder));
-				cobj->Set(NanNew("media_type"), NanNew(ffmpegcpp::getMediaTypeName(cod.mediaType)));
-				cobj->Set(NanNew("max_lowres"), NanNew(cod.max_lowres));
+				auto cobj = Nan::New<Object>();
+				cobj->Set(Nan::New("name")		.ToLocalChecked(), Nan::New(cod.name)		.ToLocalChecked());
+				cobj->Set(Nan::New("long_name")	.ToLocalChecked(), Nan::New(cod.long_name)	.ToLocalChecked());
+				cobj->Set(Nan::New("is_encoder").ToLocalChecked(), Nan::New(cod.isEncoder)	);
+				cobj->Set(Nan::New("is_decoder").ToLocalChecked(), Nan::New(cod.isDecoder)	);
+				cobj->Set(Nan::New("media_type").ToLocalChecked(), Nan::New(ffmpegcpp::getMediaTypeName(cod.mediaType)).ToLocalChecked());
+				cobj->Set(Nan::New("max_lowres").ToLocalChecked(), Nan::New(cod.max_lowres)	);
 
 
 
 				//todo, convert to array of flags
 
-				cobj->Set(NanNew("frame_rates"), fromVector<ffmpegcpp::rational, Number>(cod.frameRates, [](ffmpegcpp::rational v){return NanNew(v.toDouble()); }));
-				cobj->Set(NanNew("pixel_formats"), fromVector<ffmpegcpp::pixel_format, String>(cod.pixelFormats, [](ffmpegcpp::pixel_format v){return NanNew(ffmpegcpp::getPixelFormatName(v)); }));
-				cobj->Set(NanNew("sample_rates"), fromVector<int, Integer>(cod.sampleRates, [](int v){return NanNew(v); }));
-				cobj->Set(NanNew("sample_formats"), fromVector<ffmpegcpp::sample_format, String>(cod.sampleFormats, [](ffmpegcpp::sample_format v){return NanNew(ffmpegcpp::getSampleFormatName(v)); }));
-				cobj->Set(NanNew("channel_layouts"), fromVector<ffmpegcpp::channel_layout, String>(cod.channelLayouts, [](ffmpegcpp::channel_layout v){return NanNew(ffmpegcpp::getChannelLayoutName(v)); }));
-				cobj->Set(NanNew("codec_profiles"), fromVector<ffmpegcpp::codec_profile, Object>(cod.profiles, [](ffmpegcpp::codec_profile v)
+				cobj->Set(Nan::New("frame_rates")		.ToLocalChecked(), fromVector<ffmpegcpp::rational, Number>(cod.frameRates, [](ffmpegcpp::rational v){return Nan::New(v.toDouble()); }));
+				cobj->Set(Nan::New("pixel_formats")		.ToLocalChecked(), fromVector<ffmpegcpp::pixel_format, String>(cod.pixelFormats, [](ffmpegcpp::pixel_format v){return Nan::New(ffmpegcpp::getPixelFormatName(v)).ToLocalChecked(); }));
+				cobj->Set(Nan::New("sample_rates")		.ToLocalChecked(), fromVector<int, Integer>(cod.sampleRates, [](int v){return Nan::New(v); }));
+				cobj->Set(Nan::New("sample_formats")	.ToLocalChecked(), fromVector<ffmpegcpp::sample_format, String>(cod.sampleFormats, [](ffmpegcpp::sample_format v){return Nan::New(ffmpegcpp::getSampleFormatName(v)).ToLocalChecked(); }));
+				cobj->Set(Nan::New("channel_layouts")	.ToLocalChecked(), fromVector<ffmpegcpp::channel_layout, String>(cod.channelLayouts, [](ffmpegcpp::channel_layout v){return Nan::New(ffmpegcpp::getChannelLayoutName(v)).ToLocalChecked(); }));
+				cobj->Set(Nan::New("codec_profiles")	.ToLocalChecked(), fromVector<ffmpegcpp::codec_profile, Object>(cod.profiles, [](ffmpegcpp::codec_profile v)
 				{
-					Local<Object> cp = NanNew<Object>();
-					cp->Set(NanNew("id"), NanNew(v.profile));
-					cp->Set(NanNew("name"), NanNew(v.name));
+					Local<Object> cp = Nan::New<Object>();
+					cp->Set(Nan::New("id")	.ToLocalChecked(), Nan::New(v.profile));
+					cp->Set(Nan::New("name").ToLocalChecked(), Nan::New(v.name).ToLocalChecked());
 					return cp;
 				}));
 
-				cobj->Set(NanNew("capabilities"), fromVector<std::string, String>(ffmpegcpp::getCodecCapabilitiesVector(cod.capabilities), [](std::string s){return NanNew(s); }));
+				cobj->Set(Nan::New("capabilities").ToLocalChecked(), fromVector<std::string, String>(ffmpegcpp::getCodecCapabilitiesVector(cod.capabilities), [](std::string s){return Nan::New(s).ToLocalChecked(); }));
 
 				retval->Set(i, cobj);
 				i++;
@@ -386,32 +386,32 @@ namespace alvision{
 		}
 		catch (std::runtime_error re){
 			v8::Local<v8::Value> argv[] = {
-				v8::Exception::Error(NanNew<v8::String>(re.what()))
+				v8::Exception::Error(Nan::New<v8::String>(re.what()).ToLocalChecked())
 			};
 			callback->Call(1, argv);
-			NanReturnUndefined();
+			info.GetReturnValue().Set(Nan::Undefined());
 		}
 
 		Local<Value> argv[] = {
-			NanNull()
+			Nan::Null()
 			, retval
 		};
 
-		TryCatch try_catch;
+		Nan::TryCatch try_catch;
 		callback->Call(2, argv);
 
 		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
+			Nan::FatalException(try_catch);
 		}
 
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::Undefined());
 
 	}
 
 	NAN_METHOD(ffmpeg::ListDevices){
-		NanScope();
+		
 		REQ_FUN_ARG(0, cb);
-		NanCallback *callback = new NanCallback(cb.As<Function>());
+		Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
 		ffmpegcpp::ffmpeg ffm;
 		auto devices = ffmpegcpp::ffmpeg::ListInputDevices();
 
@@ -421,59 +421,59 @@ namespace alvision{
 			devicetype type;
 			std::vector<std::shared_ptr<deviceinfo>> deviceInfos;*/
 
-		auto retval = NanNew<Array>();
+		auto retval = Nan::New<Array>();
 
 		try{
 			int i = 0;
 
 			for (auto dev : devices){
-				auto cobj = NanNew<Object>();
-				cobj->Set(NanNew("name"), NanNew(dev->name));
-				cobj->Set(NanNew("full_name"), NanNew(dev->full_name));
-				cobj->Set(NanNew("format"), NanNew(dev->format));
+				auto cobj = Nan::New<Object>();
+				cobj->Set(Nan::New("name").ToLocalChecked(), Nan::New(dev->name).ToLocalChecked());
+				cobj->Set(Nan::New("full_name").ToLocalChecked(), Nan::New(dev->full_name).ToLocalChecked());
+				cobj->Set(Nan::New("format").ToLocalChecked(), Nan::New(dev->format).ToLocalChecked());
 
 
 
-				cobj->Set(NanNew("device_infos"), fromVector<std::shared_ptr<ffmpegcpp::deviceinfo>, Object>(dev->deviceInfos, [cobj, dev](std::shared_ptr<ffmpegcpp::deviceinfo> di)
+				cobj->Set(Nan::New("device_infos").ToLocalChecked(), fromVector<std::shared_ptr<ffmpegcpp::deviceinfo>, Object>(dev->deviceInfos, [cobj, dev](std::shared_ptr<ffmpegcpp::deviceinfo> di)
 				{
-					Local<Object> cp = NanNew<Object>();
+					Local<Object> cp = Nan::New<Object>();
 
 					if (di->pin != ""){
-						cp->Set(NanNew("pin"), NanNew(di->pin));
+						cp->Set(Nan::New("pin").ToLocalChecked(), Nan::New(di->pin).ToLocalChecked());
 					}
 
 					switch (dev->type){
 					case ffmpegcpp::devicetype::audio:
 					{
-						cobj->Set(NanNew("type"), NanNew("audio"));
+						cobj->Set(Nan::New("type").ToLocalChecked(), Nan::New("audio").ToLocalChecked());
 						auto dia = std::static_pointer_cast<ffmpegcpp::deviceinfoaudio>(di);
-						cp->Set(NanNew("minChannels"), NanNew(dia->minChannels));
-						cp->Set(NanNew("minBits"), NanNew(dia->minBits));
-						cp->Set(NanNew("minRate"), NanNew(dia->minRate));
-						cp->Set(NanNew("maxChannels"), NanNew(dia->maxChannels));
-						cp->Set(NanNew("maxBits"), NanNew(dia->maxBits));
-						cp->Set(NanNew("maxRate"), NanNew(dia->maxRate));
+						cp->Set(Nan::New("minChannels").ToLocalChecked(), Nan::New(dia->minChannels));
+						cp->Set(Nan::New("minBits").ToLocalChecked(), Nan::New(dia->minBits));
+						cp->Set(Nan::New("minRate").ToLocalChecked(), Nan::New(dia->minRate));
+						cp->Set(Nan::New("maxChannels").ToLocalChecked(), Nan::New(dia->maxChannels));
+						cp->Set(Nan::New("maxBits").ToLocalChecked(), Nan::New(dia->maxBits));
+						cp->Set(Nan::New("maxRate").ToLocalChecked(), Nan::New(dia->maxRate));
 					}
 						break;
 					case ffmpegcpp::devicetype::video:
 					{
-						cobj->Set(NanNew("type"), NanNew("video"));
+						cobj->Set(Nan::New("type").ToLocalChecked(), Nan::New("video").ToLocalChecked());
 						auto div = std::static_pointer_cast<ffmpegcpp::deviceinfovideo>(di);
 
 						auto pixelFormatName = ffmpegcpp::getPixelFormatName(div->pixelFormat);
 						if (pixelFormatName != ""){
-							cp->Set(NanNew("pixelFormat"), NanNew(pixelFormatName));
+							cp->Set(Nan::New("pixelFormat").ToLocalChecked(), Nan::New(pixelFormatName).ToLocalChecked());
 						}
 
 						if (div->codec != ""){
-							cp->Set(NanNew("codec"), NanNew(div->codec));
+							cp->Set(Nan::New("codec").ToLocalChecked(), Nan::New(div->codec).ToLocalChecked());
 						}
-						cp->Set(NanNew("minWidth"), NanNew(div->minWidth));
-						cp->Set(NanNew("minHeight"), NanNew(div->minHeight));
-						cp->Set(NanNew("minFPS"), NanNew(div->minFPS));
-						cp->Set(NanNew("maxWidth"), NanNew(div->maxWidth));
-						cp->Set(NanNew("maxHeight"), NanNew(div->maxHeight));
-						cp->Set(NanNew("maxFPS"), NanNew(div->maxFPS));
+						cp->Set(Nan::New("minWidth")	.ToLocalChecked(), Nan::New(div->minWidth));
+						cp->Set(Nan::New("minHeight")	.ToLocalChecked(), Nan::New(div->minHeight));
+						cp->Set(Nan::New("minFPS")		.ToLocalChecked(), Nan::New(div->minFPS));
+						cp->Set(Nan::New("maxWidth")	.ToLocalChecked(), Nan::New(div->maxWidth));
+						cp->Set(Nan::New("maxHeight")	.ToLocalChecked(), Nan::New(div->maxHeight));
+						cp->Set(Nan::New("maxFPS")		.ToLocalChecked(), Nan::New(div->maxFPS));
 					}
 						break;
 					}
@@ -489,35 +489,35 @@ namespace alvision{
 		}
 		catch (std::runtime_error re){
 			v8::Local<v8::Value> argv[] = {
-				v8::Exception::Error(NanNew<v8::String>(re.what()))
+				v8::Exception::Error(Nan::New<v8::String>(re.what()).ToLocalChecked())
 			};
 			callback->Call(1, argv);
-			NanReturnUndefined();
+			info.GetReturnValue().Set(Nan::Undefined());
 		}
 
 		Local<Value> argv[] = {
-			NanNull()
+			Nan::Null()
 			, retval
 		};
 
-		TryCatch try_catch;
+		Nan::TryCatch try_catch;
 		callback->Call(2, argv);
 
 		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
+			Nan::FatalException(try_catch);
 		}
 
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::Undefined());
 	}
 
 	NAN_METHOD(ffmpeg::ListFilters){
-		NanScope();
+		
 		REQ_FUN_ARG(0, cb);
-		NanCallback *callback = new NanCallback(cb.As<Function>());
+		Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
 		ffmpegcpp::ffmpeg ffm;
 
 
-		auto retval = NanNew<Array>();
+		auto retval = Nan::New<Array>();
 
 		try{
 			auto filters = ffmpegcpp::bitstreamfilter::listBitstreamFilters();
@@ -525,32 +525,32 @@ namespace alvision{
 			int i = 0;
 
 			for (auto filter : filters){
-				retval->Set(i, NanNew(filter));
+				retval->Set(i, Nan::New(filter).ToLocalChecked());
 				i++;
 			}
 
 		}
 		catch (std::runtime_error re){
 			v8::Local<v8::Value> argv[] = {
-				v8::Exception::Error(NanNew<v8::String>(re.what()))
+				v8::Exception::Error(Nan::New<v8::String>(re.what()).ToLocalChecked())
 			};
 			callback->Call(1, argv);
-			NanReturnUndefined();
+			info.GetReturnValue().Set(Nan::Undefined());
 		}
 
 		Local<Value> argv[] = {
-			NanNull()
+			Nan::Null()
 			, retval
 		};
 
-		TryCatch try_catch;
+		Nan::TryCatch try_catch;
 		callback->Call(2, argv);
 
 		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
+			Nan::FatalException(try_catch);
 		}
 
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::Undefined());
 	}
 
 
@@ -561,34 +561,32 @@ namespace alvision{
 		for (uint32_t i = 0; i < propnames->Length(); i++)
 		{
 			auto prop = propnames->Get(i);
-			NanUtf8String propnamestr(prop->ToString());
-			NanUtf8String value(object_->Get(prop)->ToString());
+			Nan::Utf8String propnamestr(prop->ToString());
+			Nan::Utf8String value(object_->Get(prop)->ToString());
 
 			dict_->set(*propnamestr, *value);
 		}
 	}
 
 	NAN_METHOD(ffmpeg::OpenAsInput){
-		NanScope();
-
-		if (args.Length() < 4){
-			return NanThrowTypeError("void alvision.ffmpeg.OpenAsInput(filename, format, options, callback(err,ffmpeg instance))");
+		if (info.Length() < 4){
+			return Nan::ThrowTypeError("void alvision.ffmpeg.OpenAsInput(filename, format, options, callback(err,ffmpeg instance))");
 		}
 
-		NanUtf8String filename((!args[0]->IsNull() && !args[0]->IsUndefined()) ? args[0]->ToString() : NanNew(""));
-		NanUtf8String format((!args[1]->IsNull() && !args[1]->IsUndefined()) ? args[1]->ToString() : NanNew(""));
-		auto options = (!args[2]->IsNull() && !args[2]->IsUndefined()) ? args[2]->ToObject() : NanNew<Object>();
+		Nan::Utf8String filename((!info[0]->IsNull() && !info[0]->IsUndefined()) ? info[0]->ToString() : Nan::New("").ToLocalChecked());
+		Nan::Utf8String format((!info[1]->IsNull() && !info[1]->IsUndefined()) ? info[1]->ToString() : Nan::New("").ToLocalChecked());
+		auto options = (!info[2]->IsNull() && !info[2]->IsUndefined()) ? info[2]->ToObject() : Nan::New<Object>();
 		REQ_FUN_ARG(3, cb);
-		NanCallback *callback = new NanCallback(cb.As<Function>());
+		Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
 		//auto callback = Local<Function>::Cast(args[3]);
 
 		std::shared_ptr<ffmpegcpp::dictionary> dict = std::make_shared<ffmpegcpp::dictionary>();
 
 		ConvertObjectToDictionary(options, dict);
 
-		auto im_h = ffmpeg::constructor->GetFunction()->NewInstance();
-		//Local<Object> im_h = NanNew(ffmpeg::constructor)->GetFunction()->NewInstance();
-		ffmpeg *ffminst = ObjectWrap::Unwrap<ffmpeg>(im_h);
+		auto im_h = Nan::New(ffmpeg::constructor)->GetFunction()->NewInstance();
+		//Local<Object> im_h = Nan::New(ffmpeg::constructor)->GetFunction()->NewInstance();
+		ffmpeg *ffminst = Nan::ObjectWrap::Unwrap<ffmpeg>(im_h);
 
 		//TODO: convert to error callback! (first parameter)
 		try{
@@ -606,64 +604,64 @@ namespace alvision{
 				st->getDecoder()->open();
 
 				auto newstream = stream::Instantiate(ffminst, sc->streamid, st);
-				NanAssignPersistent<Object>(sc->stream, newstream);
+				sc->stream.Reset(newstream);
 
 				(*ffminst->_ffmpegStreams)[std::to_string(sc->streamindex)] = sc;
 			}
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
 		//ffminst->Wrap(im_h);
 
 		Local<Value> argv[] = {
-			NanNull()
+			Nan::Null()
 			, im_h
 		};
 
-		TryCatch try_catch;
+		Nan::TryCatch try_catch;
 		callback->Call(2, argv);
 		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
+			Nan::FatalException(try_catch);
 		}
 
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::Undefined());
 	}
 
 
 	NAN_METHOD(ffmpeg::OpenAsOutputBuffer){
-		NanScope();
+		
 
-		if (args.Length() < 5){
-			return NanThrowTypeError("void alvision.ffmpeg.OpenAsOutputBuffer(filename, format, packetSize, totalSize, options, callback)");
+		if (info.Length() < 5){
+			return Nan::ThrowTypeError("void alvision.ffmpeg.OpenAsOutputBuffer(filename, format, packetSize, totalSize, options, callback)");
 		}
 
-		NanUtf8String filename((!args[0]->IsNull() && !args[0]->IsUndefined()) ? args[0]->ToString() : NanNew(""));
+		Nan::Utf8String filename((!info[0]->IsNull() && !info[0]->IsUndefined()) ? info[0]->ToString() : Nan::New("").ToLocalChecked());
 
-		NanUtf8String format((!args[1]->IsNull() && !args[1]->IsUndefined()) ? args[1]->ToString() : NanNew(""));
+		Nan::Utf8String format((!info[1]->IsNull() && !info[1]->IsUndefined()) ? info[1]->ToString() : Nan::New("").ToLocalChecked());
 
 		//packet size
-		auto packetSize = args[2]->Int32Value();
+		auto packetSize = info[2]->Int32Value();
 		//total size/
-		auto totalSize = args[3]->Int32Value();
+		auto totalSize = info[3]->Int32Value();
 
 
-		auto options = (!args[4]->IsNull() && !args[4]->IsUndefined()) ? args[4]->ToObject() : NanNew<Object>();
+		auto options = (!info[4]->IsNull() && !info[4]->IsUndefined()) ? info[4]->ToObject() : Nan::New<Object>();
 		//auto callback = Local<Function>::Cast(args[3]);
 		REQ_FUN_ARG(5, cb);
-		NanCallback *callback = new NanCallback(cb.As<Function>());
+		Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
 
 		std::shared_ptr<ffmpegcpp::dictionary> dict = std::make_shared<ffmpegcpp::dictionary>();
 
 		ConvertObjectToDictionary(options, dict);
 
-		auto im_h = ffmpeg::constructor->GetFunction()->NewInstance();
-		//Local<Object> im_h = NanNew(ffmpeg::constructor)->GetFunction()->NewInstance();
-		ffmpeg *ffminst = ObjectWrap::Unwrap<ffmpeg>(im_h);
+		auto im_h = Nan::New(ffmpeg::constructor)->GetFunction()->NewInstance();
+		//Local<Object> im_h = Nan::New(ffmpeg::constructor)->GetFunction()->NewInstance();
+		ffmpeg *ffminst = Nan::ObjectWrap::Unwrap<ffmpeg>(im_h);
 
 		//TODO: convert to error callback! (first parameter)
 		try{
@@ -676,51 +674,50 @@ namespace alvision{
 
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
 		//ffminst->Wrap(im_h);
 
 		Local<Value> argv[] = {
-			NanNull()
+			Nan::Null()
 			, im_h
 		};
 
-		TryCatch try_catch;
+		Nan::TryCatch try_catch;
 		callback->Call(2, argv);
 		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
+			Nan::FatalException(try_catch);
 		}
 
-
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::Undefined());
 	}
 
 
 	NAN_METHOD(ffmpeg::OpenAsOutput){
-		NanScope();
+		
 
-		if (args.Length() < 4){
-			return NanThrowTypeError("void alvision.ffmpeg.OpenAsOutput(filename, format, options, callback)");
+		if (info.Length() < 4){
+			return Nan::ThrowTypeError("void alvision.ffmpeg.OpenAsOutput(filename, format, options, callback)");
 		}
 
-		NanUtf8String filename((!args[0]->IsNull() && !args[0]->IsUndefined()) ? args[0]->ToString() : NanNew(""));
-		NanUtf8String format((!args[1]->IsNull() && !args[1]->IsUndefined()) ? args[1]->ToString() : NanNew(""));
-		auto options = (!args[2]->IsNull() && !args[2]->IsUndefined()) ? args[2]->ToObject() : NanNew<Object>();
+		Nan::Utf8String filename((!info[0]->IsNull() && !info[0]->IsUndefined()) ? info[0]->ToString() : Nan::EmptyString());
+		Nan::Utf8String format((!info[1]->IsNull() && !info[1]->IsUndefined()) ? info[1]->ToString() : Nan::EmptyString());
+		auto options = (!info[2]->IsNull() && !info[2]->IsUndefined()) ? info[2]->ToObject() : Nan::New<Object>();
 		//auto callback = Local<Function>::Cast(args[3]);
 		REQ_FUN_ARG(3, cb);
-		NanCallback *callback = new NanCallback(cb.As<Function>());
+		Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
 
 		std::shared_ptr<ffmpegcpp::dictionary> dict = std::make_shared<ffmpegcpp::dictionary>();
 
 		ConvertObjectToDictionary(options, dict);
 
-		auto im_h = ffmpeg::constructor->GetFunction()->NewInstance();
-		//Local<Object> im_h = NanNew(ffmpeg::constructor)->GetFunction()->NewInstance();
-		ffmpeg *ffminst = ObjectWrap::Unwrap<ffmpeg>(im_h);
+		auto im_h = Nan::New(ffmpeg::constructor)->GetFunction()->NewInstance();
+		//Local<Object> im_h = Nan::New(ffmpeg::constructor)->GetFunction()->NewInstance();
+		ffmpeg *ffminst = Nan::ObjectWrap::Unwrap<ffmpeg>(im_h);
 
 		//TODO: convert to error callback! (first parameter)
 		try{
@@ -731,41 +728,40 @@ namespace alvision{
 
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
 		//ffminst->Wrap(im_h);
 
 		Local<Value> argv[] = {
-			NanNull()
+			Nan::Null()
 			, im_h
 		};
 
-		TryCatch try_catch;
+		Nan::TryCatch try_catch;
 		callback->Call(2, argv);
 		if (try_catch.HasCaught()) {
-			FatalException(try_catch);
+			Nan::FatalException(try_catch);
 		}
 
-
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::Undefined());
 	}
 
 	NAN_METHOD(ffmpeg::getNextBufferSizes){
 		SETUP_FUNCTION(ffmpeg);
 
 		if (self->_ffmpegMemoryContext == nullptr){
-			return NanThrowError("getNextBufferSizes cannot execute on non Buffered instance");
+			return Nan::ThrowError("getNextBufferSizes cannot execute on non Buffered instance");
 		}
 
-		auto retval = NanNew<Object>();
-		retval->Set(NanNew("size"), NanNew(self->_ffmpegMemoryContext->size()));
-		retval->Set(NanNew("blocks"), NanNew(self->_ffmpegMemoryContext->blocks()));
+		auto retval = Nan::New<Object>();
+		retval->Set(Nan::New("size").ToLocalChecked(), Nan::New(self->_ffmpegMemoryContext->size()));
+		retval->Set(Nan::New("blocks").ToLocalChecked(), Nan::New(self->_ffmpegMemoryContext->blocks()));
 
-		NanReturnValue(retval);
+		info.GetReturnValue().Set(retval);
 	}
 
 
@@ -773,21 +769,21 @@ namespace alvision{
 		SETUP_FUNCTION(ffmpeg);
 
 		if (self->_ffmpegMemoryContext == nullptr){
-			return NanThrowError("getNextBuffer cannot execute on non Buffered instance");
+			return Nan::ThrowError("getNextBuffer cannot execute on non Buffered instance");
 		}
 
-		if (args.Length() < 1){
-			return NanThrowTypeError("int getNextBuffer(buffer);");
+		if (info.Length() < 1){
+			return Nan::ThrowTypeError("int getNextBuffer(buffer);");
 		}
 
-		if ((!node::Buffer::HasInstance(args[0])) || (node::Buffer::Length(args[0]) < self->_ffmpegMemoryContext->getBlockSize())){
-			return NanThrowRangeError("int getNextBuffer first argument must be a preallocated buffer at the size of the maximum packet size");
+		if ((!node::Buffer::HasInstance(info[0])) || (node::Buffer::Length(info[0]) < self->_ffmpegMemoryContext->getBlockSize())){
+			return Nan::ThrowRangeError("int getNextBuffer first argument must be a preallocated buffer at the size of the maximum packet size");
 		}
 
-		auto bufferDataPtr = node::Buffer::Data(args[0]);
-		auto actuallyRead = self->_ffmpegMemoryContext->read_next_block((uint8_t*)bufferDataPtr, node::Buffer::Length(args[0]));
+		auto bufferDataPtr = node::Buffer::Data(info[0]);
+		auto actuallyRead = self->_ffmpegMemoryContext->read_next_block((uint8_t*)bufferDataPtr, node::Buffer::Length(info[0]));
 
-		NanReturnValue(NanNew(actuallyRead));
+		info.GetReturnValue().Set(Nan::New(actuallyRead));
 	}
 
 	NAN_METHOD(ffmpeg::WriteHeader){
@@ -798,14 +794,14 @@ namespace alvision{
 			}*/
 
 		if (self->_outputWroteHeader == true){
-			return NanThrowError("WriteHeader can only be executed once");
+			return Nan::ThrowError("WriteHeader can only be executed once");
 		}
 
-		auto options = (!args[0]->IsNull() && !args[0]->IsUndefined()) ? args[0]->ToObject() : NanNew<Object>();
-		auto metadata = (!args[1]->IsNull() && !args[1]->IsUndefined()) ? args[1]->ToObject() : NanNew<Object>();
+		auto options = (!info[0]->IsNull() && !info[0]->IsUndefined()) ? info[0]->ToObject() : Nan::New<Object>();
+		auto metadata = (!info[1]->IsNull() && !info[1]->IsUndefined()) ? info[1]->ToObject() : Nan::New<Object>();
 
 		//REQ_FUN_ARG(2, cb);
-		//NanCallback *callback = new NanCallback(cb.As<Function>());
+		//Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
 
 		std::shared_ptr<ffmpegcpp::dictionary> optionsdict = std::make_shared<ffmpegcpp::dictionary>();
 		std::shared_ptr<ffmpegcpp::dictionary> metadatadict = std::make_shared<ffmpegcpp::dictionary>();
@@ -820,10 +816,10 @@ namespace alvision{
 			self->_outputWroteHeader = true;
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
 		/*Local<Value> argv[] = {
@@ -837,30 +833,28 @@ namespace alvision{
 		FatalException(try_catch);
 		}*/
 
-		NanReturnValue(NanNew(true));
-
-		NanReturnUndefined();
+		info.GetReturnValue().Set(Nan::New(true));
 	}
 
 	NAN_METHOD(ffmpeg::GetSDP){
 		SETUP_FUNCTION(ffmpeg);
 
 		if (self->_ffmpegContext == nullptr){
-			return NanThrowError("GetSDP must execute on initialized instance");
+			return Nan::ThrowError("GetSDP must execute on initialized instance");
 		}
 
 		//REQ_FUN_ARG(2, cb);
-		//NanCallback *callback = new NanCallback(cb.As<Function>());
+		//Nan::Callback *callback = new Nan::Callback(cb.As<Function>());
 
 		try{
 			auto sdp = self->_ffmpegContext->getSDP();
-			NanReturnValue(NanNew(sdp));
+			info.GetReturnValue().Set(Nan::New(sdp).ToLocalChecked());
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
 		/*Local<Value> argv[] = {
@@ -893,34 +887,34 @@ namespace alvision{
 			success = true;
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
-		NanReturnValue(NanNew(success));
+		info.GetReturnValue().Set(Nan::New(success));
 	}
 
 	NAN_METHOD(ffmpeg::GetStreams)
 	{
 		SETUP_FUNCTION(ffmpeg);
 
-		auto ret = NanNew<Array>();
+		auto ret = Nan::New<Array>();
 
 		int i = 0;
 
 		for (auto streamkv : *self->_ffmpegStreams)
 		{
 			if (streamkv.second->stream.IsEmpty()){
-				NanAssignPersistent<Object>(streamkv.second->stream, stream::Instantiate(self, streamkv.first, streamkv.second->ffstream));
+				streamkv.second->stream.Reset(stream::Instantiate(self, streamkv.first, streamkv.second->ffstream));
 			}
 
-			ret->Set(i, streamkv.second->stream);
+			ret->Set(i, Nan::New( streamkv.second->stream));
 			i++;
 		}
 
-		NanReturnValue(ret);
+		info.GetReturnValue().Set(ret);
 
 	}
 
@@ -928,30 +922,30 @@ namespace alvision{
 	{
 		SETUP_FUNCTION(ffmpeg);
 
-		if (args.Length() < 1){
-			return NanThrowTypeError("void ffmpeg.AddStream(config)");
+		if (info.Length() < 1){
+			return Nan::ThrowTypeError("void ffmpeg.AddStream(config)");
 		}
 
 		if (self->_ffmpegContext == nullptr){
-			return NanThrowError("cannot perform operations on a closed instance");
+			return Nan::ThrowError("cannot perform operations on a closed instance");
 		}
 
 		if (!self->_openedAsOutput){
-			return NanThrowError("AddStream only works on outputs");
+			return Nan::ThrowError("AddStream only works on outputs");
 		}
 
-		auto config = (!args[0]->IsNull() && !args[0]->IsUndefined()) ? args[0]->ToObject() : NanNew<Object>();
+		auto config = (!info[0]->IsNull() && !info[0]->IsUndefined()) ? info[0]->ToObject() : Nan::New<Object>();
 
-		if (config->Get(NanNew("id"))->IsUndefined())
-			return NanThrowError("id must be specified");
-		if (config->Get(NanNew("codec"))->IsUndefined())
-			return NanThrowError("codec must be specified");
-		if (config->Get(NanNew("timebase"))->IsUndefined())
-			return NanThrowError("timebase must be specified");
+		if (config->Get(Nan::New("id").ToLocalChecked())->IsUndefined())
+			return Nan::ThrowError("id must be specified");
+		if (config->Get(Nan::New("codec").ToLocalChecked())->IsUndefined())
+			return Nan::ThrowError("codec must be specified");
+		if (config->Get(Nan::New("timebase").ToLocalChecked())->IsUndefined())
+			return Nan::ThrowError("timebase must be specified");
 
-		NanUtf8String stream_id(config->Get(NanNew("id"))->ToString());
-		NanUtf8String codec_id(config->Get(NanNew("codec"))->ToString());
-		double timebase = config->Get(NanNew("timebase"))->NumberValue();
+		Nan::Utf8String stream_id(config->Get(Nan::New("id").ToLocalChecked())->ToString());
+		Nan::Utf8String codec_id(config->Get(Nan::New("codec").ToLocalChecked())->ToString());
+		double timebase = config->Get(Nan::New("timebase").ToLocalChecked())->NumberValue();
 
 		int streamIndex = -1;
 
@@ -980,69 +974,69 @@ namespace alvision{
 			auto streamCodec = stream->getCodec();
 			streamCodec->time_base(ffmpegcpp::rational(1, (int)timebase));
 
-			if (!config->Get(NanNew("bitrate"))->IsUndefined())
-				streamCodec->bit_rate(config->Get(NanNew("bitrate"))->Int32Value());
+			if (!config->Get(Nan::New("bitrate").ToLocalChecked())->IsUndefined())
+				streamCodec->bit_rate(config->Get(Nan::New("bitrate").ToLocalChecked())->Int32Value());
 
-			if (!config->Get(NanNew("width"))->IsUndefined())
+			if (!config->Get(Nan::New("width").ToLocalChecked())->IsUndefined())
 			{
-				auto width = config->Get(NanNew("width"))->Int32Value();
+				auto width = config->Get(Nan::New("width").ToLocalChecked())->Int32Value();
 				streamCodec->width(width);
 			}
 
-			if (!config->Get(NanNew("height"))->IsUndefined())
+			if (!config->Get(Nan::New("height").ToLocalChecked())->IsUndefined())
 			{
-				auto height = config->Get(NanNew("height"))->Int32Value();
+				auto height = config->Get(Nan::New("height").ToLocalChecked())->Int32Value();
 				streamCodec->height(height);
 			}
 
-			if (!config->Get(NanNew("gopsize"))->IsUndefined())
-				streamCodec->gop_size(config->Get(NanNew("gopsize"))->Int32Value());
+			if (!config->Get(Nan::New("gopsize").ToLocalChecked())->IsUndefined())
+				streamCodec->gop_size(config->Get(Nan::New("gopsize").ToLocalChecked())->Int32Value());
 
-			if (!config->Get(NanNew("pixfmt"))->IsUndefined())
-				streamCodec->pix_fmt(ffmpegcpp::getPixelFormatByName(*NanUtf8String(config->Get(NanNew("pixfmt"))->ToString())));
+			if (!config->Get(Nan::New("pixfmt").ToLocalChecked())->IsUndefined())
+				streamCodec->pix_fmt(ffmpegcpp::getPixelFormatByName(*Nan::Utf8String(config->Get(Nan::New("pixfmt").ToLocalChecked())->ToString())));
 
-			if (!config->Get(NanNew("channels"))->IsUndefined())
-				streamCodec->channels(config->Get(NanNew("channels"))->Int32Value());
+			if (!config->Get(Nan::New("channels").ToLocalChecked())->IsUndefined())
+				streamCodec->channels(config->Get(Nan::New("channels").ToLocalChecked())->Int32Value());
 
-			if (!config->Get(NanNew("samplerate"))->IsUndefined())
-				streamCodec->sample_rate(config->Get(NanNew("samplerate"))->Int32Value());
+			if (!config->Get(Nan::New("samplerate").ToLocalChecked())->IsUndefined())
+				streamCodec->sample_rate(config->Get(Nan::New("samplerate").ToLocalChecked())->Int32Value());
 
-			if (!config->Get(NanNew("channelslayout"))->IsUndefined())
-				streamCodec->channels_layout(ffmpegcpp::getChannelLayoutByName(*NanUtf8String(config->Get(NanNew("channelslayout"))->ToString())));
+			if (!config->Get(Nan::New("channelslayout").ToLocalChecked())->IsUndefined())
+				streamCodec->channels_layout(ffmpegcpp::getChannelLayoutByName(*Nan::Utf8String(config->Get(Nan::New("channelslayout").ToLocalChecked())->ToString())));
 
-			if (!config->Get(NanNew("samplefmt"))->IsUndefined())
-				streamCodec->sample_fmt(ffmpegcpp::getSampleFormatByName(*NanUtf8String(config->Get(NanNew("samplefmt"))->ToString())));
+			if (!config->Get(Nan::New("samplefmt").ToLocalChecked())->IsUndefined())
+				streamCodec->sample_fmt(ffmpegcpp::getSampleFormatByName(*Nan::Utf8String(config->Get(Nan::New("samplefmt").ToLocalChecked())->ToString())));
 
-			if (!config->Get(NanNew("options"))->IsUndefined()){
-				auto options = config->Get(NanNew("options"))->ToObject();
+			if (!config->Get(Nan::New("options").ToLocalChecked())->IsUndefined()){
+				auto options = config->Get(Nan::New("options").ToLocalChecked())->ToObject();
 				ConvertObjectToDictionary(options, optionsdict);
 			}
 
 			stream->getEncoder()->open(optionsdict);
 
-			NanAssignPersistent<Object>(sc->stream, stream::Instantiate(self, sc->streamid, stream));
+			sc->stream.Reset(stream::Instantiate(self, sc->streamid, stream));
 
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
-		NanReturnValue(sc->stream);
+		info.GetReturnValue().Set(Nan::New(sc->stream));
 	}
 
 	NAN_METHOD(ffmpeg::WritePacket)
 	{
 		SETUP_FUNCTION(ffmpeg);
 
-		packet *pt = ObjectWrap::Unwrap<packet>(args[0]->ToObject());
+		packet *pt = Nan::ObjectWrap::Unwrap<packet>(info[0]->ToObject());
 		if (pt == NULL){
-			return NanThrowError("first argument must be a packet");
+			return Nan::ThrowError("first argument must be a packet");
 		}
 
-		bool interleaved = (!args[1]->IsUndefined()) ? args[1]->BooleanValue() : true;
+		bool interleaved = (!info[1]->IsUndefined()) ? info[1]->BooleanValue() : true;
 
 		try{
 			if (interleaved){
@@ -1053,22 +1047,22 @@ namespace alvision{
 			}
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
-		NanReturnUndefined();
+		info.GetReturnValue().SetUndefined();
 	}
 
 	NAN_METHOD(ffmpeg::ReadPacket)
 	{
 		SETUP_FUNCTION(ffmpeg);
 
-		packet *pt = ObjectWrap::Unwrap<packet>(args[0]->ToObject());
+		packet *pt = Nan::ObjectWrap::Unwrap<packet>(info[0]->ToObject());
 		if (pt == NULL){
-			return NanThrowError("first argument must be a packet");
+			return Nan::ThrowError("first argument must be a packet");
 		}
 
 		ffmpegcpp::readPacketState state = ffmpegcpp::readPacketState::again;
@@ -1076,24 +1070,24 @@ namespace alvision{
 			state = self->_ffmpegContext->readPacket(pt->_packet);
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
 		switch (state){
 		case ffmpegcpp::readPacketState::success:
-			NanReturnValue(NanNew("success"));
+			info.GetReturnValue().Set(Nan::New("success").ToLocalChecked());
 			break;
 		case ffmpegcpp::readPacketState::again:
-			NanReturnValue(NanNew("again"));
+			info.GetReturnValue().Set(Nan::New("again").ToLocalChecked());
 			break;
 		case ffmpegcpp::readPacketState::eof:
-			NanReturnValue(NanNew("eof"));
+			info.GetReturnValue().Set(Nan::New("eof").ToLocalChecked());
 			break;
 		default:
-			NanReturnValue(NanNew("unknown"));
+			info.GetReturnValue().Set(Nan::New("unknown").ToLocalChecked());
 			break;
 		}
 

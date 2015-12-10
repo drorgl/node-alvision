@@ -19,7 +19,7 @@
 
 
 using namespace v8;
-using namespace node;
+//using namespace node;
 
 //#define REQ_FUN_ARG(I, VAR)                                             \
 //if (args.Length() <= (I) || !args[I]->IsFunction())                   \
@@ -27,23 +27,23 @@ using namespace node;
 //	Local<Function> VAR = Local<Function>::Cast(args[I]);
 //
 #define SETUP_FUNCTION(TYP)	\
-	NanScope();		\
-	TYP *self = ObjectWrap::Unwrap<TYP>(args.This());
+			\
+	TYP *self = Nan::ObjectWrap::Unwrap<TYP>(info.This());
 
 #define REQ_FUN_ARG(I, VAR)                                             \
-  if (args.Length() <= (I) || !args[I]->IsFunction())                   \
-    return NanThrowTypeError("Argument " #I " must be a function");  \
-  Local<Function> VAR = Local<Function>::Cast(args[I]);
+  if (info.Length() <= (I) || !info[I]->IsFunction())                   \
+    return Nan::ThrowTypeError("Argument " #I " must be a function");  \
+  Local<Function> VAR = Local<Function>::Cast(info[I]);
 //
 #define JSFUNC(NAME) \
 	static NAN_METHOD(NAME);
 //
 #define JSTHROW_TYPE(ERR) \
-	NanThrowTypeError(ERR);
+	Nan::ThrowTypeError(ERR);
 //
 //
 #define JSTHROW(ERR) \
-	NanThrowError(ERR);
+	Nan::ThrowError(ERR);
 //
 //
 //#define INT_FROM_ARGS(NAME, IND) \

@@ -14,7 +14,7 @@
 extern "C"{ 
 void
 init(Handle<Object> target) {
-	NanScope();
+	
 
 	Matrix::Init(target);
 	alvision::ffmpeg::Init(target);
@@ -23,7 +23,7 @@ init(Handle<Object> target) {
 	Constants::Init(target);
 	NamedWindow::Init(target);
 
-	target->Set(NanNew("version"), NanNew("1.0.0"));
+	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 };
 }
 

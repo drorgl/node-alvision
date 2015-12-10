@@ -4,7 +4,7 @@
 #include "../alvision.h"
 
 namespace alvision{
-	class packet : public node::ObjectWrap {
+	class packet : public Nan::ObjectWrap {
 	private:
 
 	public:
@@ -12,7 +12,7 @@ namespace alvision{
 
 		std::shared_ptr<ffmpegcpp::packet> _packet;
 
-		static Persistent<FunctionTemplate> constructor;
+		static Nan::Persistent<FunctionTemplate> constructor;
 
 		//static NAN_METHOD(GetStreamId);
 		//static v8::Handle<Value> GetStreamId(v8::Local<v8::String> property, const v8::AccessorInfo& info);

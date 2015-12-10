@@ -4,13 +4,13 @@
 #include "../alvision.h"
 
 
-class Matrix : public node::ObjectWrap {
+class Matrix : public Nan::ObjectWrap {
 public:
 	static void Init(Handle<Object> target);
 
 	std::shared_ptr<cv::Mat> _mat;
 
-	static Persistent<FunctionTemplate> constructor;
+	static Nan::Persistent<FunctionTemplate> constructor;
 	static NAN_METHOD(New);
 	Matrix();
 	Matrix(std::shared_ptr<cv::Mat> other, cv::Rect roi);

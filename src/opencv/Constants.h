@@ -1,6 +1,6 @@
 #include "../alvision.h"
 
-class Constants: public node::ObjectWrap {
+class Constants: public Nan::ObjectWrap {
  public:
     static void Init(Handle<Object> target);
 

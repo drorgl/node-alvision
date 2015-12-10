@@ -15,12 +15,14 @@ namespace alvision{
 	{
 		std::string streamid;
 		int streamindex;
-		Persistent<Object> stream;
+		Nan::Persistent<v8::Object> stream;
 		std::shared_ptr<ffmpegcpp::stream> ffstream;
 	};
 
-	class ffmpeg : public node::ObjectWrap {
+	class ffmpeg : public Nan::ObjectWrap {
+		friend class stream;
 	private:
+
 		struct log_message
 		{
 			std::string module;
@@ -28,20 +30,21 @@ namespace alvision{
 			std::string message;
 		};
 
+
 		class AsyncListInputFormatsWorker;
 		class AsyncListOutputFormatsWorker;
 
 		static Local<Object> fromFFMpegComponent(ffmpegcpp::component comp);
-		static Local<Array> fromFFMpegComponentFlags(ffmpegcpp::component_flags cflg);
+		//static Local<Array> fromFFMpegComponentFlags(ffmpegcpp::component_flags cflg);
 		static Local<Object> fromFFMpegOptions(std::vector<ffmpegcpp::option> &options);
-		static std::string fromFFMpegOptionType(ffmpegcpp::option_type otype);
+		//static std::string fromFFMpegOptionType(ffmpegcpp::option_type otype);
 
 
 
 		/*Logger Begin*/
 
 		/*v8 logger callback pointer*/
-		static Persistent<Function> _logger;
+		static Nan::Persistent<Function> _logger;
 		/*ffmpeg logger callback*/
 		static void _ffmpeg_logger(std::string module, int level, std::string message);
 		/*async callback for sending the messages on the main event loop*/
@@ -57,12 +60,12 @@ namespace alvision{
 		/*Logger Ends*/
 
 
-		static void ffmpeg::ConvertObjectToDictionary(Local<Object> object_, std::shared_ptr<ffmpegcpp::dictionary> dict_);
+		static void ConvertObjectToDictionary(Local<Object> object_, std::shared_ptr<ffmpegcpp::dictionary> dict_);
 
 		template<typename VectorT, typename LocalT>
 		static Local<Array> fromVector(std::vector<VectorT> vector, std::function<Local<LocalT>(VectorT)> cfunc)
 		{
-			Local<Array> retval = NanNew<Array>();
+			Local<Array> retval = Nan::New<Array>();
 			int i = 0;
 			for (auto vt : vector)
 			{
@@ -72,8 +75,6 @@ namespace alvision{
 			return retval;
 		}
 
-	public:
-		static void Init(Handle<Object> target);
 
 		std::shared_ptr<ffmpegcpp::ffmpeg> _ffmpeg;
 		std::shared_ptr<ffmpegcpp::formatcontext> _ffmpegContext;
@@ -84,10 +85,13 @@ namespace alvision{
 		std::shared_ptr<std::map<std::string, std::shared_ptr<streamcontainer>>> _ffmpegStreams = nullptr;
 
 
-		static Persistent<FunctionTemplate> constructor;
-		static NAN_METHOD(New);
+		static Nan::Persistent<FunctionTemplate> constructor;
+		
 		ffmpeg();
 
+
+
+		static NAN_METHOD(New);
 		static NAN_METHOD(ListInputFormats);
 		static NAN_METHOD(ListOutputFormats);
 		static NAN_METHOD(SetLogger);
@@ -111,6 +115,11 @@ namespace alvision{
 		static NAN_METHOD(WriteHeader);
 		static NAN_METHOD(ReadPacket); //bool ReadPacket();
 		static NAN_METHOD(WritePacket);
+
+
+
+	public:
+		static NAN_MODULE_INIT(Init);
 
 
 

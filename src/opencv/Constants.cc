@@ -1,13 +1,13 @@
 #include "Constants.h"
 
 #define CONST(obj,C) \
-  obj->Set(NanNew<String>(#C), NanNew<Integer>(C));
+  obj->Set(Nan::New<String>(#C).ToLocalChecked(), Nan::New<Integer>(C));
 
 void
 Constants::Init(Handle<Object> target) {
-  Persistent<Object> inner;
-  Local<Object> matrixTypeObj = NanNew<Object>();
-  NanAssignPersistent(inner, matrixTypeObj);
+  Nan::Persistent<Object> inner;
+  Local<Object> matrixTypeObj = Nan::New<Object>();
+  inner.Reset(matrixTypeObj);
 
   CONST(matrixTypeObj,CV_8U);
   CONST(matrixTypeObj,CV_8S);
@@ -53,24 +53,24 @@ Constants::Init(Handle<Object> target) {
   CONST(matrixTypeObj,CV_64FC3);
   CONST(matrixTypeObj,CV_64FC4);
 
-  NODE_SET_METHOD(matrixTypeObj, "CV_MAKETYPE", cvMakeType);
+  Nan::SetMethod(matrixTypeObj, "CV_MAKETYPE", cvMakeType);
 
-  target->Set(NanNew("MatrixType"), matrixTypeObj);
+  target->Set(Nan::New("MatrixType").ToLocalChecked(), matrixTypeObj);
 }
 
 NAN_METHOD(Constants::cvMakeType){
-	NanScope();
+	
 
-	if (args.Length() < 2){
-		return NanThrowError("MatrixType.CV_MAKE_TYPE(depth,channels);");
+	if (info.Length() < 2){
+		return Nan::ThrowError("MatrixType.CV_MAKE_TYPE(depth,channels);");
 	}
 
-	auto depth = args[0]->Int32Value();
-	auto channels = args[1]->Int32Value();
+	auto depth = info[0]->Int32Value();
+	auto channels = info[1]->Int32Value();
 
 	auto result = CV_MAKETYPE(depth, channels);
 
-	NanReturnValue(NanNew(result));
+	info.GetReturnValue().Set(Nan::New(result));
 }
 
 #undef CONST

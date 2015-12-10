@@ -9,7 +9,7 @@
 namespace alvision{
 	class ffmpeg;
 
-	class stream : public node::ObjectWrap {
+	class stream : public Nan::ObjectWrap {
 	private:
 
 
@@ -22,7 +22,7 @@ namespace alvision{
 		ffmpeg * _ffmpeg;
 		std::shared_ptr<ffmpegcpp::swscale> _converter = nullptr;
 
-		static Persistent<FunctionTemplate> constructor;
+		static Nan::Persistent<FunctionTemplate> constructor;
 
 		static Local<Object> Instantiate(ffmpeg * ffmpeg_, std::string streamid_, std::weak_ptr<ffmpegcpp::stream> stream_);
 

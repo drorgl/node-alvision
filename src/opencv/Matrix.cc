@@ -1,62 +1,63 @@
 #include "Matrix.h"
 #include "Constants.h"
 
-v8::Persistent<FunctionTemplate> Matrix::constructor;
+Nan::Persistent<FunctionTemplate> Matrix::constructor;
 
 
 void
 Matrix::Init(Handle<Object> target) {
-	NanScope();
+	
 
 	//Class
-	Local<FunctionTemplate> ctor = NanNew<FunctionTemplate>(Matrix::New);
-	NanAssignPersistent(constructor, ctor);
+	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Matrix::New);
+	constructor.Reset(ctor);
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
-	ctor->SetClassName(NanNew("Matrix"));
+	ctor->SetClassName(Nan::New("Matrix").ToLocalChecked());
 
 	// Prototype
-	NODE_SET_METHOD(ctor, "Zeros", Zeros);
-	NODE_SET_METHOD(ctor, "Ones", Ones);
-	NODE_SET_METHOD(ctor, "Eye", Eye);
+	
+	Nan::SetMethod(ctor, "Zeros", Zeros);
+	Nan::SetMethod(ctor, "Ones", Ones);
+	Nan::SetMethod(ctor, "Eye", Eye);
 
-	NODE_SET_PROTOTYPE_METHOD(ctor, "row", Row);
-	NODE_SET_PROTOTYPE_METHOD(ctor, "col", Col);
-	NODE_SET_PROTOTYPE_METHOD(ctor, "pixelRow", PixelRow);
-	NODE_SET_PROTOTYPE_METHOD(ctor, "pixelCol", PixelCol);
+	Nan::SetPrototypeMethod(ctor, "row", Row);
+	Nan::SetPrototypeMethod(ctor, "col", Col);
+	Nan::SetPrototypeMethod(ctor, "pixelRow", PixelRow);
+	Nan::SetPrototypeMethod(ctor, "pixelCol", PixelCol);
 
-	target->Set(NanNew("Matrix"), ctor->GetFunction());
+	target->Set(Nan::New("Matrix").ToLocalChecked(), ctor->GetFunction());
 };
 
 NAN_METHOD(Matrix::New) {
-	NanScope();
-	if (args.This()->InternalFieldCount() == 0)
-		NanThrowTypeError("Cannot instantiate without new");
+	
+	if (info.This()->InternalFieldCount() == 0)
+		Nan::ThrowTypeError("Cannot instantiate without new");
 
 	Matrix *mat;
 
-	if (args.Length() == 0){
+	if (info.Length() == 0){
 		mat = new Matrix;
 	}
-	else if (args.Length() == 2 && args[0]->IsInt32() && args[1]->IsInt32()){
-		mat = new Matrix(args[0]->IntegerValue(), args[1]->IntegerValue());
+	else if (info.Length() == 2 && info[0]->IsInt32() && info[1]->IsInt32()){
+		mat = new Matrix(info[0]->IntegerValue(), info[1]->IntegerValue());
 	}
-	else if (args.Length() == 3 && args[0]->IsInt32() && args[1]->IsInt32() && args[2]->IsInt32()) {
-		mat = new Matrix(args[0]->IntegerValue(), args[1]->IntegerValue(), args[2]->IntegerValue());
+	else if (info.Length() == 3 && info[0]->IsInt32() && info[1]->IsInt32() && info[2]->IsInt32()) {
+		mat = new Matrix(info[0]->IntegerValue(), info[1]->IntegerValue(), info[2]->IntegerValue());
 	}
-	else { // if (args.Length() == 5) {
-		Matrix *other = ObjectWrap::Unwrap<Matrix>(args[0]->ToObject());
-		int x = safe_cast<int>(args[1]->IntegerValue());
-		int y = safe_cast<int>(args[2]->IntegerValue());
-		int w = safe_cast<int>(args[3]->IntegerValue());
-		int h = safe_cast<int>(args[4]->IntegerValue());
+	else { // if (info.Length() == 5) {
+		Matrix *other = ObjectWrap::Unwrap<Matrix>(info[0]->ToObject());
+		int x = safe_cast<int>(info[1]->IntegerValue());
+		int y = safe_cast<int>(info[2]->IntegerValue());
+		int w = safe_cast<int>(info[3]->IntegerValue());
+		int h = safe_cast<int>(info[4]->IntegerValue());
 		mat = new Matrix(other->_mat, cv::Rect(x, y, w, h));
 	}
 
-	mat->Wrap(args.Holder());
-	args.Holder()->Set(NanNew("width"), NanNew(mat->_mat->cols));
-	args.Holder()->Set(NanNew("height"), NanNew(mat->_mat->rows));
-	args.Holder()->Set(NanNew("type"), NanNew(Constants::fromMatType(mat->_mat->type())));
-	NanReturnValue(args.Holder());
+	mat->Wrap(info.Holder());
+	info.Holder()->Set(Nan::New("width").ToLocalChecked(), Nan::New(mat->_mat->cols));
+	info.Holder()->Set(Nan::New("height").ToLocalChecked(), Nan::New(mat->_mat->rows));
+	info.Holder()->Set(Nan::New("type").ToLocalChecked(), Nan::New(Constants::fromMatType(mat->_mat->type())).ToLocalChecked());
+	info.GetReturnValue().Set(info.Holder());
 }
 
 
@@ -85,7 +86,7 @@ Matrix::Matrix(std::shared_ptr<cv::Mat> m, cv::Rect roi) : ObjectWrap() {
 
 //NAN_METHOD(Matrix::Empty){
 //	SETUP_FUNCTION(Matrix)
-//		NanReturnValue(NanNew<Boolean>(self->_mat->empty()));
+//		NanReturnValue(Nan::New<Boolean>(self->_mat->empty()));
 //}
 
 double
@@ -121,15 +122,15 @@ Matrix::DblGet(cv::Mat mat, int i, int j){
 //NAN_METHOD(Matrix::Pixel){
 //	SETUP_FUNCTION(Matrix)
 //
-//		int y = args[0]->IntegerValue();
-//	int x = args[1]->IntegerValue();
+//		int y = info[0]->IntegerValue();
+//	int x = info[1]->IntegerValue();
 //
 //	//cv::Scalar scal = self->mat.at<uchar>(y, x);
 //
 //
-//	if (args.Length() == 3){
+//	if (info.Length() == 3){
 //
-//		Local<Object> objColor = args[2]->ToObject();
+//		Local<Object> objColor = info[2]->ToObject();
 //
 //		if (self->_mat->channels() == 3){
 //			self->_mat->at<cv::Vec3b>(y, x)[0] = (uchar)objColor->Get(0)->IntegerValue();
@@ -139,37 +140,37 @@ Matrix::DblGet(cv::Mat mat, int i, int j){
 //		else if (self->_mat->channels() == 1)
 //			self->_mat->at<uchar>(y, x) = (uchar)objColor->Get(0)->IntegerValue();
 //
-//		NanReturnValue(args[2]->ToObject());
+//		NanReturnValue(info[2]->ToObject());
 //	}
 //	else{
 //
 //		if (self->_mat->channels() == 3){
 //			cv::Vec3b intensity = self->_mat->at<cv::Vec3b>(y, x);
 //
-//			v8::Local<v8::Array> arr = NanNew<v8::Array>(3);
-//			arr->Set(0, NanNew<Number>(intensity[0]));
-//			arr->Set(1, NanNew<Number>(intensity[1]));
-//			arr->Set(2, NanNew<Number>(intensity[2]));
+//			v8::Local<v8::Array> arr = Nan::New<v8::Array>(3);
+//			arr->Set(0, Nan::New<Number>(intensity[0]));
+//			arr->Set(1, Nan::New<Number>(intensity[1]));
+//			arr->Set(2, Nan::New<Number>(intensity[2]));
 //			NanReturnValue(arr);
 //		}
 //		else if (self->_mat->channels() == 1){
 //
 //			uchar intensity = self->_mat->at<uchar>(y, x);
-//			NanReturnValue(NanNew<Number>(intensity));
+//			NanReturnValue(Nan::New<Number>(intensity));
 //		}
 //	}
 //	NanReturnUndefined();
 //	//double val = Matrix::DblGet(t, i, j);
-//	//NanReturnValue(NanNew<Number>(val));
+//	//NanReturnValue(Nan::New<Number>(val));
 //}
 
 
 //NAN_METHOD(Matrix::Size){
 //	SETUP_FUNCTION(Matrix)
 //
-//		v8::Local<v8::Array> arr = NanNew<Array>(2);
-//	arr->Set(0, NanNew<Number>(self->_mat->size().height));
-//	arr->Set(1, NanNew<Number>(self->_mat->size().width));
+//		v8::Local<v8::Array> arr = Nan::New<Array>(2);
+//	arr->Set(0, Nan::New<Number>(self->_mat->size().height));
+//	arr->Set(1, Nan::New<Number>(self->_mat->size().width));
 //
 //	NanReturnValue(arr);
 //}
@@ -178,7 +179,7 @@ Matrix::DblGet(cv::Mat mat, int i, int j){
 //NAN_METHOD(Matrix::Clone){
 //	SETUP_FUNCTION(Matrix)
 //
-//		Local<Object> im_h = NanNew(Matrix::constructor)->GetFunction()->NewInstance();
+//		Local<Object> im_h = Nan::New(Matrix::constructor)->GetFunction()->NewInstance();
 //
 //	Matrix *m = ObjectWrap::Unwrap<Matrix>(im_h);
 //	m->_mat = self->_mat->clone();
@@ -190,66 +191,66 @@ Matrix::DblGet(cv::Mat mat, int i, int j){
 //
 //	SETUP_FUNCTION(Matrix)
 //
-//	if ((args.Length() == 4) && (args[0]->IsNumber()) && (args[1]->IsNumber()) && (args[2]->IsNumber()) && (args[3]->IsNumber())){
+//	if ((info.Length() == 4) && (info[0]->IsNumber()) && (info[1]->IsNumber()) && (info[2]->IsNumber()) && (info[3]->IsNumber())){
 //
-//		int x = args[0]->IntegerValue();
-//		int y = args[1]->IntegerValue();
-//		int width = args[2]->IntegerValue();
-//		int height = args[3]->IntegerValue();
+//		int x = info[0]->IntegerValue();
+//		int y = info[1]->IntegerValue();
+//		int width = info[2]->IntegerValue();
+//		int height = info[3]->IntegerValue();
 //
 //		cv::Rect roi(x, y, width, height);
 //
-//		Local<Object> im_h = NanNew(Matrix::constructor)->GetFunction()->NewInstance();
+//		Local<Object> im_h = Nan::New(Matrix::constructor)->GetFunction()->NewInstance();
 //		Matrix *m = ObjectWrap::Unwrap<Matrix>(im_h);
 //		m->_mat = self->_mat.get()(roi);
 //
 //		NanReturnValue(im_h);
 //	}
 //	else{
-//		NanReturnValue(NanNew("Insufficient or wrong arguments"));
+//		NanReturnValue(Nan::New("Insufficient or wrong arguments"));
 //	}
 //}
 
 NAN_METHOD(Matrix::Zeros){
-	NanScope();
+	
 
-	int w = args[0]->Uint32Value();
-	int h = args[1]->Uint32Value();
-	int type = (args.Length() > 2) ? safe_cast<int>(args[2]->IntegerValue()) : CV_64FC1;
+	int w = info[0]->Uint32Value();
+	int h = info[1]->Uint32Value();
+	int type = (info.Length() > 2) ? safe_cast<int>(info[2]->IntegerValue()) : CV_64FC1;
 
-	Local<Object> im_h = NanNew(Matrix::constructor)->GetFunction()->NewInstance();
+	Local<Object> im_h = Nan::New(Matrix::constructor)->GetFunction()->NewInstance();
 	Matrix *img = ObjectWrap::Unwrap<Matrix>(im_h);
 	
 	img->_mat = std::make_shared<cv::Mat>(cv::Mat::zeros(w, h, type));
-	NanReturnValue(im_h);
+		info.GetReturnValue().Set(im_h);
 }
 
 NAN_METHOD(Matrix::Ones){
-	NanScope();
+	
 
-	int w = args[0]->Uint32Value();
-	int h = args[1]->Uint32Value();
-	int type = (args.Length() > 2) ? safe_cast<int>(args[2]->IntegerValue()) : CV_64FC1;
+	int w = info[0]->Uint32Value();
+	int h = info[1]->Uint32Value();
+	int type = (info.Length() > 2) ? safe_cast<int>(info[2]->IntegerValue()) : CV_64FC1;
 
-	Local<Object> im_h = NanNew(Matrix::constructor)->GetFunction()->NewInstance();
+	Local<Object> im_h = Nan::New(Matrix::constructor)->GetFunction()->NewInstance();
 	Matrix *img = ObjectWrap::Unwrap<Matrix>(im_h);
 	
 	img->_mat = std::make_shared<cv::Mat>(cv::Mat::ones(w, h, type));
-	NanReturnValue(im_h);
+	info.GetReturnValue().Set(im_h);
 }
 
 NAN_METHOD(Matrix::Eye){
-	NanScope();
+	
 
-	int w = args[0]->Uint32Value();
-	int h = args[1]->Uint32Value();
-	int type = (args.Length() > 2) ? safe_cast<int>(args[2]->IntegerValue()) : CV_64FC1;
+	int w = info[0]->Uint32Value();
+	int h = info[1]->Uint32Value();
+	int type = (info.Length() > 2) ? safe_cast<int>(info[2]->IntegerValue()) : CV_64FC1;
 
-	Local<Object> im_h = NanNew(Matrix::constructor)->GetFunction()->NewInstance();
+	Local<Object> im_h = Nan::New(Matrix::constructor)->GetFunction()->NewInstance();
 	Matrix *img = ObjectWrap::Unwrap<Matrix>(im_h);
 	
 	img->_mat = std::make_shared<cv::Mat>(cv::Mat::eye(w, h, type));
-	NanReturnValue(im_h);
+	info.GetReturnValue().Set(im_h);
 }
 
 
@@ -258,15 +259,15 @@ NAN_METHOD(Matrix::Row){
 	SETUP_FUNCTION(Matrix)
 
 		int width = self->_mat->size().width;
-	int y = safe_cast<int>(args[0]->IntegerValue());
-	v8::Local<v8::Array> arr = NanNew<Array>(width);
+	int y = safe_cast<int>(info[0]->IntegerValue());
+	v8::Local<v8::Array> arr = Nan::New<Array>(width);
 
 	for (int x = 0; x<width; x++){
 		double v = Matrix::DblGet(*self->_mat, y, x);
-		arr->Set(x, NanNew<Number>(v));
+		arr->Set(x, Nan::New<Number>(v));
 	}
 
-	NanReturnValue(arr);
+	info.GetReturnValue().Set(arr);
 }
 
 
@@ -274,18 +275,18 @@ NAN_METHOD(Matrix::PixelRow){
 	SETUP_FUNCTION(Matrix)
 
 		int width = self->_mat->size().width;
-	int y = safe_cast<int>(args[0]->IntegerValue());
-	v8::Local<v8::Array> arr = NanNew<Array>(width * 3);
+	int y = safe_cast<int>(info[0]->IntegerValue());
+	v8::Local<v8::Array> arr = Nan::New<Array>(width * 3);
 
 	for (int x = 0; x<width; x++){
 		cv::Vec3b pixel = self->_mat->at<cv::Vec3b>(y, x);
 		int offset = x * 3;
-		arr->Set(offset, NanNew<Number>((double)pixel.val[0]));
-		arr->Set(offset + 1, NanNew<Number>((double)pixel.val[1]));
-		arr->Set(offset + 2, NanNew<Number>((double)pixel.val[2]));
+		arr->Set(offset, Nan::New<Number>((double)pixel.val[0]));
+		arr->Set(offset + 1, Nan::New<Number>((double)pixel.val[1]));
+		arr->Set(offset + 2, Nan::New<Number>((double)pixel.val[2]));
 	}
 
-	NanReturnValue(arr);
+	info.GetReturnValue().Set(arr);
 }
 
 
@@ -293,14 +294,14 @@ NAN_METHOD(Matrix::Col){
 	SETUP_FUNCTION(Matrix)
 
 		int height = self->_mat->size().height;
-	int x = safe_cast<int>(args[0]->IntegerValue());
-	v8::Local<v8::Array> arr = NanNew<Array>(height);
+	int x = safe_cast<int>(info[0]->IntegerValue());
+	v8::Local<v8::Array> arr = Nan::New<Array>(height);
 
 	for (int y = 0; y<height; y++){
 		double v = Matrix::DblGet(*self->_mat, y, x);
-		arr->Set(y, NanNew<Number>(v));
+		arr->Set(y, Nan::New<Number>(v));
 	}
-	NanReturnValue(arr);
+	info.GetReturnValue().Set(arr);
 }
 
 
@@ -308,15 +309,15 @@ NAN_METHOD(Matrix::PixelCol){
 	SETUP_FUNCTION(Matrix)
 
 		int height = self->_mat->size().height;
-	int x = safe_cast<int>(args[0]->IntegerValue());
-	v8::Local<v8::Array> arr = NanNew<Array>(height * 3);
+	int x = safe_cast<int>(info[0]->IntegerValue());
+	v8::Local<v8::Array> arr = Nan::New<Array>(height * 3);
 
 	for (int y = 0; y<height; y++){
 		cv::Vec3b pixel = self->_mat->at<cv::Vec3b>(y, x);
 		int offset = y * 3;
-		arr->Set(offset, NanNew<Number>((double)pixel.val[0]));
-		arr->Set(offset + 1, NanNew<Number>((double)pixel.val[1]));
-		arr->Set(offset + 2, NanNew<Number>((double)pixel.val[2]));
+		arr->Set(offset, Nan::New<Number>((double)pixel.val[0]));
+		arr->Set(offset + 1, Nan::New<Number>((double)pixel.val[1]));
+		arr->Set(offset + 2, Nan::New<Number>((double)pixel.val[2]));
 	}
-	NanReturnValue(arr);
+	info.GetReturnValue().Set(arr);
 }

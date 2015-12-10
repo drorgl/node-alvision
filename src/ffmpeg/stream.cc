@@ -2,46 +2,45 @@
 
 namespace alvision{
 
-	v8::Persistent<FunctionTemplate> stream::constructor;
+	Nan::Persistent<FunctionTemplate> stream::constructor;
 
 	void stream::Init(Handle<Object> target) {
-		NanScope();
+		
 
 		//Class
-		Local<FunctionTemplate> ctor = NanNew<FunctionTemplate>(stream::New);
-		NanAssignPersistent(constructor, ctor);
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(stream::New);
+		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
-		ctor->SetClassName(NanNew("stream"));
+		ctor->SetClassName(Nan::New("stream").ToLocalChecked());
 
-		NODE_SET_PROTOTYPE_METHOD(ctor, "Decode", Decode);
-		NODE_SET_PROTOTYPE_METHOD(ctor, "Encode", Encode);
+		Nan::SetPrototypeMethod(ctor, "Decode", Decode);
+		Nan::SetPrototypeMethod(ctor, "Encode", Encode);
+		Nan::SetPrototypeMethod(ctor, "AddFilter", AddFilter);
 
-		NODE_SET_PROTOTYPE_METHOD(ctor, "AddFilter", AddFilter);
-
-		target->Set(NanNew("stream"), ctor->GetFunction());
+		target->Set(Nan::New("stream").ToLocalChecked(), ctor->GetFunction());
 
 	};
 
 	NAN_METHOD(stream::New) {
-		NanScope();
-		if (!args.IsConstructCall())
-			return NanThrowTypeError("Cannot call constructor as function");
+		
+		if (!info.IsConstructCall())
+			return Nan::ThrowTypeError("Cannot call constructor as function");
 
 		//return NanThrowTypeError("cannot initialize stream directly, please see ffmpeg.GetStreams or ffmpeg.AddStream");
 
 		stream *st;
 		st = new stream(NULL, "", std::weak_ptr<ffmpegcpp::stream>());
 
-		st->Wrap(args.This());
-		return args.This();
+		st->Wrap(info.This());
+		info.GetReturnValue().Set(info.This());
 	}
 
 	//possible bug
 	Local<Object> stream::Instantiate(ffmpeg * ffmpeg_, std::string streamid_, std::weak_ptr<ffmpegcpp::stream> stream_)
 	{
-		NanScope();
+		
 
-		auto st = stream::constructor->GetFunction()->NewInstance();
+		auto st = Nan::New(stream::constructor)->GetFunction()->NewInstance();
 		stream *stinst = ObjectWrap::Unwrap<stream>(st);
 		stinst->_ffmpeg = ffmpeg_;
 		stinst->_streamid = streamid_;
@@ -52,7 +51,7 @@ namespace alvision{
 		/*stream *st;
 		st = new stream(ffmpeg_, streamid_, stream_);
 
-		auto newobj = NanNew<Object>();
+		auto newobj = Nan::New<Object>();
 		
 		st->Wrap(newobj);
 		st->ApplyV8Object(newobj);
@@ -72,47 +71,48 @@ namespace alvision{
 
 		auto codec = stream->getCodec();
 
-		obj->Set(NanNew("id"), NanNew(_streamid));
+
+		obj->Set(Nan::New("id").ToLocalChecked(), Nan::New(_streamid).ToLocalChecked());
 
 		switch (codec->mediaType())
 		{
 		case ffmpegcpp::mediaType::video:
-			obj->Set(NanNew("mediatype"), NanNew("video"));
-			obj->Set(NanNew("width"), NanNew(codec->width()));
-			obj->Set(NanNew("height"), NanNew(codec->height()));
-			obj->Set(NanNew("gop_size"), NanNew(codec->gop_size()));
-			obj->Set(NanNew("pixfmt"), NanNew(ffmpegcpp::getPixelFormatName(codec->pix_fmt())));
+			obj->Set(Nan::New("mediatype").ToLocalChecked(), Nan::New("video").ToLocalChecked());
+			obj->Set(Nan::New("width").ToLocalChecked(), Nan::New(codec->width()));
+			obj->Set(Nan::New("height").ToLocalChecked(), Nan::New(codec->height()));
+			obj->Set(Nan::New("gop_size").ToLocalChecked(), Nan::New(codec->gop_size()));
+			obj->Set(Nan::New("pixfmt").ToLocalChecked(), Nan::New(ffmpegcpp::getPixelFormatName(codec->pix_fmt())).ToLocalChecked());
 			break;
 		case ffmpegcpp::mediaType::audio:
-			obj->Set(NanNew("mediatype"), NanNew("audio"));
-			obj->Set(NanNew("channels"), NanNew(codec->channels()));
-			obj->Set(NanNew("channelslayout"), NanNew(ffmpegcpp::getChannelLayoutName(codec->channels_layout())));
+			obj->Set(Nan::New("mediatype").ToLocalChecked(), Nan::New("audio").ToLocalChecked());
+			obj->Set(Nan::New("channels").ToLocalChecked(), Nan::New(codec->channels()));
+			obj->Set(Nan::New("channelslayout").ToLocalChecked(), Nan::New(ffmpegcpp::getChannelLayoutName(codec->channels_layout())).ToLocalChecked());
 
-			obj->Set(NanNew("samplefmt"), NanNew(ffmpegcpp::getSampleFormatName(codec->sample_fmt())));
-			obj->Set(NanNew("samplerate"), NanNew(codec->sample_rate()));
+			obj->Set(Nan::New("samplefmt").ToLocalChecked(), Nan::New(ffmpegcpp::getSampleFormatName(codec->sample_fmt())).ToLocalChecked());
+			obj->Set(Nan::New("samplerate").ToLocalChecked(), Nan::New(codec->sample_rate()));
 			break;
 		case ffmpegcpp::mediaType::attachment:
-			obj->Set(NanNew("mediatype"), NanNew("attachment"));
+			obj->Set(Nan::New("mediatype").ToLocalChecked(), Nan::New("attachment").ToLocalChecked());
 			break;
 		case ffmpegcpp::mediaType::data:
-			obj->Set(NanNew("mediatype"), NanNew("data"));
+			obj->Set(Nan::New("mediatype").ToLocalChecked(), Nan::New("data").ToLocalChecked());
 			break;
 		case ffmpegcpp::mediaType::nb:
-			obj->Set(NanNew("mediatype"), NanNew("nb"));
+			obj->Set(Nan::New("mediatype").ToLocalChecked(), Nan::New("nb").ToLocalChecked());
 			break;
 		case ffmpegcpp::mediaType::subtitle:
-			obj->Set(NanNew("mediatype"), NanNew("subtitle"));
+			obj->Set(Nan::New("mediatype").ToLocalChecked(), Nan::New("subtitle").ToLocalChecked());
 			break;
 		case ffmpegcpp::mediaType::unknown:
-			obj->Set(NanNew("mediatype"), NanNew("unknown"));
+			obj->Set(Nan::New("mediatype").ToLocalChecked(), Nan::New("unknown").ToLocalChecked());
 			break;
 		}
 
-		obj->Set(NanNew("framerate"), NanNew(stream->r_frame_rate().toDouble()));
-		obj->Set(NanNew("codec"), NanNew(codec->name()));
-		obj->Set(NanNew("timebase"), NanNew(stream->time_base().toDouble()));
-		obj->Set(NanNew("bitrate"), NanNew(codec->bit_rate()));
-		obj->Set(NanNew("streamindex"), NanNew(stream->index()));
+		obj->Set(Nan::New("framerate").ToLocalChecked(), Nan::New(stream->r_frame_rate().toDouble()));
+		obj->Set(Nan::New("codec").ToLocalChecked(), Nan::New(codec->name()).ToLocalChecked());
+		obj->Set(Nan::New("timebase").ToLocalChecked(), Nan::New(stream->time_base().toDouble()));
+		obj->Set(Nan::New("bitrate").ToLocalChecked(), Nan::New(codec->bit_rate()));
+		obj->Set(Nan::New("streamindex").ToLocalChecked(), Nan::New(stream->index()));
 	}
 
 	NAN_METHOD(stream::AddFilter)
@@ -120,19 +120,19 @@ namespace alvision{
 		SETUP_FUNCTION(stream);
 
 		if (self->_ffmpeg == NULL){
-			return NanThrowError("cannot add filter, instance does not exist");
+			return Nan::ThrowError("cannot add filter, instance does not exist");
 		}
 
-		NanUtf8String filtername((!args[0]->IsNull() && !args[0]->IsUndefined()) ? args[0]->ToString() : NanNew(""));
-		NanUtf8String filterParams((!args[1]->IsNull() && !args[1]->IsUndefined()) ? args[1]->ToString() : NanNew(""));
+		Nan::Utf8String filtername((!info[0]->IsNull() && !info[0]->IsUndefined()) ? info[0]->ToString() : Nan::EmptyString());
+		Nan::Utf8String filterParams((!info[1]->IsNull() && !info[1]->IsUndefined()) ? info[1]->ToString() : Nan::EmptyString());
 
 		if (*filtername == ""){
-			return NanThrowError("you must provide at least filter name, see ListFilters for a list of filters");
+			return Nan::ThrowError("you must provide at least filter name, see ListFilters for a list of filters");
 		}
 
 		auto stream = self->_stream.lock();
 		if (stream == nullptr){
-			return NanThrowError("cannot add filter, stream does not exist");
+			return Nan::ThrowError("cannot add filter, stream does not exist");
 		}
 
 		try{
@@ -140,13 +140,13 @@ namespace alvision{
 			stream->addBitstreamFilter(bsfilter);
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
-		NanReturnValue(NanNew(true));
+		info.GetReturnValue().Set(Nan::New(true));
 	}
 
 	NAN_METHOD(stream::Decode)
@@ -154,37 +154,37 @@ namespace alvision{
 		SETUP_FUNCTION(stream);
 
 		if (self->_ffmpeg == NULL){
-			return NanThrowError("cannot decode, ffmpeg instance does not exist");
+			return Nan::ThrowError("cannot decode, ffmpeg instance does not exist");
 		}
 
 		if (self->_ffmpeg->_openedAsOutput){
-			return NanThrowError("cannot decode an output, decoding is possible only for inputs");
+			return Nan::ThrowError("cannot decode an output, decoding is possible only for inputs");
 		}
 
-		if (args.Length() < 3){
-			return NanThrowError("ffmpeg.Decode(packet,streamInfo{id:decodeFromStream, decoding parameters for destination Matrix...},Matrix);");
+		if (info.Length() < 3){
+			return Nan::ThrowError("ffmpeg.Decode(packet,streamInfo{id:decodeFromStream, decoding parameters for destination Matrix...},Matrix);");
 		}
 
 
 
 		//packet
-		packet *pt = ObjectWrap::Unwrap<packet>(args[0]->ToObject());
+		packet *pt = ObjectWrap::Unwrap<packet>(info[0]->ToObject());
 		if (pt == NULL){
-			return NanThrowError("first argument must be a packet");
+			return Nan::ThrowError("first argument must be a packet");
 		}
 
 		//output stream information
-		auto streamInfo = (!args[1]->IsNull() && !args[1]->IsUndefined()) ? args[1]->ToObject() : NanNew<Object>();
+		auto streamInfo = (!info[1]->IsNull() && !info[1]->IsUndefined()) ? info[1]->ToObject() : Nan::New<Object>();
 
-		//NanUtf8String inputStreamId(streamInfo->Get(NanNew("id"))->ToString());
+		//Nan::Utf8String inputStreamId(streamInfo->Get(Nan::New("id"))->ToString());
 		//auto inputStreamId = std::to_string(pt->_packet->stream_index());
 
 
 
 		//mat
-		Matrix *mat = ObjectWrap::Unwrap<Matrix>(args[2]->ToObject());
+		Matrix *mat = ObjectWrap::Unwrap<Matrix>(info[2]->ToObject());
 		if (mat == NULL){
-			return NanThrowError("third argument must be a Matrix");
+			return Nan::ThrowError("third argument must be a Matrix");
 		}
 
 		bool decoded = false;
@@ -196,7 +196,7 @@ namespace alvision{
 
 			if (stream == nullptr)
 			{
-				return NanThrowError("decode failed, stream is no longer valid");
+				return Nan::ThrowError("decode failed, stream is no longer valid");
 			}
 
 
@@ -211,10 +211,10 @@ namespace alvision{
 			switch (stream->getCodec()->mediaType()){
 			case ffmpegcpp::mediaType::audio:
 			{
-				auto channelslayout = ffmpegcpp::getChannelLayoutByName(*NanUtf8String(streamInfo->Get(NanNew("channelslayout"))->ToString()));
-				auto channels = streamInfo->Get(NanNew("channels"))->Int32Value();
-				auto samplefmt = ffmpegcpp::getSampleFormatByName(*NanUtf8String(streamInfo->Get(NanNew("samplefmt"))->ToString()));
-				auto samplerate = streamInfo->Get(NanNew("samplerate"))->Int32Value();
+				auto channelslayout = ffmpegcpp::getChannelLayoutByName(*Nan::Utf8String(streamInfo->Get(Nan::New("channelslayout").ToLocalChecked())->ToString()));
+				auto channels = streamInfo->Get(Nan::New("channels").ToLocalChecked())->Int32Value();
+				auto samplefmt = ffmpegcpp::getSampleFormatByName(*Nan::Utf8String(streamInfo->Get(Nan::New("samplefmt").ToLocalChecked())->ToString()));
+				auto samplerate = streamInfo->Get(Nan::New("samplerate").ToLocalChecked())->Int32Value();
 
 				if (self->_converter == nullptr){
 					self->_converter = ffmpegcpp::swscale::fromAudioCodec(stream->getCodec(), channelslayout, channels, samplefmt, samplerate);
@@ -227,8 +227,8 @@ namespace alvision{
 				break;
 			case ffmpegcpp::mediaType::video:
 			{
-				int width = streamInfo->Get(NanNew("width"))->Int32Value();
-				int height = streamInfo->Get(NanNew("height"))->Int32Value();
+				int width = streamInfo->Get(Nan::New("width").ToLocalChecked())->Int32Value();
+				int height = streamInfo->Get(Nan::New("height").ToLocalChecked())->Int32Value();
 				//pixelformat =
 
 				if (self->_converter == nullptr){
@@ -246,18 +246,17 @@ namespace alvision{
 
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
-		auto retval = NanNew<Object>();
-		retval->Set(NanNew("succeeded"), NanNew(decoded));
-		retval->Set(NanNew("SamplesRead"), NanNew(samplesRead));
+		auto retval = Nan::New<Object>();
+		retval->Set(Nan::New("succeeded").ToLocalChecked(), Nan::New(decoded));
+		retval->Set(Nan::New("SamplesRead").ToLocalChecked(), Nan::New(samplesRead));
 
-		NanReturnValue(retval);
-
+		info.GetReturnValue().Set(retval);
 	}
 
 	NAN_METHOD(stream::Encode)
@@ -265,32 +264,32 @@ namespace alvision{
 		SETUP_FUNCTION(stream);
 
 		if (self->_ffmpeg == NULL){
-			return NanThrowError("cannot encode, ffmpeg instance does not exist");
+			return Nan::ThrowError("cannot encode, ffmpeg instance does not exist");
 		}
 
 		if (self->_ffmpeg->_openedAsInput){
-			return NanThrowError("cannot encode to input, encoding is possible only for outputs");
+			return Nan::ThrowError("cannot encode to input, encoding is possible only for outputs");
 		}
 
-		if (args.Length() < 3){
-			return NanThrowError("ffmpeg.Encode(outputstream, frameinfo, mat);");
-			//return NanThrowError("ffmpeg.Encode(packet,streamInfo{id:encodeToStream, encoding parameters for source Matrix...},Matrix);");
+		if (info.Length() < 3){
+			return Nan::ThrowError("ffmpeg.Encode(outputstream, frameinfo, mat);");
+			//return Nan::ThrowError("ffmpeg.Encode(packet,streamInfo{id:encodeToStream, encoding parameters for source Matrix...},Matrix);");
 		}
 
-		auto outputStreamInfo = (!args[0]->IsNull() && !args[0]->IsUndefined()) ? args[0]->ToObject() : NanNew<Object>();
-		NanUtf8String outputStreamId(outputStreamInfo->Get(NanNew("id"))->ToString());
+		auto outputStreamInfo = (!info[0]->IsNull() && !info[0]->IsUndefined()) ? info[0]->ToObject() : Nan::New<Object>();
+		Nan::Utf8String outputStreamId(outputStreamInfo->Get(Nan::New("id").ToLocalChecked())->ToString());
 
 		//output stream information
-		//auto streamInfo = (!args[1]->IsNull() && !args[1]->IsUndefined()) ? args[1]->ToObject() : NanNew<Object>();
-		auto frameInfo = (!args[1]->IsNull() && !args[1]->IsUndefined()) ? args[1]->ToObject() : NanNew<Object>();
+		//auto streamInfo = (!info[1]->IsNull() && !info[1]->IsUndefined()) ? info[1]->ToObject() : Nan::New<Object>();
+		auto frameInfo = (!info[1]->IsNull() && !info[1]->IsUndefined()) ? info[1]->ToObject() : Nan::New<Object>();
 
 		//mat
-		Matrix *mat = ObjectWrap::Unwrap<Matrix>(args[2]->ToObject());
+		Matrix *mat = ObjectWrap::Unwrap<Matrix>(info[2]->ToObject());
 		if (mat == NULL){
-			return NanThrowError("third argument must be a Matrix");
+			return Nan::ThrowError("third argument must be a Matrix");
 		}
 		if (mat->_mat == nullptr){
-			return NanThrowError("Matrix is in invalid state, the object exists but mat is not");
+			return Nan::ThrowError("Matrix is in invalid state, the object exists but mat is not");
 		}
 
 		bool encoded = false;
@@ -301,7 +300,7 @@ namespace alvision{
 
 			if (stream == nullptr)
 			{
-				return NanThrowError("encode failed, stream instance is no longer valid");
+				return Nan::ThrowError("encode failed, stream instance is no longer valid");
 			}
 
 			auto output_codec = stream->getCodec();
@@ -313,17 +312,17 @@ namespace alvision{
 			switch (stream->getCodec()->mediaType()){
 			case ffmpegcpp::mediaType::audio:
 			{
-				auto channelslayout = ffmpegcpp::getChannelLayoutByName(*NanUtf8String(outputStreamInfo->Get(NanNew("channelslayout"))->ToString()));
-				auto channels = outputStreamInfo->Get(NanNew("channels"))->Int32Value();
-				auto samplefmt = ffmpegcpp::getSampleFormatByName(*NanUtf8String(outputStreamInfo->Get(NanNew("samplefmt"))->ToString()));
-				auto samplerate = outputStreamInfo->Get(NanNew("samplerate"))->Int32Value();
+				auto channelslayout = ffmpegcpp::getChannelLayoutByName(*Nan::Utf8String(outputStreamInfo->Get(Nan::New("channelslayout").ToLocalChecked())->ToString()));
+				auto channels = outputStreamInfo->Get(Nan::New("channels").ToLocalChecked())->Int32Value();
+				auto samplefmt = ffmpegcpp::getSampleFormatByName(*Nan::Utf8String(outputStreamInfo->Get(Nan::New("samplefmt").ToLocalChecked())->ToString()));
+				auto samplerate = outputStreamInfo->Get(Nan::New("samplerate").ToLocalChecked())->Int32Value();
 
-				if (frameInfo->Get(NanNew("SamplesRead"))->IsUndefined())
+				if (frameInfo->Get(Nan::New("SamplesRead").ToLocalChecked())->IsUndefined())
 				{
-					return NanThrowError("for encoding audio, SamplesRead property must be provided inside frameInfo, this parameter specifies how much of the matrix to encode as the number of samples can be different");
+					return Nan::ThrowError("for encoding audio, SamplesRead property must be provided inside frameInfo, this parameter specifies how much of the matrix to encode as the number of samples can be different");
 				}
 
-				auto samplesRead = frameInfo->Get(NanNew("SamplesRead"))->Int32Value();
+				auto samplesRead = frameInfo->Get(Nan::New("SamplesRead").ToLocalChecked())->Int32Value();
 
 				if (self->_converter == nullptr){
 					self->_converter = ffmpegcpp::swscale::toAudioCodec(output_codec, channelslayout, channels, samplefmt, samplerate);
@@ -349,8 +348,8 @@ namespace alvision{
 				break;
 			case ffmpegcpp::mediaType::video:
 			{
-				int width = outputStreamInfo->Get(NanNew("width"))->Int32Value();
-				int height = outputStreamInfo->Get(NanNew("height"))->Int32Value();
+				int width = outputStreamInfo->Get(Nan::New("width").ToLocalChecked())->Int32Value();
+				int height = outputStreamInfo->Get(Nan::New("height").ToLocalChecked())->Int32Value();
 				//pixelformat =
 
 				if (self->_converter == nullptr){
@@ -380,17 +379,17 @@ namespace alvision{
 
 		}
 		catch (ffmpegcpp::ffmpeg_exception ffe){
-			return NanThrowError(ffe.what());
+			return Nan::ThrowError(ffe.what());
 		}
 		catch (std::exception ex){
-			return NanThrowError(ex.what());
+			return Nan::ThrowError(ex.what());
 		}
 
 
-		auto retval = NanNew<Object>();
-		retval->Set(NanNew("succeeded"), NanNew(encoded));
+		auto retval = Nan::New<Object>();
+		retval->Set(Nan::New("succeeded").ToLocalChecked(), Nan::New(encoded));
 
-		NanReturnValue(retval);
+		info.GetReturnValue().Set(retval);
 	}
 
 }
