@@ -62,7 +62,7 @@ NAN_METHOD(Constants::cvMakeType){
 	
 
 	if (info.Length() < 2){
-		return Nan::ThrowError("MatrixType.CV_MAKE_TYPE(depth,channels);");
+		return Nan::ThrowError("MatrixType.CV_MAKETYPE(depth,channels);");
 	}
 
 	auto depth = info[0]->Int32Value();
