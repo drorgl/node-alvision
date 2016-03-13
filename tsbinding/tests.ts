@@ -1,6 +1,6 @@
 /// <reference path="../typings/tsd.d.ts" />
-/// <reference path="alvision.d.ts" />
 /// <reference path="alvision.ts" />
+/// <reference path="ffmpeg/ffmpeg.ts" />
 
 
 //var mediatype: { attachment; audio; } = { attachment: "attachment", audio: "audio" };
@@ -10,40 +10,22 @@
 import tape = require("tape");
 import path = require("path");
 import colors = require("colors");
-import async = require("async"); 
-import alvision = require("./alvision")
-//module alvision {
-//    //var alvision = require("../lib/bindings.js");
-//}
-//import * as x from 'alvision';
+import async = require("async");
+
+import * as alvision from './alvision'
 
 
 
-//var xx: alvision.IIOFormat;
+//require('./ffmpeg/ffmpeg');
 
 
-//console.log("version " + alvision.version);
-//console.log(alvision.mediatype);
 
-//console.log(alvision.ffmpeg.ListCodecs((e, cdlist) => {
-//    console.log("list " + cdlist.length);
-//}));
-
-//return;
-
-//import alvision = require('./../lib/bindings.js');
-
-//alvision.mediatype.audio
+//alvision.Matrix
+//import alvision = require("./alvision")
+//import alvision = require('./ffmpeg/ffmpeg');
 
 
-//console.log(alvision.alvision.version);
 
-
-//return;
-
-//alvision.alvision.mediatype.attachment
-
-//import alvision = require('../lib/bindings.js');
 
 //Workaround for ts optimizations
 var redColor = colors.red;
@@ -54,23 +36,6 @@ var   input_file = path.join(__dirname,"..\\test\\", 'HelenFisher_2008.mp4')
     , output_file = path.join(__dirname, "..\\test\\", 'HelenFisher_2008.mkv')
 
 
-
-//interface BoolCallback { (success: boolean): void; }
-//interface AsyncBoolFunction { (callback: BoolCallback): void; }
-
-//interface AsyncExt extends Async {
-//    awhilst(test: AsyncBoolFunction, fn: AsyncVoidFunction, callback: (err: any) => void): void;
-//}
-
-//import fs = require("fs");
-
-//var fs = require('fs')
-
-    //, cv = null
-    //, alvision = null
-    //, level = 0
-    //, input_file = path.join(__dirname, 'HelenFisher_2008.mp4')
-    //, output_file = path.join(__dirname, 'HelenFisher_2008.mkv')
 
 
 //alvision.ffmpeg.SetLogger((l) => logger);
@@ -271,7 +236,7 @@ tape("ffmpeg", (ffm)=> {
                         width: 320,
                         height: 240,
                         gopsize: 12,//,
-                        //pixfmt : alvision.pixel_format.PIX_FMT_0BGR
+                        //pixfmt : alvision.pixel_format.PIX_FMT_0BGR 
                         pixfmt: 'yuv420p'
                     });
                 }, undefined, "Prevent AddStream on InputStreams");
@@ -733,7 +698,7 @@ tape("ffmpeg", (ffm)=> {
         t.doesNotThrow(function () {
             alvision.ffmpeg.OpenAsOutputBuffer(null, "ffm", 1024, 1024 * 1024, null, function (err, ffmo) {
                 t.throws(function () {
-                    ffmo.AddStream({ "id": "0", "mediatype": "audio", "channels": 2, "channelslayout": "stereo", "samplefmt": "fltp", "samplerate": 44100, "framerate": null, "codec": "aac", "timebase": 0.000022675736961451248, "bitrate": 94997, "streamindex": 0 });
+                    ffmo.AddStream({ "id": "0", "channels": 2, "channelslayout": "stereo", "samplefmt": "fltp", "samplerate": 44100, "codec": "aac", "timebase": 0.000022675736961451248, "bitrate": 94997 });
                 }, "experimental stream");
                 t.doesNotThrow(function () {
                     ffmo.Close();

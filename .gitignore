@@ -7,3 +7,8 @@
 *.suo
 *.sdf
 /npm-debug.log
+/tsbinding/*.js
+/tsbinding/*/*.js
+/test/*/*.cpp
+/test/*/*/*.cpp
+

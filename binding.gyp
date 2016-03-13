@@ -1,3 +1,5 @@
+
+
 {
 	'target_defaults': {
 		'configurations': {
@@ -88,6 +90,19 @@
         #, "src/FaceRecognizer.cc"
         #, "src/BackgroundSubtractor.cc"
         
+		,'typings/tsd.d.ts'
+		,'typings/node/node.d.ts'
+		,'typings/tape/tape.d.ts'
+		
+		,'tsbinding/tests.ts'
+		,'tsbinding/alvision.ts'
+		,'tsbinding/ffmpeg/ffmpeg.ts'
+		,'tsbinding/ffmpeg/packet.ts'
+		,'tsbinding/ffmpeg/stream.ts'
+		,'tsbinding/opencv/Constants.ts'
+		,'tsbinding/opencv/HighGUI.ts'
+		,'tsbinding/opencv/Matrix.ts'
+		
         ]
 	  , 'dependencies':[
 			'../ffmpegcpp.module/ffmpegcpp.gyp:ffmpegcpp',
@@ -149,6 +164,8 @@
 			'cflags':['-fexceptions','-std=c++11'],
 			'cflags!' : [ '-fno-exceptions'],
 			'cflags_cc!': [ '-fno-rtti',  '-fno-exceptions'],
+			'ldflags' : ['-Wl,--rpath=\$ORIGIN'],
+			'ldflags_cc':['-Wl,--rpath=\$ORIGIN'],
 		}],
         #['OS=="mac"', {
         #  # cflags on OS X are stupid and have to be defined like this
