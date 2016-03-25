@@ -52,10 +52,22 @@ var alvision_module = require('../../lib/bindings.js');
     export module MatrixType {
         export interface ICV_MAKETYPE {
             (depth: number, channels: number): number;
+            (depth: MatrixType, channels: number): number;
         }
 
         //export declare function CV_MAKETYPE(depth: number, channels: number): number = alvision_module.MatrixType.CV_MAKETYPE;
         export var CV_MAKETYPE: ICV_MAKETYPE = alvision_module.MatrixType.CV_MAKETYPE;
     }
 //}
+
+    export interface double extends Number { };
+    export interface uchar { };
+    export interface short { };
+    export interface ushort { };
+    export interface int extends Number { };
+    export interface float extends Number { };
+    export interface double extends Number { };
+    export interface uint64 extends Number { };
+
+    
 

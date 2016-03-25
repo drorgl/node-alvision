@@ -7,6 +7,19 @@ export * from './ffmpeg/stream';
 export * from './opencv/Constants';
 export * from './opencv/HighGui';
 export * from './opencv/Matrix';
+export * from './opencv/Vec';
+export * from './opencv/Scalar';
+export * from './opencv/Matx';
+export * from './opencv/MatExpr';
+export * from './opencv/Affine';
+export * from './opencv/RNG';
+export * from './opencv/SVD';
+export * from './opencv/Point3';
+export * from './opencv/Size';
+export * from './opencv/Algorithm';
+
+export * from './opencv/static';
+export * from './opencv/test';
 
 export var version: string = alvision_module.version;
 
