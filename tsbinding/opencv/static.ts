@@ -8,6 +8,7 @@ export interface ushort { };
 export interface int extends Number { };
 export interface float extends Number { };
 export interface double extends Number { };
+export interface int64 extends Number { };
 export interface uint64 extends Number { };
 export interface size_t extends Number { };
 
@@ -126,3 +127,4 @@ export var DBL_MIN = 2.2250738585072014e-308; // min positive value
 //    IMREAD_REDUCED_GRAYSCALE_8 = 64, //!< If set, always convert image to the single channel grayscale image and the image size reduced 1/8.
 //    IMREAD_REDUCED_COLOR_8 = 65  //!< If set, always convert image to the 3 channel BGR color image and the image size reduced 1/8.
 //};
+

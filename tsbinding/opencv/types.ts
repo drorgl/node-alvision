@@ -397,6 +397,11 @@ export interface Size2f extends Size_<_st.float> { }
 export interface Size2d extends Size_<_st.double> { }
 export interface Size extends Size2i { }
 
+export var Size2i : Size_Static<_st.int> = alvision_module.Size2i
+export var Size2f : Size_Static<_st.float> = alvision_module.Size2f
+export var Size2d : Size_Static<_st.double> = alvision_module.Size2d
+export var Size: Size_Static<_st.int> = alvision_module.Size2i;
+
 
 //typedef Size_< int > Size2i;
 //typedef Size_< float > Size2f;

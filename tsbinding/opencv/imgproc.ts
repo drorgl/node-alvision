@@ -48,6 +48,7 @@ import * as _matx from './matx'
 import * as _st from './static'
 import * as _types from './types'
 import * as _core from './core'
+import * as _base from './base'
 //import * as _vec from './Vec'
 //import * as _point from './Point'
 //import * as _algorithm from './Algorithm'
@@ -1435,7 +1436,7 @@ export var GaussianBlur: IGaussianBlur = alvision_module.GaussianBlur;
 interface IbilateralFilter{
     (src: _st.InputArray, dst: _st.OutputArray, d: _st.int,
         sigmaColor: _st.double, sigmaSpace: _st.double,
-        borderType: _st.int /* = BORDER_DEFAULT*/): void;
+        borderType?: _base.BorderTypes /* = BORDER_DEFAULT*/): void;
 }
 
 export var bilateralFilter: IbilateralFilter = alvision_module.bilateralFilter;

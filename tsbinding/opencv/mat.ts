@@ -1184,7 +1184,7 @@ export interface Mat
     @param alpha optional scale factor.
     @param beta optional delta added to the scaled values.
      */
-    //void convertTo(OutputArray m, int rtype, double alpha= 1, double beta= 0) const;
+    convertTo(m: _st.OutputArray, rtype: _st.int, alpha?: _st.double  /*= 1*/, beta?: _st.double /*= 0*/) : void;
 
     /** @brief Provides a functional form of convertTo.
 
@@ -1325,13 +1325,13 @@ export interface Mat
     @param cols New number of columns.
     @param type New matrix type.
      */
-    //void create(int rows, int cols, int type);
+    create(rows : _st.int, cols : _st.int, type : _st.int): void;
 
     /** @overload
     @param size Alternative new matrix size specification: Size(cols, rows)
     @param type New matrix type.
     */
-    //void create(Size size, int type);
+    create(size : _types.Size, type : _st.int    ): void;
 
     /** @overload
     @param ndims New array dimensionality.
@@ -1599,7 +1599,7 @@ export interface Mat
     The method returns a matrix element type. This is an identifier compatible with the CvMat type
     system, like CV_16SC3 or 16-bit signed 3-channel array, and so on.
      */
-    //int type() const;
+    type(): _st.int;
 
     /** @brief Returns the depth of a matrix element.
 
@@ -1614,7 +1614,7 @@ export interface Mat
     -   CV_32F - 32-bit floating-point numbers ( -FLT_MAX..FLT_MAX, INF, NAN )
     -   CV_64F - 64-bit floating-point numbers ( -DBL_MAX..DBL_MAX, INF, NAN )
      */
-    //int depth() const;
+    depth(): _st.int;
 
     /** @brief Returns the number of matrix channels.
 
@@ -1930,6 +1930,7 @@ export interface Mat
     //template < typename _Tp, typename Functor> void forEach_impl(const Functor& operation);
 };
 
+export var Mat: MatStatic = alvision_module.Mat;
 
 ///////////////////////////////// Mat_<_Tp> ////////////////////////////////////
 
@@ -2333,8 +2334,8 @@ export interface UMat
 //    size_t elemSize() const;
 //    //! returns the size of element channel in bytes.
 //    size_t elemSize1() const;
-//    //! returns element type, similar to CV_MAT_TYPE(cvmat->type)
-//    int type() const;
+    //! returns element type, similar to CV_MAT_TYPE(cvmat->type)
+    type() : _st.int;
 //    //! returns element type, similar to CV_MAT_DEPTH(cvmat->type)
 //    int depth() const;
 //    //! returns element type, similar to CV_MAT_CN(cvmat->type)

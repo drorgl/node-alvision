@@ -67,6 +67,11 @@
 		, "src/opencv/Constants.h"
 		, "src/opencv/HighGUI.cc"
 		, "src/opencv/HighGUI.h"
+		
+		, "src/opencv/vec.cc"
+		, "src/opencv/vec.h"
+		
+		
 		, "src/ffmpeg/ffmpeg.cc"
 		, "src/ffmpeg/ffmpeg.h"
 		, "src/ffmpeg/packet.cc"
@@ -94,14 +99,58 @@
 		,'typings/node/node.d.ts'
 		,'typings/tape/tape.d.ts'
 		
+		
+		
 		,'tsbinding/tests.ts'
 		,'tsbinding/alvision.ts'
+
 		,'tsbinding/ffmpeg/ffmpeg.ts'
 		,'tsbinding/ffmpeg/packet.ts'
 		,'tsbinding/ffmpeg/stream.ts'
-		,'tsbinding/opencv/Constants.ts'
+
+		,'tsbinding/opencv/Affine.ts'
+		,'tsbinding/opencv/base.ts'
+		,'tsbinding/opencv/core.ts'
+		,'tsbinding/opencv/cvdef.ts'
 		,'tsbinding/opencv/HighGUI.ts'
-		,'tsbinding/opencv/Matrix.ts'
+		,'tsbinding/opencv/imgproc.ts'
+		,'tsbinding/opencv/mat.ts'
+		,'tsbinding/opencv/Matx.ts'
+		,'tsbinding/opencv/persistence.ts'
+		,'tsbinding/opencv/static.ts'
+		,'tsbinding/opencv/test.ts'
+		,'tsbinding/opencv/ts.ts'
+		,'tsbinding/opencv/types.ts'
+		
+		,'test/opencv/imgproc/test_approxpoly.ts'
+		,'test/opencv/imgproc/test_bilateral_filter.ts'
+		#,'test/opencv/imgproc/test_boundingrect.ts'
+		#,'test/opencv/imgproc/test_canny.ts'
+		#,'test/opencv/imgproc/test_color.ts'
+		#,'test/opencv/imgproc/test_connectedcomponents.ts'
+		#,'test/opencv/imgproc/test_contours.ts'
+		#,'test/opencv/imgproc/test_convhull.ts'
+		#,'test/opencv/imgproc/test_cvtyuv.ts'
+		#,'test/opencv/imgproc/test_distancetransform.ts'
+		#,'test/opencv/imgproc/test_emd.ts'
+		#,'test/opencv/imgproc/test_filter.ts'
+		#,'test/opencv/imgproc/test_floodfill.ts'
+		#,'test/opencv/imgproc/test_grabcut.ts'
+		#,'test/opencv/imgproc/test_histograms.ts'
+		#,'test/opencv/imgproc/test_houghLines.ts'
+		#,'test/opencv/imgproc/test_imgproc_umat.ts'
+		#,'test/opencv/imgproc/test_imgwarp.ts'
+		#,'test/opencv/imgproc/test_imgwarp_strict.ts'
+		#,'test/opencv/imgproc/test_intersection.ts'
+		#,'test/opencv/imgproc/test_lsd.ts'
+		#,'test/opencv/imgproc/test_main.ts'
+		#,'test/opencv/imgproc/test_moments.ts'
+		#,'test/opencv/imgproc/test_pc.ts'
+		#,'test/opencv/imgproc/test_precomp.ts'
+		#,'test/opencv/imgproc/test_templmatch.ts'
+		#,'test/opencv/imgproc/test_thresh.ts'
+		#,'test/opencv/imgproc/test_watershed.ts'
+		
 		
         ]
 	  , 'dependencies':[
