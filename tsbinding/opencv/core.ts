@@ -49,7 +49,8 @@ var alvision_module = require('../../lib/bindings.js');
 import * as _st from './static';
 import * as _mat from './Mat';
 import * as _types from './Types';
-import * as _core from './Core';
+//import * as _core from './Core';
+import * as _base from './Base';
 //import * as _scalar from './Scalar'
 
 //#ifndef __OPENCV_CORE_HPP__
@@ -358,8 +359,8 @@ export var error: Ierror = alvision_module.error;
 
     interface IcopyMakeBorder {
         (src: _st.InputArray, dst: _st.OutputArray,
-            top: _st.int, bottom: _st.int, left: _st.int, right: _st.int ,
-            borderType: _st.int , value : _types.Scalar/* = Scalar()*/ ): void;
+            top: _st.int, bottom: _st.int, left: _st.int, right: _st.int,
+            borderType: _base.BorderTypes, value?: _types.Scalar/* = Scalar()*/): void;
     }
 
     export var copyMakeBorder: IcopyMakeBorder = alvision_module.copyMakeBorder;
@@ -934,7 +935,7 @@ export interface IminMaxLocCallback {
 }
 
 export interface IminMaxLoc {
-    (src: _st.InputArray, cb: IminMaxLocCallback, mask : _st.InputArray /* = noArray()*/) : void;
+    (src: _st.InputArray, cb: IminMaxLocCallback, mask? : _st.InputArray /* = noArray()*/) : void;
 
 }
 
@@ -1967,7 +1968,7 @@ export var checkRange: IcheckRange = alvision_module.checkRange;
     */
 
 interface IpatchNaNs {
-    (a: _st.InputOutputArray, val: _st.double /* = 0*/): void;
+    (a: _st.InputOutputArray, val?: _st.double /* = 0*/): void;
 }
 
 export var patchNaNs: IpatchNaNs = alvision_module.patchNaNs;

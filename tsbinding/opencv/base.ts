@@ -45,8 +45,9 @@
 ////// <reference path="Matrix.ts" />
 var alvision_module = require('../../lib/bindings.js');
 
-import * as _constants from './Constants'
+//import * as _constants from './Constants'
 import * as _st from './static'
+import util = require('util');
 
 //#ifndef __OPENCV_CORE_BASE_HPP__
 //#define __OPENCV_CORE_BASE_HPP__
@@ -61,12 +62,12 @@ import * as _st from './static'
 //#include "opencv2/core/cvdef.h"
 //#include "opencv2/core/cvstd.hpp"
 
-//namespace cv {
+namespace cv {
 
     //! @addtogroup core_utils
     //! @{
 
-    namespace Error {
+    export namespace Error {
         //! error codes
         export enum Code {
             StsOk = 0,  //!< everithing is ok
@@ -126,6 +127,7 @@ import * as _st from './static'
             OpenCLNoAMDBlasFft = -223
         };
     } //Error
+}
 
     //! @} core_utils
 
@@ -301,7 +303,8 @@ import * as _st from './static'
     //#ifndef CV_StaticAssert
     //#  if !defined(__clang__) && defined(__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ > 302)
     //#    define CV_StaticAssert(condition, reason)({ extern int __attribute__((error("CV_StaticAssert: " reason " " #condition))) CV_StaticAssert(); ((condition) ? 0 : CV_StaticAssert());
-})
+    //})
+//}
 //#  else
 //template < bool x> struct CV_StaticAssert_failed;
 //template <> struct CV_StaticAssert_failed< true > { enum { val = 1 }; };
@@ -351,7 +354,7 @@ It is possible to alternate error processing by using redirectError().
  */
 
     interface Ierror {
-        error(int _code, const String& _err, const char* _func, const char* _file, int _line): error;
+        (_code: cv.Error.Code, _err: string, _func: string, _file: string, _line: _st.int ): void;
     }
 
 export var error: Ierror = alvision_module.error;
@@ -364,30 +367,36 @@ export var error: Ierror = alvision_module.error;
 //#endif
 
 /** same as cv::error, but does not return */
-CV_INLINE CV_NORETURN void errorNoReturn(int _code, const String& _err, const char* _func, const char* _file, int _line)
-{
-    error(_code, _err, _func, _file, _line);
-#ifdef __GNUC__
-# if !defined __clang__ && !defined __APPLE__
-    // this suppresses this warning: "noreturn" function does return [enabled by default]
-    __builtin_trap();
-    // or use infinite loop: for (;;) {}
-# endif
-#endif
+interface IerrorNoReturn{
+    (code: cv.Error.Code, _err: string, _func: string, _file: string, _line: _st.int): void;
 }
-#ifdef __GNUC__
-# if defined __clang__ || defined __APPLE__
-#   pragma GCC diagnostic pop
-# endif
-#endif
 
-#if defined __GNUC__
-#define CV_Func __func__
-#elif defined _MSC_VER
-#define CV_Func __FUNCTION__
-#else
-#define CV_Func ""
-#endif
+export var errorNoReturn: IerrorNoReturn = alvision_module.errorNoReturn;
+
+//CV_INLINE CV_NORETURN void errorNoReturn(int _code, const String& _err, const char* _func, const char* _file, int _line)
+//{
+//    error(_code, _err, _func, _file, _line);
+//#ifdef __GNUC__
+//# if !defined __clang__ && !defined __APPLE__
+//    // this suppresses this warning: "noreturn" function does return [enabled by default]
+//    __builtin_trap();
+//    // or use infinite loop: for (;;) {}
+//# endif
+//#endif
+//}
+//#ifdef __GNUC__
+//# if defined __clang__ || defined __APPLE__
+//#   pragma GCC diagnostic pop
+//# endif
+//#endif
+//
+//#if defined __GNUC__
+//#define CV_Func __func__
+//#elif defined _MSC_VER
+//#define CV_Func __FUNCTION__
+//#else
+//#define CV_Func ""
+//#endif
 
 /** @brief Call the error handler.
 
@@ -399,7 +408,20 @@ configuration, the exception is thrown.
 @param code one of Error::Code
 @param msg error message
 */
-#define CV_Error( code, msg ) cv::error( code, msg, CV_Func, __FILE__, __LINE__ )
+
+function getErrorObject() : Error {
+    try { throw Error('') } catch (err) { return err; }
+}
+
+export function CV_Error(code: cv.Error.Code, msg) {
+    var err = getErrorObject();
+    var caller_line = err.stack.split("\n")[4];
+    var index = caller_line.indexOf("at ");
+    var clean = caller_line.slice(index + 2, caller_line.length);
+    error(code, msg, clean, clean, -1);
+}
+
+//#define CV_Error( code, msg ) cv::error( code, msg, CV_Func, __FILE__, __LINE__ )
 
 /**  @brief Call the error handler.
 
@@ -413,7 +435,11 @@ for example:
 @param code one of Error::Code
 @param args printf-like formatted error message in parentheses
 */
-#define CV_Error_( code, args ) cv::error( code, cv::format args, CV_Func, __FILE__, __LINE__ )
+
+export function CV_Error_(code: cv.Error.Code, args) {
+    error(code, args, "", "", -1);
+}
+//#define CV_Error_( code, args ) cv::error( code, cv::format args, CV_Func, __FILE__, __LINE__ )
 
 /** @brief Checks a condition at runtime and throws exception if it fails
 
@@ -421,175 +447,196 @@ The macros CV_Assert (and CV_DbgAssert(expr)) evaluate the specified expression.
 raise an error (see cv::error). The macro CV_Assert checks the condition in both Debug and Release
 configurations while CV_DbgAssert is only retained in the Debug configuration.
 */
-#define CV_Assert( expr ) if(!!(expr)) ; else cv::error( cv::Error::StsAssert, #expr, CV_Func, __FILE__, __LINE__ )
+
+export function CV_Assert(expr: () => boolean) {
+    if (!expr()) {
+        error(cv.Error.Code.StsAssert, expr.toString(), "", "", -1);
+    }
+}
+
+//#define CV_Assert( expr ) if(!!(expr)) ; else cv::error( cv::Error::StsAssert, #expr, CV_Func, __FILE__, __LINE__ )
 
 /** same as CV_Error(code,msg), but does not return */
-#define CV_ErrorNoReturn( code, msg ) cv::errorNoReturn( code, msg, CV_Func, __FILE__, __LINE__ )
+
+export function CV_ErrorNoReturn(code, msg) {
+    errorNoReturn(code, msg, "", "", -1);
+}
+
+//#define CV_ErrorNoReturn( code, msg ) cv::errorNoReturn( code, msg, CV_Func, __FILE__, __LINE__ )
 
 /** same as CV_Error_(code,args), but does not return */
-#define CV_ErrorNoReturn_( code, args ) cv::errorNoReturn( code, cv::format args, CV_Func, __FILE__, __LINE__ )
+
+export function CV_ErrorNoReturn_(code, args) {
+    errorNoReturn(code, util.format(args), "", "", -1);
+}
+//#define CV_ErrorNoReturn_( code, args ) cv::errorNoReturn( code, cv::format args, CV_Func, __FILE__, __LINE__ )
 
 /** replaced with CV_Assert(expr) in Debug configuration */
-#ifdef _DEBUG
-#  define CV_DbgAssert(expr) CV_Assert(expr)
-#else
-#  define CV_DbgAssert(expr)
-#endif
+
+export function CV_DbgAssert(expr: () =>boolean){
+    CV_Assert(expr);
+}
+
+//#ifdef _DEBUG
+//#  define CV_DbgAssert(expr) CV_Assert(expr)
+//#else
+//#  define CV_DbgAssert(expr)
+//#endif
 
 /*
  * Hamming distance functor - counts the bit differences between two strings - useful for the Brief descriptor
  * bit count of A exclusive XOR'ed with B
  */
-struct CV_EXPORTS Hamming
-{
-    enum { normType = NORM_HAMMING };
-    typedef unsigned char ValueType;
-    typedef int ResultType;
-
-    /** this will count the bits in a ^ b
-     */
-    ResultType operator()( const unsigned char* a, const unsigned char* b, int size ) const;
-};
-
-typedef Hamming HammingLUT;
+//struct CV_EXPORTS Hamming
+//{
+//    enum { normType = NORM_HAMMING };
+//    typedef unsigned char ValueType;
+//    typedef int ResultType;
+//
+//    /** this will count the bits in a ^ b
+//     */
+//    ResultType operator()( const unsigned char* a, const unsigned char* b, int size ) const;
+//};
+//
+//typedef Hamming HammingLUT;
 
 /////////////////////////////////// inline norms ////////////////////////////////////
 
 
-template<typename _Tp> inline _Tp cv_abs(_Tp x) { return std::abs(x); }
-inline int cv_abs(uchar x) { return x; }
-inline int cv_abs(schar x) { return std::abs(x); }
-inline int cv_abs(ushort x) { return x; }
-inline int cv_abs(short x) { return std::abs(x); }
-
-template<typename _Tp, typename _AccTp> static inline
-_AccTp normL2Sqr(const _Tp* a, int n)
-{
-    _AccTp s = 0;
-    int i=0;
-#if CV_ENABLE_UNROLLED
-    for( ; i <= n - 4; i += 4 )
-    {
-        _AccTp v0 = a[i], v1 = a[i+1], v2 = a[i+2], v3 = a[i+3];
-        s += v0*v0 + v1*v1 + v2*v2 + v3*v3;
-    }
-#endif
-    for( ; i < n; i++ )
-    {
-        _AccTp v = a[i];
-        s += v*v;
-    }
-    return s;
-}
-
-template<typename _Tp, typename _AccTp> static inline
-_AccTp normL1(const _Tp* a, int n)
-{
-    _AccTp s = 0;
-    int i = 0;
-#if CV_ENABLE_UNROLLED
-    for(; i <= n - 4; i += 4 )
-    {
-        s += (_AccTp)cv_abs(a[i]) + (_AccTp)cv_abs(a[i+1]) +
-            (_AccTp)cv_abs(a[i+2]) + (_AccTp)cv_abs(a[i+3]);
-    }
-#endif
-    for( ; i < n; i++ )
-        s += cv_abs(a[i]);
-    return s;
-}
-
-template<typename _Tp, typename _AccTp> static inline
-_AccTp normInf(const _Tp* a, int n)
-{
-    _AccTp s = 0;
-    for( int i = 0; i < n; i++ )
-        s = std::max(s, (_AccTp)cv_abs(a[i]));
-    return s;
-}
-
-template<typename _Tp, typename _AccTp> static inline
-_AccTp normL2Sqr(const _Tp* a, const _Tp* b, int n)
-{
-    _AccTp s = 0;
-    int i= 0;
-#if CV_ENABLE_UNROLLED
-    for(; i <= n - 4; i += 4 )
-    {
-        _AccTp v0 = _AccTp(a[i] - b[i]), v1 = _AccTp(a[i+1] - b[i+1]), v2 = _AccTp(a[i+2] - b[i+2]), v3 = _AccTp(a[i+3] - b[i+3]);
-        s += v0*v0 + v1*v1 + v2*v2 + v3*v3;
-    }
-#endif
-    for( ; i < n; i++ )
-    {
-        _AccTp v = _AccTp(a[i] - b[i]);
-        s += v*v;
-    }
-    return s;
-}
-
-static inline float normL2Sqr(const float* a, const float* b, int n)
-{
-    float s = 0.f;
-    for( int i = 0; i < n; i++ )
-    {
-        float v = a[i] - b[i];
-        s += v*v;
-    }
-    return s;
-}
-
-template<typename _Tp, typename _AccTp> static inline
-_AccTp normL1(const _Tp* a, const _Tp* b, int n)
-{
-    _AccTp s = 0;
-    int i= 0;
-#if CV_ENABLE_UNROLLED
-    for(; i <= n - 4; i += 4 )
-    {
-        _AccTp v0 = _AccTp(a[i] - b[i]), v1 = _AccTp(a[i+1] - b[i+1]), v2 = _AccTp(a[i+2] - b[i+2]), v3 = _AccTp(a[i+3] - b[i+3]);
-        s += std::abs(v0) + std::abs(v1) + std::abs(v2) + std::abs(v3);
-    }
-#endif
-    for( ; i < n; i++ )
-    {
-        _AccTp v = _AccTp(a[i] - b[i]);
-        s += std::abs(v);
-    }
-    return s;
-}
-
-inline float normL1(const float* a, const float* b, int n)
-{
-    float s = 0.f;
-    for( int i = 0; i < n; i++ )
-    {
-        s += std::abs(a[i] - b[i]);
-    }
-    return s;
-}
-
-inline int normL1(const uchar* a, const uchar* b, int n)
-{
-    int s = 0;
-    for( int i = 0; i < n; i++ )
-    {
-        s += std::abs(a[i] - b[i]);
-    }
-    return s;
-}
-
-template<typename _Tp, typename _AccTp> static inline
-_AccTp normInf(const _Tp* a, const _Tp* b, int n)
-{
-    _AccTp s = 0;
-    for( int i = 0; i < n; i++ )
-    {
-        _AccTp v0 = a[i] - b[i];
-        s = std::max(s, std::abs(v0));
-    }
-    return s;
-}
+//template<typename _Tp> inline _Tp cv_abs(_Tp x) { return std::abs(x); }
+//inline int cv_abs(uchar x) { return x; }
+//inline int cv_abs(schar x) { return std::abs(x); }
+//inline int cv_abs(ushort x) { return x; }
+//inline int cv_abs(short x) { return std::abs(x); }
+//
+//template<typename _Tp, typename _AccTp> static inline
+//_AccTp normL2Sqr(const _Tp* a, int n)
+//{
+//    _AccTp s = 0;
+//    int i=0;
+//#if CV_ENABLE_UNROLLED
+//    for( ; i <= n - 4; i += 4 )
+//    {
+//        _AccTp v0 = a[i], v1 = a[i+1], v2 = a[i+2], v3 = a[i+3];
+//        s += v0*v0 + v1*v1 + v2*v2 + v3*v3;
+//    }
+//#endif
+//    for( ; i < n; i++ )
+//    {
+//        _AccTp v = a[i];
+//        s += v*v;
+//    }
+//    return s;
+//}
+//
+//template<typename _Tp, typename _AccTp> static inline
+//_AccTp normL1(const _Tp* a, int n)
+//{
+//    _AccTp s = 0;
+//    int i = 0;
+//#if CV_ENABLE_UNROLLED
+//    for(; i <= n - 4; i += 4 )
+//    {
+//        s += (_AccTp)cv_abs(a[i]) + (_AccTp)cv_abs(a[i+1]) +
+//            (_AccTp)cv_abs(a[i+2]) + (_AccTp)cv_abs(a[i+3]);
+//    }
+//#endif
+//    for( ; i < n; i++ )
+//        s += cv_abs(a[i]);
+//    return s;
+//}
+//
+//template<typename _Tp, typename _AccTp> static inline
+//_AccTp normInf(const _Tp* a, int n)
+//{
+//    _AccTp s = 0;
+//    for( int i = 0; i < n; i++ )
+//        s = std::max(s, (_AccTp)cv_abs(a[i]));
+//    return s;
+//}
+//
+//template<typename _Tp, typename _AccTp> static inline
+//_AccTp normL2Sqr(const _Tp* a, const _Tp* b, int n)
+//{
+//    _AccTp s = 0;
+//    int i= 0;
+//#if CV_ENABLE_UNROLLED
+//    for(; i <= n - 4; i += 4 )
+//    {
+//        _AccTp v0 = _AccTp(a[i] - b[i]), v1 = _AccTp(a[i+1] - b[i+1]), v2 = _AccTp(a[i+2] - b[i+2]), v3 = _AccTp(a[i+3] - b[i+3]);
+//        s += v0*v0 + v1*v1 + v2*v2 + v3*v3;
+//    }
+//#endif
+//    for( ; i < n; i++ )
+//    {
+//        _AccTp v = _AccTp(a[i] - b[i]);
+//        s += v*v;
+//    }
+//    return s;
+//}
+//
+//static inline float normL2Sqr(const float* a, const float* b, int n)
+//{
+//    float s = 0.f;
+//    for( int i = 0; i < n; i++ )
+//    {
+//        float v = a[i] - b[i];
+//        s += v*v;
+//    }
+//    return s;
+//}
+//
+//template<typename _Tp, typename _AccTp> static inline
+//_AccTp normL1(const _Tp* a, const _Tp* b, int n)
+//{
+//    _AccTp s = 0;
+//    int i= 0;
+//#if CV_ENABLE_UNROLLED
+//    for(; i <= n - 4; i += 4 )
+//    {
+//        _AccTp v0 = _AccTp(a[i] - b[i]), v1 = _AccTp(a[i+1] - b[i+1]), v2 = _AccTp(a[i+2] - b[i+2]), v3 = _AccTp(a[i+3] - b[i+3]);
+//        s += std::abs(v0) + std::abs(v1) + std::abs(v2) + std::abs(v3);
+//    }
+//#endif
+//    for( ; i < n; i++ )
+//    {
+//        _AccTp v = _AccTp(a[i] - b[i]);
+//        s += std::abs(v);
+//    }
+//    return s;
+//}
+//
+//inline float normL1(const float* a, const float* b, int n)
+//{
+//    float s = 0.f;
+//    for( int i = 0; i < n; i++ )
+//    {
+//        s += std::abs(a[i] - b[i]);
+//    }
+//    return s;
+//}
+//
+//inline int normL1(const uchar* a, const uchar* b, int n)
+//{
+//    int s = 0;
+//    for( int i = 0; i < n; i++ )
+//    {
+//        s += std::abs(a[i] - b[i]);
+//    }
+//    return s;
+//}
+//
+//template<typename _Tp, typename _AccTp> static inline
+//_AccTp normInf(const _Tp* a, const _Tp* b, int n)
+//{
+//    _AccTp s = 0;
+//    for( int i = 0; i < n; i++ )
+//    {
+//        _AccTp v0 = a[i] - b[i];
+//        s = std::max(s, std::abs(v0));
+//    }
+//    return s;
+//}
 
 /** @brief Computes the cube root of an argument.
 
@@ -600,7 +647,7 @@ _AccTp normInf(const _Tp* a, const _Tp* b, int n)
  */
 
     interface IcubeRoot {
-        (float val): float;
+        ( val : _st.float): _st.float;
     }
 export var cubeRoot: IcubeRoot = alvision_module.cubeRoot;
 
@@ -613,15 +660,15 @@ export var cubeRoot: IcubeRoot = alvision_module.cubeRoot;
  */
 
 interface IfastAtan2 {
-    fastAtan2(float y, float x): float;
+    fastAtan2(y: _st.float, x: _st.float ): _st.float;
 }
 
 export var fastAtan2: IfastAtan2 = alvision_module.fastAtan2;
 
 /** proxy for hal::LU */
 interface ILU {
-    (float* A, size_t astep, int m, float* b, size_t bstep, int n): int;
-    (double * A, size_t astep, int m, double * b, size_t bstep, int n) : int;
+    //(float* A, size_t astep, int m, float* b, size_t bstep, int n): int;
+    //(double * A, size_t astep, int m, double * b, size_t bstep, int n) : int;
 }
 
 export var LU: ILU = alvision_module.LU;
@@ -632,8 +679,8 @@ export var LU: ILU = alvision_module.LU;
 /** proxy for hal::Cholesky */
 
 interface ICholesky {
-    (float * A, size_t astep, int m, float * b, size_t bstep, int n) : boolean;
-    (double * A, size_t astep, int m, double * b, size_t bstep, int n) : boolean;
+//    (float * A, size_t astep, int m, float * b, size_t bstep, int n) : boolean;
+//    (double * A, size_t astep, int m, double * b, size_t bstep, int n) : boolean;
 }
 
 export var Cholesky: ICholesky = alvision_module.Cholesky;
@@ -669,7 +716,7 @@ export var Cholesky: ICholesky = alvision_module.Cholesky;
 //class CV_EXPORTS UMat;
 
 //class CV_EXPORTS SparseMat;
-typedef Mat MatND;
+//typedef Mat MatND;
 
 //template<typename _Tp> class Mat_;
 //template<typename _Tp> class SparseMat_;

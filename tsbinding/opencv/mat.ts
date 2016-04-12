@@ -1161,7 +1161,7 @@ export interface Mat
     @param m Destination matrix. If it does not have a proper size or type before the operation, it is
     reallocated.
      */
-    //void copyTo(OutputArray m ) const;
+    copyTo(m: _st.OutputArray) : void;
 
     /** @overload
     @param m Destination matrix. If it does not have a proper size or type before the operation, it is
@@ -1169,7 +1169,7 @@ export interface Mat
     @param mask Operation mask. Its non-zero elements indicate which matrix elements need to be copied.
     The mask has to be of type CV_8U and can have 1 or multiple channels.
     */
-    //void copyTo(OutputArray m, InputArray mask ) const;
+    copyTo(m: _st.OutputArray, mask: _st.InputArray ): void;
 
     /** @brief Converts an array to another data type with optional scaling.
 
@@ -1231,10 +1231,10 @@ export interface Mat
     @param cn New number of channels. If the parameter is 0, the number of channels remains the same.
     @param rows New number of rows. If the parameter is 0, the number of rows remains the same.
      */
-    //Mat reshape(int cn, int rows= 0) const;
+    reshape(cn: _st.int, rows?: _st.int /*= 0*/) :  Mat;
 
     /** @overload */
-    //Mat reshape(int cn, int newndims, const int* newsz) const;
+    //reshape(cn: _st.int, newndims: _st.int , const int* newsz) : Mat;
 
     /** @brief Transposes a matrix.
 
@@ -1620,7 +1620,7 @@ export interface Mat
 
     The method returns the number of matrix channels.
      */
-    //int channels() const;
+    channels(): _st.int;
 
     /** @brief Returns a normalized step.
 
@@ -1652,6 +1652,9 @@ export interface Mat
     Mat::isContinuous to know how to use these methods.
     @param i0 A 0-based row index.
      */
+
+    ptr<T>(i0? : _st.int /* = 0*/): Array<T>;
+
     //uchar * ptr(int i0= 0);
     /** @overload */
     //const uchar* ptr(int i0= 0) const;
@@ -1907,6 +1910,7 @@ export interface Mat
     //int rows, cols;
     //! pointer to the data
     //uchar * data;
+    data() : Buffer;
 
     //! helper fields used in locateROI and adjustROI
     //const uchar* datastart;
@@ -1924,6 +1928,10 @@ export interface Mat
     //UMatData * u;
 
     //MatSize size;
+    size(): _types.Size;
+    
+    //row length in number of elements
+    step: number;
     //MatStep step;
 
     //protected:
@@ -2387,6 +2395,7 @@ export interface UMat
 //
 //    MatSize size;
 //    MatStep step;
+
 //
 //    protected:
 };

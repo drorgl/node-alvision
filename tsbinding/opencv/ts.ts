@@ -350,15 +350,15 @@ export namespace cvtest {
         protected update_progress(progress: _st.int, test_case_idx: _st.int, count: _st.int, dt: _st.double): _st.int {
             var width: _st.int = 60 - this.get_name().length;
             if (count > 0) {
-                var t = cvRound((test_case_idx * width) / count );
+                var t = Math.round((test_case_idx.valueOf() * width.valueOf()) / count.valueOf() );
                 if (t > progress) {
                     this.ts.printf(TSConstants.CONSOLE, ".");
                     progress = t;
                 }
             }
-            else if (cvRound(dt) > progress) {
+            else if (Math.round(dt.valueOf()) > progress) {
                 this.ts.printf(TSConstants.CONSOLE, ".");
-                progress = cvRound(dt);
+                progress = Math.round(dt.valueOf());
             }
 
             return progress;
@@ -368,12 +368,21 @@ export namespace cvtest {
         //    protected abstract  find_param(fs: _pers.CvFileStorage, param_name: string): _pers.CvFileNode {
         //CvFileNode* node = cvGetFileNodeByName(fs, 0, get_name().c_str());
         //return node ? cvGetFileNodeByName(fs, node, param_name) : 0;
+
+        
+
+        //protected CV_Assert(expr: boolean): void {
+        //    if (!(expr)) {
+        //         else cv::error(cv::Error::StsAssert, #expr, CV_Func, __FILE__, __LINE__)
+        //    }
+        //}
+
     
-    //
-    //    // name of the test (it is possible to locate a test by its name)
+    
+    // name of the test (it is possible to locate a test by its name)
     protected name: string;
-    //
-    //    // pointer to the system that includes the test
+    
+    // pointer to the system that includes the test
     protected ts: TS;
 };
 

@@ -25,8 +25,55 @@ export interface OutputArrayOfArrays extends OutputArray { }
 export interface InputOutputArray extends IOArray {}
 export interface InputOutputArrayOfArrays extends InputOutputArray { }
 
-export var DBL_MAX = 1.7976931348623158e+308; // max value
-export var DBL_MIN = 2.2250738585072014e-308; // min positive value
+//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+//
+// Constants
+//
+//-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+export const DBL_DECIMAL_DIG = 17                      ;// # of decimal digits of rounding precision
+export const DBL_DIG         = 15                      ;// # of decimal digits of precision
+export const DBL_EPSILON     = 2.2204460492503131e-016 ;// smallest such that 1.0+DBL_EPSILON != 1.0
+export const DBL_HAS_SUBNORM = 1                       ;// type does support subnormal numbers
+export const DBL_MANT_DIG    = 53                      ;// # of bits in mantissa
+export const DBL_MAX         = 1.7976931348623158e+308 ;// max value
+export const DBL_MAX_10_EXP  = 308                     ;// max decimal exponent
+export const DBL_MAX_EXP     = 1024                    ;// max binary exponent
+export const DBL_MIN         = 2.2250738585072014e-308 ;// min positive value
+export const DBL_MIN_10_EXP  = (-307)                  ;// min decimal exponent
+export const DBL_MIN_EXP     = (-1021)                 ;// min binary exponent
+export const _DBL_RADIX      = 2                       ;// exponent radix
+export const DBL_TRUE_MIN = 4.9406564584124654e-324;    // min positive value
+
+export const FLT_DECIMAL_DIG = 9                       ;// # of decimal digits of rounding precision
+export const FLT_DIG         = 6                       ;// # of decimal digits of precision
+export const FLT_EPSILON     = 1.192092896e-07        ;// smallest such that 1.0+FLT_EPSILON != 1.0
+export const FLT_HAS_SUBNORM = 1                       ;// type does support subnormal numbers
+export const FLT_GUARD       = 0
+export const FLT_MANT_DIG    = 24                      ;// # of bits in mantissa
+export const FLT_MAX         = 3.402823466e+38        ;// max value
+export const FLT_MAX_10_EXP  = 38                      ;// max decimal exponent
+export const FLT_MAX_EXP     = 128                     ;// max binary exponent
+export const FLT_MIN         = 1.175494351e-38        ;// min normalized positive value
+export const FLT_MIN_10_EXP  = (-37)                   ;// min decimal exponent
+export const FLT_MIN_EXP     = (-125)                  ;// min binary exponent
+export const FLT_NORMALIZE   = 0
+export const FLT_RADIX       = 2                       ;// exponent radix
+export const FLT_TRUE_MIN    = 1.401298464e-45        ;// min positive value
+
+export const LDBL_DIG        = DBL_DIG                 ;// # of decimal digits of precision
+export const LDBL_EPSILON    = DBL_EPSILON             ;// smallest such that 1.0+LDBL_EPSILON != 1.0
+export const LDBL_HAS_SUBNORM= DBL_HAS_SUBNORM         ;// type does support subnormal numbers
+export const LDBL_MANT_DIG   = DBL_MANT_DIG            ;// # of bits in mantissa
+export const LDBL_MAX        = DBL_MAX                 ;// max value
+export const LDBL_MAX_10_EXP = DBL_MAX_10_EXP          ;// max decimal exponent
+export const LDBL_MAX_EXP    = DBL_MAX_EXP             ;// max binary exponent
+export const LDBL_MIN        = DBL_MIN                 ;// min normalized positive value
+export const LDBL_MIN_10_EXP = DBL_MIN_10_EXP          ;// min decimal exponent
+export const LDBL_MIN_EXP    = DBL_MIN_EXP             ;// min binary exponent
+export const _LDBL_RADIX     = _DBL_RADIX              ;// exponent radix
+export const LDBL_TRUE_MIN   = DBL_TRUE_MIN            ;// min positive value
+
+export const DECIMAL_DIG = DBL_DECIMAL_DIG;
 
 
 //interface IRodrigues {
