@@ -39,15 +39,23 @@
  //
  //M*/
 
-#include "test_precomp.hpp"
-#include "opencv2/imgproc/imgproc_c.h"
-#include <limits>
-#include "test_chessboardgenerator.hpp"
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
 
-using namespace std;
-using namespace cv;
+//#include "test_precomp.hpp"
+//#include "opencv2/imgproc/imgproc_c.h"
+//#include <limits>
+//#include "test_chessboardgenerator.hpp"
+//
+//using namespace std;
+//using namespace cv;
 
-class CV_ChessboardSubpixelTest : public cvtest::BaseTest
+class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest
 {
 public:
     CV_ChessboardSubpixelTest();
@@ -240,6 +248,6 @@ void CV_ChessboardSubpixelTest::generateIntrinsicParams()
     distortion_coeffs_ = (Mat_<double>(1, 5) << k1, k2, p1, p2, k3);
 }
 
-TEST(Calib3d_ChessboardSubPixDetector, accuracy) { CV_ChessboardSubpixelTest test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_ChessboardSubPixDetector', 'accuracy', () => { var test = new CV_ChessboardSubpixelTest(); test.safe_run(); });
 
 /* End of file. */

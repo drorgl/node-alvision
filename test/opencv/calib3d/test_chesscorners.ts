@@ -39,17 +39,25 @@
 //
 //M*/
 
-#include "test_precomp.hpp"
-#include "test_chessboardgenerator.hpp"
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
 
-#include <functional>
-#include <limits>
-#include <numeric>
+//#include "test_precomp.hpp"
+//#include "test_chessboardgenerator.hpp"
+//
+//#include <functional>
+//#include <limits>
+//#include <numeric>
+//
+//using namespace std;
+//using namespace cv;
 
-using namespace std;
-using namespace cv;
-
-#define _L2_ERR
+//#define _L2_ERR
 
 void show_points( const Mat& gray, const Mat& u, const vector<Point2f>& v, Size pattern_size, bool was_found )
 {

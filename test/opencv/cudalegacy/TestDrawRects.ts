@@ -40,6 +40,14 @@
 //
 //M*/
 
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
+
 #ifndef _testdrawrects_h_
 #define _testdrawrects_h_
 

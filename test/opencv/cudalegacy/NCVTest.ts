@@ -40,6 +40,14 @@
 //
 //M*/
 
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
+
 #ifndef _ncvtest_hpp_
 #define _ncvtest_hpp_
 

@@ -20,6 +20,7 @@ export * from './ffmpeg/stream';
 
 export * from './opencv/Affine';
 export * from './opencv/base';
+export * from './opencv/calib3d';
 export * from './opencv/core';
 export * from './opencv/cvdef';
 export * from './opencv/HighGUI';

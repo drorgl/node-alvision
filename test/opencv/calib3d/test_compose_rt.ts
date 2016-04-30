@@ -40,10 +40,18 @@
 //
 //M*/
 
-#include "test_precomp.hpp"
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
 
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
 class Differential
 {
@@ -211,4 +219,4 @@ protected:
     }
 };
 
-TEST(Calib3d_ComposeRT, accuracy) { CV_composeRT_Test test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_ComposeRT', 'accuracy', () => { var test = new CV_composeRT_Test(); test.safe_run(); });

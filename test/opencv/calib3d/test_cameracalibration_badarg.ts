@@ -39,16 +39,24 @@
 //
 //M*/
 
-#include "test_precomp.hpp"
-#include "test_chessboardgenerator.hpp"
-#include "opencv2/calib3d/calib3d_c.h"
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
 
-#include <iostream>
+//#include "test_precomp.hpp"
+//#include "test_chessboardgenerator.hpp"
+//#include "opencv2/calib3d/calib3d_c.h"
+//
+//#include <iostream>
+//
+//using namespace cv;
+//using namespace std;
 
-using namespace cv;
-using namespace std;
-
-class CV_CameraCalibrationBadArgTest : public cvtest::BadArgTest
+class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest
 {
 public:
     CV_CameraCalibrationBadArgTest() : imgSize(800, 600) {}
@@ -328,7 +336,7 @@ void CV_CameraCalibrationBadArgTest::run( int /* start_from */ )
 }
 
 
-class CV_Rodrigues2BadArgTest : public cvtest::BadArgTest
+class CV_Rodrigues2BadArgTest extends alvision.cvtest.BadArgTest
 {
 public:
     CV_Rodrigues2BadArgTest() {}
@@ -451,7 +459,7 @@ protected:
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////
-class CV_ProjectPoints2BadArgTest : public cvtest::BadArgTest
+class CV_ProjectPoints2BadArgTest extends alvision.cvtest.BadArgTest
 {
 public:
     CV_ProjectPoints2BadArgTest() : camMat(3, 3), distCoeffs(1, 5)
@@ -732,6 +740,6 @@ protected:
 };
 
 
-TEST(Calib3d_CalibrateCamera_C, badarg) { CV_CameraCalibrationBadArgTest test; test.safe_run(); }
-TEST(Calib3d_Rodrigues_C, badarg) { CV_Rodrigues2BadArgTest test; test.safe_run(); }
-TEST(Calib3d_ProjectPoints_C, badarg) { CV_ProjectPoints2BadArgTest test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_CalibrateCamera_C', 'badarg', () => { var test = new CV_CameraCalibrationBadArgTest(); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_Rodrigues_C', 'badarg', () => { var test = new CV_Rodrigues2BadArgTest(); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_ProjectPoints_C', 'badarg', () => { var test = new CV_ProjectPoints2BadArgTest(); test.safe_run(); });

@@ -39,11 +39,19 @@
 //
 //M*/
 
-#include "test_precomp.hpp"
-#include "opencv2/imgproc/imgproc_c.h"
-#include "opencv2/calib3d/calib3d_c.h"
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
 
-class CV_ChessboardDetectorTimingTest : public cvtest::BaseTest
+//#include "test_precomp.hpp"
+//#include "opencv2/imgproc/imgproc_c.h"
+//#include "opencv2/calib3d/calib3d_c.h"
+
+class CV_ChessboardDetectorTimingTest extends alvision.cvtest.BaseTest
 {
 public:
     CV_ChessboardDetectorTimingTest();
@@ -184,6 +192,6 @@ _exit_:
         ts->set_failed_test_info( code );
 }
 
-TEST(Calib3d_ChessboardDetector, timing) { CV_ChessboardDetectorTimingTest test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_ChessboardDetector', 'timing', () => { var test = new CV_ChessboardDetectorTimingTest(); test.safe_run(); });
 
 /* End of file. */

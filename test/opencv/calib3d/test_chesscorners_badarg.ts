@@ -39,16 +39,24 @@
 //
 //M*/
 
-#include "test_precomp.hpp"
-#include "test_chessboardgenerator.hpp"
-#include "opencv2/calib3d/calib3d_c.h"
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
 
-#include <limits>
+//#include "test_precomp.hpp"
+//#include "test_chessboardgenerator.hpp"
+//#include "opencv2/calib3d/calib3d_c.h"
+//
+//#include <limits>
+//
+//using namespace std;
+//using namespace cv;
 
-using namespace std;
-using namespace cv;
-
-class CV_ChessboardDetectorBadArgTest : public cvtest::BadArgTest
+class CV_ChessboardDetectorBadArgTest extends alvision. cvtest.BadArgTest
 {
 public:
     CV_ChessboardDetectorBadArgTest();
@@ -149,6 +157,6 @@ void CV_ChessboardDetectorBadArgTest::run( int /*start_from */)
         ts->set_failed_test_info(cvtest::TS::OK);
 }
 
-TEST(Calib3d_ChessboardDetector, badarg) { CV_ChessboardDetectorBadArgTest test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_ChessboardDetector', 'badarg', () => { var test = new CV_ChessboardDetectorBadArgTest(); test.safe_run(); });
 
 /* End of file. */

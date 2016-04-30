@@ -2,6 +2,14 @@
 /////////////////// tests for matrix operations and math functions ///////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
+
 #include "test_precomp.hpp"
 #include <float.h>
 #include <math.h>

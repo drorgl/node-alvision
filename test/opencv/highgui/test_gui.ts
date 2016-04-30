@@ -64,7 +64,7 @@ import alvision = require("../../../tsbinding/alvision");
 //using namespace cv;
 //using namespace std;
 
-class CV_HighGuiOnlyGuiTest // : public cvtest::BaseTest
+class CV_HighGuiOnlyGuiTest extends alvision. cvtest.BaseTest
 {
    public run(int /*start_from */) : void
 {
@@ -106,9 +106,6 @@ class CV_HighGuiOnlyGuiTest // : public cvtest::BaseTest
 
 //void Foo(int /*k*/, void* /*z*/) {}
 
-tape("Highgui_GUI_regression", (t) => {
-    var test = new CV_HighGuiOnlyGuiTest();
-    test.run(0);
-});
-//TEST(Highgui_GUI,    regression) { CV_HighGuiOnlyGuiTest test; test.safe_run(); }
+
+alvision.cvtest.TEST('Highgui_GUI', 'regression', () => { var test = new CV_HighGuiOnlyGuiTest(); test.safe_run(); });
 

@@ -40,19 +40,28 @@
 //
 //M*/
 
-#include "test_precomp.hpp"
+import tape = require("tape");
+import path = require("path");
+import colors = require("colors");
+import async = require("async");
+import alvision = require("../../../tsbinding/alvision");
+import util = require('util');
+import fs = require('fs');
 
-#include <string>
-#include <limits>
-#include <vector>
-#include <iostream>
-#include <sstream>
-#include <iomanip>
 
-#include "test_chessboardgenerator.hpp"
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//#include <string>
+//#include <limits>
+//#include <vector>
+//#include <iostream>
+//#include <sstream>
+//#include <iomanip>
+//
+//#include "test_chessboardgenerator.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
 //template<class T> ostream& operator<<(ostream& out, const Mat_<T>& mat)
 //{
@@ -62,7 +71,7 @@ using namespace std;
 //}
 //ostream& operator<<(ostream& out, const Mat& mat) { return out << Mat_<double>(mat); }
 
-Mat calcRvec(const vector<Point3f>& points, const Size& cornerSize)
+function calcRvec(const vector<Point3f>& points, const Size& cornerSize) : alvision.Mat
 {
     Point3f p00 = points[0];
     Point3f p10 = points[1];
@@ -82,7 +91,7 @@ Mat calcRvec(const vector<Point3f>& points, const Size& cornerSize)
     return res.reshape(1, 1);
 }
 
-class CV_CalibrateCameraArtificialTest : public cvtest::BaseTest
+class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
 {
 public:
     CV_CalibrateCameraArtificialTest() :
@@ -428,4 +437,4 @@ protected:
     }
 };
 
-TEST(Calib3d_CalibrateCamera_CPP, DISABLED_accuracy_on_artificial_data) { CV_CalibrateCameraArtificialTest test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_CalibrateCamera_CPP', 'DISABLED_accuracy_on_artificial_data', () => { var test = new CV_CalibrateCameraArtificialTest(); test.safe_run(); });
