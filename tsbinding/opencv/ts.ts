@@ -5,6 +5,9 @@ import * as _st from './static';
 import * as _pers from './persistence';
 import * as _core from './core';
 import * as _base from './base';
+import * as _types from './types';
+import * as _mat from './mat';
+import * as _cvdef from './cvdef';
 
 import tape = require("tape");
 import path = require("path");
@@ -82,11 +85,21 @@ export namespace cvtest {
     //
     //CV_EXPORTS void randUni( RNG& rng, Mat& a, const Scalar& param1, const Scalar& param2 );
     //
+
+    export function randInt(rng: _core.RNG): _st.int {
+        return rng.int();
+    }
+
     //inline unsigned randInt( RNG& rng )
     //{
     //    return (unsigned)rng;
     //}
     //
+
+    export function randReal(rng: _core.RNG): _st.double {
+        return rng.double();
+    }
+
     //inline  double randReal( RNG& rng )
     //{
     //    return (double)rng;
@@ -110,11 +123,27 @@ export namespace cvtest {
     //CV_EXPORTS double getMinVal(int depth);
     //CV_EXPORTS double getMaxVal(int depth);
     //
-    //CV_EXPORTS Size randomSize(RNG& rng, double maxSizeLog);
-    //CV_EXPORTS void randomSize(RNG& rng, int minDims, int maxDims, double maxSizeLog, vector<int>& sz);
+
+    interface IrandomSize {
+        (rng: _core.RNG, maxSizeLog: _st.double): _types.Size;
+        (rng: _core.RNG, minDims: _st.int, maxDims: _st.int, maxSizeLog: _st.double, sz: Array<_st.int>): void;
+    }
+
+    export var randomSize: IrandomSize = alvision_module.randomSize;
+
+    
     //CV_EXPORTS int randomType(RNG& rng, int typeMask, int minChannels, int maxChannels);
-    //CV_EXPORTS Mat randomMat(RNG& rng, Size size, int type, double minVal, double maxVal, bool useRoi);
-    //CV_EXPORTS Mat randomMat(RNG& rng, const vector<int>& size, int type, double minVal, double maxVal, bool useRoi);
+
+
+    
+    interface IrandomMat {
+        (rng: _core.RNG, size: _types.Size, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi: boolean): _mat.Mat;
+        (rng: _core.RNG, size: Array<_st.int>, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi: boolean): _mat.Mat;
+    }
+
+    export var randomMat: IrandomMat = alvision_module.randomMat;
+
+
     //CV_EXPORTS void add(const Mat& a, double alpha, const Mat& b, double beta,
     //                      Scalar gamma, Mat& c, int ctype, bool calcAbs=false);
     //CV_EXPORTS void multiply(const Mat& a, const Mat& b, Mat& c, double alpha=1);
@@ -168,6 +197,15 @@ export namespace cvtest {
     //// success_err_level is maximum allowed difference, idx is the index of the first
     //// element for which difference is >success_err_level
     //// (or index of element with the maximum difference)
+
+    interface IcmpEps {
+        ( data : _mat.Mat, refdata : _mat.Mat, success_err_level: _st.double, element_wise_relative_error: boolean,
+            cb:(idx : Array<_st.int>, max_diff : _st.double)=>void) : _st.int
+    }
+
+    export var cmpEps: IcmpEps = alvision_module.cmpEps;
+
+
     //CV_EXPORTS int cmpEps( const Mat& data, const Mat& refdata, double* max_diff,
     //                       double success_err_level, vector<int>* idx,
     //                       bool element_wise_relative_error );
@@ -204,19 +242,60 @@ export namespace cvtest {
     //
     //CV_EXPORTS std::ostream& operator << (std::ostream& out, const MatInfo& m);
     //
-    //struct CV_EXPORTS MatComparator
-    //{
-    //public:
-    //    MatComparator(double maxdiff, int context);
-    //
-    //    ::testing::AssertionResult operator()(const char* expr1, const char* expr2,
-    //                                          const Mat& m1, const Mat& m2);
-    //
-    //    double maxdiff;
-    //    double realmaxdiff;
-    //    vector<int> loc0;
-    //    int context;
-    //};
+//    class MatComparator {
+//        constructor(_maxdiff: _st.double, _context: _st.int) {
+//            this.maxdiff = _maxdiff;
+//            this.realmaxdiff = _st.DBL_MAX;
+//            this.context = _context;
+//        }
+
+//        //AssertionResult
+//        public run(expr1: string, expr2: string,
+//            m1: _mat.Mat, m2: _mat.Mat): AssertionResult {
+//            if (m1.type() != m2.type() || m1.size != m2.size)
+//                return ::testing::AssertionFailure()
+//                    << "The reference and the actual output arrays have different type or size:\n"
+//                    << expr1 << " ~ " << MatInfo(m1) << "\n"
+//                    << expr2 << " ~ " << MatInfo(m2) << "\n";
+
+//            //bool ok = cvtest::cmpUlps(m1, m2, maxdiff, &realmaxdiff, &loc0);
+//            var code = cmpEps(m1, m2,true, &realmaxdiff, maxdiff, &loc0, true);
+
+//            if (code >= 0)
+//                return ::testing::AssertionSuccess();
+
+//            var m = [ m1.reshape(1, 0), m2.reshape(1, 0) ];
+//            var dims = m[0].dims;
+            
+//            var loc = new Array<_st.int>();
+//            var border = dims <= 2 ? context : 0;
+
+//            var m1part = new _mat.Mat();
+//            var m2part = new _mat.Mat();
+
+//            if (border == 0) {
+//                loc = loc0;
+//                m1part = new _mat.Mat(1, 1, m[0].depth(), m[0].ptr(&loc[0]));
+//                m2part = new _mat.Mat(1, 1, m[1].depth(), m[1].ptr(&loc[0]));
+//            }
+//            else {
+//                m1part = getSubArray(m[0], border, loc0, loc);
+//                m2part = getSubArray(m[1], border, loc0, loc);
+//            }
+
+//            return ::testing::AssertionFailure()
+//                << "too big relative difference (" << realmaxdiff << " > "
+//                << maxdiff << ") between "
+//                << MatInfo(m1) << " '" << expr1 << "' and '" << expr2 << "' at " << Mat(loc0) << ".\n\n"
+//                << "'" << expr1 << "': " << MatPart(m1part, border > 0 ? &loc : 0) << ".\n\n"
+//                << "'" << expr2 << "': " << MatPart(m2part, border > 0 ? &loc : 0) << ".\n";
+//        }
+
+//    var maxdiff: _st.double;
+//    var realmaxdiff: _st.double;
+//    var loc0: Array<_st.int>;
+//    var context: _st.int;
+//}
     //
     //
     //
@@ -266,7 +345,7 @@ export namespace cvtest {
         }
         //
         //    // the wrapper for run that cares of exceptions
-        safe_run(start_from: _st.int /*= 0*/): void {
+        safe_run(start_from?: _st.int /*= 0*/): void {
             this.read_params(this.ts.get_file_storage());
             this.ts.update_context(0, -1, true);
             this.ts.update_context(this, -1, true);
@@ -509,6 +588,8 @@ export enum TSConstants
     MAX_IDX = 4
 };
 
+var _tsSingleton = new TS();
+
 export class TS
 {
     //public:
@@ -518,7 +599,9 @@ export class TS
 
     
 
-    //static TS* ptr();
+    public static ptr(): TS{
+        return _tsSingleton;
+    }
 
 //    // initialize test system before running the first test
 //    virtual void init( const string& modulename );
@@ -543,7 +626,7 @@ export class TS
     }
 
 
-    printf(streams : _st.int, format: any, ...param: any[] ) : void
+    printf(streams: TSConstants, format: any, ...param: any[] ) : void
     {
         this.vprintf(streams, format, param);
     }
@@ -615,6 +698,7 @@ export class TS
 //    double get_test_case_count_scale() { return params.test_case_count_scale; }
 //
 //    const string& get_data_path() const { return data_path; }
+    get_data_path() : string { return this.data_path; }
 //
 //    // returns textual description of failure code
 //    static string str_from_code( const TS::FailureCode code );
@@ -639,7 +723,9 @@ export class TS
 *            Subclass of BaseTest for testing functions that process dense arrays           *
 \*****************************************************************************************/
 
-abstract class ArrayTest extends BaseTest
+export enum _ArrayTestInternal { INPUT, INPUT_OUTPUT, OUTPUT, REF_INPUT_OUTPUT, REF_OUTPUT, TEMP, MASK, MAX_ARR };
+
+export abstract class ArrayTest extends BaseTest
 {
 //public:
 //    // constructor(s) and destructor
@@ -655,7 +741,26 @@ abstract class ArrayTest extends BaseTest
 //    virtual int validate_test_results( int test_case_idx );
 //
 //    virtual void prepare_to_validation( int test_case_idx );
-//    virtual void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(int /*test_case_idx*/, sizes : Array<Array<_types.Size>>, types : Array<Array<_st.int>>): void {
+        var rng = this.ts.get_rng();
+        //Size size;
+        var size = new _types.Size();
+        //double val;
+        //size_t i, j;
+
+        var val = randReal(rng).valueOf() * (this.max_log_array_size.valueOf() - this.min_log_array_size.valueOf()) + this.min_log_array_size.valueOf();
+        size.width = Math.round(Math.exp(val * Math.LOG2E));
+        val = randReal(rng).valueOf() * (this.max_log_array_size.valueOf() - this.min_log_array_size.valueOf()) + this.min_log_array_size.valueOf();
+        size.height = Math.round(Math.exp(val * Math.LOG2E));
+
+        for (var i = 0; i < this.test_array.length; i++) {
+            var sizei = this.test_array[i].length;
+            for (var j = 0; j < sizei; j++) {
+                sizes[i][j] = size;
+                types[i][j] = _cvdef.MatrixType.CV_8UC1;
+            }
+        }
+    }
 //    virtual void fill_array( int test_case_idx, int i, int j, Mat& arr );
 //    virtual void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
 //    virtual double get_success_error_level( int test_case_idx, int i, int j );
@@ -663,20 +768,22 @@ abstract class ArrayTest extends BaseTest
 //    bool cvmat_allowed;
 //    bool iplimage_allowed;
 //    bool optional_mask;
-//    bool element_wise_relative_error;
+    protected element_wise_relative_error: boolean;
 //
-//    int min_log_array_size;
-//    int max_log_array_size;
+    protected min_log_array_size: _st.int;
+    protected max_log_array_size : _st.int;
 //
-//    enum { INPUT, INPUT_OUTPUT, OUTPUT, REF_INPUT_OUTPUT, REF_OUTPUT, TEMP, MASK, MAX_ARR };
+    
 //
-//    vector<vector<void*> > test_array;
+    //vector<vector<void*> > test_array;
+    protected test_array: Array<Array<any>>;
 //    vector<vector<Mat> > test_mat;
+    protected test_mat: Array<Array<any>>;
 //    float buf[4];
 };
 
 
-abstract class BadArgTest extends BaseTest
+export abstract class BadArgTest extends BaseTest
 {
 //public:
 //    // constructor(s) and destructor
@@ -684,48 +791,56 @@ abstract class BadArgTest extends BaseTest
 //    virtual ~BadArgTest();
 //
 //protected:
-//    virtual int run_test_case( int expected_code, const string& descr );
-//    virtual void run_func(void) = 0;
-//    int test_case_idx;
+    //protected abstract run_test_case(expected_code : _st.int, descr : string ) : _st.int;
+    protected abstract run_func() : void;
+    public test_case_idx: _st.int;
 //
 //    template<class F>
-//    int run_test_case( int expected_code, const string& _descr, F f)
-//    {
-//        int errcount = 0;
-//        bool thrown = false;
-//        const char* descr = _descr.c_str() ? _descr.c_str() : "";
-//
-//        try
-//        {
-//            f();
-//        }
-//        catch(const cv::Exception& e)
-//        {
-//            thrown = true;
-//            if( e.code != expected_code )
-//            {
-//                ts->printf(TS::LOG, "%s (test case #%d): the error code %d is different from the expected %d\n",
-//                    descr, test_case_idx, e.code, expected_code);
-//                errcount = 1;
-//            }
-//        }
-//        catch(...)
-//        {
-//            thrown = true;
-//            ts->printf(TS::LOG, "%s  (test case #%d): unknown exception was thrown (the function has likely crashed)\n",
-//                       descr, test_case_idx);
-//            errcount = 1;
-//        }
-//        if(!thrown)
-//        {
-//            ts->printf(TS::LOG, "%s  (test case #%d): no expected exception was thrown\n",
-//                       descr, test_case_idx);
-//            errcount = 1;
-//        }
-//        test_case_idx++;
-//
-//        return errcount;
-//    }
+    protected run_test_case(expected_code : _st.int, descr : string, f : ()=>void): _st.int
+    {
+        var errcount = 0;
+        var thrown = false;
+        //const char* descr = _descr.c_str() ? _descr.c_str() : "";
+
+
+        try {
+            f();
+        }
+        catch (e : Error) {
+            thrown = true;
+            if (e.code != expected_code) {
+                this.ts.printf(TSConstants.LOG, "%s (test case #%d): the error code %d is different from the expected %d\n",
+                    descr, this.test_case_idx, e.code, expected_code);
+                errcount = 1;
+            }
+        }
+        //catch(const cv::Exception& e)
+        //{
+        //    thrown = true;
+        //    if( e.code != expected_code )
+        //    {
+        //        ts->printf(TS::LOG, "%s (test case #%d): the error code %d is different from the expected %d\n",
+        //            descr, test_case_idx, e.code, expected_code);
+        //        errcount = 1;
+        //    }
+        //}
+        //catch(...)
+        //{
+        //    thrown = true;
+        //    ts->printf(TS::LOG, "%s  (test case #%d): unknown exception was thrown (the function has likely crashed)\n",
+        //               descr, test_case_idx);
+        //    errcount = 1;
+        //}
+        if(!thrown)
+        {
+            this.ts.printf(TSConstants.LOG, "%s  (test case #%d): no expected exception was thrown\n",
+                       descr, this.test_case_idx);
+            errcount = 1;
+        }
+        this.test_case_idx = this.test_case_idx.valueOf() + 1;
+
+        return errcount;
+    }
 };
 
 class DefaultRngAuto

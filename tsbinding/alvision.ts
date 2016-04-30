@@ -24,6 +24,10 @@ export * from './opencv/core';
 export * from './opencv/cvdef';
 export * from './opencv/HighGUI';
 export * from './opencv/imgproc';
+export * from './opencv/imgcodecs.ts';
+export * from './opencv/features2d.ts';
+export * from './opencv/flann.ts';
+//export * from './opencv/miniflann.ts';
 export * from './opencv/mat';
 export * from './opencv/Matx';
 export * from './opencv/static';
@@ -31,6 +35,7 @@ export * from './opencv/types';
 export * from './opencv/ts';
 export * from './opencv/persistence';
 
+export * from './opencv/tiff';
 
 
 

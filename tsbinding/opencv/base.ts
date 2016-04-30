@@ -62,7 +62,7 @@ import util = require('util');
 //#include "opencv2/core/cvdef.h"
 //#include "opencv2/core/cvstd.hpp"
 
-namespace cv {
+export namespace cv {
 
     //! @addtogroup core_utils
     //! @{
@@ -475,6 +475,55 @@ export function CV_ErrorNoReturn_(code, args) {
 
 export function CV_DbgAssert(expr: () =>boolean){
     CV_Assert(expr);
+}
+
+export function ASSERT_TRUE(val: boolean) {
+    CV_Assert(() => val);
+}
+
+export function ASSERT_EQ(val: any, expected: any) {
+    CV_Assert(() => val == expected);
+}
+
+export function EXPECT_TRUE(val: boolean) {
+    CV_Assert(() => val);
+}
+
+export function EXPECT_FALSE(val: boolean) {
+    CV_Assert(() => !val);
+}
+
+
+
+export function EXPECT_LT(low: number, high: number) {
+    CV_Assert(() => low < high);
+}
+
+export function EXPECT_EQ(val: any, expected: any) {
+    CV_Assert(() => val == expected);
+}
+
+export function ASSERT_THROW(expr: () => void, expectedException) {
+    try {
+        expr();
+    } catch (e) {
+        CV_Assert(() => e.message == expectedException.message);
+    }
+}
+
+export function EXPECT_NO_THROW(expr: () => void) {
+    try {
+        expr();
+    } catch (e) {
+        CV_Assert(() => false);
+    }
+}
+
+export function ASSERT_FALSE(val: boolean, msg?: string) {
+    if (!val) {
+        //what to do with msg?
+    }
+    ASSERT_TRUE(!val);
 }
 
 //#ifdef _DEBUG

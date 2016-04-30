@@ -700,7 +700,7 @@ export var findNonZero: IfindNonZero = alvision_module.findNonZero;
     */
 
 interface Imean {
-    (src: _st.InputArray, mask: _st.InputArray /* = noArray()*/): _types.Scalar;
+    (src: _st.InputArray, mask?: _st.InputArray /* = noArray()*/): _types.Scalar;
 }
 
 export var mean: Imean = alvision_module.mean;
@@ -927,15 +927,10 @@ export var normalize: Inormalize = alvision_module.normalize;
     @sa max, min, compare, inRange, extractImageCOI, mixChannels, split, Mat::reshape
     */
 
-export interface IminMaxLocCallback {
-    (minVal: _st.double,
-        maxVal: _st.double,
-        minLoc: _types.Point,
-        maxLoc: _types.Point): void;
-}
+
 
 export interface IminMaxLoc {
-    (src: _st.InputArray, cb: IminMaxLocCallback, mask? : _st.InputArray /* = noArray()*/) : void;
+    (src: _st.InputArray, cb: (minVal: _st.double,maxVal: _st.double,minLoc: _types.Point,maxLoc: _types.Point)=> void, mask? : _st.InputArray /* = noArray()*/) : void;
 
 }
 
@@ -994,12 +989,12 @@ export var minMaxIdx: IminMaxIdx = alvision_module.minMaxIdx;
     @param maxIdx pointer to the returned maximum location (in nD case). NULL is used if not required.
     */
 
-export interface IminMaxLocCallback {
-    (minVal : _st.double,maxVal : _st.double, minIdx : _st.int/* = 0*/, maxIdx : _st.int /* = 0*/): void;
-}
+//export interface IminMaxLocCallback {
+//    (minVal : _st.double,maxVal : _st.double, minIdx : _st.int/* = 0*/, maxIdx : _st.int /* = 0*/): void;
+//}
 
 export interface IminMaxLoc {
-    (a : _mat.SparseMat) : void;
+    (a: _mat.SparseMat, cb: (minVal: _st.double, maxVal: _st.double, minIdx: _st.int/* = 0*/, maxIdx: _st.int /* = 0*/)=> void) : void;
 }
 
 export var minMaxLoc: IminMaxLoc = alvision_module.minMaxLoc;
@@ -3369,27 +3364,27 @@ export interface RNG
 //    next 32-bit random number.*/
 //    unsigned next();
 //
-//    /**Each of the methods updates the state using the MWC algorithm and
-//    returns the next random number of the specified type. In case of integer
-//    types, the returned number is from the available value range for the
-//    specified type. In case of floating-point types, the returned value is
-//    from [0,1) range.
-//    */
-//    operator uchar();
-//    /** @overload */
-//    operator schar();
-//    /** @overload */
-//    operator ushort();
-//    /** @overload */
-//    operator short();
-//    /** @overload */
-//    operator unsigned();
-//    /** @overload */
-//    operator int();
-//    /** @overload */
-//    operator float();
-//    /** @overload */
-//    operator double();
+    /**Each of the methods updates the state using the MWC algorithm and
+    returns the next random number of the specified type. In case of integer
+    types, the returned number is from the available value range for the
+    specified type. In case of floating-point types, the returned value is
+    from [0,1) range.
+    */
+    uchar(): _st.uchar;
+    /** @overload */
+    //schar() : _st.schar;
+    /** @overload */
+    ushort(): _st.ushort;
+    /** @overload */
+    short() : _st.short;
+    /** @overload */
+    //operator unsigned() : _st.uint;
+    /** @overload */
+    int(): _st.int;
+    /** @overload */
+    float(): _st.float;
+    /** @overload */
+    double(): _st.double;
 //
 //    /** @brief returns a random integer sampled uniformly from [0, N).
 //

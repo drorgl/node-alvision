@@ -125,10 +125,15 @@ export interface MatxStatic<T> {
     //template < typename _Tp, int m, int n> class Matx {
     //    public:
     //enum { depth = DataType<_Tp>::depth,
+        depth: _st.int;
     //    rows = m,
+        rows: _st.int;
     //    cols = n,
+        cols: _st.int;
     //    channels = rows * cols,
+        channels: _st.int;
     //    type = CV_MAKETYPE(depth, channels),
+        type: _st.int;
     //    shortdim = (m < n ? m : n)
     //     };
 
@@ -336,40 +341,41 @@ export interface VecStatic<T> {
 }
 
 //template < typename _Tp, int cn> class Vec : public Matx < _Tp, cn, 1 >
-export interface Vec<T> extends Matx<T>{
-        //public:
-        //typedef _Tp value_type;
-        //enum { depth    = Matx < _Tp, cn, 1>::depth,
-        //    channels = cn,
-        //    type     = CV_MAKETYPE(depth, channels)
-        //};
+export interface Vec<T> extends Matx<T> {
+    //public:
+    //typedef _Tp value_type;
+    //enum { depth    = Matx < _Tp, cn, 1>::depth,
+    //    channels = cn,
+    //    type     = CV_MAKETYPE(depth, channels)
+    //};
 
         
-        //    //! per-element multiplication
-        //    Vec mul(const Vec<_Tp, cn>& v) const;
+    //    //! per-element multiplication
+    //    Vec mul(const Vec<_Tp, cn>& v) const;
 
-        //    //! conjugation (makes sense for complex numbers and quaternions)
-        //    Vec conj() const;
+    //    //! conjugation (makes sense for complex numbers and quaternions)
+    //    Vec conj() const;
 
-        //    /*!
-        //      cross product of the two 3D vectors.
+    //    /*!
+    //      cross product of the two 3D vectors.
         
-        //      For other dimensionalities the exception is raised
-        //    */
-        //    Vec cross(const Vec& v) const;
-        ////! conversion to another data type
-        //template<typename T2> operator Vec<T2, cn>() const;
+    //      For other dimensionalities the exception is raised
+    //    */
+    //    Vec cross(const Vec& v) const;
+    ////! conversion to another data type
+    //template<typename T2> operator Vec<T2, cn>() const;
 
-        ///*! element access */
-        //const _Tp& operator[](int i) const;
-        //_Tp& operator[](int i);
-        //const _Tp& operator()(int i) const;
-        //_Tp& operator()(int i);
+    ///*! element access */
+    //const _Tp& operator[](int i) const;
+    //_Tp& operator[](int i);
+    //const _Tp& operator()(int i) const;
+    //_Tp& operator()(int i);
+    val(i: _st.int): T;
 
-        //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_AddOp);
-        //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_SubOp);
-        //template<typename _T2> Vec(const Matx< _Tp, cn, 1>& a, _T2 alpha, Matx_ScaleOp);
-    };
+    //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_AddOp);
+    //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_SubOp);
+    //template<typename _T2> Vec(const Matx< _Tp, cn, 1>& a, _T2 alpha, Matx_ScaleOp);
+}
 
 /** @name Shorter aliases for the most popular specializations of Vec<T,n>
   @{

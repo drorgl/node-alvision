@@ -11,4 +11,21 @@
 /tsbinding/*/*.js
 /test/*/*.cpp
 /test/*/*/*.cpp
+/test/*/*/*/*.cpp
+/test/*/*.cu
+/test/*/*/*.cu
+/test/*/*/*/*.cu
 
+/test/*/*.js
+/test/*/*/*.js
+
+/test/*/*.map
+/test/*/*/*.map
+/test/*/*/*/*.map
+
+/tsbinding/*.map
+/tsbinding/*/*.map
+/tsbinding/*/*/*.map
+/tsbinding/*/*/*/*.map
+
+/typings/

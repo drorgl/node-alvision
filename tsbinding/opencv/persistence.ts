@@ -1,52 +1,60 @@
-///*M///////////////////////////////////////////////////////////////////////////////////////
-////
-////  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-////
-////  By downloading, copying, installing or using the software you agree to this license.
-////  If you do not agree to this license, do not download, install,
-////  copy or use the software.
-////
-////
-////                          License Agreement
-////                For Open Source Computer Vision Library
-////
-//// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
-//// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
-//// Copyright (C) 2013, OpenCV Foundation, all rights reserved.
-//// Third party copyrights are property of their respective owners.
-////
-//// Redistribution and use in source and binary forms, with or without modification,
-//// are permitted provided that the following conditions are met:
-////
-////   * Redistribution's of source code must retain the above copyright notice,
-////     this list of conditions and the following disclaimer.
-////
-////   * Redistribution's in binary form must reproduce the above copyright notice,
-////     this list of conditions and the following disclaimer in the documentation
-////     and/or other materials provided with the distribution.
-////
-////   * The name of the copyright holders may not be used to endorse or promote products
-////     derived from this software without specific prior written permission.
-////
-//// This software is provided by the copyright holders and contributors "as is" and
-//// any express or implied warranties, including, but not limited to, the implied
-//// warranties of merchantability and fitness for a particular purpose are disclaimed.
-//// In no event shall the Intel Corporation or contributors be liable for any direct,
-//// indirect, incidental, special, exemplary, or consequential damages
-//// (including, but not limited to, procurement of substitute goods or services;
-//// loss of use, data, or profits; or business interruption) however caused
-//// and on any theory of liability, whether in contract, strict liability,
-//// or tort (including negligence or otherwise) arising in any way out of
-//// the use of this software, even if advised of the possibility of such damage.
-////
-////M*/
+/*M///////////////////////////////////////////////////////////////////////////////////////
+//
+//  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+//
+//  By downloading, copying, installing or using the software you agree to this license.
+//  If you do not agree to this license, do not download, install,
+//  copy or use the software.
+//
+//
+//                          License Agreement
+//                For Open Source Computer Vision Library
+//
+// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
+// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
+// Copyright (C) 2013, OpenCV Foundation, all rights reserved.
+// Third party copyrights are property of their respective owners.
+//
+// Redistribution and use in source and binary forms, with or without modification,
+// are permitted provided that the following conditions are met:
+//
+//   * Redistribution's of source code must retain the above copyright notice,
+//     this list of conditions and the following disclaimer.
+//
+//   * Redistribution's in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//
+//   * The name of the copyright holders may not be used to endorse or promote products
+//     derived from this software without specific prior written permission.
+//
+// This software is provided by the copyright holders and contributors "as is" and
+// any express or implied warranties, including, but not limited to, the implied
+// warranties of merchantability and fitness for a particular purpose are disclaimed.
+// In no event shall the Intel Corporation or contributors be liable for any direct,
+// indirect, incidental, special, exemplary, or consequential damages
+// (including, but not limited to, procurement of substitute goods or services;
+// loss of use, data, or profits; or business interruption) however caused
+// and on any theory of liability, whether in contract, strict liability,
+// or tort (including negligence or otherwise) arising in any way out of
+// the use of this software, even if advised of the possibility of such damage.
+//
+//M*/
 
-//var alvision_module = require('../../lib/bindings.js');
+var alvision_module = require('../../lib/bindings.js');
 
-//import * as _mat from './mat'
-//import * as _matx from './matx'
-////import * as _st from './Constants'
-//import * as _st from './static'
+import * as _mat from './mat'
+import * as _matx from './matx'
+//import * as _st from './Constants'
+import * as _st from './static'
+import * as _types from './types'
+import * as _core from './core'
+import * as _base from './base'
+//import * as _vec from './Vec'
+//import * as _point from './Point'
+//import * as _algorithm from './Algorithm'
+//import * as _size from './Size'
+//import * as _scalar from './Scalar'
 
 
 ////#ifndef __OPENCV_CORE_PERSISTENCE_HPP__
@@ -370,25 +378,55 @@ export interface CvFileNode {
 //class CV_EXPORTS FileNode;
 //class CV_EXPORTS FileNodeIterator;
 
+    //! file storage mode
+export enum FileStorageMode
+    {
+        READ        = 0, //!< value, open the file for reading
+        WRITE       = 1, //!< value, open the file for writing
+        APPEND      = 2, //!< value, open the file for appending
+        MEMORY      = 4, //!< flag, read data from source or write data to the internal buffer (which is
+                         //!< returned by FileStorage::release)
+        FORMAT_MASK = (7<<3), //!< mask for format flags
+        FORMAT_AUTO = 0,      //!< flag, auto format
+        FORMAT_XML  = (1<<3), //!< flag, XML format
+        FORMAT_YAML = (2<<3)  //!< flag, YAML format
+    };
+
+
+    interface FileStorageStatic {
+    /** @brief The constructors.
+
+    The full constructor opens the file. Alternatively you can use the default constructor and then
+    call FileStorage::open.
+     */
+        new (): FileStorage;
+
+    /** @overload
+    @param source Name of the file to open or the text string to read the data from. Extension of the
+    file (.xml or .yml/.yaml) determines its format (XML or YAML respectively). Also you can append .gz
+    to work with compressed files, for example myHugeMatrix.xml.gz. If both FileStorage::WRITE and
+    FileStorage::MEMORY flags are specified, source is used just to specify the output file format (e.g.
+    mydata.xml, .yml etc.).
+    @param flags Mode of operation. See  FileStorage::Mode
+    @param encoding Encoding of the file. Note that UTF-16 XML encoding is not supported currently and
+    you should use 8-bit encoding instead of it.
+    */
+        new (source : string, flags : FileStorageMode, encoding? : string): FileStorage;
+
+    /** @overload */
+    new(fs : CvFileStorage, owning? : boolean /*=true*/) : FileStorage
+
+//    //! the destructor. calls release()
+//    virtual ~FileStorage();
+
+    }
+
 ///** @brief XML/YAML file storage class that encapsulates all the information necessary for writing or reading
 //data to/from a file.
 // */
-//class CV_EXPORTS_W FileStorage
-//{
+interface FileStorage
+{
 //public:
-//    //! file storage mode
-//    enum Mode
-//    {
-//        READ        = 0, //!< value, open the file for reading
-//        WRITE       = 1, //!< value, open the file for writing
-//        APPEND      = 2, //!< value, open the file for appending
-//        MEMORY      = 4, //!< flag, read data from source or write data to the internal buffer (which is
-//                         //!< returned by FileStorage::release)
-//        FORMAT_MASK = (7<<3), //!< mask for format flags
-//        FORMAT_AUTO = 0,      //!< flag, auto format
-//        FORMAT_XML  = (1<<3), //!< flag, XML format
-//        FORMAT_YAML = (2<<3)  //!< flag, YAML format
-//    };
 //    enum
 //    {
 //        UNDEFINED      = 0,
@@ -397,58 +435,34 @@ export interface CvFileNode {
 //        INSIDE_MAP     = 4
 //    };
 
-//    /** @brief The constructors.
 
-//    The full constructor opens the file. Alternatively you can use the default constructor and then
-//    call FileStorage::open.
-//     */
-//    CV_WRAP FileStorage();
+    /** @brief Opens a file.
 
-//    /** @overload
-//    @param source Name of the file to open or the text string to read the data from. Extension of the
-//    file (.xml or .yml/.yaml) determines its format (XML or YAML respectively). Also you can append .gz
-//    to work with compressed files, for example myHugeMatrix.xml.gz. If both FileStorage::WRITE and
-//    FileStorage::MEMORY flags are specified, source is used just to specify the output file format (e.g.
-//    mydata.xml, .yml etc.).
-//    @param flags Mode of operation. See  FileStorage::Mode
-//    @param encoding Encoding of the file. Note that UTF-16 XML encoding is not supported currently and
-//    you should use 8-bit encoding instead of it.
-//    */
-//    CV_WRAP FileStorage(const String& source, int flags, const String& encoding=String());
+    See description of parameters in FileStorage::FileStorage. The method calls FileStorage::release
+    before opening the file.
+    @param filename Name of the file to open or the text string to read the data from.
+       Extension of the file (.xml or .yml/.yaml) determines its format (XML or YAML respectively).
+        Also you can append .gz to work with compressed files, for example myHugeMatrix.xml.gz. If both
+        FileStorage::WRITE and FileStorage::MEMORY flags are specified, source is used just to specify
+        the output file format (e.g. mydata.xml, .yml etc.).
+    @param flags Mode of operation. One of FileStorage::Mode
+    @param encoding Encoding of the file. Note that UTF-16 XML encoding is not supported currently and
+    you should use 8-bit encoding instead of it.
+     */
+    open(filename : string, flags: FileStorageMode, encoding?: string /*=String()*/): boolean;
 
-//    /** @overload */
-//    FileStorage(CvFileStorage* fs, bool owning=true);
+    /** @brief Checks whether the file is opened.
 
-//    //! the destructor. calls release()
-//    virtual ~FileStorage();
+    @returns true if the object is associated with the current file and false otherwise. It is a
+    good practice to call this method after you tried to open a file.
+     */
+    isOpened(): boolean;
 
-//    /** @brief Opens a file.
+    /** @brief Closes the file and releases all the memory buffers.
 
-//    See description of parameters in FileStorage::FileStorage. The method calls FileStorage::release
-//    before opening the file.
-//    @param filename Name of the file to open or the text string to read the data from.
-//       Extension of the file (.xml or .yml/.yaml) determines its format (XML or YAML respectively).
-//        Also you can append .gz to work with compressed files, for example myHugeMatrix.xml.gz. If both
-//        FileStorage::WRITE and FileStorage::MEMORY flags are specified, source is used just to specify
-//        the output file format (e.g. mydata.xml, .yml etc.).
-//    @param flags Mode of operation. One of FileStorage::Mode
-//    @param encoding Encoding of the file. Note that UTF-16 XML encoding is not supported currently and
-//    you should use 8-bit encoding instead of it.
-//     */
-//    CV_WRAP virtual bool open(const String& filename, int flags, const String& encoding=String());
-
-//    /** @brief Checks whether the file is opened.
-
-//    @returns true if the object is associated with the current file and false otherwise. It is a
-//    good practice to call this method after you tried to open a file.
-//     */
-//    CV_WRAP virtual bool isOpened() const;
-
-//    /** @brief Closes the file and releases all the memory buffers.
-
-//    Call this method after all I/O operations with the storage are finished.
-//     */
-//    CV_WRAP virtual void release();
+    Call this method after all I/O operations with the storage are finished.
+     */
+    release(): void;
 
 //    /** @brief Closes the file and releases all the memory buffers.
 
@@ -513,7 +527,9 @@ export interface CvFileNode {
 //    String elname; //!< the currently written element
 //    std::vector<char> structs; //!< the stack of written structures
 //    int state; //!< the writer state
-//};
+    };
+
+export var FileStorage: FileStorageStatic = alvision_module.FileStorage;
 
 //template<> CV_EXPORTS void DefaultDeleter<CvFileStorage>::operator ()(CvFileStorage* obj) const;
 

@@ -542,6 +542,11 @@ export interface Rect2f extends Rect_<_st.float> { }
 export interface Rect2d extends Rect_<_st.double> { }
 export interface Rect extends Rect2i { }
 
+export var Rect: Rect_Static<_st.int> = alvision_module.Rect2i;
+export var Rect2i: Rect_Static<_st.int> = alvision_module.Rect2i;
+export var Rect2f: Rect_Static<_st.float> = alvision_module.Rect2f;
+export var Rect2d: Rect_Static<_st.double> = alvision_module.Rect2d;
+
 //typedef Rect_< int > Rect2i;
 //typedef Rect_< float > Rect2f;
 //typedef Rect_< double > Rect2d;
@@ -626,6 +631,8 @@ export interface RotatedRect
     angle: _st.float ;    //< the rotation angle. When the angle is 0, 90, 180, 270 etc., the rectangle becomes an up-right rectangle.
 };
 
+export var RotatedRect: RotatedRectStatic = alvision_module.RotatedRect;
+
 //template <> class DataType<RotatedRect>
 //{
 //    public:
@@ -688,6 +695,8 @@ interface Range
     end: _st.int;
 };
 
+export var Range: RangeStatic = alvision_module.Range;
+
 //template <> class DataType<Range>
 //{
 //    public:
@@ -717,17 +726,17 @@ OpenCV to pass pixel values.
 */
 
 export interface Scalar_Static<T> {
-    Scalar_();
-    Scalar_(v0 : T, v1 : T, v2 : T /*= 0*/, v3 : T /*= 0*/);
-    Scalar_(v0 : T);
-    Scalar_(v: _matx.Vec<T>);
+    new();
+    new(v0 : T, v1 : T, v2? : T /*= 0*/, v3? : T /*= 0*/);
+    new(v0 : T);
+    new(v: _matx.Vec<T>);
 
         //! returns a scalar with all elements set to v0
     all(v0 : T): Scalar_<T>;
 }
 
 //template < typename _Tp> class Scalar_ : public Vec < _Tp, 4 >
-export interface Scalar_<T>
+export interface Scalar_<T> extends _matx.Vec<T>
     {
         //public:
         //! various constructors
@@ -851,8 +860,8 @@ export interface KeyPoint
     */
     //CV_WRAP static float overlap(const KeyPoint& kp1, const KeyPoint& kp2);
 
-    //CV_PROP_RW Point2f pt; //!< coordinates of the keypoints
-    //CV_PROP_RW float size; //!< diameter of the meaningful keypoint neighborhood
+    pt: Point2f; //!< coordinates of the keypoints
+    size : _st.float; //!< diameter of the meaningful keypoint neighborhood
     //CV_PROP_RW float angle; //!< computed orientation of the keypoint (-1 if not applicable);
     ////!< it's in [0,360) degrees and measured relative to
     ////!< image coordinate system, ie in clockwise.

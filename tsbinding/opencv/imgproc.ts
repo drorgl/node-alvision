@@ -1394,8 +1394,8 @@ export var medianBlur: ImedianBlur = alvision_module.medianBlur;
 
 interface IGaussianBlur{
     (src: _st.InputArray, dst: _st.OutputArray, ksize: _types.Size,
-        sigmaX: _st.double, sigmaY: _st.double /* = 0*/,
-        borderType: _st.int /* = BORDER_DEFAULT*/);
+        sigmaX: _st.double, sigmaY?: _st.double /* = 0*/,
+        borderType?: _base.BorderTypes /* = BORDER_DEFAULT*/);
 }
 
 export var GaussianBlur: IGaussianBlur = alvision_module.GaussianBlur;
@@ -4184,7 +4184,7 @@ export var floodFill: IfloodFill = alvision_module.floodFill;
      */
 
 interface IcvtColor{
-    (src: _st.InputArray, dst: _st.OutputArray, code: ColorConversionCodes, dstCn: _st.int /*= 0*/): void;
+    (src: _st.InputArray, dst: _st.OutputArray, code: ColorConversionCodes, dstCn?: _st.int /*= 0*/): void;
 }
 
 export var cvtColor: IcvtColor = alvision_module.cvtColor;
@@ -4911,13 +4911,13 @@ export var applyColorMap: IapplyColorMap = alvision_module.applyColorMap;
 
     interface Iline{
         (img: _st.InputOutputArray, pt1: _types.Point, pt2: _types.Point, color: _types.Scalar,
-            thickness: _st.int /*= 1*/, lineType: _st.int /* = LINE_8*/, shift: _st.int /* = 0*/): void;
+            thickness: _st.int /*= 1*/, lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
 }
 
 export var line: Iline = alvision_module.line;
 
     //CV_EXPORTS_W void line(img : InputOutputArray, pt1 : _types.Point, pt2 : _types.Point, color : _types.Scalar,
-    //    thickness : _st.int = 1, lineType : _st.int /* = LINE_8*/, shift : _st.int /* = 0*/);
+    //    thickness : _st.int = 1, lineType?: _core.LineTypes /* = LINE_8*/, shift : _st.int /* = 0*/);
 
     /** @brief Draws a arrow segment pointing from the first point to the second one.
     
@@ -4935,7 +4935,7 @@ export var line: Iline = alvision_module.line;
 
 interface IarrowedLine{
     (img: _st.InputOutputArray, pt1: _types.Point, pt2: _types.Point, color: _types.Scalar,
-        thickness: _st.int /*= 1*/, line_type: _st.int /* = 8*/, shift : _st.int /* = 0*/, tipLength : _st.double /* = 0.1 */): void;
+        thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes /* = 8*/, shift? : _st.int /* = 0*/, tipLength? : _st.double /* = 0.1 */): void;
 }
 
 export var arrowedLine: IarrowedLine = alvision_module.arrowedLine;
@@ -4960,15 +4960,15 @@ export var arrowedLine: IarrowedLine = alvision_module.arrowedLine;
 
     interface Irectangle {
         (img: _st.InputOutputArray, pt1 : _types.Point, pt2 : _types.Point,
-            color: _types.Scalar, thickness: _st.int /*= 1*/,
-            lineType: _st.int /* = LINE_8*/, shift: _st.int /* = 0*/): void;
+            color: _types.Scalar, thickness?: _st.int /*= 1*/,
+            lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
     }
 
 export var rectangle: Irectangle = alvision_module.rectangle;
 
 //    CV_EXPORTS_W void rectangle(img : InputOutputArray, pt1 : _types.Point, pt2 : _types.Point,
 //                          color : _types.Scalar, thickness : _st.int = 1,
-//        lineType : _st.int /* = LINE_8*/, shift : _st.int /* = 0*/);
+//        lineType?: _core.LineTypes /* = LINE_8*/, shift : _st.int /* = 0*/);
 
     /** @overload
     
@@ -4978,15 +4978,15 @@ export var rectangle: Irectangle = alvision_module.rectangle;
 
     interface Irectangle {
         (img: _mat.Mat, rec : _types.Rect,
-            color: _types.Scalar, thickness: _st.int /*= 1*/,
-            lineType: _st.int /* = LINE_8*/, shift: _st.int /* = 0*/): void;
+            color: _types.Scalar, thickness?: _st.int /*= 1*/,
+            lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
     }
 
 export var rectangle: Irectangle = alvision_module.rectangle;
 
 //    CV_EXPORTS void rectangle(img : _mat.Mat, rec : _types.Rect,
 //                          color : _types.Scalar, thickness : _st.int = 1,
-//        lineType : _st.int /* = LINE_8*/, shift : _st.int /* = 0*/);
+//        lineType?: _core.LineTypes /* = LINE_8*/, shift : _st.int /* = 0*/);
 
     /** @brief Draws a circle.
     
@@ -5003,15 +5003,15 @@ export var rectangle: Irectangle = alvision_module.rectangle;
 
     interface Icircle{
         (img: _st.InputOutputArray, center: _types.Point, radius : _st.int,
-        color: _types.Scalar, thickness: _st.int /*= 1*/,
-        lineType: _st.int /* = LINE_8*/, shift: _st.int /* = 0*/): void;
+        color: _types.Scalar, thickness?: _st.int /*= 1*/,
+        lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
     }
 
 export var circle: Icircle = alvision_module.circle;
 
 //    CV_EXPORTS_W void circle(img : InputOutputArray, center : _types.Point, radius : _st.int,
 //                       color : _types.Scalar, thickness : _st.int = 1,
-//        lineType : _st.int /* = LINE_8*/, shift : _st.int /* = 0*/);
+//        lineType?: _core.LineTypes /* = LINE_8*/, shift : _st.int /* = 0*/);
 
     /** @brief Draws a simple or thick elliptic arc or fills an ellipse sector.
     
@@ -5040,8 +5040,8 @@ export var circle: Icircle = alvision_module.circle;
     interface Iellipse{
         (img: _st.InputOutputArray, center: _types.Point, axes: _types.Size,
             angle: _st.double, startAngle: _st.double, endAngle: _st.double,
-            color: _types.Scalar, thickness: _st.int /*= 1*/,
-            lineType: _st.int /* = LINE_8*/, shift: _st.int /* = 0*/): void;
+            color: _types.Scalar, thickness?: _st.int /*= 1*/,
+            lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
     }
 
 export var ellipse: Iellipse = alvision_module.ellipse;
@@ -5049,7 +5049,7 @@ export var ellipse: Iellipse = alvision_module.ellipse;
 //    CV_EXPORTS_W void ellipse(img : InputOutputArray, center : _types.Point, axes : _types.Size,
 //        angle : _st.double, startAngle : _st.double, endAngle : _st.double,
 //                        color : _types.Scalar, thickness : _st.int = 1,
-//        lineType : _st.int /* = LINE_8*/, shift : _st.int /* = 0*/);
+//        lineType?: _core.LineTypes /* = LINE_8*/, shift : _st.int /* = 0*/);
 
     /** @overload
     @param img Image.
@@ -5063,13 +5063,13 @@ export var ellipse: Iellipse = alvision_module.ellipse;
 
     interface Iellipse{
         (img: _st.InputOutputArray, box: _types.RotatedRect, color: _types.Scalar,
-            thickness: _st.int /*= 1*/, lineType: _st.int /* = LINE_8*/): void;
+            thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes  /* = LINE_8*/): void;
     }
 
 export var ellipse: Iellipse = alvision_module.ellipse;
 
 //    CV_EXPORTS_W void ellipse(img : InputOutputArray, box : _types.RotatedRect, color : _types.Scalar,
-//        thickness : _st.int = 1, lineType : _st.int /* = LINE_8*/);
+//        thickness : _st.int = 1, lineType?: _core.LineTypes /* = LINE_8*/);
 
     /* ----------------------------------------------------------------------------------------- */
     /* ADDING A SET OF PREDEFINED MARKERS WHICH COULD BE USED TO HIGHLIGHT POSITIONS IN AN IMAGE */
@@ -5120,14 +5120,14 @@ export var drawMarker: IdrawMarker = alvision_module.drawMarker;
 
     interface IfillConvexPoly{
         (img: _mat.Mat, pts : Array<_types.Point>,
-            color: _types.Scalar, lineType: _st.int /* = LINE_8*/,
-            shift: _st.int /* = 0*/): void;
+            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/,
+            shift?: _st.int /* = 0*/): void;
     }
 
 export var fillConvexPoly: IfillConvexPoly = alvision_module.fillConvexPoly;
 
 //    CV_EXPORTS void fillConvexPoly(img : _mat.Mat, const Point* pts, int npts,
-//    color : _types.Scalar, lineType : _st.int /* = LINE_8*/,
+//    color : _types.Scalar, lineType?: _core.LineTypes /* = LINE_8*/,
 //        shift : _st.int /* = 0*/);
 
     /** @brief Fills a convex polygon.
@@ -5146,29 +5146,29 @@ export var fillConvexPoly: IfillConvexPoly = alvision_module.fillConvexPoly;
 
     interface IfillConvexPoly{
         (img: _st.InputOutputArray, points: _st.InputArray,
-            color: _types.Scalar, lineType: _st.int /* = LINE_8*/,
-            shift: _st.int /* = 0*/): void;
+            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/,
+            shift?: _st.int /* = 0*/): void;
     }
 
 export var fillConvexPoly: IfillConvexPoly = alvision_module.fillConvexPoly;
 
 //    CV_EXPORTS_W void fillConvexPoly(img : InputOutputArray, points : _st.InputArray,
-//                                 color : _types.Scalar, lineType : _st.int /* = LINE_8*/,
+//                                 color : _types.Scalar, lineType?: _core.LineTypes /* = LINE_8*/,
 //        shift : _st.int /* = 0*/);
 
     /** @overload */
 
     interface IfillPoly{
         (img: _mat.Mat, pts : Array<_types.Point>, ncontours: _st.int,
-        color: _types.Scalar, lineType: _st.int /* = LINE_8*/, shift: _st.int /* = 0*/,
-        offset: _types.Point /* = Point()*/): void;
+            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/,
+        offset?: _types.Point /* = Point()*/): void;
     }
 
 export var fillPoly: IfillPoly = alvision_module.fillPoly;
 
 //    CV_EXPORTS void fillPoly(img : _mat.Mat, const Point** pts,
 //    const int* npts, ncontours : _st.int,
-//    color : _types.Scalar, lineType : _st.int /* = LINE_8*/, shift : _st.int /* = 0*/,
+//    color : _types.Scalar, lineType?: _core.LineTypes /* = LINE_8*/, shift : _st.int /* = 0*/,
 //        offset : _types.Point /* = Point()*/ );
 
     /** @brief Fills the area bounded by one or more polygons.
@@ -5187,14 +5187,14 @@ export var fillPoly: IfillPoly = alvision_module.fillPoly;
 
     interface IfillPoly {
         (img: _st.InputOutputArray, pts: _st.InputArrayOfArrays,
-            color: _types.Scalar, lineType: _st.int /* = LINE_8*/, shift: _st.int /* = 0*/,
-            offset: _types.Point /* = Point()*/): void;
+            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/,
+            offset?: _types.Point /* = Point()*/): void;
     }
 
 export var fillPoly: IfillPoly = alvision_module.fillPoly;
 
 //    CV_EXPORTS_W void fillPoly(img : InputOutputArray, pts : _st.InputArrayOfArrays,
-//                           color : _types.Scalar, lineType : _st.int /* = LINE_8*/, shift : _st.int /* = 0*/,
+//                           color : _types.Scalar, lineType?: _core.LineTypes /* = LINE_8*/, shift : _st.int /* = 0*/,
 //        offset : _types.Point /* = Point()*/ );
 
     /** @overload */
@@ -5202,13 +5202,13 @@ export var fillPoly: IfillPoly = alvision_module.fillPoly;
     interface Ipolylines{
         (img : _mat.Mat, pts : Array<_types.Point>,
         ncontours : _st.int, isClosed: boolean, color: _types.Scalar,
-        thickness: _st.int /*= 1*/, lineType: _st.int /* = LINE_8*/, shift: _st.int /* = 0*/ ) : void;
+        thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/ ) : void;
     }
 export var polyLines: Ipolylines = alvision_module.polyLines;
 
 //    CV_EXPORTS void polylines(img : _mat.Mat, const Point* const* pts, const int* npts,
 //        ncontours : _st.int, isClosed : boolean, color : _types.Scalar,
-//            thickness : _st.int = 1, lineType : _st.int /* = LINE_8*/, shift : _st.int /* = 0*/ );
+//            thickness : _st.int = 1, lineType?: _core.LineTypes /* = LINE_8*/, shift : _st.int /* = 0*/ );
 
     /** @brief Draws several polygonal curves.
     
@@ -5227,7 +5227,7 @@ export var polyLines: Ipolylines = alvision_module.polyLines;
     interface Ipolylines{
         (img: _st.InputOutputArray, pts : _st.InputArrayOfArrays,
         isClosed : boolean, color: _types.Scalar,
-        thickness: _st.int /*= 1*/, lineType: _st.int /* = LINE_8*/, shift : _st.int /* = 0*/): void;
+        thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes  /* = LINE_8*/, shift? : _st.int /* = 0*/): void;
 
     }
 
@@ -5235,7 +5235,7 @@ export var polylines: Ipolylines = alvision_module.polylines;
 
  //   CV_EXPORTS_W void polylines(img : InputOutputArray, pts : _st.InputArrayOfArrays,
  //       isClosed : boolean, color : _types.Scalar,
- //           thickness : _st.int = 1, lineType : _st.int /* = LINE_8*/, shift : _st.int /* = 0*/ );
+ //           thickness : _st.int = 1, lineType?: _core.LineTypes /* = LINE_8*/, shift : _st.int /* = 0*/ );
 
     /** @example contours2.cpp
       An example using the drawContour functionality
@@ -5312,16 +5312,16 @@ export var polylines: Ipolylines = alvision_module.polylines;
         interface IdrawContours {
             (image: _st.InputOutputArray, contours : _st.InputArrayOfArrays,
                 contourIdx : _st.int, color : _types.Scalar,
-                thickness: _st.int /*= 1*/, lineType: _st.int /* = LINE_8*/,
-                hierarchy : _st.InputArray /* = noArray()*/,
-                maxLevel : _st.int /* =  INT_MAX*/, offset : _types.Point /* = Point()*/): void;
+                thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes  /* = LINE_8*/,
+                hierarchy? : _st.InputArray /* = noArray()*/,
+                maxLevel? : _st.int /* =  INT_MAX*/, offset? : _types.Point /* = Point()*/): void;
     }
 
 export var drawContours: IdrawContours = alvision_module.drawContours;
 
 //    CV_EXPORTS_W void drawContours(image : _st.InputOutputArray, contours : _st.InputArrayOfArrays,
 //        contourIdx : _st.int, color : _types.Scalar,
-//            thickness : _st.int = 1, lineType : _st.int /* = LINE_8*/,
+//            thickness : _st.int = 1, lineType?: _core.LineTypes /* = LINE_8*/,
 //            hierarchy : _st.InputArray /* = noArray()*/,
 //            maxLevel : _st.int /* =  INT_MAX*/, offset : _types.Point /* = Point()*/ );
 
@@ -5336,7 +5336,7 @@ export var drawContours: IdrawContours = alvision_module.drawContours;
      */
 
         interface IclipLine{
-            (imgSize: _types.Size, pt1: _types.Point, pt2: _types.Point, cb: (pt1: _types.Point, pt2: _types.Point) => void): boolean;
+            (imgSize: _types.Size, pt1: _types.Point, pt2: _types.Point, cb?: (pt1: _types.Point, pt2: _types.Point) => void): boolean;
         }
 
 export var clipLine: IclipLine = alvision_module.clipLine;
@@ -5349,7 +5349,7 @@ export var clipLine: IclipLine = alvision_module.clipLine;
     @param pt2 Second line point.
     */
 interface IclipLine {
-    (imgRect: _types.Rect, pt1: _types.Point, pt2: _types.Point, cb: (pt1: _types.Point, pt2: _types.Point) => void): boolean;
+    (imgRect: _types.Rect, pt1: _types.Point, pt2: _types.Point, cb?: (pt1: _types.Point, pt2: _types.Point) => void): boolean;
     }
 
 export var clipLine: IclipLine = alvision_module.clipLine;
@@ -5405,15 +5405,15 @@ export var ellipse2Poly: Iellipse2Poly = alvision_module.ellipse2Poly;
     interface IputText {
         (img : _st.InputOutputArray, text: string, org : _types.Point,
             fontFace: _st.int, fontScale: _st.double, color : _types.Scalar,
-            thickness: _st.int /* = 1*/, lineType : _st.int /* = LINE_8*/,
-            bottomLeftOrigin : boolean /* = false*/): void;
+            thickness?: _st.int /* = 1*/, lineType?: _core.LineTypes /* = LINE_8*/,
+            bottomLeftOrigin? : boolean /* = false*/): void;
     }
 
 export var putText: IputText = alvision_module.putText;
 
 //    CV_EXPORTS_W void putText(img : InputOutputArray, text : string, org : _types.Point,
 //        fontFace : _st.int, fontScale : _st.double, color : _types.Scalar,
-//        thickness : _st.int = 1, lineType : _st.int /* = LINE_8*/,
+//        thickness : _st.int = 1, lineType?: _core.LineTypes /* = LINE_8*/,
 //        bottomLeftOrigin : boolean /* = false*/ );
 
     /** @brief Calculates the width and height of a text string.
