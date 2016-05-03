@@ -56,68 +56,61 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-class CV_FramecountTest: public cvtest::BaseTest
+class CV_FramecountTest extends alvision. cvtest.BaseTest
 {
-public:
-    void run(int);
-};
+    run(ii : alvision.int): void {
+        const time_sec = 5, fps = 25;
 
-void CV_FramecountTest::run(int)
-{
-    const int time_sec = 5, fps = 25;
+        const ext = ["avi", "mov", "mp4"];
 
-    const string ext[] = {"avi", "mov", "mp4"};
+        //const n = sizeof(ext) / sizeof(ext[0]);
 
-    const size_t n = sizeof(ext)/sizeof(ext[0]);
+        const src_dir = this.ts.get_data_path();
 
-    const string src_dir = ts->get_data_path();
+        this.ts.printf(cvtest::TS::LOG, "\n\nSource files directory: %s\n", (src_dir + "video/").c_str());
 
-    ts->printf(cvtest::TS::LOG, "\n\nSource files directory: %s\n", (src_dir+"video/").c_str());
+        Ptr < CvCapture > cap;
+        
 
-    Ptr<CvCapture> cap;
-
-    for (size_t i = 0; i < n; ++i)
-    {
-        string file_path = src_dir+"video/big_buck_bunny."+ext[i];
-
-        cap.reset(cvCreateFileCapture(file_path.c_str()));
-        if (!cap)
+        for (size_t i = 0; i < n; ++i)
         {
-            ts->printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i+1, ext[i].c_str());
-            ts->printf(cvtest::TS::LOG, "Error: cannot read source video file.\n");
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
-            return;
-        }
+            string file_path = src_dir + "video/big_buck_bunny." + ext[i];
 
-        //cvSetCaptureProperty(cap, CV_CAP_PROP_POS_FRAMES, 0);
-        IplImage* frame; int FrameCount = 0;
+            cap.reset(cvCreateFileCapture(file_path.c_str()));
+            if (!cap) {
+                ts ->printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i + 1, ext[i].c_str());
+                ts ->printf(cvtest::TS::LOG, "Error: cannot read source video file.\n");
+                ts ->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+                return;
+            }
 
-        for(;;)
-        {
-            frame = cvQueryFrame(cap);
-            if( !frame )
-                break;
-            FrameCount++;
-        }
+            //cvSetCaptureProperty(cap, CV_CAP_PROP_POS_FRAMES, 0);
+            IplImage * frame; int FrameCount = 0;
 
-        int framecount = (int)cvGetCaptureProperty(cap, CAP_PROP_FRAME_COUNT);
+            for (; ;) {
+                frame = cvQueryFrame(cap);
+                if (!frame)
+                    break;
+                FrameCount++;
+            }
 
-        ts->printf(cvtest::TS::LOG, "\nFile information (video %d): \n"\
-                   "\nName: big_buck_bunny.%s\nActual frame count: %d\n"\
-                   "Frame count computed in the cycle of queries of frames: %d\n"\
-                   "Frame count returned by cvGetCaptureProperty function: %d\n",
-                   i+1, ext[i].c_str(), time_sec*fps, FrameCount, framecount);
+            int framecount = (int)cvGetCaptureProperty(cap, CAP_PROP_FRAME_COUNT);
 
-        if( (FrameCount != cvRound(time_sec*fps) ||
-             FrameCount != framecount) && ext[i] != "mpg" )
-        {
-            ts->printf(cvtest::TS::LOG, "FAILED\n");
-            ts->printf(cvtest::TS::LOG, "\nError: actual frame count and returned frame count are not matched.\n");
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
-            return;
+            ts ->printf(cvtest::TS::LOG, "\nFile information (video %d): \n"\
+                "\nName: big_buck_bunny.%s\nActual frame count: %d\n"\
+                "Frame count computed in the cycle of queries of frames: %d\n"\
+                "Frame count returned by cvGetCaptureProperty function: %d\n",
+                i + 1, ext[i].c_str(), time_sec * fps, FrameCount, framecount);
+
+            if ((FrameCount != cvRound(time_sec * fps) ||
+                FrameCount != framecount) && ext[i] != "mpg") {
+                ts ->printf(cvtest::TS::LOG, "FAILED\n");
+                ts ->printf(cvtest::TS::LOG, "\nError: actual frame count and returned frame count are not matched.\n");
+                ts ->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+                return;
+            }
         }
     }
-}
-#if BUILD_WITH_VIDEO_INPUT_SUPPORT && defined HAVE_FFMPEG
-TEST(Videoio_Video, framecount) {CV_FramecountTest test; test.safe_run();}
-#endif
+};
+
+alvision.cvtest.TEST('Videoio_Video', 'framecount', () => { var test = new CV_FramecountTest(); test.safe_run(); });

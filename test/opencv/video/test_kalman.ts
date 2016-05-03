@@ -53,82 +53,70 @@ import fs = require('fs');
 //
 //using namespace cv;
 
-class CV_KalmanTest : public cvtest::BaseTest
+class CV_KalmanTest extends alvision. cvtest.BaseTest
 {
-public:
-    CV_KalmanTest();
-protected:
-    void run(int);
+    run(int): void {
+        int code = cvtest::TS::OK;
+        const int Dim = 7;
+        const int Steps = 100;
+        const double max_init = 1;
+        const double max_noise = 0.1;
+
+        const double EPSILON = 1.000;
+        RNG & rng = ts ->get_rng();
+        CvKalman * Kalm;
+        int i, j;
+
+        CvMat * Sample = cvCreateMat(Dim, 1, CV_32F);
+        CvMat * Temp = cvCreateMat(Dim, 1, CV_32F);
+
+        Kalm = cvCreateKalman(Dim, Dim);
+        CvMat Dyn = cvMat(Dim, Dim, CV_32F, Kalm ->DynamMatr);
+        CvMat Mes = cvMat(Dim, Dim, CV_32F, Kalm ->MeasurementMatr);
+        CvMat PNC = cvMat(Dim, Dim, CV_32F, Kalm ->PNCovariance);
+        CvMat MNC = cvMat(Dim, Dim, CV_32F, Kalm ->MNCovariance);
+        CvMat PriErr = cvMat(Dim, Dim, CV_32F, Kalm ->PriorErrorCovariance);
+        CvMat PostErr = cvMat(Dim, Dim, CV_32F, Kalm ->PosterErrorCovariance);
+        CvMat PriState = cvMat(Dim, 1, CV_32F, Kalm ->PriorState);
+        CvMat PostState = cvMat(Dim, 1, CV_32F, Kalm ->PosterState);
+        cvSetIdentity(&PNC);
+        cvSetIdentity(&PriErr);
+        cvSetIdentity(&PostErr);
+        cvSetZero(&MNC);
+        cvSetZero(&PriState);
+        cvSetZero(&PostState);
+        cvSetIdentity(&Mes);
+        cvSetIdentity(&Dyn);
+        Mat _Sample = cvarrToMat(Sample);
+        cvtest::randUni(rng, _Sample, cvScalarAll(-max_init), cvScalarAll(max_init));
+        cvKalmanCorrect(Kalm, Sample);
+        for (i = 0; i < Steps; i++) {
+            cvKalmanPredict(Kalm);
+            for (j = 0; j < Dim; j++) {
+                float t = 0;
+                for (int k= 0; k < Dim; k++)
+                {
+                    t += Dyn.data.fl[j * Dim + k] * Sample ->data.fl[k];
+                }
+                Temp ->data.fl[j]= (float)(t + (cvtest::randReal(rng) * 2 - 1) * max_noise);
+            }
+            cvCopy(Temp, Sample);
+            cvKalmanCorrect(Kalm, Temp);
+        }
+
+        Mat _state_post = cvarrToMat(Kalm ->state_post);
+        code = cvtest::cmpEps2(ts, _Sample, _state_post, EPSILON, false, "The final estimated state");
+
+        cvReleaseMat(&Sample);
+        cvReleaseMat(&Temp);
+        cvReleaseKalman(&Kalm);
+
+        if (code < 0)
+            ts ->set_failed_test_info(code);
+    }
 };
 
 
-CV_KalmanTest::CV_KalmanTest()
-{
-}
-
-void CV_KalmanTest::run( int )
-{
-    int code = cvtest::TS::OK;
-    const int Dim = 7;
-    const int Steps = 100;
-    const double max_init = 1;
-    const double max_noise = 0.1;
-
-    const double EPSILON = 1.000;
-    RNG& rng = ts->get_rng();
-    CvKalman* Kalm;
-    int i, j;
-
-    CvMat* Sample = cvCreateMat(Dim,1,CV_32F);
-    CvMat* Temp = cvCreateMat(Dim,1,CV_32F);
-
-    Kalm = cvCreateKalman(Dim, Dim);
-    CvMat Dyn = cvMat(Dim,Dim,CV_32F,Kalm->DynamMatr);
-    CvMat Mes = cvMat(Dim,Dim,CV_32F,Kalm->MeasurementMatr);
-    CvMat PNC = cvMat(Dim,Dim,CV_32F,Kalm->PNCovariance);
-    CvMat MNC = cvMat(Dim,Dim,CV_32F,Kalm->MNCovariance);
-    CvMat PriErr = cvMat(Dim,Dim,CV_32F,Kalm->PriorErrorCovariance);
-    CvMat PostErr = cvMat(Dim,Dim,CV_32F,Kalm->PosterErrorCovariance);
-    CvMat PriState = cvMat(Dim,1,CV_32F,Kalm->PriorState);
-    CvMat PostState = cvMat(Dim,1,CV_32F,Kalm->PosterState);
-    cvSetIdentity(&PNC);
-    cvSetIdentity(&PriErr);
-    cvSetIdentity(&PostErr);
-    cvSetZero(&MNC);
-    cvSetZero(&PriState);
-    cvSetZero(&PostState);
-    cvSetIdentity(&Mes);
-    cvSetIdentity(&Dyn);
-    Mat _Sample = cvarrToMat(Sample);
-    cvtest::randUni(rng, _Sample, cvScalarAll(-max_init), cvScalarAll(max_init));
-    cvKalmanCorrect(Kalm, Sample);
-    for(i = 0; i<Steps; i++)
-    {
-        cvKalmanPredict(Kalm);
-        for(j = 0; j<Dim; j++)
-        {
-            float t = 0;
-            for(int k=0; k<Dim; k++)
-            {
-                t += Dyn.data.fl[j*Dim+k]*Sample->data.fl[k];
-            }
-            Temp->data.fl[j]= (float)(t+(cvtest::randReal(rng)*2-1)*max_noise);
-        }
-        cvCopy( Temp, Sample );
-        cvKalmanCorrect(Kalm,Temp);
-    }
-
-    Mat _state_post = cvarrToMat(Kalm->state_post);
-    code = cvtest::cmpEps2( ts, _Sample, _state_post, EPSILON, false, "The final estimated state" );
-
-    cvReleaseMat(&Sample);
-    cvReleaseMat(&Temp);
-    cvReleaseKalman(&Kalm);
-
-    if( code < 0 )
-        ts->set_failed_test_info( code );
-}
-
-TEST(Video_Kalman, accuracy) { CV_KalmanTest test; test.safe_run(); }
+alvision.cvtest.TEST('Video_Kalman', 'accuracy', () => { var test = new CV_KalmanTest (); test.safe_run(); });
 
 /* End of file. */

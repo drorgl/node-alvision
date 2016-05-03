@@ -58,14 +58,14 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class CV_BoundingRectTest: public cvtest::ArrayTest
+class CV_BoundingRectTestextends alvision.cvtest.ArrayTest
 {
 public:
     CV_BoundingRectTest();
     ~CV_BoundingRectTest();
 
 protected:
-    void run (int);
+    run(iii : alvision.int) : void {}
 
 private:
     template <typename T> void generate_src_points(vector <Point_<T> >& src, int n);

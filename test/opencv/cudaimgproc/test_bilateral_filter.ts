@@ -48,11 +48,11 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 ////////////////////////////////////////////////////////
 // BilateralFilter
@@ -102,4 +102,4 @@ INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, BilateralFilter, testing::Combine(
     ));
 
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

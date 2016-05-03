@@ -48,9 +48,9 @@ var alvision_module = require('../../lib/bindings.js');
 //import * as _constants from './Constants'
 import * as _st from './static';
 import * as _mat from './Mat';
-import * as _types from './Types';
+import * as _types from './types';
 //import * as _core from './Core';
-import * as _base from './Base';
+import * as _base from './base';
 //import * as _scalar from './Scalar'
 
 //#ifndef __OPENCV_CORE_HPP__
@@ -1778,7 +1778,7 @@ interface Ipow {
     (src: _st.InputArray, power : _st.double, dst: _st.OutputArray): void;
 }
 
-var pow: Ipow = alvision_module.pow;
+export var pow: Ipow = alvision_module.pow;
     //CV_EXPORTS_W void pow(src : _st.InputArray, power : _st.double, dst : _st.OutputArray);
 
     /** @brief Calculates the exponent of every array element.
@@ -1798,7 +1798,7 @@ var pow: Ipow = alvision_module.pow;
 interface Iexp {
     (src: _st.InputArray, dst: _st.OutputArray): void;
 }
-var exp: Iexp = alvision_module.exp;
+export var exp: Iexp = alvision_module.exp;
 //CV_EXPORTS_W void exp(src : _st.InputArray, dst : _st.OutputArray);
 
     /** @brief Calculates the natural logarithm of every array element.
@@ -3173,7 +3173,21 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
 //Mat _eigenvectors;
 //Mat _eigenvalues;
 //void lda(src : _st.InputArrayOfArrays, InputArray labels);
-};
+    };
+
+
+    export enum SVDFlags {
+        /** allow the algorithm to modify the decomposed matrix; it can save space and speed up
+            processing. currently ignored. */
+        MODIFY_A = 1,
+        /** indicates that only a vector of singular values `w` is to be processed, while u and vt
+            will be set to empty matrices */
+        NO_UV = 2,
+        /** when the matrix is not square, by default the algorithm produces u and vt matrices of
+            sufficiently large size for the further A reconstruction; if, however, FULL_UV flag is
+            specified, u and vt will be full-size square orthogonal matrices.*/
+        FULL_UV = 4
+    };
 
 /** @brief Singular Value Decomposition
 
@@ -3190,36 +3204,71 @@ and vt must be computed, which is not necessary most of the time.
 @sa invert, solve, eigen, determinant
 */
 interface SVDStatic {
-//
-//    /** @brief the default constructor
-//
-//    initializes an empty SVD structure
-//      */
-//    SVD();
-//
-//    /** @overload
-//    initializes an empty SVD structure and then calls SVD::operator()
-//    @param src decomposed matrix.
-//    @param flags operation flags (SVD::Flags)
-//      */
-//    SVD(src: _st.InputArray, flags: _st.int /* = 0*/);
+
+    /** @brief the default constructor
+
+    initializes an empty SVD structure
+      */
+    new (): SVD;
+
+    /** @overload
+    initializes an empty SVD structure and then calls SVD::operator()
+    @param src decomposed matrix.
+    @param flags operation flags (SVD::Flags)
+      */
+    new (src: _st.InputArray, flags?: SVDFlags /* = 0*/);
+    
+
+    /** @brief decomposes matrix and stores the results to user-provided matrices
+ 
+    The methods/functions perform SVD of matrix. Unlike SVD::SVD constructor
+    and SVD::operator(), they store the results to the user-provided
+    matrices:
+ 
+    @code{.cpp}
+    Mat A, w, u, vt;
+    SVD::compute(A, w, u, vt);
+    @endcode
+ 
+    @param src decomposed matrix
+    @param w calculated singular values
+    @param u calculated left singular vectors
+    @param vt transposed matrix of right singular values
+    @param flags operation flags - see SVD::SVD.
+      */
+    compute(src: _st.InputArray, w: _st.OutputArray,
+        u: _st.OutputArray, vt: _st.OutputArray, flags?: SVDFlags /* = 0*/): void;
+ 
+    /** @overload
+    computes singular values of a matrix
+    @param src decomposed matrix
+    @param w calculated singular values
+    @param flags operation flags - see SVD::Flags.
+      */
+    compute(src: _st.InputArray, w: _st.OutputArray, flags?: SVDFlags /* = 0*/): void;
+ 
+    /** @brief performs back substitution
+      */
+    backSubst(w: _st.InputArray, u: _st.InputArray,
+        vt: _st.InputArray, rhs: _st.InputArray,
+        dst: _st.OutputArray): void;
+ 
+    /** @brief solves an under-determined singular linear system
+ 
+    The method finds a unit-length solution x of a singular linear system
+    A\*x = 0. Depending on the rank of A, there can be no solutions, a
+    single solution or an infinite number of solutions. In general, the
+    algorithm solves the following problem:
+    \f[dst =  \arg \min _{x:  \| x \| =1}  \| src  \cdot x  \|\f]
+    @param src left-hand-side matrix.
+    @param dst found solution.
+      */
+    solveZ(src: _st.InputArray, dst: _st.OutputArray): void;
 }
 
 interface SVD
 {
- //   public:
- //   enum Flags {
- //       /** allow the algorithm to modify the decomposed matrix; it can save space and speed up
- //           processing. currently ignored. */
- //       MODIFY_A = 1,
- //       /** indicates that only a vector of singular values `w` is to be processed, while u and vt
- //           will be set to empty matrices */
- //       NO_UV = 2,
- //       /** when the matrix is not square, by default the algorithm produces u and vt matrices of
- //           sufficiently large size for the further A reconstruction; if, however, FULL_UV flag is
- //           specified, u and vt will be full-size square orthogonal matrices.*/
- //       FULL_UV = 4
- //   };
+
  //
  //
  //   /** @brief the operator that performs SVD. The previously allocated u, w and vt are released.
@@ -3235,51 +3284,7 @@ interface SVD
  //     */
  //   SVD & operator()(src : _st.InputArray, flags : _st.int /* = 0*/);
  //
- //   /** @brief decomposes matrix and stores the results to user-provided matrices
- //
- //   The methods/functions perform SVD of matrix. Unlike SVD::SVD constructor
- //   and SVD::operator(), they store the results to the user-provided
- //   matrices:
- //
- //   @code{.cpp}
- //   Mat A, w, u, vt;
- //   SVD::compute(A, w, u, vt);
- //   @endcode
- //
- //   @param src decomposed matrix
- //   @param w calculated singular values
- //   @param u calculated left singular vectors
- //   @param vt transposed matrix of right singular values
- //   @param flags operation flags - see SVD::SVD.
- //     */
- //   static void compute(src : _st.InputArray, w : _st.OutputArray,
- //       u : _st.OutputArray, vt : _st.OutputArray, flags : _st.int /* = 0*/);
- //
- //   /** @overload
- //   computes singular values of a matrix
- //   @param src decomposed matrix
- //   @param w calculated singular values
- //   @param flags operation flags - see SVD::Flags.
- //     */
- //   static void compute(src : _st.InputArray, w : _st.OutputArray, flags : _st.int /* = 0*/);
- //
- //   /** @brief performs back substitution
- //     */
- //   static void backSubst(w : _st.InputArray, u : _st.InputArray,
- //       vt : _st.InputArray, rhs : _st.InputArray,
- //       dst : _st.OutputArray );
- //
- //   /** @brief solves an under-determined singular linear system
- //
- //   The method finds a unit-length solution x of a singular linear system
- //   A\*x = 0. Depending on the rank of A, there can be no solutions, a
- //   single solution or an infinite number of solutions. In general, the
- //   algorithm solves the following problem:
- //   \f[dst =  \arg \min _{x:  \| x \| =1}  \| src  \cdot x  \|\f]
- //   @param src left-hand-side matrix.
- //   @param dst found solution.
- //     */
- //   static void solveZ(src : _st.InputArray, dst : _st.OutputArray );
+ 
  //
  //   /** @brief performs a singular value back substitution.
  //
@@ -3319,6 +3324,8 @@ interface SVD
  //
  //   Mat u, w, vt;
 };
+
+export var SVD: SVDStatic = alvision_module.SVD;
 
 /** @brief Random Number Generator
 

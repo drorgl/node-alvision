@@ -53,7 +53,7 @@ import fs = require('fs');
 //using namespace std;
 
 template <typename T, typename compute>
-class ShapeBaseTest : public cvtest::BaseTest
+class ShapeBaseTest  extends alvision.cvtest.BaseTest
 {
 public:
     typedef Point_<T> PointType;
@@ -190,9 +190,9 @@ protected:
         float porc = 100*float(corrects)/(NSN*distanceMat.rows);
         std::cout << "Test result: " << porc << "%" << std::endl;
         if (porc >= CURRENT_MAX_ACCUR)
-            ts->set_failed_test_info(cvtest::TS::OK);
+            this.ts.set_failed_test_info(cvtest::TS::OK);
         else
-            ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
     }
 
 protected:

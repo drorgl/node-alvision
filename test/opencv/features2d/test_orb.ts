@@ -47,49 +47,50 @@ import util = require('util');
 import fs = require('fs');
 
 
-#include "test_precomp.hpp"
-#include "opencv2/highgui.hpp"
+//#include "test_precomp.hpp"
+//#include "opencv2/highgui.hpp"
+//
+//using namespace std;
+//using namespace cv;
 
-using namespace std;
-using namespace cv;
-
-TEST(Features2D_ORB, _1996)
+alvision.cvtest.TEST('Features2D_ORB', '_1996',()=>
 {
-    Ptr<FeatureDetector> fd = ORB::create(10000, 1.2f, 8, 31, 0, 2, ORB::HARRIS_SCORE, 31, 20);
-    Ptr<DescriptorExtractor> de = fd;
+    
+    var fd = alvision.ORB.create(10000, 1.2, 8, 31, 0, 2, alvision.ORBEnum.HARRIS_SCORE, 31, 20);
+    //Ptr<DescriptorExtractor> de = fd;
 
-    Mat image = imread(string(cvtest::TS::ptr()->get_data_path()) + "shared/lena.png");
-    ASSERT_FALSE(image.empty());
+    var image = alvision.imread(alvision.cvtest.TS.ptr().get_data_path() + "shared/lena.png");
+    alvision.ASSERT_FALSE(image == null);
 
-    Mat roi(image.size(), CV_8UC1, Scalar(0));
+    var roi = new alvision.Mat(image.size(),alvision.MatrixType.CV_8UC1, new alvision.Scalar(0));
 
-    Point poly[] = {Point(100, 20), Point(300, 50), Point(400, 200), Point(10, 500)};
-    fillConvexPoly(roi, poly, int(sizeof(poly) / sizeof(poly[0])), Scalar(255));
+    var poly = [new alvision.Point(100, 20), new alvision.Point(300, 50), new alvision.Point(400, 200), new alvision.Point(10, 500)]
+    alvision.fillConvexPoly(roi, poly, new alvision.Scalar(255));
 
-    std::vector<KeyPoint> keypoints;
-    fd->detect(image, keypoints, roi);
-    Mat descriptors;
-    de->compute(image, keypoints, descriptors);
+    var keypoints = new Array<alvision.KeyPoint>();
+    fd.detect(image,(kp)=> keypoints = kp, roi);
+    var descriptors = new alvision.Mat();
+    fd.compute(image, keypoints,(kp)=>keypoints=kp, descriptors);
 
     //image.setTo(Scalar(255,255,255), roi);
 
-    int roiViolations = 0;
-    for(std::vector<KeyPoint>::const_iterator kp = keypoints.begin(); kp != keypoints.end(); ++kp)
-    {
-        int x = cvRound(kp->pt.x);
-        int y = cvRound(kp->pt.y);
+    var roiViolations = 0;
+    keypoints.forEach((kp) => {
 
-        ASSERT_LE(0, x);
-        ASSERT_LE(0, y);
-        ASSERT_GT(image.cols, x);
-        ASSERT_GT(image.rows, y);
+        var x = Math.round(kp.pt.x.valueOf());
+        var y = Math.round(kp.pt.y.valueOf());
+
+        alvision.ASSERT_LE(0, x);
+        alvision.ASSERT_LE(0, y);
+        alvision.ASSERT_GT(image.cols.valueOf(), x);
+        alvision.ASSERT_GT(image.rows.valueOf(), y);
 
         // if (!roi.at<uchar>(y,x))
         // {
         //     roiViolations++;
         //     circle(image, kp->pt, 3, Scalar(0,0,255));
         // }
-    }
+    });
 
     // if(roiViolations)
     // {
@@ -97,5 +98,5 @@ TEST(Features2D_ORB, _1996)
     //     waitKey();
     // }
 
-    ASSERT_EQ(0, roiViolations);
-}
+    alvision.ASSERT_EQ(0, roiViolations);
+});

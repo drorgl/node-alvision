@@ -61,7 +61,7 @@ const string DETECTOR_DIR = FEATURES2D_DIR + "/feature_detectors";
 *            Regression tests for feature detectors comparing keypoints.                 *
 \****************************************************************************************/
 
-class CV_FeatureDetectorTest : public cvtest::BaseTest
+class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_FeatureDetectorTest( const string& _name, const Ptr<FeatureDetector>& _fdetector ) :
@@ -92,13 +92,13 @@ void CV_FeatureDetectorTest::emptyDataTest()
     catch(...)
     {
         ts->printf( cvtest::TS::LOG, "detect() on empty image must not generate exception (1).\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
     }
 
     if( !keypoints.empty() )
     {
         ts->printf( cvtest::TS::LOG, "detect() on empty image must return empty keypoints vector (1).\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         return;
     }
 
@@ -112,7 +112,7 @@ void CV_FeatureDetectorTest::emptyDataTest()
     catch(...)
     {
         ts->printf( cvtest::TS::LOG, "detect() on empty image vector must not generate exception (2).\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
     }
 }
 
@@ -142,7 +142,7 @@ void CV_FeatureDetectorTest::compareKeypointSets( const vector<KeyPoint>& validK
     {
         ts->printf( cvtest::TS::LOG, "Bad keypoints count ratio (validCount = %d, calcCount = %d).\n",
                     validKeypoints.size(), calcKeypoints.size() );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         return;
     }
 
@@ -173,7 +173,7 @@ void CV_FeatureDetectorTest::compareKeypointSets( const vector<KeyPoint>& validK
     if( badPointCount > 0.9 * commonPointCount )
     {
         ts->printf( cvtest::TS::LOG, " - Bad accuracy!\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
         return;
     }
     ts->printf( cvtest::TS::LOG, " - OK\n" );
@@ -190,7 +190,7 @@ void CV_FeatureDetectorTest::regressionTest()
     if( image.empty() )
     {
         ts->printf( cvtest::TS::LOG, "Image %s can not be read.\n", imgFilename.c_str() );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
         return;
     }
 
@@ -210,7 +210,7 @@ void CV_FeatureDetectorTest::regressionTest()
         if( validKeypoints.empty() )
         {
             ts->printf( cvtest::TS::LOG, "Keypoints can not be read.\n" );
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
             return;
         }
 
@@ -222,7 +222,7 @@ void CV_FeatureDetectorTest::regressionTest()
         if( !fs.isOpened() )
         {
             ts->printf( cvtest::TS::LOG, "File %s can not be opened to write.\n", resFilename.c_str() );
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
             return;
         }
         else
@@ -241,14 +241,14 @@ void CV_FeatureDetectorTest::run( int /*start_from*/ )
     if( !fdetector )
     {
         ts->printf( cvtest::TS::LOG, "Feature detector is empty.\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
         return;
     }
 
     emptyDataTest();
     regressionTest();
 
-    ts->set_failed_test_info( cvtest::TS::OK );
+    this.ts.set_failed_test_info( cvtest::TS::OK );
 }
 
 /****************************************************************************************\

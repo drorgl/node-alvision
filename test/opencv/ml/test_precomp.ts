@@ -39,7 +39,7 @@ using cv::ml::DTrees;
 using cv::ml::Boost;
 using cv::ml::RTrees;
 
-class CV_MLBaseTest : public cvtest::BaseTest
+class CV_MLBaseTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_MLBaseTest( const char* _modelName );

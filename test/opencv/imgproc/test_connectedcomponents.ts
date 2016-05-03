@@ -48,68 +48,57 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <string>
+//#include "test_precomp.hpp"
+//#include <string>
+//
+//using namespace cv;
+//using namespace std;
 
-using namespace cv;
-using namespace std;
-
-class CV_ConnectedComponentsTest : public cvtest::BaseTest
+class CV_ConnectedComponentsTest extends alvision.cvtest.BaseTest
 {
-public:
-    CV_ConnectedComponentsTest();
-    ~CV_ConnectedComponentsTest();
-protected:
-    void run(int);
-};
+    run(int): void {
+        var exp_path = this.ts.get_data_path() + "connectedcomponents/ccomp_exp.png";
+        var exp = alvision.imread(exp_path, 0);
+        var orig = alvision.imread(this.ts.get_data_path() + "connectedcomponents/concentric_circles.png", 0);
 
-CV_ConnectedComponentsTest::CV_ConnectedComponentsTest() {}
-CV_ConnectedComponentsTest::~CV_ConnectedComponentsTest() {}
+        if (orig.empty()) {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+            return;
+        }
 
-void CV_ConnectedComponentsTest::run( int /* start_from */)
-{
-    string exp_path = string(ts->get_data_path()) + "connectedcomponents/ccomp_exp.png";
-    Mat exp = imread(exp_path, 0);
-    Mat orig = imread(string(ts->get_data_path()) + "connectedcomponents/concentric_circles.png", 0);
+        Mat bw = orig > 128;
+        Mat labelImage;
+        var nLabels = alvision.connectedComponents(bw, labelImage, 8, alvision.MatrixType.CV_32S);
 
-    if (orig.empty())
-    {
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
-        return;
-    }
-
-    Mat bw = orig > 128;
-    Mat labelImage;
-    int nLabels = connectedComponents(bw, labelImage, 8, CV_32S);
-
-    for(int r = 0; r < labelImage.rows; ++r){
-        for(int c = 0; c < labelImage.cols; ++c){
-            int l = labelImage.at<int>(r, c);
-            bool pass = l >= 0 && l <= nLabels;
-            if(!pass){
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
-                return;
+        for (var r = 0; r < labelImage.rows; ++r){
+            for (int c = 0; c < labelImage.cols; ++c){
+                int l = labelImage.at<int>(r, c);
+                var pass = l >= 0 && l <= nLabels;
+                if (!pass) {
+                    this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+                    return;
+                }
             }
         }
-    }
 
-    if( exp.empty() || orig.size() != exp.size() )
-    {
-        imwrite(exp_path, labelImage);
-        exp = labelImage;
-    }
+        if (exp.empty() || orig.size() != exp.size()) {
+            alvision.imwrite(exp_path, labelImage);
+            exp = labelImage;
+        }
 
-    if (0 != cvtest::norm(labelImage > 0, exp > 0, NORM_INF))
-    {
-        ts->set_failed_test_info( cvtest::TS::FAIL_MISMATCH );
-        return;
+        if (0 != alvision.cvtest.norm(labelImage > 0, exp > 0, NORM_INF))
+        {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
+            return;
+        }
+        if (nLabels != alvision.cvtest.norm(labelImage, NORM_INF) + 1)
+        {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
+            return;
+        }
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
     }
-    if (nLabels != cvtest::norm(labelImage, NORM_INF)+1)
-    {
-        ts->set_failed_test_info( cvtest::TS::FAIL_MISMATCH );
-        return;
-    }
-    ts->set_failed_test_info(cvtest::TS::OK);
-}
+};
 
-TEST(Imgproc_ConnectedComponents, regression) { CV_ConnectedComponentsTest test; test.safe_run(); }
+
+alvision.cvtest.TEST('Imgproc_ConnectedComponents', 'regression', () => { var test = new CV_ConnectedComponentsTest(); test.safe_run(); });

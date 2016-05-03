@@ -190,7 +190,7 @@ cvTsIsPointOnLineSegment(const cv::Point2f &x, const cv::Point2f &a, const cv::P
 *                              Base class for shape descriptor tests                     *
 \****************************************************************************************/
 
-class CV_BaseShapeDescrTest : public cvtest::BaseTest
+class CV_BaseShapeDescrTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_BaseShapeDescrTest();
@@ -665,7 +665,7 @@ _exit_:
     cvReleaseMat( &hull );
     cvReleaseMat( &mask );
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -790,7 +790,7 @@ int CV_MinAreaRectTest::validate_test_results( int test_case_idx )
 _exit_:
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -928,7 +928,7 @@ int CV_MinTriangleTest::validate_test_results( int test_case_idx )
     }
 
     if ( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
 
     return code;
 }
@@ -1021,7 +1021,7 @@ int CV_MinCircleTest::validate_test_results( int test_case_idx )
 _exit_:
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -1129,7 +1129,7 @@ int CV_PerimeterTest::validate_test_results( int test_case_idx )
     }
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -1325,13 +1325,13 @@ _exit_:
 
     if( code < 0 )
     {
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     }
     return code;
 }
 
 
-class CV_FitEllipseSmallTest : public cvtest::BaseTest
+class CV_FitEllipseSmallTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_FitEllipseSmallTest() {}
@@ -1629,7 +1629,7 @@ _exit_:
 
     if( code < 0 )
     {
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     }
     return code;
 }
@@ -1836,7 +1836,7 @@ int CV_ContourMomentsTest::validate_test_results( int test_case_idx )
         cvShowImage( "test", img );
         cvWaitKey();
 #endif
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     }
 
     cvReleaseMat( &img );
@@ -1846,7 +1846,7 @@ int CV_ContourMomentsTest::validate_test_results( int test_case_idx )
 
 ////////////////////////////////////// Perimeter/Area/Slice test ///////////////////////////////////
 
-class CV_PerimeterAreaSliceTest : public cvtest::BaseTest
+class CV_PerimeterAreaSliceTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_PerimeterAreaSliceTest();
@@ -1907,7 +1907,7 @@ void CV_PerimeterAreaSliceTest::run( int )
         {
             ts->printf(cvtest::TS::LOG,
                        "The contour area slice is computed differently (%g vs %g)\n", area0, area1 );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }*/
 
@@ -1917,11 +1917,11 @@ void CV_PerimeterAreaSliceTest::run( int )
         {
             ts->printf(cvtest::TS::LOG,
                        "The contour arc length is computed differently (%g vs %g)\n", len0, len1 );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
     }
-    ts->set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(cvtest::TS::OK);
 }
 
 

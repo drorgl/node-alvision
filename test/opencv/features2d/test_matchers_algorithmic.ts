@@ -59,7 +59,7 @@ const string IMAGE_FILENAME = "tsukuba.png";
 /****************************************************************************************\
 *                       Algorithmic tests for descriptor matchers                        *
 \****************************************************************************************/
-class CV_DescriptorMatcherTest : public cvtest::BaseTest
+class CV_DescriptorMatcherTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_DescriptorMatcherTest( const string& _name, const Ptr<DescriptorMatcher>& _dmatcher, float _badPart ) :
@@ -101,7 +101,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( cvtest::TS::LOG, "match() on empty descriptors must not generate exception (1).\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -111,7 +111,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( cvtest::TS::LOG, "knnMatch() on empty descriptors must not generate exception (1).\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -121,7 +121,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( cvtest::TS::LOG, "radiusMatch() on empty descriptors must not generate exception (1).\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -131,7 +131,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( cvtest::TS::LOG, "add() on empty descriptors must not generate exception.\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -141,7 +141,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( cvtest::TS::LOG, "match() on empty descriptors must not generate exception (2).\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -151,7 +151,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( cvtest::TS::LOG, "knnMatch() on empty descriptors must not generate exception (2).\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -161,7 +161,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( cvtest::TS::LOG, "radiusMatch() on empty descriptors must not generate exception (2).\n" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
     }
 
 }
@@ -210,7 +210,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(cvtest::TS::LOG, "Incorrect matches count while test match() function (1).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -225,7 +225,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
             {
                 ts->printf( cvtest::TS::LOG, "%f - too large bad matches part while test match() function (1).\n",
                             (float)badCount/(float)queryDescCount );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
             }
         }
     }
@@ -238,7 +238,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
         if( (int)matches.size() != query.rows )
         {
             ts->printf(cvtest::TS::LOG, "Incorrect matches count while test match() function for the same query and test descriptors (1).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -251,7 +251,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
                 {
                     ts->printf( cvtest::TS::LOG, "Bad match (i=%d, queryIdx=%d, trainIdx=%d, distance=%f) while test match() function for the same query and test descriptors (1).\n",
                                 i, match.queryIdx, match.trainIdx, match.distance );
-                    ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                    this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 }
             }
         }
@@ -277,7 +277,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(cvtest::TS::LOG, "Incorrect matches count while test match() function (2).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -303,7 +303,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
             {
                 ts->printf( cvtest::TS::LOG, "%f - too large bad matches part while test match() function (2).\n",
                             (float)badCount/(float)queryDescCount );
-                ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             }
         }
     }
@@ -323,7 +323,7 @@ void CV_DescriptorMatcherTest::knnMatchTest( const Mat& query, const Mat& train 
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(cvtest::TS::LOG, "Incorrect matches count while test knnMatch() function (1).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -348,7 +348,7 @@ void CV_DescriptorMatcherTest::knnMatchTest( const Mat& query, const Mat& train 
             {
                 ts->printf( cvtest::TS::LOG, "%f - too large bad matches part while test knnMatch() function (1).\n",
                             (float)badCount/(float)queryDescCount );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
             }
         }
     }
@@ -374,7 +374,7 @@ void CV_DescriptorMatcherTest::knnMatchTest( const Mat& query, const Mat& train 
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(cvtest::TS::LOG, "Incorrect matches count while test knnMatch() function (2).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -412,7 +412,7 @@ void CV_DescriptorMatcherTest::knnMatchTest( const Mat& query, const Mat& train 
             {
                 ts->printf( cvtest::TS::LOG, "%f - too large bad matches part while test knnMatch() function (2).\n",
                             (float)badCount/(float)queryDescCount );
-                ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             }
         }
     }
@@ -430,7 +430,7 @@ void CV_DescriptorMatcherTest::radiusMatchTest( const Mat& query, const Mat& tra
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(cvtest::TS::LOG, "Incorrect matches count while test radiusMatch() function (1).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -450,7 +450,7 @@ void CV_DescriptorMatcherTest::radiusMatchTest( const Mat& query, const Mat& tra
             {
                 ts->printf( cvtest::TS::LOG, "%f - too large bad matches part while test radiusMatch() function (1).\n",
                             (float)badCount/(float)queryDescCount );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
             }
         }
     }
@@ -478,7 +478,7 @@ void CV_DescriptorMatcherTest::radiusMatchTest( const Mat& query, const Mat& tra
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(cvtest::TS::LOG, "Incorrect matches count while test radiusMatch() function (1).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         }
 
         int badCount = 0;
@@ -517,7 +517,7 @@ void CV_DescriptorMatcherTest::radiusMatchTest( const Mat& query, const Mat& tra
             //curRes = cvtest::TS::FAIL_INVALID_OUTPUT;
             ts->printf( cvtest::TS::LOG, "%f - too large bad matches part while test radiusMatch() function (2).\n",
                         (float)badCount/(float)queryDescCount );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
         }
     }
 }

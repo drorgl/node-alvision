@@ -10,12 +10,12 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <float.h>
-#include <math.h>
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//#include <float.h>
+//#include <math.h>
+//
+//using namespace cv;
+//using namespace std;
 
 /// !!! NOTE !!! These tests happily avoid overflow cases & out-of-range arguments
 /// so that output arrays contain neigher Inf's nor Nan's.
@@ -25,178 +25,264 @@ using namespace std;
 /// by generating min/max boundaries for random data in logarimithic scale, but
 /// within the same test case all the input array elements are of the same order.
 
-class Core_MathTest : public cvtest::ArrayTest
-{
-public:
-    typedef cvtest::ArrayTest Base;
-    Core_MathTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes,
-                                        vector<vector<int> >& types);
-    double get_success_error_level( int /*test_case_idx*/, int i, int j );
-    bool test_nd;
-};
+class Core_MathTest extends alvision.cvtest.ArrayTest {
+    //public:
+    //typedef cvtest::ArrayTest Base;
+    constructor() {
+        super();
 
+        this.optional_mask = false;
 
-Core_MathTest::Core_MathTest()
-{
-    optional_mask = false;
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
 
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-
-    test_nd = false;
-}
-
-
-double Core_MathTest::get_success_error_level( int /*test_case_idx*/, int i, int j )
-{
-    return test_mat[i][j].depth() == CV_32F ? FLT_EPSILON*128 : DBL_EPSILON*1024;
-}
-
-
-void Core_MathTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                     vector<vector<Size> >& sizes,
-                                                     vector<vector<int> >& types)
-{
-    RNG& rng = ts->get_rng();
-    int depth = cvtest::randInt(rng)%2 + CV_32F;
-    int cn = cvtest::randInt(rng) % 4 + 1, type = CV_MAKETYPE(depth, cn);
-    size_t i, j;
-    Base::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-
-    for( i = 0; i < test_array.size(); i++ )
-    {
-        size_t count = test_array[i].size();
-        for( j = 0; j < count; j++ )
-            types[i][j] = type;
+        this.test_nd = false;
     }
-    test_nd = cvtest::randInt(rng)%3 == 0;
+
+
+    //    protected:
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {
+        var rng = this.ts.get_rng();
+        var depth = alvision.cvtest.randInt(rng).valueOf() % 2 + alvision.MatrixType.CV_32F;
+        var cn = alvision.cvtest.randInt(rng).valueOf() % 4 + 1, type = alvision.MatrixType.CV_MAKETYPE(depth, cn);
+        var i, j;
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
+
+        for (i = 0; i < this.test_array.length; i++) {
+            var count = this.test_array[i].length;
+            for (j = 0; j < count; j++)
+                types[i][j] = type;
+        }
+        this.test_nd = alvision.cvtest.randInt(rng).valueOf() % 3 == 0;
+    }
+    get_success_error_level(test_case_idx: alvision.int /**/, i: alvision.int, j: alvision.int): alvision.double {
+        return this.test_mat[i.valueOf()][j.valueOf()].depth() == alvision.MatrixType.CV_32F ? alvision.FLT_EPSILON * 128 : alvision.DBL_EPSILON * 1024;
+    }
+
+    protected test_nd: boolean;
 }
+
+
+
 
 
 ////////// pow /////////////
 
-class Core_PowTest : public Core_MathTest
-{
-public:
-    typedef Core_MathTest Base;
-    Core_PowTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx,
-                                        vector<vector<Size> >& sizes,
-                                        vector<vector<int> >& types );
-    void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-    void run_func();
-    void prepare_to_validation( int test_case_idx );
-    double get_success_error_level( int test_case_idx, int i, int j );
-    double power;
-};
-
-
-Core_PowTest::Core_PowTest()
-{
-    power = 0;
-}
-
-
-void Core_PowTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                    vector<vector<Size> >& sizes,
-                                                    vector<vector<int> >& types )
-{
-    RNG& rng = ts->get_rng();
-    int depth = cvtest::randInt(rng) % (CV_64F+1);
-    int cn = cvtest::randInt(rng) % 4 + 1;
-    size_t i, j;
-    Base::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    depth += depth == CV_8S;
-
-    if( depth < CV_32F || cvtest::randInt(rng)%8 == 0 )
-        // integer power
-        power = (int)(cvtest::randInt(rng)%21 - 10);
-    else
-    {
-        i = cvtest::randInt(rng)%17;
-        power = i == 16 ? 1./3 : i == 15 ? 0.5 : i == 14 ? -0.5 : cvtest::randReal(rng)*10 - 5;
+class Core_PowTest extends Core_MathTest {
+    constructor() {
+        super();
+        this.power = 0;
     }
 
-    for( i = 0; i < test_array.size(); i++ )
-    {
-        size_t count = test_array[i].size();
-        int type = CV_MAKETYPE(depth, cn);
-        for( j = 0; j < count; j++ )
-            types[i][j] = type;
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
+        var rng = this.ts.get_rng();
+        var depth = alvision.cvtest.randInt(rng).valueOf() % (alvision.MatrixType.CV_64F + 1);
+        var cn = alvision.cvtest.randInt(rng).valueOf() % 4 + 1;
+        var i, j;
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        depth += depth == alvision.MatrixType.CV_8S;
+
+        if (depth < alvision.MatrixType.CV_32F || alvision.cvtest.randInt(rng).valueOf() % 8 == 0)
+            // integer power
+            this.power = (alvision.cvtest.randInt(rng).valueOf() % 21 - 10);
+        else {
+            i = alvision.cvtest.randInt(rng).valueOf() % 17;
+            this.power = i == 16 ? 1. / 3 : i == 15 ? 0.5 : i == 14 ? -0.5 : alvision.cvtest.randReal(rng).valueOf() * 10 - 5;
+        }
+
+        for (i = 0; i < this.test_array.length; i++) {
+            var count = this.test_array[i].length;
+            var type = alvision.MatrixType.CV_MAKETYPE(depth, cn);
+            for (j = 0; j < count; j++)
+                types[i][j] = type;
+        }
+        this.test_nd = alvision.cvtest.randInt(rng).valueOf() % 3 == 0;
     }
-    test_nd = cvtest::randInt(rng)%3 == 0;
-}
+    get_minmax_bounds(i: alvision.int, j: alvision.int, type: alvision.int, low: alvision.Scalar, high: alvision.Scalar): void {
+        var l, u = alvision.cvtest.randInt(this.ts.get_rng()).valueOf() % 1000 + 1;
+        if (this.power > 0) {
+            var mval = alvision.cvtest.getMaxVal(type);
+            var u1 = Math.pow(mval.valueOf(), 1. / this.power.valueOf()) * 2;
+            u = Math.min(u, u1);
+        }
 
-
-double Core_PowTest::get_success_error_level( int test_case_idx, int i, int j )
-{
-    int depth = test_mat[i][j].depth();
-    if( depth < CV_32F )
-        return power == cvRound(power) && power >= 0 ? 0 : 1;
-    else
-        return Base::get_success_error_level( test_case_idx, i, j );
-}
-
-
-void Core_PowTest::get_minmax_bounds( int /*i*/, int /*j*/, int type, Scalar& low, Scalar& high )
-{
-    double l, u = cvtest::randInt(ts->get_rng())%1000 + 1;
-    if( power > 0 )
-    {
-        double mval = cvtest::getMaxVal(type);
-        double u1 = pow(mval,1./power)*2;
-        u = MIN(u,u1);
+        l = this.power == Math.round(this.power.valueOf()) ? -u : alvision.FLT_EPSILON;
+        low = alvision.Scalar.all(l);
+        high = alvision.Scalar.all(u);
     }
+    run_func(): void {
+        if (!this.test_nd) {
+            if (Math.abs(this.power.valueOf() - 1. / 3) <= alvision.DBL_EPSILON && this.test_mat[this.INPUT][0].depth() == alvision.MatrixType.CV_32F) {
+                var a = this.test_mat[this.INPUT][0], b = this.test_mat[this.OUTPUT][0];
 
-    l = power == cvRound(power) ? -u : FLT_EPSILON;
-    low = Scalar::all(l);
-    high = Scalar::all(u);
-}
+                a = a.reshape(1);
+                b = b.reshape(1);
+                for (var i = 0; i < a.rows; i++) {
+                    b.at<float>(i, 0) = (float)fabs(cvCbrt(a.at<float>(i, 0)));
+                    for (int j = 1; j < a.cols; j++ )
+                    b.at<float>(i, j) = (float)fabs(cv::cubeRoot(a.at<float>(i, j)));
+                }
+            }
+            else
+                cvPow(this.test_array[this.INPUT][0], this.test_array[this.OUTPUT][0], power);
+        }
+        else {
+            var a = this.test_mat[this.INPUT][0];
+            var b = this.test_mat[this.OUTPUT][0];
+            if (this.power == 0.5)
+                alvision.sqrt(a, b);
+            else
+                alvision.pow(a, this.power, b);
+        }
+    }
+    prepare_to_validation(test_case_idx: alvision.int): void {
 
+        var a = this.test_mat[this.INPUT][0];
+        var b = this.test_mat[this.REF_OUTPUT][0];
 
-void Core_PowTest::run_func()
-{
-    if(!test_nd)
-    {
-        if( fabs(power-1./3) <= DBL_EPSILON && test_mat[INPUT][0].depth() == CV_32F )
-        {
-            Mat a = test_mat[INPUT][0], b = test_mat[OUTPUT][0];
+        var depth = a.depth();
+        var ncols = a.cols.valueOf() * a.channels().valueOf();
+        var ipower = Math.round(this.power.valueOf()), apower = Math.abs(ipower);
+        var i, j;
 
-            a = a.reshape(1);
-            b = b.reshape(1);
-            for( int i = 0; i < a.rows; i++ )
-            {
-                b.at<float>(i,0) = (float)fabs(cvCbrt(a.at<float>(i,0)));
-                for( int j = 1; j < a.cols; j++ )
-                    b.at<float>(i,j) = (float)fabs(cv::cubeRoot(a.at<float>(i,j)));
+        for (i = 0; i < a.rows; i++) {
+            const uchar* a_data = a.ptr(i);
+            uchar * b_data = b.ptr(i);
+
+            switch (depth) {
+                case alvision.MatrixType.CV_8U:
+                    if (ipower < 0)
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((uchar *)a_data)[j];
+                            ((uchar *)b_data)[j] = (uchar)(val == 0 ? 255 : val == 1 ? 1 :
+                                val == 2 && ipower == -1 ? 1 : 0);
+                        }
+                    else
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((uchar *)a_data)[j];
+                            val = ipow(val, ipower);
+                            ((uchar *)b_data)[j] = saturate_cast<uchar>(val);
+                        }
+                    break;
+                case alvision.MatrixType.CV_8S:
+                    if (ipower < 0)
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((schar *)a_data)[j];
+                            ((schar *)b_data)[j] = (schar)(val == 0 ? 127 : val == 1 ? 1 :
+                                val == -1 ? 1 - 2 * (ipower & 1) :
+                                    val == 2 && ipower == -1 ? 1 : 0);
+                        }
+                    else
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((schar *)a_data)[j];
+                            val = ipow(val, ipower);
+                            ((schar *)b_data)[j] = saturate_cast<schar>(val);
+                        }
+                    break;
+                case alvision.MatrixType.CV_16U:
+                    if (ipower < 0)
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((ushort *)a_data)[j];
+                            ((ushort *)b_data)[j] = (ushort)(val == 0 ? 65535 : val == 1 ? 1 :
+                                val == -1 ? 1 - 2 * (ipower & 1) :
+                                    val == 2 && ipower == -1 ? 1 : 0);
+                        }
+                    else
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((ushort *)a_data)[j];
+                            val = ipow(val, ipower);
+                            ((ushort *)b_data)[j] = saturate_cast<ushort>(val);
+                        }
+                    break;
+                case alvision.MatrixType.CV_16S:
+                    if (ipower < 0)
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((short *)a_data)[j];
+                            ((short *)b_data)[j] = (short)(val == 0 ? 32767 : val == 1 ? 1 :
+                                val == -1 ? 1 - 2 * (ipower & 1) :
+                                    val == 2 && ipower == -1 ? 1 : 0);
+                        }
+                    else
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((short *)a_data)[j];
+                            val = ipow(val, ipower);
+                            ((short *)b_data)[j] = saturate_cast<short>(val);
+                        }
+                    break;
+                case alvision.MatrixType.CV_32S:
+                    if (ipower < 0)
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((int *)a_data)[j];
+                            ((int *)b_data)[j] = val == 0 ? INT_MAX : val == 1 ? 1 :
+                                val == -1 ? 1 - 2 * (ipower & 1) :
+                                    val == 2 && ipower == -1 ? 1 : 0;
+                        }
+                    else
+                        for (j = 0; j < ncols; j++) {
+                            int val = ((int *)a_data)[j];
+                            val = ipow(val, ipower);
+                            ((int *)b_data)[j] = val;
+                        }
+                    break;
+                case alvision.MatrixType.CV_32F:
+                    if (this.power != ipower)
+                        for (j = 0; j < ncols; j++) {
+                            double val = ((float *)a_data)[j];
+                            val = pow(fabs(val), power);
+                            ((float *)b_data)[j] = (float)val;
+                        }
+                    else
+                        for (j = 0; j < ncols; j++) {
+                            double val = ((float *)a_data)[j];
+                            if (ipower < 0)
+                                val = 1. / val;
+                            val = ipow(val, apower);
+                            ((float *)b_data)[j] = (float)val;
+                        }
+                    break;
+                case alvision.MatrixType.CV_64F:
+                    if (power != ipower)
+                        for (j = 0; j < ncols; j++) {
+                            double val = ((double *)a_data)[j];
+                            val = pow(fabs(val), power);
+                            ((double *)b_data)[j] = (double)val;
+                        }
+                    else
+                        for (j = 0; j < ncols; j++) {
+                            double val = ((double *)a_data)[j];
+                            if (ipower < 0)
+                                val = 1. / val;
+                            val = ipow(val, apower);
+                            ((double *)b_data)[j] = (double)val;
+                        }
+                    break;
             }
         }
-        else
-            cvPow( test_array[INPUT][0], test_array[OUTPUT][0], power );
+
     }
-    else
-    {
-        Mat& a = test_mat[INPUT][0];
-        Mat& b = test_mat[OUTPUT][0];
-        if(power == 0.5)
-            cv::sqrt(a, b);
+    get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
+        var depth = this.test_mat[i.valueOf()][j.valueOf()].depth();
+        if (depth < alvision.MatrixType.CV_32F)
+            return this.power == Math.round(this.power.valueOf()) && this.power >= 0 ? 0 : 1;
         else
-            cv::pow(a, power, b);
+            return super.get_success_error_level(test_case_idx, i, j);
     }
+
+    protected power: alvision.double;
 }
 
 
-inline static int ipow( int a, int power )
+
+
+function ipow( a : number, power : number ) : number
 {
-    int b = 1;
+    var b = 1;
     while( power > 0 )
     {
-        if( power&1 )
-            b *= a, power--;
+        if( power & 1 )
+            b *= a.valueOf(), power--;
         else
             a *= a, power >>= 1;
     }
@@ -204,313 +290,142 @@ inline static int ipow( int a, int power )
 }
 
 
-inline static double ipow( double a, int power )
-{
-    double b = 1.;
-    while( power > 0 )
-    {
-        if( power&1 )
-            b *= a, power--;
-        else
-            a *= a, power >>= 1;
-    }
-    return b;
-}
+//inline static double ipow( double a, int power )
+//{
+//    double b = 1.;
+//    while( power > 0 )
+//    {
+//        if( power&1 )
+//            b *= a, power--;
+//        else
+//            a *= a, power >>= 1;
+//    }
+//    return b;
+//}
 
 
-void Core_PowTest::prepare_to_validation( int /*test_case_idx*/ )
-{
-    const Mat& a = test_mat[INPUT][0];
-    Mat& b = test_mat[REF_OUTPUT][0];
-
-    int depth = a.depth();
-    int ncols = a.cols*a.channels();
-    int ipower = cvRound(power), apower = abs(ipower);
-    int i, j;
-
-    for( i = 0; i < a.rows; i++ )
-    {
-        const uchar* a_data = a.ptr(i);
-        uchar* b_data = b.ptr(i);
-
-        switch( depth )
-        {
-            case CV_8U:
-                if( ipower < 0 )
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((uchar*)a_data)[j];
-                        ((uchar*)b_data)[j] = (uchar)(val == 0 ? 255 : val == 1 ? 1 :
-                                                      val == 2 && ipower == -1 ? 1 : 0);
-                    }
-                else
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((uchar*)a_data)[j];
-                        val = ipow( val, ipower );
-                        ((uchar*)b_data)[j] = saturate_cast<uchar>(val);
-                    }
-                break;
-            case CV_8S:
-                if( ipower < 0 )
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((schar*)a_data)[j];
-                        ((schar*)b_data)[j] = (schar)(val == 0 ? 127 : val == 1 ? 1 :
-                                                    val ==-1 ? 1-2*(ipower&1) :
-                                                    val == 2 && ipower == -1 ? 1 : 0);
-                    }
-                else
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((schar*)a_data)[j];
-                        val = ipow( val, ipower );
-                        ((schar*)b_data)[j] = saturate_cast<schar>(val);
-                    }
-                break;
-            case CV_16U:
-                if( ipower < 0 )
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((ushort*)a_data)[j];
-                        ((ushort*)b_data)[j] = (ushort)(val == 0 ? 65535 : val == 1 ? 1 :
-                                                        val ==-1 ? 1-2*(ipower&1) :
-                                                        val == 2 && ipower == -1 ? 1 : 0);
-                    }
-                else
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((ushort*)a_data)[j];
-                        val = ipow( val, ipower );
-                        ((ushort*)b_data)[j] = saturate_cast<ushort>(val);
-                    }
-                break;
-            case CV_16S:
-                if( ipower < 0 )
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((short*)a_data)[j];
-                        ((short*)b_data)[j] = (short)(val == 0 ? 32767 : val == 1 ? 1 :
-                                                      val ==-1 ? 1-2*(ipower&1) :
-                                                      val == 2 && ipower == -1 ? 1 : 0);
-                    }
-                else
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((short*)a_data)[j];
-                        val = ipow( val, ipower );
-                        ((short*)b_data)[j] = saturate_cast<short>(val);
-                    }
-                break;
-            case CV_32S:
-                if( ipower < 0 )
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((int*)a_data)[j];
-                        ((int*)b_data)[j] = val == 0 ? INT_MAX : val == 1 ? 1 :
-                        val ==-1 ? 1-2*(ipower&1) :
-                        val == 2 && ipower == -1 ? 1 : 0;
-                    }
-                else
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        int val = ((int*)a_data)[j];
-                        val = ipow( val, ipower );
-                        ((int*)b_data)[j] = val;
-                    }
-                break;
-            case CV_32F:
-                if( power != ipower )
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        double val = ((float*)a_data)[j];
-                        val = pow( fabs(val), power );
-                        ((float*)b_data)[j] = (float)val;
-                    }
-                else
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        double val = ((float*)a_data)[j];
-                        if( ipower < 0 )
-                            val = 1./val;
-                        val = ipow( val, apower );
-                        ((float*)b_data)[j] = (float)val;
-                    }
-                break;
-            case CV_64F:
-                if( power != ipower )
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        double val = ((double*)a_data)[j];
-                        val = pow( fabs(val), power );
-                        ((double*)b_data)[j] = (double)val;
-                    }
-                else
-                    for( j = 0; j < ncols; j++ )
-                    {
-                        double val = ((double*)a_data)[j];
-                        if( ipower < 0 )
-                            val = 1./val;
-                        val = ipow( val, apower );
-                        ((double*)b_data)[j] = (double)val;
-                    }
-                break;
-        }
-    }
-}
 
 ///////////////////////////////////////// matrix tests ////////////////////////////////////////////
 
-class Core_MatrixTest : public cvtest::ArrayTest
-{
-public:
-    typedef cvtest::ArrayTest Base;
-    Core_MatrixTest( int in_count, int out_count,
-                       bool allow_int, bool scalar_output, int max_cn );
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx,
-                                        vector<vector<Size> >& sizes,
-                                        vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
-    bool allow_int;
-    bool scalar_output;
-    int max_cn;
-};
+class Core_MatrixTest extends alvision.cvtest.ArrayTest {
+    constructor(in_count: alvision.int, out_count: alvision.int,
+        _allow_int: boolean, _scalar_output: boolean, _max_cn: alvision.int) {
+        super();
 
 
-Core_MatrixTest::Core_MatrixTest( int in_count, int out_count,
-                                      bool _allow_int, bool _scalar_output, int _max_cn )
-: allow_int(_allow_int), scalar_output(_scalar_output), max_cn(_max_cn)
-{
-    int i;
-    for( i = 0; i < in_count; i++ )
-        test_array[INPUT].push_back(NULL);
+        this.allow_int = _allow_int;
+        this.scalar_output = _scalar_output;
+        this.max_cn = _max_cn;
 
-    for( i = 0; i < out_count; i++ )
-    {
-        test_array[OUTPUT].push_back(NULL);
-        test_array[REF_OUTPUT].push_back(NULL);
+
+        for (var i = 0; i < in_count; i++)
+            this.test_array[this.INPUT].push(null);
+
+        for (var i = 0; i < out_count; i++) {
+            this.test_array[this.OUTPUT].push(null);
+            this.test_array[this.REF_OUTPUT].push(null);
+        }
+
+        this.element_wise_relative_error = false;
     }
 
-    element_wise_relative_error = false;
-}
 
 
-void Core_MatrixTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                       vector<vector<Size> >& sizes,
-                                                       vector<vector<int> >& types )
-{
-    RNG& rng = ts->get_rng();
-    int depth = cvtest::randInt(rng) % (allow_int ? CV_64F+1 : 2);
-    int cn = cvtest::randInt(rng) % max_cn + 1;
-    size_t i, j;
 
-    if( allow_int )
-        depth += depth == CV_8S;
-    else
-        depth += CV_32F;
 
-    Base::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {
+        var rng = this.ts.get_rng();
+        var depth = alvision.cvtest.randInt(rng).valueOf() % (this.allow_int ? alvision.MatrixType.CV_64F + 1 : 2);
+        var cn = alvision.cvtest.randInt(rng).valueOf() % this.max_cn + 1;
+        var i, j;
 
-    for( i = 0; i < test_array.size(); i++ )
-    {
-        size_t count = test_array[i].size();
-        int flag = (i == OUTPUT || i == REF_OUTPUT) && scalar_output;
-        int type = !flag ? CV_MAKETYPE(depth, cn) : CV_64FC1;
+        if (this.allow_int)
+            depth += depth == alvision.MatrixType.CV_8S;
+        else
+            depth += alvision.MatrixType.CV_32F;
 
-        for( j = 0; j < count; j++ )
-        {
-            types[i][j] = type;
-            if( flag )
-                sizes[i][j] = Size( 4, 1 );
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
+
+        for (i = 0; i < this.test_array.length; i++) {
+            var count = this.test_array[i].length;
+            var flag = (i == this.OUTPUT || i == this.REF_OUTPUT) && this.scalar_output;
+            var type = !flag ? alvision.MatrixType.CV_MAKETYPE(depth, cn) : alvision.MatrixType.CV_64FC1;
+
+            for (j = 0; j < count; j++) {
+                types[i][j] = type;
+                if (flag)
+                    sizes[i][j] = new alvision.Size(4, 1);
+            }
         }
     }
+    get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
+        var input_depth = this.test_mat[this.INPUT][0].depth();
+        var input_precision = input_depth < alvision.MatrixType.CV_32F ? 0 : input_depth == alvision.MatrixType.CV_32F ? 5e-5 : 5e-10;
+        var output_precision = super.get_success_error_level(test_case_idx, i, j);
+        return Math.max(input_precision, output_precision);
+    }
+
+    protected allow_int: boolean;
+    protected scalar_output: boolean;
+    protected max_cn: alvision.int;
 }
 
 
-double Core_MatrixTest::get_success_error_level( int test_case_idx, int i, int j )
-{
-    int input_depth = test_mat[INPUT][0].depth();
-    double input_precision = input_depth < CV_32F ? 0 : input_depth == CV_32F ? 5e-5 : 5e-10;
-    double output_precision = Base::get_success_error_level( test_case_idx, i, j );
-    return MAX(input_precision, output_precision);
-}
+
 
 
 ///////////////// Trace /////////////////////
 
-class Core_TraceTest : public Core_MatrixTest
+class Core_TraceTest extends Core_MatrixTest
 {
-public:
-    Core_TraceTest();
-protected:
-    void run_func();
-    void prepare_to_validation( int test_case_idx );
+    constructor() {
+        super(1, 1, true, true, 4)
+    }
+
+
+    run_func(): void {
+        this.test_mat[this.OUTPUT][0].at<Scalar>(0, 0) =  cvTrace(test_array[INPUT][0]);
+    }
+    prepare_to_validation(test_case_idx: alvision.int): void {
+        var mat = this.test_mat[this.INPUT][0];
+        var count = Math.min(mat.rows.valueOf(), mat.cols.valueOf());
+        var diag = new alvision.Mat(count, 1, mat.type(), mat.ptr(), mat.step + mat.elemSize());
+        var r = alvision.cvtest.mean(diag);
+        r *= count;
+
+        this.test_mat[this.REF_OUTPUT][0].at<Scalar>(0, 0) = r;
+    }
 };
 
-
-Core_TraceTest::Core_TraceTest() : Core_MatrixTest( 1, 1, true, true, 4 )
-{
-}
-
-
-void Core_TraceTest::run_func()
-{
-    test_mat[OUTPUT][0].at<Scalar>(0,0) = cvTrace(test_array[INPUT][0]);
-}
-
-
-void Core_TraceTest::prepare_to_validation( int )
-{
-    Mat& mat = test_mat[INPUT][0];
-    int count = MIN( mat.rows, mat.cols );
-    Mat diag(count, 1, mat.type(), mat.ptr(), mat.step + mat.elemSize());
-    Scalar r = cvtest::mean(diag);
-    r *= (double)count;
-
-    test_mat[REF_OUTPUT][0].at<Scalar>(0,0) = r;
-}
 
 
 ///////// dotproduct //////////
 
-class Core_DotProductTest : public Core_MatrixTest
+class Core_DotProductTest extends Core_MatrixTest
 {
-public:
-    Core_DotProductTest();
-protected:
-    void run_func();
-    void prepare_to_validation( int test_case_idx );
+    constructor() {
+        super(2, 1, true, true, 4)
+    }
+    run_func() : void{
+    this.test_mat[this.OUTPUT][0].at<Scalar>(0, 0) = new alvision.Scalar(cvDotProduct(test_array[INPUT][0], test_array[INPUT][1]));
+}
+    prepare_to_validation(test_case_idx: alvision.int ) : void{
+    this.test_mat[REF_OUTPUT][0].at<Scalar>(0, 0) = new alvision.Scalar(cvtest::crossCorr(test_mat[INPUT][0], test_mat[INPUT][1]));
+    }
+
 };
-
-
-Core_DotProductTest::Core_DotProductTest() : Core_MatrixTest( 2, 1, true, true, 4 )
-{
-}
-
-
-void Core_DotProductTest::run_func()
-{
-    test_mat[OUTPUT][0].at<Scalar>(0,0) = Scalar(cvDotProduct( test_array[INPUT][0], test_array[INPUT][1] ));
-}
-
-
-void Core_DotProductTest::prepare_to_validation( int )
-{
-    test_mat[REF_OUTPUT][0].at<Scalar>(0,0) = Scalar(cvtest::crossCorr( test_mat[INPUT][0], test_mat[INPUT][1] ));
-}
-
 
 ///////// crossproduct //////////
 
-class Core_CrossProductTest : public Core_MatrixTest
+class Core_CrossProductTest extends Core_MatrixTest
 {
 public:
     Core_CrossProductTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx,
-                                        vector<vector<Size> >& sizes,
-                                        vector<vector<int> >& types );
+    protected:
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {
+    }
     void run_func();
     void prepare_to_validation( int test_case_idx );
 };
@@ -604,13 +519,15 @@ void Core_CrossProductTest::prepare_to_validation( int )
 
 ///////////////// gemm /////////////////////
 
-class Core_GEMMTest : public Core_MatrixTest
+class Core_GEMMTest extends Core_MatrixTest
 {
 public:
     typedef Core_MatrixTest Base;
     Core_GEMMTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    protected:
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {
+    }
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
     int prepare_test_case( int test_case_idx );
     void run_func();
@@ -715,12 +632,14 @@ void Core_GEMMTest::prepare_to_validation( int )
 
 ///////////////// multransposed /////////////////////
 
-class Core_MulTransposedTest : public Core_MatrixTest
+class Core_MulTransposedTest extends Core_MatrixTest
 {
 public:
     Core_MulTransposedTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    protected:
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {
+    }
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
     void run_func();
     void prepare_to_validation( int test_case_idx );
@@ -809,14 +728,16 @@ void Core_MulTransposedTest::prepare_to_validation( int )
 
 ///////////////// Transform /////////////////////
 
-class Core_TransformTest : public Core_MatrixTest
+class Core_TransformTest extends Core_MatrixTest
 {
 public:
     typedef Core_MatrixTest Base;
     Core_TransformTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    protected:
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {
+    }
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     int prepare_test_case( int test_case_idx );
     void run_func();
     void prepare_to_validation( int test_case_idx );
@@ -914,13 +835,15 @@ void Core_TransformTest::prepare_to_validation( int )
 
 ///////////////// PerspectiveTransform /////////////////////
 
-class Core_PerspectiveTransformTest : public Core_MatrixTest
+class Core_PerspectiveTransformTest extends Core_MatrixTest
 {
 public:
     Core_PerspectiveTransformTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    protected:
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {
+    }
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int test_case_idx );
 };
@@ -1071,13 +994,15 @@ void Core_PerspectiveTransformTest::prepare_to_validation( int )
 
 ///////////////// Mahalanobis /////////////////////
 
-class Core_MahalanobisTest : public Core_MatrixTest
+class Core_MahalanobisTest extends Core_MatrixTest
 {
 public:
     typedef Core_MatrixTest Base;
     Core_MahalanobisTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    protected:
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {}
+
     int prepare_test_case( int test_case_idx );
     void run_func();
     void prepare_to_validation( int test_case_idx );
@@ -1146,12 +1071,14 @@ void Core_MahalanobisTest::prepare_to_validation( int )
 
 ///////////////// covarmatrix /////////////////////
 
-class Core_CovarMatrixTest : public Core_MatrixTest
+class Core_CovarMatrixTest extends Core_MatrixTest
 {
 public:
     Core_CovarMatrixTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    protected:
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {
+    }
     int prepare_test_case( int test_case_idx );
     void run_func();
     void prepare_to_validation( int test_case_idx );
@@ -1335,14 +1262,15 @@ static void cvTsFloodWithZeros( Mat& mat, RNG& rng )
 
 ///////////////// determinant /////////////////////
 
-class Core_DetTest : public Core_MatrixTest
+class Core_DetTest extends Core_MatrixTest
 {
 public:
     typedef Core_MatrixTest Base;
     Core_DetTest();
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    protected:
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
+        types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
     int prepare_test_case( int test_case_idx );
     void run_func();
@@ -1494,15 +1422,15 @@ void Core_DetTest::prepare_to_validation( int )
 
 ///////////////// invert /////////////////////
 
-class Core_InvertTest : public Core_MatrixTest
+class Core_InvertTest extends Core_MatrixTest
 {
 public:
     typedef Core_MatrixTest Base;
     Core_InvertTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     int prepare_test_case( int test_case_idx );
     void run_func();
     void prepare_to_validation( int test_case_idx );
@@ -1650,15 +1578,15 @@ void Core_InvertTest::prepare_to_validation( int )
 
 ///////////////// solve /////////////////////
 
-class Core_SolveTest : public Core_MatrixTest
+class Core_SolveTest extends Core_MatrixTest
 {
 public:
     typedef Core_MatrixTest Base;
     Core_SolveTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     int prepare_test_case( int test_case_idx );
     void run_func();
     void prepare_to_validation( int test_case_idx );
@@ -1789,14 +1717,14 @@ void Core_SolveTest::prepare_to_validation( int )
 
 ///////////////// SVD /////////////////////
 
-class Core_SVDTest : public Core_MatrixTest
+class Core_SVDTest extends Core_MatrixTest
 {
 public:
     typedef Core_MatrixTest Base;
     Core_SVDTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
     int prepare_test_case( int test_case_idx );
     void run_func();
@@ -2019,14 +1947,14 @@ void Core_SVDTest::prepare_to_validation( int /*test_case_idx*/ )
 
 ///////////////// SVBkSb /////////////////////
 
-class Core_SVBkSbTest : public Core_MatrixTest
+class Core_SVBkSbTest extends Core_MatrixTest
 {
 public:
     typedef Core_MatrixTest Base;
     Core_SVBkSbTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
     int prepare_test_case( int test_case_idx );
     void run_func();
@@ -2217,7 +2145,7 @@ struct pred_double
     }
 };
 
-class Core_SolvePolyTest : public cvtest::BaseTest
+class Core_SolvePolyTest extends alvision. cvtest.BaseTest
 {
 public:
     Core_SolvePolyTest();
@@ -2340,7 +2268,7 @@ void Core_SolvePolyTest::run( int )
 
         if (!pass)
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
             ts->printf( cvtest::TS::LOG, "too big diff = %g\n", div );
 
             for (size_t j=0;j<ar2.size();++j)
@@ -2357,7 +2285,7 @@ void Core_SolvePolyTest::run( int )
     }
 }
 
-class Core_PhaseTest : public cvtest::BaseTest
+class Core_PhaseTest extends alvision. cvtest.BaseTest
 {
 public:
     Core_PhaseTest() {}
@@ -2426,7 +2354,7 @@ protected:
         {
             ts->printf(cvtest::TS::LOG, "There are result angles that are out of range [0, 360] (part of them is %f)\n",
                        static_cast<float>(outOfRangeCount)/resInDeg.total());
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
         }
 
         Mat diff = abs(anglesInDegrees - resInDeg);
@@ -2435,7 +2363,7 @@ protected:
         {
             ts->printf(cvtest::TS::LOG, "There are incorrect result angles (in degrees) (part of them is %f)\n",
                        static_cast<float>(errDegCount)/resInDeg.total());
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
         }
 
         Mat convertedRes = resInRad * 180. / CV_PI;
@@ -2443,14 +2371,14 @@ protected:
         if(normDiff > FLT_EPSILON * 180.)
         {
             ts->printf(cvtest::TS::LOG, "There are incorrect result angles (in radians)\n");
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
         }
 
-        ts->set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(cvtest::TS::OK);
     }
 };
 
-class Core_CheckRange_Empty : public cvtest::BaseTest
+class Core_CheckRange_Empty extends alvision. cvtest.BaseTest
 {
 public:
     Core_CheckRange_Empty(){}
@@ -2467,7 +2395,7 @@ void Core_CheckRange_Empty::run( int )
 
 TEST(Core_CheckRange_Empty, accuracy) { Core_CheckRange_Empty test; test.safe_run(); }
 
-class Core_CheckRange_INT_MAX : public cvtest::BaseTest
+class Core_CheckRange_INT_MAX  extends alvision.cvtest.BaseTest
 {
 public:
     Core_CheckRange_INT_MAX(){}
@@ -2643,7 +2571,7 @@ enum
     VECTOR
 };
 
-class CV_KMeansSingularTest : public cvtest::BaseTest
+class CV_KMeansSingularTest alvision. cvtest.BaseTest
 {
 public:
     CV_KMeansSingularTest() {}
@@ -2743,12 +2671,12 @@ protected:
                        "context: iteration=%d, N=%d, N0=%d, K=%d\n",
                        iter, N, N0, K);
             std::cout << labels << std::endl;
-            ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         }
     }
 };
 
-TEST(Core_KMeans, singular) { CV_KMeansSingularTest test; test.safe_run(MAT_N_DIM_C1); }
+alvision.cvtest.TEST('Core_KMeans', 'singular', () => { CV_KMeansSingularTest test; test.safe_run(MAT_N_DIM_C1); });
 
 CV_ENUM(KMeansInputVariant, MAT_N_DIM_C1, MAT_N_1_CDIM, MAT_1_N_CDIM, MAT_N_DIM_C1_NONCONT, MAT_N_1_CDIM_NONCONT, VECTOR)
 
@@ -2793,9 +2721,9 @@ TEST(CovariationMatrixVectorOfMat, accuracy)
     ASSERT_EQ(sDiff.dot(sDiff), 0.0);
 }
 
-TEST(CovariationMatrixVectorOfMatWithMean, accuracy)
+alvision.cvtest.TEST('CovariationMatrixVectorOfMatWithMean', 'accuracy',()=>
 {
-    unsigned int col_problem_size = 8, row_problem_size = 8, vector_size = 16;
+    var col_problem_size = 8, row_problem_size = 8, vector_size = 16;
     cv::Mat src(vector_size, col_problem_size * row_problem_size, CV_32F);
     int singleMatFlags = CV_COVAR_ROWS | CV_COVAR_USE_AVG;
 
@@ -2826,58 +2754,62 @@ TEST(CovariationMatrixVectorOfMatWithMean, accuracy)
     cv::absdiff(goldMean, actualMean.reshape(0,1), meanDiff);
     cv::Scalar sDiff = cv::sum(meanDiff);
     ASSERT_EQ(sDiff.dot(sDiff), 0.0);
-}
+});
 
-TEST(Core_Pow, special)
+alvision.cvtest.TEST('Core_Pow', 'special',()=>
 {
-    for( int i = 0; i < 100; i++ )
+    for( var i = 0; i < 100; i++ )
     {
-        int n = theRNG().uniform(1, 30);
-        Mat mtx0(1, n, CV_8S), mtx, result;
-        randu(mtx0, -5, 5);
+        var n = alvision.theRNG().uniform(1, 30);
+        var mtx0 = new alvision.Mat(1, n, alvision.MatrixType.CV_8S);
+        var mtx = new alvision.Mat();
+        var result = new alvision.Mat();
 
-        int type = theRNG().uniform(0, 2) ? CV_64F : CV_32F;
-        double eps = type == CV_32F ? 1e-3 : 1e-10;
+        alvision.randu(mtx0, -5, 5);
+
+        var type = alvision.theRNG().uniform(0, 2) ? alvision.MatrixType.CV_64F : alvision.MatrixType.CV_32F;
+        var eps = type == alvision.MatrixType.CV_32F ? 1e-3 : 1e-10;
         mtx0.convertTo(mtx, type);
         // generate power from [-n, n] interval with 1/8 step - enough to check various cases.
-        const int max_pf = 3;
-        int pf = theRNG().uniform(0, max_pf*2+1);
-        double power = ((1 << pf) - (1 << (max_pf*2-1)))/16.;
-        int ipower = cvRound(power);
-        bool is_ipower = ipower == power;
-        cv::pow(mtx, power, result);
-        for( int j = 0; j < n; j++ )
+        const max_pf = 3;
+
+        var pf = alvision.theRNG().uniform(0, max_pf*2+1);
+        var power = ((1 << pf.valueOf()) - (1 << (max_pf*2-1)))/16.;
+        var ipower = Math.round(power);
+        var is_ipower = ipower == power;
+        alvision.pow(mtx, power, result);
+        for( var j = 0; j < n; j++ )
         {
-            double val = type == CV_32F ? (double)mtx.at<float>(j) : mtx.at<double>(j);
-            double r = type == CV_32F ? (double)result.at<float>(j) : result.at<double>(j);
-            double r0;
+            var val = type == alvision.MatrixType.CV_32F ? (double)mtx.at<float>(j) : mtx.at<double>(j);
+            var r = type == alvision.MatrixType.CV_32F ? (double)result.at<float>(j) : result.at<double>(j);
+            var r0;
             if( power == 0. )
                 r0 = 1;
             else if( is_ipower )
             {
                 r0 = 1;
-                for( int k = 0; k < std::abs(ipower); k++ )
+                for( var k = 0; k < Math.abs(ipower); k++ )
                     r0 *= val;
                 if( ipower < 0 )
                     r0 = 1./r0;
             }
             else
-                r0 = std::pow(val, power);
+                r0 = Math.pow(val, power);
             if( cvIsInf(r0) )
             {
-                ASSERT_TRUE(cvIsInf(r) != 0);
+                alvision.ASSERT_TRUE(cvIsInf(r) != 0);
             }
             else if( cvIsNaN(r0) )
             {
-                ASSERT_TRUE(cvIsNaN(r) != 0);
+                alvision.ASSERT_TRUE(cvIsNaN(r) != 0);
             }
             else
             {
-                ASSERT_TRUE(cvIsInf(r) == 0 && cvIsNaN(r) == 0);
-                ASSERT_LT(fabs(r - r0), eps);
+                alvision.ASSERT_TRUE(cvIsInf(r) == 0 && cvIsNaN(r) == 0);
+                alvision.ASSERT_LT(fabs(r - r0), eps);
             }
         }
     }
-}
+});
 
 /* End of file. */

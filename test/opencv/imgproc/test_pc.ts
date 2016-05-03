@@ -48,50 +48,42 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
 namespace cvtest
 {
 
 /// phase correlation
-class CV_PhaseCorrelatorTest : public cvtest::ArrayTest
+class CV_PhaseCorrelatorTest extends alvision.cvtest.ArrayTest
 {
-public:
-    CV_PhaseCorrelatorTest();
-protected:
-    void run( int );
+    run(int): void {
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+
+        var r1 =alvision.Mat.from( alvision.Mat.ones(new alvision.Size(129, 128), alvision.MatrixType.CV_64F));
+        var r2 =alvision.Mat.from( alvision.Mat.ones(new alvision.Size(129, 128), alvision.MatrixType.CV_64F));
+
+        var expectedShiftX = -10.0;
+        var expectedShiftY = -20.0;
+
+        // draw 10x10 rectangles @ (100, 100) and (90, 80) should see ~(-10, -20) shift here...
+        alvision.rectangle(r1, new alvision.Point(100, 100), new alvision.Point(110, 110), new alvision.Scalar(0, 0, 0),alvision.CV_FILLED);
+        alvision.rectangle(r2, new alvision.Point(90, 80),   new alvision.Point(100, 90),  new alvision.Scalar(0, 0, 0),alvision.CV_FILLED);
+
+        var hann = new alvision.Mat();
+        alvision.createHanningWindow(hann, r1.size(), alvision.MatrixType.CV_64F);
+        var phaseShift = alvision.phaseCorrelate(r1, r2, hann);
+
+        // test accuracy should be less than 1 pixel...
+        if ((expectedShiftX - phaseShift.x.valueOf()) >= 1 || (expectedShiftY - phaseShift.y.valueOf()) >= 1) {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+        }
+    }
 };
 
-CV_PhaseCorrelatorTest::CV_PhaseCorrelatorTest() {}
 
-void CV_PhaseCorrelatorTest::run( int )
-{
-    ts->set_failed_test_info(cvtest::TS::OK);
-
-    Mat r1 = Mat::ones(Size(129, 128), CV_64F);
-    Mat r2 = Mat::ones(Size(129, 128), CV_64F);
-
-    double expectedShiftX = -10.0;
-    double expectedShiftY = -20.0;
-
-    // draw 10x10 rectangles @ (100, 100) and (90, 80) should see ~(-10, -20) shift here...
-    cv::rectangle(r1, Point(100, 100), Point(110, 110), Scalar(0, 0, 0), CV_FILLED);
-    cv::rectangle(r2, Point(90, 80), Point(100, 90), Scalar(0, 0, 0), CV_FILLED);
-
-    Mat hann;
-    createHanningWindow(hann, r1.size(), CV_64F);
-    Point2d phaseShift = phaseCorrelate(r1, r2, hann);
-
-    // test accuracy should be less than 1 pixel...
-    if((expectedShiftX - phaseShift.x) >= 1 || (expectedShiftY - phaseShift.y) >= 1)
-    {
-         ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
-    }
-}
-
-TEST(Imgproc_PhaseCorrelatorTest, accuracy) { CV_PhaseCorrelatorTest test; test.safe_run(); }
+alvision.cvtest.TEST('Imgproc_PhaseCorrelatorTest', 'accuracy',()=> { var test = new CV_PhaseCorrelatorTest(); test.safe_run(); });
 
 }

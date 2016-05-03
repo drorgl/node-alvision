@@ -52,14 +52,14 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class CV_DisTransTest : public cvtest::ArrayTest
+class CV_DisTransTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_DisTransTest();
 
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int );
 

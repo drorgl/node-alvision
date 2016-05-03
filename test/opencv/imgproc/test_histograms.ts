@@ -52,7 +52,7 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class CV_BaseHistTest : public cvtest::BaseTest
+class CV_BaseHistTest  extends alvision.cvtest.BaseTest
 {
 public:
     enum { MAX_HIST = 12 };
@@ -574,7 +574,7 @@ int CV_QueryHistTest::validate_test_results( int /*test_case_idx*/ )
     }
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -686,7 +686,7 @@ int CV_MinMaxHistTest::validate_test_results( int /*test_case_idx*/ )
     }
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -787,7 +787,7 @@ int CV_NormHistTest::validate_test_results( int /*test_case_idx*/ )
     }
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -946,7 +946,7 @@ int CV_ThreshHistTest::validate_test_results( int /*test_case_idx*/ )
     }
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -1118,7 +1118,7 @@ int CV_CompareHistTest::validate_test_results( int /*test_case_idx*/ )
     }
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -1325,7 +1325,7 @@ int CV_CalcHistTest::validate_test_results( int /*test_case_idx*/ )
     }
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 
@@ -1547,7 +1547,7 @@ int CV_CalcBackProjectTest::validate_test_results( int /*test_case_idx*/ )
     code = cvtest::cmpEps2( ts, a, b, threshold, true, "Back project image" );
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
 
     return code;
 }
@@ -1741,7 +1741,7 @@ int CV_CalcBackProjectPatchTest::validate_test_results( int /*test_case_idx*/ )
     code = cvtest::cmpEps2( ts, a, b, err_level, true, "BackProjectPatch result" );
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
 
     return code;
 }
@@ -1849,7 +1849,7 @@ int CV_BayesianProbTest::validate_test_results( int /*test_case_idx*/ )
     }
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     return code;
 }
 

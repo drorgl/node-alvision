@@ -88,15 +88,15 @@ bool BareModelEstimator::checkSubsetPublic( const CvMat* ms1, int count, bool ch
     return checkSubset(ms1, count);
 }
 
-class CV_ModelEstimator2_Test : public cvtest::ArrayTest
+class CV_ModelEstimator2_Test extends alvision.cvtest.ArrayTest
 {
 public:
     CV_ModelEstimator2_Test();
 
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int test_case_idx );
 

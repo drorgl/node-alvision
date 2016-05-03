@@ -48,56 +48,50 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
+//#include "test_precomp.hpp"
+//
+//using namespace std;
+//using namespace cv;
 
-using namespace std;
-using namespace cv;
-
-class CV_BRISKTest : public cvtest::BaseTest
+class CV_BRISKTest extends alvision.cvtest.BaseTest
 {
-public:
-    CV_BRISKTest();
-    ~CV_BRISKTest();
-protected:
-    void run(int);
+    run(ii : alvision.int): void {
+        var image1 = alvision.imread(this.ts.get_data_path() + "inpaint/orig.png");
+        var image2 = alvision.imread(this.ts.get_data_path() + "cameracalibration/chess9.png");
+
+        if (image1 == null || image2 == null) {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+            return;
+        }
+
+        var gray1 = new alvision.Mat()
+        var gray2 = new alvision.Mat();
+        
+        alvision.cvtColor(image1, gray1,alvision.ColorConversionCodes.COLOR_BGR2GRAY);
+        alvision.cvtColor(image2, gray2,alvision.ColorConversionCodes.COLOR_BGR2GRAY);
+
+        //Ptr < FeatureDetector > detector = BRISK::create();
+        var detector = alvision.BRISK.create();
+
+        var keypoints1 = new Array<alvision.KeyPoint>();
+        var keypoints2 = new Array<alvision.KeyPoint>();
+
+        detector.detect(image1, (kp) => { keypoints1 = kp;});
+        detector.detect(image2, (kp) => { keypoints2 = kp; });
+
+        for (var i = 0; i < keypoints1.length; ++i)
+        {
+            var kp = keypoints1[i];
+            alvision.ASSERT_NE(kp.angle, -1);
+        }
+
+        for (var i = 0; i < keypoints2.length; ++i)
+        {
+            var kp = keypoints2[i];
+            alvision.ASSERT_NE(kp.angle, -1);
+        }
+    }
 };
 
-CV_BRISKTest::CV_BRISKTest() {}
-CV_BRISKTest::~CV_BRISKTest() {}
 
-void CV_BRISKTest::run( int )
-{
-  Mat image1 = imread(string(ts->get_data_path()) + "inpaint/orig.png");
-  Mat image2 = imread(string(ts->get_data_path()) + "cameracalibration/chess9.png");
-
-  if (image1.empty() || image2.empty())
-    {
-      ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
-      return;
-    }
-
-  Mat gray1, gray2;
-  cvtColor(image1, gray1, COLOR_BGR2GRAY);
-  cvtColor(image2, gray2, COLOR_BGR2GRAY);
-
-  Ptr<FeatureDetector> detector = BRISK::create();
-
-  vector<KeyPoint> keypoints1;
-  vector<KeyPoint> keypoints2;
-  detector->detect(image1, keypoints1);
-  detector->detect(image2, keypoints2);
-
-  for(size_t i = 0; i < keypoints1.size(); ++i)
-    {
-      const KeyPoint& kp = keypoints1[i];
-      ASSERT_NE(kp.angle, -1);
-    }
-
-  for(size_t i = 0; i < keypoints2.size(); ++i)
-    {
-      const KeyPoint& kp = keypoints2[i];
-      ASSERT_NE(kp.angle, -1);
-    }
-}
-
-TEST(Features2d_BRISK, regression) { CV_BRISKTest test; test.safe_run(); }
+alvision.cvtest.TEST('Features2d_BRISK', 'regression', () => { var test = new CV_BRISKTest(); test.safe_run(); });

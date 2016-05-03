@@ -1432,7 +1432,7 @@ INSTANTIATE_TEST_CASE_P(Core_MinMaxLoc, ElemWiseTest, ::testing::Values(ElemWise
 INSTANTIATE_TEST_CASE_P(Core_CartToPolarToCart, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::CartToPolarToCartOp)));
 
 
-class CV_ArithmMaskTest : public cvtest::BaseTest
+class CV_ArithmMaskTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_ArithmMaskTest() {}
@@ -1522,7 +1522,7 @@ protected:
         }
         catch(...)
         {
-           ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+           this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         }
     }
 };

@@ -48,43 +48,45 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 //////////////////////////////////////////////////////
 // GoodFeaturesToTrack
 
-namespace
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(MinDistance, double)
+//}
+//
+//PARAM_TEST_CASE(GoodFeaturesToTrack, cv::cuda::DeviceInfo, MinDistance)
+//{
+//    cv::cuda::DeviceInfo devInfo;
+//    double minDistance;
+//
+//    virtual void SetUp()
+//    {
+//        devInfo = GET_PARAM(0);
+//        minDistance = GET_PARAM(1);
+//
+//        cv::cuda::setDevice(devInfo.deviceID());
+//    }
+//};
+
+
+alvision.cvtest.CUDA_TEST_P('GoodFeaturesToTrack', 'Accuracy',()=>
 {
-    IMPLEMENT_PARAM_CLASS(MinDistance, double)
-}
+    var image = readImage("opticalflow/frame0.png", cv::IMREAD_GRAYSCALE);
+    alvision.ASSERT_FALSE(image.empty());
 
-PARAM_TEST_CASE(GoodFeaturesToTrack, cv::cuda::DeviceInfo, MinDistance)
-{
-    cv::cuda::DeviceInfo devInfo;
-    double minDistance;
+    var maxCorners = 1000;
+    var qualityLevel = 0.01;
 
-    virtual void SetUp()
-    {
-        devInfo = GET_PARAM(0);
-        minDistance = GET_PARAM(1);
-
-        cv::cuda::setDevice(devInfo.deviceID());
-    }
-};
-
-CUDA_TEST_P(GoodFeaturesToTrack, Accuracy)
-{
-    cv::Mat image = readImage("opticalflow/frame0.png", cv::IMREAD_GRAYSCALE);
-    ASSERT_FALSE(image.empty());
-
-    int maxCorners = 1000;
-    double qualityLevel = 0.01;
-
-    cv::Ptr<cv::cuda::CornersDetector> detector = cv::cuda::createGoodFeaturesToTrackDetector(image.type(), maxCorners, qualityLevel, minDistance);
+    cv::Ptr < cv::cuda::CornersDetector > detector = cv::cuda::createGoodFeaturesToTrackDetector(image.type(), maxCorners, qualityLevel, minDistance);
+    var detector = alvision.cuda.
 
     cv::cuda::GpuMat d_pts;
     detector->detect(loadMat(image), d_pts);
@@ -115,25 +117,24 @@ CUDA_TEST_P(GoodFeaturesToTrack, Accuracy)
     double bad_ratio = static_cast<double>(mistmatch) / pts.size();
 
     ASSERT_LE(bad_ratio, 0.01);
-}
+});
 
-CUDA_TEST_P(GoodFeaturesToTrack, EmptyCorners)
-{
+alvision.cvtest.CUDA_TEST_P('GoodFeaturesToTrack', 'EmptyCorners', () => {
     int maxCorners = 1000;
     double qualityLevel = 0.01;
 
     cv::cuda::GpuMat src(100, 100, CV_8UC1, cv::Scalar::all(0));
     cv::cuda::GpuMat corners(1, maxCorners, CV_32FC2);
 
-    cv::Ptr<cv::cuda::CornersDetector> detector = cv::cuda::createGoodFeaturesToTrackDetector(src.type(), maxCorners, qualityLevel, minDistance);
+    cv::Ptr < cv::cuda::CornersDetector > detector = cv::cuda::createGoodFeaturesToTrackDetector(src.type(), maxCorners, qualityLevel, minDistance);
 
-    detector->detect(src, corners);
+    detector ->detect(src, corners);
 
     ASSERT_TRUE(corners.empty());
-}
+});
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, GoodFeaturesToTrack, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(MinDistance(0.0), MinDistance(3.0))));
+//INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, GoodFeaturesToTrack, testing::Combine(
+//    ALL_DEVICES,
+//    testing::Values(MinDistance(0.0), MinDistance(3.0))));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

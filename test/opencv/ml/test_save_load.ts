@@ -166,7 +166,7 @@ TEST(ML_Boost, save_load) { CV_SLMLTest test( CV_BOOST ); test.safe_run(); }
 TEST(ML_RTrees, save_load) { CV_SLMLTest test( CV_RTREES ); test.safe_run(); }
 TEST(DISABLED_ML_ERTrees, save_load) { CV_SLMLTest test( CV_ERTREES ); test.safe_run(); }
 
-class CV_LegacyTest : public cvtest::BaseTest
+class CV_LegacyTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_LegacyTest(const std::string &_modelName, const std::string &_suffixes = std::string())
@@ -226,7 +226,7 @@ protected:
             model->predict(input, output, StatModel::RAW_OUTPUT | (isTree ? DTrees::PREDICT_SUM : 0));
             // just check if no internal assertions or errors thrown
         }
-        ts->set_failed_test_info(code);
+        this.ts.set_failed_test_info(code);
     }
     void randomFillCategories(const string & filename, Mat & input)
     {

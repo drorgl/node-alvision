@@ -58,7 +58,7 @@ import fs = require('fs');
 //
 //using namespace std;
 
-class CV_FFmpegWriteBigVideoTest : public cvtest::BaseTest
+class CV_FFmpegWriteBigVideoTest  extends alvision.cvtest.BaseTest
 {
 public:
     void run(int)
@@ -122,11 +122,11 @@ public:
 
                 if (writer.isOpened() == false)
                 {
-                    ts->printf(ts->LOG, "\n\nFile name: %s\n", filename.c_str());
-                    ts->printf(ts->LOG, "Codec id: %d   Codec tag: %c%c%c%c\n", j,
+                    ts->printf(alvision.cvtest.TSConstants.LOG, "\n\nFile name: %s\n", filename.c_str());
+                    ts->printf(alvision.cvtest.TSConstants.LOG, "Codec id: %d   Codec tag: %c%c%c%c\n", j,
                                tag & 255, (tag >> 8) & 255, (tag >> 16) & 255, (tag >> 24) & 255);
-                    ts->printf(ts->LOG, "Error: cannot create video file.");
-                    ts->set_failed_test_info(ts->FAIL_INVALID_OUTPUT);
+                    ts->printf(alvision.cvtest.TSConstants.LOG, "Error: cannot create video file.");
+                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 }
                 else
                 {
@@ -148,16 +148,16 @@ public:
             }
             catch(...)
             {
-                ts->set_failed_test_info(ts->FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             }
-            ts->set_failed_test_info(cvtest::TS::OK);
+            this.ts.set_failed_test_info(cvtest::TS::OK);
         }
     }
 };
 
 TEST(Videoio_Video, ffmpeg_writebig) { CV_FFmpegWriteBigVideoTest test; test.safe_run(); }
 
-class CV_FFmpegReadImageTest : public cvtest::BaseTest
+class CV_FFmpegReadImageTest  extends alvision.cvtest.BaseTest
 {
 public:
     void run(int)
@@ -178,9 +178,9 @@ public:
         }
         catch(...)
         {
-            ts->set_failed_test_info(ts->FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
         }
-        ts->set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(cvtest::TS::OK);
     }
 };
 
@@ -347,7 +347,7 @@ public:
                     ts->printf(SUM, "Video #: %d\n", range.start);
                     ts->printf(SUM, "Frame #: %d\n", i);
     #undef SUM
-                    ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                     ts->set_gtest_status();
 
                     Mat diff;

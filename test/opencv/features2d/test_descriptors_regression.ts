@@ -102,7 +102,7 @@ static Mat readMatFromBin( const string& filename )
 }
 
 template<class Distance>
-class CV_DescriptorExtractorTest : public cvtest::BaseTest
+class CV_DescriptorExtractorTest  extends alvision.cvtest.BaseTest
 {
 public:
     typedef typename Distance::ValueType ValueType;
@@ -123,7 +123,7 @@ protected:
         if( validDescriptors.size != calcDescriptors.size || validDescriptors.type() != calcDescriptors.type() )
         {
             ts->printf(cvtest::TS::LOG, "Valid and computed descriptors matrices must have the same size and type.\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
             return;
         }
 
@@ -145,7 +145,7 @@ protected:
         else
         {
             ss << ">" << maxDist  << " - bad accuracy!"<< endl;
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
         }
         ts->printf(cvtest::TS::LOG,  ss.str().c_str() );
     }
@@ -166,7 +166,7 @@ protected:
         catch(...)
         {
             ts->printf( cvtest::TS::LOG, "compute() on empty image and empty keypoints must not generate exception (1).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
         }
 
         image.create( 50, 50, CV_8UC3 );
@@ -177,7 +177,7 @@ protected:
         catch(...)
         {
             ts->printf( cvtest::TS::LOG, "compute() on nonempty image and empty keypoints must not generate exception (1).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
         }
 
         // Several images.
@@ -191,7 +191,7 @@ protected:
         catch(...)
         {
             ts->printf( cvtest::TS::LOG, "compute() on empty images and empty keypoints collection must not generate exception (2).\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
         }
     }
 
@@ -205,7 +205,7 @@ protected:
         if( img.empty() )
         {
             ts->printf( cvtest::TS::LOG, "Image %s can not be read.\n", imgFilename.c_str() );
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
             return;
         }
         vector<KeyPoint> keypoints;
@@ -228,7 +228,7 @@ protected:
                 ts->printf( cvtest::TS::LOG, "Count of computed descriptors and keypoints count must be equal.\n" );
                 ts->printf( cvtest::TS::LOG, "Count of keypoints is            %d.\n", (int)keypoints.size() );
                 ts->printf( cvtest::TS::LOG, "Count of computed descriptors is %d.\n", calcDescriptors.rows );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -239,7 +239,7 @@ protected:
                 ts->printf( cvtest::TS::LOG, "Calculated size is %d.\n", calcDescriptors.cols );
                 ts->printf( cvtest::TS::LOG, "Expected type is   %d.\n", dextractor->descriptorType() );
                 ts->printf( cvtest::TS::LOG, "Calculated type is %d.\n", calcDescriptors.type() );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -252,7 +252,7 @@ protected:
                 if( !writeDescriptors( calcDescriptors ) )
                 {
                     ts->printf( cvtest::TS::LOG, "Descriptors can not be written.\n" );
-                    ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+                    this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
                     return;
                 }
             }
@@ -270,7 +270,7 @@ protected:
             else
             {
                 ts->printf(cvtest::TS::LOG, "File for writting keypoints can not be opened.\n");
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
                 return;
             }
         }
@@ -282,14 +282,14 @@ protected:
         if( !dextractor )
         {
             ts->printf(cvtest::TS::LOG, "Descriptor extractor is empty.\n");
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
             return;
         }
 
         emptyDataTest();
         regressionTest();
 
-        ts->set_failed_test_info( cvtest::TS::OK );
+        this.ts.set_failed_test_info( cvtest::TS::OK );
     }
 
     virtual Mat readDescriptors()

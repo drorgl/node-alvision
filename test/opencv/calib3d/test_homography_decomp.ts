@@ -58,7 +58,7 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class CV_HomographyDecompTest: public cvtest::BaseTest {
+class CV_HomographyDecompTest extends alvision.cvtest.BaseTest {
 
 public:
     CV_HomographyDecompTest()

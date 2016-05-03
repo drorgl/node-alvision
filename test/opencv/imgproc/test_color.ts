@@ -55,7 +55,7 @@ using namespace std;
 
 /////////////////////////// base test class for color transformations /////////////////////////
 
-class CV_ColorCvtBaseTest : public cvtest::ArrayTest
+class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_ColorCvtBaseTest( bool custom_inv_transform, bool allow_32f, bool allow_16u );
@@ -63,7 +63,7 @@ public:
 protected:
     int prepare_test_case( int test_case_idx );
     void prepare_to_validation( int /*test_case_idx*/ );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
 
     // input --- fwd_transform -> ref_output[0]
@@ -431,10 +431,10 @@ class CV_ColorGrayTest : public CV_ColorCvtBaseTest
 public:
     CV_ColorGrayTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void convert_row_bgr2abc_32f_c3( const float* src_row, float* dst_row, int n );
     void convert_row_abc2bgr_32f_c3( const float* src_row, float* dst_row, int n );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
 };
 
 
@@ -504,8 +504,8 @@ class CV_ColorYCrCbTest : public CV_ColorCvtBaseTest
 public:
     CV_ColorYCrCbTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void convert_row_bgr2abc_32f_c3( const float* src_row, float* dst_row, int n );
     void convert_row_abc2bgr_32f_c3( const float* src_row, float* dst_row, int n );
 };
@@ -596,8 +596,8 @@ class CV_ColorHSVTest : public CV_ColorCvtBaseTest
 public:
     CV_ColorHSVTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void convert_row_bgr2abc_32f_c3( const float* src_row, float* dst_row, int n );
     void convert_row_abc2bgr_32f_c3( const float* src_row, float* dst_row, int n );
 };
@@ -735,8 +735,8 @@ class CV_ColorHLSTest : public CV_ColorCvtBaseTest
 public:
     CV_ColorHLSTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void convert_row_bgr2abc_32f_c3( const float* src_row, float* dst_row, int n );
     void convert_row_abc2bgr_32f_c3( const float* src_row, float* dst_row, int n );
 };
@@ -901,8 +901,8 @@ class CV_ColorXYZTest : public CV_ColorCvtBaseTest
 public:
     CV_ColorXYZTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void convert_row_bgr2abc_32f_c3( const float* src_row, float* dst_row, int n );
     void convert_row_abc2bgr_32f_c3( const float* src_row, float* dst_row, int n );
 };
@@ -988,8 +988,8 @@ class CV_ColorLabTest : public CV_ColorCvtBaseTest
 public:
     CV_ColorLabTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void convert_row_bgr2abc_32f_c3( const float* src_row, float* dst_row, int n );
     void convert_row_abc2bgr_32f_c3( const float* src_row, float* dst_row, int n );
 };
@@ -1129,8 +1129,8 @@ class CV_ColorLuvTest : public CV_ColorCvtBaseTest
 public:
     CV_ColorLuvTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void convert_row_bgr2abc_32f_c3( const float* src_row, float* dst_row, int n );
     void convert_row_abc2bgr_32f_c3( const float* src_row, float* dst_row, int n );
 };
@@ -1278,8 +1278,8 @@ class CV_ColorRGBTest : public CV_ColorCvtBaseTest
 public:
     CV_ColorRGBTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void convert_forward( const Mat& src, Mat& dst );
     void convert_backward( const Mat& src, const Mat& dst, Mat& dst2 );
     int dst_bits;
@@ -1544,8 +1544,8 @@ class CV_ColorBayerTest : public CV_ColorCvtBaseTest
 public:
     CV_ColorBayerTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int test_case_idx );
 };
@@ -1819,7 +1819,7 @@ TEST(Imgproc_ColorBayerVNG_Strict, regression)
 
     if ( src.empty() )
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISSING_TEST_DATA);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISSING_TEST_DATA);
         ts->printf(cvtest::TS::SUMMARY, "No input image\n");
         ts->set_gtest_status();
         return;
@@ -1846,7 +1846,7 @@ TEST(Imgproc_ColorBayerVNG_Strict, regression)
             reference.size() != dst.size())
         {
             std::cout << reference(Rect(0, 0, 5, 5)) << std::endl << std::endl << std::endl;
-            ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
             ts->printf(cvtest::TS::SUMMARY, "\nReference channels: %d\n"
                 "Actual channels: %d\n", reference.channels(), dst.channels());
             ts->printf(cvtest::TS::SUMMARY, "\nReference depth: %d\n"
@@ -1866,7 +1866,7 @@ TEST(Imgproc_ColorBayerVNG_Strict, regression)
         int nonZero = countNonZero(diff.reshape(1) > 1);
         if (nonZero != 0)
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
             ts->printf(cvtest::TS::SUMMARY, "\nCount non zero in absdiff: %d\n", nonZero);
             ts->set_gtest_status();
             return;
@@ -1931,7 +1931,7 @@ static void validateResult(const Mat& reference, const Mat& actual, const Mat& s
                 }
                 std::cout << "src: " << src(cv::Rect(y, x / cn, 1, 1)) << std::endl;
 
-                ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                 ts->set_gtest_status();
             }
     }
@@ -2086,7 +2086,7 @@ static void checkData(const Mat& actual, const Mat& reference, cvtest::TS* ts, c
                 absdiff(actual, reference, diff);
                 EXPECT_EQ(countNonZero(diff.reshape(1) > 1), 0);
 
-                ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                 ts->set_gtest_status();
 
                 next = false;
@@ -2106,7 +2106,7 @@ TEST(ImgProc_BayerEdgeAwareDemosaicing, accuracy)
 
     if (src.empty())
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISSING_TEST_DATA);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISSING_TEST_DATA);
         ts->printf(cvtest::TS::SUMMARY, "No input image\n");
         ts->set_gtest_status();
         return;
@@ -2193,7 +2193,7 @@ TEST(ImgProc_Bayer2RGBA, accuracy)
                     absdiff(actual, reference, diff);
                     EXPECT_EQ(countNonZero(diff.reshape(1) > 1), 0);
 
-                    ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                     ts->set_gtest_status();
                 }
         }

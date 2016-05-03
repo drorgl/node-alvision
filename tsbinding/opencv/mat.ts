@@ -44,6 +44,8 @@
 var alvision_module = require('../../lib/bindings.js');
 import * as _st from './static';
 import * as _types from './types';
+import * as _matx from './matx';
+import * as _cuda from './cuda';
 
 //#ifndef __OPENCV_CORE_MAT_HPP__
 //#define __OPENCV_CORE_MAT_HPP__
@@ -833,6 +835,7 @@ including std::sort().
         and the actual step is calculated as cols*elemSize(). See Mat::elemSize.
         */
         //new (int rows, int cols, int type, void* data, size_t step= AUTO_STEP) : Mat;
+        new (rows: _st.int, cols: _st.int, type: _st.int, data: Array<number>, step?: _st.size_t): Mat;
 
     /** @overload
     @param size 2D array size: Size(cols, rows) . In the Size() constructor, the number of rows and the
@@ -914,29 +917,35 @@ including std::sort().
     destructed.
     */
     //template < typename _Tp> explicit Mat(const std::vector<_Tp>& vec, bool copyData= false);
+        new <T>(vec: Array<T>, copyData? : boolean /*= false*/): Mat;
 
     /** @overload
     */
     //template < typename _Tp, int n> explicit Mat(const Vec<_Tp, n>& vec, bool copyData= true);
+        new <T>(vec: _matx.Vec<T>, copyData?: boolean /* = true*/): Mat;
 
     /** @overload
     */
     //template < typename _Tp, int m, int n> explicit Mat(const Matx<_Tp, m, n>& mtx, bool copyData= true);
+        new <T>(mtx: _matx.Matx<T>, copyData? : boolean /* = true*/): Mat;
 
     /** @overload
     */
     //template < typename _Tp> explicit Mat(const Point_<_Tp>& pt, bool copyData= true);
+        new <T>(pt: _types.Point_<T>, copyData?: boolean /* = true*/): Mat;
 
     /** @overload
     */
     //template < typename _Tp> explicit Mat(const Point3_<_Tp>& pt, bool copyData= true);
+        new <T>(pt: _types.Point3_<T>, copyData?: boolean /* = true*/): Mat;
 
     /** @overload
     */
     //template < typename _Tp> explicit Mat(const MatCommaInitializer_<_Tp>& commaInitializer);
 
     //! download data from GpuMat
-    //explicit Mat(const cuda::GpuMat& m);
+        //explicit Mat(const cuda::GpuMat& m);
+        new (m: _cuda.cuda.GpuMat): Mat;
 
     //! destructor - calls release()
     //~Mat();
@@ -1049,7 +1058,7 @@ export interface Mat
     
 
     //! retrieve UMat from Mat
-    //UMat getUMat(int accessFlags, UMatUsageFlags usageFlags = USAGE_DEFAULT) const;
+    getUMat(accessFlags: ACCESS, usageFlags?: UMatUsageFlags /* = USAGE_DEFAULT*/): UMat;
 
     /** @brief Creates a matrix header for the specified matrix row.
 
@@ -1102,12 +1111,12 @@ export interface Mat
     @param startrow An inclusive 0-based start index of the row span.
     @param endrow An exclusive 0-based ending index of the row span.
      */
-    //Mat rowRange(int startrow, int endrow) const;
+    rowRange(startrow : _st.int, endrow : _st.int): Mat
 
     /** @overload
     @param r Range structure containing both the start and the end indices.
     */
-    //Mat rowRange(const Range& r) const;
+    rowRange(r : _types.Range): Mat;
 
     /** @brief Creates a matrix header for the specified column span.
 
@@ -1210,7 +1219,7 @@ export interface Mat
     @param value Assigned scalar converted to the actual array type.
     @param mask Operation mask of the same size as \*this.
      */
-    //Mat & setTo(InputArray value, InputArray mask= noArray());
+    setTo(value: _st.InputArray, mask?: _st.InputArray /*= noArray()*/): Mat;
 
     /** @brief Changes the shape and/or the number of channels of a 2D matrix without copying the data.
 
@@ -2198,10 +2207,10 @@ export interface Matd extends Mat_<_st.double> { }
 //typedef Mat_< Vec4d > Mat4d;
 
 
-export interface UMatStatic {
+interface UMatStatic {
  //   public:
  //   //! default constructor
- //   UMat(UMatUsageFlags usageFlags = USAGE_DEFAULT);
+    new (usageFlags?: UMatUsageFlags /* = USAGE_DEFAULT*/);
  //   //! constructs 2D matrix of the specified size and type
  //   // (_type is CV_8UC1, CV_64FC3, CV_32SC(12) etc.)
  //   UMat(int rows, int cols, int type, UMatUsageFlags usageFlags = USAGE_DEFAULT);
@@ -2236,7 +2245,7 @@ export interface UMatStatic {
 
 /** @todo document */
 //class CV_EXPORTS UMat
-export interface UMat
+interface UMat
 {
    
 //    //! builds matrix from std::vector with or without copying the data
@@ -2257,7 +2266,7 @@ export interface UMat
 //    //! assignment operators
 //    UMat & operator = (const UMat& m);
 //
-//    Mat getMat(int flags) const;
+    getMat( flags : ACCESS | _st.int): Mat 
 //
 //    //! returns a new matrix header for the specified row
 //    UMat row(int y) const;
@@ -2406,6 +2415,8 @@ export interface UMat
 //
 //    protected:
 };
+
+export var UMat: UMatStatic = alvision_module.UMat;
 
 
 /////////////////////////// multi-dimensional sparse matrix //////////////////////////
@@ -3486,8 +3497,8 @@ interface MatExpr
 //    operator Mat() const;
 //    template < typename _Tp> operator Mat_<_Tp>() const;
 
-//    Size size() const;
-//    int type() const;
+    //size() :  _types.Size;
+    //type(): _st.int;
 
 //    MatExpr row(int y) const;
 //    MatExpr col(int x) const;

@@ -47,8 +47,8 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <cstdlib>
+//#include "test_precomp.hpp"
+//#include <cstdlib>
 
 static void mytest(cv::Ptr<cv::ConjGradSolver> solver,cv::Ptr<cv::MinProblemSolver::Function> ptr_F,cv::Mat& x,
         cv::Mat& etalon_x,double etalon_res){
@@ -67,7 +67,7 @@ static void mytest(cv::Ptr<cv::ConjGradSolver> solver,cv::Ptr<cv::MinProblemSolv
     std::cout<<"--------------------------\n";
 }
 
-class SphereF_CG:public cv::MinProblemSolver::Function{
+class SphereF_CG extends alvision.MinProblemSolver.Function{
 public:
     int getDims() const { return 4; }
     double calc(const double* x)const{
@@ -91,9 +91,9 @@ class RosenbrockF_CG:public cv::MinProblemSolver::Function{
     }
 };
 
-TEST(Core_ConjGradSolver, regression_basic){
+alvision.cvtest.TEST('Core_ConjGradSolver', 'regression_basic',()=>{
     cv::Ptr<cv::ConjGradSolver> solver=cv::ConjGradSolver::create();
-#if 1
+//#if 1
     {
         cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new SphereF_CG());
         cv::Mat x=(cv::Mat_<double>(4,1)<<50.0,10.0,1.0,-10.0),
@@ -101,8 +101,8 @@ TEST(Core_ConjGradSolver, regression_basic){
         double etalon_res=0.0;
         mytest(solver,ptr_F,x,etalon_x,etalon_res);
     }
-#endif
-#if 1
+//#endif
+//#if 1
     {
         cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new RosenbrockF_CG());
         cv::Mat x=(cv::Mat_<double>(2,1)<<0.0,0.0),
@@ -110,5 +110,5 @@ TEST(Core_ConjGradSolver, regression_basic){
         double etalon_res=0.0;
         mytest(solver,ptr_F,x,etalon_x,etalon_res);
     }
-#endif
-}
+//#endif
+});

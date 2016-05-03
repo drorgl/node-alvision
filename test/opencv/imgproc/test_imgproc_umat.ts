@@ -48,45 +48,44 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <string>
+//#include "test_precomp.hpp"
+//#include <string>
+//
+//using namespace cv;
+//using namespace std;
 
-using namespace cv;
-using namespace std;
-
-class CV_ImgprocUMatTest : public cvtest::BaseTest
+class CV_ImgprocUMatTest extends alvision.cvtest.BaseTest
 {
-public:
-    CV_ImgprocUMatTest() {}
-    ~CV_ImgprocUMatTest() {}
-protected:
-    void run(int)
+    run(int): void
     {
-        string imgpath = string(ts->get_data_path()) + "shared/lena.png";
-        Mat img = imread(imgpath, 1), gray, smallimg, result;
-        UMat uimg = img.getUMat(ACCESS_READ), ugray, usmallimg, uresult;
+        var imgpath = this.ts.get_data_path() + "shared/lena.png";
+        var img = alvision.imread(imgpath, 1), gray, smallimg, result;
+        var uimg = img.getUMat(alvision.ACCESS.ACCESS_READ);
+        var ugray = new alvision.UMat();
+        var usmallimg = new alvision.UMat();
+        var uresult = new alvision.UMat();
 
-        cvtColor(img, gray, COLOR_BGR2GRAY);
-        resize(gray, smallimg, Size(), 0.75, 0.75, INTER_LINEAR);
-        equalizeHist(smallimg, result);
+        alvision.cvtColor(img, gray, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
+        alvision.resize(gray, smallimg, new alvision.Size(), 0.75, 0.75,alvision.InterpolationFlags.INTER_LINEAR);
+        alvision.equalizeHist(smallimg, result);
 
-        cvtColor(uimg, ugray, COLOR_BGR2GRAY);
-        resize(ugray, usmallimg, Size(), 0.75, 0.75, INTER_LINEAR);
-        equalizeHist(usmallimg, uresult);
+        alvision.cvtColor(uimg, ugray, alvision.ColorConversionCodes. COLOR_BGR2GRAY);
+        alvision.resize(ugray, usmallimg,new alvision. Size(), 0.75, 0.75,alvision.InterpolationFlags. INTER_LINEAR);
+        alvision.equalizeHist(usmallimg, uresult);
 
-#if 0
-        imshow("orig", uimg);
-        imshow("small", usmallimg);
-        imshow("equalized gray", uresult);
-        waitKey();
-        destroyWindow("orig");
-        destroyWindow("small");
-        destroyWindow("equalized gray");
-#endif
-        ts->set_failed_test_info(cvtest::TS::OK);
+//#if 0
+        alvision.imshow("orig", uimg);
+        alvision.imshow("small", usmallimg);
+        alvision.imshow("equalized gray", uresult);
+        alvision.waitKey();
+        alvision.destroyWindow("orig");
+        alvision.destroyWindow("small");
+        alvision.destroyWindow("equalized gray");
+        //#endif
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 
-        (void)uresult.getMat(ACCESS_READ);
+        uresult.getMat(alvision.ACCESS.ACCESS_READ);
     }
 };
 
-TEST(Imgproc_UMat, regression) { CV_ImgprocUMatTest test; test.safe_run(); }
+alvision.cvtest.TEST('Imgproc_UMat', 'regression', () => { var test = new CV_ImgprocUMatTest(); test.safe_run(); });

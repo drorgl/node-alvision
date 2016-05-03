@@ -60,7 +60,7 @@ using namespace std;
 #endif
 
 // image moments
-class CV_MomentsTest : public cvtest::ArrayTest
+class CV_MomentsTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_MomentsTest();
@@ -70,9 +70,9 @@ protected:
     enum { MOMENT_COUNT = 25 };
     int prepare_test_case( int test_case_idx );
     void prepare_to_validation( int /*test_case_idx*/ );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     int coi;
     bool is_binary;
@@ -336,7 +336,7 @@ void CV_MomentsTest::prepare_to_validation( int /*test_case_idx*/ )
 
 
 // Hu invariants
-class CV_HuMomentsTest : public cvtest::ArrayTest
+class CV_HuMomentsTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_HuMomentsTest();
@@ -347,9 +347,9 @@ protected:
 
     int prepare_test_case( int test_case_idx );
     void prepare_to_validation( int /*test_case_idx*/ );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
 };
 
@@ -443,7 +443,7 @@ void CV_HuMomentsTest::prepare_to_validation( int /*test_case_idx*/ )
 TEST(Imgproc_Moments, accuracy) { CV_MomentsTest test; test.safe_run(); }
 TEST(Imgproc_HuMoments, accuracy) { CV_HuMomentsTest test; test.safe_run(); }
 
-class CV_SmallContourMomentTest : public cvtest::BaseTest
+class CV_SmallContourMomentTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_SmallContourMomentTest() {}
@@ -466,7 +466,7 @@ protected:
         }
         catch(...)
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         }
     }
 };

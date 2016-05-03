@@ -57,7 +57,7 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class CV_solvePnPRansac_Test : public cvtest::BaseTest
+class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
 {
 public:
     CV_solvePnPRansac_Test()
@@ -162,7 +162,7 @@ protected:
 
     void run(int)
     {
-        ts->set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(cvtest::TS::OK);
 
         vector<Point3f> points, points_dls;
         const int pointsCount = 500;
@@ -189,7 +189,7 @@ protected:
                 {
                     ts->printf( cvtest::TS::LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
                         method, totalTestsCount - successfulTestsCount, totalTestsCount, maxError, mode);
-                    ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                 }
                 cout << "mode: " << mode << ", method: " << method << " -> "
                      << ((double)successfulTestsCount / totalTestsCount) * 100 << "%"

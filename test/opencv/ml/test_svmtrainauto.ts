@@ -56,43 +56,39 @@ import fs = require('fs');
 //using cv::ml::TrainData;
 
 //--------------------------------------------------------------------------------------------
-class CV_SVMTrainAutoTest : public cvtest::BaseTest {
-public:
-    CV_SVMTrainAutoTest() {}
-protected:
-    virtual void run( int start_from );
+class CV_SVMTrainAutoTest extends alvision.cvtest.BaseTest {
+    run(start_from: alvision.int  ): void {
+        var datasize = 100;
+        var samples = alvision.Mat.from(alvision.Mat.zeros(datasize, 2, alvision.MatrixType.CV_32FC1));
+        var responses = alvision.Mat.from(alvision.Mat.zeros(datasize, 1, alvision.MatrixType.CV_32S));
+
+        var rng = new alvision.RNG(0);
+        for (var i = 0; i < datasize; ++i)
+        {
+            var response = rng.uniform(0, 2);  // Random from {0, 1}.
+            samples.at<float>(i, 0) = rng.uniform(0.f, 0.5f) + response * 0.5f;
+            samples.at<float>(i, 1) = rng.uniform(0.f, 0.5f) + response * 0.5f;
+            responses.at<int>(i, 0) = response;
+        }
+
+        var data = alvision.ml.TrainData.create(samples,alvision.ml.SampleTypes.ROW_SAMPLE, responses);
+
+        //cv::Ptr < TrainData > data = TrainData::create(samples, cv::ml::ROW_SAMPLE, responses);
+        var svm = alvision.ml.SVM.create();
+        svm.trainAuto(data, 10);  // 2-fold cross validation.
+
+        var test_data0 = [ 0.25, 0.25];
+        var test_point0 = new alvision.Mat(1, 2,alvision.MatrixType.CV_32FC1, test_data0);
+        var result0 = svm.predict(test_point0);
+        var test_data1 = [ 0.75, 0.75];
+        var test_point1 = new alvision.Mat(1, 2,alvision.MatrixType.CV_32FC1, test_data1);
+        var result1 = svm.predict(test_point1);
+
+        if (Math.abs(result0.valueOf() - 0) > 0.001 || Math.abs(result1.valueOf() - 1) > 0.001) {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+        }
+    }
 };
 
-void CV_SVMTrainAutoTest::run( int /*start_from*/ )
-{
-    int datasize = 100;
-    cv::Mat samples = cv::Mat::zeros( datasize, 2, CV_32FC1 );
-    cv::Mat responses = cv::Mat::zeros( datasize, 1, CV_32S );
 
-    RNG rng(0);
-    for (int i = 0; i < datasize; ++i)
-    {
-        int response = rng.uniform(0, 2);  // Random from {0, 1}.
-        samples.at<float>( i, 0 ) = rng.uniform(0.f, 0.5f) + response * 0.5f;
-        samples.at<float>( i, 1 ) = rng.uniform(0.f, 0.5f) + response * 0.5f;
-        responses.at<int>( i, 0 ) = response;
-    }
-
-    cv::Ptr<TrainData> data = TrainData::create( samples, cv::ml::ROW_SAMPLE, responses );
-    cv::Ptr<SVM> svm = SVM::create();
-    svm->trainAuto( data, 10 );  // 2-fold cross validation.
-
-    float test_data0[2] = {0.25f, 0.25f};
-    cv::Mat test_point0 = cv::Mat( 1, 2, CV_32FC1, test_data0 );
-    float result0 = svm->predict( test_point0 );
-    float test_data1[2] = {0.75f, 0.75f};
-    cv::Mat test_point1 = cv::Mat( 1, 2, CV_32FC1, test_data1 );
-    float result1 = svm->predict( test_point1 );
-
-    if ( fabs( result0 - 0 ) > 0.001 || fabs( result1 - 1 ) > 0.001 )
-    {
-        ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
-    }
-}
-
-TEST(ML_SVM, trainauto) { CV_SVMTrainAutoTest test; test.safe_run(); }
+alvision.cvtest.TEST('ML_SVM', 'trainauto', () => { var test = new CV_SVMTrainAutoTest(); test.safe_run(); });

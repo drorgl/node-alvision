@@ -49,6 +49,7 @@ import * as _st from './static'
 import * as _types from './types'
 import * as _core from './core'
 import * as _base from './base'
+import * as _cvdef from './cvdef'
 //import * as _vec from './Vec'
 //import * as _point from './Point'
 //import * as _algorithm from './Algorithm'
@@ -2456,7 +2457,7 @@ export var morphologyEx: ImorphologyEx = alvision_module.morphologyEx;
 interface Iresize{
     (src: _st.InputArray, dst: _st.OutputArray,
     dsize : _types.Size, fx : _st.double /* = 0*/, fy : _st.double /* = 0*/,
-    interpolation : _st.int /* = INTER_LINEAR*/): void;
+    interpolation: InterpolationFlags /* = INTER_LINEAR*/): void;
 }
 
 export var resize: Iresize = alvision_module.resize;
@@ -3065,7 +3066,7 @@ export var accumulateWeighted: IaccumulateWeighted = alvision_module.accumulateW
 
 interface IphaseCorrelate{
     (src1: _st.InputArray, src2: _st.InputArray,
-        window: _st.InputArray /* = noArray()*/, cb: (response: _st.double) => void) : _types.Point2d
+        window?: _st.InputArray /* = noArray()*/, cb?: (response: _st.double) => void) : _types.Point2d
 }
 
 export var phaseCorrelate: IphaseCorrelate = alvision_module.phaseCorrelate;
@@ -3091,7 +3092,7 @@ export var phaseCorrelate: IphaseCorrelate = alvision_module.phaseCorrelate;
      */
 
 interface IcreateHanningWindow{
-    (dst: _st.OutputArray, winSize: _types.Size, type : _st.int): void;
+    (dst: _st.OutputArray, winSize: _types.Size, type : _cvdef.MatrixType): void;
 }
 
 export var createHanningWindow: IcreateHanningWindow = alvision_module.createHanningWindow;
@@ -3478,7 +3479,7 @@ export var getDefaultNewCameraMatrix: IgetDefaultNewCameraMatrix = alvision_modu
 interface IundistortPoints{
     (src: _st.InputArray, dst: _st.OutputArray,
     cameraMatrix: _st.InputArray, distCoeffs: _st.InputArray,
-    R: _st.InputArray /*= noArray()*/, P: _st.InputArray  /*= noArray()*/): void;
+    R?: _st.InputArray /*= noArray()*/, P?: _st.InputArray  /*= noArray()*/): void;
 }
 
 export var undistortPoints: IundistortPoints = alvision_module.undistortPoints;
@@ -3797,8 +3798,8 @@ export var equalizeHist: IequalizeHist = alvision_module.equalizeHist;
 
     interface IEMD {
         (signature1 : _st.InputArray, signature2 : _st.InputArray,
-            distType : _st.int, cost : _st.InputArray /* = noArray()*/,
-            lowerBound : _st.float, cb : (lowerBound : _st.float) => void,flow : _st.OutputArray /*= noArray()*/) : _st.float;
+            distType : _st.int, cost? : _st.InputArray /* = noArray()*/,
+            lowerBound? : _st.float, cb?: (lowerBound : _st.float) => void,flow? : _st.OutputArray /*= noArray()*/) : _st.float;
     }
 
 export var EMD: IEMD = alvision_module.EMD;
@@ -4330,7 +4331,7 @@ export var matchTemplate: ImatchTemplate = alvision_module.matchTemplate;
 
 interface IconnectedComponents{
     (image: _st.InputArray, labels : _st.OutputArray,
-        connectivity : _st.int /* = 8*/, ltype : _st.int /* = CV_32S*/): _st.int;
+        connectivity? : _st.int /* = 8*/, ltype? : _st.int /* = CV_32S*/): _st.int;
 }
 
 export var connectedComponents: IconnectedComponents = alvision_module.connectedComponents;
@@ -5590,3 +5591,5 @@ interface LineIterator
 //#endif
 
 //#endif
+
+export const CV_FILLED = -1;

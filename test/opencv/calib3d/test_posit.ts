@@ -53,7 +53,7 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class CV_POSITTest : public cvtest::BaseTest
+class CV_POSITTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_POSITTest();
@@ -222,7 +222,7 @@ void CV_POSITTest::run( int start_from )
     cvReleaseMat( &true_translation );
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
 }
 
 TEST(Calib3d_POSIT, accuracy) { CV_POSITTest test; test.safe_run(); }

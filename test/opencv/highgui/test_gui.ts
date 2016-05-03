@@ -89,7 +89,7 @@ class CV_HighGuiOnlyGuiTest extends alvision. cvtest.BaseTest
     
 
     //ts ->printf(ts ->LOG, "GUI 5\n");
-    alvision.createTrackbar("trackbar", "Win", value, 100, Foo, value);
+    alvision.createTrackbar("trackbar", "Win", 100, (x)=>true, value, value);
 
     //ts ->printf(ts ->LOG, "GUI 6\n");
     alvision.getTrackbarPos("trackbar", "Win");

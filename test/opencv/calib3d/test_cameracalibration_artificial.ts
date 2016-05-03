@@ -120,7 +120,7 @@ protected:
             camMat_est.at<double>(2, 2) != 1)
         {
             ts->printf( cvtest::TS::LOG, "Bad shape of camera matrix returned \n");
-            ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         }
 
         double fx_e = camMat_est.at<double>(0, 0), fy_e = camMat_est.at<double>(1, 1);
@@ -136,7 +136,7 @@ protected:
 
         if (fail)
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
         }
         ts->printf( cvtest::TS::LOG, "%d) Expected  [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx, fy, cx, cy);
         ts->printf( cvtest::TS::LOG, "%d) Estimated [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx_e, fy_e, cx_e, cy_e);
@@ -164,7 +164,7 @@ protected:
         if (fail)
         {
             // commented according to vp123's recomendation. TODO - improve accuaracy
-            //ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY); ss
+            //this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY); ss
         }
         ts->printf( cvtest::TS::LOG, "%d) DistCoeff exp=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1, k2, p1, p2, k3);
         ts->printf( cvtest::TS::LOG, "%d) DistCoeff est=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1_e, k2_e, p1_e, p2_e, k3_e);
@@ -195,7 +195,7 @@ protected:
                         ts->printf( cvtest::TS::LOG, "%d) norm(tvec_est - tvec) = %f, norm(tvec_exp) = %f \n", r, norm(tvec_est - tvec), norm(tvec));
                     }
                 }
-                ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
             }
         }
     }
@@ -227,7 +227,7 @@ protected:
 
                     }
                 }
-                ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
             }
         }
     }
@@ -347,7 +347,7 @@ protected:
         if (rep_error > thres)
         {
             ts->printf( cvtest::TS::LOG, "%d) Too big reproject error = %f\n", r, rep_error);
-            ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
         }
 
         compareCameraMatrs(camMat, camMat_est);
@@ -362,7 +362,7 @@ protected:
         if (rep_errorWOI > thres2)
         {
             ts->printf( cvtest::TS::LOG, "%d) Too big reproject error without intrinsics = %f\n", r, rep_errorWOI);
-            ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
         }
 
         ts->printf( cvtest::TS::LOG, "%d) Testing solvePnP...\n", r);
@@ -378,7 +378,7 @@ protected:
     void run(int)
     {
 
-        ts->set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(cvtest::TS::OK);
         RNG& rng = theRNG();
 
         int progress = 0;

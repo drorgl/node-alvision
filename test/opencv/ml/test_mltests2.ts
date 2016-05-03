@@ -274,7 +274,7 @@ void CV_MLBaseTest::run( int )
         ts->printf( cvtest::TS::LOG, "validation file is not determined or not correct" );
         code = cvtest::TS::FAIL_INVALID_TEST_DATA;
     }
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 int CV_MLBaseTest::prepare_test_case( int test_case_idx )

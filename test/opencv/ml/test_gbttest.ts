@@ -19,7 +19,7 @@ import fs = require('fs');
 //using namespace std;
 
 
-class CV_GBTreesTest : public cvtest::BaseTest
+class CV_GBTreesTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_GBTreesTest();
@@ -287,7 +287,7 @@ void CV_GBTreesTest::run(int)
     delete data;
     data = 0;
 
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 /////////////////////////////////////////////////////////////////////////////

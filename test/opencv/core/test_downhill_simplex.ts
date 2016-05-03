@@ -47,10 +47,10 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <cstdlib>
-#include <cmath>
-#include <algorithm>
+//#include "test_precomp.hpp"
+//#include <cstdlib>
+//#include <cmath>
+//#include <algorithm>
 
 static void mytest(cv::Ptr<cv::DownhillSolver> solver,cv::Ptr<cv::MinProblemSolver::Function> ptr_F,cv::Mat& x,cv::Mat& step,
         cv::Mat& etalon_x,double etalon_res){

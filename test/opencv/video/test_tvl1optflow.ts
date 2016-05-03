@@ -148,7 +148,7 @@ namespace
     }
 }
 
-TEST(Video_calcOpticalFlowDual_TVL1, Regression)
+alvision.cvtest.TEST(Video_calcOpticalFlowDual_TVL1, Regression)
 {
     const double MAX_RMSE = 0.03;
 

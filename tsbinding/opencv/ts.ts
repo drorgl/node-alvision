@@ -63,7 +63,13 @@ export namespace cvtest {
     export function TEST(test_case_name: string, test_name: string, cb: () => void) {
         cb();
         //tape(
-        //TODO!
+        //TODO:!!
+    }
+
+    export function CUDA_TEST_P(test_case_name: string, test_name: string, cb: () => void) {
+        cb();
+        //tape...
+        //TODO:!!
     }
 
 
@@ -120,7 +126,16 @@ export namespace cvtest {
     //    return val;
     //}
     //
+    interface IgetMinVal {
+        (depth: _st.int): _st.double;
+    }
+    export var getMinVal: IgetMinVal = alvision_module.getMinVal;
     //CV_EXPORTS double getMinVal(int depth);
+
+    interface IgetMaxVal {
+        (depth: _st.int): _st.double;
+    }
+    export var getMaxVal: IgetMaxVal = alvision_module.getMaxVal;
     //CV_EXPORTS double getMaxVal(int depth);
     //
 
@@ -188,7 +203,18 @@ export namespace cvtest {
 
     export var norm: Inorm = alvision_module.norm;
 
+
+    interface Imean {
+        (src : _mat.Mat,  mask? : _mat.Mat /*=Mat()*/): _types.Scalar;
+    }
+    export var mean: Imean = alvision_module.mean;
     //CV_EXPORTS Scalar mean(const Mat& src, const Mat& mask=Mat());
+
+    interface IPSNR {
+        (src1: _st.InputArray, src2: _st.InputArray ): _st.double;
+    }
+    export var PSNR: IPSNR = alvision_module.PSNR;
+
     //CV_EXPORTS double PSNR(InputArray src1, InputArray src2);
     //
     //CV_EXPORTS bool cmpUlps(const Mat& data, const Mat& refdata, int expMaxDiff, double* realMaxDiff, vector<int>* idx);
@@ -767,7 +793,7 @@ export abstract class ArrayTest extends BaseTest
 //
 //    bool cvmat_allowed;
 //    bool iplimage_allowed;
-//    bool optional_mask;
+    protected optional_mask: boolean;
     protected element_wise_relative_error: boolean;
 //
     protected min_log_array_size: _st.int;
@@ -778,8 +804,20 @@ export abstract class ArrayTest extends BaseTest
     //vector<vector<void*> > test_array;
     protected test_array: Array<Array<any>>;
 //    vector<vector<Mat> > test_mat;
-    protected test_mat: Array<Array<any>>;
+    protected test_mat: Array<Array<_mat.Mat>>;
 //    float buf[4];
+
+
+
+    protected INPUT = _ArrayTestInternal.INPUT;
+    protected INPUT_OUTPUT = _ArrayTestInternal.INPUT_OUTPUT;
+    protected OUTPUT = _ArrayTestInternal.OUTPUT;
+    protected REF_INPUT_OUTPUT = _ArrayTestInternal.REF_INPUT_OUTPUT;
+    protected REF_OUTPUT = _ArrayTestInternal.REF_OUTPUT;
+    protected TEMP = _ArrayTestInternal.TEMP;
+    protected MASK = _ArrayTestInternal.MASK;
+    protected MAX_ARR = _ArrayTestInternal.MAX_ARR;
+
 };
 
 

@@ -688,7 +688,7 @@ bool CV_UMatTest::TestUMat()
     catch (const test_excep& e)
     {
         ts->printf(cvtest::TS::LOG, "%s\n", e.s.c_str());
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -703,7 +703,7 @@ void CV_UMatTest::run( int /* start_from */)
     if (!TestUMat())
         return;
 
-    ts->set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(cvtest::TS::OK);
 }
 
 TEST(Core_UMat, base) { CV_UMatTest test; test.safe_run(); }

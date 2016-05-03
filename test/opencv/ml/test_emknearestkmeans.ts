@@ -225,7 +225,7 @@ bool calcErr( const Mat& labels, const Mat& origLabels, const vector<int>& sizes
 }
 
 //--------------------------------------------------------------------------------------------
-class CV_KMeansTest : public cvtest::BaseTest {
+class CV_KMeansTest  extends alvision.cvtest.BaseTest {
 public:
     CV_KMeansTest() {}
 protected:
@@ -291,11 +291,11 @@ void CV_KMeansTest::run( int /*start_from*/ )
         code = cvtest::TS::FAIL_BAD_ACCURACY;
     }
 
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 //--------------------------------------------------------------------------------------------
-class CV_KNearestTest : public cvtest::BaseTest {
+class CV_KNearestTest  extends alvision.cvtest.BaseTest {
 public:
     CV_KNearestTest() {}
 protected:
@@ -353,7 +353,7 @@ void CV_KNearestTest::run( int /*start_from*/ )
         code = cvtest::TS::FAIL_BAD_ACCURACY;
     }
 
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 class EM_Params
@@ -381,7 +381,7 @@ public:
 };
 
 //--------------------------------------------------------------------------------------------
-class CV_EMTest : public cvtest::BaseTest
+class CV_EMTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_EMTest() {}
@@ -535,10 +535,10 @@ void CV_EMTest::run( int /*start_from*/ )
         code = currCode == cvtest::TS::OK ? code : currCode;
     }
 
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
-class CV_EMTest_SaveLoad : public cvtest::BaseTest {
+class CV_EMTest_SaveLoad  extends alvision.cvtest.BaseTest {
 public:
     CV_EMTest_SaveLoad() {}
 protected:
@@ -575,7 +575,7 @@ protected:
             catch(...)
             {
                 ts->printf( cvtest::TS::LOG, "Crash in write method.\n" );
-                ts->set_failed_test_info( cvtest::TS::FAIL_EXCEPTION );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_EXCEPTION );
             }
         }
 
@@ -589,7 +589,7 @@ protected:
         catch(...)
         {
             ts->printf( cvtest::TS::LOG, "Crash in read method.\n" );
-            ts->set_failed_test_info( cvtest::TS::FAIL_EXCEPTION );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_EXCEPTION );
         }
 
         remove( filename.c_str() );
@@ -604,11 +604,11 @@ protected:
             code = cvtest::TS::FAIL_BAD_ACCURACY;
         }
 
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     }
 };
 
-class CV_EMTest_Classification : public cvtest::BaseTest
+class CV_EMTest_Classification  extends alvision.cvtest.BaseTest
 {
 public:
     CV_EMTest_Classification() {}
@@ -625,7 +625,7 @@ protected:
         if( data.empty() )
         {
             ts->printf(cvtest::TS::LOG, "File with spambase dataset cann't be read.\n");
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
         }
 
         Mat samples = data->getSamples();
@@ -701,7 +701,7 @@ protected:
             code = cvtest::TS::FAIL_INVALID_TEST_DATA;
         }
 
-        ts->set_failed_test_info(code);
+        this.ts.set_failed_test_info(code);
     }
 };
 

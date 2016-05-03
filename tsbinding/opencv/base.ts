@@ -485,6 +485,23 @@ export function ASSERT_EQ(val: any, expected: any) {
     CV_Assert(() => val == expected);
 }
 
+export function ASSERT_NE(val: any, expected: any) {
+    CV_Assert(() => val != expected);
+}
+
+
+export function ASSERT_LT(low: number, high: number) {
+    CV_Assert(() => low < high);
+}
+
+export function ASSERT_LE(low: number, high: number) {
+    CV_Assert(() => low <= high);
+}
+
+export function ASSERT_GT(low: number, high: number) {
+    CV_Assert(() => low > high);
+}
+
 export function EXPECT_TRUE(val: boolean) {
     CV_Assert(() => val);
 }
@@ -497,6 +514,14 @@ export function EXPECT_FALSE(val: boolean) {
 
 export function EXPECT_LT(low: number, high: number) {
     CV_Assert(() => low < high);
+}
+
+export function EXPECT_LE(low: number, high: number) {
+    CV_Assert(() => low <= high);
+}
+
+export function EXPECT_GE(high: number, low: number) {
+    CV_Assert(() => low <= high);
 }
 
 export function EXPECT_EQ(val: any, expected: any) {

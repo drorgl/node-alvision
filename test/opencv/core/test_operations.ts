@@ -61,7 +61,7 @@ using namespace cv;
 using namespace std;
 
 
-class CV_OperationsTest : public cvtest::BaseTest
+class CV_OperationsTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_OperationsTest();
@@ -436,7 +436,7 @@ bool CV_OperationsTest::TestMat()
     catch (const test_excep& e)
     {
         ts->printf(cvtest::TS::LOG, "%s\n", e.s.c_str());
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -464,7 +464,7 @@ bool CV_OperationsTest::SomeMatFunctions()
     catch (const test_excep& e)
     {
         ts->printf(cvtest::TS::LOG, "%s\n", e.s.c_str());
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -501,7 +501,7 @@ bool CV_OperationsTest::TestSubMatAccess()
     catch (const test_excep& e)
     {
         ts->printf(cvtest::TS::LOG, "%s\n", e.s.c_str());
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -821,7 +821,7 @@ bool CV_OperationsTest::TestTemplateMat()
     catch (const test_excep& e)
     {
         ts->printf(cvtest::TS::LOG, "%s\n", e.s.c_str());
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -851,7 +851,7 @@ bool CV_OperationsTest::TestSparseMat()
     }
     catch (const test_excep&)
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -894,7 +894,7 @@ bool CV_OperationsTest::TestMatxMultiplication()
     }
     catch(const test_excep&)
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
         return false;
     }
     return true;
@@ -916,7 +916,7 @@ bool CV_OperationsTest::TestMatxElementwiseDivison()
     }
     catch(const test_excep&)
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
         return false;
     }
     return true;
@@ -946,7 +946,7 @@ bool CV_OperationsTest::TestVec()
     }
     catch(const test_excep&)
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
         return false;
     }
     return true;
@@ -1049,7 +1049,7 @@ bool CV_OperationsTest::operations1()
     }
     catch(const test_excep&)
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -1111,7 +1111,7 @@ bool CV_OperationsTest::TestSVD()
     }
     catch(const test_excep&)
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -1155,12 +1155,12 @@ void CV_OperationsTest::run( int /* start_from */)
     if (!operations1())
         return;
 
-    ts->set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(cvtest::TS::OK);
 }
 
 TEST(Core_Array, expressions) { CV_OperationsTest test; test.safe_run(); }
 
-class CV_SparseMatTest : public cvtest::BaseTest
+class CV_SparseMatTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_SparseMatTest() {}
@@ -1242,7 +1242,7 @@ protected:
         }
         catch(...)
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         }
     }
 };

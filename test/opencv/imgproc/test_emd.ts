@@ -47,57 +47,48 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
 /*////////////////////// emd_test /////////////////////////*/
 
-class CV_EMDTest : public cvtest::BaseTest
+class CV_EMDTest extends alvision.cvtest.BaseTest
 {
-public:
-    CV_EMDTest();
-protected:
-    void run(int);
-};
 
-
-CV_EMDTest::CV_EMDTest()
-{
-}
-
-void CV_EMDTest::run( int )
-{
-    int code = cvtest::TS::OK;
-    const double success_error_level = 1e-6;
-    #define M 10000
-    double emd0 = 2460./210;
-    static float cost[] =
-    {
+    run(iii : alvision.int): void {
+        var code = alvision.cvtest.FailureCode.OK;
+        var success_error_level = 1e-6;
+        const M = 10000;
+        var emd0 = 2460. / 210;
+    var cost =
+    [
         16, 16, 13, 22, 17,
         14, 14, 13, 19, 15,
         19, 19, 20, 23,  M,
-        M ,  0,  M,  0,  0
-    };
-    static float  w1[] = { 50, 60, 50, 50 },
-                  w2[] = { 30, 20, 70, 30, 60 };
-    Mat _w1(4, 1, CV_32F, w1);
-    Mat _w2(5, 1, CV_32F, w2);
-    Mat _cost(_w1.rows, _w2.rows, CV_32F, cost);
+        M, 0,  M, 0,  0
+    ];
+    var w1 = [50, 60, 50, 50];
+    var w2 = [ 30, 20, 70, 30, 60 ];
+    var _w1= new alvision.Mat(4, 1, alvision.MatrixType.CV_32F, w1);
+    var _w2 = new alvision.Mat(5, 1,alvision.MatrixType. CV_32F, w2);
+    var _cost = new alvision.Mat(_w1.rows, _w2.rows, alvision.MatrixType.CV_32F, cost);
 
-    float emd = EMD( _w1, _w2, -1, _cost );
-    if( fabs( emd - emd0 ) > success_error_level*emd0 )
-    {
-        ts->printf( cvtest::TS::LOG,
-            "The computed distance is %.2f, while it should be %.2f\n", emd, emd0 );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+    var emd = alvision.EMD(_w1, _w2, -1, _cost);
+    if(Math.abs( emd.valueOf() - emd0) > success_error_level * emd0) {
+        this.ts.printf(alvision.cvtest.TSConstants.LOG,
+            "The computed distance is %.2f, while it should be %.2f\n", emd, emd0);
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 
-    if( code < 0 )
-        ts->set_failed_test_info( code );
+    if(code < 0 )
+    this.ts.set_failed_test_info(code);
+    }
 }
 
-TEST(Imgproc_EMD, regression) { CV_EMDTest test; test.safe_run(); }
+
+
+alvision.cvtest.TEST('Imgproc_EMD', 'regression', () => { var test = new CV_EMDTest(); test.safe_run(); });
 
 /* End of file. */

@@ -77,8 +77,8 @@ class CV_DrawingTest extends alvision.cvtest.BaseTest {
         valImg = alvision.imread(filename);
         if (valImg.empty()) {
             alvision.imwrite(filename, testImg);
-            //ts->printf( ts->LOG, "test image can not be read");
-            //ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            //ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
+            //this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
         }
         else {
             // image should match exactly

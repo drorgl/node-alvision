@@ -499,14 +499,14 @@ static void mulComplex( const Mat& src1, const Mat& src2, Mat& dst, int flags )
 }
 
 
-class CxCore_DXTBaseTest : public cvtest::ArrayTest
+class CxCore_DXTBaseTest extends alvision.cvtest.ArrayTest
 {
 public:
     typedef cvtest::ArrayTest Base;
     CxCore_DXTBaseTest( bool _allow_complex=false, bool _allow_odd=false,
                         bool _spectrum_mode=false );
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     int prepare_test_case( int test_case_idx );
     double get_success_error_level( int /*test_case_idx*/, int /*i*/, int /*j*/ );
     int flags; // transformation flags
@@ -840,7 +840,7 @@ TEST(Core_DCT, accuracy) { CxCore_DCTTest test; test.safe_run(); }
 TEST(Core_DFT, accuracy) { CxCore_DFTTest test; test.safe_run(); }
 TEST(Core_MulSpectrums, accuracy) { CxCore_MulSpectrumsTest test; test.safe_run(); }
 
-class Core_DFTComplexOutputTest : public cvtest::BaseTest
+class Core_DFTComplexOutputTest  extends alvision.cvtest.BaseTest
 {
 public:
     Core_DFTComplexOutputTest() {}

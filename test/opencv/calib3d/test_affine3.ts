@@ -55,61 +55,67 @@ import fs = require('fs');
 
 alvision.cvtest.TEST('Calib3d_Affine3f', 'accuracy', () => {
     var rvec = new alvision.Vecd(0.2, 0.5, 0.3);
-    var affine = new alvision.Affined(rvec);
+    var affine = new alvision.Affine3d(rvec);
 
-    cv::Mat expected;
-    cv::Rodrigues(rvec, expected);
-
-
-    alvision.ASSERT_EQ(0, alvision.cvtest.norm(new alvision.Mat(affine.matrix, false).colRange(0, 3).rowRange(0, 3) != expected, cv::NORM_L2));
-    alvision.ASSERT_EQ(0, alvision.cvtest.norm(new alvision.Mat(affine.linear()) != expected, cv::NORM_L2));
+    var expected = new alvision.Mat();
+    alvision.Rodrigues(rvec, expected);
 
 
-    cv::Matx33d R = cv::Matx33d::eye();
+    alvision.ASSERT_EQ(0, alvision.cvtest.norm(new alvision.Mat(affine.matrix, false).colRange(0, 3).rowRange(0, 3) != expected, alvision.NormTypes.NORM_L2));
+    alvision.ASSERT_EQ(0, alvision.cvtest.norm(new alvision.Mat(affine.linear()) != expected, alvision.NormTypes.NORM_L2));
+
+
+    var R = alvision.Matxd.eye(); //33
 
     var angle = 50;
-    R.val[0] = R.val[4] = std::cos(CV_PI * angle / 180.0);
-    R.val[3] = std::sin(CV_PI * angle / 180.0);
+    R.val[0] = R.val[4] = Math.cos(Math.PI * angle / 180.0);
+    R.val[3] = Math.sin(Math.PI * angle / 180.0);
     R.val[1] = -R.val[3];
 
 
-    cv::Affine3d affine1(cv::Mat(cv::Vec3d(0.2, 0.5, 0.3)).reshape(1, 1), cv::Vec3d(4, 5, 6));
-    cv::Affine3d affine2(R, cv::Vec3d(1, 1, 0.4));
+    var affine1 = new alvision.Affine3d(new alvision.Mat(new alvision.Vecd(0.2, 0.5, 0.3)).reshape(1, 1), new alvision.Vecd(4, 5, 6));
+    var affine2 = new alvision.Affine3d(R, new alvision.Vecd(1, 1, 0.4));
 
-    cv::Affine3d result = affine1.inv() * affine2;
+    var result = alvision.Affine3d.op_Multiplication( affine1.inv() , affine2);
 
-    expected = cv::Mat(affine1.matrix.inv(cv::DECOMP_SVD)) * cv::Mat(affine2.matrix, false);
+    expected = alvision.Mat.from(alvision.MatExpr.op_Multiplication(new alvision.Mat(affine1.matrix.inv(alvision.DecompTypes.DECOMP_SVD)), new alvision.Mat(affine2.matrix, false)));
 
 
-    cv::Mat diff;
-    cv::absdiff(expected, result.matrix, diff);
+    var diff = new alvision.Mat();
+    alvision.absdiff(expected, result.matrix, diff);
 
-    alvision.ASSERT_LT(cvtest::norm(diff, cv::NORM_INF), 1e-15);
+    alvision.ASSERT_LT(alvision.cvtest.norm(diff, alvision.NormTypes.NORM_INF).valueOf(), 1e-15);
 });
 
 alvision.cvtest.TEST('Calib3d_Affine3f', 'accuracy_rvec',()=>
 {
-    cv::RNG rng;
-    typedef float T;
+    var rng = new alvision.RNG();
+    //typedef float T;
 
-    cv::Affine3<T>::Vec3 w;
-    cv::Affine3<T>::Mat3 u, vt, R;
+    //alvision.Affine3<T>::Vec3 w;
+    var w = new alvision.Vecf();
+    //alvision.Affine3<T>::Mat3 u, vt, R;
+    var u = new alvision.Matxf();
+    var vt = new alvision.Matxf();
+    var R = new alvision.Matxf();
 
-    for (int i = 0; i < 100; ++i)
+    for (var i = 0; i < 100; ++i)
     {
-        rng.fill(R, cv::RNG::UNIFORM, -10, 10, true);
-        cv::SVD::compute(R, w, u, vt, cv::SVD::FULL_UV + cv::SVD::MODIFY_A);
-        R = u * vt;
+        rng.fill(R, alvision.DistType.UNIFORM, -10, 10, true);
+        alvision.SVD.compute(R, w, u, vt, alvision.SVDFlags.FULL_UV + alvision.SVDFlags.MODIFY_A);
+        R = alvision.Matxf.op_Multiplication(u, vt);
 
-        //double s = (double)cv::getTickCount();
-        cv::Affine3<T>::Vec3 va = cv::Affine3<T>(R).rvec();
-        //std::cout << "M:" <<(cv::getTickCount() - s)*1000/cv::getTickFrequency() << std::endl;
+        //double s = (double)alvision.getTickCount();
+        //alvision.Affine3<T>::Vec3 va = alvision.Affine3<T>(R).rvec();
+        var va = (new alvision.Affine3f(R)).rvec();
+        //std::cout << "M:" <<(alvision.getTickCount() - s)*1000/alvision.getTickFrequency() << std::endl;
 
-        cv::Affine3<T>::Vec3 vo;
-        //s = (double)cv::getTickCount();
-        cv::Rodrigues(R, vo);
-        //std::cout << "O:" <<(cv::getTickCount() - s)*1000/cv::getTickFrequency() << std::endl;
+        //alvision.Affine3<T>::Vec3 vo;
+        var vo = new alvision.Vecf;
+        //s = (double)alvision.getTickCount();
+        alvision.Rodrigues(R, vo);
+        //std::cout << "O:" <<(alvision.getTickCount() - s)*1000/alvision.getTickFrequency() << std::endl;
 
-        ASSERT_LT(cvtest::norm(va, vo, cv::NORM_L2), 1e-9);
+        alvision.ASSERT_LT(alvision.cvtest.norm(va, vo, alvision.NormTypes.NORM_L2).valueOf(), 1e-9);
     }
 });

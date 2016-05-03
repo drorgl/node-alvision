@@ -59,7 +59,7 @@ using namespace cv;
 using namespace cv::flann;
 
 //--------------------------------------------------------------------------------
-class NearestNeighborTest : public cvtest::BaseTest
+class NearestNeighborTest  extends alvision.cvtest.BaseTest
 {
 public:
     NearestNeighborTest() {}
@@ -161,7 +161,7 @@ void NearestNeighborTest::run( int /*start_from*/ ) {
 
     releaseModel();
 
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 //--------------------------------------------------------------------------------

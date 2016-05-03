@@ -110,8 +110,14 @@
 
 		,'tsbinding/opencv/Affine.ts'
 		,'tsbinding/opencv/base.ts'
-		,'tsbinding/opencv/calib3d.ts'
+		
+		
+		
 		,'tsbinding/opencv/core.ts'
+		
+		,'tsbinding/opencv/cuda.ts'
+		,'tsbinding/opencv/cudaimgproc.ts'
+		
 		,'tsbinding/opencv/cvdef.ts'
 		,'tsbinding/opencv/features2d.ts'
 		,'tsbinding/opencv/flann.ts'
@@ -121,11 +127,27 @@
 		,'tsbinding/opencv/mat.ts'
 		,'tsbinding/opencv/Matx.ts'
 		,'tsbinding/opencv/persistence.ts'
+		,'tsbinding/opencv/photo.ts'
 		,'tsbinding/opencv/static.ts'
+		
 		,'tsbinding/opencv/test.ts'
 		,'tsbinding/opencv/tiff.ts'
 		,'tsbinding/opencv/ts.ts'
 		,'tsbinding/opencv/types.ts'
+		
+		,'tsbinding/opencv/ml.ts'
+		
+		,'tsbinding/opencv/calib3d.ts'
+		,'tsbinding/opencv/calib3d/circlesgrid.ts'
+		
+		,'tsbinding/opencv/stitching.ts'
+		,'tsbinding/opencv/stitching/warpers.ts'
+		,'tsbinding/opencv/stitching/detail/blenders.ts'
+		,'tsbinding/opencv/stitching/detail/camera.ts'
+		,'tsbinding/opencv/stitching/detail/exposure_compensate.ts'
+		,'tsbinding/opencv/stitching/detail/matchers.ts'
+		,'tsbinding/opencv/stitching/detail/motion_estimators.ts'
+		,'tsbinding/opencv/stitching/detail/seam_finders.ts'
 		
 		,'test/opencv/calib3d/test_affine3.ts'
 		,'test/opencv/calib3d/test_affine3d_estimator.ts'

@@ -110,7 +110,7 @@ const VideoFormat g_specific_fmt_list[] =
 
 }
 
-class CV_VideoIOTest : public cvtest::BaseTest
+class CV_VideoIOTest  extends alvision.cvtest.BaseTest
 {
 protected:
     void ImageTest (const string& dir);
@@ -159,14 +159,14 @@ public:
 void CV_VideoIOTest::ImageTest(const string& dir)
 {
     string _name = dir + string("../cv/shared/baboon.png");
-    ts->printf(ts->LOG, "reading image : %s\n", _name.c_str());
+    ts->printf(alvision.cvtest.TSConstants.LOG, "reading image : %s\n", _name.c_str());
 
     Mat image = imread(_name);
     image.convertTo(image, CV_8UC3);
 
     if (image.empty())
     {
-        ts->set_failed_test_info(ts->FAIL_MISSING_TEST_DATA);
+        this.ts.set_failed_test_info(ts->FAIL_MISSING_TEST_DATA);
         return;
     }
 
@@ -196,15 +196,15 @@ void CV_VideoIOTest::ImageTest(const string& dir)
     {
         string ext = exts[i];
         string full_name = cv::tempfile(ext.c_str());
-        ts->printf(ts->LOG, " full_name : %s\n", full_name.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, " full_name : %s\n", full_name.c_str());
 
         imwrite(full_name, image);
 
         Mat loaded = imread(full_name);
         if (loaded.empty())
         {
-            ts->printf(ts->LOG, "Reading failed at fmt=%s\n", ext.c_str());
-            ts->set_failed_test_info(ts->FAIL_MISMATCH);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Reading failed at fmt=%s\n", ext.c_str());
+            this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
             continue;
         }
 
@@ -212,8 +212,8 @@ void CV_VideoIOTest::ImageTest(const string& dir)
         double psnr = cvtest::PSNR(loaded, image);
         if (psnr < thresDbell)
         {
-            ts->printf(ts->LOG, "Reading image from file: too big difference (=%g) with fmt=%s\n", psnr, ext.c_str());
-            ts->set_failed_test_info(ts->FAIL_BAD_ACCURACY);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Reading image from file: too big difference (=%g) with fmt=%s\n", psnr, ext.c_str());
+            this.ts.set_failed_test_info(ts->FAIL_BAD_ACCURACY);
             continue;
         }
 
@@ -232,8 +232,8 @@ void CV_VideoIOTest::ImageTest(const string& dir)
 
         if (buf != from_file)
         {
-            ts->printf(ts->LOG, "Encoding failed with fmt=%s\n", ext.c_str());
-            ts->set_failed_test_info(ts->FAIL_MISMATCH);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Encoding failed with fmt=%s\n", ext.c_str());
+            this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
             continue;
         }
 
@@ -241,8 +241,8 @@ void CV_VideoIOTest::ImageTest(const string& dir)
 
         if (buf_loaded.empty())
         {
-            ts->printf(ts->LOG, "Decoding failed with fmt=%s\n", ext.c_str());
-            ts->set_failed_test_info(ts->FAIL_MISMATCH);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Decoding failed with fmt=%s\n", ext.c_str());
+            this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
             continue;
         }
 
@@ -250,15 +250,15 @@ void CV_VideoIOTest::ImageTest(const string& dir)
 
         if (psnr < thresDbell)
         {
-            ts->printf(ts->LOG, "Decoding image from memory: too small PSNR (=%gdb) with fmt=%s\n", psnr, ext.c_str());
-            ts->set_failed_test_info(ts->FAIL_MISMATCH);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Decoding image from memory: too small PSNR (=%gdb) with fmt=%s\n", psnr, ext.c_str());
+            this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
             continue;
         }
 
     }
 
-    ts->printf(ts->LOG, "end test function : ImagesTest \n");
-    ts->set_failed_test_info(ts->OK);
+    ts->printf(alvision.cvtest.TSConstants.LOG, "end test function : ImagesTest \n");
+    this.ts.set_failed_test_info(ts->OK);
 }
 
 
@@ -267,13 +267,13 @@ void CV_VideoIOTest::VideoTest(const string& dir, const cvtest::VideoFormat& fmt
     string src_file = dir + "../cv/shared/video_for_test.avi";
     string tmp_name = cv::tempfile((cvtest::fourccToString(fmt.fourcc) + "."  + fmt.ext).c_str());
 
-    ts->printf(ts->LOG, "reading video : %s and converting it to %s\n", src_file.c_str(), tmp_name.c_str());
+    ts->printf(alvision.cvtest.TSConstants.LOG, "reading video : %s and converting it to %s\n", src_file.c_str(), tmp_name.c_str());
 
     CvCapture* cap = cvCaptureFromFile(src_file.c_str());
 
     if (!cap)
     {
-        ts->set_failed_test_info(ts->FAIL_MISMATCH);
+        this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
         return;
     }
 
@@ -294,10 +294,10 @@ void CV_VideoIOTest::VideoTest(const string& dir, const cvtest::VideoFormat& fmt
             writer = cvCreateVideoWriter(tmp_name.c_str(), fmt.fourcc, 24, cvGetSize(img));
             if (writer == NULL)
             {
-                ts->printf(ts->LOG, "can't create writer (with fourcc : %s)\n",
+                ts->printf(alvision.cvtest.TSConstants.LOG, "can't create writer (with fourcc : %s)\n",
                            cvtest::fourccToString(fmt.fourcc).c_str());
                 cvReleaseCapture( &cap );
-                ts->set_failed_test_info(ts->FAIL_MISMATCH);
+                this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
                 return;
             }
         }
@@ -311,7 +311,7 @@ void CV_VideoIOTest::VideoTest(const string& dir, const cvtest::VideoFormat& fmt
     CvCapture *saved = cvCaptureFromFile(tmp_name.c_str());
     if (!saved)
     {
-        ts->set_failed_test_info(ts->FAIL_MISMATCH);
+        this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
         return;
     }
 
@@ -330,8 +330,8 @@ void CV_VideoIOTest::VideoTest(const string& dir, const cvtest::VideoFormat& fmt
         double psnr = cvtest::PSNR(img1, img);
         if (psnr < thresDbell)
         {
-            ts->printf(ts->LOG, "Too low frame %d psnr = %gdb\n", i, psnr);
-            ts->set_failed_test_info(ts->FAIL_MISMATCH);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Too low frame %d psnr = %gdb\n", i, psnr);
+            this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
 
             //imwrite("original.png", img);
             //imwrite("after_test.png", img1);
@@ -345,7 +345,7 @@ void CV_VideoIOTest::VideoTest(const string& dir, const cvtest::VideoFormat& fmt
 
     cvReleaseCapture( &saved );
 
-    ts->printf(ts->LOG, "end test function : ImagesVideo \n");
+    ts->printf(alvision.cvtest.TSConstants.LOG, "end test function : ImagesVideo \n");
 }
 
 void CV_VideoIOTest::SpecificImageTest(const string& dir)
@@ -360,7 +360,7 @@ void CV_VideoIOTest::SpecificImageTest(const string& dir)
 
         if (image.empty())
         {
-            ts->set_failed_test_info(ts->FAIL_MISSING_TEST_DATA);
+            this.ts.set_failed_test_info(ts->FAIL_MISSING_TEST_DATA);
             return;
         }
 
@@ -369,15 +369,15 @@ void CV_VideoIOTest::SpecificImageTest(const string& dir)
         stringstream s_digit; s_digit << i;
 
         string full_name = cv::tempfile((s_digit.str() + ".bmp").c_str());
-        ts->printf(ts->LOG, " full_name : %s\n", full_name.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, " full_name : %s\n", full_name.c_str());
 
         imwrite(full_name, image);
 
         Mat loaded = imread(full_name);
         if (loaded.empty())
         {
-            ts->printf(ts->LOG, "Reading failed at fmt=bmp\n");
-            ts->set_failed_test_info(ts->FAIL_MISMATCH);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Reading failed at fmt=bmp\n");
+            this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
             continue;
         }
 
@@ -385,8 +385,8 @@ void CV_VideoIOTest::SpecificImageTest(const string& dir)
         double psnr = cvtest::PSNR(loaded, image);
         if (psnr < thresDbell)
         {
-            ts->printf(ts->LOG, "Reading image from file: too big difference (=%g) with fmt=bmp\n", psnr);
-            ts->set_failed_test_info(ts->FAIL_BAD_ACCURACY);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Reading image from file: too big difference (=%g) with fmt=bmp\n", psnr);
+            this.ts.set_failed_test_info(ts->FAIL_BAD_ACCURACY);
             continue;
         }
 
@@ -405,8 +405,8 @@ void CV_VideoIOTest::SpecificImageTest(const string& dir)
 
         if (buf != from_file)
         {
-            ts->printf(ts->LOG, "Encoding failed with fmt=bmp\n");
-            ts->set_failed_test_info(ts->FAIL_MISMATCH);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Encoding failed with fmt=bmp\n");
+            this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
             continue;
         }
 
@@ -414,8 +414,8 @@ void CV_VideoIOTest::SpecificImageTest(const string& dir)
 
         if (buf_loaded.empty())
         {
-            ts->printf(ts->LOG, "Decoding failed with fmt=bmp\n");
-            ts->set_failed_test_info(ts->FAIL_MISMATCH);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Decoding failed with fmt=bmp\n");
+            this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
             continue;
         }
 
@@ -423,14 +423,14 @@ void CV_VideoIOTest::SpecificImageTest(const string& dir)
 
         if (psnr < thresDbell)
         {
-            ts->printf(ts->LOG, "Decoding image from memory: too small PSNR (=%gdb) with fmt=bmp\n", psnr);
-            ts->set_failed_test_info(ts->FAIL_MISMATCH);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Decoding image from memory: too small PSNR (=%gdb) with fmt=bmp\n", psnr);
+            this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
             continue;
         }
     }
 
-    ts->printf(ts->LOG, "end test function : SpecificImageTest \n");
-    ts->set_failed_test_info(ts->OK);
+    ts->printf(alvision.cvtest.TSConstants.LOG, "end test function : SpecificImageTest \n");
+    this.ts.set_failed_test_info(ts->OK);
 }
 
 
@@ -449,9 +449,9 @@ void CV_VideoIOTest::SpecificVideoTest(const string& dir, const cvtest::VideoFor
     {
         // call it repeatedly for easier debugging
         VideoWriter writer2(video_file, fourcc, 25, frame_size, true);
-        ts->printf(ts->LOG, "Creating a video in %s...\n", video_file.c_str());
-        ts->printf(ts->LOG, "Cannot create VideoWriter object with codec %s.\n", fourcc_str.c_str());
-        ts->set_failed_test_info(ts->FAIL_MISMATCH);
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Creating a video in %s...\n", video_file.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Cannot create VideoWriter object with codec %s.\n", fourcc_str.c_str());
+        this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
         return;
     }
 
@@ -465,10 +465,10 @@ void CV_VideoIOTest::SpecificVideoTest(const string& dir, const cvtest::VideoFor
 
         if (img.empty())
         {
-            ts->printf(ts->LOG, "Creating a video in %s...\n", video_file.c_str());
-            ts->printf(ts->LOG, "Error: cannot read frame from %s.\n", file_path.c_str());
-            ts->printf(ts->LOG, "Continue creating the video file...\n");
-            ts->set_failed_test_info(ts->FAIL_INVALID_TEST_DATA);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Creating a video in %s...\n", video_file.c_str());
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read frame from %s.\n", file_path.c_str());
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Continue creating the video file...\n");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             break;
         }
 
@@ -509,16 +509,16 @@ void CV_VideoIOTest::SpecificVideoTest(const string& dir, const cvtest::VideoFor
 
     if (FRAME_COUNT < IMAGE_COUNT - allowed_frame_frop || FRAME_COUNT > IMAGE_COUNT + allowed_extra_frames)
     {
-        ts->printf(ts->LOG, "\nFrame count checking for video_%s.%s...\n", fourcc_str.c_str(), ext.c_str());
-        ts->printf(ts->LOG, "Video codec: %s\n", fourcc_str.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, "\nFrame count checking for video_%s.%s...\n", fourcc_str.c_str(), ext.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Video codec: %s\n", fourcc_str.c_str());
         if (allowed_extra_frames != 0)
-            ts->printf(ts->LOG, "Required frame count: %d-%d; Returned frame count: %d\n",
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Required frame count: %d-%d; Returned frame count: %d\n",
                        IMAGE_COUNT, IMAGE_COUNT + allowed_extra_frames, FRAME_COUNT);
         else
-            ts->printf(ts->LOG, "Required frame count: %d; Returned frame count: %d\n", IMAGE_COUNT, FRAME_COUNT);
-        ts->printf(ts->LOG, "Error: Incorrect frame count in the video.\n");
-        ts->printf(ts->LOG, "Continue checking...\n");
-        ts->set_failed_test_info(ts->FAIL_BAD_ACCURACY);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Required frame count: %d; Returned frame count: %d\n", IMAGE_COUNT, FRAME_COUNT);
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Error: Incorrect frame count in the video.\n");
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Continue checking...\n");
+        this.ts.set_failed_test_info(ts->FAIL_BAD_ACCURACY);
         return;
     }
 
@@ -527,11 +527,11 @@ void CV_VideoIOTest::SpecificVideoTest(const string& dir, const cvtest::VideoFor
         Mat frame; cap >> frame;
         if (frame.empty())
         {
-            ts->printf(ts->LOG, "\nVideo file directory: %s\n", ".");
-            ts->printf(ts->LOG, "File name: video_%s.%s\n", fourcc_str.c_str(), ext.c_str());
-            ts->printf(ts->LOG, "Video codec: %s\n", fourcc_str.c_str());
-            ts->printf(ts->LOG, "Error: cannot read the next frame with index %d.\n", i+1);
-            ts->set_failed_test_info(ts->FAIL_MISSING_TEST_DATA);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "\nVideo file directory: %s\n", ".");
+            ts->printf(alvision.cvtest.TSConstants.LOG, "File name: video_%s.%s\n", fourcc_str.c_str(), ext.c_str());
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Video codec: %s\n", fourcc_str.c_str());
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read the next frame with index %d.\n", i+1);
+            this.ts.set_failed_test_info(ts->FAIL_MISSING_TEST_DATA);
             break;
         }
 
@@ -542,11 +542,11 @@ void CV_VideoIOTest::SpecificVideoTest(const string& dir, const cvtest::VideoFor
 
         if (psnr > thresDbell)
         {
-            ts->printf(ts->LOG, "\nReading frame from the file video_%s.%s...\n", fourcc_str.c_str(), ext.c_str());
-            ts->printf(ts->LOG, "Frame index: %d\n", i+1);
-            ts->printf(ts->LOG, "Difference between saved and original images: %g\n", psnr);
-            ts->printf(ts->LOG, "Maximum allowed difference: %g\n", thresDbell);
-            ts->printf(ts->LOG, "Error: too big difference between saved and original images.\n");
+            ts->printf(alvision.cvtest.TSConstants.LOG, "\nReading frame from the file video_%s.%s...\n", fourcc_str.c_str(), ext.c_str());
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Frame index: %d\n", i+1);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Difference between saved and original images: %g\n", psnr);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Maximum allowed difference: %g\n", thresDbell);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Error: too big difference between saved and original images.\n");
             break;
         }
     }

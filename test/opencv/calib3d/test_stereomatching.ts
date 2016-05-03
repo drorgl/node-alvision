@@ -367,7 +367,7 @@ public:
     int ignoreBorder;
 };
 
-class CV_StereoMatchingTest : public cvtest::BaseTest
+class CV_StereoMatchingTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_StereoMatchingTest()
@@ -412,7 +412,7 @@ void CV_StereoMatchingTest::run(int)
     if( dataPath.empty() )
     {
         ts->printf( cvtest::TS::LOG, "dataPath is empty" );
-        ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ARG_CHECK );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ARG_CHECK );
         return;
     }
 
@@ -420,14 +420,14 @@ void CV_StereoMatchingTest::run(int)
     int code = readDatasetsParams( datasetsFS );
     if( code != cvtest::TS::OK )
     {
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
         return;
     }
     FileStorage runParamsFS( dataPath + ALGORITHMS_DIR + algorithmName + RUN_PARAMS_FILE, FileStorage::READ );
     code = readRunParams( runParamsFS );
     if( code != cvtest::TS::OK )
     {
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
         return;
     }
 
@@ -442,7 +442,7 @@ void CV_StereoMatchingTest::run(int)
         if( !resFS.isOpened() )
         {
             ts->printf( cvtest::TS::LOG, "file %s can not be read or written\n", fullResultFilename.c_str() );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ARG_CHECK );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ARG_CHECK );
             return;
         }
         resFS << "stereo_matching" << "{";
@@ -500,7 +500,7 @@ void CV_StereoMatchingTest::run(int)
     if( isWrite )
         resFS << "}"; // "stereo_matching"
 
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 void calcErrors( const Mat& leftImg, const Mat& /*rightImg*/,

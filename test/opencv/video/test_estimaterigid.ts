@@ -61,7 +61,7 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-class CV_RigidTransform_Test : public cvtest::BaseTest
+class CV_RigidTransform_Test  extends alvision.cvtest.BaseTest
 {
 public:
     CV_RigidTransform_Test();
@@ -133,7 +133,7 @@ bool CV_RigidTransform_Test::testNPoints(int from)
                 if( fabs(dB) < 0.01*nB )
                     continue;
             }
-            ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
             ts->printf( cvtest::TS::LOG, "Threshold = %f, norm of difference = %f", thres, d );
             return false;
         }
@@ -147,8 +147,8 @@ bool CV_RigidTransform_Test::testImage()
     Mat testImg = imread( string(ts->get_data_path()) + "shared/graffiti.png", 1);
     if (testImg.empty())
     {
-       ts->printf( ts->LOG, "test image can not be read");
-       ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+       ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
+       this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
        return false;
     }
     pyrDown(testImg, img);
@@ -165,7 +165,7 @@ bool CV_RigidTransform_Test::testImage()
     const double thres = 0.033;
     if (cvtest::norm(aff_est, aff, NORM_INF) > thres)
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
         ts->printf( cvtest::TS::LOG, "Threshold = %f, norm of difference = %f", thres,
             cvtest::norm(aff_est, aff, NORM_INF) );
         return false;
@@ -184,7 +184,7 @@ void CV_RigidTransform_Test::run( int start_from )
     if (!testImage())
         return;
 
-    ts->set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(cvtest::TS::OK);
 }
 
 TEST(Video_RigidFlow, accuracy) { CV_RigidTransform_Test test; test.safe_run(); }

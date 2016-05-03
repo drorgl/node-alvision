@@ -90,7 +90,7 @@ static bool calculateError( const Mat& _p_labels, const Mat& _o_labels, float& e
 
 //--------------------------------------------------------------------------------------------
 
-class CV_LRTest : public cvtest::BaseTest
+class CV_LRTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_LRTest() {}
@@ -139,11 +139,11 @@ void CV_LRTest::run( int /*start_from*/ )
         s << "error" << error;
         s.release();
     }
-    ts->set_failed_test_info(test_code);
+    this.ts.set_failed_test_info(test_code);
 }
 
 //--------------------------------------------------------------------------------------------
-class CV_LRTest_SaveLoad : public cvtest::BaseTest
+class CV_LRTest_SaveLoad  extends alvision.cvtest.BaseTest
 {
 public:
     CV_LRTest_SaveLoad(){}
@@ -182,7 +182,7 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
     catch(...)
     {
         ts->printf(cvtest::TS::LOG, "Crash in write method.\n" );
-        ts->set_failed_test_info(cvtest::TS::FAIL_EXCEPTION);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_EXCEPTION);
     }
 
     // and load to another
@@ -195,7 +195,7 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
     catch(...)
     {
         ts->printf(cvtest::TS::LOG, "Crash in write method.\n" );
-        ts->set_failed_test_info(cvtest::TS::FAIL_EXCEPTION);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_EXCEPTION);
     }
 
     CV_Assert(responses1.rows == responses2.rows);
@@ -222,7 +222,7 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
 
     remove( filename.c_str() );
 
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 TEST(ML_LR, accuracy) { CV_LRTest test; test.safe_run(); }

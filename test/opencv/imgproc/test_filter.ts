@@ -52,7 +52,7 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class CV_FilterBaseTest : public cvtest::ArrayTest
+class CV_FilterBaseTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_FilterBaseTest( bool _fp_kernel );
@@ -60,7 +60,7 @@ public:
 protected:
     int prepare_test_case( int test_case_idx );
     int read_params( CvFileStorage* fs );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
     CvSize aperture_size;
     CvPoint anchor;
@@ -182,8 +182,8 @@ public:
 protected:
     void prepare_to_validation( int test_case_idx );
     int prepare_test_case( int test_case_idx );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     int optype, optype_min, optype_max;
     int shape;
     IplConvKernel* element;
@@ -397,8 +397,8 @@ public:
 protected:
     void prepare_to_validation( int test_case_idx );
     void run_func();
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
 };
 
 
@@ -449,8 +449,8 @@ class CV_DerivBaseTest : public CV_FilterBaseTest
 public:
     CV_DerivBaseTest();
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     int _aperture_size;
 };
 
@@ -571,7 +571,7 @@ protected:
     int prepare_test_case( int test_case_idx );
     void prepare_to_validation( int test_case_idx );
     void run_func();
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
 };
 
 
@@ -629,8 +629,8 @@ public:
     CV_SmoothBaseTest();
 
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     const char* smooth_type;
 };
 
@@ -676,7 +676,7 @@ protected:
     int prepare_test_case( int test_case_idx );
     void prepare_to_validation( int test_case_idx );
     void run_func();
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     bool normalize;
 };
 
@@ -738,7 +738,7 @@ public:
 protected:
     void prepare_to_validation( int test_case_idx );
     void run_func();
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     double get_success_error_level( int /*test_case_idx*/, int /*i*/, int /*j*/ );
     double sigma;
     int param1, param2;
@@ -856,9 +856,9 @@ public:
 
 protected:
     void prepare_to_validation( int test_case_idx );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
 };
 
 
@@ -1035,8 +1035,8 @@ public:
     CV_PyramidBaseTest( bool downsample );
 
 protected:
-    double get_success_error_level( int test_case_idx, int i, int j );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     bool downsample;
     Mat kernel;
 };
@@ -1206,16 +1206,16 @@ void CV_PyramidUpTest::prepare_to_validation( int /*test_case_idx*/ )
 
 //////////////////////// feature selection //////////////////////////
 
-class CV_FeatureSelBaseTest : public cvtest::ArrayTest
+class CV_FeatureSelBaseTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_FeatureSelBaseTest( int width_factor );
 
 protected:
     int read_params( CvFileStorage* fs );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     int aperture_size, block_size;
     int max_aperture_size;
     int max_block_size;
@@ -1567,15 +1567,15 @@ void CV_PreCornerDetectTest::prepare_to_validation( int /*test_case_idx*/ )
 
 ///////// integral /////////
 
-class CV_IntegralTest : public cvtest::ArrayTest
+class CV_IntegralTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_IntegralTest();
 
 protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int );
 
@@ -1794,7 +1794,7 @@ TEST(Imgproc_Integral, accuracy) { CV_IntegralTest test; test.safe_run(); }
 
 //////////////////////////////////////////////////////////////////////////////////
 
-class CV_FilterSupportedFormatsTest : public cvtest::BaseTest
+class CV_FilterSupportedFormatsTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_FilterSupportedFormatsTest() {}
@@ -1888,7 +1888,7 @@ protected:
                        fidx == 8 || fidx == 9 ? "morphologyEx" :
                        "unknown???");
 
-            ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         }
     }
 };

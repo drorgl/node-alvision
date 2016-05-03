@@ -224,7 +224,7 @@ void CV_ChessboardSubpixelTest::run( int )
     ts->printf(cvtest::TS::LOG, "Average error after findCornerSubpix: %f\n", sum_dist);
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
 }
 
 void CV_ChessboardSubpixelTest::generateIntrinsicParams()

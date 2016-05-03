@@ -56,7 +56,7 @@ import fs = require('fs');
 using namespace std;
 using namespace cv;
 
-class CV_GrabcutTest : public cvtest::BaseTest
+class CV_GrabcutTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_GrabcutTest();
@@ -93,7 +93,7 @@ void CV_GrabcutTest::run( int /* start_from */)
                        (!exp_mask1.empty() && img.size() != exp_mask1.size()) ||
                        (!exp_mask2.empty() && img.size() != exp_mask2.size()) )
     {
-         ts->set_failed_test_info(cvtest::TS::FAIL_MISSING_TEST_DATA);
+         this.ts.set_failed_test_info(cvtest::TS::FAIL_MISSING_TEST_DATA);
          return;
     }
 
@@ -120,7 +120,7 @@ void CV_GrabcutTest::run( int /* start_from */)
 
     if (!verify((mask & 1) * 255, exp_mask1))
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return;
     }
 
@@ -139,10 +139,10 @@ void CV_GrabcutTest::run( int /* start_from */)
 
     if (!verify((mask & 1) * 255, exp_mask2))
     {
-        ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         return;
     }
-    ts->set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(cvtest::TS::OK);
 }
 
 TEST(Imgproc_GrabCut, regression) { CV_GrabcutTest test; test.safe_run(); }

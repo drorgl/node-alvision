@@ -89,7 +89,7 @@ static bool cvTsCheckSparse(const CvSparseMat* m1, const CvSparseMat* m2, double
 }
 
 
-class Core_IOTest : public cvtest::BaseTest
+class Core_IOTest  extends alvision.cvtest.BaseTest
 {
 public:
     Core_IOTest() { }
@@ -202,7 +202,7 @@ protected:
             if(!fs.open(mem ? content : filename, FileStorage::READ + (mem ? FileStorage::MEMORY : 0)))
             {
                 ts->printf( cvtest::TS::LOG, "filename %s can not be read\n", !mem ? filename.c_str() : content.c_str());
-                ts->set_failed_test_info( cvtest::TS::FAIL_MISSING_TEST_DATA );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_MISSING_TEST_DATA );
                 return;
             }
 
@@ -215,7 +215,7 @@ protected:
                real_string != test_string )
             {
                 ts->printf( cvtest::TS::LOG, "the read scalars are not correct\n" );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -233,7 +233,7 @@ protected:
                 ts->printf( cvtest::TS::LOG, "the read matrix is not correct: (%.20g vs %.20g) at (%d,%d)\n",
                             cvGetReal2D(&stub1, pt[0], pt[1]), cvGetReal2D(&_test_stub1, pt[0], pt[1]),
                             pt[0], pt[1] );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
             if( m && CV_IS_MAT(m))
@@ -245,7 +245,7 @@ protected:
             if( !m_nd || !CV_IS_MATND(m_nd) )
             {
                 ts->printf( cvtest::TS::LOG, "the read nd-matrix is not correct\n" );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -263,7 +263,7 @@ protected:
                 ts->printf( cvtest::TS::LOG, "readObj method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
                            cvGetReal2D(&stub1, pt[0], pt[1]), cvGetReal2D(&_test_stub1, pt[0], pt[1]),
                            pt[0], pt[1] );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -281,7 +281,7 @@ protected:
                 ts->printf( cvtest::TS::LOG, "C++ method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
                            cvGetReal2D(&stub1, pt[0], pt[1]), cvGetReal2D(&_test_stub1, pt[1], pt[0]),
                            pt[0], pt[1] );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -299,7 +299,7 @@ protected:
                !cvTsCheckSparse(_m_s2, _test_sparse, 0))
             {
                 ts->printf( cvtest::TS::LOG, "the read sparse matrix is not correct\n" );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -316,7 +316,7 @@ protected:
                (int)tl[5]["year"] != 1969 )
             {
                 ts->printf( cvtest::TS::LOG, "the test list is incorrect\n" );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -360,7 +360,7 @@ protected:
                real_lbp_val != 0xb6 )
             {
                 ts->printf( cvtest::TS::LOG, "the test map is incorrect\n" );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -369,7 +369,7 @@ protected:
                graph2->edges->active_count != ecount || graph3->edges->active_count != ecount)
             {
                 ts->printf( cvtest::TS::LOG, "the cloned or read graph have wrong number of vertices or edges\n" );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -381,7 +381,7 @@ protected:
                    !edge3 || edge3->weight != (float)(i+1) )
                 {
                     ts->printf( cvtest::TS::LOG, "the cloned or read graph do not have the edge (%d, %d)\n", edges[i][0], edges[i][1] );
-                    ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                    this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                     return;
                 }
             }
@@ -431,7 +431,7 @@ static inline void read(const FileNode& node,
     }
 }
 
-class CV_MiscIOTest : public cvtest::BaseTest
+class CV_MiscIOTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_MiscIOTest() {}
@@ -514,14 +514,14 @@ protected:
         }
         catch(...)
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         }
     }
 };
 
 TEST(Core_InputOutput, misc) { CV_MiscIOTest test; test.safe_run(); }
 
-/*class CV_BigMatrixIOTest : public cvtest::BaseTest
+/*class CV_BigMatrixIOTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_BigMatrixIOTest() {}
@@ -541,7 +541,7 @@ protected:
         }
         catch(...)
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
         }
     }
 };

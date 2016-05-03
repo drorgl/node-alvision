@@ -189,7 +189,7 @@ _exit_:
     cvReleaseImage( &thresh );
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
 }
 
 alvision.cvtest.TEST('Calib3d_ChessboardDetector', 'timing', () => { var test = new CV_ChessboardDetectorTimingTest(); test.safe_run(); });

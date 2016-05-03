@@ -43,6 +43,7 @@
 
 var alvision_module = require('../../lib/bindings.js');
 import * as _st from './static';
+import * as _base from './base';
 
 //#ifndef __OPENCV_CORE_MATX_HPP__
 //#define __OPENCV_CORE_MATX_HPP__
@@ -118,7 +119,104 @@ export interface MatxStatic<T> {
     eye(): Matx<T>;
     //diag(const diag_type& d): Matx<T>;
     randu(a : T, b : T): Matx<T>;
-    randn(a : T, b : T): Matx<T>;
+    randn(a: T, b: T): Matx<T>;
+
+
+
+    //template < typename _Tp, int m, int n> static inline
+//Matx < _Tp, m, n > operator + (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
+//    {
+//        return Matx<_Tp, m, n>(a, b, Matx_AddOp());
+//}
+    op_Addition(a: Matx<T>, b: Matx<T>): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//Matx < _Tp, m, n > operator - (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
+//    {
+//        return Matx<_Tp, m, n>(a, b, Matx_SubOp());
+//}
+    op_Substraction(a: Matx<T>, b: Matx<T>): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, n>& a, int alpha)
+//    {
+//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
+//}
+    op_Multiplication(a: Matx<T>, alpha: _st.int): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, n>& a, float alpha)
+//    {
+//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
+//}
+    op_Multiplication(a: Matx<T>, alpha: _st.float): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, n>& a, double alpha)
+//    {
+//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
+//}
+    op_Multiplication(a: Matx<T>, alpha: _st.double): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//Matx < _Tp, m, n > operator * (int alpha, const Matx<_Tp, m, n>& a)
+//    {
+//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
+//}
+    op_Multiplication(alpha: _st.int, a: Matx<T>): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//Matx < _Tp, m, n > operator * (float alpha, const Matx<_Tp, m, n>& a)
+//    {
+//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
+//}
+    op_Multiplication(alpha: _st.float, a: Matx<T>): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//Matx < _Tp, m, n > operator * (double alpha, const Matx<_Tp, m, n>& a)
+//    {
+//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
+//}
+    op_Multiplication(alpha: _st.double, a: Matx<T>): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//Matx < _Tp, m, n > operator - (const Matx<_Tp, m, n>& a)
+//    {
+//        return Matx<_Tp, m, n>(a, -1, Matx_ScaleOp());
+//}
+    op_Substraction( a: Matx<T>): Matx<T>;
+
+//template < typename _Tp, int m, int n, int l> static inline
+//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, l>& a, const Matx<_Tp, l, n>& b)
+//    {
+//        return Matx<_Tp, m, n>(a, b, Matx_MatMulOp());
+//}
+    op_Multiplication(a: Matx<T>, b: Matx<T>): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//Vec < _Tp, m > operator * (const Matx<_Tp, m, n>& a, const Vec<_Tp, n>& b)
+//    {
+//        Matx<_Tp, m, 1> c(a, b, Matx_MatMulOp());
+//return (const Vec<_Tp, m>&)(c);
+//}
+    op_Multiplication(a: Matx<T>, b: Vec<T>): Matx<T>;
+
+//template < typename _Tp, int m, int n> static inline
+//bool operator == (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
+//    {
+//        for( int i = 0; i < m * n; i++ )
+//if (a.val[i] != b.val[i]) return false;
+//return true;
+//}
+    op_Equals(a: Matx<T>, b: Matx<T>): boolean;
+
+//template < typename _Tp, int m, int n> static inline
+//bool operator != (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
+//    {
+//        return !(a == b);
+//}
+    op_NotEquals(a: Matx<T>, b: Matx<T>): boolean;
+
 }
 
     export interface Matx<T>{
@@ -172,7 +270,8 @@ export interface MatxStatic<T> {
     //Matx < _Tp, n, m > t() const;
 
     //! invert the matrix
-    //Matx < _Tp, n, m > inv(int method= DECOMP_LU, bool * p_is_ok = NULL) const;
+    inv(method? : _base.DecompTypes /*= DECOMP_LU*//*, bool * p_is_ok = NULL*/) : Matx<T>
+    
 
     ////! solve linear system
     //template < int l> Matx < _Tp, n, l > solve(const Matx<_Tp, m, l>& rhs, int flags= DECOMP_LU) const;
@@ -201,6 +300,7 @@ export interface MatxStatic<T> {
     //Matx(const Matx<_Tp, n, m>& a, Matx_TOp);
 
     //_Tp val[m * n]; //< matrix elements
+    val: T[];
 };
 
 export interface Matxf extends Matx<_st.float> { }
@@ -1169,17 +1269,7 @@ export var normalize: Inormalize = alvision_module.normalize;
 //return a;
 //}
 
-//template < typename _Tp, int m, int n> static inline
-//Matx < _Tp, m, n > operator + (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
-//    {
-//        return Matx<_Tp, m, n>(a, b, Matx_AddOp());
-//}
 
-//template < typename _Tp, int m, int n> static inline
-//Matx < _Tp, m, n > operator - (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
-//    {
-//        return Matx<_Tp, m, n>(a, b, Matx_SubOp());
-//}
 
 //template < typename _Tp, int m, int n> static inline
 //Matx<_Tp, m, n>& operator *= (Matx<_Tp, m, n>& a, int alpha)
@@ -1205,74 +1295,7 @@ export var normalize: Inormalize = alvision_module.normalize;
 //return a;
 //}
 
-//template < typename _Tp, int m, int n> static inline
-//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, n>& a, int alpha)
-//    {
-//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
-//}
 
-//template < typename _Tp, int m, int n> static inline
-//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, n>& a, float alpha)
-//    {
-//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int m, int n> static inline
-//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, n>& a, double alpha)
-//    {
-//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int m, int n> static inline
-//Matx < _Tp, m, n > operator * (int alpha, const Matx<_Tp, m, n>& a)
-//    {
-//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int m, int n> static inline
-//Matx < _Tp, m, n > operator * (float alpha, const Matx<_Tp, m, n>& a)
-//    {
-//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int m, int n> static inline
-//Matx < _Tp, m, n > operator * (double alpha, const Matx<_Tp, m, n>& a)
-//    {
-//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int m, int n> static inline
-//Matx < _Tp, m, n > operator - (const Matx<_Tp, m, n>& a)
-//    {
-//        return Matx<_Tp, m, n>(a, -1, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int m, int n, int l> static inline
-//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, l>& a, const Matx<_Tp, l, n>& b)
-//    {
-//        return Matx<_Tp, m, n>(a, b, Matx_MatMulOp());
-//}
-
-//template < typename _Tp, int m, int n> static inline
-//Vec < _Tp, m > operator * (const Matx<_Tp, m, n>& a, const Vec<_Tp, n>& b)
-//    {
-//        Matx<_Tp, m, 1> c(a, b, Matx_MatMulOp());
-//return (const Vec<_Tp, m>&)(c);
-//}
-
-//template < typename _Tp, int m, int n> static inline
-//bool operator == (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
-//    {
-//        for( int i = 0; i < m * n; i++ )
-//if (a.val[i] != b.val[i]) return false;
-//return true;
-//}
-
-//template < typename _Tp, int m, int n> static inline
-//bool operator != (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
-//    {
-//        return !(a == b);
-//}
 
 //! @}
 

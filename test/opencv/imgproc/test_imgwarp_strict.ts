@@ -110,7 +110,7 @@ CV_ImageWarpBaseTest::CV_ImageWarpBaseTest() :
     src(), dst(), reference_dst()
 {
     test_case_count = 40;
-    ts->set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(cvtest::TS::OK);
 }
 
 CV_ImageWarpBaseTest::~CV_ImageWarpBaseTest()
@@ -317,7 +317,7 @@ void CV_ImageWarpBaseTest::validate_results() const
                 std::cout << "opencv result:\n" << dst(Range(rmin, rmax), Range(cmin, cmax)) << std::endl;
                 std::cout << "reference result:\n" << reference_dst(Range(rmin, rmax), Range(cmin, cmax)) << std::endl;
 
-                ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                 return;
             }
     }

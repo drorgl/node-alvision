@@ -160,7 +160,7 @@ interface Feature2D extends _core.Algorithm
      */
     detect(image: _st.InputArray,
         cb: (keypoints: Array<_types.KeyPoint>) => void,
-        mask: _st.InputArray /*= noArray()*/): void;
+        mask?: _st.InputArray /*= noArray()*/): void;
 
     /** @overload
     @param images Image set.
@@ -171,7 +171,7 @@ interface Feature2D extends _core.Algorithm
     */
     detect(images: _st.InputArrayOfArrays,
         keypoints : Array<Array<_types.KeyPoint>>,
-        masks: _st.InputArrayOfArrays /*= noArray()*/): void;
+        masks?: _st.InputArrayOfArrays /*= noArray()*/): void;
 
     /** @brief Computes the descriptors for a set of keypoints detected in an image (first variant) or image set
     (second variant).
@@ -184,9 +184,10 @@ interface Feature2D extends _core.Algorithm
     descriptors computed for a keypoints[i]. Row j is the keypoints (or keypoints[i]) is the
     descriptor for keypoint j-th keypoint.
      */
-//    compute(image: _st.InputArray ,
-//        CV_OUT CV_IN_OUT std::vector<KeyPoint>& keypoints,
-//        descriptors: _st.OutputArray ): void;
+    compute(image: _st.InputArray,
+        keypoints: Array<_types.KeyPoint>,
+        cb: (keypoints: Array<_types.KeyPoint>)=>void,
+        descriptors: _st.OutputArray ): void;
 
     /** @overload
 
@@ -220,7 +221,7 @@ interface Feature2D extends _core.Algorithm
 between different algorithms solving the same problem. All objects that implement keypoint detectors
 inherit the FeatureDetector interface. */
 //typedef Feature2D FeatureDetector;
-interface FeatureDetector extends Feature2D { }
+export interface FeatureDetector extends Feature2D { }
 
 /** Extractors of keypoint descriptors in OpenCV have wrappers with a common interface that enables you
 to easily switch between different algorithms solving the same problem. This section is devoted to
@@ -245,7 +246,7 @@ interface BRISKStatic {
     @param patternScale apply this scale to the pattern used for sampling the neighbourhood of a
     keypoint.
      */
-    create(thresh : _st.int /*= 30*/, octaves : _st.int /*= 3*/, patternScale : _st.float /*= 1.0f*/) : BRISK;
+    create(thresh? : _st.int /*= 30*/, octaves? : _st.int /*= 3*/, patternScale? : _st.float /*= 1.0f*/) : BRISK;
 
 /** @brief The BRISK constructor for a custom pattern
 
@@ -259,7 +260,7 @@ scale 1).
 keypoint scale 1).
 @param indexChange index remapping of the bits. */
    create(radiusList : Array<_st.float>, numberList : Array<_st.int>,
-       dMax: _st.float /*= 5.85f*/, dMin: _st.float /*= 8.2f*/, indexChange : Array<_st.int> /*=std::vector<int>()*/) : BRISK;
+       dMax?: _st.float /*= 5.85f*/, dMin?: _st.float /*= 8.2f*/, indexChange? : Array<_st.int> /*=std::vector<int>()*/) : BRISK;
 
 }
 
@@ -267,7 +268,9 @@ interface BRISK extends Feature2D
 {
 };
 
-enum ORBEnum { kBytes = 32, HARRIS_SCORE = 0, FAST_SCORE = 1 };
+export var BRISK: BRISKStatic = alvision_module.BRISK;
+
+export enum ORBEnum { kBytes = 32, HARRIS_SCORE = 0, FAST_SCORE = 1 };
 
 /** @brief Class implementing the ORB (*oriented BRIEF*) keypoint detector and descriptor extractor
 
@@ -276,11 +279,8 @@ the strongest features using FAST or Harris response, finds their orientation us
 moments and computes the descriptors using BRIEF (where the coordinates of random point pairs (or
 k-tuples) are rotated according to the measured orientation).
  */
-interface ORB extends Feature2D
-{
-//public:
-    
 
+interface ORBStatic {
     /** @brief The ORB constructor
 
     @param nfeatures The maximum number of features to retain.
@@ -311,8 +311,16 @@ interface ORB extends Feature2D
     pyramid layers the perceived image area covered by a feature will be larger.
     @param fastThreshold
      */
-//    CV_WRAP static Ptr<ORB> create(int nfeatures=500, float scaleFactor=1.2f, int nlevels=8, int edgeThreshold=31,
-//        int firstLevel=0, int WTA_K=2, int scoreType=ORB::HARRIS_SCORE, int patchSize=31, int fastThreshold=20);
+    create(nfeatures?: _st.int /*= 500*/, scaleFactor?: _st.float /*= 1.2f*/, nlevels?: _st.int /*= 8*/, edgeThreshold?: _st.int /*= 31*/,
+        firstLevel?: _st.int /* = 0*/, WTA_K?: _st.int /*= 2*/, scoreType?: ORBEnum /*= HARRIS_SCORE*/, patchSize?: _st.int /*= 31*/, fastThreshold?: _st.int /*= 20*/): ORB;
+}
+
+interface ORB extends Feature2D
+{
+//public:
+    
+
+    
 //
 //    CV_WRAP virtual void setMaxFeatures(int maxFeatures) = 0;
 //    CV_WRAP virtual int getMaxFeatures() const = 0;
@@ -341,6 +349,8 @@ interface ORB extends Feature2D
 //    CV_WRAP virtual void setFastThreshold(int fastThreshold) = 0;
 //    CV_WRAP virtual int getFastThreshold() const = 0;
 };
+
+export var ORB: ORBStatic = alvision_module.ORB;
 
 /** @brief Maximally stable extremal region extractor
 

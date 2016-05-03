@@ -78,13 +78,13 @@ int METHOD[METHODS_COUNT] = {0, cv::RANSAC, cv::LMEDS, cv::RHO};
 using namespace cv;
 using namespace std;
 
-class CV_HomographyTest: public cvtest::ArrayTest
+class CV_HomographyTestextends alvision.cvtest.ArrayTest
 {
 public:
     CV_HomographyTest();
     ~CV_HomographyTest();
 
-    void run (int);
+    run(iii : alvision.int) : void {}
 
 protected:
 

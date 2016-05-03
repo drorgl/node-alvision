@@ -48,17 +48,17 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-#include "opencv2/core/cuda.hpp"
-#include "opencv2/core/private.cuda.hpp"
-#include "opencv2/ts/cuda_test.hpp"
-
-using namespace testing;
-using namespace cv;
-using namespace cv::cuda;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//#include "opencv2/core/cuda.hpp"
+//#include "opencv2/core/private.cuda.hpp"
+//#include "opencv2/ts/cuda_test.hpp"
+//
+//using namespace testing;
+//using namespace cv;
+//using namespace cv::cuda;
 
 struct BufferPoolTest : TestWithParam<DeviceInfo>
 {

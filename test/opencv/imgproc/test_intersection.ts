@@ -52,19 +52,19 @@ import util = require('util');
 import fs = require('fs');
 
 
-#include "test_precomp.hpp"
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
+//
+//#define ACCURACY 0.00001
 
-using namespace cv;
-using namespace std;
-
-#define ACCURACY 0.00001
-
-class CV_RotatedRectangleIntersectionTest: public cvtest::ArrayTest
+class CV_RotatedRectangleIntersectionTest extends alvision.cvtest.ArrayTest
 {
 public:
 
 protected:
-    void run (int);
+    run(iii : alvision.int) : void {}
 
 private:
     void test1();

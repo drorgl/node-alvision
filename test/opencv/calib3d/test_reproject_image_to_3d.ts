@@ -59,7 +59,7 @@ using namespace std;
 template<class T> double thres() { return 1.0; }
 template<> double thres<float>() { return 1e-5; }
 
-class CV_ReprojectImageTo3DTest : public cvtest::BaseTest
+class CV_ReprojectImageTo3DTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_ReprojectImageTo3DTest() {}
@@ -69,7 +69,7 @@ protected:
 
     void run(int)
     {
-        ts->set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(cvtest::TS::OK);
         int progress = 0;
         int caseId = 0;
 
@@ -166,7 +166,7 @@ protected:
                         continue;
 
                     ts->printf(cvtest::TS::LOG, "Missing values are handled improperly\n");
-                    ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                    this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
                     return;
                 }
                 else
@@ -177,7 +177,7 @@ protected:
                         ts->printf(cvtest::TS::LOG, "case %d. too big error at (%d, %d): %g vs expected %g: res = (%g, %g, %g, w=%g) vs pixel_out = (%g, %g, %g)\n",
                             caseId, x, y, err, t, res(0,0), res(1,0), res(2,0), res(3,0),
                             (double)pixel_out[0], (double)pixel_out[1], (double)pixel_out[2]);
-                        ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                        this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
                         return;
                     }
                 }

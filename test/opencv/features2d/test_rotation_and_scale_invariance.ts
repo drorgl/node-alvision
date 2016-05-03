@@ -195,7 +195,7 @@ void matchKeyPoints(const vector<KeyPoint>& keypoints0, const Mat& H,
     }
 }
 
-class DetectorRotationInvarianceTest : public cvtest::BaseTest
+class DetectorRotationInvarianceTest  extends alvision.cvtest.BaseTest
 {
 public:
     DetectorRotationInvarianceTest(const Ptr<FeatureDetector>& _featureDetector,
@@ -219,7 +219,7 @@ protected:
         if(image0.empty())
         {
             ts->printf(cvtest::TS::LOG, "Image %s can not be read.\n", imageFilename.c_str());
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
             return;
         }
 
@@ -276,7 +276,7 @@ protected:
             {
                 ts->printf(cvtest::TS::LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
                            keyPointMatchesRatio, minKeyPointMatchesRatio);
-                ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                 return;
             }
 
@@ -287,7 +287,7 @@ protected:
                 {
                     ts->printf(cvtest::TS::LOG, "Incorrect angleInliersRatio: curr = %f, min = %f.\n",
                                angleInliersRatio, minAngleInliersRatio);
-                    ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                     return;
                 }
             }
@@ -296,7 +296,7 @@ protected:
                 << " - angleInliersRatio " << static_cast<float>(angleInliersCount) / keyPointMatchesCount << std::endl;
 #endif
         }
-        ts->set_failed_test_info( cvtest::TS::OK );
+        this.ts.set_failed_test_info( cvtest::TS::OK );
     }
 
     Ptr<FeatureDetector> featureDetector;
@@ -304,7 +304,7 @@ protected:
     float minAngleInliersRatio;
 };
 
-class DescriptorRotationInvarianceTest : public cvtest::BaseTest
+class DescriptorRotationInvarianceTest  extends alvision.cvtest.BaseTest
 {
 public:
     DescriptorRotationInvarianceTest(const Ptr<FeatureDetector>& _featureDetector,
@@ -331,7 +331,7 @@ protected:
         if(image0.empty())
         {
             ts->printf(cvtest::TS::LOG, "Image %s can not be read.\n", imageFilename.c_str());
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
             return;
         }
 
@@ -375,14 +375,14 @@ protected:
             {
                 ts->printf(cvtest::TS::LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
                            descInliersRatio, minDescInliersRatio);
-                ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                 return;
             }
 #if SHOW_DEBUG_LOG
             std::cout << "descInliersRatio " << static_cast<float>(descInliersCount) / keypoints0.size() << std::endl;
 #endif
         }
-        ts->set_failed_test_info( cvtest::TS::OK );
+        this.ts.set_failed_test_info( cvtest::TS::OK );
     }
 
     Ptr<FeatureDetector> featureDetector;
@@ -391,7 +391,7 @@ protected:
     float minDescInliersRatio;
 };
 
-class DetectorScaleInvarianceTest : public cvtest::BaseTest
+class DetectorScaleInvarianceTest  extends alvision.cvtest.BaseTest
 {
 public:
     DetectorScaleInvarianceTest(const Ptr<FeatureDetector>& _featureDetector,
@@ -415,7 +415,7 @@ protected:
         if(image0.empty())
         {
             ts->printf(cvtest::TS::LOG, "Image %s can not be read.\n", imageFilename.c_str());
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
             return;
         }
 
@@ -443,7 +443,7 @@ protected:
                     "reduced size (%d, %d), keypoints count = %d\n",
                     image0.cols, image0.rows, keypoints0.size(),
                     image1.cols, image1.rows, keypoints1.size());
-                ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
                 return;
             }
 
@@ -479,7 +479,7 @@ protected:
             {
                 ts->printf(cvtest::TS::LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
                            keyPointMatchesRatio, minKeyPointMatchesRatio);
-                ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                 return;
             }
 
@@ -490,7 +490,7 @@ protected:
                 {
                     ts->printf(cvtest::TS::LOG, "Incorrect scaleInliersRatio: curr = %f, min = %f.\n",
                                scaleInliersRatio, minScaleInliersRatio);
-                    ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                     return;
                 }
             }
@@ -499,7 +499,7 @@ protected:
                 << " - scaleInliersRatio " << static_cast<float>(scaleInliersCount) / keyPointMatchesCount << std::endl;
 #endif
         }
-        ts->set_failed_test_info( cvtest::TS::OK );
+        this.ts.set_failed_test_info( cvtest::TS::OK );
     }
 
     Ptr<FeatureDetector> featureDetector;
@@ -507,7 +507,7 @@ protected:
     float minScaleInliersRatio;
 };
 
-class DescriptorScaleInvarianceTest : public cvtest::BaseTest
+class DescriptorScaleInvarianceTest  extends alvision.cvtest.BaseTest
 {
 public:
     DescriptorScaleInvarianceTest(const Ptr<FeatureDetector>& _featureDetector,
@@ -534,7 +534,7 @@ protected:
         if(image0.empty())
         {
             ts->printf(cvtest::TS::LOG, "Image %s can not be read.\n", imageFilename.c_str());
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
             return;
         }
 
@@ -579,14 +579,14 @@ protected:
             {
                 ts->printf(cvtest::TS::LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
                            descInliersRatio, minDescInliersRatio);
-                ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
                 return;
             }
 #if SHOW_DEBUG_LOG
             std::cout << "descInliersRatio " << static_cast<float>(descInliersCount) / keypoints0.size() << std::endl;
 #endif
         }
-        ts->set_failed_test_info( cvtest::TS::OK );
+        this.ts.set_failed_test_info( cvtest::TS::OK );
     }
 
     Ptr<FeatureDetector> featureDetector;

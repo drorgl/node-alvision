@@ -50,7 +50,7 @@ import fs = require('fs');
 
 #include "test_precomp.hpp"
 
-class CV_DecomposeProjectionMatrixTest : public cvtest::BaseTest
+class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_DecomposeProjectionMatrixTest();
@@ -67,7 +67,7 @@ CV_DecomposeProjectionMatrixTest::CV_DecomposeProjectionMatrixTest()
 void CV_DecomposeProjectionMatrixTest::run(int start_from)
 {
 
-    ts->set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(cvtest::TS::OK);
 
     cv::RNG& rng = ts->get_rng();
     int progress = 0;
@@ -121,19 +121,19 @@ void CV_DecomposeProjectionMatrixTest::run(int start_from)
         const double thresh = 1e-6;
         if ( norm(origK, K, cv::NORM_INF) > thresh )
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
             break;
         }
 
         if ( norm(origR, R, cv::NORM_INF) > thresh )
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
             break;
         }
 
         if ( norm(origT, t, cv::NORM_INF) > thresh )
         {
-            ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
             break;
         }
 

@@ -523,7 +523,7 @@ test_projectPoints( const Mat& _3d, const Mat& Rt, const Mat& A, Mat& _2d, RNG* 
 
 /********************************** Rodrigues transform ********************************/
 
-class CV_RodriguesTest : public cvtest::ArrayTest
+class CV_RodriguesTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_RodriguesTest();
@@ -532,8 +532,8 @@ protected:
     int read_params( CvFileStorage* fs );
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
     int prepare_test_case( int test_case_idx );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int );
 
@@ -765,7 +765,7 @@ void CV_RodriguesTest::prepare_to_validation( int /*test_case_idx*/ )
 
 /********************************** fundamental matrix *********************************/
 
-class CV_FundamentalMatTest : public cvtest::ArrayTest
+class CV_FundamentalMatTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_FundamentalMatTest();
@@ -774,8 +774,8 @@ protected:
     int read_params( CvFileStorage* fs );
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
     int prepare_test_case( int test_case_idx );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int );
 
@@ -1061,7 +1061,7 @@ void CV_FundamentalMatTest::prepare_to_validation( int test_case_idx )
     f_prop2[2] = cv::determinant( F );
 }
 /******************************* find essential matrix ***********************************/
-class CV_EssentialMatTest : public cvtest::ArrayTest
+class CV_EssentialMatTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_EssentialMatTest();
@@ -1070,8 +1070,8 @@ protected:
     int read_params( CvFileStorage* fs );
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
     int prepare_test_case( int test_case_idx );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int );
 
@@ -1424,16 +1424,16 @@ void CV_EssentialMatTest::prepare_to_validation( int test_case_idx )
 
 /********************************** convert homogeneous *********************************/
 
-class CV_ConvertHomogeneousTest : public cvtest::ArrayTest
+class CV_ConvertHomogeneousTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_ConvertHomogeneousTest();
 
 protected:
     int read_params( CvFileStorage* fs );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int );
 
@@ -1557,16 +1557,16 @@ void CV_ConvertHomogeneousTest::prepare_to_validation( int /*test_case_idx*/ )
 
 /************************** compute corresponding epipolar lines ************************/
 
-class CV_ComputeEpilinesTest : public cvtest::ArrayTest
+class CV_ComputeEpilinesTest extends alvision.cvtest.ArrayTest
 {
 public:
     CV_ComputeEpilinesTest();
 
 protected:
     int read_params( CvFileStorage* fs );
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
     void prepare_to_validation( int );
 

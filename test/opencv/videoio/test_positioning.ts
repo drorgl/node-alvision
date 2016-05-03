@@ -56,117 +56,52 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-class CV_VideoPositioningTest: public cvtest::BaseTest
+enum METHOD{PROGRESSIVE, RANDOM };
+
+class CV_VideoPositioningTest extends alvision.cvtest.BaseTest
 {
-public:
-    enum {PROGRESSIVE, RANDOM};
+    protected idx: Array<alvision.int>;
 
-    CV_VideoPositioningTest();
-    ~CV_VideoPositioningTest();
-    virtual void run(int) = 0;
+run_test(method : METHOD) : void{
+    var src_dir = this.ts.get_data_path();
 
-protected:
-    vector <int> idx;
-    void run_test(int method);
+    this.ts.printf(cvtest::TS::LOG, "\n\nSource files directory: %s\n", (src_dir + "video/"));
 
-private:
-    void generate_idx_seq(CvCapture *cap, int method);
-};
+    var ext = ["avi", "mov", "mp4", "mpg"];
 
-class CV_VideoProgressivePositioningTest: public CV_VideoPositioningTest
-{
-public:
-    CV_VideoProgressivePositioningTest() : CV_VideoPositioningTest() { }
-    ~CV_VideoProgressivePositioningTest();
-    void run(int);
-};
+    var n = (int)(sizeof(ext) / sizeof(ext[0]));
 
-class CV_VideoRandomPositioningTest: public CV_VideoPositioningTest
-{
-public:
-    CV_VideoRandomPositioningTest(): CV_VideoPositioningTest() { }
-    ~CV_VideoRandomPositioningTest();
-    void run(int);
-};
+    var failed_videos = 0;
 
-CV_VideoPositioningTest::CV_VideoPositioningTest() {}
-CV_VideoPositioningTest::~CV_VideoPositioningTest() {}
-CV_VideoProgressivePositioningTest::~CV_VideoProgressivePositioningTest() {}
-CV_VideoRandomPositioningTest::~CV_VideoRandomPositioningTest() {}
-
-void CV_VideoPositioningTest::generate_idx_seq(CvCapture* cap, int method)
-{
-    idx.clear();
-    int N = (int)cvGetCaptureProperty(cap, CAP_PROP_FRAME_COUNT);
-    switch(method)
-    {
-    case PROGRESSIVE:
-        {
-            int pos = 1, step = 20;
-            do
-            {
-                idx.push_back(pos);
-                pos += step;
-            }
-            while (pos <= N);
-            break;
-        }
-    case RANDOM:
-        {
-            RNG rng(N);
-            idx.clear();
-            for( int i = 0; i < N-1; i++ )
-                idx.push_back(rng.uniform(0, N));
-            idx.push_back(N-1);
-            std::swap(idx.at(rng.uniform(0, N-1)), idx.at(N-1));
-            break;
-        }
-    default:break;
-    }
-}
-
-void CV_VideoPositioningTest::run_test(int method)
-{
-    const string& src_dir = ts->get_data_path();
-
-    ts->printf(cvtest::TS::LOG, "\n\nSource files directory: %s\n", (src_dir+"video/").c_str());
-
-    const string ext[] = {"avi", "mov", "mp4", "mpg"};
-
-    int n = (int)(sizeof(ext)/sizeof(ext[0]));
-
-    int failed_videos = 0;
-
-    for (int i = 0; i < n; ++i)
+    for (var i = 0; i < ext.length; ++i)
     {
         // skip random positioning test in plain mpegs
-        if( method == RANDOM && ext[i] == "mpg" )
+        if (method == METHOD.RANDOM && ext[i] == "mpg")
             continue;
-        string file_path = src_dir + "video/big_buck_bunny." + ext[i];
+        var file_path = src_dir + "video/big_buck_bunny." + ext[i];
 
-        ts->printf(cvtest::TS::LOG, "\nReading video file in %s...\n", file_path.c_str());
+        this.ts.printf(cvtest::TS::LOG, "\nReading video file in %s...\n", file_path);
 
-        CvCapture* cap = cvCreateFileCapture(file_path.c_str());
+        var cap = alvision.cvCreateFileCapture(file_path);
 
-        if (!cap)
-        {
-            ts->printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i+1, ext[i].c_str());
-            ts->printf(cvtest::TS::LOG, "Error: cannot read source video file.\n");
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+        if (!cap) {
+            this.ts.printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i + 1, ext[i]);
+            this.ts.printf(cvtest::TS::LOG, "Error: cannot read source video file.\n");
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
             failed_videos++; continue;
         }
 
-        cvSetCaptureProperty(cap, CAP_PROP_POS_FRAMES, 0);
+        alvision.cvSetCaptureProperty(cap, CAP_PROP_POS_FRAMES, 0);
 
-        generate_idx_seq(cap, method);
+        this.generate_idx_seq(cap, method);
 
-        int N = (int)idx.size(), failed_frames = 0, failed_positions = 0, failed_iterations = 0;
+        var N =  (int)idx.size(), failed_frames = 0, failed_positions = 0, failed_iterations = 0;
 
-        for (int j = 0; j < N; ++j)
+        for (var j = 0; j < N; ++j)
         {
-            bool flag = false;
+            var flag = false;
 
-            cvSetCaptureProperty(cap, CAP_PROP_POS_FRAMES, idx.at(j));
+            alvision.cvSetCaptureProperty(cap, CAP_PROP_POS_FRAMES, idx.at(j));
 
             /* IplImage* frame = cvRetrieveFrame(cap);
 
@@ -178,31 +113,27 @@ void CV_VideoPositioningTest::run_test(int method)
                 }
                 failed_frames++;
                 ts->printf(cvtest::TS::LOG, "\nIteration: %d\n\nError: cannot read a frame with index %d.\n", j, idx.at(j));
-                ts->set_failed_test_info(cvtest::TS::FAIL_EXCEPTION);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_EXCEPTION);
                 flag = !flag;
             } */
 
-            int val = (int)cvGetCaptureProperty(cap, CAP_PROP_POS_FRAMES);
+            var val = (int)cvGetCaptureProperty(cap, CAP_PROP_POS_FRAMES);
 
-            if (idx.at(j) != val)
-            {
-                if (!(failed_frames||failed_positions))
-                {
-                    ts->printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\n", i+1, ext[i].c_str());
+            if (idx.at(j) != val) {
+                if (!(failed_frames || failed_positions)) {
+                    ts ->printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\n", i + 1, ext[i].c_str());
                 }
                 failed_positions++;
-                if (!failed_frames)
-                {
-                    ts->printf(cvtest::TS::LOG, "\nIteration: %d\n", j);
+                if (!failed_frames) {
+                    ts ->printf(cvtest::TS::LOG, "\nIteration: %d\n", j);
                 }
-                ts->printf(cvtest::TS::LOG, "Required pos: %d\nReturned pos: %d\n", idx.at(j), val);
-                ts->printf(cvtest::TS::LOG, "Error: required and returned positions are not matched.\n");
-                ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+                ts ->printf(cvtest::TS::LOG, "Required pos: %d\nReturned pos: %d\n", idx.at(j), val);
+                ts ->printf(cvtest::TS::LOG, "Error: required and returned positions are not matched.\n");
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
                 flag = true;
             }
 
-            if (flag)
-            {
+            if (flag) {
                 failed_iterations++;
                 failed_videos++;
                 break;
@@ -212,21 +143,54 @@ void CV_VideoPositioningTest::run_test(int method)
         cvReleaseCapture(&cap);
     }
 
-    ts->printf(cvtest::TS::LOG, "\nSuccessfull experiments: %d (%d%%)\n", n-failed_videos, 100*(n-failed_videos)/n);
-    ts->printf(cvtest::TS::LOG, "Failed experiments: %d (%d%%)\n", failed_videos, 100*failed_videos/n);
+    this.ts.printf(cvtest::TS::LOG, "\nSuccessfull experiments: %d (%d%%)\n", n - failed_videos, 100 * (n - failed_videos) / n);
+    this.ts.printf(cvtest::TS::LOG, "Failed experiments: %d (%d%%)\n", failed_videos, 100 * failed_videos / n);
 }
 
-void CV_VideoProgressivePositioningTest::run(int)
+    generate_idx_seq(CvCapture * cap, int method) : void{
+    idx.clear();
+    int N = (int)cvGetCaptureProperty(cap, CAP_PROP_FRAME_COUNT);
+    switch (method) {
+        case PROGRESSIVE:
+            {
+                int pos = 1, step = 20;
+                do {
+                    idx.push_back(pos);
+                    pos += step;
+                }
+                while (pos <= N);
+                break;
+            }
+        case RANDOM:
+            {
+                RNG rng(N);
+                idx.clear();
+                for (int i = 0; i < N - 1; i++ )
+                idx.push_back(rng.uniform(0, N));
+                idx.push_back(N - 1);
+                std::swap(idx.at(rng.uniform(0, N - 1)), idx.at(N - 1));
+                break;
+            }
+        default: break;
+    }
+    }
+};
+
+class CV_VideoProgressivePositioningTest extends CV_VideoPositioningTest
 {
-    run_test(PROGRESSIVE);
-}
+    run(iii: alvision.int) :void{
+        this.run_test(METHOD.PROGRESSIVE);
+    }
+};
 
-void CV_VideoRandomPositioningTest::run(int)
+class CV_VideoRandomPositioningTest extends CV_VideoPositioningTest
 {
-    run_test(RANDOM);
-}
+    run(iii : alvision.int):void {
+        this.run_test(METHOD.RANDOM);
+    }
+};
 
-#if BUILD_WITH_VIDEO_INPUT_SUPPORT && defined HAVE_FFMPEG
-TEST (Videoio_Video, seek_progressive) { CV_VideoProgressivePositioningTest test; test.safe_run(); }
-TEST (Videoio_Video, seek_random) { CV_VideoRandomPositioningTest test; test.safe_run(); }
-#endif
+//#if BUILD_WITH_VIDEO_INPUT_SUPPORT && defined HAVE_FFMPEG
+alvision.cvtest.TEST('Videoio_Video', 'seek_progressive', () => { var test = new CV_VideoProgressivePositioningTest(); test.safe_run(); });
+alvision.cvtest.TEST('Videoio_Video', 'seek_random', () => { var test = new CV_VideoRandomPositioningTest(); test.safe_run(); });
+//#endif

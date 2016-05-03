@@ -53,7 +53,7 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class CV_FindContourTest : public cvtest::BaseTest
+class CV_FindContourTest  extends alvision.cvtest.BaseTest
 {
 public:
     enum { NUM_IMG = 4 };
@@ -390,7 +390,7 @@ _exit_:
         cvShowImage( "test", img[0] );
         cvWaitKey();
 #endif
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     }
 
     return code;

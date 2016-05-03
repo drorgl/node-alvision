@@ -55,26 +55,27 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-static const double numerical_precision = 10.;
+const numerical_precision = 10.;
 
-TEST(Photo_Decolor, regression)
-{
-        string folder = string(cvtest::TS::ptr()->get_data_path()) + "decolor/";
-        string original_path = folder + "color_image_1.png";
+alvision.cvtest.TEST('Photo_Decolor', 'regression', () => {
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "decolor/";
+    var original_path = folder + "color_image_1.png";
 
-        Mat original = imread(original_path, IMREAD_COLOR);
+    var original = alvision.imread(original_path, alvision.ImreadModes.IMREAD_COLOR);
 
-        ASSERT_FALSE(original.empty()) << "Could not load input image " << original_path;
-        ASSERT_FALSE(original.channels()!=3) << "Load color input image " << original_path;
+    alvision.ASSERT_FALSE(original == null , "Could not load input image " + original_path);
+    alvision.ASSERT_FALSE(original.channels() != 3, "Load color input image " + original_path);
 
-        Mat grayscale, color_boost;
-        decolor(original, grayscale, color_boost);
+    var grayscale = new alvision.Mat();
+    var color_boost = new alvision.Mat();
 
-        Mat reference_grayscale = imread(folder + "grayscale_reference.png", 0 /* == grayscale image*/);
-        double error_grayscale = cvtest::norm(reference_grayscale, grayscale, NORM_L1);
-        EXPECT_LE(error_grayscale, numerical_precision);
+    alvision.decolor(original, grayscale, color_boost);
 
-        Mat reference_boost = imread(folder + "boost_reference.png");
-        double error_boost = cvtest::norm(reference_boost, color_boost, NORM_L1);
-        EXPECT_LE(error_boost, numerical_precision);
-}
+    var reference_grayscale = alvision.imread(folder + "grayscale_reference.png", 0 /* == grayscale image*/);
+    var error_grayscale = alvision.cvtest.norm(reference_grayscale, grayscale, alvision.NormTypes. NORM_L1);
+    alvision.EXPECT_LE(error_grayscale.valueOf(), numerical_precision);
+
+    var reference_boost = alvision.imread(folder + "boost_reference.png");
+    var error_boost = alvision.cvtest.norm(reference_boost, color_boost, alvision.NormTypes. NORM_L1);
+    alvision.EXPECT_LE(error_boost.valueOf(), numerical_precision);
+});

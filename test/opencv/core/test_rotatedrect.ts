@@ -47,69 +47,61 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
-using namespace cv;
-using namespace std;
-
-class Core_RotatedRectConstructorTest : public cvtest::BaseTest
+class Core_RotatedRectConstructorTest extends alvision.cvtest.BaseTest
 {
-public:
-    Core_RotatedRectConstructorTest();
-protected:
-    int prepare_test_case( int );
-    void run_func();
-    int validate_test_results( int );
-    float MAX_COORD_VAL;
-    Point2f a, b, c;
-    RotatedRect rec;
+    constructor() {
+        super();
+        this.test_case_count = 100;
+        this.MAX_COORD_VAL = 1000.0;
+    }
+
+    prepare_test_case(test_case_idx : alvision.int): alvision.int{
+        super.prepare_test_case(test_case_idx);
+        var rng = this.ts.get_rng();
+        this.a = new alvision.Point2f(rng.uniform(-this.MAX_COORD_VAL, this.MAX_COORD_VAL), rng.uniform(-this.MAX_COORD_VAL, this.MAX_COORD_VAL));
+        do {
+            this.b = new alvision.Point2f(rng.uniform(-this.MAX_COORD_VAL, this.MAX_COORD_VAL), rng.uniform(-this.MAX_COORD_VAL, this.MAX_COORD_VAL));
+        }
+        while (alvision.norm(a - b) <= FLT_EPSILON);
+        var along = new alvision.Vecf (a - b);
+        var perp = new alvision.Vec2f(-along[1], along[0]);
+        var d =  rng.uniform(1.0f, 5.0f);
+        if (alvision.cvtest.randInt(rng) % 2 == 0 ) d = -d;
+        this.c = new alvision.Point2f((float)((double) b.x + d * perp[0]), (float)((double) b.y + d * perp[1]));
+        return 1;
+}
+
+    run_func(): void {
+        this.rec = new alvision.RotatedRect(a, b, c);
+}
+
+    validate_test_results(int): alvision.int{
+        var vertices = new Array<alvision.Point2f>();
+        this.rec.points(vertices);
+        var count_match = 0;
+        for (var i = 0; i < 4; i++ )
+        {
+            if (alvision.norm(vertices[i] - a) <= 0.001) count_match++;
+            else if (alvision.norm(vertices[i] - b) <= 0.001) count_match++;
+            else if (alvision.norm(vertices[i] - c) <= 0.001) count_match++;
+        }
+        if (count_match == 3)
+            return alvision.cvtest.FailureCode.OK;
+        this.ts.printf(cvtest::TS::LOG, "RotatedRect end points don't match those supplied in constructor");
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+        return alvision.cvtest.FailureCode.OK;
+    }
+
+
+
+    protected MAX_COORD_VAL: alvision.float;
+    protected a: alvision.Point2f, b : alvision.Point2f, c : alvision.Point2f ;
+    protected rec: alvision.RotatedRect;
 };
 
-Core_RotatedRectConstructorTest::Core_RotatedRectConstructorTest()
-{
-    test_case_count = 100;
-    MAX_COORD_VAL = 1000.0f;
-}
-
-int Core_RotatedRectConstructorTest::prepare_test_case( int test_case_idx )
-{
-    cvtest::BaseTest::prepare_test_case( test_case_idx );
-    RNG& rng = ts->get_rng();
-    a = Point2f( rng.uniform(-MAX_COORD_VAL, MAX_COORD_VAL), rng.uniform(-MAX_COORD_VAL, MAX_COORD_VAL) );
-    do
-    {
-        b = Point2f( rng.uniform(-MAX_COORD_VAL, MAX_COORD_VAL), rng.uniform(-MAX_COORD_VAL, MAX_COORD_VAL) );
-    }
-    while( norm(a - b) <= FLT_EPSILON );
-    Vec2f along(a - b);
-    Vec2f perp = Vec2f(-along[1], along[0]);
-    double d = (double) rng.uniform(1.0f, 5.0f);
-    if( cvtest::randInt(rng) % 2 == 0 ) d = -d;
-    c = Point2f( (float) ((double) b.x + d * perp[0]), (float) ((double) b.y + d * perp[1]) );
-    return 1;
-}
-
-void Core_RotatedRectConstructorTest::run_func()
-{
-    rec = RotatedRect(a, b, c);
-}
-
-int Core_RotatedRectConstructorTest::validate_test_results( int )
-{
-    Point2f vertices[4];
-    rec.points(vertices);
-    int count_match = 0;
-    for( int i = 0; i < 4; i++ )
-    {
-        if( norm(vertices[i] - a) <= 0.001 ) count_match++;
-        else if( norm(vertices[i] - b) <= 0.001 ) count_match++;
-        else if( norm(vertices[i] - c) <= 0.001 ) count_match++;
-    }
-    if( count_match == 3 )
-        return cvtest::TS::OK;
-    ts->printf( cvtest::TS::LOG, "RotatedRect end points don't match those supplied in constructor");
-    ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
-    return cvtest::TS::OK;
-}
-
-TEST(Core_RotatedRect, three_point_constructor) { Core_RotatedRectConstructorTest test; test.safe_run(); }
+alvision.cvtest.TEST('Core_RotatedRect', 'three_point_constructor', () => { var test = new Core_RotatedRectConstructorTest(); test.safe_run(); });

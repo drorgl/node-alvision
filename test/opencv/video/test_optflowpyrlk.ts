@@ -51,7 +51,7 @@ import fs = require('fs');
 
 /* ///////////////////// pyrlk_test ///////////////////////// */
 
-class CV_OptFlowPyrLKTest : public cvtest::BaseTest
+class CV_OptFlowPyrLKTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_OptFlowPyrLKTest();
@@ -213,7 +213,7 @@ _exit_:
     cvReleaseMat( &_v2 );
 
     if( code < 0 )
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
 }
 
 

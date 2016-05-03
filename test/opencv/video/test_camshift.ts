@@ -54,7 +54,7 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-class CV_TrackBaseTest : public cvtest::BaseTest
+class CV_TrackBaseTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_TrackBaseTest();
@@ -368,7 +368,7 @@ _exit_:
         cvReleaseImage( &dst );
         cvWaitKey();
 #endif
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     }
     return code;
 }
@@ -509,7 +509,7 @@ _exit_:
         cvReleaseImage( &dst );
         cvWaitKey();
 #endif
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
     }
     return code;
 }

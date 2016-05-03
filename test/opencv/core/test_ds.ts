@@ -320,11 +320,11 @@ static int  cvTsSimpleGraphVertexDegree( CvTsSimpleGraph* graph, int index )
 if( !(expr) )                                               \
 {                                                           \
 set_error_context( #expr, err_msg, __FILE__, __LINE__ );    \
-ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );\
+this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );\
 throw -1;                                                   \
 }
 
-class Core_DynStructBaseTest : public cvtest::BaseTest
+class Core_DynStructBaseTest  extends alvision.cvtest.BaseTest
 {
 public:
     Core_DynStructBaseTest();
@@ -451,7 +451,7 @@ void Core_DynStructBaseTest::set_error_context( const char* condition,
     ts->printf( cvtest::TS::LOG, "file %s, line %d: %s\n(\"%s\" failed).\n"
                "generation = %d, struct_idx = %d, iter = %d\n",
                filename, lineno, err_msg, condition, gen, struct_idx, iter );
-    ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+    this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
 }
 
 

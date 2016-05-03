@@ -70,7 +70,7 @@ import fs = require('fs');
 
 #define C_SCALE_CASCADE     "scale_cascade"
 
-class CV_DetectorTest : public cvtest::BaseTest
+class CV_DetectorTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_DetectorTest();
@@ -177,7 +177,7 @@ void CV_DetectorTest::run( int )
 
     if( code < 0 )
     {
-        ts->set_failed_test_info( code );
+        this.ts.set_failed_test_info( code );
         return;
     }
 
@@ -258,7 +258,7 @@ void CV_DetectorTest::run( int )
         ts->printf( cvtest::TS::LOG, "validation file is not determined or not correct" );
         code = cvtest::TS::FAIL_INVALID_TEST_DATA;
     }
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 int CV_DetectorTest::runTestCase( int detectorIdx, vector<vector<Rect> >& objects )
@@ -1089,7 +1089,7 @@ void HOGDescriptorTester::detect(const Mat& img,
         actual_find_locations.begin()))
     {
         ts->printf(cvtest::TS::SUMMARY, "Found locations are not equal (see detect function)\n");
-        ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
         ts->set_gtest_status();
         failed = true;
         return;
@@ -1103,7 +1103,7 @@ void HOGDescriptorTester::detect(const Mat& img,
             "Norm of the difference is %lf\n", diff_norm);
         ts->printf(cvtest::TS::LOG, "Channels: %d\n", img.channels());
         failed = true;
-        ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
         ts->set_gtest_status();
         return;
     }
@@ -1183,7 +1183,7 @@ void HOGDescriptorTester::compute(InputArray _img, vector<float>& descriptors,
     {
         ts->printf(cvtest::TS::SUMMARY, "Norm of the difference: %lf\n", diff_norm);
         ts->printf(cvtest::TS::SUMMARY, "Found descriptors are not equal (see compute function)\n");
-        ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+        this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
         ts->printf(cvtest::TS::LOG, "Channels: %d\n", img.channels());
         ts->set_gtest_status();
         failed = true;
@@ -1333,7 +1333,7 @@ void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle
            ts->printf(cvtest::TS::LOG, "%s matrices are not equal\n"
                "Norm of the difference is %lf\n", args[i], diff_norm);
            ts->printf(cvtest::TS::LOG, "Channels: %d\n", img.channels());
-           ts->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+           this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
            ts->set_gtest_status();
            failed = true;
            return;

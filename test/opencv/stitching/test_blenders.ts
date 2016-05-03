@@ -53,35 +53,38 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-TEST(MultiBandBlender, CanBlendTwoImages)
-{
-    Mat image1 = imread(string(cvtest::TS::ptr()->get_data_path()) + "cv/shared/baboon.png");
-    Mat image2 = imread(string(cvtest::TS::ptr()->get_data_path()) + "cv/shared/lena.png");
-    ASSERT_EQ(image1.rows, image2.rows); ASSERT_EQ(image1.cols, image2.cols);
+alvision.cvtest.TEST('MultiBandBlender', 'CanBlendTwoImages', () => {
+    var image1 = alvision.imread(alvision.cvtest.TS.ptr().get_data_path() + "cv/shared/baboon.png");
+    var image2 = alvision.imread(alvision.cvtest.TS.ptr().get_data_path() + "cv/shared/lena.png");
+    alvision.ASSERT_EQ(image1.rows, image2.rows); alvision.ASSERT_EQ(image1.cols, image2.cols);
 
-    Mat image1s, image2s;
-    image1.convertTo(image1s, CV_16S);
-    image2.convertTo(image2s, CV_16S);
+    var image1s = new alvision.Mat();
+    var image2s = new alvision.Mat();
+    image1.convertTo(image1s, alvision.MatrixType.CV_16S);
+    image2.convertTo(image2s, alvision.MatrixType.CV_16S);
 
-    Mat mask1(image1s.size(), CV_8U);
-    mask1(Rect(0, 0, mask1.cols/2, mask1.rows)).setTo(255);
-    mask1(Rect(mask1.cols/2, 0, mask1.cols - mask1.cols/2, mask1.rows)).setTo(0);
+    var mask1 = new alvision.Mat(image1s.size(), alvision.MatrixType.CV_8U);
+    mask1 = new alvision.Mat(new alvision.Rect(0, 0, mask1.cols.valueOf() / 2, mask1.rows)).setTo(255);
+    mask1 = new alvision.Mat(new alvision.Rect(mask1.cols.valueOf() / 2, 0, mask1.cols.valueOf() - mask1.cols.valueOf() / 2, mask1.rows)).setTo(0);
 
-    Mat mask2(image2s.size(), CV_8U);
-    mask2(Rect(0, 0, mask2.cols/2, mask2.rows)).setTo(0);
-    mask2(Rect(mask2.cols/2, 0, mask2.cols - mask2.cols/2, mask2.rows)).setTo(255);
+    var mask2 = new alvision.Mat(image2s.size(), alvision.MatrixType.CV_8U);
+    mask2 = new alvision.Mat(new alvision.Rect(0, 0, mask2.cols.valueOf() / 2, mask2.rows)).setTo(0);
+    mask2 = new alvision.Mat(new alvision.Rect(mask2.cols.valueOf() / 2, 0, mask2.cols.valueOf() - mask2.cols.valueOf() / 2, mask2.rows)).setTo(255);
 
-    detail::MultiBandBlender blender(false, 5);
+    var blender = new alvision.detail.MultiBandBlender(false, 5);
+    //detail::MultiBandBlender blender(false, 5);
 
-    blender.prepare(Rect(0, 0, max(image1s.cols, image2s.cols), max(image1s.rows, image2s.rows)));
-    blender.feed(image1s, mask1, Point(0,0));
-    blender.feed(image2s, mask2, Point(0,0));
+    blender.prepare(new alvision.Rect(0, 0, Math.max(image1s.cols.valueOf(), image2s.cols.valueOf()), Math.max(image1s.rows.valueOf(), image2s.rows.valueOf())));
+    blender.feed(image1s, mask1,new alvision. Point(0, 0));
+    blender.feed(image2s, mask2,new alvision. Point(0, 0));
 
-    Mat result_s, result_mask;
+    var result_s = new alvision.Mat();
+    var result_mask = new alvision.Mat();
     blender.blend(result_s, result_mask);
-    Mat result; result_s.convertTo(result, CV_8U);
+    var result = new alvision.Mat();
+    result_s.convertTo(result, alvision.MatrixType.CV_8U);
 
-    Mat expected = imread(string(cvtest::TS::ptr()->get_data_path()) + "stitching/baboon_lena.png");
-    double psnr = cvtest::PSNR(expected, result);
-    EXPECT_GE(psnr, 50);
-}
+    var expected = alvision.imread(alvision.cvtest.TS.ptr().get_data_path() + "stitching/baboon_lena.png");
+    var psnr = alvision.cvtest.PSNR(expected, result);
+    alvision.EXPECT_GE(psnr.valueOf(), 50);
+});

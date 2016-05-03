@@ -52,7 +52,7 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class Core_ConcatenationTest : public cvtest::BaseTest
+class Core_ConcatenationTest  extends alvision.cvtest.BaseTest
 {
 public:
     Core_ConcatenationTest(bool horizontal, bool firstEmpty, bool secondEmpty);
@@ -133,7 +133,7 @@ int Core_ConcatenationTest::validate_test_results( int )
     } else
     {
         ts->printf( cvtest::TS::LOG, "Concatenation failed");
-        ts->set_failed_test_info( cvtest::TS::FAIL_MISMATCH );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_MISMATCH );
     }
 
     return cvtest::TS::OK;

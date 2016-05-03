@@ -48,13 +48,13 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_NVCUVID
-
-PARAM_TEST_CASE(Video, cv::cuda::DeviceInfo, std::string)
-{
-};
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_NVCUVID
+//
+//PARAM_TEST_CASE(Video, cv::cuda::DeviceInfo, std::string)
+//{
+//};
 
 //////////////////////////////////////////////////////
 // VideoReader

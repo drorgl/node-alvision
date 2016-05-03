@@ -48,11 +48,11 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <time.h>
-#include <limits>
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//#include <time.h>
+//#include <limits>
+//using namespace cv;
+//using namespace std;
 
 #define CORE_COUNTNONZERO_ERROR_COUNT 1
 
@@ -63,14 +63,14 @@ using namespace std;
 #define MAX_WIDTH 100
 #define MAX_HEIGHT 100
 
-class CV_CountNonZeroTest: public cvtest::BaseTest
+class CV_CountNonZeroTest extends alvision.cvtest.BaseTest
 {
 public:
     CV_CountNonZeroTest();
     ~CV_CountNonZeroTest();
 
 protected:
-    void run (int);
+    run(iii : alvision.int) : void {}
 
 private:
     float eps_32;

@@ -14,7 +14,7 @@ using namespace cv;
 using namespace std;
 
 
-class Core_ReduceTest : public cvtest::BaseTest
+class Core_ReduceTest  extends alvision.cvtest.BaseTest
 {
 public:
     Core_ReduceTest() {}
@@ -288,13 +288,13 @@ void Core_ReduceTest::run( int )
     tempCode = checkSize( Size(1000,500) );
     code = tempCode != cvtest::TS::OK ? tempCode : code;
 
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 
 #define CHECK_C
 
-class Core_PCATest : public cvtest::BaseTest
+class Core_PCATest  extends alvision.cvtest.BaseTest
 {
 public:
     Core_PCATest() {}
@@ -352,7 +352,7 @@ protected:
             if( err > eigenEps )
             {
                 ts->printf( cvtest::TS::LOG, "bad accuracy of eigen(); err = %f\n", err );
-                ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
                 return;
             }
         }
@@ -362,7 +362,7 @@ protected:
         if( err > evalEps )
         {
             ts->printf( cvtest::TS::LOG, "pca.eigenvalues is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
         // check pca eigenvectors
@@ -386,7 +386,7 @@ protected:
                     ts->printf( cvtest::TS::LOG, "max diff is %g at (i=%d, j=%d) (%g vs %g)\n",
                                mval, mloc.y, mloc.x, rPCA.eigenvectors.at<float>(mloc.y, mloc.x),
                                subEvec.at<float>(mloc.y, mloc.x));
-                    ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                    this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
                     return;
                 }
             }
@@ -402,7 +402,7 @@ protected:
             if( err > prjEps )
             {
                 ts->printf( cvtest::TS::LOG, "bad accuracy of project() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-                ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
                 return;
             }
             // check pca backProject
@@ -411,7 +411,7 @@ protected:
             if( err > backPrjEps )
             {
                 ts->printf( cvtest::TS::LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-                ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
                 return;
             }
         }
@@ -424,14 +424,14 @@ protected:
         if( err > diffPrjEps )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
         err = cvtest::norm(cPCA.backProject(ocvPrjTestPoints), rBackPrjTestPoints.t(), CV_RELATIVE_L2 );
         if( err > diffBackPrjEps )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -448,14 +448,14 @@ protected:
         if( err > diffPrjEps )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
         err = cvtest::norm(cPCA.backProject(rvPrjTestPoints), rBackPrjTestPoints.t(), CV_RELATIVE_L2 );
         if( err > diffBackPrjEps )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -479,14 +479,14 @@ protected:
         if( err > diffPrjEps )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
         err = cvtest::norm(backPrjTestPoints, rBackPrjTestPoints, CV_RELATIVE_L2);
         if( err > diffBackPrjEps )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -507,14 +507,14 @@ protected:
         if( err > diffPrjEps )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
         err = cvtest::norm(backPrjTestPoints, rBackPrjTestPoints.t(), CV_RELATIVE_L2);
         if( err > diffBackPrjEps )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
     #endif
@@ -530,24 +530,24 @@ protected:
         if( err > 0 )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
         }
         err = cvtest::norm( rPCA.eigenvalues, lPCA.eigenvalues, CV_RELATIVE_L2 );
         if( err > 0 )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
         }
         err = cvtest::norm( rPCA.mean, lPCA.mean, CV_RELATIVE_L2 );
         if( err > 0 )
         {
             ts->printf( cvtest::TS::LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
         }
     }
 };
 
-class Core_ArrayOpTest : public cvtest::BaseTest
+class Core_ArrayOpTest  extends alvision.cvtest.BaseTest
 {
 public:
     Core_ArrayOpTest();
@@ -940,7 +940,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
         }
     }
 
-    ts->set_failed_test_info(errcount == 0 ? cvtest::TS::OK : cvtest::TS::FAIL_INVALID_OUTPUT);
+    this.ts.set_failed_test_info(errcount == 0 ? cvtest::TS::OK : cvtest::TS::FAIL_INVALID_OUTPUT);
 }
 
 
@@ -995,7 +995,7 @@ int calcDiffElemCount(const vector<Mat>& mv, const Mat& m)
     return INT_MAX;
 }
 
-class Core_MergeSplitBaseTest : public cvtest::BaseTest
+class Core_MergeSplitBaseTest  extends alvision.cvtest.BaseTest
 {
 protected:
     virtual int run_case(int depth, size_t channels, const Size& size, RNG& rng) = 0;
@@ -1034,7 +1034,7 @@ protected:
         curRes = run_case(CV_64F, mvSize, mSize, rng);
         res = curRes != cvtest::TS::OK ? curRes : res;
 
-        ts->set_failed_test_info(res);
+        this.ts.set_failed_test_info(res);
     }
 };
 

@@ -54,47 +54,43 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-class CV_AccumBaseTest : public cvtest::ArrayTest
+class CV_AccumBaseTest extends alvision.cvtest.ArrayTest
 {
-public:
-    CV_AccumBaseTest();
+    constructor(){
+        super();
+        test_array[INPUT].push_back(NULL);
+        test_array[INPUT_OUTPUT].push_back(NULL);
+        test_array[REF_INPUT_OUTPUT].push_back(NULL);
+        test_array[MASK].push_back(NULL);
+        optional_mask = true;
+        element_wise_relative_error = false;
+    }
+get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array < Array < alvision.Size >>,types: Array<Array<alvision.int>>): void {
+        RNG& rng = ts->get_rng();
+        int depth = cvtest::randInt(rng) % 3, cn = cvtest::randInt(rng) & 1 ? 3 : 1;
+    int accdepth = std::max((int)(cvtest::randInt(rng) % 2 + 1), depth);
+    int i, input_count = (int)test_array[INPUT].size();
+    cvtest::ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
+    depth = depth == 0 ? CV_8U : depth == 1 ? CV_32F : CV_64F;
+    accdepth = accdepth == 1 ? CV_32F : CV_64F;
+    accdepth = MAX(accdepth, depth);
 
-protected:
-    void get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types );
-    double get_success_error_level( int test_case_idx, int i, int j );
+    for (i = 0; i < input_count; i++)
+        types[INPUT][i] = CV_MAKETYPE(depth, cn);
+
+    types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] = CV_MAKETYPE(accdepth, cn);
+
+    alpha = cvtest::randReal(rng);
+}
+        get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     double alpha;
 };
-
-
-CV_AccumBaseTest::CV_AccumBaseTest()
-{
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT_OUTPUT].push_back(NULL);
-    test_array[REF_INPUT_OUTPUT].push_back(NULL);
-    test_array[MASK].push_back(NULL);
-    optional_mask = true;
-    element_wise_relative_error = false;
-} // ctor
 
 
 void CV_AccumBaseTest::get_test_array_types_and_sizes( int test_case_idx,
                         vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
-    RNG& rng = ts->get_rng();
-    int depth = cvtest::randInt(rng) % 3, cn = cvtest::randInt(rng) & 1 ? 3 : 1;
-    int accdepth = std::max((int)(cvtest::randInt(rng) % 2 + 1), depth);
-    int i, input_count = (int)test_array[INPUT].size();
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    depth = depth == 0 ? CV_8U : depth == 1 ? CV_32F : CV_64F;
-    accdepth = accdepth == 1 ? CV_32F : CV_64F;
-    accdepth = MAX(accdepth, depth);
-
-    for( i = 0; i < input_count; i++ )
-        types[INPUT][i] = CV_MAKETYPE(depth,cn);
-
-    types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] = CV_MAKETYPE(accdepth,cn);
-
-    alpha = cvtest::randReal(rng);
+    
 }
 
 

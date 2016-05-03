@@ -866,7 +866,7 @@ void CV_CalibrationMatrixValuesTest::run(int)
 _exit_:
     RNG& _rng = ts->get_rng();
     _rng = rng;
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 //----------------------------------------- CV_CalibrationMatrixValuesTest_C --------------------------------
@@ -1150,7 +1150,7 @@ void CV_ProjectPointsTest::run(int)
 _exit_:
     RNG& _rng = ts->get_rng();
     _rng = rng;
-    ts->set_failed_test_info( code );
+    this.ts.set_failed_test_info( code );
 }
 
 //----------------------------------------- CV_ProjectPointsTest_C --------------------------------
@@ -1340,7 +1340,7 @@ void CV_StereoCalibrationTest::run( int )
         if( !f || !fgets(buf, sizeof(buf)-3, f) || sscanf(buf, "%d%d", &patternSize.width, &patternSize.height) != 2 )
         {
             ts->printf( cvtest::TS::LOG, "The file %s can not be opened or has invalid content\n", filepath.c_str() );
-            ts->set_failed_test_info( f ? cvtest::TS::FAIL_INVALID_TEST_DATA : cvtest::TS::FAIL_MISSING_TEST_DATA );
+            this.ts.set_failed_test_info( f ? cvtest::TS::FAIL_INVALID_TEST_DATA : cvtest::TS::FAIL_MISSING_TEST_DATA );
             fclose(f);
             return;
         }
@@ -1362,7 +1362,7 @@ void CV_StereoCalibrationTest::run( int )
         if( imglist.size() == 0 || imglist.size() % 2 != 0 )
         {
             ts->printf( cvtest::TS::LOG, "The number of images is 0 or an odd number in the case #%d\n", testcase );
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
             return;
         }
 
@@ -1382,7 +1382,7 @@ void CV_StereoCalibrationTest::run( int )
             {
                 ts->printf( cvtest::TS::LOG, "Can not load images %s and %s, testcase %d\n",
                     imglist[i*2].c_str(), imglist[i*2+1].c_str(), testcase );
-                ts->set_failed_test_info( cvtest::TS::FAIL_MISSING_TEST_DATA );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_MISSING_TEST_DATA );
                 return;
             }
             imgsize = left.size();
@@ -1392,7 +1392,7 @@ void CV_StereoCalibrationTest::run( int )
             {
                 ts->printf( cvtest::TS::LOG, "The function could not detect boards on the images %s and %s, testcase %d\n",
                     imglist[i*2].c_str(), imglist[i*2+1].c_str(), testcase );
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
             total += (int)imgpt1[i].size();
@@ -1419,7 +1419,7 @@ void CV_StereoCalibrationTest::run( int )
         if( err > maxReprojErr )
         {
             ts->printf( cvtest::TS::LOG, "The average reprojection error is too big (=%g), testcase %d\n", err, testcase);
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
             return;
         }
 
@@ -1435,19 +1435,19 @@ void CV_StereoCalibrationTest::run( int )
         {
             ts->printf( cvtest::TS::LOG, "The computed (by rectify) R1 and R2 are not orthogonal,"
                 "or the computed (by calibrate) F is not singular, testcase %d\n", testcase);
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
             return;
         }
 
         if(!checkPandROI(testcase, M1, D1, R1, P1, imgsize, roi1))
         {
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
 
         if(!checkPandROI(testcase, M2, D2, R2, P2, imgsize, roi2))
         {
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -1455,7 +1455,7 @@ void CV_StereoCalibrationTest::run( int )
         double tx = fabs(P2.at<double>(0, 3) / P2.at<double>(0, 0));
         if (fabs(tx - cvtest::norm(T, NORM_L2)) > 1e-5)
         {
-            ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -1466,7 +1466,7 @@ void CV_StereoCalibrationTest::run( int )
         if( reprojectedTestPoint.at<double>(2) / reprojectedTestPoint.at<double>(3) < 0 )
         {
             ts->printf( cvtest::TS::LOG, "A point after rectification is reprojected behind the camera, testcase %d\n", testcase);
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         }
 
         //check that Q reprojects the same points as reconstructed by triangulation
@@ -1507,7 +1507,7 @@ void CV_StereoCalibrationTest::run( int )
         if (cvtest::norm(triangulatedPoints, reprojectedPoints, NORM_L2) / sqrt((double)pointsCount) > requiredAccuracy)
         {
             ts->printf( cvtest::TS::LOG, "Points reprojected with a matrix Q and points reconstructed by triangulation are different, testcase %d\n", testcase);
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
         }
 
         //check correctMatches
@@ -1532,7 +1532,7 @@ void CV_StereoCalibrationTest::run( int )
             if (cvtest::norm(error, NORM_L2) > constraintAccuracy)
             {
                 ts->printf( cvtest::TS::LOG, "Epipolar constraint is violated after correctMatches, testcase %d\n", testcase);
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
             }
         }
 
@@ -1587,14 +1587,14 @@ void CV_StereoCalibrationTest::run( int )
                 {
                     ts->printf( cvtest::TS::LOG, "The distance between %s coordinates is too big(=%g) (used calibrated stereo), testcase %d\n",
                         verticalStereo ? "x" : "y", diff_c, testcase);
-                    ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                    this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
                     return;
                 }
                 if( maxDiff_uc > maxScanlineDistErr_uc )
                 {
                     ts->printf( cvtest::TS::LOG, "The distance between %s coordinates is too big(=%g) (used uncalibrated stereo), testcase %d\n",
                         verticalStereo ? "x" : "y", diff_uc, testcase);
-                    ts->set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                    this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
                     return;
                 }
             }

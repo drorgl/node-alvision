@@ -74,7 +74,7 @@ const int NORM_TYPE[COUNT_NORM_TYPES] = {cv::NORM_L1, cv::NORM_L2, cv::NORM_INF}
 
 enum TASK_TYPE_EIGEN {VALUES, VECTORS};
 
-class Core_EigenTest: public cvtest::BaseTest
+class Core_EigenTest extends alvision.cvtest.BaseTest
 {
 public:
 

@@ -61,7 +61,7 @@ const string IMAGE_FILENAME = "tsukuba.png";
 *                                     Test for KeyPoint                                  *
 \****************************************************************************************/
 
-class CV_FeatureDetectorKeypointsTest : public cvtest::BaseTest
+class CV_FeatureDetectorKeypointsTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_FeatureDetectorKeypointsTest(const Ptr<FeatureDetector>& _detector) :
@@ -78,7 +78,7 @@ protected:
         if(image.empty())
         {
             ts->printf(cvtest::TS::LOG, "Image %s can not be read.\n", imgFilename.c_str());
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
             return;
         }
 
@@ -88,7 +88,7 @@ protected:
         if(keypoints.empty())
         {
             ts->printf(cvtest::TS::LOG, "Detector can't find keypoints in image.\n");
-            ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
             return;
         }
 
@@ -100,25 +100,25 @@ protected:
             if(!r.contains(kp.pt))
             {
                 ts->printf(cvtest::TS::LOG, "KeyPoint::pt is out of image (x=%f, y=%f).\n", kp.pt.x, kp.pt.y);
-                ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
                 return;
             }
 
             if(kp.size <= 0.f)
             {
                 ts->printf(cvtest::TS::LOG, "KeyPoint::size is not positive (%f).\n", kp.size);
-                ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
                 return;
             }
 
             if((kp.angle < 0.f && kp.angle != -1.f) || kp.angle >= 360.f)
             {
                 ts->printf(cvtest::TS::LOG, "KeyPoint::angle is out of range [0, 360). It's %f.\n", kp.angle);
-                ts->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
                 return;
             }
         }
-        ts->set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(cvtest::TS::OK);
     }
 
     Ptr<FeatureDetector> detector;

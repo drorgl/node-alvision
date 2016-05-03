@@ -11,7 +11,7 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class Core_RandTest : public cvtest::BaseTest
+class Core_RandTest  extends alvision.cvtest.BaseTest
 {
 public:
     Core_RandTest();
@@ -185,7 +185,7 @@ void Core_RandTest::run( int )
         if( maxk >= 1 && cvtest::norm(arr[0], arr[1], NORM_INF) > eps)
         {
             ts->printf( cvtest::TS::LOG, "RNG output depends on the array lengths (some generated numbers get lost?)" );
-            ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
             return;
         }
 
@@ -234,14 +234,14 @@ void Core_RandTest::run( int )
             {
                 ts->printf( cvtest::TS::LOG, "Uniform RNG gave values out of the range [%g,%g) on channel %d/%d\n",
                            A[c], B[c], c, cn);
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
             if( dist_type == CV_RAND_NORMAL && W[c] < SZ*.90)
             {
                 ts->printf( cvtest::TS::LOG, "Normal RNG gave too many values out of the range (%g+4*%g,%g+4*%g) on channel %d/%d\n",
                            A[c], B[c], A[c], B[c], c, cn);
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
             double refval = 0, realval = 0;
@@ -251,7 +251,7 @@ void Core_RandTest::run( int )
                 ts->printf( cvtest::TS::LOG, "RNG failed Chi-square test "
                            "(got %g vs probable maximum %g) on channel %d/%d\n",
                            realval, refval, c, cn);
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
         }
@@ -303,7 +303,7 @@ void Core_RandTest::run( int )
                 ts->printf( cvtest::TS::LOG, "RNG failed %d-dim sphere volume test (got %g instead of %g)\n",
                            SDIM, V, V0);
                 ts->printf( cvtest::TS::LOG, "depth = %d, N0 = %d\n", depth, N0);
-                ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
                 return;
             }
         }
@@ -313,7 +313,7 @@ void Core_RandTest::run( int )
 TEST(Core_Rand, quality) { Core_RandTest test; test.safe_run(); }
 
 
-class Core_RandRangeTest : public cvtest::BaseTest
+class Core_RandRangeTest  extends alvision.cvtest.BaseTest
 {
 public:
     Core_RandRangeTest() {}

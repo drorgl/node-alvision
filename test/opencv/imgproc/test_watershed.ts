@@ -54,7 +54,7 @@ import fs = require('fs');
 using namespace cv;
 using namespace std;
 
-class CV_WatershedTest : public cvtest::BaseTest
+class CV_WatershedTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_WatershedTest();
@@ -75,7 +75,7 @@ void CV_WatershedTest::run( int /* start_from */)
 
     if (orig.empty() || !fs.isOpened())
     {
-        ts->set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
         return;
     }
 
@@ -131,10 +131,10 @@ void CV_WatershedTest::run( int /* start_from */)
 
     if (0 != norm(markers8U, exp, NORM_INF))
     {
-        ts->set_failed_test_info( cvtest::TS::FAIL_MISMATCH );
+        this.ts.set_failed_test_info( cvtest::TS::FAIL_MISMATCH );
         return;
     }
-    ts->set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(cvtest::TS::OK);
 }
 
 TEST(Imgproc_Watershed, regression) { CV_WatershedTest test; test.safe_run(); }

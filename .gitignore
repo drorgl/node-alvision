@@ -28,4 +28,9 @@
 /tsbinding/*/*/*.map
 /tsbinding/*/*/*/*.map
 
+/tsbinding/*.js
+/tsbinding/*/*.js
+/tsbinding/*/*/*.js
+/tsbinding/*/*/*/*.js
+
 /typings/

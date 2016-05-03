@@ -48,16 +48,16 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-#include <cuda_runtime.h>
-
-#include "opencv2/core/cuda.hpp"
-#include "opencv2/ts/cuda_test.hpp"
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//#include <cuda_runtime.h>
+//
+//#include "opencv2/core/cuda.hpp"
+//#include "opencv2/ts/cuda_test.hpp"
+//
+//using namespace cvtest;
 
 struct Async : testing::TestWithParam<cv::cuda::DeviceInfo>
 {
@@ -93,7 +93,7 @@ void checkMemSet(int status, void* userData)
     ASSERT_MAT_NEAR(dst_gold, dst, 0);
 }
 
-CUDA_TEST_P(Async, MemSet)
+alvision.cvtest.CUDA_TEST_P(Async, MemSet)
 {
     cv::cuda::Stream stream;
 
@@ -123,7 +123,7 @@ void checkConvert(int status, void* userData)
     ASSERT_MAT_NEAR(dst_gold, dst, 0);
 }
 
-CUDA_TEST_P(Async, Convert)
+alvision.cvtest.CUDA_TEST_P(Async, Convert)
 {
     cv::cuda::Stream stream;
 
@@ -137,7 +137,7 @@ CUDA_TEST_P(Async, Convert)
     stream.waitForCompletion();
 }
 
-CUDA_TEST_P(Async, HostMemAllocator)
+alvision.cvtest.CUDA_TEST_P(Async, HostMemAllocator)
 {
     cv::cuda::Stream stream;
 
