@@ -129,6 +129,7 @@
 		,'tsbinding/opencv/persistence.ts'
 		,'tsbinding/opencv/photo.ts'
 		,'tsbinding/opencv/static.ts'
+		,'tsbinding/opencv/videoio.ts'
 		
 		,'tsbinding/opencv/test.ts'
 		,'tsbinding/opencv/tiff.ts'
@@ -136,6 +137,13 @@
 		,'tsbinding/opencv/types.ts'
 		
 		,'tsbinding/opencv/ml.ts'
+		
+		,'tsbinding/opencv/viz.ts'
+		,'tsbinding/opencv/viz/types.ts'
+		,'tsbinding/opencv/viz/viz3d.ts'
+		,'tsbinding/opencv/viz/vizcore.ts'
+		,'tsbinding/opencv/viz/widget_accessor.ts'
+		,'tsbinding/opencv/viz/widgets.ts'
 		
 		,'tsbinding/opencv/calib3d.ts'
 		,'tsbinding/opencv/calib3d/circlesgrid.ts'

@@ -63,14 +63,14 @@ CV_SLMLTest::CV_SLMLTest( const char* _modelName ) : CV_MLBaseTest( _modelName )
 
 int CV_SLMLTest::run_test_case( int testCaseIdx )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     code = prepare_test_case( testCaseIdx );
 
-    if( code == cvtest::TS::OK )
+    if( code == alvision.cvtest.TS::OK )
     {
         data->setTrainTestSplit(data->getNTrainSamples(), true);
         code = train( testCaseIdx );
-        if( code == cvtest::TS::OK )
+        if( code == alvision.cvtest.TS::OK )
         {
             get_test_error( testCaseIdx, &test_resps1 );
             fname1 = tempfile(".yml.gz");
@@ -81,20 +81,20 @@ int CV_SLMLTest::run_test_case( int testCaseIdx )
             save( fname2.c_str() );
         }
         else
-            ts->printf( cvtest::TS::LOG, "model can not be trained" );
+            ts->printf( alvision.cvtest.TS::LOG, "model can not be trained" );
     }
     return code;
 }
 
 int CV_SLMLTest::validate_test_results( int testCaseIdx )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     // 1. compare files
     FILE *fs1 = fopen(fname1.c_str(), "rb"), *fs2 = fopen(fname2.c_str(), "rb");
     size_t sz1 = 0, sz2 = 0;
     if( !fs1 || !fs2 )
-        code = cvtest::TS::FAIL_MISSING_TEST_DATA;
+        code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
     if( code >= 0 )
     {
         fseek(fs1, 0, SEEK_END); fseek(fs2, 0, SEEK_END);
@@ -104,7 +104,7 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
     }
 
     if( sz1 != sz2 )
-        code = cvtest::TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
 
     if( code >= 0 )
     {
@@ -116,11 +116,11 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
             size_t r2 = fread(buf2, 1, BUFSZ, fs2);
             if( r1 != r2 || memcmp(buf1, buf2, r1) != 0 )
             {
-                ts->printf( cvtest::TS::LOG,
+                ts->printf( alvision.cvtest.TS::LOG,
                            "in test case %d first (%s) and second (%s) saved files differ in %d-th kb\n",
                            testCaseIdx, fname1.c_str(), fname2.c_str(),
                            (int)pos );
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 break;
             }
             pos += r1;
@@ -148,8 +148,8 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
         {
             if( fabs(*it1 - *it2) > FLT_EPSILON )
             {
-                ts->printf( cvtest::TS::LOG, "in test case %d responses predicted before saving and after loading is different", testCaseIdx );
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                ts->printf( alvision.cvtest.TS::LOG, "in test case %d responses predicted before saving and after loading is different", testCaseIdx );
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 break;
             }
         }
@@ -170,7 +170,7 @@ class CV_LegacyTest  extends alvision.cvtest.BaseTest
 {
 public:
     CV_LegacyTest(const std::string &_modelName, const std::string &_suffixes = std::string())
-        : cvtest::BaseTest(), modelName(_modelName), suffixes(_suffixes)
+        : alvision.cvtest.BaseTest(), modelName(_modelName), suffixes(_suffixes)
     {
     }
     virtual ~CV_LegacyTest() {}
@@ -194,7 +194,7 @@ protected:
     {
         using namespace cv::ml;
 
-        int code = cvtest::TS::OK;
+        int code = alvision.cvtest.TS::OK;
         string filename = ts->get_data_path() + "legacy/" + modelName + suffix;
         bool isTree = modelName == CV_BOOST || modelName == CV_DTREE || modelName == CV_RTREES;
         Ptr<StatModel> model;
@@ -212,7 +212,7 @@ protected:
             model = Algorithm::load<RTrees>(filename);
         if (!model)
         {
-            code = cvtest::TS::FAIL_INVALID_TEST_DATA;
+            code = alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
         }
         else
         {

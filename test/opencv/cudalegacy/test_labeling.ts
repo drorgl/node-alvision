@@ -171,7 +171,7 @@ struct Labeling : testing::TestWithParam<cv::cuda::DeviceInfo>
 
     cv::Mat loat_image()
     {
-        return cv::imread(std::string( cvtest::TS::ptr()->get_data_path() ) + "labeling/label.png");
+        return cv::imread(std::string( alvision.cvtest.TS::ptr()->get_data_path() ) + "labeling/label.png");
     }
 };
 

@@ -248,7 +248,7 @@ CV_BaseShapeDescrTest::~CV_BaseShapeDescrTest()
 
 void CV_BaseShapeDescrTest::clear()
 {
-    cvtest::BaseTest::clear();
+    alvision.cvtest.BaseTest::clear();
     cvReleaseMemStorage( &storage );
     cvReleaseMat( &points2 );
     points1 = 0;
@@ -258,7 +258,7 @@ void CV_BaseShapeDescrTest::clear()
 
 int CV_BaseShapeDescrTest::read_params( CvFileStorage* fs )
 {
-    int code = cvtest::BaseTest::read_params( fs );
+    int code = alvision.cvtest.BaseTest::read_params( fs );
     if( code < 0 )
         return code;
 
@@ -266,8 +266,8 @@ int CV_BaseShapeDescrTest::read_params( CvFileStorage* fs )
     min_log_size = cvReadInt( find_param( fs, "min_log_size" ), min_log_size );
     max_log_size = cvReadInt( find_param( fs, "max_log_size" ), max_log_size );
 
-    min_log_size = cvtest::clipInt( min_log_size, 0, 8 );
-    max_log_size = cvtest::clipInt( max_log_size, 0, 10 );
+    min_log_size = alvision.cvtest.clipInt( min_log_size, 0, 8 );
+    max_log_size = alvision.cvtest.clipInt( max_log_size, 0, 10 );
     if( min_log_size > max_log_size )
     {
         int t;
@@ -331,10 +331,10 @@ void CV_BaseShapeDescrTest::generate_point_set( void* pointsSet )
         }
         if( point_type == CV_32S )
             for( k = 0; k < n; k++ )
-                pi[k] = cvRound(cvtest::randReal(rng)*a[k] + b[k]);
+                pi[k] = cvRound(alvision.cvtest.randReal(rng)*a[k] + b[k]);
         else
             for( k = 0; k < n; k++ )
-                pf[k] = (float)(cvtest::randReal(rng)*a[k] + b[k]);
+                pf[k] = (float)(alvision.cvtest.randReal(rng)*a[k] + b[k]);
     }
 }
 
@@ -347,17 +347,17 @@ int CV_BaseShapeDescrTest::prepare_test_case( int test_case_idx )
     int i;
     RNG& rng = ts->get_rng();
 
-    cvtest::BaseTest::prepare_test_case( test_case_idx );
+    alvision.cvtest.BaseTest::prepare_test_case( test_case_idx );
 
     clear();
-    size = cvRound( exp((cvtest::randReal(rng) * (max_log_size - min_log_size) + min_log_size)*CV_LOG2) );
-    use_storage = cvtest::randInt(rng) % 2;
-    point_type = CV_MAKETYPE(cvtest::randInt(rng) %
+    size = cvRound( exp((alvision.cvtest.randReal(rng) * (max_log_size - min_log_size) + min_log_size)*CV_LOG2) );
+    use_storage = alvision.cvtest.randInt(rng) % 2;
+    point_type = CV_MAKETYPE(alvision.cvtest.randInt(rng) %
         (enable_flt_points ? 2 : 1) ? CV_32F : CV_32S, dims);
 
     if( use_storage )
     {
-        storage = cvCreateMemStorage( (cvtest::randInt(rng)%10 + 1)*1024 );
+        storage = cvCreateMemStorage( (alvision.cvtest.randInt(rng)%10 + 1)*1024 );
         points1 = cvCreateSeq( point_type, sizeof(CvSeq), CV_ELEM_SIZE(point_type), storage );
         cvSeqPushMulti( points1, 0, size );
         points = points1;
@@ -365,7 +365,7 @@ int CV_BaseShapeDescrTest::prepare_test_case( int test_case_idx )
     else
     {
         int rows = 1, cols = size;
-        if( cvtest::randInt(rng) % 2 )
+        if( alvision.cvtest.randInt(rng) % 2 )
             rows = size, cols = 1;
 
         points2 = cvCreateMat( rows, cols, point_type );
@@ -374,8 +374,8 @@ int CV_BaseShapeDescrTest::prepare_test_case( int test_case_idx )
 
     for( i = 0; i < 4; i++ )
     {
-        low.val[i] = (cvtest::randReal(rng)-0.5)*low_high_range*2;
-        high.val[i] = (cvtest::randReal(rng)-0.5)*low_high_range*2;
+        low.val[i] = (alvision.cvtest.randReal(rng)-0.5)*low_high_range*2;
+        high.val[i] = (alvision.cvtest.randReal(rng)-0.5)*low_high_range*2;
         if( low.val[i] > high.val[i] )
         {
             double t;
@@ -387,7 +387,7 @@ int CV_BaseShapeDescrTest::prepare_test_case( int test_case_idx )
 
     generate_point_set( points );
 
-    test_cpp = (cvtest::randInt(rng) & 16) == 0;
+    test_cpp = (alvision.cvtest.randInt(rng) & 16) == 0;
     return 1;
 }
 
@@ -478,14 +478,14 @@ int CV_ConvHullTest::prepare_test_case( int test_case_idx )
     if( code <= 0 )
         return code;
 
-    orientation = cvtest::randInt(rng) % 2 ? CV_CLOCKWISE : CV_COUNTER_CLOCKWISE;
-    return_points = cvtest::randInt(rng) % 2;
+    orientation = alvision.cvtest.randInt(rng) % 2 ? CV_CLOCKWISE : CV_COUNTER_CLOCKWISE;
+    return_points = alvision.cvtest.randInt(rng) % 2;
 
-    use_storage_for_hull = (cvtest::randInt(rng) % 2) && !test_cpp;
+    use_storage_for_hull = (alvision.cvtest.randInt(rng) % 2) && !test_cpp;
     if( use_storage_for_hull )
     {
         if( !storage )
-            storage = cvCreateMemStorage( (cvtest::randInt(rng)%10 + 1)*1024 );
+            storage = cvCreateMemStorage( (alvision.cvtest.randInt(rng)%10 + 1)*1024 );
         hull_storage = storage;
     }
     else
@@ -494,7 +494,7 @@ int CV_ConvHullTest::prepare_test_case( int test_case_idx )
         int sz = points1 ? points1->total : points2->cols + points2->rows - 1;
         int point_type = points1 ? CV_SEQ_ELTYPE(points1) : CV_MAT_TYPE(points2->type);
 
-        if( cvtest::randInt(rng) % 2 )
+        if( alvision.cvtest.randInt(rng) % 2 )
             rows = sz, cols = 1;
         else
             rows = 1, cols = sz;
@@ -606,8 +606,8 @@ int CV_ConvHullTest::validate_test_results( int test_case_idx )
 
             if( idx < 0 || idx >= point_count )
             {
-                ts->printf( cvtest::TS::LOG, "Invalid convex hull point #%d\n", i );
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                ts->printf( alvision.cvtest.TS::LOG, "Invalid convex hull point #%d\n", i );
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
             h[i] = p[idx];
@@ -627,8 +627,8 @@ int CV_ConvHullTest::validate_test_results( int test_case_idx )
             double t = (double)dx0*dy1 - (double)dx1*dy0;
             if( (t < 0) ^ (orientation != CV_COUNTER_CLOCKWISE) )
             {
-                ts->printf( cvtest::TS::LOG, "The convex hull is not convex or has a wrong orientation (vtx %d)\n", i );
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                ts->printf( alvision.cvtest.TS::LOG, "The convex hull is not convex or has a wrong orientation (vtx %d)\n", i );
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
             pt0 = pt1;
@@ -644,8 +644,8 @@ int CV_ConvHullTest::validate_test_results( int test_case_idx )
 
         if( pptresult < 0 )
         {
-            ts->printf( cvtest::TS::LOG, "The point #%d is outside of the convex hull\n", i );
-            code = cvtest::TS::FAIL_BAD_ACCURACY;
+            ts->printf( alvision.cvtest.TS::LOG, "The point #%d is outside of the convex hull\n", i );
+            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
             goto _exit_;
         }
 
@@ -653,10 +653,10 @@ int CV_ConvHullTest::validate_test_results( int test_case_idx )
             mask->data.ptr[idx] = (uchar)1;
     }
 
-    if( cvtest::norm( _mask, Mat::zeros(_mask.dims, _mask.size, _mask.type()), NORM_L1 ) != hull_count )
+    if( alvision.cvtest.norm( _mask, Mat::zeros(_mask.dims, _mask.size, _mask.type()), NORM_L1 ) != hull_count )
     {
-        ts->printf( cvtest::TS::LOG, "Not every convex hull vertex coincides with some input point\n" );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        ts->printf( alvision.cvtest.TS::LOG, "Not every convex hull vertex coincides with some input point\n" );
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -731,8 +731,8 @@ int CV_MinAreaRectTest::validate_test_results( int test_case_idx )
 
         if( fabs(d0 - d1) + fabs(x0 - x1) + fabs(y0 - y1) > eps*MAX(d0,d1) )
         {
-            ts->printf( cvtest::TS::LOG, "The bounding box is not a rectangle\n" );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            ts->printf( alvision.cvtest.TS::LOG, "The bounding box is not a rectangle\n" );
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
             goto _exit_;
         }
     }
@@ -764,8 +764,8 @@ int CV_MinAreaRectTest::validate_test_results( int test_case_idx )
         double pptresult = cvTsPointPolygonTest( p[i], box_pt, 4, &idx, &on_edge );
         if( pptresult < -eps )
         {
-            ts->printf( cvtest::TS::LOG, "The point #%d is outside of the box\n", i );
-            code = cvtest::TS::FAIL_BAD_ACCURACY;
+            ts->printf( alvision.cvtest.TS::LOG, "The point #%d is outside of the box\n", i );
+            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
             goto _exit_;
         }
 
@@ -782,8 +782,8 @@ int CV_MinAreaRectTest::validate_test_results( int test_case_idx )
 
     if( mask[0] + mask[1] + mask[2] + mask[3] != 4 )
     {
-        ts->printf( cvtest::TS::LOG, "Not every box side has a point nearby\n" );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        ts->printf( alvision.cvtest.TS::LOG, "Not every box side has a point nearby\n" );
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -909,21 +909,21 @@ int CV_MinTriangleTest::validate_test_results( int test_case_idx )
         // Report any found errors
         if (errorEnclosed)
         {
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
             "All points should be enclosed by the triangle.\n" );
-            code = cvtest::TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         }
         else if (errorMiddlePoints)
         {
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
             "All triangle edges middle points should touch the convex hull of the points.\n" );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
         }
         else if (errorFlush)
         {
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
             "At least one edge of the enclosing triangle should be flush with one edge of the polygon.\n" );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
         }
     }
 
@@ -1001,8 +1001,8 @@ int CV_MinCircleTest::validate_test_results( int test_case_idx )
         double d = cvTsDist( p[i], center );
         if( d > radius )
         {
-            ts->printf( cvtest::TS::LOG, "The point #%d is outside of the circle\n", i );
-            code = cvtest::TS::FAIL_BAD_ACCURACY;
+            ts->printf( alvision.cvtest.TS::LOG, "The point #%d is outside of the circle\n", i );
+            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
             goto _exit_;
         }
 
@@ -1012,9 +1012,9 @@ int CV_MinCircleTest::validate_test_results( int test_case_idx )
 
     if( point_count >= 2 && (j < 2 || (j == 2 && cvTsDist(v[0],v[1]) < (radius-1)*2/eps)) )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
             "There should be at at least 3 points near the circle boundary or 2 points on the diameter\n" );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1059,7 +1059,7 @@ int CV_PerimeterTest::prepare_test_case( int test_case_idx )
     if( code < 0 )
         return code;
 
-    is_closed = cvtest::randInt(rng) % 2;
+    is_closed = alvision.cvtest.randInt(rng) % 2;
 
     if( points1 )
     {
@@ -1071,10 +1071,10 @@ int CV_PerimeterTest::prepare_test_case( int test_case_idx )
     else
         total = points2->cols + points2->rows - 1;
 
-    if( (cvtest::randInt(rng) % 3) && !test_cpp )
+    if( (alvision.cvtest.randInt(rng) % 3) && !test_cpp )
     {
-        slice.start_index = cvtest::randInt(rng) % total;
-        slice.end_index = cvtest::randInt(rng) % total;
+        slice.start_index = alvision.cvtest.randInt(rng) % total;
+        slice.end_index = alvision.cvtest.randInt(rng) % total;
     }
     else
         slice = CV_WHOLE_SEQ;
@@ -1119,13 +1119,13 @@ int CV_PerimeterTest::validate_test_results( int test_case_idx )
 
     if( cvIsNaN(result) || cvIsInf(result) )
     {
-        ts->printf( cvtest::TS::LOG, "cvArcLength() returned invalid value (%g)\n", result );
-        code = cvtest::TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TS::LOG, "cvArcLength() returned invalid value (%g)\n", result );
+        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
     }
     else if( fabs(result - result0) > FLT_EPSILON*100*result0 )
     {
-        ts->printf( cvtest::TS::LOG, "The function returned %g, while the correct result is %g\n", result, result0 );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        ts->printf( alvision.cvtest.TS::LOG, "The function returned %g, while the correct result is %g\n", result, result0 );
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
     if( code < 0 )
@@ -1174,7 +1174,7 @@ void CV_FitEllipseTest::generate_point_set( void* pointsSet )
     box0.center.y = (float)((low.val[1] + high.val[1])*0.5);
     box0.size.width = (float)(MAX(high.val[0] - low.val[0], min_ellipse_size)*2);
     box0.size.height = (float)(MAX(high.val[1] - low.val[1], min_ellipse_size)*2);
-    box0.angle = (float)(cvtest::randReal(rng)*180);
+    box0.angle = (float)(alvision.cvtest.randReal(rng)*180);
     a = cos(box0.angle*CV_PI/180.);
     b = sin(box0.angle*CV_PI/180.);
 
@@ -1207,9 +1207,9 @@ void CV_FitEllipseTest::generate_point_set( void* pointsSet )
     {
         CvPoint* pp;
         CvPoint2D32f p;
-        double angle = cvtest::randReal(rng)*CV_PI*2;
-        double x = box0.size.height*0.5*(cos(angle) + (cvtest::randReal(rng)-0.5)*2*max_noise);
-        double y = box0.size.width*0.5*(sin(angle) + (cvtest::randReal(rng)-0.5)*2*max_noise);
+        double angle = alvision.cvtest.randReal(rng)*CV_PI*2;
+        double x = box0.size.height*0.5*(cos(angle) + (alvision.cvtest.randReal(rng)-0.5)*2*max_noise);
+        double y = box0.size.width*0.5*(sin(angle) + (alvision.cvtest.randReal(rng)-0.5)*2*max_noise);
         p.x = (float)(box0.center.x + a*x + b*y);
         p.y = (float)(box0.center.y - b*x + a*y);
 
@@ -1258,9 +1258,9 @@ int CV_FitEllipseTest::validate_test_results( int test_case_idx )
         cvIsNaN(box.size.height) || cvIsInf(box.size.height) ||
         cvIsNaN(box.angle) || cvIsInf(box.angle) )
     {
-        ts->printf( cvtest::TS::LOG, "Some of the computed ellipse parameters are invalid (x=%g,y=%g,w=%g,h=%g,angle=%g)\n",
+        ts->printf( alvision.cvtest.TS::LOG, "Some of the computed ellipse parameters are invalid (x=%g,y=%g,w=%g,h=%g,angle=%g)\n",
             box.center.x, box.center.y, box.size.width, box.size.height, box.angle );
-        code = cvtest::TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
         goto _exit_;
     }
 
@@ -1275,11 +1275,11 @@ int CV_FitEllipseTest::validate_test_results( int test_case_idx )
         fabs(box.size.width - box0.size.width) > 0.1*fabs(box0.size.width) ||
         fabs(box.size.height - box0.size.height) > 0.1*fabs(box0.size.height) )
     {
-        ts->printf( cvtest::TS::LOG, "The computed ellipse center and/or size are incorrect:\n\t"
+        ts->printf( alvision.cvtest.TS::LOG, "The computed ellipse center and/or size are incorrect:\n\t"
             "(x=%.1f,y=%.1f,w=%.1f,h=%.1f), while it should be (x=%.1f,y=%.1f,w=%.1f,h=%.1f)\n",
             box.center.x, box.center.y, box.size.width, box.size.height,
             box0.center.x, box0.center.y, box0.size.width, box0.size.height );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1289,9 +1289,9 @@ int CV_FitEllipseTest::validate_test_results( int test_case_idx )
 
     if( box0.size.height >= 1.3*box0.size.width && diff_angle > 30 )
     {
-        ts->printf( cvtest::TS::LOG, "Incorrect ellipse angle (=%1.f, should be %1.f)\n",
+        ts->printf( alvision.cvtest.TS::LOG, "Incorrect ellipse angle (=%1.f, should be %1.f)\n",
             box.angle, box0.angle );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1385,7 +1385,7 @@ void CV_FitEllipseParallelTest::generate_point_set( void* )
     RNG& rng = ts->get_rng();
     int height = (int)(MAX(high.val[0] - low.val[0], min_ellipse_size));
     int width = (int)(MAX(high.val[1] - low.val[1], min_ellipse_size));
-    const int angle = ( (cvtest::randInt(rng) % 5) - 2 ) * 90;
+    const int angle = ( (alvision.cvtest.randInt(rng) % 5) - 2 ) * 90;
     const int dim = max(height, width);
     const Point center = Point(dim*2, dim*2);
 
@@ -1465,7 +1465,7 @@ void CV_FitLineTest::generate_point_set( void* pointsSet )
     {
         line0[k+n] = (float)((low.val[k] + high.val[k])*0.5);
         line0[k] = (float)(high.val[k] - low.val[k]);
-        if( cvtest::randInt(rng) % 2 )
+        if( alvision.cvtest.randInt(rng) % 2 )
             line0[k] = -line0[k];
         s += (double)line0[k]*line0[k];
     }
@@ -1509,11 +1509,11 @@ void CV_FitLineTest::generate_point_set( void* pointsSet )
             pf = (float*)data + i*n;
         }
 
-        t = (float)((cvtest::randReal(rng)-0.5)*low_high_range*2);
+        t = (float)((alvision.cvtest.randReal(rng)-0.5)*low_high_range*2);
 
         for( k = 0; k < n; k++ )
         {
-            p[k] = (float)((cvtest::randReal(rng)-0.5)*max_noise*2 + t*line0[k] + line0[k+n]);
+            p[k] = (float)((alvision.cvtest.randReal(rng)-0.5)*max_noise*2 + t*line0[k] + line0[k+n]);
 
             if( point_type == CV_32S )
                 pi[k] = cvRound(p[k]);
@@ -1530,11 +1530,11 @@ void CV_FitLineTest::generate_point_set( void* pointsSet )
 int CV_FitLineTest::prepare_test_case( int test_case_idx )
 {
     RNG& rng = ts->get_rng();
-    dims = cvtest::randInt(rng) % 2 + 2;
+    dims = alvision.cvtest.randInt(rng) % 2 + 2;
     min_log_size = MAX(min_log_size,5);
     max_log_size = MAX(min_log_size,max_log_size);
     int code = CV_BaseShapeDescrTest::prepare_test_case( test_case_idx );
-    dist_type = cvtest::randInt(rng) % 6 + 1;
+    dist_type = alvision.cvtest.randInt(rng) % 6 + 1;
     dist_type += dist_type == CV_DIST_C;
     reps = 0.1; aeps = 0.01;
     return code;
@@ -1566,9 +1566,9 @@ int CV_FitLineTest::validate_test_results( int test_case_idx )
     {
         if( cvIsNaN(line[k]) || cvIsInf(line[k]) )
         {
-            ts->printf( cvtest::TS::LOG, "Some of the computed line parameters are invalid (line[%d]=%g)\n",
+            ts->printf( alvision.cvtest.TS::LOG, "Some of the computed line parameters are invalid (line[%d]=%g)\n",
                 k, line[k] );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
             goto _exit_;
         }
     }
@@ -1593,14 +1593,14 @@ int CV_FitLineTest::validate_test_results( int test_case_idx )
     if( sqrt(vec_diff) > 0.05 )
     {
         if( dims == 2 )
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
                 "The computed line vector (%.2f,%.2f) is different from the actual (%.2f,%.2f)\n",
                 line[0], line[1], line0[0], line0[1] );
         else
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
                 "The computed line vector (%.2f,%.2f,%.2f) is different from the actual (%.2f,%.2f,%.2f)\n",
                 line[0], line[1], line[2], line0[0], line0[1], line0[2] );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1614,14 +1614,14 @@ int CV_FitLineTest::validate_test_results( int test_case_idx )
     if( sqrt(vec_diff) > 1*MAX(fabs(t),1) )
     {
         if( dims == 2 )
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
                 "The computed line point (%.2f,%.2f) is too far from the actual line\n",
                 line[2]+line0[2], line[3]+line0[3] );
         else
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
                 "The computed line point (%.2f,%.2f,%.2f) is too far from the actual line\n",
                 line[3]+line0[3], line[4]+line0[4], line[5]+line0[5] );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1677,7 +1677,7 @@ cvTsGenerateTousledBlob( CvPoint2D32f center, CvSize2D32f axes,
 
         double phi0 = 2*CV_PI*i/total;
         double phi = CV_PI*angle/180.;
-        double t = cvtest::randReal(rng)*max_r_scale + (1 - max_r_scale);
+        double t = alvision.cvtest.randReal(rng)*max_r_scale + (1 - max_r_scale);
         double ta = axes.height*t;
         double tb = axes.width*t;
         double c0 = cos(phi0)*ta, s0 = sin(phi0)*tb;
@@ -1739,20 +1739,20 @@ void CV_ContourMomentsTest::generate_point_set( void* pointsSet )
     RNG& rng = ts->get_rng();
     float max_sz;
 
-    axes.width = (float)((cvtest::randReal(rng)*0.9 + 0.1)*low_high_range);
-    axes.height = (float)((cvtest::randReal(rng)*0.9 + 0.1)*low_high_range);
+    axes.width = (float)((alvision.cvtest.randReal(rng)*0.9 + 0.1)*low_high_range);
+    axes.height = (float)((alvision.cvtest.randReal(rng)*0.9 + 0.1)*low_high_range);
     max_sz = MAX(axes.width, axes.height);
 
     img_size.width = img_size.height = cvRound(low_high_range*2.2);
 
-    center.x = (float)(img_size.width*0.5 + (cvtest::randReal(rng)-0.5)*(img_size.width - max_sz*2)*0.8);
-    center.y = (float)(img_size.height*0.5 + (cvtest::randReal(rng)-0.5)*(img_size.height - max_sz*2)*0.8);
+    center.x = (float)(img_size.width*0.5 + (alvision.cvtest.randReal(rng)-0.5)*(img_size.width - max_sz*2)*0.8);
+    center.y = (float)(img_size.height*0.5 + (alvision.cvtest.randReal(rng)-0.5)*(img_size.height - max_sz*2)*0.8);
 
     assert( 0 < center.x - max_sz && center.x + max_sz < img_size.width &&
         0 < center.y - max_sz && center.y + max_sz < img_size.height );
 
-    max_r_scale = cvtest::randReal(rng)*max_max_r_scale*0.01;
-    angle = cvtest::randReal(rng)*360;
+    max_r_scale = alvision.cvtest.randReal(rng)*max_max_r_scale*0.01;
+    angle = alvision.cvtest.randReal(rng)*360;
 
     cvTsGenerateTousledBlob( center, axes, max_r_scale, angle, pointsSet, rng );
 
@@ -1812,18 +1812,18 @@ int CV_ContourMomentsTest::validate_test_results( int test_case_idx )
 
         if( cvIsNaN(v) || cvIsInf(v) )
         {
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
                 "The contour %s is invalid (=%g)\n", i < n ? "moment" : "area", v );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
             break;
         }
 
         if( fabs(v - v0) > 0.1*max_v0 )
         {
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
                 "The computed contour %s is %g, while it should be %g\n",
                 i < n ? "moment" : "area", v, v0 );
-            code = cvtest::TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
             break;
         }
     }
@@ -1905,9 +1905,9 @@ void CV_PerimeterAreaSliceTest::run( int )
         double area1 = cvContourArea(contour, slice);
         if( area0 != area1 )
         {
-            ts->printf(cvtest::TS::LOG,
+            ts->printf(alvision.cvtest.TS::LOG,
                        "The contour area slice is computed differently (%g vs %g)\n", area0, area1 );
-            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }*/
 
@@ -1915,13 +1915,13 @@ void CV_PerimeterAreaSliceTest::run( int )
         double len1 = cvArcLength(contour, slice, 1);
         if( len0 != len1 )
         {
-            ts->printf(cvtest::TS::LOG,
+            ts->printf(alvision.cvtest.TS::LOG,
                        "The contour arc length is computed differently (%g vs %g)\n", len0, len1 );
-            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
     }
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 

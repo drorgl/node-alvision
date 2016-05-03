@@ -127,7 +127,7 @@ bool CV_HomographyTest::check_matrix_size(const cv::Mat& H)
 
 bool CV_HomographyTest::check_matrix_diff(const cv::Mat& original, const cv::Mat& found, const int norm_type, double &diff)
 {
-    diff = cvtest::norm(original, found, norm_type);
+    diff = alvision.cvtest.norm(original, found, norm_type);
     return diff <= max_diff;
 }
 
@@ -263,8 +263,8 @@ void CV_HomographyTest::run(int)
 
         for (int i = 0; i < N; ++i)
         {
-            src_data[2*i] = (float)cvtest::randReal(rng)*image_size;
-            src_data[2*i+1] = (float)cvtest::randReal(rng)*image_size;
+            src_data[2*i] = (float)alvision.cvtest.randReal(rng)*image_size;
+            src_data[2*i+1] = (float)alvision.cvtest.randReal(rng)*image_size;
         }
 
         cv::Mat src_mat_2f(1, N, CV_32FC2, src_data),
@@ -284,10 +284,10 @@ void CV_HomographyTest::run(int)
             src_vec.push_back(Point2f(tmp[0], tmp[1]));
         }
 
-        double fi = cvtest::randReal(rng)*2*CV_PI;
+        double fi = alvision.cvtest.randReal(rng)*2*CV_PI;
 
-        double t_x = cvtest::randReal(rng)*sqrt(image_size*1.0),
-        t_y = cvtest::randReal(rng)*sqrt(image_size*1.0);
+        double t_x = alvision.cvtest.randReal(rng)*sqrt(image_size*1.0),
+        t_y = alvision.cvtest.randReal(rng)*sqrt(image_size*1.0);
 
         double Hdata[9] = { cos(fi), -sin(fi), t_x,
                             sin(fi),  cos(fi), t_y,

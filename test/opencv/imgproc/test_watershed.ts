@@ -75,7 +75,7 @@ void CV_WatershedTest::run( int /* start_from */)
 
     if (orig.empty() || !fs.isOpened())
     {
-        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_TEST_DATA );
         return;
     }
 
@@ -131,10 +131,10 @@ void CV_WatershedTest::run( int /* start_from */)
 
     if (0 != norm(markers8U, exp, NORM_INF))
     {
-        this.ts.set_failed_test_info( cvtest::TS::FAIL_MISMATCH );
+        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_MISMATCH );
         return;
     }
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 TEST(Imgproc_Watershed, regression) { CV_WatershedTest test; test.safe_run(); }

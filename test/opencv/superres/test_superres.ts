@@ -117,7 +117,7 @@ static void addGaussNoise(cv::OutputArray _image, double sigma)
 {
     int type = _image.type(), depth = CV_MAT_DEPTH(type), cn = CV_MAT_CN(type);
     cv::Mat noise(_image.size(), CV_32FC(cn));
-    cvtest::TS::ptr()->get_rng().fill(noise, cv::RNG::NORMAL, 0.0, sigma);
+    alvision.cvtest.TS::ptr()->get_rng().fill(noise, cv::RNG::NORMAL, 0.0, sigma);
 
     cv::addWeighted(_image, 1.0, noise, 1.0, 0.0, _image, depth);
 }
@@ -128,7 +128,7 @@ static void addSpikeNoise(cv::OutputArray _image, int frequency)
 
     for (int y = 0; y < mask.rows; ++y)
         for (int x = 0; x < mask.cols; ++x)
-            if (cvtest::TS::ptr()->get_rng().uniform(0, frequency) < 1)
+            if (alvision.cvtest.TS::ptr()->get_rng().uniform(0, frequency) < 1)
                 mask(y, x) = 255;
 
     _image.setTo(cv::Scalar::all(255), mask);
@@ -223,7 +223,7 @@ public:
 template <typename T>
 void SuperResolution::RunTest(cv::Ptr<cv::superres::SuperResolution> superRes)
 {
-    const std::string inputVideoName = cvtest::TS::ptr()->get_data_path() + "car.avi";
+    const std::string inputVideoName = alvision.cvtest.TS::ptr()->get_data_path() + "car.avi";
     const int scale = 2;
     const int iterations = 100;
     const int temporalAreaRadius = 2;
@@ -297,6 +297,6 @@ OCL_TEST_F(SuperResolution, BTVL1)
     RunTest<cv::UMat>(cv::superres::createSuperResolution_BTVL1());
 }
 
-} } // namespace cvtest::ocl
+} } // namespace alvision.cvtest.ocl
 
 #endif

@@ -76,13 +76,13 @@ bool CV_GrabcutTest::verify(const Mat& mask, const Mat& exp)
     int nonIntersectArea = countNonZero( mask != exp );
 
     float curRatio = (float)nonIntersectArea / (float)expArea;
-    ts->printf( cvtest::TS::LOG, "nonIntersectArea/expArea = %f\n", curRatio );
+    ts->printf( alvision.cvtest.TS::LOG, "nonIntersectArea/expArea = %f\n", curRatio );
     return curRatio < maxDiffRatio;
 }
 
 void CV_GrabcutTest::run( int /* start_from */)
 {
-    cvtest::DefaultRngAuto defRng;
+    alvision.cvtest.DefaultRngAuto defRng;
 
     Mat img = imread(string(ts->get_data_path()) + "shared/airplane.png");
     Mat mask_prob = imread(string(ts->get_data_path()) + "grabcut/mask_prob.png", 0);
@@ -93,7 +93,7 @@ void CV_GrabcutTest::run( int /* start_from */)
                        (!exp_mask1.empty() && img.size() != exp_mask1.size()) ||
                        (!exp_mask2.empty() && img.size() != exp_mask2.size()) )
     {
-         this.ts.set_failed_test_info(cvtest::TS::FAIL_MISSING_TEST_DATA);
+         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISSING_TEST_DATA);
          return;
     }
 
@@ -120,7 +120,7 @@ void CV_GrabcutTest::run( int /* start_from */)
 
     if (!verify((mask & 1) * 255, exp_mask1))
     {
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return;
     }
 
@@ -139,17 +139,17 @@ void CV_GrabcutTest::run( int /* start_from */)
 
     if (!verify((mask & 1) * 255, exp_mask2))
     {
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return;
     }
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 TEST(Imgproc_GrabCut, regression) { CV_GrabcutTest test; test.safe_run(); }
 
 TEST(Imgproc_GrabCut, repeatability)
 {
-    cvtest::TS& ts = *cvtest::TS::ptr();
+    alvision.cvtest.TS& ts = *alvision.cvtest.TS::ptr();
 
     Mat image_1 = imread(string(ts.get_data_path()) + "grabcut/image1652.ppm", IMREAD_COLOR);
     Mat mask_1 = imread(string(ts.get_data_path()) + "grabcut/mask1652.ppm", IMREAD_GRAYSCALE);

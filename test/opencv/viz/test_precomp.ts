@@ -84,7 +84,7 @@ namespace cv
 
     inline cv::String get_dragon_ply_file_path()
     {
-        return Path::combine(cvtest::TS::ptr()->get_data_path(), "dragon.ply");
+        return Path::combine(alvision.cvtest.TS::ptr()->get_data_path(), "dragon.ply");
     }
 
     template<typename _Tp>

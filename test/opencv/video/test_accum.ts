@@ -67,10 +67,10 @@ class CV_AccumBaseTest extends alvision.cvtest.ArrayTest
     }
 get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array < Array < alvision.Size >>,types: Array<Array<alvision.int>>): void {
         RNG& rng = ts->get_rng();
-        int depth = cvtest::randInt(rng) % 3, cn = cvtest::randInt(rng) & 1 ? 3 : 1;
-    int accdepth = std::max((int)(cvtest::randInt(rng) % 2 + 1), depth);
+        int depth = alvision.cvtest.randInt(rng) % 3, cn = alvision.cvtest.randInt(rng) & 1 ? 3 : 1;
+    int accdepth = std::max((int)(alvision.cvtest.randInt(rng) % 2 + 1), depth);
     int i, input_count = (int)test_array[INPUT].size();
-    cvtest::ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
     depth = depth == 0 ? CV_8U : depth == 1 ? CV_32F : CV_64F;
     accdepth = accdepth == 1 ? CV_32F : CV_64F;
     accdepth = MAX(accdepth, depth);
@@ -80,7 +80,7 @@ get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array < Array
 
     types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] = CV_MAKETYPE(accdepth, cn);
 
-    alpha = cvtest::randReal(rng);
+    alpha = alvision.cvtest.randReal(rng);
 }
         get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     double alpha;
@@ -124,8 +124,8 @@ void CV_AccTest::prepare_to_validation( int )
     Mat& dst = test_mat[REF_INPUT_OUTPUT][0];
     const Mat& mask = test_array[MASK][0] ? test_mat[MASK][0] : Mat();
     Mat temp;
-    cvtest::add( src, 1, dst, 1, cvScalarAll(0.), temp, dst.type() );
-    cvtest::copy( temp, dst, mask );
+    alvision.cvtest.add( src, 1, dst, 1, cvScalarAll(0.), temp, dst.type() );
+    alvision.cvtest.copy( temp, dst, mask );
 }
 
 
@@ -158,10 +158,10 @@ void CV_SquareAccTest::prepare_to_validation( int )
     const Mat& mask = test_array[MASK][0] ? test_mat[MASK][0] : Mat();
     Mat temp;
 
-    cvtest::convert( src, temp, dst.type() );
-    cvtest::multiply( temp, temp, temp, 1 );
-    cvtest::add( temp, 1, dst, 1, cvScalarAll(0.), temp, dst.depth() );
-    cvtest::copy( temp, dst, mask );
+    alvision.cvtest.convert( src, temp, dst.type() );
+    alvision.cvtest.multiply( temp, temp, temp, 1 );
+    alvision.cvtest.add( temp, 1, dst, 1, cvScalarAll(0.), temp, dst.depth() );
+    alvision.cvtest.copy( temp, dst, mask );
 }
 
 
@@ -197,12 +197,12 @@ void CV_MultiplyAccTest::prepare_to_validation( int )
     const Mat& mask = test_array[MASK][0] ? test_mat[MASK][0] : Mat();
     Mat temp1, temp2;
 
-    cvtest::convert( src1, temp1, dst.type() );
-    cvtest::convert( src2, temp2, dst.type() );
+    alvision.cvtest.convert( src1, temp1, dst.type() );
+    alvision.cvtest.convert( src2, temp2, dst.type() );
 
-    cvtest::multiply( temp1, temp2, temp1, 1 );
-    cvtest::add( temp1, 1, dst, 1, cvScalarAll(0.), temp1, dst.depth() );
-    cvtest::copy( temp1, dst, mask );
+    alvision.cvtest.multiply( temp1, temp2, temp1, 1 );
+    alvision.cvtest.add( temp1, 1, dst, 1, cvScalarAll(0.), temp1, dst.depth() );
+    alvision.cvtest.copy( temp1, dst, mask );
 }
 
 
@@ -241,9 +241,9 @@ void CV_RunningAvgTest::prepare_to_validation( int )
     cvSetReal1D( &A, 0, alpha);
     cvSetReal1D( &B, 0, 1 - cvGetReal1D(&A, 0));
 
-    cvtest::convert( src, temp, dst.type() );
-    cvtest::add( src, cvGetReal1D(&A, 0), dst, cvGetReal1D(&B, 0), cvScalarAll(0.), temp, temp.depth() );
-    cvtest::copy( temp, dst, mask );
+    alvision.cvtest.convert( src, temp, dst.type() );
+    alvision.cvtest.add( src, cvGetReal1D(&A, 0), dst, cvGetReal1D(&B, 0), cvScalarAll(0.), temp, temp.depth() );
+    alvision.cvtest.copy( temp, dst, mask );
 }
 
 

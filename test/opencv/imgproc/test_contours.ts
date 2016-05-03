@@ -111,7 +111,7 @@ void CV_FindContourTest::clear()
 {
     int i;
 
-    cvtest::BaseTest::clear();
+    alvision.cvtest.BaseTest::clear();
 
     for( i = 0; i < NUM_IMG; i++ )
         cvReleaseImage( &img[i] );
@@ -123,7 +123,7 @@ void CV_FindContourTest::clear()
 int CV_FindContourTest::read_params( CvFileStorage* fs )
 {
     int t;
-    int code = cvtest::BaseTest::read_params( fs );
+    int code = alvision.cvtest.BaseTest::read_params( fs );
 
     if( code < 0 )
         return code;
@@ -134,16 +134,16 @@ int CV_FindContourTest::read_params( CvFileStorage* fs )
     min_log_img_size   = cvReadInt( find_param( fs, "min_log_img_size" ), min_log_img_size );
     max_log_img_size   = cvReadInt( find_param( fs, "max_log_img_size" ), max_log_img_size );
 
-    min_blob_size = cvtest::clipInt( min_blob_size, 1, 100 );
-    max_blob_size = cvtest::clipInt( max_blob_size, 1, 100 );
+    min_blob_size = alvision.cvtest.clipInt( min_blob_size, 1, 100 );
+    max_blob_size = alvision.cvtest.clipInt( max_blob_size, 1, 100 );
 
     if( min_blob_size > max_blob_size )
         CV_SWAP( min_blob_size, max_blob_size, t );
 
-    max_log_blob_count = cvtest::clipInt( max_log_blob_count, 1, 10 );
+    max_log_blob_count = alvision.cvtest.clipInt( max_log_blob_count, 1, 10 );
 
-    min_log_img_size = cvtest::clipInt( min_log_img_size, 1, 10 );
-    max_log_img_size = cvtest::clipInt( max_log_img_size, 1, 10 );
+    min_log_img_size = alvision.cvtest.clipInt( min_log_img_size, 1, 10 );
+    max_log_img_size = alvision.cvtest.clipInt( max_log_img_size, 1, 10 );
 
     if( min_log_img_size > max_log_img_size )
         CV_SWAP( min_log_img_size, max_log_img_size, t );
@@ -172,15 +172,15 @@ cvTsGenerateBlobImage( IplImage* img, int min_blob_size, int max_blob_size,
     {
         CvPoint center;
         CvSize  axes;
-        int angle = cvtest::randInt(rng) % 180;
-        int brightness = cvtest::randInt(rng) %
+        int angle = alvision.cvtest.randInt(rng) % 180;
+        int brightness = alvision.cvtest.randInt(rng) %
                          (max_brightness - min_brightness) + min_brightness;
-        center.x = cvtest::randInt(rng) % size.width;
-        center.y = cvtest::randInt(rng) % size.height;
+        center.x = alvision.cvtest.randInt(rng) % size.width;
+        center.y = alvision.cvtest.randInt(rng) % size.height;
 
-        axes.width = (cvtest::randInt(rng) %
+        axes.width = (alvision.cvtest.randInt(rng) %
                      (max_blob_size - min_blob_size) + min_blob_size + 1)/2;
-        axes.height = (cvtest::randInt(rng) %
+        axes.height = (alvision.cvtest.randInt(rng) %
                       (max_blob_size - min_blob_size) + min_blob_size + 1)/2;
 
         cvEllipse( img, center, axes, angle, 0, 360, cvScalar(brightness), CV_FILLED );
@@ -214,22 +214,22 @@ int CV_FindContourTest::prepare_test_case( int test_case_idx )
 {
     RNG& rng = ts->get_rng();
     const int  min_brightness = 0, max_brightness = 2;
-    int i, code = cvtest::BaseTest::prepare_test_case( test_case_idx );
+    int i, code = alvision.cvtest.BaseTest::prepare_test_case( test_case_idx );
 
     if( code < 0 )
         return code;
 
     clear();
 
-    blob_count = cvRound(exp(cvtest::randReal(rng)*max_log_blob_count*CV_LOG2));
+    blob_count = cvRound(exp(alvision.cvtest.randReal(rng)*max_log_blob_count*CV_LOG2));
 
-    img_size.width = cvRound(exp((cvtest::randReal(rng)*
+    img_size.width = cvRound(exp((alvision.cvtest.randReal(rng)*
         (max_log_img_size - min_log_img_size) + min_log_img_size)*CV_LOG2));
-    img_size.height = cvRound(exp((cvtest::randReal(rng)*
+    img_size.height = cvRound(exp((alvision.cvtest.randReal(rng)*
         (max_log_img_size - min_log_img_size) + min_log_img_size)*CV_LOG2));
 
-    approx_method = cvtest::randInt( rng ) % 4 + 1;
-    retr_mode = cvtest::randInt( rng ) % 4;
+    approx_method = alvision.cvtest.randInt( rng ) % 4 + 1;
+    retr_mode = alvision.cvtest.randInt( rng ) % 4;
 
     storage = cvCreateMemStorage( 1 << 10 );
 
@@ -275,17 +275,17 @@ void CV_FindContourTest::run_func()
 // the whole testing is done here, run_func() is not utilized in this test
 int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     cvCmpS( img[0], 0, img[0], CV_CMP_GT );
 
     if( count != count2 )
     {
-        ts->printf( cvtest::TS::LOG, "The number of contours retrieved with different "
+        ts->printf( alvision.cvtest.TS::LOG, "The number of contours retrieved with different "
             "approximation methods is not the same\n"
             "(%d contour(s) for method %d vs %d contour(s) for method %d)\n",
             count, approx_method, count2, CV_CHAIN_CODE );
-        code = cvtest::TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
     }
 
     if( retr_mode != CV_RETR_EXTERNAL && approx_method < CV_CHAIN_APPROX_TC89_L1 )
@@ -294,12 +294,12 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
         for( int i = 0; i < 4; i++ )
             _img[i] = cvarrToMat(img[i]);
 
-        code = cvtest::cmpEps2(ts, _img[0], _img[3], 0, true, "Comparing original image with the map of filled contours" );
+        code = alvision.cvtest.cmpEps2(ts, _img[0], _img[3], 0, true, "Comparing original image with the map of filled contours" );
 
         if( code < 0 )
             goto _exit_;
 
-        code = cvtest::cmpEps2( ts, _img[1], _img[2], 0, true,
+        code = alvision.cvtest.cmpEps2( ts, _img[1], _img[2], 0, true,
             "Comparing contour outline vs manually produced edge map" );
 
         if( code < 0 )
@@ -322,11 +322,11 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
             if( count3 != count )
             {
-                ts->printf( cvtest::TS::LOG,
+                ts->printf( alvision.cvtest.TS::LOG,
                     "The returned number of retrieved contours (using the approx_method = %d) does not match\n"
                     "to the actual number of contours in the tree/list (returned %d, actual %d)\n",
                     i == 0 ? approx_method : 0, count, count3 );
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
         }
@@ -343,10 +343,10 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
             if( !seq1 || !seq2 )
             {
-                ts->printf( cvtest::TS::LOG,
+                ts->printf( alvision.cvtest.TS::LOG,
                     "There are NULL pointers in the original contour tree or the "
                     "tree produced by cvApproxChains\n" );
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
 
@@ -355,10 +355,10 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
             if( seq1->total != seq2->total )
             {
-                ts->printf( cvtest::TS::LOG,
+                ts->printf( alvision.cvtest.TS::LOG,
                     "The original contour #%d has %d points, while the corresponding contour has %d point\n",
                     count3, seq1->total, seq2->total );
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
 
@@ -372,10 +372,10 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
                 if( pt1.x != pt2.x || pt1.y != pt2.y )
                 {
-                    ts->printf( cvtest::TS::LOG,
+                    ts->printf( alvision.cvtest.TS::LOG,
                     "The point #%d in the contour #%d is different from the corresponding point "
                     "in the approximated chain ((%d,%d) vs (%d,%d)", count3, i, pt1.x, pt1.y, pt2.x, pt2.y );
-                    code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                    code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                     goto _exit_;
                 }
             }

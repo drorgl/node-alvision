@@ -63,7 +63,7 @@ CUDA_TEST_P(Video, Reader)
 {
     cv::cuda::setDevice(GET_PARAM(0).deviceID());
 
-    const std::string inputFile = std::string(cvtest::TS::ptr()->get_data_path()) + "video/" + GET_PARAM(1);
+    const std::string inputFile = std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "video/" + GET_PARAM(1);
 
     cv::Ptr<cv::cudacodec::VideoReader> reader = cv::cudacodec::createVideoReader(inputFile);
 
@@ -85,7 +85,7 @@ CUDA_TEST_P(Video, Writer)
 {
     cv::cuda::setDevice(GET_PARAM(0).deviceID());
 
-    const std::string inputFile = std::string(cvtest::TS::ptr()->get_data_path()) + "video/" + GET_PARAM(1);
+    const std::string inputFile = std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "video/" + GET_PARAM(1);
 
     std::string outputFile = cv::tempfile(".avi");
     const double FPS = 25.0;

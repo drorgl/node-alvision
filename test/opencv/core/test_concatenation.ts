@@ -98,7 +98,7 @@ Core_ConcatenationTest::Core_ConcatenationTest(bool horizontal_, bool firstEmpty
 
 int Core_ConcatenationTest::prepare_test_case( int test_case_idx )
 {
-    cvtest::BaseTest::prepare_test_case( test_case_idx );
+    alvision.cvtest.BaseTest::prepare_test_case( test_case_idx );
     return 1;
 }
 
@@ -129,14 +129,14 @@ int Core_ConcatenationTest::validate_test_results( int )
 
     if (areEqual(expected, result))
     {
-        return cvtest::TS::OK;
+        return alvision.cvtest.TS::OK;
     } else
     {
-        ts->printf( cvtest::TS::LOG, "Concatenation failed");
-        this.ts.set_failed_test_info( cvtest::TS::FAIL_MISMATCH );
+        ts->printf( alvision.cvtest.TS::LOG, "Concatenation failed");
+        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_MISMATCH );
     }
 
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 bool Core_ConcatenationTest::areEqual(const Mat &m1, const Mat &m2)

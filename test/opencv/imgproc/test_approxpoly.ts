@@ -187,22 +187,22 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
         int max_x = INT_MIN, max_y = INT_MIN, min_x = INT_MAX, min_y = INT_MAX;
         int i;
         CvSeq * seq;
-        int total = cvtest::randInt(rng) % 1000 + 1;
+        int total = alvision.cvtest.randInt(rng) % 1000 + 1;
         CvPoint center;
         int radius, angle;
         double deg_to_rad = CV_PI / 180.;
         CvPoint pt;
 
-        center.x = cvtest::randInt(rng) % 1000;
-        center.y = cvtest::randInt(rng) % 1000;
-        radius = cvtest::randInt(rng) % 1000;
-        angle = cvtest::randInt(rng) % 360;
+        center.x = alvision.cvtest.randInt(rng) % 1000;
+        center.y = alvision.cvtest.randInt(rng) % 1000;
+        radius = alvision.cvtest.randInt(rng) % 1000;
+        angle = alvision.cvtest.randInt(rng) % 360;
 
         seq = cvCreateSeq(CV_SEQ_POLYGON, sizeof(CvContour), sizeof(CvPoint), storage);
 
         for (i = 0; i < total; i++) {
-            int d_radius = cvtest::randInt(rng) % 10 - 5;
-            int d_angle = 360 / total;//cvtest::randInt( rng ) % 10 - 5;
+            int d_radius = alvision.cvtest.randInt(rng) % 10 - 5;
+            int d_angle = 360 / total;//alvision.cvtest.randInt( rng ) % 10 - 5;
             pt.x = cvRound(center.x + radius * cos(angle * deg_to_rad));
             pt.y = cvRound(center.x - radius * sin(angle * deg_to_rad));
             radius += d_radius;
@@ -223,7 +223,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
 
     run(start_from: alvision.int /*start_from*/): void
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     CvMemStorage * storage = 0;
     ////////////// Variables ////////////////
     int IntervalsCount = 10;
@@ -264,17 +264,17 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
                 CV_POLY_APPROX_DP, Eps);
 
             if (DstSeq == NULL) {
-                ts ->printf(cvtest::TS::LOG,
+                ts ->printf(alvision.cvtest.TS::LOG,
                     "cvApproxPoly returned NULL for contour #%d, espilon = %g\n", i, Eps);
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 goto _exit_;
             } // if( DstSeq == NULL )
 
             code = check(SrcSeq, DstSeq, Eps);
             if (code != 0) {
-                ts ->printf(cvtest::TS::LOG,
+                ts ->printf(alvision.cvtest.TS::LOG,
                     "Incorrect result for the contour #%d approximated with epsilon=%g\n", i, Eps);
-                code = cvtest::TS::FAIL_BAD_ACCURACY;
+                code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
                 goto _exit_;
             }
 

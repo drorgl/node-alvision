@@ -106,9 +106,9 @@ CUDA_TEST_P(MeanShift, Proc)
 {
     cv::FileStorage fs;
     if (supportFeature(devInfo, cv::cuda::FEATURE_SET_COMPUTE_20))
-        fs.open(std::string(cvtest::TS::ptr()->get_data_path()) + "meanshift/spmap.yaml", cv::FileStorage::READ);
+        fs.open(std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "meanshift/spmap.yaml", cv::FileStorage::READ);
     else
-        fs.open(std::string(cvtest::TS::ptr()->get_data_path()) + "meanshift/spmap_CC1X.yaml", cv::FileStorage::READ);
+        fs.open(std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "meanshift/spmap_CC1X.yaml", cv::FileStorage::READ);
     ASSERT_TRUE(fs.isOpened());
 
     cv::Mat spmap_template;

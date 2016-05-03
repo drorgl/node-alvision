@@ -69,7 +69,7 @@ CV_POSITTest::CV_POSITTest()
 
 void CV_POSITTest::run( int start_from )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     /* fixed parameters output */
     /*float rot[3][3]={  0.49010f,  0.85057f, 0.19063f,
@@ -136,9 +136,9 @@ void CV_POSITTest::run( int start_from )
         cvZero( true_rotationZ );
 
         /* fill random rotation matrix */
-        angleX = (float)(cvtest::randReal(rng)*2*CV_PI);
-        angleY = (float)(cvtest::randReal(rng)*2*CV_PI);
-        angleZ = (float)(cvtest::randReal(rng)*2*CV_PI);
+        angleX = (float)(alvision.cvtest.randReal(rng)*2*CV_PI);
+        angleY = (float)(alvision.cvtest.randReal(rng)*2*CV_PI);
+        angleZ = (float)(alvision.cvtest.randReal(rng)*2*CV_PI);
 
         true_rotationX->data.fl[0 *3+ 0] = 1;
         true_rotationX->data.fl[1 *3+ 1] = (float)cos(angleX);
@@ -162,9 +162,9 @@ void CV_POSITTest::run( int start_from )
         cvMatMul( tmp_matrix, true_rotationZ, true_rotation);
 
         /* fill translation vector */
-        true_translation->data.fl[2] = (float)(cvtest::randReal(rng)*(2*flFocalLength-40) + 60);
-        true_translation->data.fl[0] = (float)((cvtest::randReal(rng)*2-1)*true_translation->data.fl[2]);
-        true_translation->data.fl[1] = (float)((cvtest::randReal(rng)*2-1)*true_translation->data.fl[2]);
+        true_translation->data.fl[2] = (float)(alvision.cvtest.randReal(rng)*(2*flFocalLength-40) + 60);
+        true_translation->data.fl[0] = (float)((alvision.cvtest.randReal(rng)*2-1)*true_translation->data.fl[2]);
+        true_translation->data.fl[1] = (float)((alvision.cvtest.randReal(rng)*2-1)*true_translation->data.fl[2]);
 
         /* calculate perspective projection */
         for ( i = 0; i < 8; i++ )
@@ -200,11 +200,11 @@ void CV_POSITTest::run( int start_from )
 
         Mat _rotation = cvarrToMat(rotation), _true_rotation = cvarrToMat(true_rotation);
         Mat _translation = cvarrToMat(translation), _true_translation = cvarrToMat(true_translation);
-        code = cvtest::cmpEps2( ts, _rotation, _true_rotation, flEpsilon, false, "rotation matrix" );
+        code = alvision.cvtest.cmpEps2( ts, _rotation, _true_rotation, flEpsilon, false, "rotation matrix" );
         if( code < 0 )
             break;
 
-        code = cvtest::cmpEps2( ts, _translation, _true_translation, flEpsilon, false, "translation vector" );
+        code = alvision.cvtest.cmpEps2( ts, _translation, _true_translation, flEpsilon, false, "translation vector" );
         if( code < 0 )
             break;
     }

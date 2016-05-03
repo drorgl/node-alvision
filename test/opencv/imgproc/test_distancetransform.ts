@@ -89,13 +89,13 @@ void CV_DisTransTest::get_test_array_types_and_sizes( int test_case_idx,
                                                 vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
     types[INPUT][0] = CV_8UC1;
     types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_32FC1;
     types[OUTPUT][1] = types[REF_OUTPUT][1] = CV_32SC1;
 
-    if( cvtest::randInt(rng) & 1 )
+    if( alvision.cvtest.randInt(rng) & 1 )
     {
         mask_size = 3;
     }
@@ -104,7 +104,7 @@ void CV_DisTransTest::get_test_array_types_and_sizes( int test_case_idx,
         mask_size = 5;
     }
 
-    dist_type = cvtest::randInt(rng) % 3;
+    dist_type = alvision.cvtest.randInt(rng) % 3;
     dist_type = dist_type == 0 ? CV_DIST_C : dist_type == 1 ? CV_DIST_L1 : CV_DIST_L2;
 
     // for now, check only the "labeled" distance transform mode
@@ -124,7 +124,7 @@ double CV_DisTransTest::get_success_error_level( int /*test_case_idx*/, int /*i*
 
 void CV_DisTransTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
 {
-    cvtest::ArrayTest::get_minmax_bounds( i, j, type, low, high );
+    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
     if( i == INPUT && CV_MAT_DEPTH(type) == CV_8U )
     {
         low = Scalar::all(0);
@@ -134,15 +134,15 @@ void CV_DisTransTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Sc
 
 int CV_DisTransTest::prepare_test_case( int test_case_idx )
 {
-    int code = cvtest::ArrayTest::prepare_test_case( test_case_idx );
+    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         // the function's response to an "all-nonzeros" image is not determined,
         // so put at least one zero point
         Mat& mat = test_mat[INPUT][0];
         RNG& rng = ts->get_rng();
-        int i = cvtest::randInt(rng) % mat.rows;
-        int j = cvtest::randInt(rng) % mat.cols;
+        int i = alvision.cvtest.randInt(rng) % mat.rows;
+        int j = alvision.cvtest.randInt(rng) % mat.cols;
         mat.at<uchar>(i,j) = 0;
     }
 

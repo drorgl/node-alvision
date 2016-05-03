@@ -56,7 +56,7 @@ import fs = require('fs');
 class CV_KalmanTest extends alvision. cvtest.BaseTest
 {
     run(int): void {
-        int code = cvtest::TS::OK;
+        int code = alvision.cvtest.TS::OK;
         const int Dim = 7;
         const int Steps = 100;
         const double max_init = 1;
@@ -88,7 +88,7 @@ class CV_KalmanTest extends alvision. cvtest.BaseTest
         cvSetIdentity(&Mes);
         cvSetIdentity(&Dyn);
         Mat _Sample = cvarrToMat(Sample);
-        cvtest::randUni(rng, _Sample, cvScalarAll(-max_init), cvScalarAll(max_init));
+        alvision.cvtest.randUni(rng, _Sample, cvScalarAll(-max_init), cvScalarAll(max_init));
         cvKalmanCorrect(Kalm, Sample);
         for (i = 0; i < Steps; i++) {
             cvKalmanPredict(Kalm);
@@ -98,14 +98,14 @@ class CV_KalmanTest extends alvision. cvtest.BaseTest
                 {
                     t += Dyn.data.fl[j * Dim + k] * Sample ->data.fl[k];
                 }
-                Temp ->data.fl[j]= (float)(t + (cvtest::randReal(rng) * 2 - 1) * max_noise);
+                Temp ->data.fl[j]= (float)(t + (alvision.cvtest.randReal(rng) * 2 - 1) * max_noise);
             }
             cvCopy(Temp, Sample);
             cvKalmanCorrect(Kalm, Temp);
         }
 
         Mat _state_post = cvarrToMat(Kalm ->state_post);
-        code = cvtest::cmpEps2(ts, _Sample, _state_post, EPSILON, false, "The final estimated state");
+        code = alvision.cvtest.cmpEps2(ts, _Sample, _state_post, EPSILON, false, "The final estimated state");
 
         cvReleaseMat(&Sample);
         cvReleaseMat(&Temp);

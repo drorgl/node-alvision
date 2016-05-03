@@ -613,7 +613,7 @@ alvision.cvtest.TEST('Imgcodecs_Jpeg', 'encode_empty', () => {
 
 alvision.cvtest.TEST('Imgcodecs_Jpeg', 'encode_decode_progressive_jpeg', () => {
     var ts = alvision.cvtest.TS.ptr();
-    //cvtest::TS & ts = *cvtest::TS::ptr();
+    //alvision.cvtest.TS & ts = *alvision.cvtest.TS::ptr();
     var input = ts.get_data_path() + "../cv/shared/lena.png";
     var img = alvision.imread(input);
     alvision.ASSERT_FALSE(img.empty());

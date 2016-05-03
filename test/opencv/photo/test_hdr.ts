@@ -97,7 +97,7 @@ void loadResponseCSV(String path, Mat& response)
 
 TEST(Photo_Tonemap, regression)
 {
-    string test_path = string(cvtest::TS::ptr()->get_data_path()) + "hdr/tonemap/";
+    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/tonemap/";
 
     Mat img, expected, result;
     loadImage(test_path + "image.hdr", img);
@@ -137,7 +137,7 @@ TEST(Photo_Tonemap, regression)
 TEST(Photo_AlignMTB, regression)
 {
     const int TESTS_COUNT = 100;
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "shared/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "shared/";
 
     string file_name = folder + "lena.png";
     Mat img;
@@ -163,7 +163,7 @@ TEST(Photo_AlignMTB, regression)
 
 TEST(Photo_MergeMertens, regression)
 {
-    string test_path = string(cvtest::TS::ptr()->get_data_path()) + "hdr/";
+    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
 
     vector<Mat> images;
     loadExposureSeq((test_path + "exposures/").c_str() , images);
@@ -189,7 +189,7 @@ TEST(Photo_MergeMertens, regression)
 
 TEST(Photo_MergeDebevec, regression)
 {
-    string test_path = string(cvtest::TS::ptr()->get_data_path()) + "hdr/";
+    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
 
     vector<Mat> images;
     vector<float> times;
@@ -212,7 +212,7 @@ TEST(Photo_MergeDebevec, regression)
 
 TEST(Photo_MergeRobertson, regression)
 {
-    string test_path = string(cvtest::TS::ptr()->get_data_path()) + "hdr/";
+    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
 
     vector<Mat> images;
     vector<float> times;
@@ -232,7 +232,7 @@ TEST(Photo_MergeRobertson, regression)
 
 TEST(Photo_CalibrateDebevec, regression)
 {
-    string test_path = string(cvtest::TS::ptr()->get_data_path()) + "hdr/";
+    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
 
     vector<Mat> images;
     vector<float> times;
@@ -251,7 +251,7 @@ TEST(Photo_CalibrateDebevec, regression)
 
 TEST(Photo_CalibrateRobertson, regression)
 {
-    string test_path = string(cvtest::TS::ptr()->get_data_path()) + "hdr/";
+    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
 
     vector<Mat> images;
     vector<float> times;

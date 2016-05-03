@@ -91,7 +91,7 @@ PARAM_TEST_CASE(MOG2, cv::cuda::DeviceInfo, std::string, UseGray, DetectShadow, 
         devInfo = GET_PARAM(0);
         cv::cuda::setDevice(devInfo.deviceID());
 
-        inputFile = std::string(cvtest::TS::ptr()->get_data_path()) + "video/" + GET_PARAM(1);
+        inputFile = std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "video/" + GET_PARAM(1);
         useGray = GET_PARAM(2);
         detectShadow = GET_PARAM(3);
         useRoi = GET_PARAM(4);

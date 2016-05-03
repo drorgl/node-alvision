@@ -150,15 +150,15 @@ public:
 
 void BaseHoughLineTest::run_test(int type)
 {
-    string filename = cvtest::TS::ptr()->get_data_path() + picture_name;
+    string filename = alvision.cvtest.TS::ptr()->get_data_path() + picture_name;
     Mat src = imread(filename, IMREAD_GRAYSCALE);
     EXPECT_FALSE(src.empty()) << "Invalid test image: " << filename;
 
     string xml;
     if (type == STANDART)
-        xml = string(cvtest::TS::ptr()->get_data_path()) + "imgproc/HoughLines.xml";
+        xml = string(alvision.cvtest.TS::ptr()->get_data_path()) + "imgproc/HoughLines.xml";
     else if (type == PROBABILISTIC)
-        xml = string(cvtest::TS::ptr()->get_data_path()) + "imgproc/HoughLinesP.xml";
+        xml = string(alvision.cvtest.TS::ptr()->get_data_path()) + "imgproc/HoughLinesP.xml";
 
     Mat dst;
     Canny(src, dst, 100, 150, 3);

@@ -92,7 +92,7 @@ CUDA_TEST_P(BroxOpticalFlow, Regression)
     cv::cuda::GpuMat u = flows[0];
     cv::cuda::GpuMat v = flows[1];
 
-    std::string fname(cvtest::TS::ptr()->get_data_path());
+    std::string fname(alvision.cvtest.TS::ptr()->get_data_path());
     if (devInfo.majorVersion() >= 2)
         fname += "opticalflow/brox_optical_flow_cc20.bin";
     else

@@ -1051,7 +1051,11 @@ including std::sort().
     //Mat & operator = (const MatExpr& expr);
         from(expr: MatExpr): Mat;
 
-}
+    }
+
+    interface TrackedPtr<T> {
+        [i: number]: T;
+    }
 
 export interface Mat
 {
@@ -1293,6 +1297,7 @@ export interface Mat
     @param m Another cross-product operand.
      */
     //Mat cross(InputArray m) const;
+    cross(m: _st.InputArray): Mat;
 
     /** @brief Computes a dot-product of two vectors.
 
@@ -1302,6 +1307,7 @@ export interface Mat
     the dot products from all the channels are summed together.
     @param m another dot-product operand.
      */
+    dot(m: _st.InputArray): _st.double;
     //double dot(InputArray m) const;
 
     
@@ -1667,7 +1673,7 @@ export interface Mat
     @param i0 A 0-based row index.
      */
 
-    ptr<T>(i0? : _st.int /* = 0*/): Array<T>;
+    ptr<T>(T: string, i0?: _st.int /* = 0*/): TrackedPtr<T>;
 
     //uchar * ptr(int i0= 0);
     /** @overload */
@@ -1743,6 +1749,10 @@ export interface Mat
 
     @param i0 Index along the dimension 0
      */
+
+    atGet<T>(T: string, i0: _st.int, i1?: _st.int, i2?: _st.int): T;
+    atSet<T>(T: string, value: T, i0: _st.int, i1?: _st.int, i2?: _st.int): void;
+
     //template < typename _Tp> _Tp & at(int i0= 0);
     /** @overload
     @param i0 Index along the dimension 0

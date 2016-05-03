@@ -165,7 +165,7 @@ CUDA_TEST_P(HOG, DISABLED_Detect)
     cv::Mat img_rgb = readImage("hog/road.png");
     ASSERT_FALSE(img_rgb.empty());
 
-    f.open((std::string(cvtest::TS::ptr()->get_data_path()) + "hog/expected_output.bin").c_str(), std::ios_base::binary);
+    f.open((std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "hog/expected_output.bin").c_str(), std::ios_base::binary);
     ASSERT_TRUE(f.is_open());
 
     // Test on color image
@@ -295,7 +295,7 @@ PARAM_TEST_CASE(LBP_Read_classifier, cv::cuda::DeviceInfo, int)
 
 CUDA_TEST_P(LBP_Read_classifier, Accuracy)
 {
-    std::string classifierXmlPath = std::string(cvtest::TS::ptr()->get_data_path()) + "lbpcascade/lbpcascade_frontalface.xml";
+    std::string classifierXmlPath = std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "lbpcascade/lbpcascade_frontalface.xml";
 
     cv::Ptr<cv::cuda::CascadeClassifier> d_cascade;
 
@@ -323,8 +323,8 @@ PARAM_TEST_CASE(LBP_classify, cv::cuda::DeviceInfo, int)
 
 CUDA_TEST_P(LBP_classify, Accuracy)
 {
-    std::string classifierXmlPath = std::string(cvtest::TS::ptr()->get_data_path()) + "lbpcascade/lbpcascade_frontalface.xml";
-    std::string imagePath = std::string(cvtest::TS::ptr()->get_data_path()) + "lbpcascade/er.png";
+    std::string classifierXmlPath = std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "lbpcascade/lbpcascade_frontalface.xml";
+    std::string imagePath = std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "lbpcascade/er.png";
 
     cv::CascadeClassifier cpuClassifier(classifierXmlPath);
     ASSERT_FALSE(cpuClassifier.empty());

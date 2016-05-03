@@ -150,7 +150,7 @@ public:
             {
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             }
-            this.ts.set_failed_test_info(cvtest::TS::OK);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
         }
     }
 };
@@ -173,14 +173,14 @@ public:
 
             CV_Assert( !img0.empty() && !img.empty() && img_next.empty() );
 
-            double diff = cvtest::norm(img0, img, CV_C);
+            double diff = alvision.cvtest.norm(img0, img, CV_C);
             CV_Assert( diff == 0 );
         }
         catch(...)
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
         }
-        this.ts.set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
     }
 };
 
@@ -309,7 +309,7 @@ class ReadImageAndTest :
     public ParallelLoopBody
 {
 public:
-    ReadImageAndTest(const std::vector<VideoCapture*>& _readers, cvtest::TS* _ts) :
+    ReadImageAndTest(const std::vector<VideoCapture*>& _readers, alvision.cvtest.TS* _ts) :
         ParallelLoopBody(), readers(&_readers), ts(_ts)
     {
     }
@@ -339,15 +339,15 @@ public:
                 EXPECT_EQ(reference.depth(), actual.depth());
                 EXPECT_EQ(reference.channels(), actual.channels());
 
-                double psnr = cvtest::PSNR(actual, reference);
+                double psnr = alvision.cvtest.PSNR(actual, reference);
                 if (psnr < eps)
                 {
-    #define SUM cvtest::TS::SUMMARY
+    #define SUM alvision.cvtest.TS::SUMMARY
                     ts->printf(SUM, "\nPSNR: %lf\n", psnr);
                     ts->printf(SUM, "Video #: %d\n", range.start);
                     ts->printf(SUM, "Frame #: %d\n", i);
     #undef SUM
-                    this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                     ts->set_gtest_status();
 
                     Mat diff;
@@ -365,7 +365,7 @@ public:
 
 private:
     const std::vector<VideoCapture*>* readers;
-    cvtest::TS* ts;
+    alvision.cvtest.TS* ts;
 };
 
 bool ReadImageAndTest::next;
@@ -373,7 +373,7 @@ bool ReadImageAndTest::next;
 TEST(Videoio_Video_parallel_writers_and_readers, accuracy)
 {
     const unsigned int threadsCount = 4;
-    cvtest::TS* ts = cvtest::TS::ptr();
+    alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
 
     // creating VideoWriters
     std::vector<VideoWriter*> writers(threadsCount);

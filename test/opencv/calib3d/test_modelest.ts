@@ -122,10 +122,10 @@ void CV_ModelEstimator2_Test::get_test_array_types_and_sizes( int /*test_case_id
                                                               vector<vector<Size> > &sizes, vector<vector<int> > &types )
 {
     RNG &rng = ts->get_rng();
-    checkPartialSubsets = (cvtest::randInt(rng) % 2 == 0);
+    checkPartialSubsets = (alvision.cvtest.randInt(rng) % 2 == 0);
 
-    int pointsCount = cvtest::randInt(rng) % maxPointsCount;
-    usedPointsCount = pointsCount == 0 ? 0 : cvtest::randInt(rng) % pointsCount;
+    int pointsCount = alvision.cvtest.randInt(rng) % maxPointsCount;
+    usedPointsCount = pointsCount == 0 ? 0 : alvision.cvtest.randInt(rng) % pointsCount;
 
     sizes[INPUT][0] = cvSize(1, pointsCount);
     types[INPUT][0] = CV_64FC2;
@@ -138,7 +138,7 @@ void CV_ModelEstimator2_Test::fill_array( int test_case_idx, int i, int j, Mat& 
 {
     if( i != INPUT )
     {
-        cvtest::ArrayTest::fill_array( test_case_idx, i, j, arr );
+        alvision.cvtest.ArrayTest::fill_array( test_case_idx, i, j, arr );
         return;
     }
 
@@ -196,13 +196,13 @@ void CV_ModelEstimator2_Test::fill_array( int test_case_idx, int i, int j, Mat& 
         int startPointIndex, endPointIndex, modifiedPointIndex;
         do
         {
-            startPointIndex = cvtest::randInt(rng) % usedPointsCount;
-            endPointIndex = cvtest::randInt(rng) % usedPointsCount;
-            modifiedPointIndex = checkPartialSubsets ? usedPointsCount - 1 : cvtest::randInt(rng) % usedPointsCount;
+            startPointIndex = alvision.cvtest.randInt(rng) % usedPointsCount;
+            endPointIndex = alvision.cvtest.randInt(rng) % usedPointsCount;
+            modifiedPointIndex = checkPartialSubsets ? usedPointsCount - 1 : alvision.cvtest.randInt(rng) % usedPointsCount;
         }
         while (startPointIndex == endPointIndex || startPointIndex == modifiedPointIndex || endPointIndex == modifiedPointIndex);
 
-        double startWeight = cvtest::randReal(rng);
+        double startWeight = alvision.cvtest.randReal(rng);
         CV_Assert(arr.type() == CV_64FC2);
         arr.at<Point2d>(modifiedPointIndex) = startWeight * arr.at<Point2d>(startPointIndex) + (1.0 - startWeight) * arr.at<Point2d>(endPointIndex);
     }
@@ -227,9 +227,9 @@ void CV_ModelEstimator2_Test::run_func()
     CvMat _input = input;
 
     RNG &rng = ts->get_rng();
-    int modelPoints = cvtest::randInt(rng);
+    int modelPoints = alvision.cvtest.randInt(rng);
     CvSize modelSize = cvSize(2, modelPoints);
-    int maxBasicSolutions = cvtest::randInt(rng);
+    int maxBasicSolutions = alvision.cvtest.randInt(rng);
     BareModelEstimator modelEstimator(modelPoints, modelSize, maxBasicSolutions);
     checkSubsetResult = modelEstimator.checkSubsetPublic(&_input, usedPointsCount, checkPartialSubsets);
 }

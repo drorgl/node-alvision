@@ -86,12 +86,12 @@ CV_TemplMatchTest::CV_TemplMatchTest()
 
 int CV_TemplMatchTest::read_params( CvFileStorage* fs )
 {
-    int code = cvtest::ArrayTest::read_params( fs );
+    int code = alvision.cvtest.ArrayTest::read_params( fs );
     if( code < 0 )
         return code;
 
     max_template_size = cvReadInt( find_param( fs, "max_template_size" ), max_template_size );
-    max_template_size = cvtest::clipInt( max_template_size, 1, 100 );
+    max_template_size = alvision.cvtest.clipInt( max_template_size, 1, 100 );
 
     return code;
 }
@@ -99,7 +99,7 @@ int CV_TemplMatchTest::read_params( CvFileStorage* fs )
 
 void CV_TemplMatchTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
 {
-    cvtest::ArrayTest::get_minmax_bounds( i, j, type, low, high );
+    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
     int depth = CV_MAT_DEPTH(type);
     if( depth == CV_32F )
     {
@@ -113,21 +113,21 @@ void CV_TemplMatchTest::get_test_array_types_and_sizes( int test_case_idx,
                                                 vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    int depth = cvtest::randInt(rng) % 2, cn = cvtest::randInt(rng) & 1 ? 3 : 1;
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    int depth = alvision.cvtest.randInt(rng) % 2, cn = alvision.cvtest.randInt(rng) & 1 ? 3 : 1;
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     depth = depth == 0 ? CV_8U : CV_32F;
 
     types[INPUT][0] = types[INPUT][1] = CV_MAKETYPE(depth,cn);
     types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_32FC1;
 
-    sizes[INPUT][1].width = cvtest::randInt(rng)%MIN(sizes[INPUT][1].width,max_template_size) + 1;
-    sizes[INPUT][1].height = cvtest::randInt(rng)%MIN(sizes[INPUT][1].height,max_template_size) + 1;
+    sizes[INPUT][1].width = alvision.cvtest.randInt(rng)%MIN(sizes[INPUT][1].width,max_template_size) + 1;
+    sizes[INPUT][1].height = alvision.cvtest.randInt(rng)%MIN(sizes[INPUT][1].height,max_template_size) + 1;
     sizes[OUTPUT][0].width = sizes[INPUT][0].width - sizes[INPUT][1].width + 1;
     sizes[OUTPUT][0].height = sizes[INPUT][0].height - sizes[INPUT][1].height + 1;
     sizes[REF_OUTPUT][0] = sizes[OUTPUT][0];
 
-    method = cvtest::randInt(rng)%6;
-    test_cpp = (cvtest::randInt(rng) & 256) == 0;
+    method = alvision.cvtest.randInt(rng)%6;
+    test_cpp = (alvision.cvtest.randInt(rng) & 256) == 0;
 }
 
 

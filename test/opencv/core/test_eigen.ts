@@ -242,7 +242,7 @@ bool Core_EigenTest::check_orthogonality(const cv::Mat& U)
 
     for (int i = 0; i < COUNT_NORM_TYPES; ++i)
     {
-        double diff = cvtest::norm(UUt, E, NORM_TYPE[i]);
+        double diff = alvision.cvtest.norm(UUt, E, NORM_TYPE[i]);
         if (diff > eps_vec)
         {
             std::cout << endl; std::cout << "Checking orthogonality of matrix " << U << ": ";
@@ -351,7 +351,7 @@ bool Core_EigenTest::test_pairs(const cv::Mat& src)
 
     for (int i = 0; i < COUNT_NORM_TYPES; ++i)
     {
-        double diff = cvtest::norm(disparity, NORM_TYPE[i]);
+        double diff = alvision.cvtest.norm(disparity, NORM_TYPE[i]);
         if (diff > eps_vec)
         {
             std::cout << endl; std::cout << "Checking accuracy of eigen vectors computing for matrix " << src << ": ";
@@ -380,7 +380,7 @@ bool Core_EigenTest::test_values(const cv::Mat& src)
 
     for (int i = 0; i < COUNT_NORM_TYPES; ++i)
     {
-        double diff = cvtest::norm(eigen_values_1, eigen_values_2, NORM_TYPE[i]);
+        double diff = alvision.cvtest.norm(eigen_values_1, eigen_values_2, NORM_TYPE[i]);
         if (diff > eps_val)
         {
             std::cout << endl; std::cout << "Checking accuracy of eigen values computing for matrix " << src << ": ";

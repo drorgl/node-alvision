@@ -22,8 +22,8 @@ static SparseMat cvTsGetRandomSparseMat(int dims, const int* sz, int type,
     {
         int idx[CV_MAX_DIM];
         for( j = 0; j < dims; j++ )
-            idx[j] = cvtest::randInt(rng) % sz[j];
-        double val = cvtest::randReal(rng)*(b - a) + a;
+            idx[j] = alvision.cvtest.randInt(rng) % sz[j];
+        double val = alvision.cvtest.randReal(rng)*(b - a) + a;
         uchar* ptr = m.ptr(idx, true, 0);
         if( type == CV_8U )
             *(uchar*)ptr = saturate_cast<uchar>(val);
@@ -116,13 +116,13 @@ protected:
 
             FileStorage fs(filename, FileStorage::WRITE + (mem ? FileStorage::MEMORY : 0));
 
-            int test_int = (int)cvtest::randInt(rng);
-            double test_real = (cvtest::randInt(rng)%2?1:-1)*exp(cvtest::randReal(rng)*18-9);
+            int test_int = (int)alvision.cvtest.randInt(rng);
+            double test_real = (alvision.cvtest.randInt(rng)%2?1:-1)*exp(alvision.cvtest.randReal(rng)*18-9);
             string test_string = "vw wv23424rt\"&amp;&lt;&gt;&amp;&apos;@#$@$%$%&%IJUKYILFD@#$@%$&*&() ";
 
-            int depth = cvtest::randInt(rng) % (CV_64F+1);
-            int cn = cvtest::randInt(rng) % 4 + 1;
-            Mat test_mat(cvtest::randInt(rng)%30+1, cvtest::randInt(rng)%30+1, CV_MAKETYPE(depth, cn));
+            int depth = alvision.cvtest.randInt(rng) % (CV_64F+1);
+            int cn = alvision.cvtest.randInt(rng) % 4 + 1;
+            Mat test_mat(alvision.cvtest.randInt(rng)%30+1, alvision.cvtest.randInt(rng)%30+1, CV_MAKETYPE(depth, cn));
 
             rng0.fill(test_mat, CV_RAND_UNI, Scalar::all(ranges[depth][0]), Scalar::all(ranges[depth][1]));
             if( depth >= CV_32F )
@@ -151,12 +151,12 @@ protected:
                 edge->weight = (float)(i+1);
             }
 
-            depth = cvtest::randInt(rng) % (CV_64F+1);
-            cn = cvtest::randInt(rng) % 4 + 1;
+            depth = alvision.cvtest.randInt(rng) % (CV_64F+1);
+            cn = alvision.cvtest.randInt(rng) % 4 + 1;
             int sz[] = {
-                static_cast<int>(cvtest::randInt(rng)%10+1),
-                static_cast<int>(cvtest::randInt(rng)%10+1),
-                static_cast<int>(cvtest::randInt(rng)%10+1),
+                static_cast<int>(alvision.cvtest.randInt(rng)%10+1),
+                static_cast<int>(alvision.cvtest.randInt(rng)%10+1),
+                static_cast<int>(alvision.cvtest.randInt(rng)%10+1),
             };
             MatND test_mat_nd(3, sz, CV_MAKETYPE(depth, cn));
 
@@ -170,13 +170,13 @@ protected:
             }
 
             int ssz[] = {
-                static_cast<int>(cvtest::randInt(rng)%10+1),
-                static_cast<int>(cvtest::randInt(rng)%10+1),
-                static_cast<int>(cvtest::randInt(rng)%10+1),
-                static_cast<int>(cvtest::randInt(rng)%10+1),
+                static_cast<int>(alvision.cvtest.randInt(rng)%10+1),
+                static_cast<int>(alvision.cvtest.randInt(rng)%10+1),
+                static_cast<int>(alvision.cvtest.randInt(rng)%10+1),
+                static_cast<int>(alvision.cvtest.randInt(rng)%10+1),
             };
-            SparseMat test_sparse_mat = cvTsGetRandomSparseMat(4, ssz, cvtest::randInt(rng)%(CV_64F+1),
-                                                               cvtest::randInt(rng) % 10000, 0, 100, rng);
+            SparseMat test_sparse_mat = cvTsGetRandomSparseMat(4, ssz, alvision.cvtest.randInt(rng)%(CV_64F+1),
+                                                               alvision.cvtest.randInt(rng) % 10000, 0, 100, rng);
 
             fs << "test_int" << test_int << "test_real" << test_real << "test_string" << test_string;
             fs << "test_mat" << test_mat;
@@ -201,8 +201,8 @@ protected:
 
             if(!fs.open(mem ? content : filename, FileStorage::READ + (mem ? FileStorage::MEMORY : 0)))
             {
-                ts->printf( cvtest::TS::LOG, "filename %s can not be read\n", !mem ? filename.c_str() : content.c_str());
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_MISSING_TEST_DATA );
+                ts->printf( alvision.cvtest.TS::LOG, "filename %s can not be read\n", !mem ? filename.c_str() : content.c_str());
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_MISSING_TEST_DATA );
                 return;
             }
 
@@ -214,8 +214,8 @@ protected:
                fabs(real_real - test_real) > DBL_EPSILON*(fabs(test_real)+1) ||
                real_string != test_string )
             {
-                ts->printf( cvtest::TS::LOG, "the read scalars are not correct\n" );
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                ts->printf( alvision.cvtest.TS::LOG, "the read scalars are not correct\n" );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -228,12 +228,12 @@ protected:
             vector<int> pt;
 
             if( !m || !CV_IS_MAT(m) || m->rows != test_mat.rows || m->cols != test_mat.cols ||
-               cvtest::cmpEps( cv::cvarrToMat(&stub1), cv::cvarrToMat(&_test_stub1), &max_diff, 0, &pt, true) < 0 )
+               alvision.cvtest.cmpEps( cv::cvarrToMat(&stub1), cv::cvarrToMat(&_test_stub1), &max_diff, 0, &pt, true) < 0 )
             {
-                ts->printf( cvtest::TS::LOG, "the read matrix is not correct: (%.20g vs %.20g) at (%d,%d)\n",
+                ts->printf( alvision.cvtest.TS::LOG, "the read matrix is not correct: (%.20g vs %.20g) at (%d,%d)\n",
                             cvGetReal2D(&stub1, pt[0], pt[1]), cvGetReal2D(&_test_stub1, pt[0], pt[1]),
                             pt[0], pt[1] );
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
             if( m && CV_IS_MAT(m))
@@ -244,8 +244,8 @@ protected:
 
             if( !m_nd || !CV_IS_MATND(m_nd) )
             {
-                ts->printf( cvtest::TS::LOG, "the read nd-matrix is not correct\n" );
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                ts->printf( alvision.cvtest.TS::LOG, "the read nd-matrix is not correct\n" );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -258,12 +258,12 @@ protected:
             if( !CV_ARE_TYPES_EQ(&stub, &_test_stub) ||
                !CV_ARE_SIZES_EQ(&stub, &_test_stub) ||
                //cvNorm(&stub, &_test_stub, CV_L2) != 0 )
-               cvtest::cmpEps( cv::cvarrToMat(&stub1), cv::cvarrToMat(&_test_stub1), &max_diff, 0, &pt, true) < 0 )
+               alvision.cvtest.cmpEps( cv::cvarrToMat(&stub1), cv::cvarrToMat(&_test_stub1), &max_diff, 0, &pt, true) < 0 )
             {
-                ts->printf( cvtest::TS::LOG, "readObj method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
+                ts->printf( alvision.cvtest.TS::LOG, "readObj method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
                            cvGetReal2D(&stub1, pt[0], pt[1]), cvGetReal2D(&_test_stub1, pt[0], pt[1]),
                            pt[0], pt[1] );
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -276,12 +276,12 @@ protected:
             if( !CV_ARE_TYPES_EQ(&stub, &_test_stub) ||
                !CV_ARE_SIZES_EQ(&stub, &_test_stub) ||
                //cvNorm(&stub, &_test_stub, CV_L2) != 0 )
-               cvtest::cmpEps( cv::cvarrToMat(&stub1), cv::cvarrToMat(&_test_stub1), &max_diff, 0, &pt, true) < 0 )
+               alvision.cvtest.cmpEps( cv::cvarrToMat(&stub1), cv::cvarrToMat(&_test_stub1), &max_diff, 0, &pt, true) < 0 )
             {
-                ts->printf( cvtest::TS::LOG, "C++ method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
+                ts->printf( alvision.cvtest.TS::LOG, "C++ method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
                            cvGetReal2D(&stub1, pt[0], pt[1]), cvGetReal2D(&_test_stub1, pt[1], pt[0]),
                            pt[0], pt[1] );
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -298,8 +298,8 @@ protected:
                !cvTsCheckSparse(m_s, _test_sparse, 0) ||
                !cvTsCheckSparse(_m_s2, _test_sparse, 0))
             {
-                ts->printf( cvtest::TS::LOG, "the read sparse matrix is not correct\n" );
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                ts->printf( alvision.cvtest.TS::LOG, "the read sparse matrix is not correct\n" );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -315,8 +315,8 @@ protected:
                (int)tl[5]["day"] != 31 ||
                (int)tl[5]["year"] != 1969 )
             {
-                ts->printf( cvtest::TS::LOG, "the test list is incorrect\n" );
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                ts->printf( alvision.cvtest.TS::LOG, "the test list is incorrect\n" );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -359,8 +359,8 @@ protected:
                tm_lbp.size() != 8 ||
                real_lbp_val != 0xb6 )
             {
-                ts->printf( cvtest::TS::LOG, "the test map is incorrect\n" );
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                ts->printf( alvision.cvtest.TS::LOG, "the test map is incorrect\n" );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -368,8 +368,8 @@ protected:
             if(graph2->active_count != vcount || graph3->active_count != vcount ||
                graph2->edges->active_count != ecount || graph3->edges->active_count != ecount)
             {
-                ts->printf( cvtest::TS::LOG, "the cloned or read graph have wrong number of vertices or edges\n" );
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                ts->printf( alvision.cvtest.TS::LOG, "the cloned or read graph have wrong number of vertices or edges\n" );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -380,8 +380,8 @@ protected:
                 if( !edge2 || edge2->weight != (float)(i+1) ||
                    !edge3 || edge3->weight != (float)(i+1) )
                 {
-                    ts->printf( cvtest::TS::LOG, "the cloned or read graph do not have the edge (%d, %d)\n", edges[i][0], edges[i][1] );
-                    this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                    ts->printf( alvision.cvtest.TS::LOG, "the cloned or read graph do not have the edge (%d, %d)\n", edges[i][0], edges[i][1] );
+                    this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                     return;
                 }
             }
@@ -497,9 +497,9 @@ protected:
             fs["g1"] >> og1;
             CV_Assert( mi2.empty() );
             CV_Assert( mv2.empty() );
-            CV_Assert( cvtest::norm(Mat(mi3), Mat(mi4), CV_C) == 0 );
+            CV_Assert( alvision.cvtest.norm(Mat(mi3), Mat(mi4), CV_C) == 0 );
             CV_Assert( mv4.size() == 1 );
-            double n = cvtest::norm(mv3[0], mv4[0], CV_C);
+            double n = alvision.cvtest.norm(mv3[0], mv4[0], CV_C);
             CV_Assert( vudt2.empty() );
             CV_Assert( vudt3 == vudt4 );
             CV_Assert( n == 0 );
@@ -514,7 +514,7 @@ protected:
         }
         catch(...)
         {
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         }
     }
 };
@@ -541,7 +541,7 @@ protected:
         }
         catch(...)
         {
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         }
     }
 };
@@ -551,8 +551,8 @@ TEST(Core_InputOutput, huge) { CV_BigMatrixIOTest test; test.safe_run(); }
 
 TEST(Core_globbing, accuracy)
 {
-    std::string patternLena    = cvtest::TS::ptr()->get_data_path() + "lena*.*";
-    std::string patternLenaPng = cvtest::TS::ptr()->get_data_path() + "lena.png";
+    std::string patternLena    = alvision.cvtest.TS::ptr()->get_data_path() + "lena*.*";
+    std::string patternLenaPng = alvision.cvtest.TS::ptr()->get_data_path() + "lena.png";
 
     std::vector<String> lenas, pngLenas;
     cv::glob(patternLena, lenas, true);

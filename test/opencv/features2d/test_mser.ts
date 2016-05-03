@@ -97,7 +97,7 @@ TEST(Features2d_MSER, cases)
          255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
          255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
     };
-    Mat big_image = imread(cvtest::TS::ptr()->get_data_path() + "mser/puzzle.png", 0);
+    Mat big_image = imread(alvision.cvtest.TS::ptr()->get_data_path() + "mser/puzzle.png", 0);
     Mat small_image(14, 26, CV_8U, buf);
     static const int thresharr[] = { 0, 70, 120, 180, 255 };
 

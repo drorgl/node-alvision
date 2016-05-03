@@ -95,13 +95,13 @@ CV_TrackBaseTest::~CV_TrackBaseTest()
 void CV_TrackBaseTest::clear()
 {
     cvReleaseMat( &img );
-    cvtest::BaseTest::clear();
+    alvision.cvtest.BaseTest::clear();
 }
 
 
 int CV_TrackBaseTest::read_params( CvFileStorage* fs )
 {
-    int code = cvtest::BaseTest::read_params( fs );
+    int code = alvision.cvtest.BaseTest::read_params( fs );
     if( code < 0 )
         return code;
 
@@ -109,8 +109,8 @@ int CV_TrackBaseTest::read_params( CvFileStorage* fs )
     min_log_size = cvReadInt( find_param( fs, "min_log_size" ), min_log_size );
     max_log_size = cvReadInt( find_param( fs, "max_log_size" ), max_log_size );
 
-    min_log_size = cvtest::clipInt( min_log_size, 1, 10 );
-    max_log_size = cvtest::clipInt( max_log_size, 1, 10 );
+    min_log_size = alvision.cvtest.clipInt( min_log_size, 1, 10 );
+    max_log_size = alvision.cvtest.clipInt( max_log_size, 1, 10 );
     if( min_log_size > max_log_size )
     {
         int t;
@@ -162,14 +162,14 @@ void CV_TrackBaseTest::generate_object()
 int CV_TrackBaseTest::prepare_test_case( int test_case_idx )
 {
     RNG& rng = ts->get_rng();
-    cvtest::BaseTest::prepare_test_case( test_case_idx );
+    alvision.cvtest.BaseTest::prepare_test_case( test_case_idx );
     float m;
 
     clear();
 
-    box0.size.width = (float)exp((cvtest::randReal(rng) * (max_log_size - min_log_size) + min_log_size)*CV_LOG2);
-    box0.size.height = (float)exp((cvtest::randReal(rng) * (max_log_size - min_log_size) + min_log_size)*CV_LOG2);
-    box0.angle = (float)(cvtest::randReal(rng)*180.);
+    box0.size.width = (float)exp((alvision.cvtest.randReal(rng) * (max_log_size - min_log_size) + min_log_size)*CV_LOG2);
+    box0.size.height = (float)exp((alvision.cvtest.randReal(rng) * (max_log_size - min_log_size) + min_log_size)*CV_LOG2);
+    box0.angle = (float)(alvision.cvtest.randReal(rng)*180.);
 
     if( box0.size.width > box0.size.height )
     {
@@ -178,13 +178,13 @@ int CV_TrackBaseTest::prepare_test_case( int test_case_idx )
     }
 
     m = MAX( box0.size.width, box0.size.height );
-    img_size.width = cvRound(cvtest::randReal(rng)*m*0.5 + m + 1);
-    img_size.height = cvRound(cvtest::randReal(rng)*m*0.5 + m + 1);
-    img_type = cvtest::randInt(rng) % 2 ? CV_32F : CV_8U;
+    img_size.width = cvRound(alvision.cvtest.randReal(rng)*m*0.5 + m + 1);
+    img_size.height = cvRound(alvision.cvtest.randReal(rng)*m*0.5 + m + 1);
+    img_type = alvision.cvtest.randInt(rng) % 2 ? CV_32F : CV_8U;
     img_type = CV_8U;
 
-    box0.center.x = (float)(img_size.width*0.5 + (cvtest::randReal(rng)-0.5)*(img_size.width - m));
-    box0.center.y = (float)(img_size.height*0.5 + (cvtest::randReal(rng)-0.5)*(img_size.height - m));
+    box0.center.x = (float)(img_size.width*0.5 + (alvision.cvtest.randReal(rng)-0.5)*(img_size.width - m));
+    box0.center.y = (float)(img_size.height*0.5 + (alvision.cvtest.randReal(rng)-0.5)*(img_size.height - m));
 
     criteria = cvTermCriteria( CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 10, 0.1 );
 
@@ -248,10 +248,10 @@ int CV_CamShiftTest::prepare_test_case( int test_case_idx )
         CvMat temp;
 
         m = MAX(box0.size.width,box0.size.height)*0.8;
-        init_rect.x = cvFloor(box0.center.x - m*(0.45 + cvtest::randReal(rng)*0.2));
-        init_rect.y = cvFloor(box0.center.y - m*(0.45 + cvtest::randReal(rng)*0.2));
-        init_rect.width = cvCeil(box0.center.x + m*(0.45 + cvtest::randReal(rng)*0.2) - init_rect.x);
-        init_rect.height = cvCeil(box0.center.y + m*(0.45 + cvtest::randReal(rng)*0.2) - init_rect.y);
+        init_rect.x = cvFloor(box0.center.x - m*(0.45 + alvision.cvtest.randReal(rng)*0.2));
+        init_rect.y = cvFloor(box0.center.y - m*(0.45 + alvision.cvtest.randReal(rng)*0.2));
+        init_rect.width = cvCeil(box0.center.x + m*(0.45 + alvision.cvtest.randReal(rng)*0.2) - init_rect.x);
+        init_rect.height = cvCeil(box0.center.y + m*(0.45 + alvision.cvtest.randReal(rng)*0.2) - init_rect.y);
 
         if( init_rect.x < 0 || init_rect.y < 0 ||
             init_rect.x + init_rect.width >= img_size.width ||
@@ -277,7 +277,7 @@ void CV_CamShiftTest::run_func(void)
 
 int CV_CamShiftTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     double m = MAX(box0.size.width, box0.size.height), delta;
     double diff_angle;
@@ -289,8 +289,8 @@ int CV_CamShiftTest::validate_test_results( int /*test_case_idx*/ )
         cvIsNaN(box.angle) || cvIsInf(box.angle) || box.angle < -180 || box.angle > 180 ||
         cvIsNaN(comp.area) || cvIsInf(comp.area) || comp.area <= 0 )
     {
-        ts->printf( cvtest::TS::LOG, "Invalid CvBox2D or CvConnectedComp was returned by cvCamShift\n" );
-        code = cvtest::TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TS::LOG, "Invalid CvBox2D or CvConnectedComp was returned by cvCamShift\n" );
+        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
         goto _exit_;
     }
 
@@ -299,18 +299,18 @@ int CV_CamShiftTest::validate_test_results( int /*test_case_idx*/ )
     if( fabs(box.size.width - box0.size.width) > box0.size.width*0.2 ||
         fabs(box.size.height - box0.size.height) > box0.size.height*0.3 )
     {
-        ts->printf( cvtest::TS::LOG, "Incorrect CvBox2D size (=%.1f x %.1f, should be %.1f x %.1f)\n",
+        ts->printf( alvision.cvtest.TS::LOG, "Incorrect CvBox2D size (=%.1f x %.1f, should be %.1f x %.1f)\n",
             box.size.width, box.size.height, box0.size.width, box0.size.height );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
     if( fabs(box.center.x - box0.center.x) > m*0.1 ||
         fabs(box.center.y - box0.center.y) > m*0.1 )
     {
-        ts->printf( cvtest::TS::LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
+        ts->printf( alvision.cvtest.TS::LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
             box.center.x, box.center.y, box0.center.x, box0.center.y );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -322,9 +322,9 @@ int CV_CamShiftTest::validate_test_results( int /*test_case_idx*/ )
 
     if( fabs(diff_angle) > 30 && box0.size.height > box0.size.width*1.2 )
     {
-        ts->printf( cvtest::TS::LOG, "Incorrect CvBox2D angle (=%1.f, should be %1.f)\n",
+        ts->printf( alvision.cvtest.TS::LOG, "Incorrect CvBox2D angle (=%1.f, should be %1.f)\n",
             box.angle, box0.angle );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -335,19 +335,19 @@ int CV_CamShiftTest::validate_test_results( int /*test_case_idx*/ )
         comp.rect.x + comp.rect.width > box0.center.x + delta ||
         comp.rect.y + comp.rect.height > box0.center.y + delta )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
             "Incorrect CvConnectedComp ((%d,%d,%d,%d) is not within (%.1f,%.1f,%.1f,%.1f))\n",
             comp.rect.x, comp.rect.y, comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height,
             box0.center.x - delta, box0.center.y - delta, box0.center.x + delta, box0.center.y + delta );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
     if( fabs(comp.area - area0) > area0*0.15 )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
             "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", comp.area, area0 );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -415,10 +415,10 @@ int CV_MeanShiftTest::prepare_test_case( int test_case_idx )
         CvMat temp;
 
         m = (box0.size.width + box0.size.height)*0.5;
-        init_rect.x = cvFloor(box0.center.x - m*(0.4 + cvtest::randReal(rng)*0.2));
-        init_rect.y = cvFloor(box0.center.y - m*(0.4 + cvtest::randReal(rng)*0.2));
-        init_rect.width = cvCeil(box0.center.x + m*(0.4 + cvtest::randReal(rng)*0.2) - init_rect.x);
-        init_rect.height = cvCeil(box0.center.y + m*(0.4 + cvtest::randReal(rng)*0.2) - init_rect.y);
+        init_rect.x = cvFloor(box0.center.x - m*(0.4 + alvision.cvtest.randReal(rng)*0.2));
+        init_rect.y = cvFloor(box0.center.y - m*(0.4 + alvision.cvtest.randReal(rng)*0.2));
+        init_rect.width = cvCeil(box0.center.x + m*(0.4 + alvision.cvtest.randReal(rng)*0.2) - init_rect.x);
+        init_rect.height = cvCeil(box0.center.y + m*(0.4 + alvision.cvtest.randReal(rng)*0.2) - init_rect.y);
 
         if( init_rect.x < 0 || init_rect.y < 0 ||
             init_rect.x + init_rect.width >= img_size.width ||
@@ -444,14 +444,14 @@ void CV_MeanShiftTest::run_func(void)
 
 int CV_MeanShiftTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     CvPoint2D32f c;
     double m = MAX(box0.size.width, box0.size.height), delta;
 
     if( cvIsNaN(comp.area) || cvIsInf(comp.area) || comp.area <= 0 )
     {
-        ts->printf( cvtest::TS::LOG, "Invalid CvConnectedComp was returned by cvMeanShift\n" );
-        code = cvtest::TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TS::LOG, "Invalid CvConnectedComp was returned by cvMeanShift\n" );
+        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
         goto _exit_;
     }
 
@@ -461,9 +461,9 @@ int CV_MeanShiftTest::validate_test_results( int /*test_case_idx*/ )
     if( fabs(c.x - box0.center.x) > m*0.1 ||
         fabs(c.y - box0.center.y) > m*0.1 )
     {
-        ts->printf( cvtest::TS::LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
+        ts->printf( alvision.cvtest.TS::LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
             c.x, c.y, box0.center.x, box0.center.y );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -474,19 +474,19 @@ int CV_MeanShiftTest::validate_test_results( int /*test_case_idx*/ )
         comp.rect.x + comp.rect.width > box0.center.x + delta ||
         comp.rect.y + comp.rect.height > box0.center.y + delta )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
             "Incorrect CvConnectedComp ((%d,%d,%d,%d) is not within (%.1f,%.1f,%.1f,%.1f))\n",
             comp.rect.x, comp.rect.y, comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height,
             box0.center.x - delta, box0.center.y - delta, box0.center.x + delta, box0.center.y + delta );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
     if( fabs((double)(comp.area - area0)) > fabs((double)(area - area0)) + area0*0.05 )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
             "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", comp.area, area0 );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 

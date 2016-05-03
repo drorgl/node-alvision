@@ -64,7 +64,7 @@ CV_OptFlowPyrLKTest::CV_OptFlowPyrLKTest() {}
 
 void CV_OptFlowPyrLKTest::run( int )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     const double success_error_level = 0.3;
     const int bad_points_max = 8;
@@ -91,8 +91,8 @@ void CV_OptFlowPyrLKTest::run( int )
 
     if( !_u )
     {
-        ts->printf( cvtest::TS::LOG, "could not read %s\n", filename );
-        code = cvtest::TS::FAIL_MISSING_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "could not read %s\n", filename );
+        code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
     }
 
@@ -101,16 +101,16 @@ void CV_OptFlowPyrLKTest::run( int )
 
     if( !_v )
     {
-        ts->printf( cvtest::TS::LOG, "could not read %s\n", filename );
-        code = cvtest::TS::FAIL_MISSING_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "could not read %s\n", filename );
+        code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
     }
 
     if( _u->cols != 2 || CV_MAT_TYPE(_u->type) != CV_32F ||
         _v->cols != 2 || CV_MAT_TYPE(_v->type) != CV_32F || _v->rows != _u->rows )
     {
-        ts->printf( cvtest::TS::LOG, "the loaded matrices of points are not valid\n" );
-        code = cvtest::TS::FAIL_MISSING_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "the loaded matrices of points are not valid\n" );
+        code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
 
     }
@@ -129,8 +129,8 @@ void CV_OptFlowPyrLKTest::run( int )
 
     if( imgI2.empty() )
     {
-        ts->printf( cvtest::TS::LOG, "could not read %s\n", filename );
-        code = cvtest::TS::FAIL_MISSING_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "could not read %s\n", filename );
+        code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
     }
 
@@ -141,8 +141,8 @@ void CV_OptFlowPyrLKTest::run( int )
 
     if( imgJ2.empty() )
     {
-        ts->printf( cvtest::TS::LOG, "could not read %s\n", filename );
-        code = cvtest::TS::FAIL_MISSING_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "could not read %s\n", filename );
+        code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
     }
 
@@ -183,8 +183,8 @@ void CV_OptFlowPyrLKTest::run( int )
             {
                 merr_i = i;
                 merr_k++;
-                ts->printf( cvtest::TS::LOG, "The algorithm lost the point #%d\n", i );
-                code = cvtest::TS::FAIL_BAD_ACCURACY;
+                ts->printf( alvision.cvtest.TS::LOG, "The algorithm lost the point #%d\n", i );
+                code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
                 goto _exit_;
             }
         }
@@ -192,16 +192,16 @@ void CV_OptFlowPyrLKTest::run( int )
 
     if( pt_exceed > bad_points_max )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
                    "The number of poorly tracked points is too big (>=%d)\n", pt_exceed );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
     if( max_err > 1 )
     {
-        ts->printf( cvtest::TS::LOG, "Maximum tracking error is too big (=%g) at %d\n", max_err, merr_i );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        ts->printf( alvision.cvtest.TS::LOG, "Maximum tracking error is too big (=%g) at %d\n", max_err, merr_i );
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -222,7 +222,7 @@ TEST(Video_OpticalFlowPyrLK, accuracy) { CV_OptFlowPyrLKTest test; test.safe_run
 TEST(Video_OpticalFlowPyrLK, submat)
 {
     // see bug #2075
-    std::string path = cvtest::TS::ptr()->get_data_path() + "../cv/shared/lena.png";
+    std::string path = alvision.cvtest.TS::ptr()->get_data_path() + "../cv/shared/lena.png";
 
     cv::Mat lenaImg = cv::imread(path);
     ASSERT_FALSE(lenaImg.empty());

@@ -63,7 +63,7 @@ protected:
     std::string datasets_repository_path;
 
     virtual void SetUp() {
-        datasets_repository_path = combine(cvtest::TS::ptr()->get_data_path(), "cv/cameracalibration/fisheye");
+        datasets_repository_path = combine(alvision.cvtest.TS::ptr()->get_data_path(), "cv/cameracalibration/fisheye");
     }
 
 protected:

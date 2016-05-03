@@ -61,7 +61,7 @@ TEST(Core_LPSolver, regression_basic){
     cv::solveLP(A,B,z);
     std::cout<<"here z goes\n"<<z<<"\n";
     etalon_z=(cv::Mat_<double>(3,1)<<8,4,0);
-    ASSERT_LT(cvtest::norm(z, etalon_z, cv::NORM_L1), 1e-12);
+    ASSERT_LT(alvision.cvtest.norm(z, etalon_z, cv::NORM_L1), 1e-12);
 #endif
 
 #if 1
@@ -72,7 +72,7 @@ TEST(Core_LPSolver, regression_basic){
     cv::solveLP(A,B,z);
     std::cout<<"here z goes\n"<<z<<"\n";
     etalon_z=(cv::Mat_<double>(2,1)<<20,0);
-    ASSERT_LT(cvtest::norm(z, etalon_z, cv::NORM_L1), 1e-12);
+    ASSERT_LT(alvision.cvtest.norm(z, etalon_z, cv::NORM_L1), 1e-12);
 #endif
 
 #if 1
@@ -83,7 +83,7 @@ TEST(Core_LPSolver, regression_basic){
     cv::solveLP(A,B,z);
     std::cout<<"here z goes\n"<<z<<"\n";
     etalon_z=(cv::Mat_<double>(2,1)<<1,0);
-    ASSERT_LT(cvtest::norm(z, etalon_z, cv::NORM_L1), 1e-12);
+    ASSERT_LT(alvision.cvtest.norm(z, etalon_z, cv::NORM_L1), 1e-12);
 #endif
 }
 
@@ -98,7 +98,7 @@ TEST(Core_LPSolver, regression_init_unfeasible){
     cv::solveLP(A,B,z);
     std::cout<<"here z goes\n"<<z<<"\n";
     etalon_z=(cv::Mat_<double>(3,1)<<1250,1000,0);
-    ASSERT_LT(cvtest::norm(z, etalon_z, cv::NORM_L1), 1e-12);
+    ASSERT_LT(alvision.cvtest.norm(z, etalon_z, cv::NORM_L1), 1e-12);
 #endif
 }
 

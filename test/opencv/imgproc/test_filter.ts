@@ -87,12 +87,12 @@ CV_FilterBaseTest::CV_FilterBaseTest( bool _fp_kernel ) : fp_kernel(_fp_kernel)
 
 int CV_FilterBaseTest::read_params( CvFileStorage* fs )
 {
-    int code = cvtest::ArrayTest::read_params( fs );
+    int code = alvision.cvtest.ArrayTest::read_params( fs );
     if( code < 0 )
         return code;
 
     max_aperture_size = cvReadInt( find_param( fs, "max_aperture_size" ), max_aperture_size );
-    max_aperture_size = cvtest::clipInt( max_aperture_size, 1, 100 );
+    max_aperture_size = alvision.cvtest.clipInt( max_aperture_size, 1, 100 );
 
     return code;
 }
@@ -100,7 +100,7 @@ int CV_FilterBaseTest::read_params( CvFileStorage* fs )
 
 void CV_FilterBaseTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
 {
-    cvtest::ArrayTest::get_minmax_bounds( i, j, type, low, high );
+    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
     if( i == INPUT )
     {
         if( j == 1 )
@@ -108,7 +108,7 @@ void CV_FilterBaseTest::get_minmax_bounds( int i, int j, int type, Scalar& low, 
             if( fp_kernel )
             {
                 RNG& rng = ts->get_rng();
-                double val = exp( cvtest::randReal(rng)*10 - 4 );
+                double val = exp( alvision.cvtest.randReal(rng)*10 - 4 );
                 low = Scalar::all(-val);
                 high = Scalar::all(val);
             }
@@ -137,34 +137,34 @@ void CV_FilterBaseTest::get_test_array_types_and_sizes( int test_case_idx,
                                                         vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    int depth = cvtest::randInt(rng) % CV_32F;
-    int cn = cvtest::randInt(rng) % 3 + 1;
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    int depth = alvision.cvtest.randInt(rng) % CV_32F;
+    int cn = alvision.cvtest.randInt(rng) % 3 + 1;
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     depth += depth == CV_8S;
     cn += cn == 2;
 
     types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(depth, cn);
 
-    aperture_size.width = cvtest::randInt(rng) % max_aperture_size + 1;
-    aperture_size.height = cvtest::randInt(rng) % max_aperture_size + 1;
-    anchor.x = cvtest::randInt(rng) % aperture_size.width;
-    anchor.y = cvtest::randInt(rng) % aperture_size.height;
+    aperture_size.width = alvision.cvtest.randInt(rng) % max_aperture_size + 1;
+    aperture_size.height = alvision.cvtest.randInt(rng) % max_aperture_size + 1;
+    anchor.x = alvision.cvtest.randInt(rng) % aperture_size.width;
+    anchor.y = alvision.cvtest.randInt(rng) % aperture_size.height;
 
     types[INPUT][1] = fp_kernel ? CV_32FC1 : CV_8UC1;
     sizes[INPUT][1] = aperture_size;
 
-    inplace = cvtest::randInt(rng) % 2 != 0;
+    inplace = alvision.cvtest.randInt(rng) % 2 != 0;
     border = BORDER_REPLICATE;
 }
 
 
 int CV_FilterBaseTest::prepare_test_case( int test_case_idx )
 {
-    int code = cvtest::ArrayTest::prepare_test_case( test_case_idx );
+    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         if( inplace && test_mat[INPUT][0].type() == test_mat[OUTPUT][0].type())
-            cvtest::copy( test_mat[INPUT][0], test_mat[OUTPUT][0] );
+            alvision.cvtest.copy( test_mat[INPUT][0], test_mat[OUTPUT][0] );
         else
             inplace = false;
     }
@@ -203,17 +203,17 @@ void CV_MorphologyBaseTest::get_test_array_types_and_sizes( int test_case_idx,
 {
     RNG& rng = ts->get_rng();
     CV_FilterBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    int depth = cvtest::randInt(rng) % 4;
+    int depth = alvision.cvtest.randInt(rng) % 4;
     depth = depth == 0 ? CV_8U : depth == 1 ? CV_16U : depth == 2 ? CV_16S : CV_32F;
     int cn = CV_MAT_CN(types[INPUT][0]);
 
     types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(depth, cn);
-    shape = cvtest::randInt(rng) % 4;
+    shape = alvision.cvtest.randInt(rng) % 4;
     if( shape >= 3 )
         shape = CV_SHAPE_CUSTOM;
     else
         sizes[INPUT][1] = cvSize(0,0);
-    optype = cvtest::randInt(rng) % (optype_max - optype_min + 1) + optype_min;
+    optype = alvision.cvtest.randInt(rng) % (optype_max - optype_min + 1) + optype_min;
 }
 
 
@@ -271,42 +271,42 @@ void CV_MorphologyBaseTest::prepare_to_validation( int /*test_case_idx*/ )
 
     if( optype == CV_MOP_ERODE )
     {
-        cvtest::erode( src, dst, _element, _anchor, _border );
+        alvision.cvtest.erode( src, dst, _element, _anchor, _border );
     }
     else if( optype == CV_MOP_DILATE )
     {
-        cvtest::dilate( src, dst, _element, _anchor, _border );
+        alvision.cvtest.dilate( src, dst, _element, _anchor, _border );
     }
     else
     {
         Mat temp;
         if( optype == CV_MOP_OPEN )
         {
-            cvtest::erode( src, temp, _element, _anchor, _border );
-            cvtest::dilate( temp, dst, _element, _anchor, _border );
+            alvision.cvtest.erode( src, temp, _element, _anchor, _border );
+            alvision.cvtest.dilate( temp, dst, _element, _anchor, _border );
         }
         else if( optype == CV_MOP_CLOSE )
         {
-            cvtest::dilate( src, temp, _element, _anchor, _border );
-            cvtest::erode( temp, dst, _element, _anchor, _border );
+            alvision.cvtest.dilate( src, temp, _element, _anchor, _border );
+            alvision.cvtest.erode( temp, dst, _element, _anchor, _border );
         }
         else if( optype == CV_MOP_GRADIENT )
         {
-            cvtest::erode( src, temp, _element, _anchor, _border );
-            cvtest::dilate( src, dst, _element, _anchor, _border );
-            cvtest::add( dst, 1, temp, -1, Scalar::all(0), dst, dst.type() );
+            alvision.cvtest.erode( src, temp, _element, _anchor, _border );
+            alvision.cvtest.dilate( src, dst, _element, _anchor, _border );
+            alvision.cvtest.add( dst, 1, temp, -1, Scalar::all(0), dst, dst.type() );
         }
         else if( optype == CV_MOP_TOPHAT )
         {
-            cvtest::erode( src, temp, _element, _anchor, _border );
-            cvtest::dilate( temp, dst, _element, _anchor, _border );
-            cvtest::add( src, 1, dst, -1, Scalar::all(0), dst, dst.type() );
+            alvision.cvtest.erode( src, temp, _element, _anchor, _border );
+            alvision.cvtest.dilate( temp, dst, _element, _anchor, _border );
+            alvision.cvtest.add( src, 1, dst, -1, Scalar::all(0), dst, dst.type() );
         }
         else if( optype == CV_MOP_BLACKHAT )
         {
-            cvtest::dilate( src, temp, _element, _anchor, _border );
-            cvtest::erode( temp, dst, _element, _anchor, _border );
-            cvtest::add( dst, 1, src, -1, Scalar::all(0), dst, dst.type() );
+            alvision.cvtest.dilate( src, temp, _element, _anchor, _border );
+            alvision.cvtest.erode( temp, dst, _element, _anchor, _border );
+            alvision.cvtest.add( dst, 1, src, -1, Scalar::all(0), dst, dst.type() );
         }
         else
             CV_Error( CV_StsBadArg, "Unknown operation" );
@@ -412,7 +412,7 @@ void CV_FilterTest::get_test_array_types_and_sizes( int test_case_idx,
 {
     CV_FilterBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     RNG& rng = ts->get_rng();
-    int depth = cvtest::randInt(rng)%3;
+    int depth = alvision.cvtest.randInt(rng)%3;
     int cn = CV_MAT_CN(types[INPUT][0]);
     depth = depth == 0 ? CV_8U : depth == 1 ? CV_16U : CV_32F;
     types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(depth, cn);
@@ -437,7 +437,7 @@ void CV_FilterTest::run_func()
 
 void CV_FilterTest::prepare_to_validation( int /*test_case_idx*/ )
 {
-    cvtest::filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].type(),
+    alvision.cvtest.filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].type(),
                       test_mat[INPUT][1], anchor, 0, BORDER_REPLICATE );
 }
 
@@ -466,11 +466,11 @@ void CV_DerivBaseTest::get_test_array_types_and_sizes( int test_case_idx,
 {
     RNG& rng = ts->get_rng();
     CV_FilterBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    int depth = cvtest::randInt(rng) % 2;
+    int depth = alvision.cvtest.randInt(rng) % 2;
     depth = depth == 0 ? CV_8U : CV_32F;
     types[INPUT][0] = CV_MAKETYPE(depth,1);
     types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(depth==CV_8U?CV_16S:CV_32F,1);
-    _aperture_size = (cvtest::randInt(rng)%5)*2 - 1;
+    _aperture_size = (alvision.cvtest.randInt(rng)%5)*2 - 1;
     sizes[INPUT][1] = aperture_size = cvSize(_aperture_size, _aperture_size);
 }
 
@@ -508,12 +508,12 @@ void CV_SobelTest::get_test_array_types_and_sizes( int test_case_idx,
     RNG& rng = ts->get_rng();
     CV_DerivBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     int max_d = _aperture_size > 0 ? 2 : 1;
-    origin = cvtest::randInt(rng) % 2;
-    dx = cvtest::randInt(rng) % (max_d + 1);
-    dy = cvtest::randInt(rng) % (max_d + 1 - dx);
+    origin = alvision.cvtest.randInt(rng) % 2;
+    dx = alvision.cvtest.randInt(rng) % (max_d + 1);
+    dy = alvision.cvtest.randInt(rng) % (max_d + 1 - dx);
     if( dx == 0 && dy == 0 )
         dx = 1;
-    if( cvtest::randInt(rng) % 2 )
+    if( alvision.cvtest.randInt(rng) % 2 )
     {
         int t;
         CV_SWAP( dx, dy, t );
@@ -554,8 +554,8 @@ void CV_SobelTest::run_func()
 
 void CV_SobelTest::prepare_to_validation( int /*test_case_idx*/ )
 {
-    Mat kernel = cvtest::calcSobelKernel2D( dx, dy, _aperture_size, 0 );
-    cvtest::filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].depth(),
+    Mat kernel = alvision.cvtest.calcSobelKernel2D( dx, dy, _aperture_size, 0 );
+    alvision.cvtest.filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].depth(),
                       kernel, anchor, 0, BORDER_REPLICATE);
 }
 
@@ -615,8 +615,8 @@ int CV_LaplaceTest::prepare_test_case( int test_case_idx )
 
 void CV_LaplaceTest::prepare_to_validation( int /*test_case_idx*/ )
 {
-    Mat kernel = cvtest::calcLaplaceKernel2D( _aperture_size );
-    cvtest::filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].depth(),
+    Mat kernel = alvision.cvtest.calcLaplaceKernel2D( _aperture_size );
+    alvision.cvtest.filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].depth(),
                       kernel, anchor, 0, BORDER_REPLICATE );
 }
 
@@ -646,12 +646,12 @@ void CV_SmoothBaseTest::get_test_array_types_and_sizes( int test_case_idx,
 {
     RNG& rng = ts->get_rng();
     CV_FilterBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    int depth = cvtest::randInt(rng) % 2;
+    int depth = alvision.cvtest.randInt(rng) % 2;
     int cn = CV_MAT_CN(types[INPUT][0]);
     depth = depth == 0 ? CV_8U : CV_32F;
     types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(depth,cn);
-    anchor.x = cvtest::randInt(rng)%(max_aperture_size/2+1);
-    anchor.y = cvtest::randInt(rng)%(max_aperture_size/2+1);
+    anchor.x = alvision.cvtest.randInt(rng)%(max_aperture_size/2+1);
+    anchor.y = alvision.cvtest.randInt(rng)%(max_aperture_size/2+1);
     aperture_size.width = anchor.x*2 + 1;
     aperture_size.height = anchor.y*2 + 1;
     sizes[INPUT][1] = aperture_size;
@@ -691,11 +691,11 @@ void CV_BlurTest::get_test_array_types_and_sizes( int test_case_idx,
 {
     RNG& rng = ts->get_rng();
     CV_SmoothBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    int depth = cvtest::randInt(rng) % 4;
-    int cn = (cvtest::randInt(rng) % 4) + 1;
+    int depth = alvision.cvtest.randInt(rng) % 4;
+    int cn = (alvision.cvtest.randInt(rng) % 4) + 1;
     depth = depth == 0 ? CV_8U : depth == 1 ? CV_16U : depth == 2 ? CV_16S : CV_32F;
     types[OUTPUT][0] = types[REF_OUTPUT][0] = types[INPUT][0] = CV_MAKETYPE(depth, cn);
-    normalize = cvtest::randInt(rng) % 2 != 0;
+    normalize = alvision.cvtest.randInt(rng) % 2 != 0;
     if( !normalize )
     {
         types[INPUT][0] = CV_MAKETYPE(depth, 1);
@@ -723,7 +723,7 @@ void CV_BlurTest::prepare_to_validation( int /*test_case_idx*/ )
 {
     Mat kernel(aperture_size, CV_64F);
     kernel.setTo(Scalar::all(normalize ? 1./(aperture_size.width*aperture_size.height) : 1.));
-    cvtest::filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].depth(),
+    alvision.cvtest.filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].depth(),
                       kernel, anchor, 0, BORDER_REPLICATE );
 }
 
@@ -763,11 +763,11 @@ void CV_GaussianBlurTest::get_test_array_types_and_sizes( int test_case_idx,
                                                 vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    int kernel_case = cvtest::randInt(rng) % 2;
+    int kernel_case = alvision.cvtest.randInt(rng) % 2;
     CV_SmoothBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     anchor = cvPoint(aperture_size.width/2,aperture_size.height/2);
 
-    sigma = exp(cvtest::randReal(rng)*5-2);
+    sigma = exp(alvision.cvtest.randReal(rng)*5-2);
     param1 = aperture_size.width;
     param2 = aperture_size.height;
 
@@ -842,7 +842,7 @@ static Mat calcGaussianKernel2D( Size ksize, double sigma )
 void CV_GaussianBlurTest::prepare_to_validation( int /*test_case_idx*/ )
 {
     Mat kernel = calcGaussianKernel2D( aperture_size, sigma );
-    cvtest::filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].depth(),
+    alvision.cvtest.filter2D( test_mat[INPUT][0], test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].depth(),
                       kernel, anchor, 0, border & ~BORDER_ISOLATED );
 }
 
@@ -1016,13 +1016,13 @@ void CV_MedianBlurTest::prepare_to_validation( int /*test_case_idx*/ )
         Mat ptr = src0;
         if( cn > 1 )
         {
-            cvtest::extract( src0, dst, i );
+            alvision.cvtest.extract( src0, dst, i );
             ptr = dst;
         }
-        cvtest::copyMakeBorder( ptr, src, m/2, m/2, m/2, m/2, border & ~BORDER_ISOLATED );
+        alvision.cvtest.copyMakeBorder( ptr, src, m/2, m/2, m/2, m/2, border & ~BORDER_ISOLATED );
         test_medianFilter( src, dst, m );
         if( cn > 1 )
-            cvtest::insert( dst, dst0, i );
+            alvision.cvtest.insert( dst, dst0, i );
     }
 }
 
@@ -1069,8 +1069,8 @@ void CV_PyramidBaseTest::get_test_array_types_and_sizes( int test_case_idx,
     CvSize sz;
     CV_FilterBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
-    int depth = depthes[cvtest::randInt(rng) % (sizeof(depthes)/sizeof(depthes[0]))];
-    int cn = channels[cvtest::randInt(rng) % (sizeof(channels)/sizeof(channels[0]))];
+    int depth = depthes[alvision.cvtest.randInt(rng) % (sizeof(depthes)/sizeof(depthes[0]))];
+    int cn = channels[alvision.cvtest.randInt(rng) % (sizeof(channels)/sizeof(channels[0]))];
 
     aperture_size = cvSize(5,5);
     anchor = cvPoint(aperture_size.width/2, aperture_size.height/2);
@@ -1128,7 +1128,7 @@ void CV_PyramidDownTest::prepare_to_validation( int /*test_case_idx*/ )
 {
     Mat& src = test_mat[INPUT][0], &dst = test_mat[REF_OUTPUT][0];
     Mat temp;
-    cvtest::filter2D(src, temp, src.depth(),
+    alvision.cvtest.filter2D(src, temp, src.depth(),
                      kernel, Point(kernel.cols/2, kernel.rows/2),
                      0, BORDER_REFLECT_101);
 
@@ -1198,7 +1198,7 @@ void CV_PyramidUpTest::prepare_to_validation( int /*test_case_idx*/ )
         }
     }
 
-    cvtest::filter2D(temp, dst, dst.depth(),
+    alvision.cvtest.filter2D(temp, dst, dst.depth(),
                      kernel, Point(kernel.cols/2, kernel.rows/2),
                      0, BORDER_REFLECT_101);
 }
@@ -1238,14 +1238,14 @@ CV_FeatureSelBaseTest::CV_FeatureSelBaseTest( int _width_factor )
 
 int CV_FeatureSelBaseTest::read_params( CvFileStorage* fs )
 {
-    int code = cvtest::BaseTest::read_params( fs );
+    int code = alvision.cvtest.BaseTest::read_params( fs );
     if( code < 0 )
         return code;
 
     max_aperture_size = cvReadInt( find_param( fs, "max_aperture_size" ), max_aperture_size );
-    max_aperture_size = cvtest::clipInt( max_aperture_size, 1, 9 );
+    max_aperture_size = alvision.cvtest.clipInt( max_aperture_size, 1, 9 );
     max_block_size = cvReadInt( find_param( fs, "max_block_size" ), max_block_size );
-    max_block_size = cvtest::clipInt( max_aperture_size, 1, 100 );
+    max_block_size = alvision.cvtest.clipInt( max_aperture_size, 1, 100 );
 
     return code;
 }
@@ -1260,7 +1260,7 @@ double CV_FeatureSelBaseTest::get_success_error_level( int /*test_case_idx*/, in
 
 void CV_FeatureSelBaseTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
 {
-    cvtest::ArrayTest::get_minmax_bounds( i, j, type, low, high );
+    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
     if( i == INPUT && CV_MAT_DEPTH(type) == CV_32F )
     {
         low = Scalar::all(-10.);
@@ -1273,19 +1273,19 @@ void CV_FeatureSelBaseTest::get_test_array_types_and_sizes( int test_case_idx,
                                                 vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    int depth = cvtest::randInt(rng) % 2, asz;
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    int depth = alvision.cvtest.randInt(rng) % 2, asz;
 
     depth = depth == 0 ? CV_8U : CV_32F;
     types[INPUT][0] = depth;
     types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_32FC1;
 
-    aperture_size = (cvtest::randInt(rng) % (max_aperture_size+2) - 1) | 1;
+    aperture_size = (alvision.cvtest.randInt(rng) % (max_aperture_size+2) - 1) | 1;
     if( aperture_size == 1 )
         aperture_size = 3;
     if( depth == CV_8U )
         aperture_size = MIN( aperture_size, 5 );
-    block_size = (cvtest::randInt(rng) % max_block_size + 1) | 1;
+    block_size = (alvision.cvtest.randInt(rng) % max_block_size + 1) | 1;
     if( block_size <= 3 )
         block_size = 3;
     asz = aperture_size > 0 ? aperture_size : 3;
@@ -1317,10 +1317,10 @@ test_cornerEigenValsVecs( const Mat& src, Mat& eigenv, Mat& ocv_eigenv,
 
     Mat dx2, dy2, dxdy(src.size(), CV_32F), kernel;
 
-    kernel = cvtest::calcSobelKernel2D( 1, 0, _aperture_size );
-    cvtest::filter2D( src, dx2, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE );
-    kernel = cvtest::calcSobelKernel2D( 0, 1, _aperture_size );
-    cvtest::filter2D( src, dy2, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE );
+    kernel = alvision.cvtest.calcSobelKernel2D( 1, 0, _aperture_size );
+    alvision.cvtest.filter2D( src, dx2, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE );
+    kernel = alvision.cvtest.calcSobelKernel2D( 0, 1, _aperture_size );
+    alvision.cvtest.filter2D( src, dy2, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE );
 
     double denom = (1 << (aperture_size-1))*block_size;
     denom = denom * denom;
@@ -1346,9 +1346,9 @@ test_cornerEigenValsVecs( const Mat& src, Mat& eigenv, Mat& ocv_eigenv,
     kernel = Mat::ones(block_size, block_size, CV_32F);
     anchor = Point(block_size/2, block_size/2);
 
-    cvtest::filter2D( dx2, dx2, ftype, kernel, anchor, 0, BORDER_REPLICATE );
-    cvtest::filter2D( dy2, dy2, ftype, kernel, anchor, 0, BORDER_REPLICATE );
-    cvtest::filter2D( dxdy, dxdy, ftype, kernel, anchor, 0, BORDER_REPLICATE );
+    alvision.cvtest.filter2D( dx2, dx2, ftype, kernel, anchor, 0, BORDER_REPLICATE );
+    alvision.cvtest.filter2D( dy2, dy2, ftype, kernel, anchor, 0, BORDER_REPLICATE );
+    alvision.cvtest.filter2D( dxdy, dxdy, ftype, kernel, anchor, 0, BORDER_REPLICATE );
 
     if( mode == 0 )
     {
@@ -1530,16 +1530,16 @@ void CV_PreCornerDetectTest::prepare_to_validation( int /*test_case_idx*/ )
 
     Mat dx, dy, d2x, d2y, dxy, kernel;
 
-    kernel = cvtest::calcSobelKernel2D(1, 0, aperture_size);
-    cvtest::filter2D(src, dx, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
-    kernel = cvtest::calcSobelKernel2D(2, 0, aperture_size);
-    cvtest::filter2D(src, d2x, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
-    kernel = cvtest::calcSobelKernel2D(0, 1, aperture_size);
-    cvtest::filter2D(src, dy, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
-    kernel = cvtest::calcSobelKernel2D(0, 2, aperture_size);
-    cvtest::filter2D(src, d2y, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
-    kernel = cvtest::calcSobelKernel2D(1, 1, aperture_size);
-    cvtest::filter2D(src, dxy, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
+    kernel = alvision.cvtest.calcSobelKernel2D(1, 0, aperture_size);
+    alvision.cvtest.filter2D(src, dx, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
+    kernel = alvision.cvtest.calcSobelKernel2D(2, 0, aperture_size);
+    alvision.cvtest.filter2D(src, d2x, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
+    kernel = alvision.cvtest.calcSobelKernel2D(0, 1, aperture_size);
+    alvision.cvtest.filter2D(src, dy, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
+    kernel = alvision.cvtest.calcSobelKernel2D(0, 2, aperture_size);
+    alvision.cvtest.filter2D(src, d2y, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
+    kernel = alvision.cvtest.calcSobelKernel2D(1, 1, aperture_size);
+    alvision.cvtest.filter2D(src, dxy, ftype, kernel*kernel_scale, anchor, 0, BORDER_REPLICATE);
 
     double denom = 1 << (aperture_size-1);
     denom = denom * denom * denom;
@@ -1598,7 +1598,7 @@ CV_IntegralTest::CV_IntegralTest()
 
 void CV_IntegralTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
 {
-    cvtest::ArrayTest::get_minmax_bounds( i, j, type, low, high );
+    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
     int depth = CV_MAT_DEPTH(type);
     if( depth == CV_32F )
     {
@@ -1612,14 +1612,14 @@ void CV_IntegralTest::get_test_array_types_and_sizes( int test_case_idx,
                                                 vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    int depth = cvtest::randInt(rng) % 2, sum_depth;
-    int cn = cvtest::randInt(rng) % 3 + 1;
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    int depth = alvision.cvtest.randInt(rng) % 2, sum_depth;
+    int cn = alvision.cvtest.randInt(rng) % 3 + 1;
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     Size sum_size;
 
     depth = depth == 0 ? CV_8U : CV_32F;
     cn += cn == 2;
-    int b = (cvtest::randInt(rng) & 1) != 0;
+    int b = (alvision.cvtest.randInt(rng) & 1) != 0;
     sum_depth = depth == CV_8U && b ? CV_32S : b ? CV_32F : CV_64F;
 
     types[INPUT][0] = CV_MAKETYPE(depth,cn);
@@ -1634,10 +1634,10 @@ void CV_IntegralTest::get_test_array_types_and_sizes( int test_case_idx,
     sizes[OUTPUT][1] = sizes[REF_OUTPUT][1] =
         sizes[OUTPUT][2] = sizes[REF_OUTPUT][2] = Size(0,0);
 
-    if( cvtest::randInt(rng) % 3 > 0 )
+    if( alvision.cvtest.randInt(rng) % 3 > 0 )
     {
         sizes[OUTPUT][1] = sizes[REF_OUTPUT][1] = sum_size;
-        if( cvtest::randInt(rng) % 2 > 0 )
+        if( alvision.cvtest.randInt(rng) % 2 > 0 )
             sizes[REF_OUTPUT][2] = sizes[OUTPUT][2] = sum_size;
     }
 }
@@ -1652,7 +1652,7 @@ double CV_IntegralTest::get_success_error_level( int, int i, int j )
 
 int CV_IntegralTest::prepare_test_case( int test_case_idx )
 {
-    int code = cvtest::ArrayTest::prepare_test_case( test_case_idx );
+    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
     return code > 0 && ((test_array[OUTPUT][2] && test_mat[OUTPUT][2].channels() > 1) ||
         test_mat[OUTPUT][0].depth() < test_mat[INPUT][0].depth()) ? 0 : code;
 }
@@ -1752,7 +1752,7 @@ void CV_IntegralTest::prepare_to_validation( int /*test_case_idx*/ )
     for( int i = 0; i < cn; i++ )
     {
         if( cn > 1 )
-            cvtest::extract(src, plane, i);
+            alvision.cvtest.extract(src, plane, i);
         plane.convertTo(srcf, CV_32F);
 
         test_integral( srcf, &psum, sqsum0 ? &psqsum : 0, tsum0 ? &ptsum : 0 );
@@ -1764,11 +1764,11 @@ void CV_IntegralTest::prepare_to_validation( int /*test_case_idx*/ )
 
         if( cn > 1 )
         {
-            cvtest::insert(psum2, *sum0, i);
+            alvision.cvtest.insert(psum2, *sum0, i);
             if( sqsum0 )
-                cvtest::insert(psqsum2, *sqsum0, i);
+                alvision.cvtest.insert(psqsum2, *sqsum0, i);
             if( tsum0 )
-                cvtest::insert(ptsum2, *tsum0, i);
+                alvision.cvtest.insert(ptsum2, *tsum0, i);
         }
     }
 }
@@ -1875,7 +1875,7 @@ protected:
         }
         catch(...)
         {
-            ts->printf(cvtest::TS::LOG, "Combination of depths %d => %d in %s is not supported (yet it should be)",
+            ts->printf(alvision.cvtest.TS::LOG, "Combination of depths %d => %d in %s is not supported (yet it should be)",
                        depths[i][0], depths[i][1],
                        fidx == 0 ? "filter2D (small kernel)" :
                        fidx == 1 ? "filter2D (large kernel)" :
@@ -1888,7 +1888,7 @@ protected:
                        fidx == 8 || fidx == 9 ? "morphologyEx" :
                        "unknown???");
 
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         }
     }
 };
@@ -1924,7 +1924,7 @@ TEST(Imgproc_Blur, borderTypes)
             (Mat_<uchar>(3, 3) << 170, 113, 170, 113, 28, 113, 170, 113, 170);
     EXPECT_EQ(expected_dst.type(), dst.type());
     EXPECT_EQ(expected_dst.size(), dst.size());
-    EXPECT_DOUBLE_EQ(0.0, cvtest::norm(expected_dst, dst, NORM_INF));
+    EXPECT_DOUBLE_EQ(0.0, alvision.cvtest.norm(expected_dst, dst, NORM_INF));
 }
 
 TEST(Imgproc_Morphology, iterated)

@@ -255,7 +255,7 @@ PARAM_TEST_CASE(BruteForceMatcher, cv::cuda::DeviceInfo, NormCode, DescriptorSiz
         queryDescCount = 300; // must be even number because we split train data in some cases in two
         countFactor = 4; // do not change it
 
-        cv::RNG& rng = cvtest::TS::ptr()->get_rng();
+        cv::RNG& rng = alvision.cvtest.TS::ptr()->get_rng();
 
         cv::Mat queryBuf, trainBuf;
 

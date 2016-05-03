@@ -74,7 +74,7 @@ void CV_FastTest::run( int )
 
     if (image1.empty() || image2.empty())
     {
-        this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_TEST_DATA );
+        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_TEST_DATA );
         return;
     }
 
@@ -108,7 +108,7 @@ void CV_FastTest::run( int )
         fs.open(xml, FileStorage::WRITE);
         if (!fs.isOpened())
         {
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
             return;
         }
         fs << "exp_kps1" << kps1;
@@ -117,7 +117,7 @@ void CV_FastTest::run( int )
         fs.open(xml, FileStorage::READ);
         if (!fs.isOpened())
         {
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
             return;
         }
     }
@@ -127,10 +127,10 @@ void CV_FastTest::run( int )
     read( fs["exp_kps2"], exp_kps2, Mat() );
     fs.release();
 
-     if ( exp_kps1.size != kps1.size || 0 != cvtest::norm(exp_kps1, kps1, NORM_L2) ||
-          exp_kps2.size != kps2.size || 0 != cvtest::norm(exp_kps2, kps2, NORM_L2))
+     if ( exp_kps1.size != kps1.size || 0 != alvision.cvtest.norm(exp_kps1, kps1, NORM_L2) ||
+          exp_kps2.size != kps2.size || 0 != alvision.cvtest.norm(exp_kps2, kps2, NORM_L2))
     {
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return;
     }
 
@@ -139,7 +139,7 @@ void CV_FastTest::run( int )
     cv::waitKey(0);*/
   }
 
-  this.ts.set_failed_test_info(cvtest::TS::OK);
+  this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 TEST(Features2d_FAST, regression) { CV_FastTest test; test.safe_run(); }

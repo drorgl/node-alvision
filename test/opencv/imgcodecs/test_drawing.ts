@@ -78,7 +78,7 @@ class CV_DrawingTest extends alvision.cvtest.BaseTest {
         if (valImg.empty()) {
             alvision.imwrite(filename, testImg);
             //ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-            //this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            //this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
         }
         else {
             // image should match exactly
@@ -241,13 +241,13 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
         for (int i = 0; i < it.count; ++it, i++ )
         {
             Vec3b v = (Vec3b)(*(*it)) - img.at<Vec3b>(300, i);
-            float err = (float)cvtest::norm(v, NORM_L2);
+            float err = (float)alvision.cvtest.norm(v, NORM_L2);
             if (err != 0) {
                 ts ->printf(ts ->LOG, "LineIterator works incorrect");
-                ts ->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+                ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
             }
         }
-        this.ts.set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
         return 0;
     }
 }
@@ -407,14 +407,14 @@ class CV_DrawingTest_C extends CV_DrawingTest {
         for (int i = 0; i < count; i++ )
         {
             Vec3b v = (Vec3b)(*(it.ptr)) - _img.at<Vec3b>(300, i);
-            float err = (float)cvtest::norm(v, NORM_L2);
+            float err = (float)alvision.cvtest.norm(v, NORM_L2);
             if (err != 0) {
                 ts ->printf(ts ->LOG, "CvLineIterator works incorrect");
-                ts ->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+                ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
             }
             CV_NEXT_LINE_POINT(it);
         }
-        this.ts.set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
         return 0;
     }
 

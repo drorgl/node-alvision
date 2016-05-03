@@ -118,7 +118,7 @@ CV_BaseHistTest::~CV_BaseHistTest()
 
 void CV_BaseHistTest::clear()
 {
-    cvtest::BaseTest::clear();
+    alvision.cvtest.BaseTest::clear();
     for( size_t i = 0; i < hist.size(); i++ )
         cvReleaseHist( &hist[i] );
 }
@@ -126,18 +126,18 @@ void CV_BaseHistTest::clear()
 
 int CV_BaseHistTest::read_params( CvFileStorage* fs )
 {
-    int code = cvtest::BaseTest::read_params( fs );
+    int code = alvision.cvtest.BaseTest::read_params( fs );
     if( code < 0 )
         return code;
 
     test_case_count = cvReadInt( find_param( fs, "struct_count" ), test_case_count );
     max_log_size = cvReadInt( find_param( fs, "max_log_size" ), max_log_size );
-    max_log_size = cvtest::clipInt( max_log_size, 1, 20 );
+    max_log_size = alvision.cvtest.clipInt( max_log_size, 1, 20 );
     img_max_log_size = cvReadInt( find_param( fs, "max_log_array_size" ), img_max_log_size );
-    img_max_log_size = cvtest::clipInt( img_max_log_size, 1, 9 );
+    img_max_log_size = alvision.cvtest.clipInt( img_max_log_size, 1, 9 );
 
     max_cdims = cvReadInt( find_param( fs, "max_cdims" ), max_cdims );
-    max_cdims = cvtest::clipInt( max_cdims, 1, 6 );
+    max_cdims = alvision.cvtest.clipInt( max_cdims, 1, 6 );
 
     return 0;
 }
@@ -149,29 +149,29 @@ void CV_BaseHistTest::get_hist_params( int /*test_case_idx*/ )
     int i, max_dim_size, max_ni_dim_size = 31;
     double hist_size;
 
-    cdims = cvtest::randInt(rng) % max_cdims + 1;
-    hist_size = exp(cvtest::randReal(rng)*max_log_size*CV_LOG2);
+    cdims = alvision.cvtest.randInt(rng) % max_cdims + 1;
+    hist_size = exp(alvision.cvtest.randReal(rng)*max_log_size*CV_LOG2);
     max_dim_size = cvRound(pow(hist_size,1./cdims));
     total_size = 1;
-    uniform = cvtest::randInt(rng) % 2;
-    hist_type = cvtest::randInt(rng) % 2 ? CV_HIST_SPARSE : CV_HIST_ARRAY;
+    uniform = alvision.cvtest.randInt(rng) % 2;
+    hist_type = alvision.cvtest.randInt(rng) % 2 ? CV_HIST_SPARSE : CV_HIST_ARRAY;
 
     for( i = 0; i < cdims; i++ )
     {
-        dims[i] = cvtest::randInt(rng) % (max_dim_size + 2) + 2;
+        dims[i] = alvision.cvtest.randInt(rng) % (max_dim_size + 2) + 2;
         if( !uniform )
             dims[i] = MIN(dims[i], max_ni_dim_size);
         total_size *= dims[i];
     }
 
-    img_type = cvtest::randInt(rng) % 2 ? CV_32F : CV_8U;
-    img_size.width = cvRound( exp(cvtest::randReal(rng) * img_max_log_size * CV_LOG2) );
-    img_size.height = cvRound( exp(cvtest::randReal(rng) * img_max_log_size * CV_LOG2) );
+    img_type = alvision.cvtest.randInt(rng) % 2 ? CV_32F : CV_8U;
+    img_size.width = cvRound( exp(alvision.cvtest.randReal(rng) * img_max_log_size * CV_LOG2) );
+    img_size.height = cvRound( exp(alvision.cvtest.randReal(rng) * img_max_log_size * CV_LOG2) );
 
     if( img_type < CV_32F )
     {
-        low = cvtest::getMinVal(img_type);
-        high = cvtest::getMaxVal(img_type);
+        low = alvision.cvtest.getMinVal(img_type);
+        high = alvision.cvtest.getMaxVal(img_type);
     }
     else
     {
@@ -179,7 +179,7 @@ void CV_BaseHistTest::get_hist_params( int /*test_case_idx*/ )
         low = -high;
     }
 
-    range_delta = (cvtest::randInt(rng) % 2)*(high-low)*0.05;
+    range_delta = (alvision.cvtest.randInt(rng) % 2)*(high-low)*0.05;
 }
 
 
@@ -258,7 +258,7 @@ void CV_BaseHistTest::init_hist( int /*test_case_idx*/, int hist_i )
         if( hist_type == CV_HIST_ARRAY )
         {
             Mat h = cvarrToMat(hist[hist_i]->bins);
-            cvtest::randUni(rng, h, Scalar::all(0), Scalar::all(gen_hist_max_val) );
+            alvision.cvtest.randUni(rng, h, Scalar::all(0), Scalar::all(gen_hist_max_val) );
         }
         else
         {
@@ -268,15 +268,15 @@ void CV_BaseHistTest::init_hist( int /*test_case_idx*/, int hist_i )
             for( i = 0; i < cdims; i++ )
                 totalSize *= dims[i];
 
-            nz_count = cvtest::randInt(rng) % MAX( totalSize/4, 100 );
+            nz_count = alvision.cvtest.randInt(rng) % MAX( totalSize/4, 100 );
             nz_count = MIN( nz_count, totalSize );
 
             // a zero number of non-zero elements should be allowed
             for( i = 0; i < nz_count; i++ )
             {
                 for( j = 0; j < cdims; j++ )
-                    idx[j] = cvtest::randInt(rng) % dims[j];
-                cvSetRealND(arr, idx, cvtest::randReal(rng)*gen_hist_max_val);
+                    idx[j] = alvision.cvtest.randInt(rng) % dims[j];
+                cvSetRealND(arr, idx, alvision.cvtest.randReal(rng)*gen_hist_max_val);
             }
         }
     }
@@ -290,7 +290,7 @@ int CV_BaseHistTest::prepare_test_case( int test_case_idx )
 
     clear();
 
-    cvtest::BaseTest::prepare_test_case( test_case_idx );
+    alvision.cvtest.BaseTest::prepare_test_case( test_case_idx );
     get_hist_params( test_case_idx );
     r = get_hist_ranges( test_case_idx );
     hist.resize(hist_count);
@@ -300,7 +300,7 @@ int CV_BaseHistTest::prepare_test_case( int test_case_idx )
         hist[i] = cvCreateHist( cdims, dims, hist_type, r, uniform );
         init_hist( test_case_idx, i );
     }
-    test_cpp = (cvtest::randInt(ts->get_rng()) % 2) != 0;
+    test_cpp = (alvision.cvtest.randInt(ts->get_rng()) % 2) != 0;
 
     return 1;
 }
@@ -382,7 +382,7 @@ int CV_QueryHistTest::prepare_test_case( int test_case_idx )
         CvMat* bit_mask = 0;
         int* idx;
 
-        iters = (cvtest::randInt(rng) % MAX(total_size/10,100)) + 1;
+        iters = (alvision.cvtest.randInt(rng) % MAX(total_size/10,100)) + 1;
         iters = MIN( iters, total_size*9/10 + 1 );
 
         indices = cvCreateMat( 1, iters*cdims, CV_32S );
@@ -404,12 +404,12 @@ int CV_QueryHistTest::prepare_test_case( int test_case_idx )
             int lin_idx = 0;
             for( j = 0; j < cdims; j++ )
             {
-                int t = cvtest::randInt(rng) % dims[j];
+                int t = alvision.cvtest.randInt(rng) % dims[j];
                 idx[i*cdims + j] = t;
                 lin_idx = lin_idx*dims[j] + t;
             }
 
-            if( cvtest::randInt(rng) % 8 || GET_BIT(lin_idx) )
+            if( alvision.cvtest.randInt(rng) % 8 || GET_BIT(lin_idx) )
             {
                 values0->data.fl[i] = (float)(lin_idx+1);
                 SET_BIT(lin_idx);
@@ -545,7 +545,7 @@ void CV_QueryHistTest::run_func(void)
 
 int CV_QueryHistTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     int i, j, iters = values->cols;
 
     for( i = 0; i < iters; i++ )
@@ -554,20 +554,20 @@ int CV_QueryHistTest::validate_test_results( int /*test_case_idx*/ )
 
         if( cvIsNaN(v) || cvIsInf(v) )
         {
-            ts->printf( cvtest::TS::LOG, "The bin #%d has invalid value\n", i );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            ts->printf( alvision.cvtest.TS::LOG, "The bin #%d has invalid value\n", i );
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
         }
         else if( fabs(v - v0) > FLT_EPSILON )
         {
-            ts->printf( cvtest::TS::LOG, "The bin #%d = %g, while it should be %g\n", i, v, v0 );
-            code = cvtest::TS::FAIL_BAD_ACCURACY;
+            ts->printf( alvision.cvtest.TS::LOG, "The bin #%d = %g, while it should be %g\n", i, v, v0 );
+            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         }
 
         if( code < 0 )
         {
-            ts->printf( cvtest::TS::LOG, "The bin index = (" );
+            ts->printf( alvision.cvtest.TS::LOG, "The bin index = (" );
             for( j = 0; j < cdims; j++ )
-                ts->printf( cvtest::TS::LOG, "%d%s", indices->data.i[i*cdims + j],
+                ts->printf( alvision.cvtest.TS::LOG, "%d%s", indices->data.i[i*cdims + j],
                                         j < cdims-1 ? ", " : ")\n" );
             break;
         }
@@ -615,16 +615,16 @@ void CV_MinMaxHistTest::init_hist(int test_case_idx, int hist_i)
     {
         for( i = 0; i < cdims; i++ )
         {
-            min_idx0[i] = cvtest::randInt(rng) % dims[i];
-            max_idx0[i] = cvtest::randInt(rng) % dims[i];
+            min_idx0[i] = alvision.cvtest.randInt(rng) % dims[i];
+            max_idx0[i] = alvision.cvtest.randInt(rng) % dims[i];
             eq &= min_idx0[i] == max_idx0[i];
         }
         if( !eq || total_size == 1 )
             break;
     }
 
-    min_val0 = (float)(-cvtest::randReal(rng)*10 - FLT_EPSILON);
-    max_val0 = (float)(cvtest::randReal(rng)*10 + FLT_EPSILON + gen_hist_max_val);
+    min_val0 = (float)(-alvision.cvtest.randReal(rng)*10 - FLT_EPSILON);
+    max_val0 = (float)(alvision.cvtest.randReal(rng)*10 + FLT_EPSILON + gen_hist_max_val);
 
     if( total_size == 1 )
         min_val0 = max_val0;
@@ -652,22 +652,22 @@ void CV_MinMaxHistTest::run_func(void)
 
 int CV_MinMaxHistTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     if( cvIsNaN(min_val) || cvIsInf(min_val) ||
         cvIsNaN(max_val) || cvIsInf(max_val) )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
             "The extrema histogram bin values are invalid (min = %g, max = %g)\n", min_val, max_val );
-        code = cvtest::TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
     }
     else if( fabs(min_val - min_val0) > FLT_EPSILON ||
              fabs(max_val - max_val0) > FLT_EPSILON )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
             "The extrema histogram bin values are incorrect: (min = %g, should be = %g), (max = %g, should be = %g)\n",
             min_val, min_val0, max_val, max_val0 );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
     else
     {
@@ -676,11 +676,11 @@ int CV_MinMaxHistTest::validate_test_results( int /*test_case_idx*/ )
         {
             if( min_idx[i] != min_idx0[i] || max_idx[i] != max_idx0[i] )
             {
-                ts->printf( cvtest::TS::LOG,
+                ts->printf( alvision.cvtest.TS::LOG,
                     "The %d-th coordinates of extrema histogram bin values are incorrect: "
                     "(min = %d, should be = %d), (max = %d, should be = %d)\n",
                     i, min_idx[i], min_idx0[i], max_idx[i], max_idx0[i] );
-                code = cvtest::TS::FAIL_BAD_ACCURACY;
+                code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
             }
         }
     }
@@ -722,7 +722,7 @@ int CV_NormHistTest::prepare_test_case( int test_case_idx )
     if( code > 0 )
     {
         RNG& rng = ts->get_rng();
-        factor = cvtest::randReal(rng)*10 + 0.1;
+        factor = alvision.cvtest.randReal(rng)*10 + 0.1;
         if( hist_type == CV_HIST_SPARSE &&
             ((CvSparseMat*)hist[0]->bins)->heap->active_count == 0 )
             factor = 0;
@@ -749,7 +749,7 @@ void CV_NormHistTest::run_func(void)
 
 int CV_NormHistTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     double sum = 0;
 
     if( hist_type == CV_HIST_ARRAY )
@@ -775,15 +775,15 @@ int CV_NormHistTest::validate_test_results( int /*test_case_idx*/ )
 
     if( cvIsNaN(sum) || cvIsInf(sum) )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
             "The normalized histogram has invalid sum =%g\n", sum );
-        code = cvtest::TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
     }
     else if( fabs(sum - factor) > FLT_EPSILON*10*fabs(factor) )
     {
-        ts->printf( cvtest::TS::LOG,
+        ts->printf( alvision.cvtest.TS::LOG,
             "The normalized histogram has incorrect sum =%g, while it should be =%g\n", sum, factor );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
     if( code < 0 )
@@ -844,7 +844,7 @@ int CV_ThreshHistTest::prepare_test_case( int test_case_idx )
     if( code > 0 )
     {
         RNG& rng = ts->get_rng();
-        threshold = cvtest::randReal(rng)*gen_hist_max_val;
+        threshold = alvision.cvtest.randReal(rng)*gen_hist_max_val;
 
         if( hist_type == CV_HIST_ARRAY )
         {
@@ -894,7 +894,7 @@ void CV_ThreshHistTest::run_func(void)
 
 int CV_ThreshHistTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     int i;
     float* ptr0 = values->data.fl;
     float* ptr = 0;
@@ -922,14 +922,14 @@ int CV_ThreshHistTest::validate_test_results( int /*test_case_idx*/ )
             if( v0 <= threshold ) v0 = 0.f;
             if( cvIsNaN(v) || cvIsInf(v) )
             {
-                ts->printf( cvtest::TS::LOG, "The %d-th bin is invalid (=%g)\n", i, v );
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                ts->printf( alvision.cvtest.TS::LOG, "The %d-th bin is invalid (=%g)\n", i, v );
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 break;
             }
             else if( fabs(v0 - v) > FLT_EPSILON*10*fabs(v0) )
             {
-                ts->printf( cvtest::TS::LOG, "The %d-th bin is incorrect (=%g, should be =%g)\n", i, v, v0 );
-                code = cvtest::TS::FAIL_BAD_ACCURACY;
+                ts->printf( alvision.cvtest.TS::LOG, "The %d-th bin is incorrect (=%g, should be =%g)\n", i, v, v0 );
+                code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
                 break;
             }
         }
@@ -939,9 +939,9 @@ int CV_ThreshHistTest::validate_test_results( int /*test_case_idx*/ )
     {
         if( sparse->heap->active_count > 0 )
         {
-            ts->printf( cvtest::TS::LOG,
+            ts->printf( alvision.cvtest.TS::LOG,
                 "There some extra histogram bins in the sparse histogram after the thresholding\n" );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
         }
     }
 
@@ -1002,7 +1002,7 @@ void CV_CompareHistTest::run_func(void)
 
 int CV_CompareHistTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     int i;
     double result0[MAX_METHOD+1];
     double s0 = 0, s1 = 0, sq0 = 0, sq1 = 0, t;
@@ -1103,16 +1103,16 @@ int CV_CompareHistTest::validate_test_results( int /*test_case_idx*/ )
 
         if( cvIsNaN(v) || cvIsInf(v) )
         {
-            ts->printf( cvtest::TS::LOG, "The comparison result using the method #%d (%s) is invalid (=%g)\n",
+            ts->printf( alvision.cvtest.TS::LOG, "The comparison result using the method #%d (%s) is invalid (=%g)\n",
                 i, method_name, v );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
             break;
         }
         else if( fabs(v0 - v) > FLT_EPSILON*14*MAX(fabs(v0),0.1) )
         {
-            ts->printf( cvtest::TS::LOG, "The comparison result using the method #%d (%s)\n\tis inaccurate (=%g, should be =%g)\n",
+            ts->printf( alvision.cvtest.TS::LOG, "The comparison result using the method #%d (%s)\n\tis inaccurate (=%g, should be =%g)\n",
                 i, method_name, v, v0 );
-            code = cvtest::TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
             break;
         }
     }
@@ -1188,22 +1188,22 @@ int CV_CalcHistTest::prepare_test_case( int test_case_idx )
         {
             if( i < cdims )
             {
-                int nch = 1; //cvtest::randInt(rng) % 3 + 1;
+                int nch = 1; //alvision.cvtest.randInt(rng) % 3 + 1;
                 images[i] = cvCreateImage( img_size,
                     img_type == CV_8U ? IPL_DEPTH_8U : IPL_DEPTH_32F, nch );
-                channels[i] = cvtest::randInt(rng) % nch;
+                channels[i] = alvision.cvtest.randInt(rng) % nch;
                 Mat images_i = cvarrToMat(images[i]);
 
-                cvtest::randUni( rng, images_i, Scalar::all(low), Scalar::all(high) );
+                alvision.cvtest.randUni( rng, images_i, Scalar::all(low), Scalar::all(high) );
             }
-            else if( i == CV_MAX_DIM && cvtest::randInt(rng) % 2 )
+            else if( i == CV_MAX_DIM && alvision.cvtest.randInt(rng) % 2 )
             {
                 // create mask
                 images[i] = cvCreateImage( img_size, IPL_DEPTH_8U, 1 );
                 Mat images_i = cvarrToMat(images[i]);
 
                 // make ~25% pixels in the mask non-zero
-                cvtest::randUni( rng, images_i, Scalar::all(-2), Scalar::all(2) );
+                alvision.cvtest.randUni( rng, images_i, Scalar::all(-2), Scalar::all(2) );
             }
         }
     }
@@ -1313,14 +1313,14 @@ cvTsCalcHist( IplImage** _images, CvHistogram* hist, IplImage* _mask, int* chann
 
 int CV_CalcHistTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     double diff;
     cvTsCalcHist( images, hist[1], images[CV_MAX_DIM], channels );
     diff = cvCompareHist( hist[0], hist[1], CV_COMP_CHISQR );
     if( diff > DBL_EPSILON )
     {
-        ts->printf( cvtest::TS::LOG, "The histogram does not match to the reference one\n" );
-        code = cvtest::TS::FAIL_BAD_ACCURACY;
+        ts->printf( alvision.cvtest.TS::LOG, "The histogram does not match to the reference one\n" );
+        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
 
     }
 
@@ -1399,21 +1399,21 @@ int CV_CalcBackProjectTest::prepare_test_case( int test_case_idx )
         {
             if( i < cdims )
             {
-                int nch = 1; //cvtest::randInt(rng) % 3 + 1;
+                int nch = 1; //alvision.cvtest.randInt(rng) % 3 + 1;
                 images[i] = cvCreateImage( img_size,
                     img_type == CV_8U ? IPL_DEPTH_8U : IPL_DEPTH_32F, nch );
-                channels[i] = cvtest::randInt(rng) % nch;
+                channels[i] = alvision.cvtest.randInt(rng) % nch;
 
                 Mat images_i = cvarrToMat(images[i]);
-                cvtest::randUni( rng, images_i, Scalar::all(low), Scalar::all(high) );
+                alvision.cvtest.randUni( rng, images_i, Scalar::all(low), Scalar::all(high) );
             }
-            else if( i == CV_MAX_DIM && cvtest::randInt(rng) % 2 )
+            else if( i == CV_MAX_DIM && alvision.cvtest.randInt(rng) % 2 )
             {
                 // create mask
                 images[i] = cvCreateImage( img_size, IPL_DEPTH_8U, 1 );
                 Mat images_i = cvarrToMat(images[i]);
                 // make ~25% pixels in the mask non-zero
-                cvtest::randUni( rng, images_i, Scalar::all(-2), Scalar::all(2) );
+                alvision.cvtest.randUni( rng, images_i, Scalar::all(-2), Scalar::all(2) );
             }
             else if( i > CV_MAX_DIM )
             {
@@ -1424,14 +1424,14 @@ int CV_CalcBackProjectTest::prepare_test_case( int test_case_idx )
         cvTsCalcHist( images, hist[0], images[CV_MAX_DIM], channels );
 
         // now modify the images a bit to add some zeros go to the backprojection
-        n = cvtest::randInt(rng) % (img_len/20+1);
+        n = alvision.cvtest.randInt(rng) % (img_len/20+1);
         for( i = 0; i < cdims; i++ )
         {
             char* data = images[i]->imageData;
             for( j = 0; j < n; j++ )
             {
-                int idx = cvtest::randInt(rng) % img_len;
-                double val = cvtest::randReal(rng)*(high - low) + low;
+                int idx = alvision.cvtest.randInt(rng) % img_len;
+                double val = alvision.cvtest.randReal(rng)*(high - low) + low;
 
                 if( img_type == CV_8U )
                     ((uchar*)data)[idx] = (uchar)cvRound(val);
@@ -1539,12 +1539,12 @@ cvTsCalcBackProject( IplImage** images, IplImage* dst, CvHistogram* hist, int* c
 
 int CV_CalcBackProjectTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     cvTsCalcBackProject( images, images[CV_MAX_DIM+2], hist[0], channels );
     Mat a = cvarrToMat(images[CV_MAX_DIM+1]), b = cvarrToMat(images[CV_MAX_DIM+2]);
     double threshold = a.depth() == CV_8U ? 2 : FLT_EPSILON;
-    code = cvtest::cmpEps2( ts, a, b, threshold, true, "Back project image" );
+    code = alvision.cvtest.cmpEps2( ts, a, b, threshold, true, "Back project image" );
 
     if( code < 0 )
         this.ts.set_failed_test_info( code );
@@ -1619,25 +1619,25 @@ int CV_CalcBackProjectPatchTest::prepare_test_case( int test_case_idx )
         RNG& rng = ts->get_rng();
         int i, j, n, img_len = img_size.width*img_size.height;
 
-        patch_size.width = cvtest::randInt(rng) % img_size.width + 1;
-        patch_size.height = cvtest::randInt(rng) % img_size.height + 1;
+        patch_size.width = alvision.cvtest.randInt(rng) % img_size.width + 1;
+        patch_size.height = alvision.cvtest.randInt(rng) % img_size.height + 1;
         patch_size.width = MIN( patch_size.width, 30 );
         patch_size.height = MIN( patch_size.height, 30 );
 
         factor = 1.;
-        method = cvtest::randInt(rng) % CV_CompareHistTest::MAX_METHOD;
+        method = alvision.cvtest.randInt(rng) % CV_CompareHistTest::MAX_METHOD;
 
         for( i = 0; i < CV_MAX_DIM + 2; i++ )
         {
             if( i < cdims )
             {
-                int nch = 1; //cvtest::randInt(rng) % 3 + 1;
+                int nch = 1; //alvision.cvtest.randInt(rng) % 3 + 1;
                 images[i] = cvCreateImage( img_size,
                     img_type == CV_8U ? IPL_DEPTH_8U : IPL_DEPTH_32F, nch );
-                channels[i] = cvtest::randInt(rng) % nch;
+                channels[i] = alvision.cvtest.randInt(rng) % nch;
 
                 Mat images_i = cvarrToMat(images[i]);
-                cvtest::randUni( rng, images_i, Scalar::all(low), Scalar::all(high) );
+                alvision.cvtest.randUni( rng, images_i, Scalar::all(low), Scalar::all(high) );
             }
             else if( i >= CV_MAX_DIM )
             {
@@ -1652,14 +1652,14 @@ int CV_CalcBackProjectPatchTest::prepare_test_case( int test_case_idx )
         cvNormalizeHist( hist[0], factor );
 
         // now modify the images a bit
-        n = cvtest::randInt(rng) % (img_len/10+1);
+        n = alvision.cvtest.randInt(rng) % (img_len/10+1);
         for( i = 0; i < cdims; i++ )
         {
             char* data = images[i]->imageData;
             for( j = 0; j < n; j++ )
             {
-                int idx = cvtest::randInt(rng) % img_len;
-                double val = cvtest::randReal(rng)*(high - low) + low;
+                int idx = alvision.cvtest.randInt(rng) % img_len;
+                double val = alvision.cvtest.randReal(rng)*(high - low) + low;
 
                 if( img_type == CV_8U )
                     ((uchar*)data)[idx] = (uchar)cvRound(val);
@@ -1731,14 +1731,14 @@ cvTsCalcBackProjectPatch( IplImage** images, IplImage* dst, CvSize patch_size,
 
 int CV_CalcBackProjectPatchTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     double err_level = 5e-3;
 
     cvTsCalcBackProjectPatch( images, images[CV_MAX_DIM+1],
         patch_size, hist[0], method, factor, channels );
 
     Mat a = cvarrToMat(images[CV_MAX_DIM]), b = cvarrToMat(images[CV_MAX_DIM+1]);
-    code = cvtest::cmpEps2( ts, a, b, err_level, true, "BackProjectPatch result" );
+    code = alvision.cvtest.cmpEps2( ts, a, b, err_level, true, "BackProjectPatch result" );
 
     if( code < 0 )
         this.ts.set_failed_test_info( code );
@@ -1790,7 +1790,7 @@ int CV_BayesianProbTest::prepare_test_case( int test_case_idx )
 {
     RNG& rng = ts->get_rng();
 
-    hist_count = (cvtest::randInt(rng) % (MAX_HIST/2-1) + 2)*2;
+    hist_count = (alvision.cvtest.randInt(rng) % (MAX_HIST/2-1) + 2)*2;
     hist_count = MIN( hist_count, MAX_HIST );
     int code = CV_BaseHistTest::prepare_test_case( test_case_idx );
 
@@ -1806,7 +1806,7 @@ void CV_BayesianProbTest::run_func(void)
 
 int CV_BayesianProbTest::validate_test_results( int /*test_case_idx*/ )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     int i, j, n = hist_count/2;
     double s[CV_MAX_DIM];
     const double err_level = 1e-5;
@@ -1829,18 +1829,18 @@ int CV_BayesianProbTest::validate_test_results( int /*test_case_idx*/ )
 
             if( cvIsNaN(v) || cvIsInf(v) )
             {
-                ts->printf( cvtest::TS::LOG,
+                ts->printf( alvision.cvtest.TS::LOG,
                     "The element #%d in the destination histogram #%d is invalid (=%g)\n",
                     i, j, v );
-                code = cvtest::TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
                 break;
             }
             else if( fabs(v0 - v) > err_level*fabs(v0) )
             {
-                ts->printf( cvtest::TS::LOG,
+                ts->printf( alvision.cvtest.TS::LOG,
                     "The element #%d in the destination histogram #%d is inaccurate (=%g, should be =%g)\n",
                     i, j, v, v0 );
-                code = cvtest::TS::FAIL_BAD_ACCURACY;
+                code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
                 break;
             }
         }

@@ -240,7 +240,7 @@
 
 //        //------------
 //        cvReleaseImage(&temp_img);
-//        ts ->set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : cvtest::TS::OK);
+//        ts ->set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
 //    }
 //    protected run_func(): void {
 //        if (useCPlus) {
@@ -354,7 +354,7 @@
 //        //------------
 //        delete [] arr_mapx;
 //        delete [] arr_mapy;
-//        ts ->set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : cvtest::TS::OK);
+//        ts ->set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
 //    }
 //    protected run_func() : void{
 //    if (useCPlus) {
@@ -465,7 +465,7 @@
 //        //------------
 //        delete [] arr_src;
 //        delete [] arr_dst;
-//        ts ->set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : cvtest::TS::OK);
+//        ts ->set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
 //    }
 //    protected run_func(): void {
 //        if (useCPlus) {

@@ -138,7 +138,7 @@ static void DFT_2D( const Mat& src, Mat& dst, int flags )
         }
     }
     else
-        cvtest::transpose(tmp, dst);
+        alvision.cvtest.transpose(tmp, dst);
 }
 
 
@@ -247,7 +247,7 @@ static void DCT_2D( const Mat& src, Mat& dst, int flags )
         }
     }
     else
-        cvtest::transpose( tmp, dst );
+        alvision.cvtest.transpose( tmp, dst );
 }
 
 
@@ -502,7 +502,7 @@ static void mulComplex( const Mat& src1, const Mat& src2, Mat& dst, int flags )
 class CxCore_DXTBaseTest extends alvision.cvtest.ArrayTest
 {
 public:
-    typedef cvtest::ArrayTest Base;
+    typedef alvision.cvtest.ArrayTest Base;
     CxCore_DXTBaseTest( bool _allow_complex=false, bool _allow_odd=false,
                         bool _spectrum_mode=false );
 protected:
@@ -543,8 +543,8 @@ void CxCore_DXTBaseTest::get_test_array_types_and_sizes( int test_case_idx,
                                                          vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    int bits = cvtest::randInt(rng);
-    int depth = cvtest::randInt(rng)%2 + CV_32F;
+    int bits = alvision.cvtest.randInt(rng);
+    int depth = alvision.cvtest.randInt(rng)%2 + CV_32F;
     int cn = !allow_complex || !(bits & 256) ? 1 : 2;
     Size size;
     Base::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -660,10 +660,10 @@ int CxCore_DXTBaseTest::prepare_test_case( int test_case_idx )
         int out_type = test_mat[OUTPUT][0].type();
 
         if( CV_MAT_CN(in_type) == 2 && CV_MAT_CN(out_type) == 1 )
-            cvtest::fixCCS( test_mat[INPUT][0], test_mat[OUTPUT][0].cols, flags );
+            alvision.cvtest.fixCCS( test_mat[INPUT][0], test_mat[OUTPUT][0].cols, flags );
 
         if( inplace )
-            cvtest::copy( test_mat[INPUT][test_case_idx & (int)spectrum_mode],
+            alvision.cvtest.copy( test_mat[INPUT][test_case_idx & (int)spectrum_mode],
                      temp_dst ? test_mat[TEMP][1] :
                      in_type == out_type ? test_mat[OUTPUT][0] :
                      test_mat[TEMP][0] );
@@ -717,25 +717,25 @@ void CxCore_DFTTest::prepare_to_validation( int /*test_case_idx*/ )
         if( !(flags & CV_DXT_INVERSE ) )
         {
             Mat& cvdft_dst = test_mat[TEMP][1];
-            cvtest::convertFromCCS( cvdft_dst, cvdft_dst,
+            alvision.cvtest.convertFromCCS( cvdft_dst, cvdft_dst,
                                test_mat[OUTPUT][0], flags );
             *tmp_src = Scalar::all(0);
-            cvtest::insert( src, *tmp_src, 0 );
+            alvision.cvtest.insert( src, *tmp_src, 0 );
         }
         else
         {
-            cvtest::convertFromCCS( src, src, *tmp_src, flags );
+            alvision.cvtest.convertFromCCS( src, src, *tmp_src, flags );
             tmp_dst = &test_mat[TEMP][1];
         }
     }
 
     if( src.rows == 1 || (src.cols == 1 && !(flags & CV_DXT_ROWS)) )
-        cvtest::DFT_1D( *tmp_src, *tmp_dst, flags );
+        alvision.cvtest.DFT_1D( *tmp_src, *tmp_dst, flags );
     else
-        cvtest::DFT_2D( *tmp_src, *tmp_dst, flags );
+        alvision.cvtest.DFT_2D( *tmp_src, *tmp_dst, flags );
 
     if( tmp_dst != &dst )
-        cvtest::extract( *tmp_dst, dst, 0 );
+        alvision.cvtest.extract( *tmp_dst, dst, 0 );
 }
 
 ////////////////////// DCT ////////////////////////
@@ -772,9 +772,9 @@ void CxCore_DCTTest::prepare_to_validation( int /*test_case_idx*/ )
     Mat& dst = test_mat[REF_OUTPUT][0];
 
     if( src.rows == 1 || (src.cols == 1 && !(flags & CV_DXT_ROWS)) )
-        cvtest::DCT_1D( src, dst, flags );
+        alvision.cvtest.DCT_1D( src, dst, flags );
     else
-        cvtest::DCT_2D( src, dst, flags );
+        alvision.cvtest.DCT_2D( src, dst, flags );
 }
 
 
@@ -822,17 +822,17 @@ void CxCore_MulSpectrumsTest::prepare_to_validation( int /*test_case_idx*/ )
 
     if( cn == 1 )
     {
-        cvtest::convertFromCCS( *src1, *src1, dst, flags );
-        cvtest::convertFromCCS( *src2, *src2, dst0, flags );
+        alvision.cvtest.convertFromCCS( *src1, *src1, dst, flags );
+        alvision.cvtest.convertFromCCS( *src2, *src2, dst0, flags );
         src1 = &dst;
         src2 = &dst0;
     }
 
-    cvtest::mulComplex( *src1, *src2, dst0, flags );
+    alvision.cvtest.mulComplex( *src1, *src2, dst0, flags );
     if( cn == 1 )
     {
         Mat& temp = test_mat[TEMP][0];
-        cvtest::convertFromCCS( temp, temp, dst, flags );
+        alvision.cvtest.convertFromCCS( temp, temp, dst, flags );
     }
 }
 
@@ -863,7 +863,7 @@ protected:
             merge(mv, 2, srcz);
             dft(srcz, dstz);
             dft(src, dst, DFT_COMPLEX_OUTPUT);
-            if (cvtest::norm(dst, dstz, NORM_INF) > 1e-3)
+            if (alvision.cvtest.norm(dst, dstz, NORM_INF) > 1e-3)
             {
                 cout << "actual:\n" << dst << endl << endl;
                 cout << "reference:\n" << dstz << endl << endl;

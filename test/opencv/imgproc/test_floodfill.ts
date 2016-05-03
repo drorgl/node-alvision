@@ -103,17 +103,17 @@ void CV_FloodFillTest::get_test_array_types_and_sizes( int test_case_idx,
     int depth, cn;
     int i;
     double buff[8];
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
-    depth = cvtest::randInt(rng) % 3;
+    depth = alvision.cvtest.randInt(rng) % 3;
     depth = depth == 0 ? CV_8U : depth == 1 ? CV_32S : CV_32F;
-    cn = cvtest::randInt(rng) & 1 ? 3 : 1;
+    cn = alvision.cvtest.randInt(rng) & 1 ? 3 : 1;
 
-    use_mask = (cvtest::randInt(rng) & 1) != 0;
-    connectivity = (cvtest::randInt(rng) & 1) ? 4 : 8;
-    mask_only = use_mask && (cvtest::randInt(rng) & 1) != 0;
-    new_mask_val = cvtest::randInt(rng) & 255;
-    range_type = cvtest::randInt(rng) % 3;
+    use_mask = (alvision.cvtest.randInt(rng) & 1) != 0;
+    connectivity = (alvision.cvtest.randInt(rng) & 1) ? 4 : 8;
+    mask_only = use_mask && (alvision.cvtest.randInt(rng) & 1) != 0;
+    new_mask_val = alvision.cvtest.randInt(rng) & 255;
+    range_type = alvision.cvtest.randInt(rng) % 3;
 
     types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] = CV_MAKETYPE(depth, cn);
     types[INPUT_OUTPUT][1] = types[REF_INPUT_OUTPUT][1] = CV_8UC1;
@@ -128,8 +128,8 @@ void CV_FloodFillTest::get_test_array_types_and_sizes( int test_case_idx,
         sizes[INPUT_OUTPUT][1] = sizes[REF_INPUT_OUTPUT][1] = cvSize(sz.width+2,sz.height+2);
     }
 
-    seed_pt.x = cvtest::randInt(rng) % sizes[INPUT_OUTPUT][0].width;
-    seed_pt.y = cvtest::randInt(rng) % sizes[INPUT_OUTPUT][0].height;
+    seed_pt.x = alvision.cvtest.randInt(rng) % sizes[INPUT_OUTPUT][0].width;
+    seed_pt.y = alvision.cvtest.randInt(rng) % sizes[INPUT_OUTPUT][0].height;
 
     if( range_type == 0 )
         l_diff = u_diff = Scalar::all(0.);
@@ -146,9 +146,9 @@ void CV_FloodFillTest::get_test_array_types_and_sizes( int test_case_idx,
 
     new_val = Scalar::all(0.);
     for( i = 0; i < cn; i++ )
-        new_val.val[i] = cvtest::randReal(rng)*255;
+        new_val.val[i] = alvision.cvtest.randReal(rng)*255;
 
-    test_cpp = (cvtest::randInt(rng) & 256) == 0;
+    test_cpp = (alvision.cvtest.randInt(rng) & 256) == 0;
 }
 
 
@@ -164,7 +164,7 @@ void CV_FloodFillTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
 
     if( i != INPUT && i != INPUT_OUTPUT )
     {
-        cvtest::ArrayTest::fill_array( test_case_idx, i, j, arr );
+        alvision.cvtest.ArrayTest::fill_array( test_case_idx, i, j, arr );
         return;
     }
 
@@ -182,13 +182,13 @@ void CV_FloodFillTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
 
         rng.fill(tmp, RNG::NORMAL, m, s );
         if( arr.data != tmp.data )
-            cvtest::convert(tmp, arr, arr.type());
+            alvision.cvtest.convert(tmp, arr, arr.type());
     }
     else
     {
         Scalar l = Scalar::all(-2);
         Scalar u = Scalar::all(2);
-        cvtest::randUni(rng, arr, l, u );
+        alvision.cvtest.randUni(rng, arr, l, u );
         rectangle( arr, Point(0,0), Point(arr.cols-1,arr.rows-1), Scalar::all(1), 1, 8, 0 );
     }
 }
@@ -267,17 +267,17 @@ cvTsFloodFill( CvMat* _img, CvPoint seed_pt, CvScalar new_val,
     if( CV_MAT_DEPTH(_img->type) == CV_8U || CV_MAT_DEPTH(_img->type) == CV_32S )
     {
         tmp = cvCreateMat( rows, cols, CV_MAKETYPE(CV_32F,CV_MAT_CN(_img->type)) );
-        cvtest::convert(cvarrToMat(_img), cvarrToMat(tmp), -1);
+        alvision.cvtest.convert(cvarrToMat(_img), cvarrToMat(tmp), -1);
     }
 
     mask = cvCreateMat( rows + 2, cols + 2, CV_16UC1 );
 
     if( _mask )
-        cvtest::convert(cvarrToMat(_mask), cvarrToMat(mask), -1);
+        alvision.cvtest.convert(cvarrToMat(_mask), cvarrToMat(mask), -1);
     else
     {
         Mat m_mask = cvarrToMat(mask);
-        cvtest::set( m_mask, Scalar::all(0), Mat() );
+        alvision.cvtest.set( m_mask, Scalar::all(0), Mat() );
         cvRectangle( mask, cvPoint(0,0), cvPoint(mask->cols-1,mask->rows-1), Scalar::all(1.), 1, 8, 0 );
     }
 
@@ -490,7 +490,7 @@ _exit_:
     if( tmp != _img )
     {
         if( !mask_only )
-            cvtest::convert(cvarrToMat(tmp), cvarrToMat(_img), -1);
+            alvision.cvtest.convert(cvarrToMat(tmp), cvarrToMat(_img), -1);
         cvReleaseMat( &tmp );
     }
 

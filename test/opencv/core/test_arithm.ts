@@ -33,18 +33,18 @@ struct BaseElemWiseOp
     virtual void refop(const vector<Mat>&, Mat&, const Mat&) {}
     virtual void getValueRange(int depth, double& minval, double& maxval)
     {
-        minval = depth < CV_32S ? cvtest::getMinVal(depth) : depth == CV_32S ? -1000000 : -1000.;
-        maxval = depth < CV_32S ? cvtest::getMaxVal(depth) : depth == CV_32S ? 1000000 : 1000.;
+        minval = depth < CV_32S ? alvision.cvtest.getMinVal(depth) : depth == CV_32S ? -1000000 : -1000.;
+        maxval = depth < CV_32S ? alvision.cvtest.getMaxVal(depth) : depth == CV_32S ? 1000000 : 1000.;
     }
 
     virtual void getRandomSize(RNG& rng, vector<int>& size)
     {
-        cvtest::randomSize(rng, 2, ARITHM_MAX_NDIMS, cvtest::ARITHM_MAX_SIZE_LOG, size);
+        alvision.cvtest.randomSize(rng, 2, ARITHM_MAX_NDIMS, alvision.cvtest.ARITHM_MAX_SIZE_LOG, size);
     }
 
     virtual int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1,
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1,
                                   ninputs > 1 ? ARITHM_MAX_CHANNELS : 4);
     }
 
@@ -112,11 +112,11 @@ struct BaseAddOp : public BaseElemWiseOp
         Mat temp;
         if( !mask.empty() )
         {
-            cvtest::add(src[0], alpha, src.size() > 1 ? src[1] : Mat(), beta, gamma, temp, src[0].type());
-            cvtest::copy(temp, dst, mask);
+            alvision.cvtest.add(src[0], alpha, src.size() > 1 ? src[1] : Mat(), beta, gamma, temp, src[0].type());
+            alvision.cvtest.copy(temp, dst, mask);
         }
         else
-            cvtest::add(src[0], alpha, src.size() > 1 ? src[1] : Mat(), beta, gamma, dst, src[0].type());
+            alvision.cvtest.add(src[0], alpha, src.size() > 1 ? src[1] : Mat(), beta, gamma, dst, src[0].type());
     }
 };
 
@@ -205,8 +205,8 @@ struct MulOp : public BaseElemWiseOp
     MulOp() : BaseElemWiseOp(2, FIX_BETA+FIX_GAMMA, 1, 1, Scalar::all(0)) {}
     void getValueRange(int depth, double& minval, double& maxval)
     {
-        minval = depth < CV_32S ? cvtest::getMinVal(depth) : depth == CV_32S ? -1000000 : -1000.;
-        maxval = depth < CV_32S ? cvtest::getMaxVal(depth) : depth == CV_32S ? 1000000 : 1000.;
+        minval = depth < CV_32S ? alvision.cvtest.getMinVal(depth) : depth == CV_32S ? -1000000 : -1000.;
+        maxval = depth < CV_32S ? alvision.cvtest.getMaxVal(depth) : depth == CV_32S ? 1000000 : 1000.;
         minval = std::max(minval, -30000.);
         maxval = std::min(maxval, 30000.);
     }
@@ -216,7 +216,7 @@ struct MulOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::multiply(src[0], src[1], dst, alpha);
+        alvision.cvtest.multiply(src[0], src[1], dst, alpha);
     }
     double getMaxErr(int depth)
     {
@@ -233,7 +233,7 @@ struct DivOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::divide(src[0], src[1], dst, alpha);
+        alvision.cvtest.divide(src[0], src[1], dst, alpha);
     }
     double getMaxErr(int depth)
     {
@@ -250,7 +250,7 @@ struct RecipOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::divide(Mat(), src[0], dst, alpha);
+        alvision.cvtest.divide(Mat(), src[0], dst, alpha);
     }
     double getMaxErr(int depth)
     {
@@ -267,7 +267,7 @@ struct AbsDiffOp : public BaseAddOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::add(src[0], 1, src[1], -1, Scalar::all(0), dst, src[0].type(), true);
+        alvision.cvtest.add(src[0], 1, src[1], -1, Scalar::all(0), dst, src[0].type(), true);
     }
 };
 
@@ -280,7 +280,7 @@ struct AbsDiffSOp : public BaseAddOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::add(src[0], 1, Mat(), 0, -gamma, dst, src[0].type(), true);
+        alvision.cvtest.add(src[0], 1, Mat(), 0, -gamma, dst, src[0].type(), true);
     }
 };
 
@@ -301,11 +301,11 @@ struct LogicOp : public BaseElemWiseOp
         Mat temp;
         if( !mask.empty() )
         {
-            cvtest::logicOp(src[0], src[1], temp, opcode);
-            cvtest::copy(temp, dst, mask);
+            alvision.cvtest.logicOp(src[0], src[1], temp, opcode);
+            alvision.cvtest.copy(temp, dst, mask);
         }
         else
-            cvtest::logicOp(src[0], src[1], dst, opcode);
+            alvision.cvtest.logicOp(src[0], src[1], dst, opcode);
     }
     double getMaxErr(int)
     {
@@ -334,11 +334,11 @@ struct LogicSOp : public BaseElemWiseOp
         Mat temp;
         if( !mask.empty() )
         {
-            cvtest::logicOp(src[0], gamma, temp, opcode);
-            cvtest::copy(temp, dst, mask);
+            alvision.cvtest.logicOp(src[0], gamma, temp, opcode);
+            alvision.cvtest.copy(temp, dst, mask);
         }
         else
-            cvtest::logicOp(src[0], gamma, dst, opcode);
+            alvision.cvtest.logicOp(src[0], gamma, dst, opcode);
     }
     double getMaxErr(int)
     {
@@ -356,7 +356,7 @@ struct MinOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::min(src[0], src[1], dst);
+        alvision.cvtest.min(src[0], src[1], dst);
     }
     double getMaxErr(int)
     {
@@ -373,7 +373,7 @@ struct MaxOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::max(src[0], src[1], dst);
+        alvision.cvtest.max(src[0], src[1], dst);
     }
     double getMaxErr(int)
     {
@@ -390,7 +390,7 @@ struct MinSOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::min(src[0], gamma[0], dst);
+        alvision.cvtest.min(src[0], gamma[0], dst);
     }
     double getMaxErr(int)
     {
@@ -407,7 +407,7 @@ struct MaxSOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::max(src[0], gamma[0], dst);
+        alvision.cvtest.max(src[0], gamma[0], dst);
     }
     double getMaxErr(int)
     {
@@ -429,11 +429,11 @@ struct CmpOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::compare(src[0], src[1], dst, cmpop);
+        alvision.cvtest.compare(src[0], src[1], dst, cmpop);
     }
     int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1, 1);
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1, 1);
     }
 
     double getMaxErr(int)
@@ -459,11 +459,11 @@ struct CmpSOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::compare(src[0], gamma[0], dst, cmpop);
+        alvision.cvtest.compare(src[0], gamma[0], dst, cmpop);
     }
     int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1, 1);
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1, 1);
     }
     double getMaxErr(int)
     {
@@ -482,11 +482,11 @@ struct CopyOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat& mask)
     {
-        cvtest::copy(src[0], dst, mask);
+        alvision.cvtest.copy(src[0], dst, mask);
     }
     int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, ARITHM_MAX_CHANNELS);
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, ARITHM_MAX_CHANNELS);
     }
     double getMaxErr(int)
     {
@@ -504,11 +504,11 @@ struct SetOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>&, Mat& dst, const Mat& mask)
     {
-        cvtest::set(dst, gamma, mask);
+        alvision.cvtest.set(dst, gamma, mask);
     }
     int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, ARITHM_MAX_CHANNELS);
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, ARITHM_MAX_CHANNELS);
     }
     double getMaxErr(int)
     {
@@ -665,7 +665,7 @@ struct InRangeSOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::inRangeS(src[0], gamma, gamma1, dst);
+        alvision.cvtest.inRangeS(src[0], gamma, gamma1, dst);
     }
     double getMaxErr(int)
     {
@@ -692,18 +692,18 @@ struct InRangeOp : public BaseElemWiseOp
     void op(const vector<Mat>& src, Mat& dst, const Mat&)
     {
         Mat lb, rb;
-        cvtest::min(src[1], src[2], lb);
-        cvtest::max(src[1], src[2], rb);
+        alvision.cvtest.min(src[1], src[2], lb);
+        alvision.cvtest.max(src[1], src[2], rb);
 
         cv::inRange(src[0], lb, rb, dst);
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
         Mat lb, rb;
-        cvtest::min(src[1], src[2], lb);
-        cvtest::max(src[1], src[2], rb);
+        alvision.cvtest.min(src[1], src[2], lb);
+        alvision.cvtest.max(src[1], src[2], rb);
 
-        cvtest::inRange(src[0], lb, rb, dst);
+        alvision.cvtest.inRange(src[0], lb, rb, dst);
     }
     double getMaxErr(int)
     {
@@ -721,12 +721,12 @@ struct ConvertScaleOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::convert(src[0], dst, CV_MAKETYPE(ddepth, src[0].channels()), alpha, gamma[0]);
+        alvision.cvtest.convert(src[0], dst, CV_MAKETYPE(ddepth, src[0].channels()), alpha, gamma[0]);
     }
     int getRandomType(RNG& rng)
     {
-        int srctype = cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, ARITHM_MAX_CHANNELS);
-        ddepth = cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, 1);
+        int srctype = alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, ARITHM_MAX_CHANNELS);
+        ddepth = alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, 1);
         return srctype;
     }
     double getMaxErr(int)
@@ -756,7 +756,7 @@ struct ConvertScaleAbsOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::add(src[0], alpha, Mat(), 0, Scalar::all(gamma[0]), dst, CV_8UC(src[0].channels()), true);
+        alvision.cvtest.add(src[0], alpha, Mat(), 0, Scalar::all(gamma[0]), dst, CV_8UC(src[0].channels()), true);
     }
     double getMaxErr(int)
     {
@@ -820,7 +820,7 @@ struct FlipOp : public BaseElemWiseOp
     FlipOp() : BaseElemWiseOp(1, FIX_ALPHA+FIX_BETA+FIX_GAMMA, 1, 1, Scalar::all(0)) { flipcode = 0; }
     void getRandomSize(RNG& rng, vector<int>& size)
     {
-        cvtest::randomSize(rng, 2, 2, cvtest::ARITHM_MAX_SIZE_LOG, size);
+        alvision.cvtest.randomSize(rng, 2, 2, alvision.cvtest.ARITHM_MAX_SIZE_LOG, size);
     }
     void op(const vector<Mat>& src, Mat& dst, const Mat&)
     {
@@ -828,7 +828,7 @@ struct FlipOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::flip(src[0], dst, flipcode);
+        alvision.cvtest.flip(src[0], dst, flipcode);
     }
     void generateScalars(int, RNG& rng)
     {
@@ -846,7 +846,7 @@ struct TransposeOp : public BaseElemWiseOp
     TransposeOp() : BaseElemWiseOp(1, FIX_ALPHA+FIX_BETA+FIX_GAMMA, 1, 1, Scalar::all(0)) {}
     void getRandomSize(RNG& rng, vector<int>& size)
     {
-        cvtest::randomSize(rng, 2, 2, cvtest::ARITHM_MAX_SIZE_LOG, size);
+        alvision.cvtest.randomSize(rng, 2, 2, alvision.cvtest.ARITHM_MAX_SIZE_LOG, size);
     }
     void op(const vector<Mat>& src, Mat& dst, const Mat&)
     {
@@ -854,7 +854,7 @@ struct TransposeOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::transpose(src[0], dst);
+        alvision.cvtest.transpose(src[0], dst);
     }
     double getMaxErr(int)
     {
@@ -867,7 +867,7 @@ struct SetIdentityOp : public BaseElemWiseOp
     SetIdentityOp() : BaseElemWiseOp(0, FIX_ALPHA+FIX_BETA, 1, 1, Scalar::all(0)) {}
     void getRandomSize(RNG& rng, vector<int>& size)
     {
-        cvtest::randomSize(rng, 2, 2, cvtest::ARITHM_MAX_SIZE_LOG, size);
+        alvision.cvtest.randomSize(rng, 2, 2, alvision.cvtest.ARITHM_MAX_SIZE_LOG, size);
     }
     void op(const vector<Mat>&, Mat& dst, const Mat&)
     {
@@ -875,7 +875,7 @@ struct SetIdentityOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>&, Mat& dst, const Mat&)
     {
-        cvtest::setIdentity(dst, gamma);
+        alvision.cvtest.setIdentity(dst, gamma);
     }
     double getMaxErr(int)
     {
@@ -892,7 +892,7 @@ struct SetZeroOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>&, Mat& dst, const Mat&)
     {
-        cvtest::set(dst, Scalar::all(0));
+        alvision.cvtest.set(dst, Scalar::all(0));
     }
     double getMaxErr(int)
     {
@@ -964,7 +964,7 @@ struct ExpOp : public BaseElemWiseOp
     ExpOp() : BaseElemWiseOp(1, FIX_ALPHA+FIX_BETA+FIX_GAMMA, 1, 1, Scalar::all(0)) {}
     int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_FLT, 1, ARITHM_MAX_CHANNELS);
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_FLT, 1, ARITHM_MAX_CHANNELS);
     }
     void getValueRange(int depth, double& minval, double& maxval)
     {
@@ -977,7 +977,7 @@ struct ExpOp : public BaseElemWiseOp
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
-        cvtest::exp(src[0], dst);
+        alvision.cvtest.exp(src[0], dst);
     }
     double getMaxErr(int depth)
     {
@@ -991,7 +991,7 @@ struct LogOp : public BaseElemWiseOp
     LogOp() : BaseElemWiseOp(1, FIX_ALPHA+FIX_BETA+FIX_GAMMA, 1, 1, Scalar::all(0)) {}
     int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_FLT, 1, ARITHM_MAX_CHANNELS);
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_FLT, 1, ARITHM_MAX_CHANNELS);
     }
     void getValueRange(int depth, double& minval, double& maxval)
     {
@@ -1001,14 +1001,14 @@ struct LogOp : public BaseElemWiseOp
     void op(const vector<Mat>& src, Mat& dst, const Mat&)
     {
         Mat temp;
-        cvtest::exp(src[0], temp);
+        alvision.cvtest.exp(src[0], temp);
         cv::log(temp, dst);
     }
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
         Mat temp;
-        cvtest::exp(src[0], temp);
-        cvtest::log(temp, dst);
+        alvision.cvtest.exp(src[0], temp);
+        alvision.cvtest.log(temp, dst);
     }
     double getMaxErr(int depth)
     {
@@ -1077,7 +1077,7 @@ struct CartToPolarToCartOp : public BaseElemWiseOp
     }
     int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_FLT, 1, 1);
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_FLT, 1, 1);
     }
     void op(const vector<Mat>& src, Mat& dst, const Mat&)
     {
@@ -1094,7 +1094,7 @@ struct CartToPolarToCartOp : public BaseElemWiseOp
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
         Mat mag, angle;
-        cvtest::cartToPolar(src[0], src[1], mag, angle, angleInDegrees);
+        alvision.cvtest.cartToPolar(src[0], src[1], mag, angle, angleInDegrees);
         Mat msrc[] = {mag, angle, src[0], src[1]};
         int pairs[] = {0, 0, 1, 1, 2, 2, 3, 3};
         dst.create(src[0].dims, src[0].size, CV_MAKETYPE(src[0].depth(), 4));
@@ -1126,7 +1126,7 @@ struct MeanOp : public BaseElemWiseOp
     void refop(const vector<Mat>& src, Mat& dst, const Mat& mask)
     {
         dst.create(1, 1, CV_64FC4);
-        dst.at<Scalar>(0,0) = cvtest::mean(src[0], mask);
+        dst.at<Scalar>(0,0) = alvision.cvtest.mean(src[0], mask);
     }
     double getMaxErr(int)
     {
@@ -1149,7 +1149,7 @@ struct SumOp : public BaseElemWiseOp
     void refop(const vector<Mat>& src, Mat& dst, const Mat&)
     {
         dst.create(1, 1, CV_64FC4);
-        dst.at<Scalar>(0,0) = cvtest::mean(src[0])*(double)src[0].total();
+        dst.at<Scalar>(0,0) = alvision.cvtest.mean(src[0])*(double)src[0].total();
     }
     double getMaxErr(int)
     {
@@ -1164,7 +1164,7 @@ struct CountNonZeroOp : public BaseElemWiseOp
     {}
     int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, 1);
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL, 1, 1);
     }
     void op(const vector<Mat>& src, Mat& dst, const Mat& mask)
     {
@@ -1178,11 +1178,11 @@ struct CountNonZeroOp : public BaseElemWiseOp
     void refop(const vector<Mat>& src, Mat& dst, const Mat& mask)
     {
         Mat temp;
-        cvtest::compare(src[0], 0, temp, CMP_NE);
+        alvision.cvtest.compare(src[0], 0, temp, CMP_NE);
         if( !mask.empty() )
-            cvtest::set(temp, Scalar::all(0), mask);
+            alvision.cvtest.set(temp, Scalar::all(0), mask);
         dst.create(1, 1, CV_32S);
-        dst.at<int>(0,0) = saturate_cast<int>(cvtest::mean(temp)[0]/255*temp.total());
+        dst.at<int>(0,0) = saturate_cast<int>(alvision.cvtest.mean(temp)[0]/255*temp.total());
     }
     double getMaxErr(int)
     {
@@ -1209,10 +1209,10 @@ struct MeanStdDevOp : public BaseElemWiseOp
     void refop(const vector<Mat>& src, Mat& dst, const Mat& mask)
     {
         Mat temp;
-        cvtest::convert(src[0], temp, CV_64F);
-        cvtest::multiply(temp, temp, temp);
-        Scalar mean = cvtest::mean(src[0], mask);
-        Scalar sqmean = cvtest::mean(temp, mask);
+        alvision.cvtest.convert(src[0], temp, CV_64F);
+        alvision.cvtest.multiply(temp, temp, temp);
+        Scalar mean = alvision.cvtest.mean(src[0], mask);
+        Scalar sqmean = alvision.cvtest.mean(temp, mask);
 
         sqmeanRef = sqmean;
         cn = temp.channels();
@@ -1244,7 +1244,7 @@ struct NormOp : public BaseElemWiseOp
     };
     int getRandomType(RNG& rng)
     {
-        int type = cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1, 4);
+        int type = alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1, 4);
         for(;;)
         {
             normType = rng.uniform(1, 8);
@@ -1268,8 +1268,8 @@ struct NormOp : public BaseElemWiseOp
     void refop(const vector<Mat>& src, Mat& dst, const Mat& mask)
     {
         dst.create(1, 2, CV_64FC1);
-        dst.at<double>(0,0) = cvtest::norm(src[0], normType, mask);
-        dst.at<double>(0,1) = cvtest::norm(src[0], src[1], normType, mask);
+        dst.at<double>(0,0) = alvision.cvtest.norm(src[0], normType, mask);
+        dst.at<double>(0,1) = alvision.cvtest.norm(src[0], src[1], normType, mask);
     }
     void generateScalars(int, RNG& /*rng*/)
     {
@@ -1290,7 +1290,7 @@ struct MinMaxLocOp : public BaseElemWiseOp
     };
     int getRandomType(RNG& rng)
     {
-        return cvtest::randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1, 1);
+        return alvision.cvtest.randomType(rng, _OutputArray::DEPTH_MASK_ALL_BUT_8S, 1, 1);
     }
     void saveOutput(const vector<int>& minidx, const vector<int>& maxidx,
                     double minval, double maxval, Mat& dst)
@@ -1319,7 +1319,7 @@ struct MinMaxLocOp : public BaseElemWiseOp
         int ndims=src[0].dims;
         vector<int> minidx(ndims), maxidx(ndims);
         double minval=0, maxval=0;
-        cvtest::minMaxLoc(src[0], &minval, &maxval, &minidx, &maxidx, mask);
+        alvision.cvtest.minMaxLoc(src[0], &minval, &maxval, &minidx, &maxidx, mask);
         saveOutput(minidx, maxidx, minval, maxval, dst);
     }
     double getMaxErr(int)
@@ -1331,7 +1331,7 @@ struct MinMaxLocOp : public BaseElemWiseOp
 
 }
 
-typedef Ptr<cvtest::BaseElemWiseOp> ElemWiseOpPtr;
+typedef Ptr<alvision.cvtest.BaseElemWiseOp> ElemWiseOpPtr;
 class ElemWiseTest : public ::testing::TestWithParam<ElemWiseOpPtr> {};
 
 TEST_P(ElemWiseTest, accuracy)
@@ -1339,30 +1339,30 @@ TEST_P(ElemWiseTest, accuracy)
     ElemWiseOpPtr op = GetParam();
 
     int testIdx = 0;
-    RNG rng((uint64)cvtest::ARITHM_RNG_SEED);
-    for( testIdx = 0; testIdx < cvtest::ARITHM_NTESTS; testIdx++ )
+    RNG rng((uint64)alvision.cvtest.ARITHM_RNG_SEED);
+    for( testIdx = 0; testIdx < alvision.cvtest.ARITHM_NTESTS; testIdx++ )
     {
         vector<int> size;
         op->getRandomSize(rng, size);
         int type = op->getRandomType(rng);
         int depth = CV_MAT_DEPTH(type);
-        bool haveMask = (op->flags & cvtest::BaseElemWiseOp::SUPPORT_MASK) != 0 && rng.uniform(0, 4) == 0;
+        bool haveMask = (op->flags & alvision.cvtest.BaseElemWiseOp::SUPPORT_MASK) != 0 && rng.uniform(0, 4) == 0;
 
         double minval=0, maxval=0;
         op->getValueRange(depth, minval, maxval);
         int i, ninputs = op->ninputs;
         vector<Mat> src(ninputs);
         for( i = 0; i < ninputs; i++ )
-            src[i] = cvtest::randomMat(rng, size, type, minval, maxval, true);
+            src[i] = alvision.cvtest.randomMat(rng, size, type, minval, maxval, true);
         Mat dst0, dst, mask;
         if( haveMask )
-            mask = cvtest::randomMat(rng, size, CV_8U, 0, 2, true);
+            mask = alvision.cvtest.randomMat(rng, size, CV_8U, 0, 2, true);
 
-        if( (haveMask || ninputs == 0) && !(op->flags & cvtest::BaseElemWiseOp::SCALAR_OUTPUT))
+        if( (haveMask || ninputs == 0) && !(op->flags & alvision.cvtest.BaseElemWiseOp::SCALAR_OUTPUT))
         {
-            dst0 = cvtest::randomMat(rng, size, type, minval, maxval, false);
-            dst = cvtest::randomMat(rng, size, type, minval, maxval, true);
-            cvtest::copy(dst, dst0);
+            dst0 = alvision.cvtest.randomMat(rng, size, type, minval, maxval, false);
+            dst = alvision.cvtest.randomMat(rng, size, type, minval, maxval, true);
+            alvision.cvtest.copy(dst, dst0);
         }
         op->generateScalars(depth, rng);
 
@@ -1370,66 +1370,66 @@ TEST_P(ElemWiseTest, accuracy)
         op->op(src, dst, mask);
 
         double maxErr = op->getMaxErr(depth);
-        ASSERT_PRED_FORMAT2(cvtest::MatComparator(maxErr, op->context), dst0, dst) << "\nsrc[0] ~ " <<
-            cvtest::MatInfo(!src.empty() ? src[0] : Mat()) << "\ntestCase #" << testIdx << "\n";
+        ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(maxErr, op->context), dst0, dst) << "\nsrc[0] ~ " <<
+            alvision.cvtest.MatInfo(!src.empty() ? src[0] : Mat()) << "\ntestCase #" << testIdx << "\n";
     }
 }
 
 
-INSTANTIATE_TEST_CASE_P(Core_Copy, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::CopyOp)));
-INSTANTIATE_TEST_CASE_P(Core_Set, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::SetOp)));
-INSTANTIATE_TEST_CASE_P(Core_SetZero, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::SetZeroOp)));
-INSTANTIATE_TEST_CASE_P(Core_ConvertScale, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::ConvertScaleOp)));
-INSTANTIATE_TEST_CASE_P(Core_ConvertScaleAbs, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::ConvertScaleAbsOp)));
+INSTANTIATE_TEST_CASE_P(Core_Copy, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.CopyOp)));
+INSTANTIATE_TEST_CASE_P(Core_Set, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.SetOp)));
+INSTANTIATE_TEST_CASE_P(Core_SetZero, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.SetZeroOp)));
+INSTANTIATE_TEST_CASE_P(Core_ConvertScale, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.ConvertScaleOp)));
+INSTANTIATE_TEST_CASE_P(Core_ConvertScaleAbs, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.ConvertScaleAbsOp)));
 
-INSTANTIATE_TEST_CASE_P(Core_Add, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::AddOp)));
-INSTANTIATE_TEST_CASE_P(Core_Sub, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::SubOp)));
-INSTANTIATE_TEST_CASE_P(Core_AddS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::AddSOp)));
-INSTANTIATE_TEST_CASE_P(Core_SubRS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::SubRSOp)));
-INSTANTIATE_TEST_CASE_P(Core_ScaleAdd, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::ScaleAddOp)));
-INSTANTIATE_TEST_CASE_P(Core_AddWeighted, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::AddWeightedOp)));
-INSTANTIATE_TEST_CASE_P(Core_AbsDiff, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::AbsDiffOp)));
+INSTANTIATE_TEST_CASE_P(Core_Add, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.AddOp)));
+INSTANTIATE_TEST_CASE_P(Core_Sub, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.SubOp)));
+INSTANTIATE_TEST_CASE_P(Core_AddS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.AddSOp)));
+INSTANTIATE_TEST_CASE_P(Core_SubRS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.SubRSOp)));
+INSTANTIATE_TEST_CASE_P(Core_ScaleAdd, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.ScaleAddOp)));
+INSTANTIATE_TEST_CASE_P(Core_AddWeighted, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.AddWeightedOp)));
+INSTANTIATE_TEST_CASE_P(Core_AbsDiff, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.AbsDiffOp)));
 
 
-INSTANTIATE_TEST_CASE_P(Core_AbsDiffS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::AbsDiffSOp)));
+INSTANTIATE_TEST_CASE_P(Core_AbsDiffS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.AbsDiffSOp)));
 
-INSTANTIATE_TEST_CASE_P(Core_And, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::LogicOp('&'))));
-INSTANTIATE_TEST_CASE_P(Core_AndS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::LogicSOp('&'))));
-INSTANTIATE_TEST_CASE_P(Core_Or, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::LogicOp('|'))));
-INSTANTIATE_TEST_CASE_P(Core_OrS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::LogicSOp('|'))));
-INSTANTIATE_TEST_CASE_P(Core_Xor, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::LogicOp('^'))));
-INSTANTIATE_TEST_CASE_P(Core_XorS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::LogicSOp('^'))));
-INSTANTIATE_TEST_CASE_P(Core_Not, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::LogicSOp('~'))));
+INSTANTIATE_TEST_CASE_P(Core_And, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.LogicOp('&'))));
+INSTANTIATE_TEST_CASE_P(Core_AndS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.LogicSOp('&'))));
+INSTANTIATE_TEST_CASE_P(Core_Or, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.LogicOp('|'))));
+INSTANTIATE_TEST_CASE_P(Core_OrS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.LogicSOp('|'))));
+INSTANTIATE_TEST_CASE_P(Core_Xor, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.LogicOp('^'))));
+INSTANTIATE_TEST_CASE_P(Core_XorS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.LogicSOp('^'))));
+INSTANTIATE_TEST_CASE_P(Core_Not, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.LogicSOp('~'))));
 
-INSTANTIATE_TEST_CASE_P(Core_Max, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::MaxOp)));
-INSTANTIATE_TEST_CASE_P(Core_MaxS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::MaxSOp)));
-INSTANTIATE_TEST_CASE_P(Core_Min, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::MinOp)));
-INSTANTIATE_TEST_CASE_P(Core_MinS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::MinSOp)));
+INSTANTIATE_TEST_CASE_P(Core_Max, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.MaxOp)));
+INSTANTIATE_TEST_CASE_P(Core_MaxS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.MaxSOp)));
+INSTANTIATE_TEST_CASE_P(Core_Min, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.MinOp)));
+INSTANTIATE_TEST_CASE_P(Core_MinS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.MinSOp)));
 
-INSTANTIATE_TEST_CASE_P(Core_Mul, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::MulOp)));
-INSTANTIATE_TEST_CASE_P(Core_Div, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::DivOp)));
-INSTANTIATE_TEST_CASE_P(Core_Recip, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::RecipOp)));
+INSTANTIATE_TEST_CASE_P(Core_Mul, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.MulOp)));
+INSTANTIATE_TEST_CASE_P(Core_Div, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.DivOp)));
+INSTANTIATE_TEST_CASE_P(Core_Recip, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.RecipOp)));
 
-INSTANTIATE_TEST_CASE_P(Core_Cmp, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::CmpOp)));
-INSTANTIATE_TEST_CASE_P(Core_CmpS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::CmpSOp)));
+INSTANTIATE_TEST_CASE_P(Core_Cmp, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.CmpOp)));
+INSTANTIATE_TEST_CASE_P(Core_CmpS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.CmpSOp)));
 
-INSTANTIATE_TEST_CASE_P(Core_InRangeS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::InRangeSOp)));
-INSTANTIATE_TEST_CASE_P(Core_InRange, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::InRangeOp)));
+INSTANTIATE_TEST_CASE_P(Core_InRangeS, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.InRangeSOp)));
+INSTANTIATE_TEST_CASE_P(Core_InRange, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.InRangeOp)));
 
-INSTANTIATE_TEST_CASE_P(Core_Flip, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::FlipOp)));
-INSTANTIATE_TEST_CASE_P(Core_Transpose, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::TransposeOp)));
-INSTANTIATE_TEST_CASE_P(Core_SetIdentity, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::SetIdentityOp)));
+INSTANTIATE_TEST_CASE_P(Core_Flip, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.FlipOp)));
+INSTANTIATE_TEST_CASE_P(Core_Transpose, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.TransposeOp)));
+INSTANTIATE_TEST_CASE_P(Core_SetIdentity, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.SetIdentityOp)));
 
-INSTANTIATE_TEST_CASE_P(Core_Exp, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::ExpOp)));
-INSTANTIATE_TEST_CASE_P(Core_Log, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::LogOp)));
+INSTANTIATE_TEST_CASE_P(Core_Exp, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.ExpOp)));
+INSTANTIATE_TEST_CASE_P(Core_Log, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.LogOp)));
 
-INSTANTIATE_TEST_CASE_P(Core_CountNonZero, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::CountNonZeroOp)));
-INSTANTIATE_TEST_CASE_P(Core_Mean, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::MeanOp)));
-INSTANTIATE_TEST_CASE_P(Core_MeanStdDev, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::MeanStdDevOp)));
-INSTANTIATE_TEST_CASE_P(Core_Sum, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::SumOp)));
-INSTANTIATE_TEST_CASE_P(Core_Norm, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::NormOp)));
-INSTANTIATE_TEST_CASE_P(Core_MinMaxLoc, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::MinMaxLocOp)));
-INSTANTIATE_TEST_CASE_P(Core_CartToPolarToCart, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new cvtest::CartToPolarToCartOp)));
+INSTANTIATE_TEST_CASE_P(Core_CountNonZero, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.CountNonZeroOp)));
+INSTANTIATE_TEST_CASE_P(Core_Mean, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.MeanOp)));
+INSTANTIATE_TEST_CASE_P(Core_MeanStdDev, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.MeanStdDevOp)));
+INSTANTIATE_TEST_CASE_P(Core_Sum, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.SumOp)));
+INSTANTIATE_TEST_CASE_P(Core_Norm, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.NormOp)));
+INSTANTIATE_TEST_CASE_P(Core_MinMaxLoc, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.MinMaxLocOp)));
+INSTANTIATE_TEST_CASE_P(Core_CartToPolarToCart, ElemWiseTest, ::testing::Values(ElemWiseOpPtr(new alvision.cvtest.CartToPolarToCartOp)));
 
 
 class CV_ArithmMaskTest  extends alvision.cvtest.BaseTest
@@ -1447,7 +1447,7 @@ protected:
             int sizes[MAX_DIM];
             for( int iter = 0; iter < 100; iter++ )
             {
-                //ts->printf(cvtest::TS::LOG, ".");
+                //ts->printf(alvision.cvtest.TS::LOG, ".");
 
                 ts->update_context(this, iter, true);
                 int k, dims = rng.uniform(1, MAX_DIM+1), p = 1;
@@ -1509,7 +1509,7 @@ protected:
                 }
                 Mat d1;
                 d.convertTo(d1, depth);
-                CV_Assert( cvtest::norm(c, d1, CV_C) <= DBL_EPSILON );
+                CV_Assert( alvision.cvtest.norm(c, d1, CV_C) <= DBL_EPSILON );
             }
 
             Mat_<uchar> tmpSrc(100,100);
@@ -1522,7 +1522,7 @@ protected:
         }
         catch(...)
         {
-           this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+           this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         }
     }
 };
@@ -1583,7 +1583,7 @@ TEST_P(Mul1, One)
 
     cv::multiply(3, src, dst);
 
-    ASSERT_EQ(0, cvtest::norm(dst, ref_dst, cv::NORM_INF));
+    ASSERT_EQ(0, alvision.cvtest.norm(dst, ref_dst, cv::NORM_INF));
 }
 
 INSTANTIATE_TEST_CASE_P(Arithm, Mul1, testing::Values(Size(2, 2), Size(1, 1)));

@@ -118,8 +118,8 @@ bool CV_RigidTransform_Test::testNPoints(int from)
 
         Mat aff_est = estimateRigidTransform(fpts, tpts, true);
 
-        double thres = 0.1*cvtest::norm(aff, NORM_L2);
-        double d = cvtest::norm(aff_est, aff, NORM_L2);
+        double thres = 0.1*alvision.cvtest.norm(aff, NORM_L2);
+        double d = alvision.cvtest.norm(aff_est, aff, NORM_L2);
         if (d > thres)
         {
             double dB=0, nB=0;
@@ -129,12 +129,12 @@ bool CV_RigidTransform_Test::testNPoints(int from)
                 Mat B = A - repeat(A.row(0), 3, 1), Bt = B.t();
                 B = Bt*B;
                 dB = cv::determinant(B);
-                nB = cvtest::norm(B, NORM_L2);
+                nB = alvision.cvtest.norm(B, NORM_L2);
                 if( fabs(dB) < 0.01*nB )
                     continue;
             }
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
-            ts->printf( cvtest::TS::LOG, "Threshold = %f, norm of difference = %f", thres, d );
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            ts->printf( alvision.cvtest.TS::LOG, "Threshold = %f, norm of difference = %f", thres, d );
             return false;
         }
     }
@@ -148,7 +148,7 @@ bool CV_RigidTransform_Test::testImage()
     if (testImg.empty())
     {
        ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-       this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+       this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
        return false;
     }
     pyrDown(testImg, img);
@@ -163,11 +163,11 @@ bool CV_RigidTransform_Test::testImage()
     Mat aff_est = estimateRigidTransform(img, rotated, true);
 
     const double thres = 0.033;
-    if (cvtest::norm(aff_est, aff, NORM_INF) > thres)
+    if (alvision.cvtest.norm(aff_est, aff, NORM_INF) > thres)
     {
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
-        ts->printf( cvtest::TS::LOG, "Threshold = %f, norm of difference = %f", thres,
-            cvtest::norm(aff_est, aff, NORM_INF) );
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+        ts->printf( alvision.cvtest.TS::LOG, "Threshold = %f, norm of difference = %f", thres,
+            alvision.cvtest.norm(aff_est, aff, NORM_INF) );
         return false;
     }
 
@@ -176,7 +176,7 @@ bool CV_RigidTransform_Test::testImage()
 
 void CV_RigidTransform_Test::run( int start_from )
 {
-    cvtest::DefaultRngAuto dra;
+    alvision.cvtest.DefaultRngAuto dra;
 
     if (!testNPoints(start_from))
         return;
@@ -184,7 +184,7 @@ void CV_RigidTransform_Test::run( int start_from )
     if (!testImage())
         return;
 
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 TEST(Video_RigidFlow, accuracy) { CV_RigidTransform_Test test; test.safe_run(); }

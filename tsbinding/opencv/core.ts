@@ -2000,7 +2000,7 @@ export var patchNaNs: IpatchNaNs = alvision_module.patchNaNs;
     */
 interface Igemm {
     (src1: _st.InputArray, src2: _st.InputArray, alpha: _st.double,
-        src3: _st.InputArray, beta: _st.double, dst: _st.OutputArray, flags : _st.int /* = 0*/): void;
+        src3: _st.InputArray, beta: _st.double, dst: _st.OutputArray, flags: _base.GemmFlags /* = 0*/): void;
 }
 
 export var gemm: Igemm = alvision_module.gemm;
@@ -2276,7 +2276,7 @@ export var invert: Iinvert = alvision_module.invert;
 
 export interface Isolve {
     (src1: _st.InputArray, src2: _st.InputArray,
-        dst: _st.OutputArray, flags : _st.int /* = DECOMP_LU*/): boolean;
+        dst: _st.OutputArray, flags: _base.DecompTypes /* = DECOMP_LU*/): boolean;
 }
 
 export var solve: Isolve = alvision_module.solve;
@@ -2298,7 +2298,7 @@ export var solve: Isolve = alvision_module.solve;
     @sa sortIdx, randShuffle
     */
 export interface Isort {
-    (src: _st.InputArray, dst: _st.OutputArray, flags : _st.int): void;
+    (src: _st.InputArray, dst: _st.OutputArray, flags: SortFlags): void;
 }
 
 export var sort: Isort = alvision_module.sort;

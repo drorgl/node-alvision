@@ -111,10 +111,10 @@ void Core_RandTest::run( int )
         progress = update_progress( progress, idx, test_case_count, 0 );
         ts->update_context( this, idx, false );
 
-        int depth = cvtest::randInt(rng) % (CV_64F+1);
-        int c, cn = (cvtest::randInt(rng) % 4) + 1;
+        int depth = alvision.cvtest.randInt(rng) % (CV_64F+1);
+        int c, cn = (alvision.cvtest.randInt(rng) % 4) + 1;
         int type = CV_MAKETYPE(depth, cn);
-        int dist_type = cvtest::randInt(rng) % (CV_RAND_NORMAL+1);
+        int dist_type = alvision.cvtest.randInt(rng) % (CV_RAND_NORMAL+1);
         int i, k, SZ = N/cn;
         Scalar A, B;
 
@@ -135,11 +135,11 @@ void Core_RandTest::run( int )
             int a, b, hsz;
             if( dist_type == CV_RAND_UNI )
             {
-                a = (int)(cvtest::randInt(rng) % (_ranges[depth][1] -
+                a = (int)(alvision.cvtest.randInt(rng) % (_ranges[depth][1] -
                                               _ranges[depth][0])) + _ranges[depth][0];
                 do
                 {
-                    b = (int)(cvtest::randInt(rng) % (_ranges[depth][1] -
+                    b = (int)(alvision.cvtest.randInt(rng) % (_ranges[depth][1] -
                                                   _ranges[depth][0])) + _ranges[depth][0];
                 }
                 while( abs(a-b) <= 1 );
@@ -158,9 +158,9 @@ void Core_RandTest::run( int )
                 int mindiv = MAX(vrange/20, 5);
                 int maxdiv = MIN(vrange/8, 10000);
 
-                a = cvtest::randInt(rng) % meanrange - meanrange/2 +
+                a = alvision.cvtest.randInt(rng) % meanrange - meanrange/2 +
                 (_ranges[depth][0] + _ranges[depth][1])/2;
-                b = cvtest::randInt(rng) % (maxdiv - mindiv) + mindiv;
+                b = alvision.cvtest.randInt(rng) % (maxdiv - mindiv) + mindiv;
                 hsz = min((unsigned)b*9, (unsigned)MAX_HIST_SIZE);
             }
             A[c] = a;
@@ -176,16 +176,16 @@ void Core_RandTest::run( int )
             int sz = 0, dsz = 0, slice;
             for( slice = 0; slice < maxSlice; slice++, sz += dsz )
             {
-                dsz = slice+1 < maxSlice ? (int)(cvtest::randInt(rng) % (SZ - sz + 1)) : SZ - sz;
+                dsz = slice+1 < maxSlice ? (int)(alvision.cvtest.randInt(rng) % (SZ - sz + 1)) : SZ - sz;
                 Mat aslice = arr[k].colRange(sz, sz + dsz);
                 tested_rng.fill(aslice, dist_type, A, B);
             }
         }
 
-        if( maxk >= 1 && cvtest::norm(arr[0], arr[1], NORM_INF) > eps)
+        if( maxk >= 1 && alvision.cvtest.norm(arr[0], arr[1], NORM_INF) > eps)
         {
-            ts->printf( cvtest::TS::LOG, "RNG output depends on the array lengths (some generated numbers get lost?)" );
-            this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+            ts->printf( alvision.cvtest.TS::LOG, "RNG output depends on the array lengths (some generated numbers get lost?)" );
+            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
             return;
         }
 
@@ -232,26 +232,26 @@ void Core_RandTest::run( int )
 
             if( dist_type == CV_RAND_UNI && W[c] != SZ )
             {
-                ts->printf( cvtest::TS::LOG, "Uniform RNG gave values out of the range [%g,%g) on channel %d/%d\n",
+                ts->printf( alvision.cvtest.TS::LOG, "Uniform RNG gave values out of the range [%g,%g) on channel %d/%d\n",
                            A[c], B[c], c, cn);
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
             if( dist_type == CV_RAND_NORMAL && W[c] < SZ*.90)
             {
-                ts->printf( cvtest::TS::LOG, "Normal RNG gave too many values out of the range (%g+4*%g,%g+4*%g) on channel %d/%d\n",
+                ts->printf( alvision.cvtest.TS::LOG, "Normal RNG gave too many values out of the range (%g+4*%g,%g+4*%g) on channel %d/%d\n",
                            A[c], B[c], A[c], B[c], c, cn);
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
             double refval = 0, realval = 0;
 
             if( !check_pdf(hist[c], 1./W[c], dist_type, refval, realval) )
             {
-                ts->printf( cvtest::TS::LOG, "RNG failed Chi-square test "
+                ts->printf( alvision.cvtest.TS::LOG, "RNG failed Chi-square test "
                            "(got %g vs probable maximum %g) on channel %d/%d\n",
                            realval, refval, c, cn);
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
         }
@@ -260,7 +260,7 @@ void Core_RandTest::run( int )
         // inscribed in [-1,1]^SDIM cube.
         if( do_sphere_test )
         {
-            int SDIM = cvtest::randInt(rng) % (MAX_SDIM-1) + 2;
+            int SDIM = alvision.cvtest.randInt(rng) % (MAX_SDIM-1) + 2;
             int N0 = (SZ*cn/SDIM), n = 0;
             double r2 = 0;
             const uchar* data = arr[0].ptr();
@@ -300,10 +300,10 @@ void Core_RandTest::run( int )
 
             if( fabs(V - V0) > 0.3*fabs(V0) )
             {
-                ts->printf( cvtest::TS::LOG, "RNG failed %d-dim sphere volume test (got %g instead of %g)\n",
+                ts->printf( alvision.cvtest.TS::LOG, "RNG failed %d-dim sphere volume test (got %g instead of %g)\n",
                            SDIM, V, V0);
-                ts->printf( cvtest::TS::LOG, "depth = %d, N0 = %d\n", depth, N0);
-                this.ts.set_failed_test_info( cvtest::TS::FAIL_INVALID_OUTPUT );
+                ts->printf( alvision.cvtest.TS::LOG, "depth = %d, N0 = %d\n", depth, N0);
+                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
                 return;
             }
         }

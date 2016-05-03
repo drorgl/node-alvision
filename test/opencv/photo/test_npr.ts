@@ -59,7 +59,7 @@ static const double numerical_precision = 100.;
 
 TEST(Photo_NPR_EdgePreserveSmoothing_RecursiveFilter, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "npr/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
     string original_path = folder + "test1.png";
 
     Mat source = imread(original_path, IMREAD_COLOR);
@@ -70,13 +70,13 @@ TEST(Photo_NPR_EdgePreserveSmoothing_RecursiveFilter, regression)
     edgePreservingFilter(source,result,1);
 
     Mat reference = imread(folder + "smoothened_RF_reference.png");
-    double error = cvtest::norm(reference, result, NORM_L1);
+    double error = alvision.cvtest.norm(reference, result, NORM_L1);
     EXPECT_LE(error, numerical_precision);
 }
 
 TEST(Photo_NPR_EdgePreserveSmoothing_NormConvFilter, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "npr/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
     string original_path = folder + "test1.png";
 
     Mat source = imread(original_path, IMREAD_COLOR);
@@ -87,14 +87,14 @@ TEST(Photo_NPR_EdgePreserveSmoothing_NormConvFilter, regression)
     edgePreservingFilter(source,result,2);
 
     Mat reference = imread(folder + "smoothened_NCF_reference.png");
-    double error = cvtest::norm(reference, result, NORM_L1);
+    double error = alvision.cvtest.norm(reference, result, NORM_L1);
     EXPECT_LE(error, numerical_precision);
 
 }
 
 TEST(Photo_NPR_DetailEnhance, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "npr/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
     string original_path = folder + "test1.png";
 
     Mat source = imread(original_path, IMREAD_COLOR);
@@ -105,13 +105,13 @@ TEST(Photo_NPR_DetailEnhance, regression)
     detailEnhance(source,result);
 
     Mat reference = imread(folder + "detail_enhanced_reference.png");
-    double error = cvtest::norm(reference, result, NORM_L1);
+    double error = alvision.cvtest.norm(reference, result, NORM_L1);
     EXPECT_LE(error, numerical_precision);
 }
 
 TEST(Photo_NPR_PencilSketch, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "npr/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
     string original_path = folder + "test1.png";
 
     Mat source = imread(original_path, IMREAD_COLOR);
@@ -126,13 +126,13 @@ TEST(Photo_NPR_PencilSketch, regression)
     EXPECT_LE(pencil_error, numerical_precision);
 
     Mat color_pencil_reference = imread(folder + "color_pencil_sketch_reference.png");
-    double color_pencil_error = cvtest::norm(color_pencil_reference, color_pencil_result, NORM_L1);
+    double color_pencil_error = alvision.cvtest.norm(color_pencil_reference, color_pencil_result, NORM_L1);
     EXPECT_LE(color_pencil_error, numerical_precision);
 }
 
 TEST(Photo_NPR_Stylization, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "npr/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
     string original_path = folder + "test1.png";
 
     Mat source = imread(original_path, IMREAD_COLOR);
@@ -143,7 +143,7 @@ TEST(Photo_NPR_Stylization, regression)
     stylization(source,result);
 
     Mat stylized_reference = imread(folder + "stylized_reference.png");
-    double stylized_error = cvtest::norm(stylized_reference, result, NORM_L1);
+    double stylized_error = alvision.cvtest.norm(stylized_reference, result, NORM_L1);
     EXPECT_LE(stylized_error, numerical_precision);
 
 }

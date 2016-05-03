@@ -158,6 +158,12 @@ export namespace cvtest {
 
     export var randomMat: IrandomMat = alvision_module.randomMat;
 
+    interface Iadd {
+        (a: _mat.Mat, alpha: _st.double, b: _mat.Mat, beta: _st.double ,
+            gamma: _types.Scalar, c: _mat.Mat, ctype: _st.int , calcAbs?  : boolean /*=false*/):void;
+    }
+
+    export var add: Iadd = alvision_module.add;
 
     //CV_EXPORTS void add(const Mat& a, double alpha, const Mat& b, double beta,
     //                      Scalar gamma, Mat& c, int ctype, bool calcAbs=false);
@@ -205,13 +211,13 @@ export namespace cvtest {
 
 
     interface Imean {
-        (src : _mat.Mat,  mask? : _mat.Mat /*=Mat()*/): _types.Scalar;
+        (src: _mat.Mat, mask?: _mat.Mat /*=Mat()*/): _types.Scalar;
     }
     export var mean: Imean = alvision_module.mean;
     //CV_EXPORTS Scalar mean(const Mat& src, const Mat& mask=Mat());
 
     interface IPSNR {
-        (src1: _st.InputArray, src2: _st.InputArray ): _st.double;
+        (src1: _st.InputArray, src2: _st.InputArray): _st.double;
     }
     export var PSNR: IPSNR = alvision_module.PSNR;
 
@@ -225,8 +231,8 @@ export namespace cvtest {
     //// (or index of element with the maximum difference)
 
     interface IcmpEps {
-        ( data : _mat.Mat, refdata : _mat.Mat, success_err_level: _st.double, element_wise_relative_error: boolean,
-            cb:(idx : Array<_st.int>, max_diff : _st.double)=>void) : _st.int
+        (data: _mat.Mat, refdata: _mat.Mat, success_err_level: _st.double, element_wise_relative_error: boolean,
+            cb: (idx: Array<_st.int>, max_diff: _st.double) => void): _st.int
     }
 
     export var cmpEps: IcmpEps = alvision_module.cmpEps;
@@ -252,9 +258,23 @@ export namespace cvtest {
     //
     //CV_EXPORTS void compare(const Mat& src1, const Mat& src2, Mat& dst, int cmpop);
     //CV_EXPORTS void compare(const Mat& src, double s, Mat& dst, int cmpop);
+
+    interface Igemm {
+        (src1 : _mat.Mat, src2 : _mat.Mat, alpha : _st.double,
+                         src3 : _mat.Mat, beta : _st.double, dst : _mat.Mat, flags : _st.int): void;
+    }
+    export var gemm: Igemm = alvision_module.gemm;
+
     //CV_EXPORTS void gemm(const Mat& src1, const Mat& src2, double alpha,
     //                     const Mat& src3, double beta, Mat& dst, int flags);
     //CV_EXPORTS void transform( const Mat& src, Mat& dst, const Mat& transmat, const Mat& shift );
+
+    interface IcrossCorr {
+        (src1 : _mat.Mat, src2 : _mat.Mat): _st.double;
+    }
+    export var crossCorr: IcrossCorr = alvision_module.crossCorr;
+
+
     //CV_EXPORTS double crossCorr(const Mat& src1, const Mat& src2);
     //CV_EXPORTS void threshold( const Mat& src, Mat& dst, double thresh, double maxval, int thresh_type );
     //CV_EXPORTS void minMaxIdx( InputArray _img, double* minVal, double* maxVal,
@@ -789,7 +809,7 @@ export abstract class ArrayTest extends BaseTest
     }
 //    virtual void fill_array( int test_case_idx, int i, int j, Mat& arr );
 //    virtual void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-//    virtual double get_success_error_level( int test_case_idx, int i, int j );
+    get_success_error_level(test_case_idx: _st.int, i: _st.int, j: _st.int): _st.double { return 0;}
 //
 //    bool cvmat_allowed;
 //    bool iplimage_allowed;

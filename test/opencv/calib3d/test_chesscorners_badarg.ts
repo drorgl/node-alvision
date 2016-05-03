@@ -152,9 +152,9 @@ void CV_ChessboardDetectorBadArgTest::run( int /*start_from */)
 
 
     if (errors)
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
     else
-        this.ts.set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 alvision.cvtest.TEST('Calib3d_ChessboardDetector', 'badarg', () => { var test = new CV_ChessboardDetectorBadArgTest(); test.safe_run(); });

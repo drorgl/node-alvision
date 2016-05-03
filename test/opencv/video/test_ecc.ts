@@ -126,7 +126,7 @@ bool CV_ECC_Test_Translation::testTranslation(int from)
     if (img.empty())
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
         return false;
     }
     Mat testImg;
@@ -155,12 +155,12 @@ bool CV_ECC_Test_Translation::testTranslation(int from)
             TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, ECC_iterations, ECC_epsilon));
 
         if (!isMapCorrect(mapTranslation)){
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
             return false;
         }
 
         if (computeRMS(mapTranslation, translationGround)>MAX_RMS_ECC){
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
             ts->printf( alvision.cvtest.TSConstants.LOG, "RMS = %f",
                 computeRMS(mapTranslation, translationGround));
             return false;
@@ -176,7 +176,7 @@ void CV_ECC_Test_Translation::run(int from)
     if (!testTranslation(from))
         return;
 
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 
@@ -201,7 +201,7 @@ bool CV_ECC_Test_Euclidean::testEuclidean(int from)
     if (img.empty())
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
         return false;
     }
     Mat testImg;
@@ -230,12 +230,12 @@ bool CV_ECC_Test_Euclidean::testEuclidean(int from)
             TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, ECC_iterations, ECC_epsilon));
 
         if (!isMapCorrect(mapEuclidean)){
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
             return false;
         }
 
         if (computeRMS(mapEuclidean, euclideanGround)>MAX_RMS_ECC){
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
             ts->printf( alvision.cvtest.TSConstants.LOG, "RMS = %f",
                 computeRMS(mapEuclidean, euclideanGround));
             return false;
@@ -252,7 +252,7 @@ void CV_ECC_Test_Euclidean::run(int from)
     if (!testEuclidean(from))
         return;
 
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 class CV_ECC_Test_Affine : public CV_ECC_BaseTest
@@ -275,7 +275,7 @@ bool CV_ECC_Test_Affine::testAffine(int from)
     if (img.empty())
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
         return false;
     }
     Mat testImg;
@@ -305,12 +305,12 @@ bool CV_ECC_Test_Affine::testAffine(int from)
             TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, ECC_iterations, ECC_epsilon));
 
         if (!isMapCorrect(mapAffine)){
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
             return false;
         }
 
         if (computeRMS(mapAffine, affineGround)>MAX_RMS_ECC){
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
             ts->printf( alvision.cvtest.TSConstants.LOG, "RMS = %f",
                 computeRMS(mapAffine, affineGround));
             return false;
@@ -328,7 +328,7 @@ void CV_ECC_Test_Affine::run(int from)
     if (!testAffine(from))
         return;
 
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 class CV_ECC_Test_Homography : public CV_ECC_BaseTest
@@ -351,7 +351,7 @@ bool CV_ECC_Test_Homography::testHomography(int from)
     if (img.empty())
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
         return false;
     }
     Mat testImg;
@@ -380,12 +380,12 @@ bool CV_ECC_Test_Homography::testHomography(int from)
             TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, ECC_iterations, ECC_epsilon));
 
         if (!isMapCorrect(mapHomography)){
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
             return false;
         }
 
         if (computeRMS(mapHomography, homoGround)>MAX_RMS_ECC){
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
             ts->printf( alvision.cvtest.TSConstants.LOG, "RMS = %f",
                 computeRMS(mapHomography, homoGround));
             return false;
@@ -400,7 +400,7 @@ void CV_ECC_Test_Homography::run(int from)
     if (!testHomography(from))
         return;
 
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 

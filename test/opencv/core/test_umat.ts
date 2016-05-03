@@ -559,7 +559,7 @@ TEST(UMat, BufferPoolGrowing)
 }
 
 class CV_UMatTest :
-        public cvtest::BaseTest
+        public alvision.cvtest.BaseTest
 {
 public:
     CV_UMatTest() {}
@@ -577,12 +577,12 @@ protected:
 
     void checkDiff(const Mat& m1, const Mat& m2, const string& s)
     {
-        if (cvtest::norm(m1, m2, NORM_INF) != 0)
+        if (alvision.cvtest.norm(m1, m2, NORM_INF) != 0)
             throw test_excep(s);
     }
     void checkDiffF(const Mat& m1, const Mat& m2, const string& s)
     {
-        if (cvtest::norm(m1, m2, NORM_INF) > 1e-5)
+        if (alvision.cvtest.norm(m1, m2, NORM_INF) > 1e-5)
             throw test_excep(s);
     }
 };
@@ -687,8 +687,8 @@ bool CV_UMatTest::TestUMat()
     }
     catch (const test_excep& e)
     {
-        ts->printf(cvtest::TS::LOG, "%s\n", e.s.c_str());
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        ts->printf(alvision.cvtest.TS::LOG, "%s\n", e.s.c_str());
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -703,7 +703,7 @@ void CV_UMatTest::run( int /* start_from */)
     if (!TestUMat())
         return;
 
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 TEST(Core_UMat, base) { CV_UMatTest test; test.safe_run(); }
@@ -735,7 +735,7 @@ TEST(Core_UMat, getUMat)
             um.setTo(17);
         }
 
-        double err = cvtest::norm(m, ref, NORM_INF);
+        double err = alvision.cvtest.norm(m, ref, NORM_INF);
         if (err > 0)
         {
             std::cout << "m: " << std::endl << m << std::endl;
@@ -756,7 +756,7 @@ TEST(UMat, Sync)
 
     um.setTo(cv::Scalar::all(19));
 
-    EXPECT_EQ(0, cvtest::norm(um.getMat(ACCESS_READ), cv::Mat(um.size(), um.type(), 19), NORM_INF));
+    EXPECT_EQ(0, alvision.cvtest.norm(um.getMat(ACCESS_READ), cv::Mat(um.size(), um.type(), 19), NORM_INF));
 }
 
 TEST(UMat, CopyToIfDeviceCopyIsObsolete)
@@ -774,7 +774,7 @@ TEST(UMat, CopyToIfDeviceCopyIsObsolete)
     m.copyTo(um);
     um.setTo(Scalar::all(17));
 
-    EXPECT_EQ(0, cvtest::norm(um.getMat(ACCESS_READ), Mat(um.size(), um.type(), 17), NORM_INF));
+    EXPECT_EQ(0, alvision.cvtest.norm(um.getMat(ACCESS_READ), Mat(um.size(), um.type(), 17), NORM_INF));
 }
 
 TEST(UMat, setOpenCL)
@@ -865,7 +865,7 @@ TEST(UMat, DISABLED_synchronization_map_unmap)
     }
 }
 
-} } // namespace cvtest::ocl
+} } // namespace alvision.cvtest.ocl
 
 TEST(UMat, DISABLED_bug_with_unmap)
 {

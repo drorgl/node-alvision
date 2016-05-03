@@ -250,7 +250,7 @@ int CV_MLBaseTest::read_params( CvFileStorage* __fs )
             }
         }
     }
-    return cvtest::TS::OK;;
+    return alvision.cvtest.TS::OK;;
 }
 
 void CV_MLBaseTest::run( int )
@@ -260,19 +260,19 @@ void CV_MLBaseTest::run( int )
     validationFS.open( filename, FileStorage::READ );
     read_params( *validationFS );
 
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     for (int i = 0; i < test_case_count; i++)
     {
         int temp_code = run_test_case( i );
-        if (temp_code == cvtest::TS::OK)
+        if (temp_code == alvision.cvtest.TS::OK)
             temp_code = validate_test_results( i );
-        if (temp_code != cvtest::TS::OK)
+        if (temp_code != alvision.cvtest.TS::OK)
             code = temp_code;
     }
     if ( test_case_count <= 0)
     {
-        ts->printf( cvtest::TS::LOG, "validation file is not determined or not correct" );
-        code = cvtest::TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "validation file is not determined or not correct" );
+        code = alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
     }
     this.ts.set_failed_test_info( code );
 }
@@ -284,8 +284,8 @@ int CV_MLBaseTest::prepare_test_case( int test_case_idx )
     string dataPath = ts->get_data_path();
     if ( dataPath.empty() )
     {
-        ts->printf( cvtest::TS::LOG, "data path is empty" );
-        return cvtest::TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "data path is empty" );
+        return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
     }
 
     string dataName = dataSetNames[test_case_idx],
@@ -306,12 +306,12 @@ int CV_MLBaseTest::prepare_test_case( int test_case_idx )
     data = TrainData::loadFromCSV(filename, 0, respIdx, respIdx+1, varTypes);
     if( data.empty() )
     {
-        ts->printf( cvtest::TS::LOG, "file %s can not be read\n", filename.c_str() );
-        return cvtest::TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "file %s can not be read\n", filename.c_str() );
+        return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
     }
 
     data->setTrainTestSplit(trainSampleCount);
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 string& CV_MLBaseTest::get_validation_filename()
@@ -450,10 +450,10 @@ int CV_MLBaseTest::train( int testCaseIdx )
 
     if( !is_trained )
     {
-        ts->printf( cvtest::TS::LOG, "in test case %d model training was failed", testCaseIdx );
-        return cvtest::TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TS::LOG, "in test case %d model training was failed", testCaseIdx );
+        return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
     }
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 float CV_MLBaseTest::get_test_error( int /*testCaseIdx*/, vector<float> *resp )

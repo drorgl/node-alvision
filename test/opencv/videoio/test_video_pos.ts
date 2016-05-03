@@ -168,7 +168,7 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
                     return;
                 }
 
-                double err = cvtest::PSNR(img, img0);
+                double err = alvision.cvtest.PSNR(img, img0);
 
                 if( err < 20 )
                 {

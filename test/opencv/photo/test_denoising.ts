@@ -67,7 +67,7 @@ import fs = require('fs');
 
 TEST(Photo_DenoisingGrayscale, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "denoising/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "denoising/";
     string original_path = folder + "lena_noised_gaussian_sigma=10.png";
     string expected_path = folder + "lena_noised_denoised_grayscale_tw=7_sw=21_h=10.png";
 
@@ -82,12 +82,12 @@ TEST(Photo_DenoisingGrayscale, regression)
 
     DUMP(result, expected_path + ".res.png");
 
-    ASSERT_EQ(0, cvtest::norm(result, expected, NORM_L2));
+    ASSERT_EQ(0, alvision.cvtest.norm(result, expected, NORM_L2));
 }
 
 TEST(Photo_DenoisingColored, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "denoising/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "denoising/";
     string original_path = folder + "lena_noised_gaussian_sigma=10.png";
     string expected_path = folder + "lena_noised_denoised_lab12_tw=7_sw=21_h=10_h2=10.png";
 
@@ -102,13 +102,13 @@ TEST(Photo_DenoisingColored, regression)
 
     DUMP(result, expected_path + ".res.png");
 
-    ASSERT_EQ(0, cvtest::norm(result, expected, NORM_L2));
+    ASSERT_EQ(0, alvision.cvtest.norm(result, expected, NORM_L2));
 }
 
 TEST(Photo_DenoisingGrayscaleMulti, regression)
 {
     const int imgs_count = 3;
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "denoising/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "denoising/";
 
     string expected_path = folder + "lena_noised_denoised_multi_tw=7_sw=21_h=15.png";
     Mat expected = imread(expected_path, IMREAD_GRAYSCALE);
@@ -127,13 +127,13 @@ TEST(Photo_DenoisingGrayscaleMulti, regression)
 
     DUMP(result, expected_path + ".res.png");
 
-    ASSERT_EQ(0, cvtest::norm(result, expected, NORM_L2));
+    ASSERT_EQ(0, alvision.cvtest.norm(result, expected, NORM_L2));
 }
 
 TEST(Photo_DenoisingColoredMulti, regression)
 {
     const int imgs_count = 3;
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "denoising/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "denoising/";
 
     string expected_path = folder + "lena_noised_denoised_multi_lab12_tw=7_sw=21_h=10_h2=15.png";
     Mat expected = imread(expected_path, IMREAD_COLOR);
@@ -152,7 +152,7 @@ TEST(Photo_DenoisingColoredMulti, regression)
 
     DUMP(result, expected_path + ".res.png");
 
-    ASSERT_EQ(0, cvtest::norm(result, expected, NORM_L2));
+    ASSERT_EQ(0, alvision.cvtest.norm(result, expected, NORM_L2));
 }
 
 TEST(Photo_White, issue_2646)
@@ -168,7 +168,7 @@ TEST(Photo_White, issue_2646)
 
 TEST(Photo_Denoising, speed)
 {
-    string imgname = string(cvtest::TS::ptr()->get_data_path()) + "shared/5MP.png";
+    string imgname = string(alvision.cvtest.TS::ptr()->get_data_path()) + "shared/5MP.png";
     Mat src = imread(imgname, 0), dst;
 
     double t = (double)getTickCount();

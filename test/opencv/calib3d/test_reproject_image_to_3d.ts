@@ -69,7 +69,7 @@ protected:
 
     void run(int)
     {
-        this.ts.set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
         int progress = 0;
         int caseId = 0;
 
@@ -165,8 +165,8 @@ protected:
                     if (pixel_out[2] == largeZValue)
                         continue;
 
-                    ts->printf(cvtest::TS::LOG, "Missing values are handled improperly\n");
-                    this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                    ts->printf(alvision.cvtest.TS::LOG, "Missing values are handled improperly\n");
+                    this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
                     return;
                 }
                 else
@@ -174,10 +174,10 @@ protected:
                     double err = error(pixel_out, pixel_exp), t = thres<OutT>();
                     if ( err > t )
                     {
-                        ts->printf(cvtest::TS::LOG, "case %d. too big error at (%d, %d): %g vs expected %g: res = (%g, %g, %g, w=%g) vs pixel_out = (%g, %g, %g)\n",
+                        ts->printf(alvision.cvtest.TS::LOG, "case %d. too big error at (%d, %d): %g vs expected %g: res = (%g, %g, %g, w=%g) vs pixel_out = (%g, %g, %g)\n",
                             caseId, x, y, err, t, res(0,0), res(1,0), res(2,0), res(3,0),
                             (double)pixel_out[0], (double)pixel_out[1], (double)pixel_out[2]);
-                        this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ACCURACY );
+                        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
                         return;
                     }
                 }

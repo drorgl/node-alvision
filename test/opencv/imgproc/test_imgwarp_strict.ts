@@ -63,7 +63,7 @@ namespace
         va_start(args, fmt);
         char buffer[256];
         vsprintf (buffer, fmt, args);
-        cvtest::TS::ptr()->printf(cvtest::TS::SUMMARY, buffer);
+        alvision.cvtest.TS::ptr()->printf(alvision.cvtest.TS::SUMMARY, buffer);
         va_end(args);
     }
 
@@ -78,7 +78,7 @@ namespace
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class CV_ImageWarpBaseTest :
-    public cvtest::BaseTest
+    public alvision.cvtest.BaseTest
 {
 public:
     enum { cell_size = 10 };
@@ -110,7 +110,7 @@ CV_ImageWarpBaseTest::CV_ImageWarpBaseTest() :
     src(), dst(), reference_dst()
 {
     test_case_count = 40;
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 CV_ImageWarpBaseTest::~CV_ImageWarpBaseTest()
@@ -170,7 +170,7 @@ void CV_ImageWarpBaseTest::generate_test_data()
 
     // generating the src matrix
     int x, y;
-    if (cvtest::randInt(rng) % 2)
+    if (alvision.cvtest.randInt(rng) % 2)
     {
         for (y = 0; y < ssize.height; y += cell_size)
             for (x = 0; x < ssize.width; x += cell_size)
@@ -270,7 +270,7 @@ void CV_ImageWarpBaseTest::validate_results() const
 //                fabs(rD[dx] - D[dx]) < 250.0f &&
                 rD[dx] <= 255.0f && D[dx] <= 255.0f && rD[dx] >= 0.0f && D[dx] >= 0.0f)
             {
-                PRINT_TO_LOG("\nNorm of the difference: %lf\n", cvtest::norm(reference_dst, _dst, NORM_INF));
+                PRINT_TO_LOG("\nNorm of the difference: %lf\n", alvision.cvtest.norm(reference_dst, _dst, NORM_INF));
                 PRINT_TO_LOG("Error in (dx, dy): (%d, %d)\n", dx / cn + 1, dy + 1);
                 PRINT_TO_LOG("Tuple (rD, D): (%f, %f)\n", rD[dx], D[dx]);
                 PRINT_TO_LOG("Dsize: (%d, %d)\n", dsize.width / cn, dsize.height);
@@ -317,7 +317,7 @@ void CV_ImageWarpBaseTest::validate_results() const
                 std::cout << "opencv result:\n" << dst(Range(rmin, rmax), Range(cmin, cmax)) << std::endl;
                 std::cout << "reference result:\n" << reference_dst(Range(rmin, rmax), Range(cmin, cmax)) << std::endl;
 
-                this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                 return;
             }
     }
@@ -973,7 +973,7 @@ void CV_Remap_Test::remap_generic(const Mat& _src, Mat& _dst)
 void CV_Remap_Test::validate_results() const
 {
     CV_ImageWarpBaseTest::validate_results();
-    if (cvtest::TS::ptr()->get_err_code() == cvtest::TS::FAIL_BAD_ACCURACY)
+    if (alvision.cvtest.TS::ptr()->get_err_code() == alvision.cvtest.TS::FAIL_BAD_ACCURACY)
     {
         PRINT_TO_LOG("BorderType: %s\n", borderType_to_string());
         PRINT_TO_LOG("BorderValue: (%f, %f, %f, %f)\n",

@@ -54,20 +54,94 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace cv::viz;
 
-TEST(Viz, show_cloud_bluberry)
-{
-    Mat dragon_cloud = readCloud(get_dragon_ply_file_path());
 
-    Affine3d pose = Affine3d().rotate(Vec3d(0, 0.8, 0));
+    class Path
+    {
+        private static combine2(item1: string, item2: string): string {
+            if (item1 == null || item1 == "")
+                return item2;
 
-    Viz3d viz("show_cloud_bluberry");
+            if (item2 == null || item2 == "")
+                return item1;
+
+            var last = item1[item1.length - 1];
+
+            var need_append = last != '/' && last != '\\';
+            return item1 + (need_append ? "/" : "") + item2;
+        }
+        public static combine(item1: string, item2: string, item3?: string): string {
+            if (item3 == null || item3 == "") {
+                return Path.combine2(item1, item2);
+            } else {
+                return combine(combine(item1, item2), item3);
+            }
+        }
+        static change_extension(file: string, ext: string): string {
+            var  pos = file.lastIndexOf('.');
+            return (pos == -1) ? file : file.substr(0, pos + 1) + ext;
+        }
+    };
+
+    function get_dragon_ply_file_path() : string
+    {
+        return Path.combine(alvision.cvtest.TS.ptr().get_data_path(), "dragon.ply");
+    }
+
+    //template < typename _Tp>
+    //    inline std::vector < Affine3 < _Tp > > generate_test_trajectory()
+    //generate_test_trajectory<T>() : Array < alvision.Affine3 < T >> 
+    //{
+    //    std::vector < Affine3 < _Tp > > result;
+    //
+    //    for (int i = 0, j = 0; i <= 270; i += 3, j += 10)
+    //    {
+    //        double x = 2 * cos(i * 3 * CV_PI / 180.0) * (1.0 + 0.5 * cos(1.2 + i * 1.2 * CV_PI / 180.0));
+    //        double y = 0.25 + i / 270.0 + sin(j * CV_PI / 180.0) * 0.2 * sin(0.6 + j * 1.5 * CV_PI / 180.0);
+    //        double z = 2 * sin(i * 3 * CV_PI / 180.0) * (1.0 + 0.5 * cos(1.2 + i * CV_PI / 180.0));
+    //        result.push_back(viz::makeCameraPose(Vec3d(x, y, z), Vec3d::all(0.0), Vec3d(0.0, 1.0, 0.0)));
+    //    }
+    //    return result;
+    //}
+
+function make_gray(image: alvision.Mat): alvision.Mat{
+    //Mat chs[3]; split(image, chs);
+    var chs = new Array<alvision.Mat>();
+    alvision.split(image, chs);
+    return alvision.Mat.from(
+        alvision.MatExpr.op_Addition(
+            alvision.MatExpr.op_Addition(
+                alvision.MatExpr.op_Multiplication(0.114, chs[0]),
+                alvision.MatExpr.op_Multiplication(0.58, chs[1])),
+            alvision.MatExpr.op_Multiplication(0.3, chs[2])));
+}
+
+//    inline Mat make_gray(const Mat& image)
+//        {
+//            Mat chs[3]; split(image, chs);
+//    return 0.114 * chs[0] + 0.58 * chs[1] + 0.3 * chs[2];
+//}
+//}
+
+
+
+
+alvision.cvtest.TEST('Viz', 'show_cloud_bluberry', () => {
+    var dragon_cloud = alvision.viz.readCloud(get_dragon_ply_file_path());
+
+    var pose = new alvision.Affine3d().rotate(new alvision.Vecd(0, 0.8, 0));
+
+
+    //Affine3d pose = Affine3d().rotate(Vec3d(0, 0.8, 0));
+
+    var viz = new alvision.viz.Viz3d("show_cloud_bluberry");
+
     viz.setBackgroundColor(Color::black());
     viz.showWidget("coosys", WCoordinateSystem());
     viz.showWidget("dragon", WCloud(dragon_cloud, Color::bluberry()), pose);
 
     viz.showWidget("text2d", WText("Bluberry cloud", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
 TEST(Viz, show_cloud_random_color)
 {
@@ -188,7 +262,7 @@ TEST(Viz, show_widget_merger)
 
 TEST(Viz, show_textured_mesh)
 {
-    Mat lena = imread(Path::combine(cvtest::TS::ptr()->get_data_path(), "lena.png"));
+    Mat lena = imread(Path::combine(alvision.cvtest.TS::ptr()->get_data_path(), "lena.png"));
 
     std::vector<Vec3d> points;
     std::vector<Vec2d> tcoords;
@@ -322,7 +396,7 @@ TEST(Viz, show_trajectory_reposition)
 TEST(Viz, show_camera_positions)
 {
     Matx33d K(1024.0, 0.0, 320.0, 0.0, 1024.0, 240.0, 0.0, 0.0, 1.0);
-    Mat lena = imread(Path::combine(cvtest::TS::ptr()->get_data_path(), "lena.png"));
+    Mat lena = imread(Path::combine(alvision.cvtest.TS::ptr()->get_data_path(), "lena.png"));
     Mat gray = make_gray(lena);
 
     Affine3d poses[2];
@@ -345,7 +419,7 @@ TEST(Viz, show_camera_positions)
 
 TEST(Viz, show_overlay_image)
 {
-    Mat lena = imread(Path::combine(cvtest::TS::ptr()->get_data_path(), "lena.png"));
+    Mat lena = imread(Path::combine(alvision.cvtest.TS::ptr()->get_data_path(), "lena.png"));
     Mat gray = make_gray(lena);
 
     Size2d half_lsize = Size2d(lena.size()) * 0.5;
@@ -378,7 +452,7 @@ TEST(Viz, show_overlay_image)
 
 TEST(Viz, show_image_method)
 {
-    Mat lena = imread(Path::combine(cvtest::TS::ptr()->get_data_path(), "lena.png"));
+    Mat lena = imread(Path::combine(alvision.cvtest.TS::ptr()->get_data_path(), "lena.png"));
 
     Viz3d viz("show_image_method");
     viz.showImage(lena);
@@ -391,7 +465,7 @@ TEST(Viz, show_image_method)
 
 TEST(Viz, show_image_3d)
 {
-    Mat lena = imread(Path::combine(cvtest::TS::ptr()->get_data_path(), "lena.png"));
+    Mat lena = imread(Path::combine(alvision.cvtest.TS::ptr()->get_data_path(), "lena.png"));
     Mat gray = make_gray(lena);
 
     Viz3d viz("show_image_3d");

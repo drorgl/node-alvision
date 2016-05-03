@@ -162,7 +162,7 @@ protected:
 
     void run(int)
     {
-        this.ts.set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 
         vector<Point3f> points, points_dls;
         const int pointsCount = 500;
@@ -187,9 +187,9 @@ protected:
                 //cout <<  maxError << " " << successfulTestsCount << endl;
                 if (successfulTestsCount < 0.7*totalTestsCount)
                 {
-                    ts->printf( cvtest::TS::LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
+                    ts->printf( alvision.cvtest.TS::LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
                         method, totalTestsCount - successfulTestsCount, totalTestsCount, maxError, mode);
-                    this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                 }
                 cout << "mode: " << mode << ", method: " << method << " -> "
                      << ((double)successfulTestsCount / totalTestsCount) * 100 << "%"
@@ -319,8 +319,8 @@ TEST(DISABLED_Calib3d_SolvePnPRansac, concurrency)
         solvePnPRansac(object, image, camera_mat, dist_coef, rvec2, tvec2);
     }
 
-    double rnorm = cvtest::norm(rvec1, rvec2, NORM_INF);
-    double tnorm = cvtest::norm(tvec1, tvec2, NORM_INF);
+    double rnorm = alvision.cvtest.norm(rvec1, rvec2, NORM_INF);
+    double tnorm = alvision.cvtest.norm(tvec1, tvec2, NORM_INF);
 
     EXPECT_LT(rnorm, 1e-6);
     EXPECT_LT(tnorm, 1e-6);

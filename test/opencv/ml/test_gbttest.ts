@@ -86,7 +86,7 @@ CV_GBTreesTest::~CV_GBTreesTest()
 
 int CV_GBTreesTest::TestTrainPredict(int test_num)
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     int weak_count = 200;
     float shrinkage = 0.1f;
@@ -102,8 +102,8 @@ int CV_GBTreesTest::TestTrainPredict(int test_num)
         case (0) : loss_function_type = CvGBTrees::DEVIANCE_LOSS; break;
         default  :
             {
-            ts->printf( cvtest::TS::LOG, "Bad test_num value in CV_GBTreesTest::TestTrainPredict(..) function." );
-            return cvtest::TS::FAIL_BAD_ARG_CHECK;
+            ts->printf( alvision.cvtest.TS::LOG, "Bad test_num value in CV_GBTreesTest::TestTrainPredict(..) function." );
+            return alvision.cvtest.TS::FAIL_BAD_ARG_CHECK;
             }
     }
 
@@ -115,8 +115,8 @@ int CV_GBTreesTest::TestTrainPredict(int test_num)
 
         if (data->read_csv(datasets[dataset_num].c_str()))
         {
-            ts->printf( cvtest::TS::LOG, "File reading error." );
-            return cvtest::TS::FAIL_INVALID_TEST_DATA;
+            ts->printf( alvision.cvtest.TS::LOG, "File reading error." );
+            return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
         }
 
         if (test_num == 0)
@@ -148,8 +148,8 @@ int CV_GBTreesTest::TestTrainPredict(int test_num)
 
     if (!tmp_code)
     {
-        ts->printf( cvtest::TS::LOG, "Model training was failed.");
-        return cvtest::TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TS::LOG, "Model training was failed.");
+        return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
     }
 
     code = checkPredictError(test_num);
@@ -162,7 +162,7 @@ int CV_GBTreesTest::TestTrainPredict(int test_num)
 int CV_GBTreesTest::checkPredictError(int test_num)
 {
     if (!gtb)
-        return cvtest::TS::FAIL_GENERIC;
+        return alvision.cvtest.TS::FAIL_GENERIC;
 
     //float mean[] = {5.430247f, 13.5654f, 12.6569f, 13.1661f};
     //float sigma[] = {0.4162694f, 3.21161f, 3.43297f, 3.00624f};
@@ -173,13 +173,13 @@ int CV_GBTreesTest::checkPredictError(int test_num)
 
     if ( abs( current_error - mean[test_num]) > 6*sigma[test_num] )
     {
-        ts->printf( cvtest::TS::LOG, "Test error is out of range:\n"
+        ts->printf( alvision.cvtest.TS::LOG, "Test error is out of range:\n"
                     "abs(%f/*curEr*/ - %f/*mean*/ > %f/*6*sigma*/",
                     current_error, mean[test_num], 6*sigma[test_num] );
-        return cvtest::TS::FAIL_BAD_ACCURACY;
+        return alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 
 }
 
@@ -187,7 +187,7 @@ int CV_GBTreesTest::checkPredictError(int test_num)
 int CV_GBTreesTest::TestSaveLoad()
 {
     if (!gtb)
-        return cvtest::TS::FAIL_GENERIC;
+        return alvision.cvtest.TS::FAIL_GENERIC;
 
     model_file_name1 = cv::tempfile();
     model_file_name2 = cv::tempfile();
@@ -206,7 +206,7 @@ int CV_GBTreesTest::TestSaveLoad()
 
 int CV_GBTreesTest::checkLoadSave()
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     // 1. compare files
     ifstream f1( model_file_name1.c_str() ), f2( model_file_name2.c_str() );
@@ -219,16 +219,16 @@ int CV_GBTreesTest::checkLoadSave()
         getline( f2, s2 );
         if( s1.compare(s2) )
         {
-            ts->printf( cvtest::TS::LOG, "first and second saved files differ in %n-line; first %n line: %s; second %n-line: %s",
+            ts->printf( alvision.cvtest.TS::LOG, "first and second saved files differ in %n-line; first %n line: %s; second %n-line: %s",
                lineIdx, lineIdx, s1.c_str(), lineIdx, s2.c_str() );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
         }
     }
     if( !f1.eof() || !f2.eof() )
     {
-        ts->printf( cvtest::TS::LOG, "First and second saved files differ in %n-line; first %n line: %s; second %n-line: %s",
+        ts->printf( alvision.cvtest.TS::LOG, "First and second saved files differ in %n-line; first %n line: %s; second %n-line: %s",
             lineIdx, lineIdx, s1.c_str(), lineIdx, s2.c_str() );
-        code = cvtest::TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
     }
     f1.close();
     f2.close();
@@ -243,8 +243,8 @@ int CV_GBTreesTest::checkLoadSave()
     {
         if( fabs(*it1 - *it2) > FLT_EPSILON )
         {
-            ts->printf( cvtest::TS::LOG, "Responses predicted before saving and after loading are different" );
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            ts->printf( alvision.cvtest.TS::LOG, "Responses predicted before saving and after loading are different" );
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
         }
     }
     return code;
@@ -260,13 +260,13 @@ void CV_GBTreesTest::run(int)
     datasets[0] = dataPath + string("spambase.data"); /*string("dataset_classification.csv");*/
     datasets[1] = dataPath + string("housing_.data");  /*string("dataset_regression.csv");*/
 
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
 
     for (int i = 0; i < 4; i++)
     {
 
         int temp_code = TestTrainPredict(i);
-        if (temp_code != cvtest::TS::OK)
+        if (temp_code != alvision.cvtest.TS::OK)
         {
             code = temp_code;
             break;
@@ -275,7 +275,7 @@ void CV_GBTreesTest::run(int)
         else if (i==0)
         {
             temp_code = TestSaveLoad();
-            if (temp_code != cvtest::TS::OK)
+            if (temp_code != alvision.cvtest.TS::OK)
                 code = temp_code;
             delete data;
             data = 0;

@@ -72,7 +72,7 @@ public:
             for (int j = 0; j < NSN; ++j)
             {
                 stringstream filename;
-                filename << cvtest::TS::ptr()->get_data_path()
+                filename << alvision.cvtest.TS::ptr()->get_data_path()
                          << "shape/mpeg_test/" << *i << "-" << j + 1 << ".png";
                 filenames.push_back(filename.str());
             }
@@ -190,9 +190,9 @@ protected:
         float porc = 100*float(corrects)/(NSN*distanceMat.rows);
         std::cout << "Test result: " << porc << "%" << std::endl;
         if (porc >= CURRENT_MAX_ACCUR)
-            this.ts.set_failed_test_info(cvtest::TS::OK);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
         else
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
     }
 
 protected:

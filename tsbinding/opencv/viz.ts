@@ -10,8 +10,7 @@
 //                           License Agreement
 //                For Open Source Computer Vision Library
 //
-// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
-// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
+// Copyright (C) 2013, OpenCV Foundation, all rights reserved.
 // Third party copyrights are property of their respective owners.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -38,74 +37,60 @@
 // or tort (including negligence or otherwise) arising in any way out of
 // the use of this software, even if advised of the possibility of such damage.
 //
+// Authors:
+//  * Ozan Tonkal, ozantonkal@gmail.com
+//  * Anatoly Baksheev, Itseez Inc.  myname.mysurname <> mycompany.com
+//
 //M*/
 
-/// <reference path="../../../typings/tsd.d.ts" />
-/// <reference path="../../../tsbinding/alvision.d.ts" />
-/// <reference path="../../../tsbinding/alvision.ts" />
+var alvision_module = require('../../lib/bindings.js');
 
+import * as _mat from './mat'
+import * as _matx from './matx'
+//import * as _st from './Constants'
+import * as _st from './static'
+import * as _types from './types'
+import * as _core from './core'
+import * as _base from './base'
+import * as _affine from './Affine'
+import * as _features2d from './features2d'
 
-//var mediatype: { attachment; audio; } = { attachment: "attachment", audio: "audio" };
+//#ifndef __OPENCV_VIZ_HPP__
+//#define __OPENCV_VIZ_HPP__
+//
+//#include <opencv2/viz/types.hpp>
+//#include <opencv2/viz/widgets.hpp>
+//#include <opencv2/viz/viz3d.hpp>
+//#include <opencv2/viz/vizcore.hpp>
 
+/**
+  @defgroup viz 3D Visualizer
 
+This section describes 3D visualization window as well as classes and methods that are used to
+interact with it.
 
-import tape = require("tape");
-import path = require("path");
-import colors = require("colors");
-import async = require("async");
-import alvision = require("../../../tsbinding/alvision");
+3D visualization window (see Viz3d) is used to display widgets (see Widget), and it provides several
+methods to interact with scene and widgets.
 
+  @{
+    @defgroup viz_widget Widget
 
-//#include "test_precomp.hpp"
-//#include "opencv2/highgui.hpp"
+In this section, the widget framework is explained. Widgets represent 2D or 3D objects, varying from
+simple ones such as lines to complex one such as point clouds and meshes.
 
-//#if defined HAVE_GTK || defined HAVE_QT || defined HAVE_WIN32UI || defined HAVE_CARBON || defined HAVE_COCOA
+Widgets are **implicitly shared**. Therefore, one can add a widget to the scene, and modify the
+widget without re-adding the widget.
 
-//using namespace cv;
-//using namespace std;
+@code
+// Create a cloud widget
+viz::WCloud cw(cloud, viz::Color::red());
+// Display it in a window
+myWindow.showWidget("CloudWidget1", cw);
+// Modify it, and it will be modified in the window.
+cw.setColor(viz::Color::yellow());
+@endcode
 
-class CV_HighGuiOnlyGuiTest extends alvision. cvtest.BaseTest
-{
-   public run(int /*start_from */) : void
-{
-    //ts ->printf(ts ->LOG, "GUI 0\n");
-    alvision.destroyAllWindows();
+  @}
+*/
 
-    //ts ->printf(ts ->LOG, "GUI 1\n");
-    alvision.namedWindow("Win");
-
-    //ts ->printf(ts ->LOG, "GUI 2\n");
-    var m = new alvision.Mat(256, 256, alvision.MatrixType.CV_8U);
-    //Mat m(256, 256, CV_8U);
-    m = new alvision.Scalar(128);
-    //m = Scalar(128);
-
-    //ts ->printf(ts ->LOG, "GUI 3\n");
-    alvision.imshow("Win", m);
-
-    //ts ->printf(ts ->LOG, "GUI 4\n");
-    var value: alvision.int = 50;
-    //int value = 50;
-    
-
-    //ts ->printf(ts ->LOG, "GUI 5\n");
-    alvision.createTrackbar("trackbar", "Win", 100, (x)=>true, value, value);
-
-    //ts ->printf(ts ->LOG, "GUI 6\n");
-    alvision.getTrackbarPos("trackbar", "Win");
-
-    //ts ->printf(ts ->LOG, "GUI 7\n");
-    alvision.waitKey(500);
-
-    //ts ->printf(ts ->LOG, "GUI 8\n");
-    alvision.destroyAllWindows();
-    //ts ->set_failed_test_info(alvision.cvtest.TS::OK);
-}
-
-};
-
-//void Foo(int /*k*/, void* /*z*/) {}
-
-
-alvision.cvtest.TEST('Highgui_GUI', 'regression', () => { var test = new CV_HighGuiOnlyGuiTest(); test.safe_run(); });
-
+//#endif /* __OPENCV_VIZ_HPP__ */

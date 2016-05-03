@@ -94,7 +94,7 @@ CV_MomentsTest::CV_MomentsTest()
 
 void CV_MomentsTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
 {
-    cvtest::ArrayTest::get_minmax_bounds( i, j, type, low, high );
+    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
     int depth = CV_MAT_DEPTH(type);
 
     if( depth == CV_16U )
@@ -118,16 +118,16 @@ void CV_MomentsTest::get_test_array_types_and_sizes( int test_case_idx,
                                                 vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    int cn = (cvtest::randInt(rng) % 4) + 1;
-    int depth = cvtest::randInt(rng) % 4;
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    int cn = (alvision.cvtest.randInt(rng) % 4) + 1;
+    int depth = alvision.cvtest.randInt(rng) % 4;
     depth = depth == 0 ? CV_8U : depth == 1 ? CV_16U : depth == 2 ? CV_16S : CV_32F;
 
-    is_binary = cvtest::randInt(rng) % 2 != 0;
+    is_binary = alvision.cvtest.randInt(rng) % 2 != 0;
     if( depth == 0 && !is_binary )
-        try_umat = cvtest::randInt(rng) % 5 != 0;
+        try_umat = alvision.cvtest.randInt(rng) % 5 != 0;
     else
-        try_umat = cvtest::randInt(rng) % 2 != 0;
+        try_umat = alvision.cvtest.randInt(rng) % 2 != 0;
 
     if( cn == 2 || try_umat )
         cn = 1;
@@ -150,7 +150,7 @@ void CV_MomentsTest::get_test_array_types_and_sizes( int test_case_idx,
     cvmat_allowed = true;
     if( cn > 1 )
     {
-        coi = cvtest::randInt(rng) % cn;
+        coi = alvision.cvtest.randInt(rng) % cn;
         cvmat_allowed = false;
     }
 }
@@ -164,7 +164,7 @@ double CV_MomentsTest::get_success_error_level( int /*test_case_idx*/, int /*i*/
 
 int CV_MomentsTest::prepare_test_case( int test_case_idx )
 {
-    int code = cvtest::ArrayTest::prepare_test_case( test_case_idx );
+    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         int cn = test_mat[INPUT][0].channels();
@@ -364,7 +364,7 @@ CV_HuMomentsTest::CV_HuMomentsTest()
 
 void CV_HuMomentsTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
 {
-    cvtest::ArrayTest::get_minmax_bounds( i, j, type, low, high );
+    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
     low = Scalar::all(-10000);
     high = Scalar::all(10000);
 }
@@ -373,7 +373,7 @@ void CV_HuMomentsTest::get_minmax_bounds( int i, int j, int type, Scalar& low, S
 void CV_HuMomentsTest::get_test_array_types_and_sizes( int test_case_idx,
                                                 vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC1;
     sizes[INPUT][0] = cvSize(MOMENT_COUNT,1);
     sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(HU_MOMENT_COUNT,1);
@@ -389,7 +389,7 @@ double CV_HuMomentsTest::get_success_error_level( int /*test_case_idx*/, int /*i
 
 int CV_HuMomentsTest::prepare_test_case( int test_case_idx )
 {
-    int code = cvtest::ArrayTest::prepare_test_case( test_case_idx );
+    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         // ...
@@ -466,7 +466,7 @@ protected:
         }
         catch(...)
         {
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         }
     }
 };

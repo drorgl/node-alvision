@@ -3,6 +3,7 @@ var alvision_module = require('../../lib/bindings.js');
 
 export interface double extends Number { };
 export interface uchar { };
+export interface schar { };
 export interface short { };
 export interface ushort { };
 export interface int extends Number { };
@@ -74,6 +75,10 @@ export const _LDBL_RADIX     = _DBL_RADIX              ;// exponent radix
 export const LDBL_TRUE_MIN   = DBL_TRUE_MIN            ;// min positive value
 
 export const DECIMAL_DIG = DBL_DECIMAL_DIG;
+
+export const INT_MIN   =  (-2147483647 - 1); // minimum (signed) int value
+export const INT_MAX = 2147483647;// maximum (signed) int value
+
 
 
 //interface IRodrigues {

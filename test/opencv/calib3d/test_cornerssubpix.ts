@@ -127,7 +127,7 @@ CV_ChessboardSubpixelTest::CV_ChessboardSubpixelTest() :
 /* ///////////////////// chess_corner_test ///////////////////////// */
 void CV_ChessboardSubpixelTest::run( int )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     int  progress = 0;
 
     RNG& rng = ts->get_rng();
@@ -142,8 +142,8 @@ void CV_ChessboardSubpixelTest::run( int )
     int count = 0;
     for(int i = 0; i < runs_count; i++)
     {
-        const int pattern_width = min_pattern_size + cvtest::randInt(rng) % (max_pattern_size - min_pattern_size);
-        const int pattern_height = min_pattern_size + cvtest::randInt(rng) % (max_pattern_size - min_pattern_size);
+        const int pattern_width = min_pattern_size + alvision.cvtest.randInt(rng) % (max_pattern_size - min_pattern_size);
+        const int pattern_height = min_pattern_size + alvision.cvtest.randInt(rng) % (max_pattern_size - min_pattern_size);
         Size pattern_size;
         if(pattern_width > pattern_height)
         {
@@ -166,12 +166,12 @@ void CV_ChessboardSubpixelTest::run( int )
         if(!result)
         {
 #if 0
-            ts->printf(cvtest::TS::LOG, "Warning: chessboard was not detected! Writing image to test.png\n");
-            ts->printf(cvtest::TS::LOG, "Size = %d, %d\n", pattern_size.width, pattern_size.height);
-            ts->printf(cvtest::TS::LOG, "Intrinsic params: fx = %f, fy = %f, cx = %f, cy = %f\n",
+            ts->printf(alvision.cvtest.TS::LOG, "Warning: chessboard was not detected! Writing image to test.png\n");
+            ts->printf(alvision.cvtest.TS::LOG, "Size = %d, %d\n", pattern_size.width, pattern_size.height);
+            ts->printf(alvision.cvtest.TS::LOG, "Intrinsic params: fx = %f, fy = %f, cx = %f, cy = %f\n",
                        intrinsic_matrix_.at<double>(0, 0), intrinsic_matrix_.at<double>(1, 1),
                        intrinsic_matrix_.at<double>(0, 2), intrinsic_matrix_.at<double>(1, 2));
-            ts->printf(cvtest::TS::LOG, "Distortion matrix: %f, %f, %f, %f, %f\n",
+            ts->printf(alvision.cvtest.TS::LOG, "Distortion matrix: %f, %f, %f, %f, %f\n",
                        distortion_coeffs_.at<double>(0, 0), distortion_coeffs_.at<double>(0, 1),
                        distortion_coeffs_.at<double>(0, 2), distortion_coeffs_.at<double>(0, 3),
                        distortion_coeffs_.at<double>(0, 4));
@@ -185,8 +185,8 @@ void CV_ChessboardSubpixelTest::run( int )
         int ret = calcDistance(corners, test_corners, dist1);
         if(ret == 0)
         {
-            ts->printf(cvtest::TS::LOG, "findChessboardCorners returns invalid corner coordinates!\n");
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TS::LOG, "findChessboardCorners returns invalid corner coordinates!\n");
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
             break;
         }
 
@@ -199,12 +199,12 @@ void CV_ChessboardSubpixelTest::run( int )
         ret = calcDistance(corners, test_corners, dist2);
         if(ret == 0)
         {
-            ts->printf(cvtest::TS::LOG, "findCornerSubpix returns invalid corner coordinates!\n");
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TS::LOG, "findCornerSubpix returns invalid corner coordinates!\n");
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
             break;
         }
 
-        ts->printf(cvtest::TS::LOG, "Error after findChessboardCorners: %f, after findCornerSubPix: %f\n",
+        ts->printf(alvision.cvtest.TS::LOG, "Error after findChessboardCorners: %f, after findCornerSubPix: %f\n",
                    dist1, dist2);
         sum_dist += dist2;
         count++;
@@ -212,8 +212,8 @@ void CV_ChessboardSubpixelTest::run( int )
         const double max_reduce_factor = 0.8;
         if(dist1 < dist2*max_reduce_factor)
         {
-            ts->printf(cvtest::TS::LOG, "findCornerSubPix increases average error!\n");
-            code = cvtest::TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TS::LOG, "findCornerSubPix increases average error!\n");
+            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
             break;
         }
 
@@ -221,7 +221,7 @@ void CV_ChessboardSubpixelTest::run( int )
     }
     ASSERT_NE(0, count);
     sum_dist /= count;
-    ts->printf(cvtest::TS::LOG, "Average error after findCornerSubpix: %f\n", sum_dist);
+    ts->printf(alvision.cvtest.TS::LOG, "Average error after findCornerSubpix: %f\n", sum_dist);
 
     if( code < 0 )
         this.ts.set_failed_test_info( code );
@@ -233,15 +233,15 @@ void CV_ChessboardSubpixelTest::generateIntrinsicParams()
     const double max_focus_length = 1000.0;
     const double max_focus_diff = 5.0;
 
-    double fx = cvtest::randReal(rng)*max_focus_length;
-    double fy = fx + cvtest::randReal(rng)*max_focus_diff;
+    double fx = alvision.cvtest.randReal(rng)*max_focus_length;
+    double fy = fx + alvision.cvtest.randReal(rng)*max_focus_diff;
     double cx = image_size_.width/2;
     double cy = image_size_.height/2;
 
-    double k1 = 0.5*cvtest::randReal(rng);
-    double k2 = 0.05*cvtest::randReal(rng);
-    double p1 = 0.05*cvtest::randReal(rng);
-    double p2 = 0.05*cvtest::randReal(rng);
+    double k1 = 0.5*alvision.cvtest.randReal(rng);
+    double k2 = 0.05*alvision.cvtest.randReal(rng);
+    double p1 = 0.05*alvision.cvtest.randReal(rng);
+    double p2 = 0.05*alvision.cvtest.randReal(rng);
     double k3 = 0.0;
 
     intrinsic_matrix_ = (Mat_<double>(3, 3) << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0);

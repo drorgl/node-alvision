@@ -60,10 +60,10 @@ CV_AMLTest::CV_AMLTest( const char* _modelName ) : CV_MLBaseTest( _modelName )
 
 int CV_AMLTest::run_test_case( int testCaseIdx )
 {
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     code = prepare_test_case( testCaseIdx );
 
-    if (code == cvtest::TS::OK)
+    if (code == alvision.cvtest.TS::OK)
     {
         //#define GET_STAT
 #ifdef GET_STAT
@@ -113,23 +113,23 @@ int CV_AMLTest::validate_test_results( int testCaseIdx )
         model->save(format("/Users/vp/tmp/dtree/testcase_%02d.cur.yml", testCaseIdx));
         float curErr = get_test_error( testCaseIdx );
         const int coeff = 4;
-        ts->printf( cvtest::TS::LOG, "Test case = %d; test error = %f; mean error = %f (diff=%f), %d*sigma = %f\n",
+        ts->printf( alvision.cvtest.TS::LOG, "Test case = %d; test error = %f; mean error = %f (diff=%f), %d*sigma = %f\n",
                                 testCaseIdx, curErr, mean, abs( curErr - mean), coeff, coeff*sigma );
         if ( abs( curErr - mean) > coeff*sigma )
         {
-            ts->printf( cvtest::TS::LOG, "abs(%f - %f) > %f - OUT OF RANGE!\n", curErr, mean, coeff*sigma, coeff );
-            return cvtest::TS::FAIL_BAD_ACCURACY;
+            ts->printf( alvision.cvtest.TS::LOG, "abs(%f - %f) > %f - OUT OF RANGE!\n", curErr, mean, coeff*sigma, coeff );
+            return alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         }
         else
-            ts->printf( cvtest::TS::LOG, ".\n" );
+            ts->printf( alvision.cvtest.TS::LOG, ".\n" );
 
     }
     else
     {
-        ts->printf( cvtest::TS::LOG, "validation info is not suitable" );
-        return cvtest::TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "validation info is not suitable" );
+        return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
     }
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 TEST(ML_DTree, regression) { CV_AMLTest test( CV_DTREE ); test.safe_run(); }

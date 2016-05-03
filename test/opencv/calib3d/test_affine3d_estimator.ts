@@ -69,7 +69,7 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
     //protected:
     run(int /* start_from */) : void
 {
-    cvtest::DefaultRngAuto dra;
+    alvision.cvtest.DefaultRngAuto dra;
 
     if (!test4Points())
         return;
@@ -77,7 +77,7 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
     if (!testNPoints())
         return;
 
-    ts ->set_failed_test_info(cvtest::TS::OK);
+    ts ->set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
     function test4Points(): boolean {
@@ -101,10 +101,10 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
         estimateAffine3D(fpts, tpts, aff_est, outliers);
 
         const double thres = 1e-3;
-        if (cvtest::norm(aff_est, aff, NORM_INF) > thres)
+        if (alvision.cvtest.norm(aff_est, aff, NORM_INF) > thres)
         {
-            //cout << cvtest::norm(aff_est, aff, NORM_INF) << endl;
-            ts ->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            //cout << alvision.cvtest.norm(aff_est, aff, NORM_INF) << endl;
+            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
             return false;
         }
         return true;
@@ -136,16 +136,16 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
         int res = estimateAffine3D(fpts, tpts, aff_est, outl);
 
         if (!res) {
-            ts ->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
             return false;
         }
 
         const double thres = 1e-4;
-        if (cvtest::norm(aff_est, aff, NORM_INF) > thres)
+        if (alvision.cvtest.norm(aff_est, aff, NORM_INF) > thres)
         {
             cout << "aff est: " << aff_est << endl;
             cout << "aff ref: " << aff << endl;
-            ts ->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
             return false;
         }
 
@@ -153,7 +153,7 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
             m == accumulate(outl.begin(), outl.begin() + m, 0);
 
         if (!outl_good) {
-            ts ->set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
             return false;
         }
         return true;

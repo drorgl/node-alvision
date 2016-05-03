@@ -60,107 +60,106 @@ import fs = require('fs');
 //using namespace std;
 //using namespace cvtest;
 
-#ifdef HAVE_GSTREAMER
-const string ext[] = {"avi"};
-#else
-const string ext[] = {"avi", "mov", "mp4"};
-#endif
+//#ifdef HAVE_GSTREAMER
+//const string ext[] = {"avi"};
+//#else
+const ext = ["avi", "mov", "mp4"];
+//#endif
 
-TEST(Videoio_Video, prop_resolution)
+alvision.cvtest.TEST('Videoio_Video', 'prop_resolution',()=>
 {
-    const size_t n = sizeof(ext)/sizeof(ext[0]);
-    const string src_dir = TS::ptr()->get_data_path();
+    const n = ext.length;//sizeof(ext)/sizeof(ext[0]);
+    const src_dir = alvision.cvtest.TS.ptr().get_data_path();
 
-    TS::ptr()->printf(cvtest::TS::LOG, "\n\nSource files directory: %s\n", (src_dir+"video/").c_str());
+    alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "\n\nSource files directory: %s\n", (src_dir+"video/"));
 
-    for (size_t i = 0; i < n; ++i)
+    for (var i = 0; i < n; ++i)
     {
-        string file_path = src_dir+"video/big_buck_bunny."+ext[i];
-        VideoCapture cap(file_path);
+        var file_path = src_dir+"video/big_buck_bunny."+ext[i];
+        var cap = new alvision.VideoCapture (file_path);
         if (!cap.isOpened())
         {
-            TS::ptr()->printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i+1, ext[i].c_str());
-            TS::ptr()->printf(cvtest::TS::LOG, "Error: cannot read source video file.\n");
-            TS::ptr()->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i+1, ext[i]);
+            alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read source video file.\n");
+            alvision.cvtest.TS.ptr().set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
-        ASSERT_EQ(672, cap.get(CAP_PROP_FRAME_WIDTH));
-        ASSERT_EQ(384, cap.get(CAP_PROP_FRAME_HEIGHT));
+        alvision.ASSERT_EQ(672, cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_WIDTH));
+        alvision.ASSERT_EQ(384, cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_HEIGHT));
     }
-}
+});
 
-TEST(Videoio_Video, actual_resolution)
+alvision.cvtest.TEST('Videoio_Video', 'actual_resolution',()=>
 {
-    const size_t n = sizeof(ext)/sizeof(ext[0]);
-    const string src_dir = TS::ptr()->get_data_path();
+    const n = ext.length;//sizeof(ext)/sizeof(ext[0]);
+    const  src_dir = alvision.cvtest.TS.ptr().get_data_path();
 
-    TS::ptr()->printf(cvtest::TS::LOG, "\n\nSource files directory: %s\n", (src_dir+"video/").c_str());
+    alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "\n\nSource files directory: %s\n", (src_dir+"video/"));
 
-    for (size_t i = 0; i < n; ++i)
+    for (var i = 0; i < n; ++i)
     {
-        string file_path = src_dir+"video/big_buck_bunny."+ext[i];
-        VideoCapture cap(file_path);
+        var file_path = src_dir+"video/big_buck_bunny."+ext[i];
+        var cap = new alvision.VideoCapture (file_path);
         if (!cap.isOpened())
         {
-            TS::ptr()->printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i+1, ext[i].c_str());
-            TS::ptr()->printf(cvtest::TS::LOG, "Error: cannot read source video file.\n");
-            TS::ptr()->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i+1, ext[i]);
+            alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read source video file.\n");
+            alvision.cvtest.TS.ptr().set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
-        Mat frame;
-        cap >> frame;
+        var frame = new alvision.Mat();
+        cap.retrieve(frame);
+        //
+        //cap >> frame;
 
-        ASSERT_EQ(672, frame.cols);
-        ASSERT_EQ(384, frame.rows);
+        alvision.ASSERT_EQ(672, frame.cols);
+        alvision.ASSERT_EQ(384, frame.rows);
     }
-}
+});
 
-TEST(Videoio_Video, DISABLED_prop_fps)
+alvision.cvtest.TEST('Videoio_Video', 'DISABLED_prop_fps',()=>
 {
-    const size_t n = sizeof(ext)/sizeof(ext[0]);
-    const string src_dir = TS::ptr()->get_data_path();
+    const n = ext.length;// sizeof(ext)/sizeof(ext[0]);
+    const  src_dir = alvision.cvtest.TS.ptr().get_data_path();
 
-    TS::ptr()->printf(cvtest::TS::LOG, "\n\nSource files directory: %s\n", (src_dir+"video/").c_str());
+    alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "\n\nSource files directory: %s\n", (src_dir+"video/"));
 
-    for (size_t i = 0; i < n; ++i)
+    for (var i = 0; i < n; ++i)
     {
-        string file_path = src_dir+"video/big_buck_bunny."+ext[i];
-        VideoCapture cap(file_path);
+        var file_path = src_dir+"video/big_buck_bunny."+ext[i];
+        var cap = new alvision.VideoCapture (file_path);
         if (!cap.isOpened())
         {
-            TS::ptr()->printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i+1, ext[i].c_str());
-            TS::ptr()->printf(cvtest::TS::LOG, "Error: cannot read source video file.\n");
-            TS::ptr()->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+            alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i+1, ext[i]);
+            alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read source video file.\n");
+            alvision.cvtest.TS.ptr().set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
-        ASSERT_EQ(24, cap.get(CAP_PROP_FPS));
+        alvision.ASSERT_EQ(24, cap.get(alvision.CAP_PROP.CAP_PROP_FPS));
     }
-}
+});
 
-TEST(Videoio_Video, prop_framecount)
-{
-    const size_t n = sizeof(ext)/sizeof(ext[0]);
-    const string src_dir = TS::ptr()->get_data_path();
+alvision.cvtest.TEST('Videoio_Video', 'prop_framecount', () => {
+    const n = ext.length;// sizeof(ext)/sizeof(ext[0]);
+    const src_dir = alvision.cvtest.TS.ptr().get_data_path();
 
-    TS::ptr()->printf(cvtest::TS::LOG, "\n\nSource files directory: %s\n", (src_dir+"video/").c_str());
+    alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "\n\nSource files directory: %s\n", (src_dir + "video/"));
 
-    for (size_t i = 0; i < n; ++i)
-    {
-        string file_path = src_dir+"video/big_buck_bunny."+ext[i];
-        VideoCapture cap(file_path);
-        if (!cap.isOpened())
-        {
-            TS::ptr()->printf(cvtest::TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i+1, ext[i].c_str());
-            TS::ptr()->printf(cvtest::TS::LOG, "Error: cannot read source video file.\n");
-            TS::ptr()->set_failed_test_info(cvtest::TS::FAIL_INVALID_TEST_DATA);
+    for (var i = 0; i < n; ++i) {
+        var file_path = src_dir + "video/big_buck_bunny." + ext[i];
+        var cap = new alvision.VideoCapture (file_path);
+        if (!cap.isOpened()) {
+            alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i + 1, ext[i]);
+            alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read source video file.\n");
+            alvision.cvtest.TS.ptr().set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
-        ASSERT_EQ(125, cap.get(CAP_PROP_FRAME_COUNT));
+        alvision.ASSERT_EQ(125, cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT));
     }
-}
+});
 
-#endif
+//#endif

@@ -67,30 +67,30 @@ class CV_DefaultNewCameraMatrixTest extends alvision.cvtest.ArrayTest {
     }
 
     protected prepare_test_case(test_case_idx: alvision.int): alvision.int {
-        int code = cvtest::ArrayTest::prepare_test_case(test_case_idx);
+        int code = alvision.cvtest.ArrayTest::prepare_test_case(test_case_idx);
 
         if (code <= 0)
             return code;
 
         RNG & rng = ts ->get_rng();
 
-        img_size.width = cvtest::randInt(rng) % MAX_X + 1;
-        img_size.height = cvtest::randInt(rng) % MAX_Y + 1;
+        img_size.width = alvision.cvtest.randInt(rng) % MAX_X + 1;
+        img_size.height = alvision.cvtest.randInt(rng) % MAX_Y + 1;
 
-        center_principal_point = ((cvtest::randInt(rng) % 2)!=0);
+        center_principal_point = ((alvision.cvtest.randInt(rng) % 2)!=0);
 
         // Generating camera_mat matrix
         double sz = MAX(img_size.width, img_size.height);
-        double aspect_ratio = cvtest::randReal(rng) * 0.6 + 0.7;
+        double aspect_ratio = alvision.cvtest.randReal(rng) * 0.6 + 0.7;
         double a[9] = { 0,0,0,0,0,0,0,0,1};
         Mat _a(3, 3, CV_64F, a);
-        a[2] = (img_size.width - 1) * 0.5 + cvtest::randReal(rng) * 10 - 5;
-        a[5] = (img_size.height - 1) * 0.5 + cvtest::randReal(rng) * 10 - 5;
-        a[0] = sz / (0.9 - cvtest::randReal(rng) * 0.6);
+        a[2] = (img_size.width - 1) * 0.5 + alvision.cvtest.randReal(rng) * 10 - 5;
+        a[5] = (img_size.height - 1) * 0.5 + alvision.cvtest.randReal(rng) * 10 - 5;
+        a[0] = sz / (0.9 - alvision.cvtest.randReal(rng) * 0.6);
         a[4] = aspect_ratio * a[0];
 
         Mat & _a0 = test_mat[INPUT][0];
-        cvtest::convert(_a, _a0, _a0.type());
+        alvision.cvtest.convert(_a, _a0, _a0.type());
         camera_mat = _a0;
 
         return code;
@@ -100,9 +100,9 @@ class CV_DefaultNewCameraMatrixTest extends alvision.cvtest.ArrayTest {
         Mat & dst = test_mat[REF_OUTPUT][0];
         Mat & test_output = test_mat[OUTPUT][0];
         Mat & output = new_camera_mat;
-        cvtest::convert(output, test_output, test_output.type());
+        alvision.cvtest.convert(output, test_output, test_output.type());
         if (!center_principal_point) {
-            cvtest::copy(src, dst);
+            alvision.cvtest.copy(src, dst);
         }
         else {
             double a[9] = { 0,0,0,0,0,0,0,0,1};
@@ -117,13 +117,13 @@ class CV_DefaultNewCameraMatrixTest extends alvision.cvtest.ArrayTest {
             }
             a[2] = (img_size.width - 1) * 0.5;
             a[5] = (img_size.height - 1) * 0.5;
-            cvtest::convert(_a, dst, dst.type());
+            alvision.cvtest.convert(_a, dst, dst.type());
         }
     }
     protected get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
-        cvtest::ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
         RNG & rng = ts ->get_rng();
-        matrix_type = types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = cvtest::randInt(rng) % 2 ? CV_64F : CV_32F;
+        matrix_type = types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = alvision.cvtest.randInt(rng) % 2 ? CV_64F : CV_32F;
         sizes[INPUT][0] = sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(3, 3);
     }
     protected run_func(): void {
@@ -167,15 +167,15 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
        protected int prepare_test_case (int test_case_idx){
 
         RNG & rng = ts ->get_rng();
-        int code = cvtest::ArrayTest::prepare_test_case(test_case_idx);
+        int code = alvision.cvtest.ArrayTest::prepare_test_case(test_case_idx);
 
         if (code <= 0)
             return code;
 
-        useDstMat = (cvtest::randInt(rng) % 2) == 0;
+        useDstMat = (alvision.cvtest.randInt(rng) % 2) == 0;
 
-        img_size.width = cvtest::randInt(rng) % MAX_X + 1;
-        img_size.height = cvtest::randInt(rng) % MAX_Y + 1;
+        img_size.width = alvision.cvtest.randInt(rng) % MAX_X + 1;
+        img_size.height = alvision.cvtest.randInt(rng) % MAX_Y + 1;
         int dist_size = test_mat[INPUT][2].cols > test_mat[INPUT][2].rows ? test_mat[INPUT][2].cols : test_mat[INPUT][2].rows;
         double cam[9] = { 0,0,0,0,0,0,0,0,1};
         vector < double > dist(dist_size);
@@ -192,29 +192,29 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
         //Generating points
         for (int i = 0; i < N_POINTS; i++ )
         {
-            points[i].x = cvtest::randReal(rng) * img_size.width;
-            points[i].y = cvtest::randReal(rng) * img_size.height;
+            points[i].x = alvision.cvtest.randReal(rng) * img_size.width;
+            points[i].y = alvision.cvtest.randReal(rng) * img_size.height;
         }
 
         //Generating camera matrix
         double sz = MAX(img_size.width, img_size.height);
-        double aspect_ratio = cvtest::randReal(rng) * 0.6 + 0.7;
-        cam[2] = (img_size.width - 1) * 0.5 + cvtest::randReal(rng) * 10 - 5;
-        cam[5] = (img_size.height - 1) * 0.5 + cvtest::randReal(rng) * 10 - 5;
-        cam[0] = sz / (0.9 - cvtest::randReal(rng) * 0.6);
+        double aspect_ratio = alvision.cvtest.randReal(rng) * 0.6 + 0.7;
+        cam[2] = (img_size.width - 1) * 0.5 + alvision.cvtest.randReal(rng) * 10 - 5;
+        cam[5] = (img_size.height - 1) * 0.5 + alvision.cvtest.randReal(rng) * 10 - 5;
+        cam[0] = sz / (0.9 - alvision.cvtest.randReal(rng) * 0.6);
         cam[4] = aspect_ratio * cam[0];
 
         //Generating distortion coeffs
-        dist[0] = cvtest::randReal(rng) * 0.06 - 0.03;
-        dist[1] = cvtest::randReal(rng) * 0.06 - 0.03;
+        dist[0] = alvision.cvtest.randReal(rng) * 0.06 - 0.03;
+        dist[1] = alvision.cvtest.randReal(rng) * 0.06 - 0.03;
         if (dist[0] * dist[1] > 0)
             dist[1] = -dist[1];
-        if (cvtest::randInt(rng) % 4 != 0 )
+        if (alvision.cvtest.randInt(rng) % 4 != 0 )
         {
-            dist[2] = cvtest::randReal(rng) * 0.004 - 0.002;
-            dist[3] = cvtest::randReal(rng) * 0.004 - 0.002;
+            dist[2] = alvision.cvtest.randReal(rng) * 0.004 - 0.002;
+            dist[3] = alvision.cvtest.randReal(rng) * 0.004 - 0.002;
             if (dist_size > 4)
-                dist[4] = cvtest::randReal(rng) * 0.004 - 0.002;
+                dist[4] = alvision.cvtest.randReal(rng) * 0.004 - 0.002;
         }
     else
         {
@@ -226,38 +226,38 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
         //Generating P matrix (projection)
         if (test_mat[INPUT][4].cols != 4) {
             proj[8] = 1;
-            if (cvtest::randInt(rng) % 2 == 0) // use identity new camera matrix
+            if (alvision.cvtest.randInt(rng) % 2 == 0) // use identity new camera matrix
             {
                 proj[0] = 1;
                 proj[4] = 1;
             }
         else
             {
-                proj[0] = cam[0] + (cvtest::randReal(rng) - (double)0.5)*0.2 * cam[0]; //10%
-                proj[4] = cam[4] + (cvtest::randReal(rng) - (double)0.5)*0.2 * cam[4]; //10%
-                proj[2] = cam[2] + (cvtest::randReal(rng) - (double)0.5)*0.3 * img_size.width; //15%
-                proj[5] = cam[5] + (cvtest::randReal(rng) - (double)0.5)*0.3 * img_size.height; //15%
+                proj[0] = cam[0] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.2 * cam[0]; //10%
+                proj[4] = cam[4] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.2 * cam[4]; //10%
+                proj[2] = cam[2] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.3 * img_size.width; //15%
+                proj[5] = cam[5] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.3 * img_size.height; //15%
             }
         }
         else {
             proj[10] = 1;
-            proj[0] = cam[0] + (cvtest::randReal(rng) - (double)0.5)*0.2 * cam[0]; //10%
-            proj[5] = cam[4] + (cvtest::randReal(rng) - (double)0.5)*0.2 * cam[4]; //10%
-            proj[2] = cam[2] + (cvtest::randReal(rng) - (double)0.5)*0.3 * img_size.width; //15%
-            proj[6] = cam[5] + (cvtest::randReal(rng) - (double)0.5)*0.3 * img_size.height; //15%
+            proj[0] = cam[0] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.2 * cam[0]; //10%
+            proj[5] = cam[4] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.2 * cam[4]; //10%
+            proj[2] = cam[2] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.3 * img_size.width; //15%
+            proj[6] = cam[5] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.3 * img_size.height; //15%
 
-            proj[3] = (img_size.height + img_size.width - 1) * 0.5 + cvtest::randReal(rng) * 10 - 5;
-            proj[7] = (img_size.height + img_size.width - 1) * 0.5 + cvtest::randReal(rng) * 10 - 5;
-            proj[11] = (img_size.height + img_size.width - 1) * 0.5 + cvtest::randReal(rng) * 10 - 5;
+            proj[3] = (img_size.height + img_size.width - 1) * 0.5 + alvision.cvtest.randReal(rng) * 10 - 5;
+            proj[7] = (img_size.height + img_size.width - 1) * 0.5 + alvision.cvtest.randReal(rng) * 10 - 5;
+            proj[11] = (img_size.height + img_size.width - 1) * 0.5 + alvision.cvtest.randReal(rng) * 10 - 5;
         }
 
         //Generating R matrix
         Mat _rot(3, 3, CV_64F);
         Mat rotation(1, 3, CV_64F);
-        rotation.at<double>(0) = CV_PI * (cvtest::randReal(rng) - (double)0.5); // phi
-        rotation.at<double>(1) = CV_PI * (cvtest::randReal(rng) - (double)0.5); // ksi
-        rotation.at<double>(2) = CV_PI * (cvtest::randReal(rng) - (double)0.5); //khi
-        cvtest::Rodrigues(rotation, _rot);
+        rotation.at<double>(0) = CV_PI * (alvision.cvtest.randReal(rng) - (double)0.5); // phi
+        rotation.at<double>(1) = CV_PI * (alvision.cvtest.randReal(rng) - (double)0.5); // ksi
+        rotation.at<double>(2) = CV_PI * (alvision.cvtest.randReal(rng) - (double)0.5); //khi
+        alvision.cvtest.Rodrigues(rotation, _rot);
 
         //copying data
         //src_points = &_points;
@@ -267,9 +267,9 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
         _rot.convertTo(test_mat[INPUT][3], test_mat[INPUT][3].type());
         _proj.convertTo(test_mat[INPUT][4], test_mat[INPUT][4].type());
 
-        zero_distortion = (cvtest::randInt(rng) % 2) == 0 ? false : true;
-        zero_new_cam = (cvtest::randInt(rng) % 2) == 0 ? false : true;
-        zero_R = (cvtest::randInt(rng) % 2) == 0 ? false : true;
+        zero_distortion = (alvision.cvtest.randInt(rng) % 2) == 0 ? false : true;
+        zero_new_cam = (alvision.cvtest.randInt(rng) % 2) == 0 ? false : true;
+        zero_R = (alvision.cvtest.randInt(rng) % 2) == 0 ? false : true;
 
         if (useCPlus) {
             _points.convertTo(src_points, CV_32F);
@@ -308,10 +308,10 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
         Mat __points = cvarrToMat(&_points);
         Mat _ref_points = cvarrToMat(&ref_points);
 
-        cvtest::convert(test_mat[INPUT][1], __camera, __camera.type());
-        cvtest::convert(test_mat[INPUT][2], __distort, __distort.type());
-        cvtest::convert(test_mat[INPUT][3], __rot, __rot.type());
-        cvtest::convert(test_mat[INPUT][4], __proj, __proj.type());
+        alvision.cvtest.convert(test_mat[INPUT][1], __camera, __camera.type());
+        alvision.cvtest.convert(test_mat[INPUT][2], __distort, __distort.type());
+        alvision.cvtest.convert(test_mat[INPUT][3], __rot, __rot.type());
+        alvision.cvtest.convert(test_mat[INPUT][4], __proj, __proj.type());
 
         if (useCPlus) {
             if (useDstMat) {
@@ -330,7 +330,7 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
             }
         }
         else {
-            cvtest::convert(test_mat[TEMP][0], __points, __points.type());
+            alvision.cvtest.convert(test_mat[TEMP][0], __points, __points.type());
         }
 
         CvMat * input2 = zero_distortion ? 0 : &_distort;
@@ -339,9 +339,9 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
         distortPoints(&_points,&ref_points,&_camera, input2, input3, input4);
 
         Mat & dst = test_mat[REF_OUTPUT][0];
-        cvtest::convert(_ref_points, dst, dst.type());
+        alvision.cvtest.convert(_ref_points, dst, dst.type());
 
-        cvtest::copy(test_mat[INPUT][0], test_mat[OUTPUT][0]);
+        alvision.cvtest.copy(test_mat[INPUT][0], test_mat[OUTPUT][0]);
 
         delete [] dist;
         delete [] proj;
@@ -350,28 +350,28 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
 
     }
     protected void get_test_array_types_and_sizes(int test_case_idx, vector<vector<Size>>& sizes, vector<vector<int>>& types){
-        cvtest::ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
     RNG& rng = ts->get_rng();
-        useCPlus = ((cvtest::randInt(rng) % 2)!=0);
+        useCPlus = ((alvision.cvtest.randInt(rng) % 2)!=0);
     //useCPlus = 0;
     if (useCPlus) {
         types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = types[TEMP][0] = CV_32FC2;
     }
     else {
-        types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = types[TEMP][0] = cvtest::randInt(rng) % 2 ? CV_64FC2 : CV_32FC2;
+        types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = types[TEMP][0] = alvision.cvtest.randInt(rng) % 2 ? CV_64FC2 : CV_32FC2;
     }
-    types[INPUT][1] = cvtest::randInt(rng) % 2 ? CV_64F : CV_32F;
-    types[INPUT][2] = cvtest::randInt(rng) % 2 ? CV_64F : CV_32F;
-    types[INPUT][3] = cvtest::randInt(rng) % 2 ? CV_64F : CV_32F;
-    types[INPUT][4] = cvtest::randInt(rng) % 2 ? CV_64F : CV_32F;
+    types[INPUT][1] = alvision.cvtest.randInt(rng) % 2 ? CV_64F : CV_32F;
+    types[INPUT][2] = alvision.cvtest.randInt(rng) % 2 ? CV_64F : CV_32F;
+    types[INPUT][3] = alvision.cvtest.randInt(rng) % 2 ? CV_64F : CV_32F;
+    types[INPUT][4] = alvision.cvtest.randInt(rng) % 2 ? CV_64F : CV_32F;
 
-    sizes[INPUT][0] = sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = sizes[TEMP][0] = cvtest::randInt(rng) % 2 ? cvSize(1, N_POINTS) : cvSize(N_POINTS, 1);
+    sizes[INPUT][0] = sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = sizes[TEMP][0] = alvision.cvtest.randInt(rng) % 2 ? cvSize(1, N_POINTS) : cvSize(N_POINTS, 1);
     sizes[INPUT][1] = sizes[INPUT][3] = cvSize(3, 3);
-    sizes[INPUT][4] = cvtest::randInt(rng) % 2 ? cvSize(3, 3) : cvSize(4, 3);
+    sizes[INPUT][4] = alvision.cvtest.randInt(rng) % 2 ? cvSize(3, 3) : cvSize(4, 3);
 
-    if (cvtest::randInt(rng) % 2)
+    if (alvision.cvtest.randInt(rng) % 2)
     {
-        if (cvtest::randInt(rng) % 2)
+        if (alvision.cvtest.randInt(rng) % 2)
         {
             sizes[INPUT][2] = cvSize(1, 4);
         }
@@ -382,7 +382,7 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
     }
     else
     {
-        if (cvtest::randInt(rng) % 2)
+        if (alvision.cvtest.randInt(rng) % 2)
         {
             sizes[INPUT][2] = cvSize(4, 1);
         }
@@ -469,7 +469,7 @@ void CV_UndistortPointsTest::distortPoints(const CvMat* _src, CvMat* _dst, const
         __P = cvCreateMat(3,4,CV_64F);
     if (matP)
     {
-        cvtest::convert(cvarrToMat(matP), cvarrToMat(__P), -1);
+        alvision.cvtest.convert(cvarrToMat(matP), cvarrToMat(__P), -1);
     }
     else
     {
@@ -591,24 +591,24 @@ CV_InitUndistortRectifyMapTest::CV_InitUndistortRectifyMapTest()
 
 void CV_InitUndistortRectifyMapTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
-    cvtest::ArrayTest::get_test_array_types_and_sizes(test_case_idx,sizes,types);
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx,sizes,types);
     RNG& rng = ts->get_rng();
-    useCPlus = ((cvtest::randInt(rng) % 2)!=0);
+    useCPlus = ((alvision.cvtest.randInt(rng) % 2)!=0);
     //useCPlus = 0;
     types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC2;
 
-    types[INPUT][1] = cvtest::randInt(rng)%2 ? CV_64F : CV_32F;
-    types[INPUT][2] = cvtest::randInt(rng)%2 ? CV_64F : CV_32F;
-    types[INPUT][3] = cvtest::randInt(rng)%2 ? CV_64F : CV_32F;
-    types[INPUT][4] = cvtest::randInt(rng)%2 ? CV_64F : CV_32F;
+    types[INPUT][1] = alvision.cvtest.randInt(rng)%2 ? CV_64F : CV_32F;
+    types[INPUT][2] = alvision.cvtest.randInt(rng)%2 ? CV_64F : CV_32F;
+    types[INPUT][3] = alvision.cvtest.randInt(rng)%2 ? CV_64F : CV_32F;
+    types[INPUT][4] = alvision.cvtest.randInt(rng)%2 ? CV_64F : CV_32F;
 
     sizes[INPUT][0] = sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(N_POINTS,1);
     sizes[INPUT][1] = sizes[INPUT][3] = cvSize(3,3);
     sizes[INPUT][4] = cvSize(3,3);
 
-    if (cvtest::randInt(rng)%2)
+    if (alvision.cvtest.randInt(rng)%2)
     {
-        if (cvtest::randInt(rng)%2)
+        if (alvision.cvtest.randInt(rng)%2)
         {
             sizes[INPUT][2] = cvSize(1,4);
         }
@@ -619,7 +619,7 @@ void CV_InitUndistortRectifyMapTest::get_test_array_types_and_sizes( int test_ca
     }
     else
     {
-        if (cvtest::randInt(rng)%2)
+        if (alvision.cvtest.randInt(rng)%2)
         {
             sizes[INPUT][2] = cvSize(4,1);
         }
@@ -634,27 +634,27 @@ void CV_InitUndistortRectifyMapTest::get_test_array_types_and_sizes( int test_ca
 int CV_InitUndistortRectifyMapTest::prepare_test_case(int test_case_idx)
 {
     RNG& rng = ts->get_rng();
-    int code = cvtest::ArrayTest::prepare_test_case( test_case_idx );
+    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
 
     if (code <= 0)
         return code;
 
-    img_size.width = cvtest::randInt(rng) % MAX_X + 1;
-    img_size.height = cvtest::randInt(rng) % MAX_Y + 1;
+    img_size.width = alvision.cvtest.randInt(rng) % MAX_X + 1;
+    img_size.height = alvision.cvtest.randInt(rng) % MAX_Y + 1;
 
     if (useCPlus)
     {
-        mat_type = (cvtest::randInt(rng) % 2) == 0 ? CV_32FC1 : CV_16SC2;
-        if ((cvtest::randInt(rng) % 4) == 0)
+        mat_type = (alvision.cvtest.randInt(rng) % 2) == 0 ? CV_32FC1 : CV_16SC2;
+        if ((alvision.cvtest.randInt(rng) % 4) == 0)
             mat_type = -1;
-        if ((cvtest::randInt(rng) % 4) == 0)
+        if ((alvision.cvtest.randInt(rng) % 4) == 0)
             mat_type = CV_32FC2;
         _mapx = 0;
         _mapy = 0;
     }
     else
     {
-        int typex = (cvtest::randInt(rng) % 2) == 0 ? CV_32FC1 : CV_16SC2;
+        int typex = (alvision.cvtest.randInt(rng) % 2) == 0 ? CV_32FC1 : CV_16SC2;
         //typex = CV_32FC1; ///!!!!!!!!!!!!!!!!
         int typey = (typex == CV_32FC1) ? CV_32FC1 : CV_16UC1;
 
@@ -678,29 +678,29 @@ int CV_InitUndistortRectifyMapTest::prepare_test_case(int test_case_idx)
     //Generating points
     for (int i=0;i<N_POINTS;i++)
     {
-        points[i].x = cvtest::randReal(rng)*img_size.width;
-        points[i].y = cvtest::randReal(rng)*img_size.height;
+        points[i].x = alvision.cvtest.randReal(rng)*img_size.width;
+        points[i].y = alvision.cvtest.randReal(rng)*img_size.height;
     }
 
     //Generating camera matrix
     double sz = MAX(img_size.width,img_size.height);
-    double aspect_ratio = cvtest::randReal(rng)*0.6 + 0.7;
-    cam[2] = (img_size.width - 1)*0.5 + cvtest::randReal(rng)*10 - 5;
-    cam[5] = (img_size.height - 1)*0.5 + cvtest::randReal(rng)*10 - 5;
-    cam[0] = sz/(0.9 - cvtest::randReal(rng)*0.6);
+    double aspect_ratio = alvision.cvtest.randReal(rng)*0.6 + 0.7;
+    cam[2] = (img_size.width - 1)*0.5 + alvision.cvtest.randReal(rng)*10 - 5;
+    cam[5] = (img_size.height - 1)*0.5 + alvision.cvtest.randReal(rng)*10 - 5;
+    cam[0] = sz/(0.9 - alvision.cvtest.randReal(rng)*0.6);
     cam[4] = aspect_ratio*cam[0];
 
     //Generating distortion coeffs
-    dist[0] = cvtest::randReal(rng)*0.06 - 0.03;
-    dist[1] = cvtest::randReal(rng)*0.06 - 0.03;
+    dist[0] = alvision.cvtest.randReal(rng)*0.06 - 0.03;
+    dist[1] = alvision.cvtest.randReal(rng)*0.06 - 0.03;
     if( dist[0]*dist[1] > 0 )
         dist[1] = -dist[1];
-    if( cvtest::randInt(rng)%4 != 0 )
+    if( alvision.cvtest.randInt(rng)%4 != 0 )
     {
-        dist[2] = cvtest::randReal(rng)*0.004 - 0.002;
-        dist[3] = cvtest::randReal(rng)*0.004 - 0.002;
+        dist[2] = alvision.cvtest.randReal(rng)*0.004 - 0.002;
+        dist[3] = alvision.cvtest.randReal(rng)*0.004 - 0.002;
         if (dist_size > 4)
-            dist[4] = cvtest::randReal(rng)*0.004 - 0.002;
+            dist[4] = alvision.cvtest.randReal(rng)*0.004 - 0.002;
     }
     else
     {
@@ -718,31 +718,31 @@ int CV_InitUndistortRectifyMapTest::prepare_test_case(int test_case_idx)
     //new_cam[2] = cam[2];
     //new_cam[5] = cam[5];
 
-    new_cam[0] = cam[0] + (cvtest::randReal(rng) - (double)0.5)*0.2*cam[0]; //10%
-    new_cam[4] = cam[4] + (cvtest::randReal(rng) - (double)0.5)*0.2*cam[4]; //10%
-    new_cam[2] = cam[2] + (cvtest::randReal(rng) - (double)0.5)*0.3*img_size.width; //15%
-    new_cam[5] = cam[5] + (cvtest::randReal(rng) - (double)0.5)*0.3*img_size.height; //15%
+    new_cam[0] = cam[0] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.2*cam[0]; //10%
+    new_cam[4] = cam[4] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.2*cam[4]; //10%
+    new_cam[2] = cam[2] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.3*img_size.width; //15%
+    new_cam[5] = cam[5] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.3*img_size.height; //15%
 
 
     //Generating R matrix
     Mat _rot(3,3,CV_64F);
     Mat rotation(1,3,CV_64F);
-    rotation.at<double>(0) = CV_PI/8*(cvtest::randReal(rng) - (double)0.5); // phi
-    rotation.at<double>(1) = CV_PI/8*(cvtest::randReal(rng) - (double)0.5); // ksi
-    rotation.at<double>(2) = CV_PI/3*(cvtest::randReal(rng) - (double)0.5); //khi
-    cvtest::Rodrigues(rotation, _rot);
+    rotation.at<double>(0) = CV_PI/8*(alvision.cvtest.randReal(rng) - (double)0.5); // phi
+    rotation.at<double>(1) = CV_PI/8*(alvision.cvtest.randReal(rng) - (double)0.5); // ksi
+    rotation.at<double>(2) = CV_PI/3*(alvision.cvtest.randReal(rng) - (double)0.5); //khi
+    alvision.cvtest.Rodrigues(rotation, _rot);
 
     //cvSetIdentity(_rot);
     //copying data
-    cvtest::convert( _points, test_mat[INPUT][0], test_mat[INPUT][0].type());
-    cvtest::convert( _camera, test_mat[INPUT][1], test_mat[INPUT][1].type());
-    cvtest::convert( _distort, test_mat[INPUT][2], test_mat[INPUT][2].type());
-    cvtest::convert( _rot, test_mat[INPUT][3], test_mat[INPUT][3].type());
-    cvtest::convert( _new_cam, test_mat[INPUT][4], test_mat[INPUT][4].type());
+    alvision.cvtest.convert( _points, test_mat[INPUT][0], test_mat[INPUT][0].type());
+    alvision.cvtest.convert( _camera, test_mat[INPUT][1], test_mat[INPUT][1].type());
+    alvision.cvtest.convert( _distort, test_mat[INPUT][2], test_mat[INPUT][2].type());
+    alvision.cvtest.convert( _rot, test_mat[INPUT][3], test_mat[INPUT][3].type());
+    alvision.cvtest.convert( _new_cam, test_mat[INPUT][4], test_mat[INPUT][4].type());
 
-    zero_distortion = (cvtest::randInt(rng)%2) == 0 ? false : true;
-    zero_new_cam = (cvtest::randInt(rng)%2) == 0 ? false : true;
-    zero_R = (cvtest::randInt(rng)%2) == 0 ? false : true;
+    zero_distortion = (alvision.cvtest.randInt(rng)%2) == 0 ? false : true;
+    zero_new_cam = (alvision.cvtest.randInt(rng)%2) == 0 ? false : true;
+    zero_R = (alvision.cvtest.randInt(rng)%2) == 0 ? false : true;
 
     if (useCPlus)
     {
@@ -773,10 +773,10 @@ void CV_InitUndistortRectifyMapTest::prepare_to_validation(int/* test_case_idx*/
     Mat _new_cam(test_mat[INPUT][4].size(),CV_64F,&new_cam[0]);
     Mat _points(test_mat[INPUT][0].size(),CV_64FC2,&points[0]);
 
-    cvtest::convert(test_mat[INPUT][1],_camera,_camera.type());
-    cvtest::convert(test_mat[INPUT][2],_distort,_distort.type());
-    cvtest::convert(test_mat[INPUT][3],_rot,_rot.type());
-    cvtest::convert(test_mat[INPUT][4],_new_cam,_new_cam.type());
+    alvision.cvtest.convert(test_mat[INPUT][1],_camera,_camera.type());
+    alvision.cvtest.convert(test_mat[INPUT][2],_distort,_distort.type());
+    alvision.cvtest.convert(test_mat[INPUT][3],_rot,_rot.type());
+    alvision.cvtest.convert(test_mat[INPUT][4],_new_cam,_new_cam.type());
 
     //Applying precalculated undistort rectify map
     if (!useCPlus)
@@ -804,8 +804,8 @@ void CV_InitUndistortRectifyMapTest::prepare_to_validation(int/* test_case_idx*/
                         zero_R ? Mat::eye(3,3,CV_64F) : _rot,
                         zero_new_cam ? _camera : _new_cam);
     //cvTsDistortPoints(&_points,&ref_points,&_camera,&_distort,&_rot,&_new_cam);
-    cvtest::convert(ref_points, test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].type());
-    cvtest::copy(test_mat[INPUT][0],test_mat[OUTPUT][0]);
+    alvision.cvtest.convert(ref_points, test_mat[REF_OUTPUT][0], test_mat[REF_OUTPUT][0].type());
+    alvision.cvtest.copy(test_mat[INPUT][0],test_mat[OUTPUT][0]);
 
     cvReleaseMat(&_mapx);
     cvReleaseMat(&_mapy);
@@ -830,10 +830,10 @@ void CV_InitUndistortRectifyMapTest::prepare_to_validation(int/* test_case_idx*/
     CvMat _input3 = test_mat[INPUT][3];
     CvMat _input4 = test_mat[INPUT][4];
 
-    cvtest::convert(cvarrToMat(&_input1), cvarrToMat(&_camera), -1);
-    cvtest::convert(cvarrToMat(&_input2), cvarrToMat(&_distort), -1);
-    cvtest::convert(cvarrToMat(&_input3), cvarrToMat(&_rot), -1);
-    cvtest::convert(cvarrToMat(&_input4), cvarrToMat(&_new_cam), -1);
+    alvision.cvtest.convert(cvarrToMat(&_input1), cvarrToMat(&_camera), -1);
+    alvision.cvtest.convert(cvarrToMat(&_input2), cvarrToMat(&_distort), -1);
+    alvision.cvtest.convert(cvarrToMat(&_input3), cvarrToMat(&_rot), -1);
+    alvision.cvtest.convert(cvarrToMat(&_input4), cvarrToMat(&_new_cam), -1);
 
     //Applying precalculated undistort rectify map
     if (!useCPlus)
@@ -859,9 +859,9 @@ void CV_InitUndistortRectifyMapTest::prepare_to_validation(int/* test_case_idx*/
                       zero_distortion ? 0 : &_distort, zero_R ? 0 : &_rot, zero_new_cam ? &_camera : &_new_cam);
     //cvTsDistortPoints(&_points,&ref_points,&_camera,&_distort,&_rot,&_new_cam);
     CvMat dst = test_mat[REF_OUTPUT][0];
-    cvtest::convert(cvarrToMat(&ref_points), cvarrToMat(&dst), -1);
+    alvision.cvtest.convert(cvarrToMat(&ref_points), cvarrToMat(&dst), -1);
 
-    cvtest::copy(test_mat[INPUT][0],test_mat[OUTPUT][0]);
+    alvision.cvtest.copy(test_mat[INPUT][0],test_mat[OUTPUT][0]);
 
     delete[] dist;
     delete[] new_cam;

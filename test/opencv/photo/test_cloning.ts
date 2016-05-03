@@ -69,7 +69,7 @@ static const double numerical_precision = 1000.;
 
 TEST(Photo_SeamlessClone_normal, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "cloning/Normal_Cloning/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Normal_Cloning/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "destination1.png";
     string original_path3 = folder + "mask.png";
@@ -94,13 +94,13 @@ TEST(Photo_SeamlessClone_normal, regression)
 
     SAVE(result);
 
-    double error = cvtest::norm(reference, result, NORM_L1);
+    double error = alvision.cvtest.norm(reference, result, NORM_L1);
     EXPECT_LE(error, numerical_precision);
 }
 
 TEST(Photo_SeamlessClone_mixed, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "cloning/Mixed_Cloning/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Mixed_Cloning/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "destination1.png";
     string original_path3 = folder + "mask.png";
@@ -125,14 +125,14 @@ TEST(Photo_SeamlessClone_mixed, regression)
     Mat reference = imread(reference_path);
     ASSERT_FALSE(reference.empty()) << "Could not load reference image " << reference_path;
 
-    double error = cvtest::norm(reference, result, NORM_L1);
+    double error = alvision.cvtest.norm(reference, result, NORM_L1);
     EXPECT_LE(error, numerical_precision);
 
 }
 
 TEST(Photo_SeamlessClone_featureExchange, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "cloning/Monochrome_Transfer/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Monochrome_Transfer/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "destination1.png";
     string original_path3 = folder + "mask.png";
@@ -157,14 +157,14 @@ TEST(Photo_SeamlessClone_featureExchange, regression)
     Mat reference = imread(reference_path);
     ASSERT_FALSE(reference.empty()) << "Could not load reference image " << reference_path;
 
-    double error = cvtest::norm(reference, result, NORM_L1);
+    double error = alvision.cvtest.norm(reference, result, NORM_L1);
     EXPECT_LE(error, numerical_precision);
 
 }
 
 TEST(Photo_SeamlessClone_colorChange, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "cloning/color_change/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/color_change/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "mask.png";
     string reference_path = folder + "reference.png";
@@ -183,14 +183,14 @@ TEST(Photo_SeamlessClone_colorChange, regression)
     Mat reference = imread(reference_path);
     ASSERT_FALSE(reference.empty()) << "Could not load reference image " << reference_path;
 
-    double error = cvtest::norm(reference, result, NORM_L1);
+    double error = alvision.cvtest.norm(reference, result, NORM_L1);
     EXPECT_LE(error, numerical_precision);
 
 }
 
 TEST(Photo_SeamlessClone_illuminationChange, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "cloning/Illumination_Change/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Illumination_Change/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "mask.png";
     string reference_path = folder + "reference.png";
@@ -207,14 +207,14 @@ TEST(Photo_SeamlessClone_illuminationChange, regression)
     SAVE(result);
 
     Mat reference = imread(reference_path);
-    double error = cvtest::norm(reference, result, NORM_L1);
+    double error = alvision.cvtest.norm(reference, result, NORM_L1);
     EXPECT_LE(error, numerical_precision);
 
 }
 
 TEST(Photo_SeamlessClone_textureFlattening, regression)
 {
-    string folder = string(cvtest::TS::ptr()->get_data_path()) + "cloning/Texture_Flattening/";
+    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Texture_Flattening/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "mask.png";
     string reference_path = folder + "reference.png";
@@ -233,7 +233,7 @@ TEST(Photo_SeamlessClone_textureFlattening, regression)
     Mat reference = imread(reference_path);
     ASSERT_FALSE(reference.empty()) << "Could not load reference image " << reference_path;
 
-    double error = cvtest::norm(reference, result, NORM_L1);
+    double error = alvision.cvtest.norm(reference, result, NORM_L1);
     EXPECT_LE(error, numerical_precision);
 
 }

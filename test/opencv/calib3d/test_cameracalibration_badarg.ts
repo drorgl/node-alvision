@@ -323,14 +323,14 @@ void CV_CameraCalibrationBadArgTest::run( int /* start_from */ )
     errors += run_test_case( CV_StsBadArg, "Bad objPts data", bad_caller );
 
     if (errors)
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
     else
-        this.ts.set_failed_test_info(cvtest::TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 
     //try { caller(); }
     //catch (...)
     //{
-    //    this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+    //    this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
     //    printf("+!");
     //}
 }
@@ -450,9 +450,9 @@ protected:
 
 
         if (errors)
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         else
-            this.ts.set_failed_test_info(cvtest::TS::OK);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
     }
 };
 
@@ -733,9 +733,9 @@ protected:
 
 
         if (errors)
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         else
-            this.ts.set_failed_test_info(cvtest::TS::OK);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
     }
 };
 

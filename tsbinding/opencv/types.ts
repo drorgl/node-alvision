@@ -989,10 +989,10 @@ OpenCV to pass pixel values.
 */
 
 export interface Scalar_Static<T> {
-    new();
-    new(v0 : T, v1 : T, v2? : T /*= 0*/, v3? : T /*= 0*/);
-    new(v0 : T);
-    new(v: _matx.Vec<T>);
+    new (): Scalar_<T>;
+    new (v0: T, v1: T, v2?: T /*= 0*/, v3?: T /*= 0*/): Scalar_<T>;
+    new (v0: T): Scalar_<T>;
+    new (v: _matx.Vec<T>): Scalar_<T>;
 
         //! returns a scalar with all elements set to v0
     all(v0 : T): Scalar_<T>;

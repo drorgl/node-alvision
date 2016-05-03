@@ -55,6 +55,15 @@ export * from './opencv/stitching/detail/matchers';
 export * from './opencv/stitching/detail/motion_estimators';
 export * from './opencv/stitching/detail/seam_finders';
 
+export * from './opencv/viz';
+export * from './opencv/viz/types';
+export * from './opencv/viz/viz3d';
+export * from './opencv/viz/vizcore';
+export * from './opencv/viz/widget_accessor';
+export * from './opencv/viz/widgets';
+
+export * from './opencv/videoio';
+
 export * from './opencv/static';
 export * from './opencv/test';
 

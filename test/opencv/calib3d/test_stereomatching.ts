@@ -287,7 +287,7 @@ float dispRMS( const Mat& computedDisp, const Mat& groundTruthDisp, const Mat& m
         checkTypeAndSizeOfMask( mask, sz );
         pointsCount = countNonZero(mask);
     }
-    return 1.f/sqrt((float)pointsCount) * (float)cvtest::norm(computedDisp, groundTruthDisp, NORM_L2, mask);
+    return 1.f/sqrt((float)pointsCount) * (float)alvision.cvtest.norm(computedDisp, groundTruthDisp, NORM_L2, mask);
 }
 
 /*
@@ -411,21 +411,21 @@ void CV_StereoMatchingTest::run(int)
     assert( !algorithmName.empty() );
     if( dataPath.empty() )
     {
-        ts->printf( cvtest::TS::LOG, "dataPath is empty" );
-        this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ARG_CHECK );
+        ts->printf( alvision.cvtest.TS::LOG, "dataPath is empty" );
+        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ARG_CHECK );
         return;
     }
 
     FileStorage datasetsFS( dataPath + DATASETS_DIR + DATASETS_FILE, FileStorage::READ );
     int code = readDatasetsParams( datasetsFS );
-    if( code != cvtest::TS::OK )
+    if( code != alvision.cvtest.TS::OK )
     {
         this.ts.set_failed_test_info( code );
         return;
     }
     FileStorage runParamsFS( dataPath + ALGORITHMS_DIR + algorithmName + RUN_PARAMS_FILE, FileStorage::READ );
     code = readRunParams( runParamsFS );
-    if( code != cvtest::TS::OK )
+    if( code != alvision.cvtest.TS::OK )
     {
         this.ts.set_failed_test_info( code );
         return;
@@ -441,8 +441,8 @@ void CV_StereoMatchingTest::run(int)
         resFS.open( fullResultFilename, FileStorage::WRITE );
         if( !resFS.isOpened() )
         {
-            ts->printf( cvtest::TS::LOG, "file %s can not be read or written\n", fullResultFilename.c_str() );
-            this.ts.set_failed_test_info( cvtest::TS::FAIL_BAD_ARG_CHECK );
+            ts->printf( alvision.cvtest.TS::LOG, "file %s can not be read or written\n", fullResultFilename.c_str() );
+            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ARG_CHECK );
             return;
         }
         resFS << "stereo_matching" << "{";
@@ -463,8 +463,8 @@ void CV_StereoMatchingTest::run(int)
 
         if( leftImg.empty() || rightImg.empty() || trueLeftDisp.empty() )
         {
-            ts->printf( cvtest::TS::LOG, "images or left ground-truth disparities of dataset %s can not be read", datasetName.c_str() );
-            code = cvtest::TS::FAIL_INVALID_TEST_DATA;
+            ts->printf( alvision.cvtest.TS::LOG, "images or left ground-truth disparities of dataset %s can not be read", datasetName.c_str() );
+            code = alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
             continue;
         }
         int dispScaleFactor = datasetsParams[datasetName].dispScaleFactor;
@@ -494,7 +494,7 @@ void CV_StereoMatchingTest::run(int)
 
         int tempCode = processStereoMatchingResults( resFS, ci, isWrite,
                    leftImg, rightImg, trueLeftDisp, trueRightDisp, leftDisp, rightDisp, QualityEvalParams(ignBorder));
-        code = tempCode==cvtest::TS::OK ? code : tempCode;
+        code = tempCode==alvision.cvtest.TS::OK ? code : tempCode;
     }
 
     if( isWrite )
@@ -552,7 +552,7 @@ int CV_StereoMatchingTest::processStereoMatchingResults( FileStorage& fs, int ca
               const QualityEvalParams& qualityEvalParams )
 {
     // rightDisp is not used in current test virsion
-    int code = cvtest::TS::OK;
+    int code = alvision.cvtest.TS::OK;
     assert( fs.isOpened() );
     assert( trueLeftDisp.type() == CV_32FC1 );
     assert( trueRightDisp.empty() || trueRightDisp.type() == CV_32FC1 );
@@ -587,10 +587,10 @@ int CV_StereoMatchingTest::processStereoMatchingResults( FileStorage& fs, int ca
     }
     else // compare
     {
-        ts->printf( cvtest::TS::LOG, "\nquality of case named %s\n", caseNames[caseIdx].c_str() );
-        ts->printf( cvtest::TS::LOG, "%s\n", RMS_STR.c_str() );
+        ts->printf( alvision.cvtest.TS::LOG, "\nquality of case named %s\n", caseNames[caseIdx].c_str() );
+        ts->printf( alvision.cvtest.TS::LOG, "%s\n", RMS_STR.c_str() );
         writeErrors( RMS_STR, rmss );
-        ts->printf( cvtest::TS::LOG, "%s\n", BAD_PXLS_FRACTION_STR.c_str() );
+        ts->printf( alvision.cvtest.TS::LOG, "%s\n", BAD_PXLS_FRACTION_STR.c_str() );
         writeErrors( BAD_PXLS_FRACTION_STR, badPxlsFractions );
 
         FileNode fn = fs.getFirstTopLevelNode()[caseNames[caseIdx]];
@@ -599,9 +599,9 @@ int CV_StereoMatchingTest::processStereoMatchingResults( FileStorage& fs, int ca
         readErrors( fn, RMS_STR, validRmss );
         readErrors( fn, BAD_PXLS_FRACTION_STR, validBadPxlsFractions );
         int tempCode = compareErrors( rmss, validRmss, rmsEps, RMS_STR );
-        code = tempCode==cvtest::TS::OK ? code : tempCode;
+        code = tempCode==alvision.cvtest.TS::OK ? code : tempCode;
         tempCode = compareErrors( badPxlsFractions, validBadPxlsFractions, fracEps, BAD_PXLS_FRACTION_STR );
-        code = tempCode==cvtest::TS::OK ? code : tempCode;
+        code = tempCode==alvision.cvtest.TS::OK ? code : tempCode;
     }
     return code;
 }
@@ -610,8 +610,8 @@ int CV_StereoMatchingTest::readDatasetsParams( FileStorage& fs )
 {
     if( !fs.isOpened() )
     {
-        ts->printf( cvtest::TS::LOG, "datasetsParams can not be read " );
-        return cvtest::TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "datasetsParams can not be read " );
+        return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
     }
     datasetsParams.clear();
     FileNode fn = fs.getFirstTopLevelNode();
@@ -624,19 +624,19 @@ int CV_StereoMatchingTest::readDatasetsParams( FileStorage& fs )
         String uv = fn[i+2]; params.dispUnknVal = atoi(uv.c_str());
         datasetsParams[_name] = params;
     }
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 int CV_StereoMatchingTest::readRunParams( FileStorage& fs )
 {
     if( !fs.isOpened() )
     {
-        ts->printf( cvtest::TS::LOG, "runParams can not be read " );
-        return cvtest::TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "runParams can not be read " );
+        return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
     }
     caseNames.clear();;
     caseDatasets.clear();
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 void CV_StereoMatchingTest::writeErrors( const string& errName, const vector<float>& errors, FileStorage* fs )
@@ -648,7 +648,7 @@ void CV_StereoMatchingTest::writeErrors( const string& errName, const vector<flo
             *fs << ERROR_PREFIXES[i] + errName << *it;
     else
         for( int i = 0; i < ERROR_KINDS_COUNT; i++, ++it )
-            ts->printf( cvtest::TS::LOG, "%s = %f\n", string(ERROR_PREFIXES[i]+errName).c_str(), *it );
+            ts->printf( alvision.cvtest.TS::LOG, "%s = %f\n", string(ERROR_PREFIXES[i]+errName).c_str(), *it );
 }
 
 void CV_StereoMatchingTest::readErrors( FileNode& fn, const string& errName, vector<float>& errors )
@@ -672,10 +672,10 @@ int CV_StereoMatchingTest::compareErrors( const vector<float>& calcErrors, const
     for( int i = 0; i < ERROR_KINDS_COUNT; i++, ++calcIt, ++validIt, ++epsIt )
         if( *calcIt - *validIt > *epsIt )
         {
-            ts->printf( cvtest::TS::LOG, "bad accuracy of %s (valid=%f; calc=%f)\n", string(ERROR_PREFIXES[i]+errName).c_str(), *validIt, *calcIt );
+            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of %s (valid=%f; calc=%f)\n", string(ERROR_PREFIXES[i]+errName).c_str(), *validIt, *calcIt );
             ok = false;
         }
-    return ok ? cvtest::TS::OK : cvtest::TS::FAIL_BAD_ACCURACY;
+    return ok ? alvision.cvtest.TS::OK : alvision.cvtest.TS::FAIL_BAD_ACCURACY;
 }
 
 //----------------------------------- StereoBM test -----------------------------------------------------

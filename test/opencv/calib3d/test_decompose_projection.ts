@@ -67,7 +67,7 @@ CV_DecomposeProjectionMatrixTest::CV_DecomposeProjectionMatrixTest()
 void CV_DecomposeProjectionMatrixTest::run(int start_from)
 {
 
-    this.ts.set_failed_test_info(cvtest::TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 
     cv::RNG& rng = ts->get_rng();
     int progress = 0;
@@ -121,19 +121,19 @@ void CV_DecomposeProjectionMatrixTest::run(int start_from)
         const double thresh = 1e-6;
         if ( norm(origK, K, cv::NORM_INF) > thresh )
         {
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
             break;
         }
 
         if ( norm(origR, R, cv::NORM_INF) > thresh )
         {
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
             break;
         }
 
         if ( norm(origT, t, cv::NORM_INF) > thresh )
         {
-            this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
             break;
         }
 

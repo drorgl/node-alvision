@@ -154,7 +154,7 @@ int CV_DetectorTest::prepareData( FileStorage& _fs )
             }
         }
     }
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 void CV_DetectorTest::run( int )
@@ -237,10 +237,10 @@ void CV_DetectorTest::run( int )
         vector<vector<Rect> > objects;
         int temp_code = runTestCase( di, objects );
 
-        if (!write_results && temp_code == cvtest::TS::OK)
+        if (!write_results && temp_code == alvision.cvtest.TS::OK)
             temp_code = validate( di, objects );
 
-        if (temp_code != cvtest::TS::OK)
+        if (temp_code != alvision.cvtest.TS::OK)
             code = temp_code;
 
         if( write_results )
@@ -255,8 +255,8 @@ void CV_DetectorTest::run( int )
 
     if ( test_case_count <= 0 || imageFilenames.size() <= 0 )
     {
-        ts->printf( cvtest::TS::LOG, "validation file is not determined or not correct" );
-        code = cvtest::TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "validation file is not determined or not correct" );
+        code = alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
     }
     this.ts.set_failed_test_info( code );
 }
@@ -276,11 +276,11 @@ int CV_DetectorTest::runTestCase( int detectorIdx, vector<vector<Rect> >& object
         {
             char msg[30];
             sprintf( msg, "%s %d %s", "image ", ii, " can not be read" );
-            ts->printf( cvtest::TS::LOG, msg );
-            return cvtest::TS::FAIL_INVALID_TEST_DATA;
+            ts->printf( alvision.cvtest.TS::LOG, msg );
+            return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
         }
         int code = detectMultiScale( detectorIdx, image, imgObjects );
-        if( code != cvtest::TS::OK )
+        if( code != alvision.cvtest.TS::OK )
             return code;
 
         objects.push_back( imgObjects );
@@ -299,7 +299,7 @@ int CV_DetectorTest::runTestCase( int detectorIdx, vector<vector<Rect> >& object
             validationFS << "]"; // imageIdxStr
         }
     }
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 
@@ -387,9 +387,9 @@ int CV_DetectorTest::validate( int detectorIdx, vector<vector<Rect> >& objects )
         << "detector " << detectorNames[detectorIdx] << " has overrated count of rectangles without pair on all images set";
 
     if (::testing::Test::HasFailure())
-        return cvtest::TS::FAIL_BAD_ACCURACY;
+        return alvision.cvtest.TS::FAIL_BAD_ACCURACY;
 
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 //----------------------------------------------- CascadeDetectorTest -----------------------------------
@@ -441,8 +441,8 @@ int CV_CascadeDetectorTest::detectMultiScale_C( const string& filename,
 
     if( !c_cascade )
     {
-        ts->printf( cvtest::TS::LOG, "cascade %s can not be opened");
-        return cvtest::TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "cascade %s can not be opened");
+        return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
     }
     Mat grayImg;
     cvtColor( img, grayImg, COLOR_BGR2GRAY );
@@ -458,7 +458,7 @@ int CV_CascadeDetectorTest::detectMultiScale_C( const string& filename,
         objects.push_back(r);
     }
 
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 int CV_CascadeDetectorTest::detectMultiScale( int di, const Mat& img,
@@ -476,14 +476,14 @@ int CV_CascadeDetectorTest::detectMultiScale( int di, const Mat& img,
     CascadeClassifier cascade( filename );
     if( cascade.empty() )
     {
-        ts->printf( cvtest::TS::LOG, "cascade %s can not be opened");
-        return cvtest::TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TS::LOG, "cascade %s can not be opened");
+        return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
     }
     Mat grayImg;
     cvtColor( img, grayImg, COLOR_BGR2GRAY );
     equalizeHist( grayImg, grayImg );
     cascade.detectMultiScale( grayImg, objects, 1.1, 3, flags[di] );
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 //----------------------------------------------- HOGDetectorTest -----------------------------------
@@ -524,7 +524,7 @@ int CV_HOGDetectorTest::detectMultiScale( int di, const Mat& img,
     else
         assert(0);
     hog.detectMultiScale(img, objects);
-    return cvtest::TS::OK;
+    return alvision.cvtest.TS::OK;
 }
 
 //----------------------------------------------- HOGDetectorReadWriteTest -----------------------------------
@@ -532,7 +532,7 @@ TEST(Objdetect_HOGDetectorReadWrite, regression)
 {
     // Inspired by bug #2607
     Mat img;
-    img = imread(cvtest::TS::ptr()->get_data_path() + "/cascadeandhog/images/karen-and-rob.png");
+    img = imread(alvision.cvtest.TS::ptr()->get_data_path() + "/cascadeandhog/images/karen-and-rob.png");
     ASSERT_FALSE(img.empty());
 
     HOGDescriptor hog;
@@ -562,13 +562,13 @@ class HOGDescriptorTester :
     public cv::HOGDescriptor
 {
     HOGDescriptor* actual_hog;
-    cvtest::TS* ts;
+    alvision.cvtest.TS* ts;
     mutable bool failed;
 
 public:
     HOGDescriptorTester(HOGDescriptor& instance) :
         cv::HOGDescriptor(instance), actual_hog(&instance),
-        ts(cvtest::TS::ptr()), failed(false)
+        ts(alvision.cvtest.TS::ptr()), failed(false)
     { }
 
     virtual void computeGradient(const Mat& img, Mat& grad, Mat& qangle,
@@ -1088,22 +1088,22 @@ void HOGDescriptorTester::detect(const Mat& img,
     if (!std::equal(hits.begin(), hits.end(),
         actual_find_locations.begin()))
     {
-        ts->printf(cvtest::TS::SUMMARY, "Found locations are not equal (see detect function)\n");
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+        ts->printf(alvision.cvtest.TS::SUMMARY, "Found locations are not equal (see detect function)\n");
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
         ts->set_gtest_status();
         failed = true;
         return;
     }
 
     const double eps = 0.0;
-    double diff_norm = cvtest::norm(actual_weights, weights, NORM_L2);
+    double diff_norm = alvision.cvtest.norm(actual_weights, weights, NORM_L2);
     if (diff_norm > eps)
     {
-        ts->printf(cvtest::TS::SUMMARY, "Weights for found locations aren't equal.\n"
+        ts->printf(alvision.cvtest.TS::SUMMARY, "Weights for found locations aren't equal.\n"
             "Norm of the difference is %lf\n", diff_norm);
-        ts->printf(cvtest::TS::LOG, "Channels: %d\n", img.channels());
+        ts->printf(alvision.cvtest.TS::LOG, "Channels: %d\n", img.channels());
         failed = true;
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
         ts->set_gtest_status();
         return;
     }
@@ -1177,14 +1177,14 @@ void HOGDescriptorTester::compute(InputArray _img, vector<float>& descriptors,
     std::vector<float> actual_descriptors;
     actual_hog->compute(img, actual_descriptors, winStride, padding, locations);
 
-    double diff_norm = cvtest::norm(actual_descriptors, descriptors, NORM_L2);
+    double diff_norm = alvision.cvtest.norm(actual_descriptors, descriptors, NORM_L2);
     const double eps = 0.0;
     if (diff_norm > eps)
     {
-        ts->printf(cvtest::TS::SUMMARY, "Norm of the difference: %lf\n", diff_norm);
-        ts->printf(cvtest::TS::SUMMARY, "Found descriptors are not equal (see compute function)\n");
-        this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
-        ts->printf(cvtest::TS::LOG, "Channels: %d\n", img.channels());
+        ts->printf(alvision.cvtest.TS::SUMMARY, "Norm of the difference: %lf\n", diff_norm);
+        ts->printf(alvision.cvtest.TS::SUMMARY, "Found descriptors are not equal (see compute function)\n");
+        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+        ts->printf(alvision.cvtest.TS::LOG, "Channels: %d\n", img.channels());
         ts->set_gtest_status();
         failed = true;
         return;
@@ -1327,13 +1327,13 @@ void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle
     const double eps = 0.0;
     for (i = 0; i < 2; ++i)
     {
-       double diff_norm = cvtest::norm(reference_mats[i], actual_mats[i], NORM_L2);
+       double diff_norm = alvision.cvtest.norm(reference_mats[i], actual_mats[i], NORM_L2);
        if (diff_norm > eps)
        {
-           ts->printf(cvtest::TS::LOG, "%s matrices are not equal\n"
+           ts->printf(alvision.cvtest.TS::LOG, "%s matrices are not equal\n"
                "Norm of the difference is %lf\n", args[i], diff_norm);
-           ts->printf(cvtest::TS::LOG, "Channels: %d\n", img.channels());
-           this.ts.set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+           ts->printf(alvision.cvtest.TS::LOG, "Channels: %d\n", img.channels());
+           this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
            ts->set_gtest_status();
            failed = true;
            return;
@@ -1343,7 +1343,7 @@ void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle
 
 TEST(Objdetect_HOGDetector_Strict, accuracy)
 {
-    cvtest::TS* ts = cvtest::TS::ptr();
+    alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
     RNG& rng = ts->get_rng();
 
     HOGDescriptor actual_hog;

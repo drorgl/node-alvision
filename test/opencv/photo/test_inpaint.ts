@@ -101,7 +101,7 @@ class CV_InpaintTest extends alvision.cvtest.BaseTest
 
         const jpeg_thres = 3;
         if (n1 > jpeg_thres || n2 > jpeg_thres) {
-            ts ->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
             return;
         }
 

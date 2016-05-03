@@ -87,7 +87,7 @@ bool validate_pixel(const cv::Mat& image,int x,int y,uchar val)
 TEST(Optim_denoise_tvl1, regression_basic)
 {
     cv::RNG rng(42);
-    cv::Mat img = cv::imread(cvtest::TS::ptr()->get_data_path() + "shared/lena.png", 0), noisy, res;
+    cv::Mat img = cv::imread(alvision.cvtest.TS::ptr()->get_data_path() + "shared/lena.png", 0), noisy, res;
 
     ASSERT_FALSE(img.empty()) << "Error: can't open 'lena.png'";
 

@@ -114,9 +114,9 @@ class CV_VideoIOTest  extends alvision.cvtest.BaseTest
 {
 protected:
     void ImageTest (const string& dir);
-    void VideoTest (const string& dir, const cvtest::VideoFormat& fmt);
+    void VideoTest (const string& dir, const alvision.cvtest.VideoFormat& fmt);
     void SpecificImageTest (const string& dir);
-    void SpecificVideoTest (const string& dir, const cvtest::VideoFormat& fmt);
+    void SpecificVideoTest (const string& dir, const alvision.cvtest.VideoFormat& fmt);
 
     CV_VideoIOTest() {}
     ~CV_VideoIOTest() {}
@@ -209,7 +209,7 @@ void CV_VideoIOTest::ImageTest(const string& dir)
         }
 
         const double thresDbell = 20;
-        double psnr = cvtest::PSNR(loaded, image);
+        double psnr = alvision.cvtest.PSNR(loaded, image);
         if (psnr < thresDbell)
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Reading image from file: too big difference (=%g) with fmt=%s\n", psnr, ext.c_str());
@@ -246,7 +246,7 @@ void CV_VideoIOTest::ImageTest(const string& dir)
             continue;
         }
 
-        psnr = cvtest::PSNR(buf_loaded, image);
+        psnr = alvision.cvtest.PSNR(buf_loaded, image);
 
         if (psnr < thresDbell)
         {
@@ -262,10 +262,10 @@ void CV_VideoIOTest::ImageTest(const string& dir)
 }
 
 
-void CV_VideoIOTest::VideoTest(const string& dir, const cvtest::VideoFormat& fmt)
+void CV_VideoIOTest::VideoTest(const string& dir, const alvision.cvtest.VideoFormat& fmt)
 {
     string src_file = dir + "../cv/shared/video_for_test.avi";
-    string tmp_name = cv::tempfile((cvtest::fourccToString(fmt.fourcc) + "."  + fmt.ext).c_str());
+    string tmp_name = cv::tempfile((alvision.cvtest.fourccToString(fmt.fourcc) + "."  + fmt.ext).c_str());
 
     ts->printf(alvision.cvtest.TSConstants.LOG, "reading video : %s and converting it to %s\n", src_file.c_str(), tmp_name.c_str());
 
@@ -295,7 +295,7 @@ void CV_VideoIOTest::VideoTest(const string& dir, const cvtest::VideoFormat& fmt
             if (writer == NULL)
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "can't create writer (with fourcc : %s)\n",
-                           cvtest::fourccToString(fmt.fourcc).c_str());
+                           alvision.cvtest.fourccToString(fmt.fourcc).c_str());
                 cvReleaseCapture( &cap );
                 this.ts.set_failed_test_info(ts->FAIL_MISMATCH);
                 return;
@@ -327,7 +327,7 @@ void CV_VideoIOTest::VideoTest(const string& dir, const cvtest::VideoFormat& fmt
         Mat img = frames[i];
         Mat img1 = cv::cvarrToMat(ipl1);
 
-        double psnr = cvtest::PSNR(img1, img);
+        double psnr = alvision.cvtest.PSNR(img1, img);
         if (psnr < thresDbell)
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Too low frame %d psnr = %gdb\n", i, psnr);
@@ -382,7 +382,7 @@ void CV_VideoIOTest::SpecificImageTest(const string& dir)
         }
 
         const double thresDbell = 20;
-        double psnr = cvtest::PSNR(loaded, image);
+        double psnr = alvision.cvtest.PSNR(loaded, image);
         if (psnr < thresDbell)
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Reading image from file: too big difference (=%g) with fmt=bmp\n", psnr);
@@ -419,7 +419,7 @@ void CV_VideoIOTest::SpecificImageTest(const string& dir)
             continue;
         }
 
-        psnr = cvtest::PSNR(buf_loaded, image);
+        psnr = alvision.cvtest.PSNR(buf_loaded, image);
 
         if (psnr < thresDbell)
         {
@@ -434,12 +434,12 @@ void CV_VideoIOTest::SpecificImageTest(const string& dir)
 }
 
 
-void CV_VideoIOTest::SpecificVideoTest(const string& dir, const cvtest::VideoFormat& fmt)
+void CV_VideoIOTest::SpecificVideoTest(const string& dir, const alvision.cvtest.VideoFormat& fmt)
 {
     string ext = fmt.ext;
     int fourcc = fmt.fourcc;
 
-    string fourcc_str = cvtest::fourccToString(fourcc);
+    string fourcc_str = alvision.cvtest.fourccToString(fourcc);
     const string video_file = cv::tempfile((fourcc_str + "." + ext).c_str());
 
     Size frame_size(968 & -2, 757 & -2);
@@ -538,7 +538,7 @@ void CV_VideoIOTest::SpecificVideoTest(const string& dir, const cvtest::VideoFor
         Mat img = images[i];
 
         const double thresDbell = 40;
-        double psnr = cvtest::PSNR(img, frame);
+        double psnr = alvision.cvtest.PSNR(img, frame);
 
         if (psnr > thresDbell)
         {
@@ -566,7 +566,7 @@ void CV_VideoTest::run(int)
 {
     for (int i = 0; ; ++i)
     {
-        const cvtest::VideoFormat& fmt = cvtest::g_specific_fmt_list[i];
+        const alvision.cvtest.VideoFormat& fmt = alvision.cvtest.g_specific_fmt_list[i];
         if( fmt.empty() )
             break;
         VideoTest(ts->get_data_path(), fmt);
@@ -577,7 +577,7 @@ void CV_SpecificVideoTest::run(int)
 {
     for (int i = 0; ; ++i)
     {
-        const cvtest::VideoFormat& fmt = cvtest::g_specific_fmt_list[i];
+        const alvision.cvtest.VideoFormat& fmt = alvision.cvtest.g_specific_fmt_list[i];
         if( fmt.empty() )
             break;
         SpecificVideoTest(ts->get_data_path(), fmt);

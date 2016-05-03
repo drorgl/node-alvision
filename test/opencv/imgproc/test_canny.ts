@@ -127,24 +127,24 @@ class CV_CannyTest extends alvision.cvtest.ArrayTest
 
 
     validate_test_results(int test_case_idx ) : alvision.int {
-        int code = cvtest::TS::OK, nz0;
+        int code = alvision.cvtest.TS::OK, nz0;
         prepare_to_validation(test_case_idx);
 
-        double err = cvtest::norm(test_mat[OUTPUT][0], test_mat[REF_OUTPUT][0], CV_L1);
+        double err = alvision.cvtest.norm(test_mat[OUTPUT][0], test_mat[REF_OUTPUT][0], CV_L1);
         if (err == 0)
             return code;
 
         if (err != cvRound(err) || cvRound(err) % 255 != 0) {
-            ts ->printf(cvtest::TS::LOG, "Some of the pixels, produced by Canny, are not 0's or 255's; the difference is %g\n", err);
-            ts ->set_failed_test_info(cvtest::TS::FAIL_INVALID_OUTPUT);
+            ts ->printf(alvision.cvtest.TS::LOG, "Some of the pixels, produced by Canny, are not 0's or 255's; the difference is %g\n", err);
+            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
             return code;
         }
 
-        nz0 = cvRound(cvtest::norm(test_mat[REF_OUTPUT][0], CV_L1) / 255);
+        nz0 = cvRound(alvision.cvtest.norm(test_mat[REF_OUTPUT][0], CV_L1) / 255);
         err = (err / 255 / MAX(nz0, 100)) * 100;
         if (err > 1) {
-            ts ->printf(cvtest::TS::LOG, "Too high percentage of non-matching edge pixels = %g%%\n", err);
-            ts ->set_failed_test_info(cvtest::TS::FAIL_BAD_ACCURACY);
+            ts ->printf(alvision.cvtest.TS::LOG, "Too high percentage of non-matching edge pixels = %g%%\n", err);
+            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
         }
 
         return code;
@@ -199,11 +199,11 @@ function test_Canny(  src : alvision.Mat, dst : alvision.Mat,
 
     int x, y, width = src.cols, height = src.rows;
 
-    Mat dxkernel = cvtest::calcSobelKernel2D( 1, 0, m, 0 );
-    Mat dykernel = cvtest::calcSobelKernel2D( 0, 1, m, 0 );
+    Mat dxkernel = alvision.cvtest.calcSobelKernel2D( 1, 0, m, 0 );
+    Mat dykernel = alvision.cvtest.calcSobelKernel2D( 0, 1, m, 0 );
     Mat dx, dy, mag(height, width, CV_32F);
-    cvtest::filter2D(src, dx, CV_16S, dxkernel, anchor, 0, BORDER_REPLICATE);
-    cvtest::filter2D(src, dy, CV_16S, dykernel, anchor, 0, BORDER_REPLICATE);
+    alvision.cvtest.filter2D(src, dx, CV_16S, dxkernel, anchor, 0, BORDER_REPLICATE);
+    alvision.cvtest.filter2D(src, dy, CV_16S, dykernel, anchor, 0, BORDER_REPLICATE);
 
     // calc gradient magnitude
     for( y = 0; y < height; y++ )

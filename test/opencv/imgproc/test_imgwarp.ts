@@ -88,14 +88,14 @@ CV_ImgWarpBaseTest::CV_ImgWarpBaseTest( bool warp_matrix )
 
 int CV_ImgWarpBaseTest::read_params( CvFileStorage* fs )
 {
-    int code = cvtest::ArrayTest::read_params( fs );
+    int code = alvision.cvtest.ArrayTest::read_params( fs );
     return code;
 }
 
 
 void CV_ImgWarpBaseTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
 {
-    cvtest::ArrayTest::get_minmax_bounds( i, j, type, low, high );
+    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
     if( CV_MAT_DEPTH(type) == CV_32F )
     {
         low = Scalar::all(-10.);
@@ -108,29 +108,29 @@ void CV_ImgWarpBaseTest::get_test_array_types_and_sizes( int test_case_idx,
                                                 vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    int depth = cvtest::randInt(rng) % 3;
-    int cn = cvtest::randInt(rng) % 3 + 1;
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    int depth = alvision.cvtest.randInt(rng) % 3;
+    int cn = alvision.cvtest.randInt(rng) % 3 + 1;
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     depth = depth == 0 ? CV_8U : depth == 1 ? CV_16U : CV_32F;
     cn += cn == 2;
 
     types[INPUT][0] = types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] = CV_MAKETYPE(depth, cn);
     if( test_array[INPUT].size() > 1 )
-        types[INPUT][1] = cvtest::randInt(rng) & 1 ? CV_32FC1 : CV_64FC1;
+        types[INPUT][1] = alvision.cvtest.randInt(rng) & 1 ? CV_32FC1 : CV_64FC1;
 
-    interpolation = cvtest::randInt(rng) % max_interpolation;
+    interpolation = alvision.cvtest.randInt(rng) % max_interpolation;
 }
 
 
 void CV_ImgWarpBaseTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
 {
     if( i != INPUT || j != 0 )
-        cvtest::ArrayTest::fill_array( test_case_idx, i, j, arr );
+        alvision.cvtest.ArrayTest::fill_array( test_case_idx, i, j, arr );
 }
 
 int CV_ImgWarpBaseTest::prepare_test_case( int test_case_idx )
 {
-    int code = cvtest::ArrayTest::prepare_test_case( test_case_idx );
+    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
     Mat& img = test_mat[INPUT][0];
     int i, j, cols = img.cols;
     int type = img.type(), depth = CV_MAT_DEPTH(type), cn = CV_MAT_CN(type);
@@ -234,15 +234,15 @@ void CV_ResizeTest::get_test_array_types_and_sizes( int test_case_idx, vector<ve
     CV_ImgWarpBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     CvSize sz;
 
-    sz.width = (cvtest::randInt(rng) % sizes[INPUT][0].width) + 1;
-    sz.height = (cvtest::randInt(rng) % sizes[INPUT][0].height) + 1;
+    sz.width = (alvision.cvtest.randInt(rng) % sizes[INPUT][0].width) + 1;
+    sz.height = (alvision.cvtest.randInt(rng) % sizes[INPUT][0].height) + 1;
 
-    if( cvtest::randInt(rng) & 1 )
+    if( alvision.cvtest.randInt(rng) & 1 )
     {
-        int xfactor = cvtest::randInt(rng) % 10 + 1;
-        int yfactor = cvtest::randInt(rng) % 10 + 1;
+        int xfactor = alvision.cvtest.randInt(rng) % 10 + 1;
+        int yfactor = alvision.cvtest.randInt(rng) % 10 + 1;
 
-        if( cvtest::randInt(rng) & 1 )
+        if( alvision.cvtest.randInt(rng) & 1 )
             yfactor = xfactor;
 
         sz.width = sizes[INPUT][0].width / xfactor;
@@ -253,7 +253,7 @@ void CV_ResizeTest::get_test_array_types_and_sizes( int test_case_idx, vector<ve
         sizes[INPUT][0].height = sz.height * yfactor;
     }
 
-    if( cvtest::randInt(rng) & 1 )
+    if( alvision.cvtest.randInt(rng) & 1 )
         sizes[INPUT_OUTPUT][0] = sizes[REF_INPUT_OUTPUT][0] = sz;
     else
     {
@@ -528,9 +528,9 @@ int CV_WarpAffineTest::prepare_test_case( int test_case_idx )
     double buffer[6];
     Mat tmp( 2, 3, mat.type(), buffer );
 
-    center.x = (float)((cvtest::randReal(rng)*1.2 - 0.1)*src.cols);
-    center.y = (float)((cvtest::randReal(rng)*1.2 - 0.1)*src.rows);
-    angle = cvtest::randReal(rng)*360;
+    center.x = (float)((alvision.cvtest.randReal(rng)*1.2 - 0.1)*src.cols);
+    center.y = (float)((alvision.cvtest.randReal(rng)*1.2 - 0.1)*src.rows);
+    angle = alvision.cvtest.randReal(rng)*360;
     scale = ((double)dst.rows/src.rows + (double)dst.cols/src.cols)*0.5;
     getRotationMatrix2D(center, angle, scale).convertTo(mat, mat.depth());
     rng.fill( tmp, CV_RAND_NORMAL, Scalar::all(1.), Scalar::all(0.01) );
@@ -770,19 +770,19 @@ int CV_RemapTest::prepare_test_case( int test_case_idx )
     if( code <= 0 )
         return code;
 
-    double aspect_ratio = cvtest::randReal(rng)*0.6 + 0.7;
-    a[2] = (src.cols - 1)*0.5 + cvtest::randReal(rng)*10 - 5;
-    a[5] = (src.rows - 1)*0.5 + cvtest::randReal(rng)*10 - 5;
-    a[0] = sz/(0.9 - cvtest::randReal(rng)*0.6);
+    double aspect_ratio = alvision.cvtest.randReal(rng)*0.6 + 0.7;
+    a[2] = (src.cols - 1)*0.5 + alvision.cvtest.randReal(rng)*10 - 5;
+    a[5] = (src.rows - 1)*0.5 + alvision.cvtest.randReal(rng)*10 - 5;
+    a[0] = sz/(0.9 - alvision.cvtest.randReal(rng)*0.6);
     a[4] = aspect_ratio*a[0];
-    k[0] = cvtest::randReal(rng)*0.06 - 0.03;
-    k[1] = cvtest::randReal(rng)*0.06 - 0.03;
+    k[0] = alvision.cvtest.randReal(rng)*0.06 - 0.03;
+    k[1] = alvision.cvtest.randReal(rng)*0.06 - 0.03;
     if( k[0]*k[1] > 0 )
         k[1] = -k[1];
-    k[2] = cvtest::randReal(rng)*0.004 - 0.002;
-    k[3] = cvtest::randReal(rng)*0.004 - 0.002;
+    k[2] = alvision.cvtest.randReal(rng)*0.004 - 0.002;
+    k[3] = alvision.cvtest.randReal(rng)*0.004 - 0.002;
 
-    cvtest::initUndistortMap( _a, _k, test_mat[INPUT][1].size(), test_mat[INPUT][1], test_mat[INPUT][2] );
+    alvision.cvtest.initUndistortMap( _a, _k, test_mat[INPUT][1].size(), test_mat[INPUT][1], test_mat[INPUT][2] );
     return code;
 }
 
@@ -845,10 +845,10 @@ void CV_UndistortTest::get_test_array_types_and_sizes( int test_case_idx, vector
     int type = types[INPUT][0];
     type = CV_MAKETYPE( CV_8U, CV_MAT_CN(type) );
     types[INPUT][0] = types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] = type;
-    types[INPUT][1] = cvtest::randInt(rng)%2 ? CV_64F : CV_32F;
-    types[INPUT][2] = cvtest::randInt(rng)%2 ? CV_64F : CV_32F;
+    types[INPUT][1] = alvision.cvtest.randInt(rng)%2 ? CV_64F : CV_32F;
+    types[INPUT][2] = alvision.cvtest.randInt(rng)%2 ? CV_64F : CV_32F;
     sizes[INPUT][1] = cvSize(3,3);
-    sizes[INPUT][2] = cvtest::randInt(rng)%2 ? cvSize(4,1) : cvSize(1,4);
+    sizes[INPUT][2] = alvision.cvtest.randInt(rng)%2 ? cvSize(4,1) : cvSize(1,4);
     types[INPUT][3] =  types[INPUT][1];
     sizes[INPUT][3] = sizes[INPUT][1];
     interpolation = CV_INTER_LINEAR;
@@ -910,38 +910,38 @@ int CV_UndistortTest::prepare_test_case( int test_case_idx )
     if( code <= 0 )
         return code;
 
-    double aspect_ratio = cvtest::randReal(rng)*0.6 + 0.7;
-    a[2] = (src.cols - 1)*0.5 + cvtest::randReal(rng)*10 - 5;
-    a[5] = (src.rows - 1)*0.5 + cvtest::randReal(rng)*10 - 5;
-    a[0] = sz/(0.9 - cvtest::randReal(rng)*0.6);
+    double aspect_ratio = alvision.cvtest.randReal(rng)*0.6 + 0.7;
+    a[2] = (src.cols - 1)*0.5 + alvision.cvtest.randReal(rng)*10 - 5;
+    a[5] = (src.rows - 1)*0.5 + alvision.cvtest.randReal(rng)*10 - 5;
+    a[0] = sz/(0.9 - alvision.cvtest.randReal(rng)*0.6);
     a[4] = aspect_ratio*a[0];
-    k[0] = cvtest::randReal(rng)*0.06 - 0.03;
-    k[1] = cvtest::randReal(rng)*0.06 - 0.03;
+    k[0] = alvision.cvtest.randReal(rng)*0.06 - 0.03;
+    k[1] = alvision.cvtest.randReal(rng)*0.06 - 0.03;
     if( k[0]*k[1] > 0 )
         k[1] = -k[1];
-    if( cvtest::randInt(rng)%4 != 0 )
+    if( alvision.cvtest.randInt(rng)%4 != 0 )
     {
-        k[2] = cvtest::randReal(rng)*0.004 - 0.002;
-        k[3] = cvtest::randReal(rng)*0.004 - 0.002;
+        k[2] = alvision.cvtest.randReal(rng)*0.004 - 0.002;
+        k[3] = alvision.cvtest.randReal(rng)*0.004 - 0.002;
     }
     else
         k[2] = k[3] = 0;
 
-    new_cam[0] = a[0] + (cvtest::randReal(rng) - (double)0.5)*0.2*a[0]; //10%
-    new_cam[4] = a[4] + (cvtest::randReal(rng) - (double)0.5)*0.2*a[4]; //10%
-    new_cam[2] = a[2] + (cvtest::randReal(rng) - (double)0.5)*0.3*test_mat[INPUT][0].rows; //15%
-    new_cam[5] = a[5] + (cvtest::randReal(rng) - (double)0.5)*0.3*test_mat[INPUT][0].cols; //15%
+    new_cam[0] = a[0] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.2*a[0]; //10%
+    new_cam[4] = a[4] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.2*a[4]; //10%
+    new_cam[2] = a[2] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.3*test_mat[INPUT][0].rows; //15%
+    new_cam[5] = a[5] + (alvision.cvtest.randReal(rng) - (double)0.5)*0.3*test_mat[INPUT][0].cols; //15%
 
     _a.convertTo(_a0, _a0.depth());
 
-    zero_distortion = (cvtest::randInt(rng)%2) == 0 ? false : true;
+    zero_distortion = (alvision.cvtest.randInt(rng)%2) == 0 ? false : true;
     _k.convertTo(_k0, _k0.depth());
 
-    zero_new_cam = (cvtest::randInt(rng)%2) == 0 ? false : true;
+    zero_new_cam = (alvision.cvtest.randInt(rng)%2) == 0 ? false : true;
     _new_cam.convertTo(_new_cam0, _new_cam0.depth());
 
     //Testing C++ code
-    useCPlus = ((cvtest::randInt(rng) % 2)!=0);
+    useCPlus = ((alvision.cvtest.randInt(rng) % 2)!=0);
     if (useCPlus)
     {
         input0 = test_mat[INPUT][0];
@@ -965,7 +965,7 @@ void CV_UndistortTest::prepare_to_validation( int /*test_case_idx*/ )
     Mat& dst = test_mat[REF_INPUT_OUTPUT][0];
     Mat& dst0 = test_mat[INPUT_OUTPUT][0];
     Mat mapx, mapy;
-    cvtest::initUndistortMap( test_mat[INPUT][1], test_mat[INPUT][2], dst.size(), mapx, mapy );
+    alvision.cvtest.initUndistortMap( test_mat[INPUT][1], test_mat[INPUT][2], dst.size(), mapx, mapy );
     Mat mask( dst.size(), CV_8U );
     test_remap( src, dst, mapx, mapy, &mask, interpolation );
     dst.setTo(Scalar::all(0), mask);
@@ -1007,16 +1007,16 @@ CV_UndistortMapTest::CV_UndistortMapTest()
 void CV_UndistortMapTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
 {
     RNG& rng = ts->get_rng();
-    cvtest::ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    int depth = cvtest::randInt(rng)%2 ? CV_64F : CV_32F;
+    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    int depth = alvision.cvtest.randInt(rng)%2 ? CV_64F : CV_32F;
 
     CvSize sz = sizes[OUTPUT][0];
     types[INPUT][0] = types[INPUT][1] = depth;
-    dualChannel = cvtest::randInt(rng)%2 == 0;
+    dualChannel = alvision.cvtest.randInt(rng)%2 == 0;
     types[OUTPUT][0] = types[OUTPUT][1] =
         types[REF_OUTPUT][0] = types[REF_OUTPUT][1] = dualChannel ? CV_32FC2 : CV_32F;
     sizes[INPUT][0] = cvSize(3,3);
-    sizes[INPUT][1] = cvtest::randInt(rng)%2 ? cvSize(4,1) : cvSize(1,4);
+    sizes[INPUT][1] = alvision.cvtest.randInt(rng)%2 ? cvSize(4,1) : cvSize(1,4);
 
     sz.width = MAX(sz.width,16);
     sz.height = MAX(sz.height,16);
@@ -1028,7 +1028,7 @@ void CV_UndistortMapTest::get_test_array_types_and_sizes( int test_case_idx, vec
 void CV_UndistortMapTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
 {
     if( i != INPUT )
-        cvtest::ArrayTest::fill_array( test_case_idx, i, j, arr );
+        alvision.cvtest.ArrayTest::fill_array( test_case_idx, i, j, arr );
 }
 
 
@@ -1052,7 +1052,7 @@ double CV_UndistortMapTest::get_success_error_level( int /*test_case_idx*/, int 
 int CV_UndistortMapTest::prepare_test_case( int test_case_idx )
 {
     RNG& rng = ts->get_rng();
-    int code = cvtest::ArrayTest::prepare_test_case( test_case_idx );
+    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
     const Mat& mapx = test_mat[OUTPUT][0];
     double k[4], a[9] = {0,0,0,0,0,0,0,0,1};
     double sz = MAX(mapx.rows, mapx.cols);
@@ -1063,17 +1063,17 @@ int CV_UndistortMapTest::prepare_test_case( int test_case_idx )
     if( code <= 0 )
         return code;
 
-    double aspect_ratio = cvtest::randReal(rng)*0.6 + 0.7;
-    a[2] = (mapx.cols - 1)*0.5 + cvtest::randReal(rng)*10 - 5;
-    a[5] = (mapx.rows - 1)*0.5 + cvtest::randReal(rng)*10 - 5;
-    a[0] = sz/(0.9 - cvtest::randReal(rng)*0.6);
+    double aspect_ratio = alvision.cvtest.randReal(rng)*0.6 + 0.7;
+    a[2] = (mapx.cols - 1)*0.5 + alvision.cvtest.randReal(rng)*10 - 5;
+    a[5] = (mapx.rows - 1)*0.5 + alvision.cvtest.randReal(rng)*10 - 5;
+    a[0] = sz/(0.9 - alvision.cvtest.randReal(rng)*0.6);
     a[4] = aspect_ratio*a[0];
-    k[0] = cvtest::randReal(rng)*0.06 - 0.03;
-    k[1] = cvtest::randReal(rng)*0.06 - 0.03;
+    k[0] = alvision.cvtest.randReal(rng)*0.06 - 0.03;
+    k[1] = alvision.cvtest.randReal(rng)*0.06 - 0.03;
     if( k[0]*k[1] > 0 )
         k[1] = -k[1];
-    k[2] = cvtest::randReal(rng)*0.004 - 0.002;
-    k[3] = cvtest::randReal(rng)*0.004 - 0.002;
+    k[2] = alvision.cvtest.randReal(rng)*0.004 - 0.002;
+    k[3] = alvision.cvtest.randReal(rng)*0.004 - 0.002;
 
     _a.convertTo(_a0, _a0.depth());
     _k.convertTo(_k0, _k0.depth());
@@ -1091,7 +1091,7 @@ int CV_UndistortMapTest::prepare_test_case( int test_case_idx )
 void CV_UndistortMapTest::prepare_to_validation( int )
 {
     Mat mapx, mapy;
-    cvtest::initUndistortMap( test_mat[INPUT][0], test_mat[INPUT][1], test_mat[REF_OUTPUT][0].size(), mapx, mapy );
+    alvision.cvtest.initUndistortMap( test_mat[INPUT][0], test_mat[INPUT][1], test_mat[REF_OUTPUT][0].size(), mapx, mapy );
     if( !dualChannel )
     {
         mapx.copyTo(test_mat[REF_OUTPUT][0]);
@@ -1173,29 +1173,29 @@ void CV_GetRectSubPixTest::get_test_array_types_and_sizes( int test_case_idx, ve
 {
     RNG& rng = ts->get_rng();
     CV_ImgWarpBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    int src_depth = cvtest::randInt(rng) % 2, dst_depth;
-    int cn = cvtest::randInt(rng) % 2 ? 3 : 1;
+    int src_depth = alvision.cvtest.randInt(rng) % 2, dst_depth;
+    int cn = alvision.cvtest.randInt(rng) % 2 ? 3 : 1;
     CvSize src_size, dst_size;
 
     dst_depth = src_depth = src_depth == 0 ? CV_8U : CV_32F;
-    if( src_depth < CV_32F && cvtest::randInt(rng) % 2 )
+    if( src_depth < CV_32F && alvision.cvtest.randInt(rng) % 2 )
         dst_depth = CV_32F;
 
     types[INPUT][0] = CV_MAKETYPE(src_depth,cn);
     types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] = CV_MAKETYPE(dst_depth,cn);
 
     src_size = sizes[INPUT][0];
-    dst_size.width = cvRound(sqrt(cvtest::randReal(rng)*src_size.width) + 1);
-    dst_size.height = cvRound(sqrt(cvtest::randReal(rng)*src_size.height) + 1);
+    dst_size.width = cvRound(sqrt(alvision.cvtest.randReal(rng)*src_size.width) + 1);
+    dst_size.height = cvRound(sqrt(alvision.cvtest.randReal(rng)*src_size.height) + 1);
     dst_size.width = MIN(dst_size.width,src_size.width);
     dst_size.height = MIN(dst_size.width,src_size.height);
     sizes[INPUT_OUTPUT][0] = sizes[REF_INPUT_OUTPUT][0] = dst_size;
 
-    center.x = (float)(cvtest::randReal(rng)*src_size.width);
-    center.y = (float)(cvtest::randReal(rng)*src_size.height);
+    center.x = (float)(alvision.cvtest.randReal(rng)*src_size.width);
+    center.y = (float)(alvision.cvtest.randReal(rng)*src_size.height);
     interpolation = CV_INTER_LINEAR;
 
-    test_cpp = (cvtest::randInt(rng) & 256) == 0;
+    test_cpp = (alvision.cvtest.randInt(rng) & 256) == 0;
 }
 
 
@@ -1281,11 +1281,11 @@ void CV_GetQuadSubPixTest::get_test_array_types_and_sizes( int test_case_idx, ve
     CV_ImgWarpBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     CvSize sz = sizes[INPUT][0], dsz;
     RNG& rng = ts->get_rng();
-    int msz, src_depth = cvtest::randInt(rng) % 2, dst_depth;
-    int cn = cvtest::randInt(rng) % 2 ? 3 : 1;
+    int msz, src_depth = alvision.cvtest.randInt(rng) % 2, dst_depth;
+    int cn = alvision.cvtest.randInt(rng) % 2 ? 3 : 1;
 
     dst_depth = src_depth = src_depth == 0 ? CV_8U : CV_32F;
-    if( src_depth < CV_32F && cvtest::randInt(rng) % 2 )
+    if( src_depth < CV_32F && alvision.cvtest.randInt(rng) % 2 )
         dst_depth = CV_32F;
 
     types[INPUT][0] = CV_MAKETYPE(src_depth,cn);
@@ -1296,8 +1296,8 @@ void CV_GetQuadSubPixTest::get_test_array_types_and_sizes( int test_case_idx, ve
     sizes[INPUT][0] = sz;
     msz = MIN( sz.width, sz.height );
 
-    dsz.width = cvRound(sqrt(cvtest::randReal(rng)*msz) + 1);
-    dsz.height = cvRound(sqrt(cvtest::randReal(rng)*msz) + 1);
+    dsz.width = cvRound(sqrt(alvision.cvtest.randReal(rng)*msz) + 1);
+    dsz.height = cvRound(sqrt(alvision.cvtest.randReal(rng)*msz) + 1);
     dsz.width = MIN(dsz.width,msz);
     dsz.height = MIN(dsz.width,msz);
     dsz.width = MAX(dsz.width,min_size);
@@ -1338,10 +1338,10 @@ int CV_GetQuadSubPixTest::prepare_test_case( int test_case_idx )
     double a[6];
     Mat A( 2, 3, CV_64FC1, a );
 
-    center.x = (float)((cvtest::randReal(rng)*1.2 - 0.1)*src.cols);
-    center.y = (float)((cvtest::randReal(rng)*1.2 - 0.1)*src.rows);
-    angle = cvtest::randReal(rng)*360;
-    scale = cvtest::randReal(rng)*0.2 + 0.9;
+    center.x = (float)((alvision.cvtest.randReal(rng)*1.2 - 0.1)*src.cols);
+    center.y = (float)((alvision.cvtest.randReal(rng)*1.2 - 0.1)*src.rows);
+    angle = alvision.cvtest.randReal(rng)*360;
+    scale = alvision.cvtest.randReal(rng)*0.2 + 0.9;
 
     // y = Ax + b -> x = A^-1(y - b) = A^-1*y - A^-1*b
     scale = 1./scale;
@@ -1524,8 +1524,8 @@ TEST(Imgproc_resize_area, regression)
         for (int dx = 0; dx < dsize.width && next; ++dx)
             if (fabs(static_cast<float>(aD[dx] - eD[dx])) > elem_diff)
             {
-                cvtest::TS::ptr()->printf(cvtest::TS::SUMMARY, "Inf norm: %f\n", static_cast<float>(norm(actual, expected, NORM_INF)));
-                cvtest::TS::ptr()->printf(cvtest::TS::SUMMARY, "Error in : (%d, %d)\n", dx, dy);
+                alvision.cvtest.TS::ptr()->printf(alvision.cvtest.TS::SUMMARY, "Inf norm: %f\n", static_cast<float>(norm(actual, expected, NORM_INF)));
+                alvision.cvtest.TS::ptr()->printf(alvision.cvtest.TS::SUMMARY, "Error in : (%d, %d)\n", dx, dy);
 
                 const int radius = 3;
                 int rmin = MAX(dy - radius, 0), rmax = MIN(dy + radius, dsize.height);
@@ -1539,7 +1539,7 @@ TEST(Imgproc_resize_area, regression)
             }
     }
 
-    ASSERT_EQ(cvtest::norm(one_channel_diff, cv::NORM_INF), 0);
+    ASSERT_EQ(alvision.cvtest.norm(one_channel_diff, cv::NORM_INF), 0);
 }
 
 
@@ -1637,7 +1637,7 @@ TEST(Resize, Area_half)
 
         cv::resize(src, dst_actual, dst_actual.size(), 0, 0, cv::INTER_AREA);
 
-        ASSERT_GE(eps, cvtest::norm(dst_reference, dst_actual, cv::NORM_INF));
+        ASSERT_GE(eps, alvision.cvtest.norm(dst_reference, dst_actual, cv::NORM_INF));
     }
 }
 
