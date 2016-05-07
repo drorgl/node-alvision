@@ -80,6 +80,10 @@ export const DECIMAL_DIG = DBL_DECIMAL_DIG;
 export const INT_MIN   =  (-2147483647 - 1); // minimum (signed) int value
 export const INT_MAX = 2147483647;// maximum (signed) int value
 
+export const SHRT_MIN = (-32768);      // minimum (signed) short value
+export const SHRT_MAX =     32767   ;      // maximum (signed) short value
+
+
 
 
 //interface IRodrigues {

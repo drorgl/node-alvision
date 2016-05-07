@@ -80,7 +80,7 @@ PARAM_TEST_CASE(GpuMat_SetTo, alvision.cuda::DeviceInfo, alvision.Size, MatType,
 
 CUDA_TEST_P(GpuMat_SetTo, Zero)
 {
-    alvision.Scalar zero = alvision.Scalar::all(0);
+    alvision.Scalar zero = alvision.alvision.Scalar.all(0);
 
     alvision.cuda::GpuMat mat = createMat(size, type, useRoi);
     mat.setTo(zero);

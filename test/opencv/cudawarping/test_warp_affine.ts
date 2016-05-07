@@ -274,7 +274,7 @@ CUDA_TEST_P(WarpAffineNPP, Accuracy)
     alvision.cuda::warpAffine(loadMat(src), dst, M, src.size(), flags);
 
     alvision.Mat dst_gold;
-    warpAffineGold(src, M, inverse, src.size(), dst_gold, interpolation, alvision.BORDER_CONSTANT, alvision.Scalar::all(0));
+    warpAffineGold(src, M, inverse, src.size(), dst_gold, interpolation, alvision.BORDER_CONSTANT, alvision.alvision.Scalar.all(0));
 
     EXPECT_MAT_SIMILAR(dst_gold, dst, 2e-2);
 }

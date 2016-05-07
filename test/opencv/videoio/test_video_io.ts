@@ -227,7 +227,7 @@ for (; ;) {
     if (!img)
         break;
 
-    frames.push_back(alvision.cvarrToMat(img, true));
+    frames.push(alvision.cvarrToMat(img, true));
 
     if (writer == NULL) {
         writer = cvCreateVideoWriter(tmp_name, fmt.fourcc, 24, cvGetSize(img));
@@ -403,7 +403,7 @@ for (size_t i = 0; i < IMAGE_COUNT; ++i )
 
     resize(img, img, frame_size, 0.0, 0.0, INTER_CUBIC);
 
-    images.push_back(img);
+    images.push(img);
     writer << img;
 }
 

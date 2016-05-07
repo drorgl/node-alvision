@@ -48,105 +48,87 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <time.h>
+//#include "test_precomp.hpp"
+//#include <time.h>
+//
+//#define IMGPROC_BOUNDINGRECT_ERROR_DIFF 1
+//
+//#define MESSAGE_ERROR_DIFF "Bounding rectangle found by boundingRect function is incorrect."
+//
+//using namespace cv;
+//using namespace std;
 
-#define IMGPROC_BOUNDINGRECT_ERROR_DIFF 1
+class CV_BoundingRectTest extends alvision.cvtest.ArrayTest {
+    run(iii: alvision.int): void {
+        var src_veci = new Array<alvision.Point>() ;
+        if (!this.checking_function_work(src_veci, 0)) return;
+        var src_vecf = new Array<alvision.Point2f>();
+        this.checking_function_work(src_vecf, 1);
 
-#define MESSAGE_ERROR_DIFF "Bounding rectangle found by boundingRect function is incorrect."
-
-using namespace cv;
-using namespace std;
-
-class CV_BoundingRectTestextends alvision.cvtest.ArrayTest
-{
-public:
-    CV_BoundingRectTest();
-    ~CV_BoundingRectTest();
-
-protected:
-    run(iii : alvision.int) : void {}
-
-private:
-    template <typename T> void generate_src_points(vector <Point_<T> >& src, int n);
-    template <typename T> alvision.Rect get_bounding_rect(const vector <Point_<T> > src);
-    template <typename T> bool checking_function_work(vector <Point_<T> >& src, int type);
-};
-
-CV_BoundingRectTest::CV_BoundingRectTest() {}
-CV_BoundingRectTest::~CV_BoundingRectTest() {}
-
-template <typename T> void CV_BoundingRectTest::generate_src_points(vector <Point_<T> >& src, int n)
-{
-    src.clear();
-    for (int i = 0; i < n; ++i)
-        src.push_back(Point_<T>(alvision.randu<T>(), alvision.randu<T>()));
-}
-
-template <typename T> alvision.Rect CV_BoundingRectTest::get_bounding_rect(const vector <Point_<T> > src)
-{
-    int n = (int)src.size();
-    T min_w = std::numeric_limits<T>::max(), max_w = std::numeric_limits<T>::min();
-    T min_h = min_w, max_h = max_w;
-
-    for (int i = 0; i < n; ++i)
-    {
-        min_w = std::min<T>(src.at(i).x, min_w);
-        max_w = std::max<T>(src.at(i).x, max_w);
-        min_h = std::min<T>(src.at(i).y, min_h);
-        max_h = std::max<T>(src.at(i).y, max_h);
     }
 
-    return Rect((int)min_w, (int)min_h, (int)max_w-(int)min_w + 1, (int)max_h-(int)min_h + 1);
-}
+    generate_src_points<T>(src: Array<alvision.Point_<T>>, n: alvision.int): void {
+        src.length = 0;
+        for (var i = 0; i < n; ++i)
+        src.push(new alvision.Point_<T>(alvision.randu<T>(), alvision.randu<T>()));
+    }
+    get_bounding_rect<T>(src: Array<alvision.Point_<T>>): alvision.Rect {
+        var n = src.length;//(int)src.size();
+        var min_w = std::numeric_limits<T>::max(), max_w = std::numeric_limits<T>::min();
+        var min_h = min_w, max_h = max_w;
 
-template <typename T> bool CV_BoundingRectTest::checking_function_work(vector <Point_<T> >& src, int type)
-{
-    const int MAX_COUNT_OF_POINTS = 1000;
-    const int N = 10000;
-
-    for (int k = 0; k < N; ++k)
-    {
-
-        RNG& rng = ts->get_rng();
-
-        int n = rng.next()%MAX_COUNT_OF_POINTS + 1;
-
-        generate_src_points <T> (src, n);
-
-        alvision.Rect right = get_bounding_rect <T> (src);
-
-        alvision.Rect rect[2] = { boundingRect(src), boundingRect(Mat(src)) };
-
-        for (int i = 0; i < 2; ++i) if (rect[i] != right)
+        for (var i = 0; i < n; ++i)
         {
-            cout << endl; cout << "Checking for the work of boundingRect function..." << endl;
-            cout << "Type of src points: ";
-            switch (type)
-            {
-            case 0: {cout << "INT"; break;}
-            case 1: {cout << "FLOAT"; break;}
-            default: break;
-            }
-            cout << endl;
-            cout << "Src points are stored as "; if (i == 0) cout << "VECTOR" << endl; else cout << "MAT" << endl;
-            cout << "Number of points: " << n << endl;
-            cout << "Right rect (x, y, w, h): [" << right.x << ", " << right.y << ", " << right.width << ", " << right.height << "]" << endl;
-            cout << "Result rect (x, y, w, h): [" << rect[i].x << ", " << rect[i].y << ", " << rect[i].width << ", " << rect[i].height << "]" << endl;
-            cout << endl;
-            CV_Error(IMGPROC_BOUNDINGRECT_ERROR_DIFF, MESSAGE_ERROR_DIFF);
-            return false;
+            min_w = Math.min(src.atGet(i).x, min_w);
+            max_w = Math.max(src.atGet(i).x, max_w);
+            min_h = Math.min(src.atGet(i).y, min_h);
+            max_h = Math.max(src.atGet(i).y, max_h);
         }
 
+        return new alvision.Rect(min_w, min_h, max_w- min_w + 1, max_h- min_h + 1);
+
     }
+    checking_function_work<T>(src: Array<alvision.Point_<T>>, type: alvision.int): boolean {
+        const  MAX_COUNT_OF_POINTS = 1000;
+        const  N = 10000;
 
-    return true;
+        for (var k = 0; k < N; ++k)
+        {
+
+            var rng = this.ts.get_rng();
+
+            var n = rng.next() % MAX_COUNT_OF_POINTS + 1;
+
+            this.generate_src_points(src, n);
+
+            var right = this.get_bounding_rect<T>(src);
+
+            var rect = [ alvision.boundingRect(src), alvision.boundingRect(new alvision.Mat(src)) ];
+
+            for (var i = 0; i < 2; ++i) if (rect[i] != right) {
+                console.log("Checking for the work of boundingRect function...");
+                console.log("Type of src points: ");
+                switch (type) {
+                    case 0: { console.log( "INT"  ); break; }
+                    case 1: { console.log( "FLOAT"); break; }
+                    default: break;
+                }
+                console.log("Src points are stored as " + (i == 0) ? "VECTOR" : "MAT");
+                console.log("Number of points: " + n);
+                console.log("Right rect (x, y, w, h): [" + right.x + ", " + right.y + ", " + right.width + ", " + right.height + "]");
+                console.log("Result rect (x, y, w, h): [" + rect[i].x + ", " + rect[i].y + ", " + rect[i].width + ", " + rect[i].height + "]");
+                
+                alvision.CV_Error(IMGPROC_BOUNDINGRECT_ERROR_DIFF, MESSAGE_ERROR_DIFF);
+                return false;
+            }
+
+        }
+
+        return true;
+
+    }
 }
 
-void CV_BoundingRectTest::run(int)
-{
-    vector <Point> src_veci; if (!checking_function_work(src_veci, 0)) return;
-    vector <Point2f> src_vecf; checking_function_work(src_vecf, 1);
-}
 
-TEST (Imgproc_BoundingRect, accuracy) { CV_BoundingRectTest test; test.safe_run(); }
+
+alvision.cvtest.TEST('Imgproc_BoundingRect', 'accuracy', () => { var test = new CV_BoundingRectTest(); test.safe_run(); });

@@ -173,7 +173,7 @@ void computeOcclusionBasedMasks( const Mat& leftDisp, const Mat& _rightDisp,
         if( !rightUnknDispMask.empty() )
            CV_Error( Error::StsBadArg, "rightUnknDispMask must be empty if _rightDisp is empty" );
         rightDisp.create(leftDisp.size(), CV_32FC1);
-        rightDisp.setTo(Scalar::all(0) );
+        rightDisp.setTo(alvision.Scalar.all(0) );
         for( int leftY = 0; leftY < leftDisp.rows; leftY++ )
         {
             for( int leftX = 0; leftX < leftDisp.cols; leftX++ )
@@ -181,7 +181,7 @@ void computeOcclusionBasedMasks( const Mat& leftDisp, const Mat& _rightDisp,
                 if( !leftUnknDispMask.empty() && leftUnknDispMask.at<uchar>(leftY,leftX) )
                     continue;
                 float leftDispVal = leftDisp.at<float>(leftY, leftX);
-                int rightX = leftX - cvRound(leftDispVal), rightY = leftY;
+                int rightX = leftX - Math.round(leftDispVal), rightY = leftY;
                 if( rightX >= 0)
                     rightDisp.at<float>(rightY,rightX) = max(rightDisp.at<float>(rightY,rightX), leftDispVal);
             }
@@ -193,12 +193,12 @@ void computeOcclusionBasedMasks( const Mat& leftDisp, const Mat& _rightDisp,
     if( occludedMask )
     {
         occludedMask->create(leftDisp.size(), CV_8UC1);
-        occludedMask->setTo(Scalar::all(0) );
+        occludedMask->setTo(alvision.Scalar.all(0) );
     }
     if( nonOccludedMask )
     {
         nonOccludedMask->create(leftDisp.size(), CV_8UC1);
-        nonOccludedMask->setTo(Scalar::all(0) );
+        nonOccludedMask->setTo(alvision.Scalar.all(0) );
     }
     for( int leftY = 0; leftY < leftDisp.rows; leftY++ )
     {
@@ -207,7 +207,7 @@ void computeOcclusionBasedMasks( const Mat& leftDisp, const Mat& _rightDisp,
             if( !leftUnknDispMask.empty() && leftUnknDispMask.at<uchar>(leftY,leftX) )
                 continue;
             float leftDispVal = leftDisp.at<float>(leftY, leftX);
-            int rightX = leftX - cvRound(leftDispVal), rightY = leftY;
+            int rightX = leftX - Math.round(leftDispVal), rightY = leftY;
             if( rightX < 0 && occludedMask )
                 occludedMask->at<uchar>(leftY, leftX) = 255;
             else
@@ -296,7 +296,7 @@ float dispRMS( const Mat& computedDisp, const Mat& groundTruthDisp, const Mat& m
 float badMatchPxlsFraction( const Mat& computedDisp, const Mat& groundTruthDisp, const Mat& mask,
                             float _badThresh = EVAL_BAD_THRESH )
 {
-    int badThresh = cvRound(_badThresh);
+    int badThresh = Math.round(_badThresh);
     checkTypeAndSizeOfDisp( groundTruthDisp, 0 );
     Size sz = groundTruthDisp.size();
     checkTypeAndSizeOfDisp( computedDisp, &sz );
@@ -418,14 +418,14 @@ void CV_StereoMatchingTest::run(int)
 
     FileStorage datasetsFS( dataPath + DATASETS_DIR + DATASETS_FILE, FileStorage::READ );
     int code = readDatasetsParams( datasetsFS );
-    if( code != alvision.cvtest.TS::OK )
+    if( code != alvision.cvtest.FailureCode.OK )
     {
         this.ts.set_failed_test_info( code );
         return;
     }
     FileStorage runParamsFS( dataPath + ALGORITHMS_DIR + algorithmName + RUN_PARAMS_FILE, FileStorage::READ );
     code = readRunParams( runParamsFS );
-    if( code != alvision.cvtest.TS::OK )
+    if( code != alvision.cvtest.FailureCode.OK )
     {
         this.ts.set_failed_test_info( code );
         return;
@@ -494,7 +494,7 @@ void CV_StereoMatchingTest::run(int)
 
         int tempCode = processStereoMatchingResults( resFS, ci, isWrite,
                    leftImg, rightImg, trueLeftDisp, trueRightDisp, leftDisp, rightDisp, QualityEvalParams(ignBorder));
-        code = tempCode==alvision.cvtest.TS::OK ? code : tempCode;
+        code = tempCode==alvision.cvtest.FailureCode.OK ? code : tempCode;
     }
 
     if( isWrite )
@@ -552,7 +552,7 @@ int CV_StereoMatchingTest::processStereoMatchingResults( FileStorage& fs, int ca
               const QualityEvalParams& qualityEvalParams )
 {
     // rightDisp is not used in current test virsion
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
     assert( fs.isOpened() );
     assert( trueLeftDisp.type() == CV_32FC1 );
     assert( trueRightDisp.empty() || trueRightDisp.type() == CV_32FC1 );
@@ -599,9 +599,9 @@ int CV_StereoMatchingTest::processStereoMatchingResults( FileStorage& fs, int ca
         readErrors( fn, RMS_STR, validRmss );
         readErrors( fn, BAD_PXLS_FRACTION_STR, validBadPxlsFractions );
         int tempCode = compareErrors( rmss, validRmss, rmsEps, RMS_STR );
-        code = tempCode==alvision.cvtest.TS::OK ? code : tempCode;
+        code = tempCode==alvision.cvtest.FailureCode.OK ? code : tempCode;
         tempCode = compareErrors( badPxlsFractions, validBadPxlsFractions, fracEps, BAD_PXLS_FRACTION_STR );
-        code = tempCode==alvision.cvtest.TS::OK ? code : tempCode;
+        code = tempCode==alvision.cvtest.FailureCode.OK ? code : tempCode;
     }
     return code;
 }
@@ -624,7 +624,7 @@ int CV_StereoMatchingTest::readDatasetsParams( FileStorage& fs )
         String uv = fn[i+2]; params.dispUnknVal = atoi(uv);
         datasetsParams[_name] = params;
     }
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 int CV_StereoMatchingTest::readRunParams( FileStorage& fs )
@@ -636,7 +636,7 @@ int CV_StereoMatchingTest::readRunParams( FileStorage& fs )
     }
     caseNames.clear();;
     caseDatasets.clear();
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 void CV_StereoMatchingTest::writeErrors( const string& errName, const Array<float>& errors, FileStorage* fs )
@@ -675,7 +675,7 @@ int CV_StereoMatchingTest::compareErrors( const Array<float>& calcErrors, const 
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of %s (valid=%f; calc=%f)\n", string(ERROR_PREFIXES[i]+errName), *validIt, *calcIt );
             ok = false;
         }
-    return ok ? alvision.cvtest.TS::OK : alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+    return ok ? alvision.cvtest.FailureCode.OK : alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
 }
 
 //----------------------------------- StereoBM test -----------------------------------------------------
@@ -709,9 +709,9 @@ protected:
             RunParams params;
             String ndisp = fn[i+2]; params.ndisp = atoi(ndisp);
             String winSize = fn[i+3]; params.winSize = atoi(winSize);
-            caseNames.push_back( caseName );
-            caseDatasets.push_back( datasetName );
-            caseRunParams.push_back( params );
+            caseNames.push( caseName );
+            caseDatasets.push( datasetName );
+            caseRunParams.push( params );
         }
         return code;
     }
@@ -766,9 +766,9 @@ protected:
             String ndisp = fn[i+2]; params.ndisp = atoi(ndisp);
             String winSize = fn[i+3]; params.winSize = atoi(winSize);
             String fullDP = fn[i+4]; params.fullDP = atoi(fullDP) == 0 ? false : true;
-            caseNames.push_back( caseName );
-            caseDatasets.push_back( datasetName );
-            caseRunParams.push_back( params );
+            caseNames.push( caseName );
+            caseDatasets.push( datasetName );
+            caseRunParams.push( params );
         }
         return code;
     }

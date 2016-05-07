@@ -679,8 +679,8 @@ TEST_P(Imgproc_ColorYUV, roi_accuracy)
         Mat src_full(srcSize.height + roi_offset_top + roi_offset_bottom, srcSize.width + roi_offset_left + roi_offset_right, CV_8UC(scn));
 
         Size dstSize = cvt.getDstSize(sz);
-        Mat dst_full(dstSize.height  + roi_offset_left + roi_offset_right, dstSize.width + roi_offset_top + roi_offset_bottom, CV_8UC(dcn), Scalar::all(0));
-        Mat gold_full(dst_full.size(), CV_8UC(dcn), Scalar::all(0));
+        Mat dst_full(dstSize.height  + roi_offset_left + roi_offset_right, dstSize.width + roi_offset_top + roi_offset_bottom, CV_8UC(dcn), alvision.Scalar.all(0));
+        Mat gold_full(dst_full.size(), CV_8UC(dcn), alvision.Scalar.all(0));
 
         random.fill(src_full, RNG::UNIFORM, 0, 256);
 

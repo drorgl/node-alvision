@@ -240,7 +240,7 @@
 
 //        //------------
 //        cvReleaseImage(&temp_img);
-//        this.ts.set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
+//        this.ts.set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.FailureCode.OK);
 //    }
 //    protected run_func(): void {
 //        if (useCPlus) {
@@ -354,7 +354,7 @@
 //        //------------
 //        delete [] arr_mapx;
 //        delete [] arr_mapy;
-//        this.ts.set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
+//        this.ts.set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.FailureCode.OK);
 //    }
 //    protected run_func() : void{
 //    if (useCPlus) {
@@ -465,7 +465,7 @@
 //        //------------
 //        delete [] arr_src;
 //        delete [] arr_dst;
-//        this.ts.set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
+//        this.ts.set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.FailureCode.OK);
 //    }
 //    protected run_func(): void {
 //        if (useCPlus) {

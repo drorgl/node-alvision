@@ -525,13 +525,13 @@ CxCore_DXTBaseTest::CxCore_DXTBaseTest( bool _allow_complex, bool _allow_odd, bo
 : Base(), flags(0), allow_complex(_allow_complex), allow_odd(_allow_odd),
 spectrum_mode(_spectrum_mode), inplace(false), temp_dst(false)
 {
-    test_array[INPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
     if( spectrum_mode )
-        test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[TEMP].push_back(NULL);
-    test_array[TEMP].push_back(NULL);
+        test_array[INPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[TEMP].push(NULL);
+    test_array[TEMP].push(NULL);
 
     max_log_array_size = 9;
     element_wise_relative_error = spectrum_mode;
@@ -719,7 +719,7 @@ void CxCore_DFTTest::prepare_to_validation( int /*test_case_idx*/ )
             Mat& cvdft_dst = test_mat[TEMP][1];
             alvision.cvtest.convertFromCCS( cvdft_dst, cvdft_dst,
                                test_mat[OUTPUT][0], flags );
-            *tmp_src = Scalar::all(0);
+            *tmp_src = alvision.Scalar.all(0);
             alvision.cvtest.insert( src, *tmp_src, 0 );
         }
         else
@@ -856,7 +856,7 @@ protected:
             int depth = rng.uniform(0, 2) + CV_32F;
             Mat src8u(m, n, depth), src(m, n, depth), dst(m, n, CV_MAKETYPE(depth, 2));
             Mat z = Mat::zeros(m, n, depth), dstz;
-            randu(src8u, Scalar::all(0), Scalar::all(10));
+            randu(src8u, alvision.Scalar.all(0), Scalar::all(10));
             src8u.convertTo(src, src.type());
             dst = Scalar::all(123);
             Mat mv[] = {src, z}, srcz;

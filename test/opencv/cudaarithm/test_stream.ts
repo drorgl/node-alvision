@@ -99,7 +99,7 @@ alvision.cvtest.CUDA_TEST_P(Async, MemSet)
 
     d_dst.upload(src);
 
-    d_dst.setTo(alvision.Scalar::all(0), stream);
+    d_dst.setTo(alvision.alvision.Scalar.all(0), stream);
     d_dst.download(dst, stream);
 
     Async* test = this;

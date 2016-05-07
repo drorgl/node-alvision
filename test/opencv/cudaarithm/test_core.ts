@@ -82,11 +82,11 @@ CUDA_TEST_P(Merge, Accuracy)
     std::Array<alvision.Mat> src;
     src.reserve(channels);
     for (int i = 0; i < channels; ++i)
-        src.push_back(alvision.Mat(size, depth, alvision.Scalar::all(i)));
+        src.push(alvision.Mat(size, depth, alvision.Scalar::all(i)));
 
     std::Array<alvision.cuda::GpuMat> d_src;
     for (int i = 0; i < channels; ++i)
-        d_src.push_back(loadMat(src[i], useRoi));
+        d_src.push(loadMat(src[i], useRoi));
 
     if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
     {

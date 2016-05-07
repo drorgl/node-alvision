@@ -193,7 +193,7 @@ CUDA_TEST_P(Labeling, DISABLED_ConnectedComponents)
     alvision.cuda::GpuMat components;
     components.create(image.rows, image.cols, CV_32SC1);
 
-    alvision.cuda::connectivityMask(alvision.cuda::GpuMat(image), mask, alvision.Scalar::all(0), alvision.Scalar::all(2));
+    alvision.cuda::connectivityMask(alvision.cuda::GpuMat(image), mask, alvision.alvision.Scalar.all(0), alvision.Scalar::all(2));
 
     alvision.cuda::labelComponents(mask, components);
 

@@ -90,13 +90,13 @@ void CV_FastTest::run( int )
     for(size_t i = 0; i < keypoints1.size(); ++i)
     {
         const KeyPoint& kp = keypoints1[i];
-        alvision.circle(image1, kp.pt, cvRound(kp.size/2), Scalar(255, 0, 0));
+        alvision.circle(image1, kp.pt, Math.round(kp.size/2), Scalar(255, 0, 0));
     }
 
     for(size_t i = 0; i < keypoints2.size(); ++i)
     {
         const KeyPoint& kp = keypoints2[i];
-        alvision.circle(image2, kp.pt, cvRound(kp.size/2), Scalar(255, 0, 0));
+        alvision.circle(image2, kp.pt, Math.round(kp.size/2), Scalar(255, 0, 0));
     }
 
     Mat kps1(1, (int)(keypoints1.size() * sizeof(KeyPoint)), CV_8U, &keypoints1[0]);
@@ -130,7 +130,7 @@ void CV_FastTest::run( int )
      if ( exp_kps1.size != kps1.size || 0 != alvision.cvtest.norm(exp_kps1, kps1,alvision.NormTypes. NORM_L2) ||
           exp_kps2.size != kps2.size || 0 != alvision.cvtest.norm(exp_kps2, kps2,alvision.NormTypes. NORM_L2))
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return;
     }
 
@@ -139,7 +139,7 @@ void CV_FastTest::run( int )
     alvision.waitKey(0);*/
   }
 
-  this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+  this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 }
 
 TEST(Features2d_FAST, regression) { CV_FastTest test; test.safe_run(); }

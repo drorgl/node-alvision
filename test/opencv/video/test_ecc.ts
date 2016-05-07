@@ -56,262 +56,216 @@ import fs = require('fs');
 
 class CV_ECC_BaseTest  extends alvision.cvtest.BaseTest
 {
-public:
-    CV_ECC_BaseTest();
+    constructor() {
+        super();
+        this.MAX_RMS_ECC = 0.1;
+        this.ntests = 3;
+        this.ECC_iterations = 50;
+        this.ECC_epsilon = -1; //-> negative value means that ECC_Iterations will be executed
+    }
 
-protected:
+    computeRMS(mat1: alvision.Mat, mat2: alvision.Mat): alvision.double {
+        alvision.CV_Assert(mat1.rows == mat2.rows);
+        alvision.CV_Assert(mat1.cols == mat2.cols);
 
-    double computeRMS(const Mat& mat1, const Mat& mat2);
-    bool isMapCorrect(const Mat& mat);
+        var errorMat = new alvision.Mat();
+        alvision.subtract(mat1, mat2, errorMat);
 
-
-    double MAX_RMS_ECC;//upper bound for RMS error
-    int ntests;//number of tests per motion type
-    int ECC_iterations;//number of iterations for ECC
-    double ECC_epsilon; //we choose a negative value, so that
-    // ECC_iterations are always executed
-};
-
-CV_ECC_BaseTest::CV_ECC_BaseTest()
-{
-    MAX_RMS_ECC=0.1;
-    ntests = 3;
-    ECC_iterations = 50;
-    ECC_epsilon = -1; //-> negative value means that ECC_Iterations will be executed
-}
-
-
-bool CV_ECC_BaseTest::isMapCorrect(const Mat& map)
-{
-    bool tr = true;
-    float mapVal;
-    for(int i =0; i<map.rows; i++)
-        for(int j=0; j<map.cols; j++){
-            mapVal = map.at<float>(i, j);
+        return alvision.sqrt(errorMat.dot(errorMat) / (mat1.rows * mat1.cols));
+    }
+    isMapCorrect(mat: alvision.Mat): boolean {
+        var tr = true;
+        for (var i = 0; i < map.rows; i++)
+        for (var j= 0; j < map.cols; j++){
+            var mapVal = map.atGet<alvision.float>("float",i, j);
             tr = tr & (!cvIsNaN(mapVal) && (fabs(mapVal) < 1e9));
         }
 
         return tr;
-}
-
-double CV_ECC_BaseTest::computeRMS(const Mat& mat1, const Mat& mat2){
-
-    CV_Assert(mat1.rows == mat2.rows);
-    CV_Assert(mat1.cols == mat2.cols);
-
-    Mat errorMat;
-    subtract(mat1, mat2, errorMat);
-
-    return sqrt(errorMat.dot(errorMat)/(mat1.rows*mat1.cols));
-}
+    }
 
 
-class CV_ECC_Test_Translation : public CV_ECC_BaseTest
-{
-public:
-    CV_ECC_Test_Translation();
-protected:
-    void run(int);
-
-    bool testTranslation(int);
+    protected MAX_RMS_ECC: alvision.double ;//upper bound for RMS error
+    protected ntests : alvision.int;//number of tests per motion type
+    protected ECC_iterations : alvision.int;//number of iterations for ECC
+    protected ECC_epsilon: alvision.double ; //we choose a negative value, so that
+    // ECC_iterations are always executed
 };
 
-CV_ECC_Test_Translation::CV_ECC_Test_Translation(){}
 
-bool CV_ECC_Test_Translation::testTranslation(int from)
+class CV_ECC_Test_Translation extends CV_ECC_BaseTest
 {
-    Mat img = imread( string(ts->get_data_path()) + "shared/fruits.png", 0);
+    run(iii: alvision.int): void {
+        if (!this.testTranslation(from))
+            return;
+
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
+
+    testTranslation(from: alvision.int): boolean{
+        var img = alvision.imread(this.ts.get_data_path() + "shared/fruits.png", 0);
 
 
-    if (img.empty())
-    {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
+        if (img.empty()) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "test image can not be read");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+            return false;
+        }
+        var testImg = new alvision.Mat();
+        alvision.resize(img, testImg, new alvision.Size(216, 216));
+
+        var rng = this.ts.get_rng();
+
+        var progress : alvision.int = 0;
+
+        for (var k= from; k < this.ntests; k++){
+
+            this.ts.update_context(this, k, true);
+            progress = this.update_progress(progress, k, this.ntests, 0);
+
+            var translationGround = new alvision.Mat (new alvision.Mat_<float>(2, 3) << 1, 0, (rng.uniform(10.f, 20.f)),
+                0, 1, (rng.uniform(10.f, 20.f)));
+
+            var warpedImage = new alvision.Mat();
+
+            alvision.warpAffine(testImg, warpedImage, translationGround,
+                new alvision.Size(200, 200), INTER_LINEAR + WARP_INVERSE_MAP);
+
+            var mapTranslation = new alvision.Mat (Mat_<float>(2, 3) << 1, 0, 0, 0, 1, 0);
+
+            alvision.findTransformECC(warpedImage, testImg, mapTranslation, 0,
+                TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, ECC_iterations, ECC_epsilon));
+
+            if (!this.isMapCorrect(mapTranslation)) {
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
+                return false;
+            }
+
+            if (this.computeRMS(mapTranslation, translationGround) > this.MAX_RMS_ECC) {
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "RMS = %f",
+                    this.computeRMS(mapTranslation, translationGround));
+                return false;
+            }
+
+        }
+        return true;
+    }
+};
+
+class CV_ECC_Test_Euclidean extends CV_ECC_BaseTest
+{
+    run(iii: alvision.int): void {
+        if (!this.testEuclidean(from))
+            return;
+
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
+
+    testEuclidean(from: alvision.int): boolean {
+        var img = alvision.imread(this.ts.get_data_path() + "shared/fruits.png", 0);
+
+
+        if (img.empty()) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "test image can not be read");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+            return false;
+        }
+        var testImg = new alvision.Mat();
+        alvision.resize(img, testImg, new alvision.Size(216, 216));
+
+        var rng = this.ts.get_rng();
+
+        var progress: alvision.int  = 0;
+        for (var k= from; k < this.ntests; k++){
+            this.ts.update_context(this, k, true);
+            progress = this.update_progress(progress, k, this.ntests, 0);
+
+            var angle = Math.PI / 30 + Math.PI * rng.uniform((double) - 2.f, (double)2.f) / 180;
+
+            var euclideanGround = new alvision.Mat (Mat_<float>(2, 3) << Math.cos(angle), -Math.sin(angle), (rng.uniform(10.f, 20.f)),
+                Math.sin(angle), Math.cos(angle), (rng.uniform(10.f, 20.f)));
+
+            var warpedImage = new alvision.Mat();
+
+            alvision.warpAffine(testImg, warpedImage, euclideanGround,
+                new alvision.Size(200, 200), INTER_LINEAR + WARP_INVERSE_MAP);
+
+            var mapEuclidean = new alvision.Mat (Mat_<float>(2, 3) << 1, 0, 0, 0, 1, 0);
+
+            alvision.findTransformECC(warpedImage, testImg, mapEuclidean, 1,
+                TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, ECC_iterations, ECC_epsilon));
+
+            if (!this.isMapCorrect(mapEuclidean)) {
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
+                return false;
+            }
+
+            if (this.computeRMS(mapEuclidean, euclideanGround) > this.MAX_RMS_ECC) {
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "RMS = %f",
+                    this.computeRMS(mapEuclidean, euclideanGround));
+                return false;
+            }
+
+        }
+        return true;
+    }
+};
+
+
+
+class CV_ECC_Test_Affine extends CV_ECC_BaseTest
+{
+    run(from: alvision.int): void {
+        if (!this.testAffine(from))
+            return;
+
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
+
+    testAffine(from : alvision.int) : boolean{
+    var img = alvision.imread(this.ts.get_data_path() + "shared/fruits.png", 0);
+
+    if (img.empty()) {
+        this.ts.printf(alvision.cvtest.TSConstants.LOG, "test image can not be read");
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
         return false;
     }
-    Mat testImg;
-    resize(img, testImg, Size(216, 216));
+    var testImg = new alvision.Mat();
+    alvision.resize(img, testImg, new alvision.Size(216, 216));
 
-    alvision.RNG rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
-    int progress=0;
-
-    for (int k=from; k<ntests; k++){
-
-        ts->update_context( this, k, true );
-        progress = update_progress(progress, k, ntests, 0);
-
-        Mat translationGround = (Mat_<float>(2,3) << 1, 0, (rng.uniform(10.f, 20.f)),
-            0, 1, (rng.uniform(10.f, 20.f)));
-
-        Mat warpedImage;
-
-        warpAffine(testImg, warpedImage, translationGround,
-            Size(200,200), INTER_LINEAR + WARP_INVERSE_MAP);
-
-        Mat mapTranslation = (Mat_<float>(2,3) << 1, 0, 0, 0, 1, 0);
-
-        findTransformECC(warpedImage, testImg, mapTranslation, 0,
-            TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, ECC_iterations, ECC_epsilon));
-
-        if (!isMapCorrect(mapTranslation)){
-            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
-            return false;
-        }
-
-        if (computeRMS(mapTranslation, translationGround)>MAX_RMS_ECC){
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
-            ts->printf( alvision.cvtest.TSConstants.LOG, "RMS = %f",
-                computeRMS(mapTranslation, translationGround));
-            return false;
-        }
-
-    }
-    return true;
-}
-
-void CV_ECC_Test_Translation::run(int from)
-{
-
-    if (!testTranslation(from))
-        return;
-
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
-}
+    var progress: alvision.int  = 0;
+    for (var k= from; k < this.ntests; k++){
+        this.ts.update_context(this, k, true);
+        progress = this.update_progress(progress, k, this.ntests, 0);
 
 
-
-class CV_ECC_Test_Euclidean : public CV_ECC_BaseTest
-{
-public:
-    CV_ECC_Test_Euclidean();
-protected:
-    void run(int);
-
-    bool testEuclidean(int);
-};
-
-CV_ECC_Test_Euclidean::CV_ECC_Test_Euclidean() { }
-
-bool CV_ECC_Test_Euclidean::testEuclidean(int from)
-{
-    Mat img = imread( string(ts->get_data_path()) + "shared/fruits.png", 0);
-
-
-    if (img.empty())
-    {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
-        return false;
-    }
-    Mat testImg;
-    resize(img, testImg, Size(216, 216));
-
-    alvision.RNG rng = ts->get_rng();
-
-    int progress = 0;
-    for (int k=from; k<ntests; k++){
-        ts->update_context( this, k, true );
-        progress = update_progress(progress, k, ntests, 0);
-
-        double angle = Math.PI/30 + Math.PI*rng.uniform((double)-2.f, (double)2.f)/180;
-
-        Mat euclideanGround = (Mat_<float>(2,3) << cos(angle), -sin(angle), (rng.uniform(10.f, 20.f)),
-            sin(angle), cos(angle), (rng.uniform(10.f, 20.f)));
-
-        Mat warpedImage;
-
-        warpAffine(testImg, warpedImage, euclideanGround,
-            Size(200,200), INTER_LINEAR + WARP_INVERSE_MAP);
-
-        Mat mapEuclidean = (Mat_<float>(2,3) << 1, 0, 0, 0, 1, 0);
-
-        findTransformECC(warpedImage, testImg, mapEuclidean, 1,
-            TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, ECC_iterations, ECC_epsilon));
-
-        if (!isMapCorrect(mapEuclidean)){
-            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
-            return false;
-        }
-
-        if (computeRMS(mapEuclidean, euclideanGround)>MAX_RMS_ECC){
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
-            ts->printf( alvision.cvtest.TSConstants.LOG, "RMS = %f",
-                computeRMS(mapEuclidean, euclideanGround));
-            return false;
-        }
-
-    }
-    return true;
-}
-
-
-void CV_ECC_Test_Euclidean::run(int from)
-{
-
-    if (!testEuclidean(from))
-        return;
-
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
-}
-
-class CV_ECC_Test_Affine : public CV_ECC_BaseTest
-{
-public:
-    CV_ECC_Test_Affine();
-protected:
-    void run(int);
-
-    bool testAffine(int);
-};
-
-CV_ECC_Test_Affine::CV_ECC_Test_Affine(){}
-
-
-bool CV_ECC_Test_Affine::testAffine(int from)
-{
-    Mat img = imread( string(ts->get_data_path()) + "shared/fruits.png", 0);
-
-    if (img.empty())
-    {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
-        return false;
-    }
-    Mat testImg;
-    resize(img, testImg, Size(216, 216));
-
-    alvision.RNG rng = ts->get_rng();
-
-    int progress = 0;
-    for (int k=from; k<ntests; k++){
-        ts->update_context( this, k, true );
-        progress = update_progress(progress, k, ntests, 0);
-
-
-        Mat affineGround = (Mat_<float>(2,3) << (1-rng.uniform(-0.05f, 0.05f)),
+        var affineGround = new alvision.Mat (Mat_<float>(2, 3) << (1 - rng.uniform(-0.05f, 0.05f)),
             (rng.uniform(-0.03f, 0.03f)), (rng.uniform(10.f, 20.f)),
-            (rng.uniform(-0.03f, 0.03f)), (1-rng.uniform(-0.05f, 0.05f)),
+            (rng.uniform(-0.03f, 0.03f)), (1 - rng.uniform(-0.05f, 0.05f)),
             (rng.uniform(10.f, 20.f)));
 
         Mat warpedImage;
 
         warpAffine(testImg, warpedImage, affineGround,
-            Size(200,200), INTER_LINEAR + WARP_INVERSE_MAP);
+            Size(200, 200), INTER_LINEAR + WARP_INVERSE_MAP);
 
-        Mat mapAffine = (Mat_<float>(2,3) << 1, 0, 0, 0, 1, 0);
+        Mat mapAffine = (Mat_<float>(2, 3) << 1, 0, 0, 0, 1, 0);
 
         findTransformECC(warpedImage, testImg, mapAffine, 2,
-            TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, ECC_iterations, ECC_epsilon));
+            TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, ECC_iterations, ECC_epsilon));
 
-        if (!isMapCorrect(mapAffine)){
-            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+        if (!isMapCorrect(mapAffine)) {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             return false;
         }
 
-        if (computeRMS(mapAffine, affineGround)>MAX_RMS_ECC){
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
-            ts->printf( alvision.cvtest.TSConstants.LOG, "RMS = %f",
+        if (computeRMS(mapAffine, affineGround) > MAX_RMS_ECC) {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "RMS = %f",
                 computeRMS(mapAffine, affineGround));
             return false;
         }
@@ -319,92 +273,73 @@ bool CV_ECC_Test_Affine::testAffine(int from)
     }
 
     return true;
-}
-
-
-void CV_ECC_Test_Affine::run(int from)
-{
-
-    if (!testAffine(from))
-        return;
-
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
-}
-
-class CV_ECC_Test_Homography : public CV_ECC_BaseTest
-{
-public:
-    CV_ECC_Test_Homography();
-protected:
-    void run(int);
-
-    bool testHomography(int);
+    }
 };
 
-CV_ECC_Test_Homography::CV_ECC_Test_Homography(){}
-
-bool CV_ECC_Test_Homography::testHomography(int from)
+class CV_ECC_Test_Homography extends CV_ECC_BaseTest
 {
-    Mat img = imread( string(ts->get_data_path()) + "shared/fruits.png", 0);
+    run(from: alvision.int): void {
+        if (!this.testHomography(from))
+            return;
 
-
-    if (img.empty())
-    {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
-        return false;
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
     }
-    Mat testImg;
-    resize(img, testImg, Size(216, 216));
 
-    alvision.RNG rng = ts->get_rng();
+    testHomography(from: alvision.int): boolean{
+        var img = alvision.imread(this.ts.get_data_path() + "shared/fruits.png", 0);
 
-    int progress = 0;
-    for (int k=from; k<ntests; k++){
-        ts->update_context( this, k, true );
-        progress = update_progress(progress, k, ntests, 0);
 
-        Mat homoGround = (Mat_<float>(3,3) << (1-rng.uniform(-0.05f, 0.05f)),
-            (rng.uniform(-0.03f, 0.03f)), (rng.uniform(10.f, 20.f)),
-            (rng.uniform(-0.03f, 0.03f)), (1-rng.uniform(-0.05f, 0.05f)),(rng.uniform(10.f, 20.f)),
-            (rng.uniform(0.0001f, 0.0003f)), (rng.uniform(0.0001f, 0.0003f)), 1.f);
-
-        Mat warpedImage;
-
-        warpPerspective(testImg, warpedImage, homoGround,
-            Size(200,200), INTER_LINEAR + WARP_INVERSE_MAP);
-
-        Mat mapHomography = Mat::eye(3, 3, CV_32F);
-
-        findTransformECC(warpedImage, testImg, mapHomography, 3,
-            TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, ECC_iterations, ECC_epsilon));
-
-        if (!isMapCorrect(mapHomography)){
-            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+        if (img.empty()) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "test image can not be read");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return false;
         }
+        var testImg = new alvision.Mat();
+        alvision.resize(img, testImg,new alvision. Size(216, 216));
 
-        if (computeRMS(mapHomography, homoGround)>MAX_RMS_ECC){
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
-            ts->printf( alvision.cvtest.TSConstants.LOG, "RMS = %f",
-                computeRMS(mapHomography, homoGround));
-            return false;
+        var rng = this.ts.get_rng();
+
+        var progress: alvision.int  = 0;
+        for (var k= from; k < this.ntests; k++){
+            this.ts.update_context(this, k, true);
+            progress = this.update_progress(progress, k, this.ntests, 0);
+
+            var homoGround = new alvision.Mat (Mat_<float>(3, 3) << (1 - rng.uniform(-0.05f, 0.05f)),
+                (rng.uniform(-0.03f, 0.03f)), (rng.uniform(10.f, 20.f)),
+                (rng.uniform(-0.03f, 0.03f)), (1 - rng.uniform(-0.05f, 0.05f)), (rng.uniform(10.f, 20.f)),
+                (rng.uniform(0.0001f, 0.0003f)), (rng.uniform(0.0001f, 0.0003f)), 1.f);
+
+            var warpedImage = new alvision.Mat();
+
+            alvision.warpPerspective(testImg, warpedImage, homoGround,
+                new alvision.Size(200, 200), INTER_LINEAR + WARP_INVERSE_MAP);
+
+            var mapHomography = alvision.Mat.eye(3, 3,alvision.MatrixType. CV_32F);
+
+            alvision.findTransformECC(warpedImage, testImg, mapHomography, 3,
+                TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, ECC_iterations, ECC_epsilon));
+
+            if (!this.isMapCorrect(mapHomography)) {
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
+                return false;
+            }
+
+            if (computeRMS(mapHomography, homoGround) > MAX_RMS_ECC) {
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "RMS = %f",
+                    computeRMS(mapHomography, homoGround));
+                return false;
+            }
+
         }
-
+        return true;
     }
-    return true;
-}
-
-void CV_ECC_Test_Homography::run(int from)
-{
-    if (!testHomography(from))
-        return;
-
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
-}
+};
 
 
-TEST(Video_ECC_Translation, accuracy) { CV_ECC_Test_Translation test; test.safe_run();}
-TEST(Video_ECC_Euclidean, accuracy) { CV_ECC_Test_Euclidean test; test.safe_run(); }
-TEST(Video_ECC_Affine, accuracy) { CV_ECC_Test_Affine test; test.safe_run(); }
-TEST(Video_ECC_Homography, accuracy) { CV_ECC_Test_Homography test; test.safe_run(); }
+
+
+alvision.cvtest.TEST('Video_ECC_Translation', 'accuracy', () => { var test = new CV_ECC_Test_Translation(); test.safe_run(); });
+alvision.cvtest.TEST('Video_ECC_Euclidean', 'accuracy', () => { var test = new CV_ECC_Test_Euclidean(); test.safe_run(); });
+alvision.cvtest.TEST('Video_ECC_Affine', 'accuracy', () => { var test = new CV_ECC_Test_Affine(); test.safe_run(); });
+alvision.cvtest.TEST('Video_ECC_Homography', 'accuracy', () => { var test = new CV_ECC_Test_Homography(); test.safe_run(); });

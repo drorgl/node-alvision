@@ -67,18 +67,17 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
 //    CV_Affine3D_EstTest();
 //    ~CV_Affine3D_EstTest();
     //protected:
-    run(int /* start_from */) : void
-{
-    alvision.cvtest.DefaultRngAuto dra;
+    run(int /* start_from */): void {
+        alvision.cvtest.DefaultRngAuto dra;
 
-    if (!test4Points())
-        return;
+        if (!this.test4Points())
+            return;
 
-    if (!testNPoints())
-        return;
+        if (!this.testNPoints())
+            return;
 
-    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
-}
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
 
     test4Points(): boolean {
         var aff = new alvision.Mat(3, 4, alvision.MatrixType.CV_64F);
@@ -89,15 +88,15 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
         var fpts = new alvision.Mat(1, 4, alvision.MatrixType.CV_32FC3);
         var tpts = new alvision.Mat(1, 4, alvision.MatrixType.CV_32FC3);
 
-        fpts.ptr<Point3f>()[0] = new alvision.Point3f(rngIn(1, 2), rngIn(1, 2), rngIn(5, 6));
-        fpts.ptr<Point3f>()[1] = new alvision.Point3f(rngIn(3, 4), rngIn(3, 4), rngIn(5, 6));
-        fpts.ptr<Point3f>()[2] = new alvision.Point3f(rngIn(1, 2), rngIn(3, 4), rngIn(5, 6));
-        fpts.ptr<Point3f>()[3] = new alvision.Point3f(rngIn(3, 4), rngIn(1, 2), rngIn(5, 6));
+        fpts.ptr<alvision.Point3f>("Point3f")[0] = new alvision.Point3f(rngIn(1, 2), rngIn(1, 2), rngIn(5, 6));
+        fpts.ptr<alvision.Point3f>("Point3f")[1] = new alvision.Point3f(rngIn(3, 4), rngIn(3, 4), rngIn(5, 6));
+        fpts.ptr<alvision.Point3f>("Point3f")[2] = new alvision.Point3f(rngIn(1, 2), rngIn(3, 4), rngIn(5, 6));
+        fpts.ptr<alvision.Point3f>("Point3f")[3] = new alvision.Point3f(rngIn(3, 4), rngIn(1, 2), rngIn(5, 6));
 
-        alvision.transform(fpts.ptr<Point3f>(), fpts.ptr<Point3f>() + 4, tpts.ptr<Point3f>(), WrapAff(aff));
+        alvision.transform(fpts.ptr<alvision.Point3f>("Point3f"), fpts.ptr<alvision.Point3f>("Point3f") + 4, tpts.ptr<alvision.Point3f>("Point3f"), WrapAff(aff));
 
         var aff_est = new alvision.Mat();
-        vector < uchar > outliers;
+        var outliers = new Array<alvision.uchar>();
         alvision.estimateAffine3D(fpts, tpts, aff_est, outliers);
 
         const thres = 1e-3;
@@ -110,49 +109,49 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
     }
     testNPoints() : boolean
     {
-        Mat aff(3, 4, CV_64F);
-        alvision.randu(aff, Scalar(-2), Scalar(2));
+        var aff = new alvision.Mat(3, 4,alvision.MatrixType. CV_64F);
+        alvision.randu(aff, new alvision.Scalar(-2), new alvision.Scalar(2));
 
         // setting points that are no in the same line
 
-        const int n = 100;
-        const int m = 3 * n / 5;
-        const Point3f shift_outl = Point3f(15, 15, 15);
-        const float noise_level = 20.f;
+        const  n = 100;
+        const  m = 3 * n / 5;
+        const shift_outl = new alvision.Point3f(15, 15, 15);
+        const  noise_level = 20.;
 
-        Mat fpts(1, n, CV_32FC3);
-        Mat tpts(1, n, CV_32FC3);
+        var fpts = new alvision.Mat(1, n,alvision.MatrixType. CV_32FC3);
+        var tpts = new alvision.Mat(1, n,alvision.MatrixType. CV_32FC3);
 
-        randu(fpts, Scalar::all(0), Scalar::all(100));
-        transform(fpts.ptr<Point3f>(), fpts.ptr<Point3f>() + n, tpts.ptr<Point3f>(), WrapAff(aff));
+        alvision.randu(fpts,alvision. Scalar.all(0), alvision.Scalar.all(100));
+        alvision.transform(fpts.ptr<alvision.Point3f>("Point3f"), fpts.ptr<alvision.Point3f>("Point3f") + n, tpts.ptr<alvision.Point3f>("Point3f"), WrapAff(aff));
 
         /* adding noise*/
-        transform(tpts.ptr<Point3f>() + m, tpts.ptr<Point3f>() + n, tpts.ptr<Point3f>() + m, bind2nd(plus<Point3f>(), shift_outl));
-        transform(tpts.ptr<Point3f>() + m, tpts.ptr<Point3f>() + n, tpts.ptr<Point3f>() + m, Noise(noise_level));
+        alvision.transform(tpts.ptr<alvision.Point3f>("Point3f") + m, tpts.ptr<alvision.Point3f>("Point3f") + n, tpts.ptr<alvision.Point3f>("Point3f") + m, bind2nd(plus<Point3f>(), shift_outl));
+        alvision.transform(tpts.ptr<alvision.Point3f>("Point3f") + m, tpts.ptr<alvision.Point3f>("Point3f") + n, tpts.ptr<alvision.Point3f>("Point3f") + m, Noise(noise_level));
 
-        Mat aff_est;
-        vector < uchar > outl;
-        int res = estimateAffine3D(fpts, tpts, aff_est, outl);
+        var aff_est = new alvision.Mat();
+        var outl = new Array<alvision.uchar>();
+        var res = alvision.estimateAffine3D(fpts, tpts, aff_est, outl);
 
         if (!res) {
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return false;
         }
 
-        const double thres = 1e-4;
-        if (alvision.cvtest.norm(aff_est, aff, NORM_INF) > thres)
+        const thres = 1e-4;
+        if (alvision.cvtest.norm(aff_est, aff,alvision.NormTypes. NORM_INF) > thres)
         {
-            cout << "aff est: " << aff_est << endl;
-            cout << "aff ref: " << aff << endl;
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+            console.log( "aff est: " + aff_est );
+            console.log( "aff ref: " + aff     );
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return false;
         }
 
-        bool outl_good = count(outl.begin(), outl.end(), 1) == m &&
+        var outl_good = count(outl.begin(), outl.end(), 1) == m &&
             m == accumulate(outl.begin(), outl.begin() + m, 0);
 
         if (!outl_good) {
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return false;
         }
         return true;

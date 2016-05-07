@@ -67,7 +67,7 @@ CV_ChessboardDetectorTimingTest::CV_ChessboardDetectorTimingTest()
 /* ///////////////////// chess_corner_test ///////////////////////// */
 void CV_ChessboardDetectorTimingTest::run( int start_from )
 {
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
 
     /* test parameters */
     std::string   filepath;
@@ -156,7 +156,7 @@ void CV_ChessboardDetectorTimingTest::run( int start_from )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "Error: chessboard was %sdetected in the image %s\n",
                        result ? "" : "not ", imgname );
-            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             goto _exit_;
         }
         if(result != result1)

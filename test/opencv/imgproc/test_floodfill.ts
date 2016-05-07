@@ -82,12 +82,12 @@ protected:
 
 CV_FloodFillTest::CV_FloodFillTest()
 {
-    test_array[INPUT_OUTPUT].push_back(NULL);
-    test_array[INPUT_OUTPUT].push_back(NULL);
-    test_array[REF_INPUT_OUTPUT].push_back(NULL);
-    test_array[REF_INPUT_OUTPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT_OUTPUT].push(NULL);
+    test_array[INPUT_OUTPUT].push(NULL);
+    test_array[REF_INPUT_OUTPUT].push(NULL);
+    test_array[REF_INPUT_OUTPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
     optional_mask = false;
     element_wise_relative_error = true;
 
@@ -136,7 +136,7 @@ void CV_FloodFillTest::get_test_array_types_and_sizes( int test_case_idx,
     else
     {
         Mat m( 1, 8, CV_16S, buff );
-        rng.fill( m, RNG::NORMAL, Scalar::all(0), Scalar::all(32) );
+        rng.fill( m, RNG::NORMAL, alvision.Scalar.all(0), Scalar::all(32) );
         for( i = 0; i < 4; i++ )
         {
             l_diff.val[i] = fabs(m.at<short>(i)/16.);
@@ -277,7 +277,7 @@ cvTsFloodFill( CvMat* _img, CvPoint seed_pt, CvScalar new_val,
     else
     {
         Mat m_mask = cvarrToMat(mask);
-        alvision.cvtest.set( m_mask, Scalar::all(0), Mat() );
+        alvision.cvtest.set( m_mask, alvision.Scalar.all(0), Mat() );
         cvRectangle( mask, cvPoint(0,0), cvPoint(mask->cols-1,mask->rows-1), Scalar::all(1.), 1, 8, 0 );
     }
 

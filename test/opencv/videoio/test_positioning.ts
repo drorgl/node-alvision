@@ -130,7 +130,7 @@ run_test(method : METHOD) : void{
                 }
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Required pos: %d\nReturned pos: %d\n", idx.at(j), val);
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: required and returned positions are not matched.\n");
-                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 flag = true;
             }
 
@@ -156,7 +156,7 @@ run_test(method : METHOD) : void{
             {
                 int pos = 1, step = 20;
                 do {
-                    idx.push_back(pos);
+                    idx.push(pos);
                     pos += step;
                 }
                 while (pos <= N);
@@ -167,8 +167,8 @@ run_test(method : METHOD) : void{
                 RNG rng(N);
                 idx.clear();
                 for (int i = 0; i < N - 1; i++ )
-                idx.push_back(rng.uniform(0, N));
-                idx.push_back(N - 1);
+                idx.push(rng.uniform(0, N));
+                idx.push(N - 1);
                 std::swap(idx.at(rng.uniform(0, N - 1)), idx.at(N - 1));
                 break;
             }

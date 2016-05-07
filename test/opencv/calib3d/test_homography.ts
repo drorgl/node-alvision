@@ -281,7 +281,7 @@ void CV_HomographyTest::run(int)
             src_mat_3d.at<float>(1, i) = tmp[1];
             src_mat_3d.at<float>(2, i) = 1.0f;
 
-            src_vec.push_back(Point2f(tmp[0], tmp[1]));
+            src_vec.push(Point2f(tmp[0], tmp[1]));
         }
 
         double fi = alvision.cvtest.randReal(rng)*2*Math.PI;
@@ -308,7 +308,7 @@ void CV_HomographyTest::run(int)
             tmp_2f[1] = dst_mat_2d.at<float>(1, i) = dst_mat_3d.at<float>(1, i) /= dst_mat_3d.at<float>(2, i);
             dst_mat_3d.at<float>(2, i) = 1.0f;
 
-            dst_vec.push_back(Point2f(tmp_2f[0], tmp_2f[1]));
+            dst_vec.push(Point2f(tmp_2f[0], tmp_2f[1]));
         }
 
         for (int i = 0; i < METHODS_COUNT; ++i)
@@ -403,7 +403,7 @@ void CV_HomographyTest::run(int)
         }
 
         Mat noise_2f(1, N, CV_32FC2);
-        rng.fill(noise_2f, RNG::NORMAL, Scalar::all(0), Scalar::all(sigma));
+        rng.fill(noise_2f, RNG::NORMAL, alvision.Scalar.all(0), Scalar::all(sigma));
 
         alvision.Mat mask(N, 1, CV_8UC1);
 

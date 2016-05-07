@@ -145,7 +145,7 @@ protected:
         else
         {
             ss << ">" << maxDist  << " - bad accuracy!"<< endl;
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         }
         ts->printf(alvision.cvtest.TSConstants.LOG,  ss );
     }
@@ -228,7 +228,7 @@ protected:
                 ts->printf( alvision.cvtest.TSConstants.LOG, "Count of computed descriptors and keypoints count must be equal.\n" );
                 ts->printf( alvision.cvtest.TSConstants.LOG, "Count of keypoints is            %d.\n", (int)keypoints.size() );
                 ts->printf( alvision.cvtest.TSConstants.LOG, "Count of computed descriptors is %d.\n", calcDescriptors.rows );
-                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -239,7 +239,7 @@ protected:
                 ts->printf( alvision.cvtest.TSConstants.LOG, "Calculated size is %d.\n", calcDescriptors.cols );
                 ts->printf( alvision.cvtest.TSConstants.LOG, "Expected type is   %d.\n", dextractor->descriptorType() );
                 ts->printf( alvision.cvtest.TSConstants.LOG, "Calculated type is %d.\n", calcDescriptors.type() );
-                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
 
@@ -289,7 +289,7 @@ protected:
         emptyDataTest();
         regressionTest();
 
-        this.ts.set_failed_test_info( alvision.cvtest.TS::OK );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.OK );
     }
 
     virtual Mat readDescriptors()
@@ -368,7 +368,7 @@ TEST( Features2d_DescriptorExtractor, batch )
     {
         string imgname = format("%s/img%d.png", path, i+1);
         Mat img = imread(imgname, 0);
-        imgs.push_back(img);
+        imgs.push(img);
     }
 
     orb->detect(imgs, keypoints);

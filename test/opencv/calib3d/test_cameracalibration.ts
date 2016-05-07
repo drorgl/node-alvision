@@ -61,17 +61,17 @@ class CV_ProjectPointsTest extends alvision.cvtest.ArrayTest
     constructor()
         : alvision.cvtest.ArrayTest( "3d-ProjectPoints", "cvProjectPoints2", "" )
 {
-    test_array[INPUT].push_back(NULL);  // rotation vector
-    test_array[OUTPUT].push_back(NULL); // rotation matrix
-    test_array[OUTPUT].push_back(NULL); // jacobian (J)
-    test_array[OUTPUT].push_back(NULL); // rotation vector (backward transform result)
-    test_array[OUTPUT].push_back(NULL); // inverse transform jacobian (J1)
-    test_array[OUTPUT].push_back(NULL); // J*J1 (or J1*J) == I(3x3)
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);  // rotation vector
+    test_array[OUTPUT].push(NULL); // rotation matrix
+    test_array[OUTPUT].push(NULL); // jacobian (J)
+    test_array[OUTPUT].push(NULL); // rotation vector (backward transform result)
+    test_array[OUTPUT].push(NULL); // inverse transform jacobian (J1)
+    test_array[OUTPUT].push(NULL); // J*J1 (or J1*J) == I(3x3)
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
 
     element_wise_relative_error = false;
     calc_jacobians = false;
@@ -257,7 +257,7 @@ class CV_CameraCalibrationTest extends alvision.cvtest.BaseTest
 
     run(int start_from ) : void
 {
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
     alvision.String            filepath;
     alvision.String            filename;
 
@@ -565,13 +565,13 @@ class CV_CameraCalibrationTest extends alvision.cvtest.BaseTest
         if (maxDx > 1.0) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG,
                 "Error in reprojection maxDx=%f > 1.0\n", maxDx);
-            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY; goto _exit_;
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY; goto _exit_;
         }
 
         if (maxDy > 1.0) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG,
                 "Error in reprojection maxDy=%f > 1.0\n", maxDy);
-            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY; goto _exit_;
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY; goto _exit_;
         }
 
         progress = update_progress(progress, currTest, numTests, 0);
@@ -690,7 +690,7 @@ void CV_CameraCalibrationTest_CPP::calibrate( int imageCount, int* pointCounts,
     Array<Array<Point3f> > objectPoints( imageCount );
     Array<Array<Point2f> > imagePoints( imageCount );
     Size imageSize = _imageSize;
-    Mat cameraMatrix, distCoeffs(1,4,CV_64F,Scalar::all(0));
+    Mat cameraMatrix, distCoeffs(1,4,CV_64F,alvision.Scalar.all(0));
     Array<Mat> rvecs, tvecs;
 
     CvPoint3D64f* op = _objectPoints;
@@ -780,7 +780,7 @@ protected:
 
 void CV_CalibrationMatrixValuesTest::run(int)
 {
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
     const double fcMinVal = 1e-5;
     const double fcMaxVal = 1000;
     const double apertureMaxVal = 0.01;
@@ -835,31 +835,31 @@ void CV_CalibrationMatrixValuesTest::run(int)
     if( fabs(fovx - goodFovx) > FLT_EPSILON )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad fovx (real=%f, good = %f\n", fovx, goodFovx );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
     if( fabs(fovy - goodFovy) > FLT_EPSILON )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad fovy (real=%f, good = %f\n", fovy, goodFovy );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
     if( fabs(focalLength - goodFocalLength) > FLT_EPSILON )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad focalLength (real=%f, good = %f\n", focalLength, goodFocalLength );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
     if( fabs(aspectRatio - goodAspectRatio) > FLT_EPSILON )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad aspectRatio (real=%f, good = %f\n", aspectRatio, goodAspectRatio );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
     if( norm( principalPoint - goodPrincipalPoint ) > FLT_EPSILON )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad principalPoint\n" );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -964,7 +964,7 @@ void CV_ProjectPointsTest::run(int)
 {
     //typedef float matType;
 
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
     const int pointCount = 100;
 
     const float zMinVal = 10.0f, zMaxVal = 100.0f,
@@ -1041,7 +1041,7 @@ void CV_ProjectPointsTest::run(int)
             fabs(it->y - validImgPoint.y) > imgPointErr )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad image point\n" );
-            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             goto _exit_;
         }
     }
@@ -1064,7 +1064,7 @@ void CV_ProjectPointsTest::run(int)
     if( err > 3 )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad dpdrot: too big difference = %g\n", err );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 
     // 2. translation
@@ -1081,7 +1081,7 @@ void CV_ProjectPointsTest::run(int)
     if( alvision.cvtest.norm( dpdt, valDpdt, NORM_INF ) > 0.2 )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad dpdtvec\n" );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 
     // 3. camera matrix
@@ -1104,7 +1104,7 @@ void CV_ProjectPointsTest::run(int)
     if ( alvision.cvtest.norm( dpdf, valDpdf,alvision.NormTypes. NORM_L2 ) > 0.2 )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad dpdf\n" );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
     // 3.2. principal point
     leftImgPoints.resize(2);
@@ -1125,7 +1125,7 @@ void CV_ProjectPointsTest::run(int)
     if ( alvision.cvtest.norm( dpdc, valDpdc,alvision.NormTypes. NORM_L2 ) > 0.2 )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad dpdc\n" );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 
     // 4. distortion
@@ -1144,7 +1144,7 @@ void CV_ProjectPointsTest::run(int)
     if( alvision.cvtest.norm( dpddist, valDpddist,alvision.NormTypes. NORM_L2 ) > 0.3 )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad dpddist\n" );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 
 _exit_:
@@ -1285,7 +1285,7 @@ bool CV_StereoCalibrationTest::checkPandROI( int test_case_idx, const Mat& M, co
     // step 1. check that all the original points belong to the destination image
     for( y = 0; y < N; y++ )
         for( x = 0; x < N; x++ )
-            pts.push_back(Point2f((float)x*imgsize.width/(N-1), (float)y*imgsize.height/(N-1)));
+            pts.push(Point2f((float)x*imgsize.width/(N-1), (float)y*imgsize.height/(N-1)));
 
     undistortPoints(Mat(pts), upts, M, D, R, P );
     for( k = 0; k < N*N; k++ )
@@ -1355,7 +1355,7 @@ void CV_StereoCalibrationTest::run( int )
             if( buf[0] == '#')
                 continue;
             filepath = alvision.format("%scv/stereo/case%d/%s", ts->get_data_path(), testcase, buf );
-            imglist.push_back(string(filepath));
+            imglist.push(string(filepath));
         }
         fclose(f);
 
@@ -1392,20 +1392,20 @@ void CV_StereoCalibrationTest::run( int )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "The function could not detect boards on the images %s and %s, testcase %d\n",
                     imglist[i*2], imglist[i*2+1], testcase );
-                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
             total += (int)imgpt1[i].size();
             for( int j = 0; j < npoints; j++ )
-                objpt[i].push_back(Point3f((float)(j%patternSize.width), (float)(j/patternSize.width), 0.f));
+                objpt[i].push(Point3f((float)(j%patternSize.width), (float)(j/patternSize.width), 0.f));
         }
 
         // rectify (calibrated)
         Mat M1 = Mat::eye(3,3,CV_64F), M2 = Mat::eye(3,3,CV_64F), D1(5,1,CV_64F), D2(5,1,CV_64F), R, T, E, F;
         M1.at<double>(0,2) = M2.at<double>(0,2)=(imgsize.width-1)*0.5;
         M1.at<double>(1,2) = M2.at<double>(1,2)=(imgsize.height-1)*0.5;
-        D1 = Scalar::all(0);
-        D2 = Scalar::all(0);
+        D1 = alvision.Scalar.all(0);
+        D2 = alvision.Scalar.all(0);
         double err = calibrateStereoCamera(objpt, imgpt1, imgpt2, M1, D1, M2, D2, imgsize, R, T, E, F,
             TermCriteria(TermCriteria::MAX_ITER+TermCriteria::EPS, 30, 1e-6),
             CV_CALIB_SAME_FOCAL_LENGTH
@@ -1419,7 +1419,7 @@ void CV_StereoCalibrationTest::run( int )
         if( err > maxReprojErr )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "The average reprojection error is too big (=%g), testcase %d\n", err, testcase);
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
             return;
         }
 
@@ -1435,19 +1435,19 @@ void CV_StereoCalibrationTest::run( int )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "The computed (by rectify) R1 and R2 are not orthogonal,"
                 "or the computed (by calibrate) F is not singular, testcase %d\n", testcase);
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
             return;
         }
 
         if(!checkPandROI(testcase, M1, D1, R1, P1, imgsize, roi1))
         {
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
 
         if(!checkPandROI(testcase, M2, D2, R2, P2, imgsize, roi2))
         {
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -1455,7 +1455,7 @@ void CV_StereoCalibrationTest::run( int )
         double tx = fabs(P2.at<double>(0, 3) / P2.at<double>(0, 0));
         if (fabs(tx - alvision.cvtest.norm(T,alvision.NormTypes. NORM_L2)) > 1e-5)
         {
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -1466,7 +1466,7 @@ void CV_StereoCalibrationTest::run( int )
         if( reprojectedTestPoint.at<double>(2) / reprojectedTestPoint.at<double>(3) < 0 )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "A point after rectification is reprojected behind the camera, testcase %d\n", testcase);
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         }
 
         //check that Q reprojects the same points as reconstructed by triangulation
@@ -1497,8 +1497,8 @@ void CV_StereoCalibrationTest::run( int )
         convertPointsFromHomogeneous(homogeneousPoints4d, triangulatedPoints);
 
         Mat sparsePoints;
-        sparsePoints.push_back(projectedPoints_1);
-        sparsePoints.push_back(disparities);
+        sparsePoints.push(projectedPoints_1);
+        sparsePoints.push(disparities);
         sparsePoints = sparsePoints.t();
         sparsePoints = sparsePoints.reshape(3);
         Mat reprojectedPoints;
@@ -1507,7 +1507,7 @@ void CV_StereoCalibrationTest::run( int )
         if (alvision.cvtest.norm(triangulatedPoints, reprojectedPoints,alvision.NormTypes. NORM_L2) / sqrt((double)pointsCount) > requiredAccuracy)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "Points reprojected with a matrix Q and points reconstructed by triangulation are different, testcase %d\n", testcase);
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         }
 
         //check correctMatches
@@ -1532,7 +1532,7 @@ void CV_StereoCalibrationTest::run( int )
             if (alvision.cvtest.norm(error,alvision.NormTypes. NORM_L2) > constraintAccuracy)
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "Epipolar constraint is violated after correctMatches, testcase %d\n", testcase);
-                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
             }
         }
 
@@ -1587,14 +1587,14 @@ void CV_StereoCalibrationTest::run( int )
                 {
                     ts->printf( alvision.cvtest.TSConstants.LOG, "The distance between %s coordinates is too big(=%g) (used calibrated stereo), testcase %d\n",
                         verticalStereo ? "x" : "y", diff_c, testcase);
-                    this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                    this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                     return;
                 }
                 if( maxDiff_uc > maxScanlineDistErr_uc )
                 {
                     ts->printf( alvision.cvtest.TSConstants.LOG, "The distance between %s coordinates is too big(=%g) (used uncalibrated stereo), testcase %d\n",
                         verticalStereo ? "x" : "y", diff_uc, testcase);
-                    this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                    this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                     return;
                 }
             }

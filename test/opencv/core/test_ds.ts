@@ -320,7 +320,7 @@ static int  cvTsSimpleGraphVertexDegree( CvTsSimpleGraph* graph, int index )
 if( !(expr) )                                               \
 {                                                           \
 set_error_context( #expr, err_msg, __FILE__, __LINE__ );    \
-this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );\
+this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );\
 throw -1;                                                   \
 }
 
@@ -402,8 +402,8 @@ int Core_DynStructBaseTest::read_params( CvFileStorage* fs )
     max_struct_size = cvReadInt( find_param( fs, "max_struct_size" ), max_struct_size );
     generations = cvReadInt( find_param( fs, "generations" ), generations );
     iterations = cvReadInt( find_param( fs, "iterations" ), iterations );
-    generations = cvRound(generations*sqrt_scale);
-    iterations = cvRound(iterations*sqrt_scale);
+    generations = Math.round(generations*sqrt_scale);
+    iterations = Math.round(iterations*sqrt_scale);
 
     min_log_storage_block_size = cvReadInt( find_param( fs, "min_log_storage_block_size" ),
                                            min_log_storage_block_size );
@@ -451,7 +451,7 @@ void Core_DynStructBaseTest::set_error_context( const char* condition,
     ts->printf( alvision.cvtest.TSConstants.LOG, "file %s, line %d: %s\n(\"%s\" failed).\n"
                "generation = %d, struct_idx = %d, iter = %d\n",
                filename, lineno, err_msg, condition, gen, struct_idx, iter );
-    this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+    this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
 }
 
 
@@ -540,7 +540,7 @@ int Core_SeqBaseTest::test_multi_create()
         index[i] = i;
 
         t = alvision.cvtest.randReal(rng)*(max_log_elem_size - min_log_elem_size) + min_log_elem_size;
-        elem_size = cvRound( exp(t * CV_LOG2) );
+        elem_size = Math.round( exp(t * Math.LOG2E) );
         elem_size = MIN( elem_size, (int)(storage->block_size - sizeof(void*) -
                                           sizeof(CvSeqBlock) - sizeof(CvMemBlock)) );
 
@@ -549,7 +549,7 @@ int Core_SeqBaseTest::test_multi_create()
         cxcore_struct[i] = 0;
         sseq->count = alvision.cvtest.randInt( rng ) % max_struct_size;
         Mat m( 1, MAX(sseq->count,1)*elem_size, CV_8UC1, sseq->array );
-        alvision.cvtest.randUni( rng, m, Scalar::all(0), Scalar::all(256) );
+        alvision.cvtest.randUni( rng, m, alvision.Scalar.all(0), Scalar::all(256) );
     }
 
     for( cur_count = struct_count; cur_count > 0; cur_count-- )
@@ -1005,7 +1005,7 @@ void Core_SeqBaseTest::run( int )
             {
                 t = alvision.cvtest.randReal(rng)*(max_log_storage_block_size - min_log_storage_block_size)
                 + min_log_storage_block_size;
-                storage.reset(cvCreateMemStorage( cvRound( exp(t * CV_LOG2) ) ));
+                storage.reset(cvCreateMemStorage( Math.round( exp(t * Math.LOG2E) ) ));
             }
 
             iter = struct_idx = -1;
@@ -1093,7 +1093,7 @@ void Core_SeqSortInvTest::run( int )
             {
                 t = alvision.cvtest.randReal(rng)*(max_log_storage_block_size - min_log_storage_block_size)
                 + min_log_storage_block_size;
-                storage.reset(cvCreateMemStorage( cvRound( exp(t * CV_LOG2) ) ));
+                storage.reset(cvCreateMemStorage( Math.round( exp(t * Math.LOG2E) ) ));
             }
 
             for( iter = 0; iter < iterations/10; iter++ )
@@ -1390,12 +1390,12 @@ void Core_SetTest::run( int )
         {
             struct_idx = iter = -1;
             t = alvision.cvtest.randReal(rng)*(max_log_storage_block_size - min_log_storage_block_size) + min_log_storage_block_size;
-            storage.reset(cvCreateMemStorage( cvRound( exp(t * CV_LOG2) ) ));
+            storage.reset(cvCreateMemStorage( Math.round( exp(t * Math.LOG2E) ) ));
 
             for( int i = 0; i < struct_count; i++ )
             {
                 t = alvision.cvtest.randReal(rng)*(max_log_elem_size - min_log_elem_size) + min_log_elem_size;
-                int pure_elem_size = cvRound( exp(t * CV_LOG2) );
+                int pure_elem_size = Math.round( exp(t * Math.LOG2E) );
                 int elem_size = pure_elem_size + sizeof(int);
                 elem_size = (elem_size + sizeof(size_t) - 1) & ~(sizeof(size_t)-1);
                 elem_size = MAX( elem_size, (int)sizeof(CvSetElem) );
@@ -1814,7 +1814,7 @@ void Core_GraphTest::run( int )
         {
             struct_idx = iter = -1;
             t = alvision.cvtest.randReal(rng)*(max_log_storage_block_size - min_log_storage_block_size) + min_log_storage_block_size;
-            int block_size = cvRound( exp(t * CV_LOG2) );
+            int block_size = Math.round( exp(t * Math.LOG2E) );
             block_size = MAX(block_size, (int)(sizeof(CvGraph) + sizeof(CvMemBlock) + sizeof(CvSeqBlock)));
 
             storage.reset(cvCreateMemStorage(block_size));
@@ -1826,7 +1826,7 @@ void Core_GraphTest::run( int )
                 for( k = 0; k < 2; k++ )
                 {
                     t = alvision.cvtest.randReal(rng)*(max_log_elem_size - min_log_elem_size) + min_log_elem_size;
-                    int pe = cvRound( exp(t * CV_LOG2) ) - 1; // pure_elem_size==0 does also make sense
+                    int pe = Math.round( exp(t * Math.LOG2E) ) - 1; // pure_elem_size==0 does also make sense
                     int delta = k == 0 ? sizeof(CvGraphVtx) : sizeof(CvGraphEdge);
                     int e = pe + delta;
                     e = (e + sizeof(size_t) - 1) & ~(sizeof(size_t)-1);
@@ -1931,7 +1931,7 @@ void Core_GraphScanTest::run( int )
         {
             struct_idx = iter = -1;
             t = alvision.cvtest.randReal(rng)*(max_log_storage_block_size - min_log_storage_block_size) + min_log_storage_block_size;
-            int storage_blocksize = cvRound( exp(t * CV_LOG2) );
+            int storage_blocksize = Math.round( exp(t * Math.LOG2E) );
             storage_blocksize = MAX(storage_blocksize, (int)(sizeof(CvGraph) + sizeof(CvMemBlock) + sizeof(CvSeqBlock)));
             storage_blocksize = MAX(storage_blocksize, (int)(sizeof(CvGraphEdge) + sizeof(CvMemBlock) + sizeof(CvSeqBlock)));
             storage_blocksize = MAX(storage_blocksize, (int)(sizeof(CvGraphVtx) + sizeof(CvMemBlock) + sizeof(CvSeqBlock)));

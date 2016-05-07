@@ -491,7 +491,7 @@ test_projectPoints( const Mat& _3d, const Mat& Rt, const Mat& A, Mat& _2d, RNG* 
         else
         {
             noise.create( 1, _3d.cols, CV_64FC2 );
-            rng->fill(noise, RNG::NORMAL, Scalar::all(0), Scalar::all(sigma) );
+            rng->fill(noise, RNG::NORMAL, alvision.Scalar.all(0), Scalar::all(sigma) );
         }
     }
 
@@ -544,17 +544,17 @@ protected:
 
 CV_RodriguesTest::CV_RodriguesTest()
 {
-    test_array[INPUT].push_back(NULL);  // rotation vector
-    test_array[OUTPUT].push_back(NULL); // rotation matrix
-    test_array[OUTPUT].push_back(NULL); // jacobian (J)
-    test_array[OUTPUT].push_back(NULL); // rotation vector (backward transform result)
-    test_array[OUTPUT].push_back(NULL); // inverse transform jacobian (J1)
-    test_array[OUTPUT].push_back(NULL); // J*J1 (or J1*J) == I(3x3)
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);  // rotation vector
+    test_array[OUTPUT].push(NULL); // rotation matrix
+    test_array[OUTPUT].push(NULL); // jacobian (J)
+    test_array[OUTPUT].push(NULL); // rotation vector (backward transform result)
+    test_array[OUTPUT].push(NULL); // inverse transform jacobian (J1)
+    test_array[OUTPUT].push(NULL); // J*J1 (or J1*J) == I(3x3)
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
 
     element_wise_relative_error = false;
     calc_jacobians = false;
@@ -798,18 +798,18 @@ CV_FundamentalMatTest::CV_FundamentalMatTest()
     //   2 - array of 3d points that are projected to both view planes
     //   3 - [R|t] matrix for the second view plane (for the first one it is [I|0]
     //   4, 5 - intrinsic matrices
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[TEMP].push_back(NULL);
-    test_array[TEMP].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[TEMP].push(NULL);
+    test_array[TEMP].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
 
     element_wise_relative_error = false;
 
@@ -839,7 +839,7 @@ void CV_FundamentalMatTest::get_test_array_types_and_sizes( int /*test_case_idx*
     RNG& rng = ts->get_rng();
     int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
     double pt_count_exp = alvision.cvtest.randReal(rng)*6 + 1;
-    int pt_count = cvRound(exp(pt_count_exp));
+    int pt_count = Math.round(exp(pt_count_exp));
 
     dims = alvision.cvtest.randInt(rng) % 2 + 2;
     method = 1 << (alvision.cvtest.randInt(rng) % 4);
@@ -1094,24 +1094,24 @@ CV_EssentialMatTest::CV_EssentialMatTest()
     //   2 - array of 3d points that are projected to both view planes
     //   3 - [R|t] matrix for the second view plane (for the first one it is [I|0]
     //   4 - intrinsic matrix for both camera
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[TEMP].push_back(NULL);
-    test_array[TEMP].push_back(NULL);
-    test_array[TEMP].push_back(NULL);
-    test_array[TEMP].push_back(NULL);
-    test_array[TEMP].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL); // Essential Matrix singularity
-    test_array[OUTPUT].push_back(NULL); // Inliers mask
-    test_array[OUTPUT].push_back(NULL); // Translation error
-    test_array[OUTPUT].push_back(NULL); // Positive depth count
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[TEMP].push(NULL);
+    test_array[TEMP].push(NULL);
+    test_array[TEMP].push(NULL);
+    test_array[TEMP].push(NULL);
+    test_array[TEMP].push(NULL);
+    test_array[OUTPUT].push(NULL); // Essential Matrix singularity
+    test_array[OUTPUT].push(NULL); // Inliers mask
+    test_array[OUTPUT].push(NULL); // Translation error
+    test_array[OUTPUT].push(NULL); // Positive depth count
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
 
     element_wise_relative_error = false;
 
@@ -1138,7 +1138,7 @@ void CV_EssentialMatTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
     RNG& rng = ts->get_rng();
     int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
     double pt_count_exp = alvision.cvtest.randReal(rng)*6 + 1;
-    int pt_count = MAX(5, cvRound(exp(pt_count_exp)));
+    int pt_count = MAX(5, Math.round(exp(pt_count_exp)));
 
     dims = alvision.cvtest.randInt(rng) % 2 + 2;
     dims = 2;
@@ -1444,9 +1444,9 @@ protected:
 
 CV_ConvertHomogeneousTest::CV_ConvertHomogeneousTest()
 {
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
     element_wise_relative_error = false;
 
     pt_count = dims1 = dims2 = 0;
@@ -1469,7 +1469,7 @@ void CV_ConvertHomogeneousTest::get_test_array_types_and_sizes( int /*test_case_
     double pt_count_exp = alvision.cvtest.randReal(rng)*6 + 1;
     int t;
 
-    pt_count = cvRound(exp(pt_count_exp));
+    pt_count = Math.round(exp(pt_count_exp));
     pt_count = MAX( pt_count, 5 );
 
     dims1 = 2 + (alvision.cvtest.randInt(rng) % 3);
@@ -1578,10 +1578,10 @@ protected:
 
 CV_ComputeEpilinesTest::CV_ComputeEpilinesTest()
 {
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
     element_wise_relative_error = false;
 
     pt_count = dims = which_image = 0;
@@ -1606,7 +1606,7 @@ void CV_ComputeEpilinesTest::get_test_array_types_and_sizes( int /*test_case_idx
 
     which_image = 1 + (alvision.cvtest.randInt(rng) % 2);
 
-    pt_count = cvRound(exp(pt_count_exp));
+    pt_count = Math.round(exp(pt_count_exp));
     pt_count = MAX( pt_count, 1 );
     bool few_points = pt_count < 5;
 

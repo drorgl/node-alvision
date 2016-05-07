@@ -51,8 +51,8 @@ import fs = require('fs');
 //#define OUTPUT_SAVING 0
 //#if OUTPUT_SAVING
 //#define SAVE(x) std::Array<int> params;\
-//                params.push_back(16);\
-//                params.push_back(0);\
+//                params.push(16);\
+//                params.push(0);\
 //                imwrite(folder + "output.png", x ,params);
 //#else
 //#define SAVE(x)

@@ -92,13 +92,13 @@ void CV_FeatureDetectorTest::emptyDataTest()
     catch(...)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "detect() on empty image must not generate exception (1).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
     }
 
     if( !keypoints.empty() )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "detect() on empty image must return empty keypoints vector (1).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         return;
     }
 
@@ -112,7 +112,7 @@ void CV_FeatureDetectorTest::emptyDataTest()
     catch(...)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "detect() on empty image vector must not generate exception (2).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
     }
 }
 
@@ -142,7 +142,7 @@ void CV_FeatureDetectorTest::compareKeypointSets( const Array<KeyPoint>& validKe
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "Bad keypoints count ratio (validCount = %d, calcCount = %d).\n",
                     validKeypoints.size(), calcKeypoints.size() );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         return;
     }
 
@@ -173,7 +173,7 @@ void CV_FeatureDetectorTest::compareKeypointSets( const Array<KeyPoint>& validKe
     if( badPointCount > 0.9 * commonPointCount )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, " - Bad accuracy!\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         return;
     }
     ts->printf( alvision.cvtest.TSConstants.LOG, " - OK\n" );
@@ -248,7 +248,7 @@ void CV_FeatureDetectorTest::run( int /*start_from*/ )
     emptyDataTest();
     regressionTest();
 
-    this.ts.set_failed_test_info( alvision.cvtest.TS::OK );
+    this.ts.set_failed_test_info( alvision.cvtest.FailureCode.OK );
 }
 
 /****************************************************************************************\

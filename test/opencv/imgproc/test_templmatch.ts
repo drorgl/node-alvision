@@ -73,10 +73,10 @@ protected:
 
 CV_TemplMatchTest::CV_TemplMatchTest()
 {
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
     element_wise_relative_error = false;
     max_template_size = 100;
     method = 0;

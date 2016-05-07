@@ -98,7 +98,7 @@ import fs = require('fs');
     //        double x = 2 * cos(i * 3 * Math.PI / 180.0) * (1.0 + 0.5 * cos(1.2 + i * 1.2 * Math.PI / 180.0));
     //        double y = 0.25 + i / 270.0 + sin(j * Math.PI / 180.0) * 0.2 * sin(0.6 + j * 1.5 * Math.PI / 180.0);
     //        double z = 2 * sin(i * 3 * Math.PI / 180.0) * (1.0 + 0.5 * cos(1.2 + i * Math.PI / 180.0));
-    //        result.push_back(viz::makeCameraPose(Vec3d(x, y, z), Vec3d::all(0.0), Vec3d(0.0, 1.0, 0.0)));
+    //        result.push(viz::makeCameraPose(Vec3d(x, y, z), Vec3d::all(0.0), Vec3d(0.0, 1.0, 0.0)));
     //    }
     //    return result;
     //}
@@ -270,10 +270,10 @@ TEST(Viz, show_textured_mesh)
     for(size_t i = 0; i < 64; ++i)
     {
         double angle = Math.PI/2 * i/64.0;
-        points.push_back(Vec3d(0.00, cos(angle), sin(angle))*0.75);
-        points.push_back(Vec3d(1.57, cos(angle), sin(angle))*0.75);
-        tcoords.push_back(Vec2d(0.0, i/64.0));
-        tcoords.push_back(Vec2d(1.0, i/64.0));
+        points.push(Vec3d(0.00, cos(angle), sin(angle))*0.75);
+        points.push(Vec3d(1.57, cos(angle), sin(angle))*0.75);
+        tcoords.push(Vec2d(0.0, i/64.0));
+        tcoords.push(Vec2d(1.0, i/64.0));
     }
 
     for(int i = 0; i < (int)points.size()/2-1; ++i)

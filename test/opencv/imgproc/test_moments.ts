@@ -62,256 +62,127 @@ import fs = require('fs');
 // image moments
 class CV_MomentsTest extends alvision.cvtest.ArrayTest
 {
-public:
-    CV_MomentsTest();
-
-protected:
-
-    enum { MOMENT_COUNT = 25 };
-    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
-    void prepare_to_validation( int /*test_case_idx*/ );
-    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
-    void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    int coi;
-    bool is_binary;
-    bool try_umat;
-};
-
-
-CV_MomentsTest::CV_MomentsTest()
-{
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    coi = -1;
-    is_binary = false;
-    OCL_TUNING_MODE_ONLY(test_case_count = 10);
-    //element_wise_relative_error = false;
-}
-
-
-void CV_MomentsTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
-{
-    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
-    int depth = CV_MAT_DEPTH(type);
-
-    if( depth == CV_16U )
-    {
-        low = Scalar::all(0);
-        high = Scalar::all(1000);
-    }
-    else if( depth == CV_16S )
-    {
-        low = Scalar::all(-1000);
-        high = Scalar::all(1000);
-    }
-    else if( depth == CV_32F )
-    {
-        low = Scalar::all(-1);
-        high = Scalar::all(1);
-    }
-}
-
-void CV_MomentsTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
-{
-    RNG& rng = ts->get_rng();
-    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    int cn = (alvision.cvtest.randInt(rng) % 4) + 1;
-    int depth = alvision.cvtest.randInt(rng) % 4;
-    depth = depth == 0 ? CV_8U : depth == 1 ? CV_16U : depth == 2 ? CV_16S : CV_32F;
-
-    is_binary = alvision.cvtest.randInt(rng) % 2 != 0;
-    if( depth == 0 && !is_binary )
-        try_umat = alvision.cvtest.randInt(rng) % 5 != 0;
-    else
-        try_umat = alvision.cvtest.randInt(rng) % 2 != 0;
-
-    if( cn == 2 || try_umat )
-        cn = 1;
-
-    OCL_TUNING_MODE_ONLY(
-    cn = 1;
-    depth = CV_8U;
-    try_umat = true;
-    is_binary = false;
-    sizes[INPUT][0] = Size(1024,768)
-    );
-
-    types[INPUT][0] = CV_MAKETYPE(depth, cn);
-    types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC1;
-    sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(MOMENT_COUNT,1);
-    if(CV_MAT_DEPTH(types[INPUT][0])>=CV_32S)
-        sizes[INPUT][0].width = MAX(sizes[INPUT][0].width, 3);
-
-    coi = 0;
-    cvmat_allowed = true;
-    if( cn > 1 )
-    {
-        coi = alvision.cvtest.randInt(rng) % cn;
-        cvmat_allowed = false;
-    }
-}
-
-
-double CV_MomentsTest::get_success_error_level( int /*test_case_idx*/, int /*i*/, int /*j*/ )
-{
-    int depth = test_mat[INPUT][0].depth();
-    return depth != CV_32F ? FLT_EPSILON*10 : FLT_EPSILON*100;
-}
-
-int CV_MomentsTest::prepare_test_case( int test_case_idx )
-{
-    int code = super.prepare_test_case( test_case_idx );
-    if( code > 0 )
-    {
-        int cn = test_mat[INPUT][0].channels();
-        if( cn > 1 )
-            cvSetImageCOI( (IplImage*)test_array[INPUT][0], coi + 1 );
+    constructor() {
+        super();
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.coi = -1;
+        this.is_binary = false;
+        OCL_TUNING_MODE_ONLY(test_case_count = 10);
+        //element_wise_relative_error = false;
     }
 
-    return code;
-}
 
+    //enum { MOMENT_COUNT = 25 };
+    prepare_test_case(test_case_idx: alvision.int): alvision.int {
+        var code = super.prepare_test_case(test_case_idx);
+        if (code > 0) {
+            var cn = this.test_mat[this.INPUT][0].channels();
+            if (cn > 1)
+                cvSetImageCOI((IplImage *)this.test_array[INPUT][0], coi + 1);
+        }
 
-void CV_MomentsTest::run_func()
-{
-    CvMoments* m = (CvMoments*)test_mat[OUTPUT][0].ptr<double>();
-    double* others = (double*)(m + 1);
-    if( try_umat )
-    {
-        UMat u;
-        test_mat[INPUT][0].clone().copyTo(u);
-        OCL_TUNING_MODE_ONLY(
-            static double ttime = 0;
-            static int ncalls = 0;
-            moments(u, is_binary != 0);
-            double t = (double)getTickCount());
-        Moments new_m = moments(u, is_binary != 0);
-        OCL_TUNING_MODE_ONLY(
-            ttime += (double)getTickCount() - t;
-            ncalls++;
-            printf("%g\n", ttime/ncalls/u.total()));
-        *m = new_m;
+        return code;
     }
-    else
-        cvMoments( test_array[INPUT][0], m, is_binary );
+    prepare_to_validation(test_case_idx : alvision.int ) : void{
+        var src = this.test_mat[this.INPUT][0];
 
-    others[0] = cvGetNormalizedCentralMoment( m, 2, 0 );
-    others[1] = cvGetNormalizedCentralMoment( m, 1, 1 );
-    others[2] = cvGetNormalizedCentralMoment( m, 0, 2 );
-    others[3] = cvGetNormalizedCentralMoment( m, 3, 0 );
-    others[4] = cvGetNormalizedCentralMoment( m, 2, 1 );
-    others[5] = cvGetNormalizedCentralMoment( m, 1, 2 );
-    others[6] = cvGetNormalizedCentralMoment( m, 0, 3 );
-}
-
-
-void CV_MomentsTest::prepare_to_validation( int /*test_case_idx*/ )
-{
-    Mat& src = test_mat[INPUT][0];
-    CvMoments m;
-    double* mdata = test_mat[REF_OUTPUT][0].ptr<double>();
-    int depth = src.depth();
-    int cn = src.channels();
-    int i, y, x, cols = src.cols;
-    double xc = 0., yc = 0.;
+        var m = new alvision.Moments();
+    var mdata = this.test_mat[this.REF_OUTPUT][0].ptr<alvision.double>("double");
+    var depth = src.depth();
+    var cn = src.channels();
+    var i, cols = src.cols;
+    var xc = 0., yc = 0.;
 
     memset( &m, 0, sizeof(m));
 
-    for( y = 0; y < src.rows; y++ )
-    {
-        double s0 = 0, s1 = 0, s2 = 0, s3 = 0;
-        uchar* ptr = src.ptr(y);
-        for( x = 0; x < cols; x++ )
-        {
+    for (var y = 0; y < src.rows; y++) {
+        var s0 = 0, s1 = 0, s2 = 0, s3 = 0;
+        uchar * ptr = src.ptr(y);
+        for (var x = 0; x < cols; x++) {
             double val;
-            if( depth == CV_8U )
-                val = ptr[x*cn + coi];
-            else if( depth == CV_16U )
-                val = ((ushort*)ptr)[x*cn + coi];
-            else if( depth == CV_16S )
-                val = ((short*)ptr)[x*cn + coi];
+            if (depth == CV_8U)
+                val = ptr[x * cn + coi];
+            else if (depth == CV_16U)
+                val = ((ushort *)ptr)[x * cn + coi];
+            else if (depth == CV_16S)
+                val = ((short *)ptr)[x * cn + coi];
             else
-                val = ((float*)ptr)[x*cn + coi];
+            val = ((float *)ptr)[x * cn + coi];
 
-            if( is_binary )
+            if (is_binary)
                 val = val != 0;
 
             s0 += val;
-            s1 += val*x;
-            s2 += val*x*x;
-            s3 += ((val*x)*x)*x;
+            s1 += val * x;
+            s2 += val * x * x;
+            s3 += ((val * x) * x) * x;
         }
 
         m.m00 += s0;
-        m.m01 += s0*y;
-        m.m02 += (s0*y)*y;
-        m.m03 += ((s0*y)*y)*y;
+        m.m01 += s0 * y;
+        m.m02 += (s0 * y) * y;
+        m.m03 += ((s0 * y) * y) * y;
 
         m.m10 += s1;
-        m.m11 += s1*y;
-        m.m12 += (s1*y)*y;
+        m.m11 += s1 * y;
+        m.m12 += (s1 * y) * y;
 
         m.m20 += s2;
-        m.m21 += s2*y;
+        m.m21 += s2 * y;
 
         m.m30 += s3;
     }
 
-    if( m.m00 != 0 )
-    {
-        xc = m.m10/m.m00, yc = m.m01/m.m00;
-        m.inv_sqrt_m00 = 1./sqrt(fabs(m.m00));
+    if (m.m00 != 0) {
+        xc = m.m10 / m.m00, yc = m.m01 / m.m00;
+        m.inv_sqrt_m00 = 1. / sqrt(fabs(m.m00));
     }
 
-    for( y = 0; y < src.rows; y++ )
-    {
+    for (y = 0; y < src.rows; y++) {
         double s0 = 0, s1 = 0, s2 = 0, s3 = 0, y1 = y - yc;
-        uchar* ptr = src.ptr(y);
-        for( x = 0; x < cols; x++ )
-        {
+        uchar * ptr = src.ptr(y);
+        for (x = 0; x < cols; x++) {
             double val, x1 = x - xc;
-            if( depth == CV_8U )
-                val = ptr[x*cn + coi];
-            else if( depth == CV_16U )
-                val = ((ushort*)ptr)[x*cn + coi];
-            else if( depth == CV_16S )
-                val = ((short*)ptr)[x*cn + coi];
+            if (depth == CV_8U)
+                val = ptr[x * cn + coi];
+            else if (depth == CV_16U)
+                val = ((ushort *)ptr)[x * cn + coi];
+            else if (depth == CV_16S)
+                val = ((short *)ptr)[x * cn + coi];
             else
-                val = ((float*)ptr)[x*cn + coi];
+            val = ((float *)ptr)[x * cn + coi];
 
-            if( is_binary )
+            if (is_binary)
                 val = val != 0;
 
             s0 += val;
-            s1 += val*x1;
-            s2 += val*x1*x1;
-            s3 += ((val*x1)*x1)*x1;
+            s1 += val * x1;
+            s2 += val * x1 * x1;
+            s3 += ((val * x1) * x1) * x1;
         }
 
-        m.mu02 += s0*y1*y1;
-        m.mu03 += ((s0*y1)*y1)*y1;
+        m.mu02 += s0 * y1 * y1;
+        m.mu03 += ((s0 * y1) * y1) * y1;
 
-        m.mu11 += s1*y1;
-        m.mu12 += (s1*y1)*y1;
+        m.mu11 += s1 * y1;
+        m.mu12 += (s1 * y1) * y1;
 
         m.mu20 += s2;
-        m.mu21 += s2*y1;
+        m.mu21 += s2 * y1;
 
         m.mu30 += s3;
     }
 
-    memcpy( mdata, &m, sizeof(m));
-    mdata += sizeof(m)/sizeof(m.m00);
+    memcpy(mdata, &m, sizeof(m));
+    mdata += sizeof(m) / sizeof(m.m00);
 
     /* calc normalized moments */
     {
-        double inv_m00 = m.inv_sqrt_m00*m.inv_sqrt_m00;
-        double s2 = inv_m00*inv_m00; /* 1./(m00 ^ (2/2 + 1)) */
-        double s3 = s2*m.inv_sqrt_m00; /* 1./(m00 ^ (3/2 + 1)) */
+        double inv_m00 = m.inv_sqrt_m00 * m.inv_sqrt_m00;
+        double s2 = inv_m00 * inv_m00; /* 1./(m00 ^ (2/2 + 1)) */
+        double s3 = s2 * m.inv_sqrt_m00; /* 1./(m00 ^ (3/2 + 1)) */
 
         mdata[0] = m.mu20 * s2;
         mdata[1] = m.mu11 * s2;
@@ -323,152 +194,205 @@ void CV_MomentsTest::prepare_to_validation( int /*test_case_idx*/ )
         mdata[6] = m.mu03 * s3;
     }
 
-    double* a = test_mat[REF_OUTPUT][0].ptr<double>();
-    double* b = test_mat[OUTPUT][0].ptr<double>();
-    for( i = 0; i < MOMENT_COUNT; i++ )
-    {
-        if( fabs(a[i]) < 1e-3 )
+    double * a = test_mat[REF_OUTPUT][0].ptr<double>();
+    double * b = test_mat[OUTPUT][0].ptr<double>();
+    for (i = 0; i < MOMENT_COUNT; i++) {
+        if (fabs(a[i]) < 1e-3)
             a[i] = 0;
-        if( fabs(b[i]) < 1e-3 )
+        if (fabs(b[i]) < 1e-3)
             b[i] = 0;
     }
+    }
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array < Array < alvision.Size >>,types: Array<Array<alvision.int>>): void {
+        var rng = this.ts.get_rng();
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
+    var cn = (alvision.cvtest.randInt(rng) % 4) + 1;
+        var depth = alvision.cvtest.randInt(rng) % 4;
+        depth = depth == 0 ? CV_8U : depth == 1 ? CV_16U : depth == 2 ? CV_16S : CV_32F;
+
+        is_binary = alvision.cvtest.randInt(rng) % 2 != 0;
+        if(depth == 0 && !is_binary)
+        try_umat = alvision.cvtest.randInt(rng) % 5 != 0;
+        else
+        try_umat = alvision.cvtest.randInt(rng) % 2 != 0;
+
+        if(cn == 2 || try_umat)
+        cn = 1;
+
+        OCL_TUNING_MODE_ONLY(
+            cn = 1;
+    depth = CV_8U;
+        try_umat = true;
+        is_binary = false;
+        sizes[INPUT][0] = Size(1024, 768)
+    );
+
+    types[INPUT][0] = CV_MAKETYPE(depth, cn);
+    types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC1;
+    sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(MOMENT_COUNT, 1);
+    if (CV_MAT_DEPTH(types[INPUT][0]) >= CV_32S)
+        sizes[INPUT][0].width = MAX(sizes[INPUT][0].width, 3);
+
+    coi = 0;
+    cvmat_allowed = true;
+    if (cn > 1) {
+        coi = alvision.cvtest.randInt(rng) % cn;
+        cvmat_allowed = false;
+    }
+    }
+    get_minmax_bounds(i : alvision.int, j : alvision.int, type : alvision.int, low : alvision.Scalar, high : alvision.Scalar) : void {
+        super.get_minmax_bounds(i, j, type, low, high);
+        var depth = CV_MAT_DEPTH(type);
+
+        if(depth == CV_16U) {
+            low = alvision.Scalar.all(0);
+            high = Scalar::all(1000);
+        }
+    else if(depth == CV_16S) {
+            low = Scalar::all(-1000);
+            high = Scalar::all(1000);
+        }
+    else if(depth == CV_32F) {
+            low = Scalar::all(-1);
+            high = Scalar::all(1);
+        }
+    }
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int, j  : alvision.int) : alvision.double {
+        var depth = this.test_mat[this.INPUT][0].depth();
+        return depth != CV_32F ? FLT_EPSILON * 10 : FLT_EPSILON * 100;
+    }
+    run_func() : void{
+    CvMoments * m = (CvMoments *)test_mat[OUTPUT][0].ptr<double>();
+    double * others = (double *)(m + 1);
+    if (try_umat) {
+        UMat u;
+        test_mat[INPUT][0].clone().copyTo(u);
+        OCL_TUNING_MODE_ONLY(
+            static double ttime = 0;
+            static int ncalls = 0;
+        moments(u, is_binary != 0);
+        double t = (double)getTickCount());
+        Moments new_m = moments(u, is_binary != 0);
+        OCL_TUNING_MODE_ONLY(
+            ttime += (double)getTickCount() - t;
+        ncalls++;
+        printf("%g\n", ttime / ncalls / u.total()));
+        *m = new_m;
+    }
+    else
+        cvMoments(test_array[INPUT][0], m, is_binary);
+
+    others[0] = cvGetNormalizedCentralMoment(m, 2, 0);
+    others[1] = cvGetNormalizedCentralMoment(m, 1, 1);
+    others[2] = cvGetNormalizedCentralMoment(m, 0, 2);
+    others[3] = cvGetNormalizedCentralMoment(m, 3, 0);
+    others[4] = cvGetNormalizedCentralMoment(m, 2, 1);
+    others[5] = cvGetNormalizedCentralMoment(m, 1, 2);
+    others[6] = cvGetNormalizedCentralMoment(m, 0, 3);
+    }
+    protected coi : alvision.int;
+    protected  is_binary: boolean;
+    protected  try_umat: boolean;
 }
+
 
 
 // Hu invariants
 class CV_HuMomentsTest extends alvision.cvtest.ArrayTest
 {
-public:
-    CV_HuMomentsTest();
-
-protected:
+    constructor() {
+        test_array[INPUT].push(NULL);
+        test_array[OUTPUT].push(NULL);
+        test_array[REF_OUTPUT].push(NULL);
+    }
 
     enum { MOMENT_COUNT = 18, HU_MOMENT_COUNT = 7 };
 
-    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
-    void prepare_to_validation( int /*test_case_idx*/ );
-    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
-    void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-};
-
-
-CV_HuMomentsTest::CV_HuMomentsTest()
-{
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-}
-
-
-void CV_HuMomentsTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
-{
-    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
-    low = Scalar::all(-10000);
-    high = Scalar::all(10000);
-}
-
-
-void CV_HuMomentsTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
-{
-    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC1;
-    sizes[INPUT][0] = cvSize(MOMENT_COUNT,1);
-    sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(HU_MOMENT_COUNT,1);
-}
-
-
-double CV_HuMomentsTest::get_success_error_level( int /*test_case_idx*/, int /*i*/, int /*j*/ )
-{
-    return FLT_EPSILON;
-}
-
-
-
-int CV_HuMomentsTest::prepare_test_case( int test_case_idx )
-{
-    int code = super.prepare_test_case( test_case_idx );
-    if( code > 0 )
-    {
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{
+    int code = super.prepare_test_case(test_case_idx);
+    if (code > 0) {
         // ...
     }
 
     return code;
 }
+    void prepare_to_validation(int /*test_case_idx*/){
+    CvMoments * m = test_mat[INPUT][0].ptr<CvMoments>();
+    CvHuMoments * hu = test_mat[REF_OUTPUT][0].ptr<CvHuMoments>();
 
+    double inv_m00 = m ->inv_sqrt_m00 * m ->inv_sqrt_m00;
+    double s2 = inv_m00 * inv_m00; /* 1./(m00 ^ (2/2 + 1)) */
+    double s3 = s2 * m ->inv_sqrt_m00; /* 1./(m00 ^ (3/2 + 1)) */
 
-void CV_HuMomentsTest::run_func()
-{
-    cvGetHuMoments( test_mat[INPUT][0].ptr<CvMoments>(),
-                    test_mat[OUTPUT][0].ptr<CvHuMoments>() );
-}
+    double nu20 = m ->mu20 * s2;
+    double nu11 = m ->mu11 * s2;
+    double nu02 = m ->mu02 * s2;
 
-
-void CV_HuMomentsTest::prepare_to_validation( int /*test_case_idx*/ )
-{
-    CvMoments* m = test_mat[INPUT][0].ptr<CvMoments>();
-    CvHuMoments* hu = test_mat[REF_OUTPUT][0].ptr<CvHuMoments>();
-
-    double inv_m00 = m->inv_sqrt_m00*m->inv_sqrt_m00;
-    double s2 = inv_m00*inv_m00; /* 1./(m00 ^ (2/2 + 1)) */
-    double s3 = s2*m->inv_sqrt_m00; /* 1./(m00 ^ (3/2 + 1)) */
-
-    double nu20 = m->mu20 * s2;
-    double nu11 = m->mu11 * s2;
-    double nu02 = m->mu02 * s2;
-
-    double nu30 = m->mu30 * s3;
-    double nu21 = m->mu21 * s3;
-    double nu12 = m->mu12 * s3;
-    double nu03 = m->mu03 * s3;
+    double nu30 = m ->mu30 * s3;
+    double nu21 = m ->mu21 * s3;
+    double nu12 = m ->mu12 * s3;
+    double nu03 = m ->mu03 * s3;
 
     #undef sqr
-    #define sqr(a) ((a)*(a))
+    #define sqr(a)((a) * (a))
 
-    hu->hu1 = nu20 + nu02;
-    hu->hu2 = sqr(nu20 - nu02) + 4*sqr(nu11);
-    hu->hu3 = sqr(nu30 - 3*nu12) + sqr(3*nu21 - nu03);
-    hu->hu4 = sqr(nu30 + nu12) + sqr(nu21 + nu03);
-    hu->hu5 = (nu30 - 3*nu12)*(nu30 + nu12)*(sqr(nu30 + nu12) - 3*sqr(nu21 + nu03)) +
-            (3*nu21 - nu03)*(nu21 + nu03)*(3*sqr(nu30 + nu12) - sqr(nu21 + nu03));
-    hu->hu6 = (nu20 - nu02)*(sqr(nu30 + nu12) - sqr(nu21 + nu03)) +
-            4*nu11*(nu30 + nu12)*(nu21 + nu03);
-    hu->hu7 = (3*nu21 - nu03)*(nu30 + nu12)*(sqr(nu30 + nu12) - 3*sqr(nu21 + nu03)) +
-            (3*nu12 - nu30)*(nu21 + nu03)*(3*sqr(nu30 + nu12) - sqr(nu21 + nu03));
+    hu ->hu1 = nu20 + nu02;
+    hu ->hu2 = sqr(nu20 - nu02) + 4 * sqr(nu11);
+    hu ->hu3 = sqr(nu30 - 3 * nu12) + sqr(3 * nu21 - nu03);
+    hu ->hu4 = sqr(nu30 + nu12) + sqr(nu21 + nu03);
+    hu ->hu5 = (nu30 - 3 * nu12) * (nu30 + nu12) * (sqr(nu30 + nu12) - 3 * sqr(nu21 + nu03)) +
+        (3 * nu21 - nu03) * (nu21 + nu03) * (3 * sqr(nu30 + nu12) - sqr(nu21 + nu03));
+    hu ->hu6 = (nu20 - nu02) * (sqr(nu30 + nu12) - sqr(nu21 + nu03)) +
+        4 * nu11 * (nu30 + nu12) * (nu21 + nu03);
+    hu ->hu7 = (3 * nu21 - nu03) * (nu30 + nu12) * (sqr(nu30 + nu12) - 3 * sqr(nu21 + nu03)) +
+        (3 * nu12 - nu30) * (nu21 + nu03) * (3 * sqr(nu30 + nu12) - sqr(nu21 + nu03));
+    }
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array < Array < alvision.Size >>,types: Array<Array<alvision.int>>): void {
+        alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
+    types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC1;
+        sizes[INPUT][0] = cvSize(MOMENT_COUNT, 1);
+        sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(HU_MOMENT_COUNT, 1);
+    }
+    void get_minmax_bounds(int i, int j, int type, Scalar & low, Scalar & high){
+        alvision.cvtest.ArrayTest::get_minmax_bounds(i, j, type, low, high);
+    low = Scalar::all(-10000);
+    high = Scalar::all(10000);
+        }
+    get_success_error_level(test_case_idx : alvision.int, i : alvision.int, j  : alvision.int) : alvision.double {
+    return FLT_EPSILON;
 }
-
-
-TEST(Imgproc_Moments, accuracy) { CV_MomentsTest test; test.safe_run(); }
-TEST(Imgproc_HuMoments, accuracy) { CV_HuMomentsTest test; test.safe_run(); }
-
-class CV_SmallContourMomentTest  extends alvision.cvtest.BaseTest
-{
-public:
-    CV_SmallContourMomentTest() {}
-    ~CV_SmallContourMomentTest() {}
-protected:
-    void run(int)
-    {
-        try
-        {
-            Array<Point> points;
-            points.push_back(Point(50, 56));
-            points.push_back(Point(53, 53));
-            points.push_back(Point(46, 54));
-            points.push_back(Point(49, 51));
-
-            Moments m = moments(points, false);
-            double area = contourArea(points);
-
-            CV_Assert( m.m00 == 0 && m.m01 == 0 && m.m10 == 0 && area == 0 );
-        }
-        catch(...)
-        {
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
-        }
+    void run_func(){
+    cvGetHuMoments(test_mat[INPUT][0].ptr<CvMoments>(),
+        test_mat[OUTPUT][0].ptr<CvHuMoments>());
     }
 };
 
-TEST(Imgproc_ContourMoment, small) { CV_SmallContourMomentTest test; test.safe_run(); }
+
+
+
+alvision.cvtest.TEST('Imgproc_Moments', 'accuracy', () => { var test = new CV_MomentsTest(); test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_HuMoments', 'accuracy', () => { var test = new CV_HuMomentsTest(); test.safe_run(); });
+
+class CV_SmallContourMomentTest extends alvision.cvtest.BaseTest {
+
+    run(iii: alvision.int): void {
+        try {
+            var points  = Array < alvision.Point > ();
+            points.push(new alvision.Point(50, 56));
+            points.push(new alvision.Point(53, 53));
+            points.push(new alvision.Point(46, 54));
+            points.push(new alvision.Point(49, 51));
+
+            Moments m = moments(points, false);
+            var area = alvision.contourArea(points);
+
+            alvision.CV_Assert(m.m00 == 0 && m.m01 == 0 && m.m10 == 0 && area == 0);
+        }
+        catch (e)
+        {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
+        }
+    }
+}
+
+alvision.cvtest.TEST('Imgproc_ContourMoment', 'small', () => { var test = new CV_SmallContourMomentTest(); test.safe_run(); });

@@ -57,343 +57,309 @@ import fs = require('fs');
 
 //#define GET_STAT
 
-#define DIST_E              "distE"
-#define S_E                 "sE"
-#define NO_PAIR_E           "noPairE"
+const DIST_E = "distE";
+const S_E         =        "sE"     ;
+const NO_PAIR_E   =        "noPairE";
 //#define TOTAL_NO_PAIR_E     "totalNoPairE"
 
-#define DETECTOR_NAMES      "detector_names"
-#define DETECTORS           "detectors"
-#define IMAGE_FILENAMES     "image_filenames"
-#define VALIDATION          "validation"
-#define FILENAME            "fn"
+const DETECTOR_NAMES    =  "detector_names" ;
+const DETECTORS         =  "detectors"      ;
+const IMAGE_FILENAMES   =  "image_filenames";
+const VALIDATION        =  "validation"     ;
+const FILENAME = "fn";
 
-#define C_SCALE_CASCADE     "scale_cascade"
+const C_SCALE_CASCADE = "scale_cascade";
 
-class CV_DetectorTest  extends alvision.cvtest.BaseTest
-{
-public:
-    CV_DetectorTest();
-protected:
-    virtual int prepareData( FileStorage& fs );
-    virtual void run( int startFrom );
-    virtual string& getValidationFilename();
-
-    virtual void readDetector( const FileNode& fn ) = 0;
-    virtual void writeDetector( FileStorage& fs, int di ) = 0;
-    int runTestCase( int detectorIdx, Array<Array<Rect> >& objects );
-    virtual int detectMultiScale( int di, const Mat& img, Array<Rect>& objects ) = 0;
-    int validate( int detectorIdx, Array<Array<Rect> >& objects );
-
-    struct
-    {
-        float dist;
-        float s;
-        float noPair;
-        //float totalNoPair;
-    } eps;
-    Array<string> detectorNames;
-    Array<string> detectorFilenames;
-    Array<string> imageFilenames;
-    Array<Mat> images;
-    string validationFilename;
-    string configFilename;
-    FileStorage validationFS;
-    bool write_results;
-};
-
-CV_DetectorTest::CV_DetectorTest()
-{
-    configFilename = "dummy";
-    write_results = false;
-}
-
-string& CV_DetectorTest::getValidationFilename()
-{
-    return validationFilename;
-}
-
-int CV_DetectorTest::prepareData( FileStorage& _fs )
-{
-    if( !_fs.isOpened() )
-        test_case_count = -1;
-    else
-    {
-        FileNode fn = _fs.getFirstTopLevelNode();
-
-        fn[DIST_E] >> eps.dist;
-        fn[S_E] >> eps.s;
-        fn[NO_PAIR_E] >> eps.noPair;
-//        fn[TOTAL_NO_PAIR_E] >> eps.totalNoPair;
-
-        // read detectors
-        if( fn[DETECTOR_NAMES].size() != 0 )
-        {
-            FileNodeIterator it = fn[DETECTOR_NAMES].begin();
-            for( ; it != fn[DETECTOR_NAMES].end(); )
-            {
-                String _name;
-                it >> _name;
-                detectorNames.push_back(_name);
-                readDetector(fn[DETECTORS][_name]);
-            }
-        }
-        test_case_count = (int)detectorNames.size();
-
-        // read images filenames and images
-        string dataPath = ts->get_data_path();
-        if( fn[IMAGE_FILENAMES].size() != 0 )
-        {
-            for( FileNodeIterator it = fn[IMAGE_FILENAMES].begin(); it != fn[IMAGE_FILENAMES].end(); )
-            {
-                String filename;
-                it >> filename;
-                imageFilenames.push_back(filename);
-                Mat img = imread( dataPath+filename, 1 );
-                images.push_back( img );
-            }
-        }
-    }
-    return alvision.cvtest.TS::OK;
-}
-
-void CV_DetectorTest::run( int )
-{
-    string dataPath = ts->get_data_path();
-    string vs_filename = dataPath + getValidationFilename();
-
-    write_results = !validationFS.open( vs_filename, FileStorage::READ );
-
-    int code;
-    if( !write_results )
-    {
-        code = prepareData( validationFS );
-    }
-    else
-    {
-        FileStorage fs0(dataPath + configFilename, FileStorage::READ );
-        code = prepareData(fs0);
+class CV_DetectorTest extends alvision.cvtest.BaseTest {
+    constructor() {
+        super();
+        this.configFilename = "dummy";
+        this.write_results = false;
     }
 
-    if( code < 0 )
-    {
-        this.ts.set_failed_test_info( code );
-        return;
-    }
+    prepareData(_fs: alvision.FileStorage): alvision.int {
+        if (!_fs.isOpened())
+            this.test_case_count = -1;
+        else {
+            var fn = _fs.getFirstTopLevelNode();
 
-    if( write_results )
-    {
-        validationFS.release();
-        validationFS.open( vs_filename, FileStorage::WRITE );
-        validationFS << FileStorage::getDefaultObjectName(validationFilename) << "{";
+            fn[DIST_E] >> eps.dist;
+            fn[S_E] >> eps.s;
+            fn[NO_PAIR_E] >> eps.noPair;
+            //        fn[TOTAL_NO_PAIR_E] >> eps.totalNoPair;
 
-        validationFS << DIST_E << eps.dist;
-        validationFS << S_E << eps.s;
-        validationFS << NO_PAIR_E << eps.noPair;
-    //    validationFS << TOTAL_NO_PAIR_E << eps.totalNoPair;
-
-        // write detector names
-        validationFS << DETECTOR_NAMES << "[";
-        Array<string>::const_iterator nit = detectorNames.begin();
-        for( ; nit != detectorNames.end(); ++nit )
-        {
-            validationFS << *nit;
-        }
-        validationFS << "]"; // DETECTOR_NAMES
-
-        // write detectors
-        validationFS << DETECTORS << "{";
-        assert( detectorNames.size() == detectorFilenames.size() );
-        nit = detectorNames.begin();
-        for( int di = 0; nit != detectorNames.end(); ++nit, di++ )
-        {
-            validationFS << *nit << "{";
-            writeDetector( validationFS, di );
-            validationFS << "}";
-        }
-        validationFS << "}";
-
-        // write image filenames
-        validationFS << IMAGE_FILENAMES << "[";
-        Array<string>::const_iterator it = imageFilenames.begin();
-        for( int ii = 0; it != imageFilenames.end(); ++it, ii++ )
-        {
-            char buf[10];
-            sprintf( buf, "%s%d", "img_", ii );
-            //cvWriteComment( validationFS.fs, buf, 0 );
-            validationFS << *it;
-        }
-        validationFS << "]"; // IMAGE_FILENAMES
-
-        validationFS << VALIDATION << "{";
-    }
-
-    int progress = 0;
-    for( int di = 0; di < test_case_count; di++ )
-    {
-        progress = update_progress( progress, di, test_case_count, 0 );
-        if( write_results )
-            validationFS << detectorNames[di] << "{";
-        Array<Array<Rect> > objects;
-        int temp_code = runTestCase( di, objects );
-
-        if (!write_results && temp_code == alvision.cvtest.TS::OK)
-            temp_code = validate( di, objects );
-
-        if (temp_code != alvision.cvtest.TS::OK)
-            code = temp_code;
-
-        if( write_results )
-            validationFS << "}"; // detectorNames[di]
-    }
-
-    if( write_results )
-    {
-        validationFS << "}"; // VALIDATION
-        validationFS << "}"; // getDefaultObjectName
-    }
-
-    if ( test_case_count <= 0 || imageFilenames.size() <= 0 )
-    {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "validation file is not determined or not correct" );
-        code = alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
-    }
-    this.ts.set_failed_test_info( code );
-}
-
-int CV_DetectorTest::runTestCase( int detectorIdx, Array<Array<Rect> >& objects )
-{
-    string dataPath = ts->get_data_path(), detectorFilename;
-    if( !detectorFilenames[detectorIdx].empty() )
-        detectorFilename = dataPath + detectorFilenames[detectorIdx];
-    printf("detector %s\n", detectorFilename);
-
-    for( int ii = 0; ii < (int)imageFilenames.size(); ++ii )
-    {
-        Array<Rect> imgObjects;
-        Mat image = images[ii];
-        if( image.empty() )
-        {
-            char msg[30];
-            sprintf( msg, "%s %d %s", "image ", ii, " can not be read" );
-            ts->printf( alvision.cvtest.TSConstants.LOG, msg );
-            return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
-        }
-        int code = detectMultiScale( detectorIdx, image, imgObjects );
-        if( code != alvision.cvtest.TS::OK )
-            return code;
-
-        objects.push_back( imgObjects );
-
-        if( write_results )
-        {
-            char buf[10];
-            sprintf( buf, "%s%d", "img_", ii );
-            string imageIdxStr = buf;
-            validationFS << imageIdxStr << "[:";
-            for( Array<Rect>::const_iterator it = imgObjects.begin();
-                    it != imgObjects.end(); ++it )
-            {
-                validationFS << it->x << it->y << it->width << it->height;
-            }
-            validationFS << "]"; // imageIdxStr
-        }
-    }
-    return alvision.cvtest.TS::OK;
-}
-
-
-bool isZero( uchar i ) {return i == 0;}
-
-int CV_DetectorTest::validate( int detectorIdx, Array<Array<Rect> >& objects )
-{
-    assert( imageFilenames.size() == objects.size() );
-    int imageIdx = 0;
-    int totalNoPair = 0, totalValRectCount = 0;
-
-    for( Array<Array<Rect> >::const_iterator it = objects.begin();
-        it != objects.end(); ++it, imageIdx++ ) // for image
-    {
-        Size imgSize = images[imageIdx].size();
-        float dist = min(imgSize.height, imgSize.width) * eps.dist;
-        float wDiff = imgSize.width * eps.s;
-        float hDiff = imgSize.height * eps.s;
-
-        int noPair = 0;
-
-        // read validation rectangles
-        char buf[10];
-        sprintf( buf, "%s%d", "img_", imageIdx );
-        string imageIdxStr = buf;
-        FileNode node = validationFS.getFirstTopLevelNode()[VALIDATION][detectorNames[detectorIdx]][imageIdxStr];
-        Array<Rect> valRects;
-        if( node.size() != 0 )
-        {
-            for( FileNodeIterator it2 = node.begin(); it2 != node.end(); )
-            {
-                Rect r;
-                it2 >> r.x >> r.y >> r.width >> r.height;
-                valRects.push_back(r);
-            }
-        }
-        totalValRectCount += (int)valRects.size();
-
-        // compare rectangles
-        Array<uchar> map(valRects.size(), 0);
-        for( Array<Rect>::const_iterator cr = it->begin();
-            cr != it->end(); ++cr )
-        {
-            // find nearest rectangle
-            Point2f cp1 = Point2f( cr->x + (float)cr->width/2.0f, cr->y + (float)cr->height/2.0f );
-            int minIdx = -1, vi = 0;
-            float minDist = (float)norm( Point(imgSize.width, imgSize.height) );
-            for( Array<Rect>::const_iterator vr = valRects.begin();
-                vr != valRects.end(); ++vr, vi++ )
-            {
-                Point2f cp2 = Point2f( vr->x + (float)vr->width/2.0f, vr->y + (float)vr->height/2.0f );
-                float curDist = (float)norm(cp1-cp2);
-                if( curDist < minDist )
-                {
-                    minIdx = vi;
-                    minDist = curDist;
+            // read detectors
+            if (fn[DETECTOR_NAMES].size() != 0) {
+                var it = fn[DETECTOR_NAMES].begin();
+                for (; it != fn[DETECTOR_NAMES].end();) {
+                    String _name;
+                    it >> _name;
+                    detectorNames.push(_name);
+                    readDetector(fn[DETECTORS][_name]);
                 }
             }
-            if( minIdx == -1 )
-            {
-                noPair++;
-            }
-            else
-            {
-                Rect vr = valRects[minIdx];
-                if( map[minIdx] != 0 || (minDist > dist) || (abs(cr->width - vr.width) > wDiff) ||
-                                                        (abs(cr->height - vr.height) > hDiff) )
-                    noPair++;
-                else
-                    map[minIdx] = 1;
+            this.test_case_count = this.detectorNames.length;
+
+            // read images filenames and images
+            var dataPath = this.ts.get_data_path();
+            if (fn[IMAGE_FILENAMES].size() != 0) {
+                for (FileNodeIterator it = fn[IMAGE_FILENAMES].begin(); it != fn[IMAGE_FILENAMES].end(); )
+                {
+                    String filename;
+                    it >> filename;
+                    imageFilenames.push(filename);
+                    var img = alvision.imread(dataPath + filename, 1);
+                    images.push(img);
+                }
             }
         }
-        noPair += (int)count_if( map.begin(), map.end(), isZero );
-        totalNoPair += noPair;
+        return alvision.cvtest.FailureCode.OK;
+    }
+    run(startFrom: alvision.int): void {
+        var dataPath = this.ts.get_data_path();
+        var vs_filename = dataPath + getValidationFilename();
 
-        EXPECT_LE(noPair, cvRound(valRects.size()*eps.noPair)+1)
-            << "detector " << detectorNames[detectorIdx] << " has overrated count of rectangles without pair on "
-            << imageFilenames[imageIdx] << " image";
+        this.write_results = !validationFS.open(vs_filename, FileStorage::READ);
 
-        if (::testing::Test::HasFailure())
-            break;
+        var code: alvision.int;
+
+        if (!this.write_results) {
+            code = this.prepareData(validationFS);
+        }
+        else {
+            var fs0 = new alvision.FileStorage(dataPath + configFilename, FileStorage::READ);
+            code = this.prepareData(fs0);
+        }
+
+        if (code < 0) {
+            this.ts.set_failed_test_info(code);
+            return;
+        }
+
+        if (this.write_results) {
+            validationFS.release();
+            validationFS.open(vs_filename, FileStorage::WRITE);
+            validationFS << FileStorage::getDefaultObjectName(validationFilename) << "{";
+
+            validationFS << DIST_E << eps.dist;
+            validationFS << S_E << eps.s;
+            validationFS << NO_PAIR_E << eps.noPair;
+            //    validationFS << TOTAL_NO_PAIR_E << eps.totalNoPair;
+
+            // write detector names
+            validationFS << DETECTOR_NAMES << "[";
+            Array<string>::const_iterator nit = detectorNames.begin();
+            for (; nit != detectorNames.end(); ++nit) {
+                validationFS << *nit;
+            }
+            validationFS << "]"; // DETECTOR_NAMES
+
+            // write detectors
+            validationFS << DETECTORS << "{";
+            assert(detectorNames.size() == detectorFilenames.size());
+            nit = detectorNames.begin();
+            for (int di = 0; nit != detectorNames.end(); ++nit, di++ )
+            {
+                validationFS << *nit << "{";
+                writeDetector(validationFS, di);
+                validationFS << "}";
+            }
+            validationFS << "}";
+
+            // write image filenames
+            validationFS << IMAGE_FILENAMES << "[";
+            Array<string>::const_iterator it = imageFilenames.begin();
+            for (int ii = 0; it != imageFilenames.end(); ++it, ii++ )
+            {
+                char buf[10];
+                sprintf(buf, "%s%d", "img_", ii);
+                //cvWriteComment( validationFS.fs, buf, 0 );
+                validationFS << *it;
+            }
+            validationFS << "]"; // IMAGE_FILENAMES
+
+            validationFS << VALIDATION << "{";
+        }
+
+        int progress = 0;
+        for (int di = 0; di < test_case_count; di++ )
+        {
+            progress = update_progress(progress, di, test_case_count, 0);
+            if (write_results)
+                validationFS << detectorNames[di] << "{";
+            Array < Array < Rect > > objects;
+            int temp_code = runTestCase(di, objects);
+
+            if (!write_results && temp_code == alvision.cvtest.FailureCode.OK)
+                temp_code = validate(di, objects);
+
+            if (temp_code != alvision.cvtest.FailureCode.OK)
+                code = temp_code;
+
+            if (write_results)
+                validationFS << "}"; // detectorNames[di]
+        }
+
+        if (write_results) {
+            validationFS << "}"; // VALIDATION
+            validationFS << "}"; // getDefaultObjectName
+        }
+
+        if (test_case_count <= 0 || imageFilenames.size() <= 0) {
+            ts ->printf(alvision.cvtest.TSConstants.LOG, "validation file is not determined or not correct");
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
+        }
+        this.ts.set_failed_test_info(code);
+    }
+    getValidationFilename(): string {
+        return this.validationFilename;
     }
 
-    EXPECT_LE(totalNoPair, cvRound(totalValRectCount*eps./*total*/noPair)+1)
-        << "detector " << detectorNames[detectorIdx] << " has overrated count of rectangles without pair on all images set";
+    readDetector(fn: alvision.FileNode): void {
+    }
+    writeDetector(fs: alvision.FileStorage, di: alvision.int): void {
+    }
+    runTestCase(detectorIdx: alvision.int, objects: Array<Array<alvision.Rect>>): alvision.int {
+        string dataPath = ts ->get_data_path(), detectorFilename;
+        if (!detectorFilenames[detectorIdx].empty())
+            detectorFilename = dataPath + detectorFilenames[detectorIdx];
+        printf("detector %s\n", detectorFilename);
 
-    if (::testing::Test::HasFailure())
-        return alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        for (int ii = 0; ii < (int)imageFilenames.size(); ++ii )
+        {
+            Array < Rect > imgObjects;
+            Mat image = images[ii];
+            if (image.empty()) {
+                char msg[30];
+                sprintf(msg, "%s %d %s", "image ", ii, " can not be read");
+                ts ->printf(alvision.cvtest.TSConstants.LOG, msg);
+                return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
+            }
+            int code = detectMultiScale(detectorIdx, image, imgObjects);
+            if (code != alvision.cvtest.FailureCode.OK)
+                return code;
 
-    return alvision.cvtest.TS::OK;
+            objects.push(imgObjects);
+
+            if (write_results) {
+                char buf[10];
+                sprintf(buf, "%s%d", "img_", ii);
+                string imageIdxStr = buf;
+                validationFS << imageIdxStr << "[:";
+                for (Array<Rect>::const_iterator it = imgObjects.begin();
+                    it != imgObjects.end(); ++it) {
+                    validationFS << it ->x << it ->y << it ->width << it ->height;
+                }
+                validationFS << "]"; // imageIdxStr
+            }
+        }
+        return alvision.cvtest.FailureCode.OK;
+    }
+    detectMultiScale(di: alvision.int, img: alvision.Mat, objects: Array<alvision.Rect>): alvision.int {
+    }
+    validate(detectorIdx: alvision.int, objects: Array<Array<alvision.Rect>>): alvision.int {
+        assert(imageFilenames.size() == objects.size());
+        int imageIdx = 0;
+        int totalNoPair = 0, totalValRectCount = 0;
+
+        for (Array<Array<Rect>>::const_iterator it = objects.begin();
+            it != objects.end(); ++it, imageIdx++) // for image
+        {
+            Size imgSize = images[imageIdx].size();
+            float dist = min(imgSize.height, imgSize.width) * eps.dist;
+            float wDiff = imgSize.width * eps.s;
+            float hDiff = imgSize.height * eps.s;
+
+            int noPair = 0;
+
+            // read validation rectangles
+            char buf[10];
+            sprintf(buf, "%s%d", "img_", imageIdx);
+            string imageIdxStr = buf;
+            FileNode node = validationFS.getFirstTopLevelNode()[VALIDATION][detectorNames[detectorIdx]][imageIdxStr];
+            Array < Rect > valRects;
+            if (node.size() != 0) {
+                for (FileNodeIterator it2 = node.begin(); it2 != node.end(); )
+                {
+                    Rect r;
+                    it2 >> r.x >> r.y >> r.width >> r.height;
+                    valRects.push(r);
+                }
+            }
+            totalValRectCount += (int)valRects.size();
+
+            // compare rectangles
+            Array < uchar > map(valRects.size(), 0);
+            for (Array<Rect>::const_iterator cr = it ->begin();
+                cr != it ->end(); ++cr) {
+                // find nearest rectangle
+                Point2f cp1 = Point2f(cr ->x + (float)cr->width / 2.0f, cr ->y + (float)cr->height / 2.0f );
+                int minIdx = -1, vi = 0;
+                float minDist = (float)norm(Point(imgSize.width, imgSize.height));
+                for (Array<Rect>::const_iterator vr = valRects.begin();
+                    vr != valRects.end(); ++vr, vi++) {
+                    Point2f cp2 = Point2f(vr ->x + (float)vr->width / 2.0f, vr ->y + (float)vr->height / 2.0f );
+                    float curDist = (float)norm(cp1 - cp2);
+                    if (curDist < minDist) {
+                        minIdx = vi;
+                        minDist = curDist;
+                    }
+                }
+                if (minIdx == -1) {
+                    noPair++;
+                }
+                else {
+                    Rect vr = valRects[minIdx];
+                    if (map[minIdx] != 0 || (minDist > dist) || (abs(cr ->width - vr.width) > wDiff) ||
+                        (abs(cr ->height - vr.height) > hDiff))
+                        noPair++;
+                    else
+                        map[minIdx] = 1;
+                }
+            }
+            noPair += (int)count_if(map.begin(), map.end(), isZero);
+            totalNoPair += noPair;
+
+            EXPECT_LE(noPair, Math.round(valRects.size() * eps.noPair) + 1)
+                << "detector " << detectorNames[detectorIdx] << " has overrated count of rectangles without pair on "
+                << imageFilenames[imageIdx] << " image";
+
+            if (::testing::Test::HasFailure())
+            break;
+        }
+
+        alvision.EXPECT_LE(totalNoPair, Math.round(totalValRectCount * eps./*total*/noPair) + 1)
+            << "detector " << detectorNames[detectorIdx] << " has overrated count of rectangles without pair on all images set";
+
+        if (::testing::Test::HasFailure())
+        return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+
+        return alvision.cvtest.FailureCode.OK;
+    }
+
+    //struct
+    //{
+    //    float dist;
+    //    float s;
+    //    float noPair;
+    //    //float totalNoPair;
+    //} eps;
+    protected detectorNames: Array<string>;
+    protected detectorFilenames: Array<string>;
+    protected imageFilenames: Array<string>;
+    protected images: Array<alvision.Mat>;
+    protected validationFilename: string;
+    protected configFilename: string;
+    protected validationFS: alvision.FileStorage;
+    protected write_results: boolean;
 }
 
+
+function isZero(i: alvision.uchar): boolean { return i == 0; }
+
+
 //----------------------------------------------- CascadeDetectorTest -----------------------------------
-class CV_CascadeDetectorTest : public CV_DetectorTest
+class CV_CascadeDetectorTest extends CV_DetectorTest
 {
 public:
     CV_CascadeDetectorTest();
@@ -416,12 +382,12 @@ void CV_CascadeDetectorTest::readDetector( const FileNode& fn )
     String filename;
     int flag;
     fn[FILENAME] >> filename;
-    detectorFilenames.push_back(filename);
+    detectorFilenames.push(filename);
     fn[C_SCALE_CASCADE] >> flag;
     if( flag )
-        flags.push_back( 0 );
+        flags.push( 0 );
     else
-        flags.push_back( CASCADE_SCALE_IMAGE );
+        flags.push( CASCADE_SCALE_IMAGE );
 }
 
 void CV_CascadeDetectorTest::writeDetector( FileStorage& fs, int di )
@@ -455,10 +421,10 @@ int CV_CascadeDetectorTest::detectMultiScale_C( const string& filename,
     for( int i = 0; i < rs->total; i++ )
     {
         Rect r = *(Rect*)cvGetSeqElem(rs, i);
-        objects.push_back(r);
+        objects.push(r);
     }
 
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 int CV_CascadeDetectorTest::detectMultiScale( int di, const Mat& img,
@@ -483,7 +449,7 @@ int CV_CascadeDetectorTest::detectMultiScale( int di, const Mat& img,
     cvtColor( img, grayImg, COLOR_BGR2GRAY );
     equalizeHist( grayImg, grayImg );
     cascade.detectMultiScale( grayImg, objects, 1.1, 3, flags[di] );
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 //----------------------------------------------- HOGDetectorTest -----------------------------------
@@ -507,7 +473,7 @@ void CV_HOGDetectorTest::readDetector( const FileNode& fn )
     String filename;
     if( fn[FILENAME].size() != 0 )
         fn[FILENAME] >> filename;
-    detectorFilenames.push_back( filename);
+    detectorFilenames.push( filename);
 }
 
 void CV_HOGDetectorTest::writeDetector( FileStorage& fs, int di )
@@ -524,7 +490,7 @@ int CV_HOGDetectorTest::detectMultiScale( int di, const Mat& img,
     else
         assert(0);
     hog.detectMultiScale(img, objects);
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 //----------------------------------------------- HOGDetectorReadWriteTest -----------------------------------
@@ -734,8 +700,8 @@ void HOGCacheTester::init(const HOGDescriptorTester* _descriptor,
             PixData* data = 0;
             float cellX = (j+0.5f)/cellSize.width - 0.5f;
             float cellY = (i+0.5f)/cellSize.height - 0.5f;
-            int icellX0 = cvFloor(cellX);
-            int icellY0 = cvFloor(cellY);
+            int icellX0 = Math.floor(cellX);
+            int icellY0 = Math.floor(cellY);
             int icellX1 = icellX0 + 1, icellY1 = icellY0 + 1;
             cellX -= icellX0;
             cellY -= icellY0;
@@ -960,7 +926,7 @@ void HOGCacheTester::normalizeBlockHistogram(float* _hist) const
     for( ; i < sz; i++ )
         sum += hist[i]*hist[i];
 
-    float scale = 1.f/(std::sqrt(sum)+sz*0.1f), thresh = (float)descriptor->L2HysThreshold;
+    float scale = 1.f/(Math.sqrt(sum)+sz*0.1f), thresh = (float)descriptor->L2HysThreshold;
     partSum[0] = partSum[1] = partSum[2] = partSum[3] = 0.0f;
     for(i = 0; i <= sz - 4; i += 4)
     {
@@ -982,7 +948,7 @@ void HOGCacheTester::normalizeBlockHistogram(float* _hist) const
         sum += hist[i]*hist[i];
     }
 
-    scale = 1.f/(std::sqrt(sum)+1e-3f);
+    scale = 1.f/(Math.sqrt(sum)+1e-3f);
     for( i = 0; i < sz; i++ )
         hist[i] *= scale;
 }
@@ -1074,8 +1040,8 @@ void HOGDescriptorTester::detect(const Mat& img,
         }
         if( s >= hitThreshold )
         {
-            hits.push_back(pt0);
-            weights.push_back(s);
+            hits.push(pt0);
+            weights.push(s);
         }
     }
 
@@ -1089,7 +1055,7 @@ void HOGDescriptorTester::detect(const Mat& img,
         actual_find_locations.begin()))
     {
         ts->printf(alvision.cvtest.TS::SUMMARY, "Found locations are not equal (see detect function)\n");
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         ts->set_gtest_status();
         failed = true;
         return;
@@ -1103,7 +1069,7 @@ void HOGDescriptorTester::detect(const Mat& img,
             "Norm of the difference is %lf\n", diff_norm);
         ts->printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
         failed = true;
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         ts->set_gtest_status();
         return;
     }
@@ -1183,7 +1149,7 @@ void HOGDescriptorTester::compute(InputArray _img, Array<float>& descriptors,
     {
         ts->printf(alvision.cvtest.TS::SUMMARY, "Norm of the difference: %lf\n", diff_norm);
         ts->printf(alvision.cvtest.TS::SUMMARY, "Found descriptors are not equal (see compute function)\n");
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         ts->printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
         ts->set_gtest_status();
         failed = true;
@@ -1212,7 +1178,7 @@ void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle
 
     if( gammaCorrection )
        for( i = 0; i < 256; i++ )
-           _lut(0,i) = std::sqrt((float)i);
+           _lut(0,i) = Math.sqrt((float)i);
     else
        for( i = 0; i < 256; i++ )
            _lut(0,i) = (float)i;
@@ -1302,7 +1268,7 @@ void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle
        for( x = 0; x < width; x++ )
        {
            float mag = dbuf[x+width*2], angle = dbuf[x+width*3]*angleScale - 0.5f;
-           int hidx = cvFloor(angle);
+           int hidx = Math.floor(angle);
            angle -= hidx;
            gradPtr[x*2] = mag*(1.f - angle);
            gradPtr[x*2+1] = mag*angle;
@@ -1333,7 +1299,7 @@ void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle
            ts->printf(alvision.cvtest.TSConstants.LOG, "%s matrices are not equal\n"
                "Norm of the difference is %lf\n", args[i], diff_norm);
            ts->printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
-           this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+           this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
            ts->set_gtest_status();
            failed = true;
            return;

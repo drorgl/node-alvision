@@ -66,16 +66,16 @@ class CV_ConnectedComponentsTest extends alvision.cvtest.BaseTest
             return;
         }
 
-        Mat bw = orig > 128;
-        Mat labelImage;
+        var bw = alvision.Mat.from(alvision.MatExpr.op_GreaterThan( orig , 128));
+        var labelImage = new alvision.Mat();
         var nLabels = alvision.connectedComponents(bw, labelImage, 8, alvision.MatrixType.CV_32S);
 
         for (var r = 0; r < labelImage.rows; ++r){
-            for (int c = 0; c < labelImage.cols; ++c){
-                int l = labelImage.at<int>(r, c);
+            for (var c = 0; c < labelImage.cols; ++c){
+                var l = labelImage.atGet<alvision.int>("int",r, c);
                 var pass = l >= 0 && l <= nLabels;
                 if (!pass) {
-                    this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
             }
@@ -86,12 +86,12 @@ class CV_ConnectedComponentsTest extends alvision.cvtest.BaseTest
             exp = labelImage;
         }
 
-        if (0 != alvision.cvtest.norm(labelImage > 0, exp > 0, NORM_INF))
+        if (0 != alvision.cvtest.norm(alvision.Mat.from(alvision.MatExpr.op_GreaterThan( labelImage , 0)),alvision.Mat.from(alvision.MatExpr.op_GreaterThan( exp , 0)),alvision.NormTypes. NORM_INF))
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return;
         }
-        if (nLabels != alvision.cvtest.norm(labelImage, NORM_INF) + 1)
+        if (nLabels != alvision.cvtest.norm(labelImage, alvision.NormTypes. NORM_INF).valueOf() + 1)
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return;

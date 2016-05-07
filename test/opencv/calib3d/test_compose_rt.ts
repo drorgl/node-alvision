@@ -147,7 +147,7 @@ protected:
 
     void run(int)
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 
         Mat_<double> rvec1(3, 1), tvec1(3, 1), rvec2(3, 1), tvec2(3, 1);
 
@@ -171,7 +171,7 @@ protected:
 
         const double thres = 1e-5;
         if (norm(rvec3_exp, rvec3) > thres ||  norm(tvec3_exp, tvec3) > thres)
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
 
         const double eps = 1e-3;
         Differential diff(eps, rvec1, tvec1, rvec2, tvec2);
@@ -187,7 +187,7 @@ protected:
         if (norm(dr3_dr1, dr3dr1) > thres || norm(dt3_dr1, dt3dr1) > thres)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "Invalid derivates by r1\n" );
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
         Mat_<double> dr3_dr2, dt3_dr2;
@@ -196,7 +196,7 @@ protected:
         if (norm(dr3_dr2, dr3dr2) > thres || norm(dt3_dr2, dt3dr2) > thres)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "Invalid derivates by r2\n" );
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
         Mat_<double> dr3_dt1, dt3_dt1;
@@ -205,7 +205,7 @@ protected:
         if (norm(dr3_dt1, dr3dt1) > thres || norm(dt3_dt1, dt3dt1) > thres)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "Invalid derivates by t1\n" );
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
         Mat_<double> dr3_dt2, dt3_dt2;
@@ -214,7 +214,7 @@ protected:
         if (norm(dr3_dt2, dr3dt2) > thres || norm(dt3_dt2, dt3dt2) > thres)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "Invalid derivates by t2\n" );
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
     }
 };

@@ -129,14 +129,14 @@ int Core_ConcatenationTest::validate_test_results( int )
 
     if (areEqual(expected, result))
     {
-        return alvision.cvtest.TS::OK;
+        return alvision.cvtest.FailureCode.OK;
     } else
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "Concatenation failed");
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_MISMATCH );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_MISMATCH );
     }
 
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 bool Core_ConcatenationTest::areEqual(const Mat &m1, const Mat &m2)

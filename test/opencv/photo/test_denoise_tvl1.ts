@@ -53,12 +53,12 @@ import fs = require('fs');
 function make_noisy(img : alvision.Mat, noisy : alvision.Mat, sigma : alvision.double, pepper_salt_ratio : alvision.double ,  rng : alvision.RNG) : void
 {
     noisy.create(img.size(), img.type());
-    alvision.Mat noise(img.size(), img.type()), mask(img.size(), CV_8U);
+    var noise = new alvision.Mat(img.size(), img.type()), mask(img.size(), CV_8U);
     rng.fill(noise,alvision.RNG::NORMAL,128.0,sigma);
     alvision.addWeighted(img, 1, noise, 1, -128, noisy);
-    alvision.randn(noise, alvision.Scalar::all(0), alvision.Scalar::all(2));
+    alvision.randn(noise, alvision.alvision.Scalar.all(0), alvision.Scalar::all(2));
     noise *= 255;
-    alvision.randu(mask, 0, cvRound(1./pepper_salt_ratio));
+    alvision.randu(mask, 0, Math.round(1./pepper_salt_ratio));
     alvision.Mat half = mask.colRange(0, img.cols/2);
     half = alvision.Scalar::all(1);
     noise.setTo(128, mask);
@@ -77,10 +77,10 @@ function make_spotty(img: alvision.Mat, rng: alvision.RNG, r: alvision.int = 3, 
     }
 }
 
-function validate_pixel(image: const alvision.Mat, x: alvision.int, y: alvision.int, val: alvision.uchar ): boolean;
+function validate_pixel(image: alvision.Mat, x: alvision.int, y: alvision.int, val: alvision.uchar ): boolean
 {
-    var ok = Math.abs(image.atGet<uchar>("uchar",x,y) - val) < 10;
-    printf("test: image(%d,%d)=%d vs %d - %s\n",x,y,(int)image.at<uchar>(x,y),val,ok?"ok":"bad");
+    var ok = Math.abs(image.atGet<alvision.uchar>("uchar",x,y) - val) < 10;
+    console.log(util.format("test: image(%d,%d)=%d vs %d - %s\n",x,y,image.atGet<alvision.uchar>("uchar",x,y),val,ok?"ok":"bad");
     return ok;
 }
 
@@ -92,8 +92,8 @@ alvision.cvtest.TEST('Optim_denoise_tvl1', 'regression_basic',()=>
     alvision.ASSERT_FALSE(img.empty(),  "Error: can't open 'lena.png'";
 
     const obs_num=5;
-    std::Array<alvision.Mat> images(obs_num, alvision.Mat());
-    for(int i=0;i<(int)images.size();i++)
+    var images = new Array<alvision.Mat>(obs_num, new alvision.Mat());
+    for(var i=0;i<images.length;i++)
     {
         make_noisy(img,images[i], 20, 0.02,rng);
         //make_spotty(images[i],rng);

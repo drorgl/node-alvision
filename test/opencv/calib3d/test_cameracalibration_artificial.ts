@@ -120,7 +120,7 @@ protected:
             camMat_est.at<double>(2, 2) != 1)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "Bad shape of camera matrix returned \n");
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         }
 
         double fx_e = camMat_est.at<double>(0, 0), fy_e = camMat_est.at<double>(1, 1);
@@ -136,7 +136,7 @@ protected:
 
         if (fail)
         {
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
         ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Expected  [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx, fy, cx, cy);
         ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Estimated [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx_e, fy_e, cx_e, cy_e);
@@ -164,7 +164,7 @@ protected:
         if (fail)
         {
             // commented according to vp123's recomendation. TODO - improve accuaracy
-            //this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY); ss
+            //this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY); ss
         }
         ts->printf( alvision.cvtest.TSConstants.LOG, "%d) DistCoeff exp=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1, k2, p1, p2, k3);
         ts->printf( alvision.cvtest.TSConstants.LOG, "%d) DistCoeff est=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1_e, k2_e, p1_e, p2_e, k3_e);
@@ -195,7 +195,7 @@ protected:
                         ts->printf( alvision.cvtest.TSConstants.LOG, "%d) norm(tvec_est - tvec) = %f, norm(tvec_exp) = %f \n", r, norm(tvec_est - tvec), norm(tvec));
                     }
                 }
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
             }
         }
     }
@@ -227,7 +227,7 @@ protected:
 
                     }
                 }
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
             }
         }
     }
@@ -268,7 +268,7 @@ protected:
         chessboard3D.clear();
         for(int j = 0; j < cornersSize.height; ++j)
             for(int i = 0; i < cornersSize.width; ++i)
-                chessboard3D.push_back(Point3f(sqSile.width * i, sqSile.height * j, 0));
+                chessboard3D.push(Point3f(sqSile.width * i, sqSile.height * j, 0));
 
         boards.resize(brdsNum);
         rvecs_exp.resize(brdsNum);
@@ -290,8 +290,8 @@ protected:
 
             //alvision.namedWindow("CB"); imshow("CB", boards[i]); alvision.waitKey();
 
-            imagePoints_art.push_back(corners_art);
-            imagePoints_findCb.push_back(corners_fcb);
+            imagePoints_art.push(corners_art);
+            imagePoints_findCb.push(corners_fcb);
 
             tvecs_exp[i].create(1, 3, CV_64F);
             *tvecs_exp[i].ptr<Point3d>() = cbg.corners3d[0];
@@ -318,7 +318,7 @@ protected:
                 cvtColor(boards[i], gray, COLOR_BGR2GRAY);
                 Array<Point2f> tmp = imagePoints_findCb[i];
                 cornerSubPix(gray, tmp, Size(5, 5), Size(-1,-1), tc);
-                imagePoints.push_back(tmp);
+                imagePoints.push(tmp);
             }
             break;
         case USE_4QUAD_CORNERS:
@@ -328,7 +328,7 @@ protected:
                 cvtColor(boards[i], gray, COLOR_BGR2GRAY);
                 Array<Point2f> tmp = imagePoints_findCb[i];
                 find4QuadCornerSubpix(gray, tmp, Size(5, 5));
-                imagePoints.push_back(tmp);
+                imagePoints.push(tmp);
             }
             break;
         default:
@@ -347,7 +347,7 @@ protected:
         if (rep_error > thres)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error = %f\n", r, rep_error);
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
         compareCameraMatrs(camMat, camMat_est);
@@ -362,7 +362,7 @@ protected:
         if (rep_errorWOI > thres2)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error without intrinsics = %f\n", r, rep_errorWOI);
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
         ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Testing solvePnP...\n", r);
@@ -378,7 +378,7 @@ protected:
     void run(int)
     {
 
-        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
         RNG& rng = theRNG();
 
         int progress = 0;

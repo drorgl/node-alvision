@@ -120,7 +120,7 @@ void CV_GrabcutTest::run( int /* start_from */)
 
     if (!verify((mask & 1) * 255, exp_mask1))
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return;
     }
 
@@ -139,10 +139,10 @@ void CV_GrabcutTest::run( int /* start_from */)
 
     if (!verify((mask & 1) * 255, exp_mask2))
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return;
     }
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 }
 
 TEST(Imgproc_GrabCut, regression) { CV_GrabcutTest test; test.safe_run(); }

@@ -61,24 +61,98 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-class CV_RigidTransform_Test  extends alvision.cvtest.BaseTest
-{
-public:
-    CV_RigidTransform_Test();
-    ~CV_RigidTransform_Test();
-protected:
-    void run(int);
+class CV_RigidTransform_Test extends alvision.cvtest.BaseTest {
+    run(start_from: alvision.int): void {
+        alvision.cvtest.DefaultRngAuto dra;
 
-    bool testNPoints(int);
-    bool testImage();
-};
+        if (!this.testNPoints(start_from))
+            return;
 
-CV_RigidTransform_Test::CV_RigidTransform_Test()
-{
+        if (!this.testImage())
+            return;
+
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
+
+    testNPoints(from: alvision.int): boolean {
+        var rng = this.ts.get_rng();
+
+        var progress : alvision.int = 0;
+        var ntests = 10000;
+
+        for (var k = from; k < ntests; k++) {
+            this.ts.update_context(this, k, true);
+            progress = this.update_progress(progress, k, ntests, 0);
+
+            var aff = new alvision.Mat(2, 3,alvision.MatrixType. CV_64F);
+            rng.fill(aff, RNG::UNIFORM, new alvision.Scalar(-2), new alvision.Scalar(2));
+
+            var n = (unsigned)rng % 100 + 10;
+
+            var fpts = new alvision.Mat(1, n,alvision.MatrixType. CV_32FC2);
+            var tpts = new alvision.Mat(1, n,alvision.MatrixType. CV_32FC2);
+
+            rng.fill(fpts, RNG::UNIFORM, new alvision.Scalar(0, 0), new alvision.Scalar(10, 10));
+            alvision.transform(fpts.ptr<alvision.Point2f>("Point2f"), fpts.ptr<alvision.Point2f>("Point2f") + n, tpts.ptr<alvision.Point2f>("Point2f"), WrapAff2D(aff));
+
+            var noise = new alvision.Mat (1, n,alvision.MatrixType. CV_32FC2);
+            rng.fill(noise, RNG::NORMAL, alvision.Scalar.all(0), alvision.Scalar.all(0.001 * (n <= 7 ? 0 : n <= 30 ? 1 : 10)));
+            tpts += noise;
+
+            var aff_est = alvision.estimateRigidTransform(fpts, tpts, true);
+
+            var thres = 0.1 * alvision.cvtest.norm(aff, alvision.NormTypes.NORM_L2);
+            var d = alvision.cvtest.norm(aff_est, aff, alvision.NormTypes.NORM_L2);
+            if (d > thres) {
+                var dB= 0, nB = 0;
+                if (n <= 4) {
+                    var A = fpts.reshape(1, 3);
+                    var B = A - alvision.repeat(A.row(0), 3, 1), Bt = B.t();
+                    B = Bt * B;
+                    dB = alvision.determinant(B);
+                    nB = alvision.cvtest.norm(B, alvision.NormTypes.NORM_L2);
+                    if (Math.abs(dB) < 0.01 * nB)
+                        continue;
+                }
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Threshold = %f, norm of difference = %f", thres, d);
+                return false;
+            }
+        }
+        return true;
+    }
+    testImage(): boolean {
+        Mat img;
+        Mat testImg = imread(this.ts.get_data_path() + "shared/graffiti.png", 1);
+        if (testImg.empty()) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "test image can not be read");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+            return false;
+        }
+        pyrDown(testImg, img);
+
+        Mat aff = alvision.getRotationMatrix2D(Point(img.cols / 2, img.rows / 2), 1, 0.99);
+        aff.ptr<double>()[2] += 3;
+        aff.ptr<double>()[5] += 3;
+
+        Mat rotated;
+        warpAffine(img, rotated, aff, img.size());
+
+        Mat aff_est = estimateRigidTransform(img, rotated, true);
+
+        const double thres = 0.033;
+        if (alvision.cvtest.norm(aff_est, aff, NORM_INF) > thres) {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Threshold = %f, norm of difference = %f", thres,
+                alvision.cvtest.norm(aff_est, aff, NORM_INF));
+            return false;
+        }
+
+        return true;
+    }
 }
-CV_RigidTransform_Test::~CV_RigidTransform_Test() {}
 
-struct WrapAff2D
+class WrapAff2D
 {
     const double *F;
     WrapAff2D(const Mat& aff) : F(aff.ptr<double>()) {}
@@ -89,102 +163,6 @@ struct WrapAff2D
     }
 };
 
-bool CV_RigidTransform_Test::testNPoints(int from)
-{
-    alvision.RNG rng = ts->get_rng();
 
-    int progress = 0;
-    int k, ntests = 10000;
 
-    for( k = from; k < ntests; k++ )
-    {
-        ts->update_context( this, k, true );
-        progress = update_progress(progress, k, ntests, 0);
-
-        Mat aff(2, 3, CV_64F);
-        rng.fill(aff, RNG::UNIFORM, Scalar(-2), Scalar(2));
-
-        int n = (unsigned)rng % 100 + 10;
-
-        Mat fpts(1, n, CV_32FC2);
-        Mat tpts(1, n, CV_32FC2);
-
-        rng.fill(fpts, RNG::UNIFORM, Scalar(0,0), Scalar(10,10));
-        transform(fpts.ptr<Point2f>(), fpts.ptr<Point2f>() + n, tpts.ptr<Point2f>(), WrapAff2D(aff));
-
-        Mat noise(1, n, CV_32FC2);
-        rng.fill(noise, RNG::NORMAL, Scalar::all(0), Scalar::all(0.001*(n<=7 ? 0 : n <= 30 ? 1 : 10)));
-        tpts += noise;
-
-        Mat aff_est = estimateRigidTransform(fpts, tpts, true);
-
-        double thres = 0.1*alvision.cvtest.norm(aff,alvision.NormTypes. NORM_L2);
-        double d = alvision.cvtest.norm(aff_est, aff,alvision.NormTypes. NORM_L2);
-        if (d > thres)
-        {
-            double dB=0, nB=0;
-            if (n <= 4)
-            {
-                Mat A = fpts.reshape(1, 3);
-                Mat B = A - repeat(A.row(0), 3, 1), Bt = B.t();
-                B = Bt*B;
-                dB = alvision.determinant(B);
-                nB = alvision.cvtest.norm(B,alvision.NormTypes. NORM_L2);
-                if( fabs(dB) < 0.01*nB )
-                    continue;
-            }
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
-            ts->printf( alvision.cvtest.TSConstants.LOG, "Threshold = %f, norm of difference = %f", thres, d );
-            return false;
-        }
-    }
-    return true;
-}
-
-bool CV_RigidTransform_Test::testImage()
-{
-    Mat img;
-    Mat testImg = imread( string(ts->get_data_path()) + "shared/graffiti.png", 1);
-    if (testImg.empty())
-    {
-       ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-       this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
-       return false;
-    }
-    pyrDown(testImg, img);
-
-    Mat aff = alvision.getRotationMatrix2D(Point(img.cols/2, img.rows/2), 1, 0.99);
-    aff.ptr<double>()[2]+=3;
-    aff.ptr<double>()[5]+=3;
-
-    Mat rotated;
-    warpAffine(img, rotated, aff, img.size());
-
-    Mat aff_est = estimateRigidTransform(img, rotated, true);
-
-    const double thres = 0.033;
-    if (alvision.cvtest.norm(aff_est, aff, NORM_INF) > thres)
-    {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
-        ts->printf( alvision.cvtest.TSConstants.LOG, "Threshold = %f, norm of difference = %f", thres,
-            alvision.cvtest.norm(aff_est, aff, NORM_INF) );
-        return false;
-    }
-
-    return true;
-}
-
-void CV_RigidTransform_Test::run( int start_from )
-{
-    alvision.cvtest.DefaultRngAuto dra;
-
-    if (!testNPoints(start_from))
-        return;
-
-    if (!testImage())
-        return;
-
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
-}
-
-TEST(Video_RigidFlow, accuracy) { CV_RigidTransform_Test test; test.safe_run(); }
+alvision.cvtest.TEST('Video_RigidFlow', 'accuracy', () => { var test = new CV_RigidTransform_Test(); test.safe_run(); });

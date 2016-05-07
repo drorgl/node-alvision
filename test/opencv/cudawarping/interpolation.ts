@@ -48,11 +48,11 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#ifndef __OPENCV_TEST_INTERPOLATION_HPP__
-#define __OPENCV_TEST_INTERPOLATION_HPP__
-
-#include "opencv2/core.hpp"
-#include "opencv2/imgproc.hpp"
+//#ifndef __OPENCV_TEST_INTERPOLATION_HPP__
+//#define __OPENCV_TEST_INTERPOLATION_HPP__
+//
+//#include "opencv2/core.hpp"
+//#include "opencv2/imgproc.hpp"
 
 template <typename T> T readVal(const alvision.Mat& src, int y, int x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
 {
@@ -74,8 +74,8 @@ template <typename T> struct LinearInterpolator
 {
     static T getValue(const alvision.Mat& src, float y, float x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
     {
-        int x1 = cvFloor(x);
-        int y1 = cvFloor(y);
+        int x1 = Math.floor(x);
+        int y1 = Math.floor(y);
         int x2 = x1 + 1;
         int y2 = y1 + 1;
 
@@ -90,50 +90,47 @@ template <typename T> struct LinearInterpolator
     }
 };
 
-template <typename T> struct CubicInterpolator
+class CubicInterpolator<T>
 {
-    static float bicubicCoeff(float x_)
-    {
-        float x = fabsf(x_);
-        if (x <= 1.0f)
-        {
-            return x * x * (1.5f * x - 2.5f) + 1.0f;
+    static bicubicCoeff(x_: alvision.float): alvision.float {
+        var x = Math.abs(x_);
+        if (x <= 1.0) {
+            return x * x * (1.5 * x - 2.5) + 1.0;
         }
-        else if (x < 2.0f)
-        {
-            return x * (x * (-0.5f * x + 2.5f) - 4.0f) + 2.0f;
+        else if (x < 2.0) {
+            return x * (x * (-0.5 * x + 2.5) - 4.0) + 2.0;
         }
-        else
-        {
-            return 0.0f;
+        else {
+            return 0.0;
         }
+
     }
 
-    static T getValue(const alvision.Mat& src, float y, float x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
+    static getValue<T>(src: alvision.Mat, y: alvision.float, x: alvision.float, c: alvision.int, border_type: alvision.int, borderVal?: alvision.Scalar  = new alvision.Scalar()) : T
     {
-        const float xmin = ceilf(x - 2.0f);
-        const float xmax = floorf(x + 2.0f);
+        const  xmin = Math.ceil(x - 2.0);
+        const  xmax = Math.floor(x + 2.0);
 
-        const float ymin = ceilf(y - 2.0f);
-        const float ymax = floorf(y + 2.0f);
+        const ymin = Math.ceil(y - 2.0);
+        const ymax = Math.floor(y + 2.0);
 
-        float sum  = 0.0f;
-        float wsum = 0.0f;
+        var sum  = 0.0;
+        var wsum = 0.0;
 
-        for (float cy = ymin; cy <= ymax; cy += 1.0f)
+        for (var cy = ymin; cy <= ymax; cy += 1.0)
         {
-            for (float cx = xmin; cx <= xmax; cx += 1.0f)
+            for (var cx = xmin; cx <= xmax; cx += 1.0)
             {
-                const float w = bicubicCoeff(x - cx) * bicubicCoeff(y - cy);
+                const w = alvision.bicubicCoeff(x - cx) * alvision.bicubicCoeff(y - cy);
                 sum += w * readVal<T>(src, (int) floorf(cy), (int) floorf(cx), c, border_type, borderVal);
                 wsum += w;
             }
         }
 
-        float res = (!wsum)? 0 : sum / wsum;
+        var res = (!wsum)? 0 : sum / wsum;
 
-        return alvision.saturate_cast<T>(res);
+        return res;
     }
 };
 
-#endif // __OPENCV_TEST_INTERPOLATION_HPP__
+//#endif // __OPENCV_TEST_INTERPOLATION_HPP__

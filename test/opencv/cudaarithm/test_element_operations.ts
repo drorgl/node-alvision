@@ -103,10 +103,10 @@ CUDA_TEST_P(Add_Array, Accuracy)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::add(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, alvision.cuda::GpuMat(), depth.second);
 
-        alvision.Mat dst_gold(size, dtype, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, dtype, alvision.alvision.Scalar.all(0));
         alvision.add(mat1, mat2, dst_gold, alvision.noArray(), depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
@@ -165,10 +165,10 @@ CUDA_TEST_P(Add_Array_Mask, Accuracy)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::add(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, loadMat(mask, useRoi), depth.second);
 
-        alvision.Mat dst_gold(size, dtype, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, dtype, alvision.alvision.Scalar.all(0));
         alvision.add(mat1, mat2, dst_gold, mask, depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
@@ -222,10 +222,10 @@ CUDA_TEST_P(Add_Scalar, WithOutMask)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::add(loadMat(mat, useRoi), val, dst, alvision.cuda::GpuMat(), depth.second);
 
-        alvision.Mat dst_gold(size, depth.second, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
         alvision.add(mat, val, dst_gold, alvision.noArray(), depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
@@ -253,10 +253,10 @@ CUDA_TEST_P(Add_Scalar, WithMask)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::add(loadMat(mat, useRoi), val, dst, loadMat(mask, useRoi), depth.second);
 
-        alvision.Mat dst_gold(size, depth.second, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
         alvision.add(mat, val, dst_gold, mask, depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
@@ -310,10 +310,10 @@ CUDA_TEST_P(Add_Scalar_First, WithOutMask)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::add(val, loadMat(mat, useRoi), dst, alvision.cuda::GpuMat(), depth.second);
 
-        alvision.Mat dst_gold(size, depth.second, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
         alvision.add(val, mat, dst_gold, alvision.noArray(), depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
@@ -341,10 +341,10 @@ CUDA_TEST_P(Add_Scalar_First, WithMask)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::add(val, loadMat(mat, useRoi), dst, loadMat(mask, useRoi), depth.second);
 
-        alvision.Mat dst_gold(size, depth.second, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
         alvision.add(val, mat, dst_gold, mask, depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
@@ -406,10 +406,10 @@ CUDA_TEST_P(Subtract_Array, Accuracy)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::subtract(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, alvision.cuda::GpuMat(), depth.second);
 
-        alvision.Mat dst_gold(size, dtype, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, dtype, alvision.alvision.Scalar.all(0));
         alvision.subtract(mat1, mat2, dst_gold, alvision.noArray(), depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
@@ -468,10 +468,10 @@ CUDA_TEST_P(Subtract_Array_Mask, Accuracy)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::subtract(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, loadMat(mask, useRoi), depth.second);
 
-        alvision.Mat dst_gold(size, dtype, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, dtype, alvision.alvision.Scalar.all(0));
         alvision.subtract(mat1, mat2, dst_gold, mask, depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
@@ -525,10 +525,10 @@ CUDA_TEST_P(Subtract_Scalar, WithOutMask)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::subtract(loadMat(mat, useRoi), val, dst, alvision.cuda::GpuMat(), depth.second);
 
-        alvision.Mat dst_gold(size, depth.second, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
         alvision.subtract(mat, val, dst_gold, alvision.noArray(), depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
@@ -556,10 +556,10 @@ CUDA_TEST_P(Subtract_Scalar, WithMask)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::subtract(loadMat(mat, useRoi), val, dst, loadMat(mask, useRoi), depth.second);
 
-        alvision.Mat dst_gold(size, depth.second, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
         alvision.subtract(mat, val, dst_gold, mask, depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
@@ -613,10 +613,10 @@ CUDA_TEST_P(Subtract_Scalar_First, WithOutMask)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::subtract(val, loadMat(mat, useRoi), dst, alvision.cuda::GpuMat(), depth.second);
 
-        alvision.Mat dst_gold(size, depth.second, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
         alvision.subtract(val, mat, dst_gold, alvision.noArray(), depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
@@ -644,10 +644,10 @@ CUDA_TEST_P(Subtract_Scalar_First, WithMask)
     else
     {
         alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
         alvision.cuda::subtract(val, loadMat(mat, useRoi), dst, loadMat(mask, useRoi), depth.second);
 
-        alvision.Mat dst_gold(size, depth.second, alvision.Scalar::all(0));
+        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
         alvision.subtract(val, mat, dst_gold, mask, depth.second);
 
         EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
@@ -1570,7 +1570,7 @@ namespace
         for (int y = 0; y < src.rows; ++y)
         {
             for (int x = 0; x < src.cols; ++x)
-                dst.at<T>(y, x) = static_cast<T>(std::sqrt(static_cast<float>(src.at<T>(y, x))));
+                dst.at<T>(y, x) = static_cast<T>(Math.sqrt(static_cast<float>(src.at<T>(y, x))));
         }
     }
 
@@ -1972,10 +1972,10 @@ CUDA_TEST_P(Compare_Scalar, Accuracy)
 
     if (src.depth() < CV_32F)
     {
-        sc.val[0] = cvRound(sc.val[0]);
-        sc.val[1] = cvRound(sc.val[1]);
-        sc.val[2] = cvRound(sc.val[2]);
-        sc.val[3] = cvRound(sc.val[3]);
+        sc.val[0] = Math.round(sc.val[0]);
+        sc.val[1] = Math.round(sc.val[1]);
+        sc.val[2] = Math.round(sc.val[2]);
+        sc.val[3] = Math.round(sc.val[3]);
     }
 
     if (src.depth() == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))

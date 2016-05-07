@@ -99,7 +99,7 @@ class CV_HighGuiOnlyGuiTest extends alvision. cvtest.BaseTest
 
     //this.ts.printf(ts ->LOG, "GUI 8\n");
     alvision.destroyAllWindows();
-    //this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+    //this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 }
 
 };

@@ -137,7 +137,7 @@ CUDA_TEST_P(ProjectPoints, Accuracy)
     ASSERT_EQ(MatType(CV_32FC2), MatType(dst.type()));
 
     std::Array<alvision.Point2f> dst_gold;
-    alvision.projectPoints(src, rvec, tvec, camera_mat, alvision.Mat(1, 8, CV_32F, alvision.Scalar::all(0)), dst_gold);
+    alvision.projectPoints(src, rvec, tvec, camera_mat, alvision.Mat(1, 8, CV_32F, alvision.alvision.Scalar.all(0)), dst_gold);
 
     ASSERT_EQ(dst_gold.size(), static_cast<size_t>(dst.cols));
 
@@ -183,12 +183,12 @@ CUDA_TEST_P(SolvePnPRansac, Accuracy)
     alvision.Mat tvec_gold;
     rvec_gold = randomMat(alvision.Size(3, 1), CV_32F, 0, 1);
     tvec_gold = randomMat(alvision.Size(3, 1), CV_32F, 0, 1);
-    alvision.projectPoints(object, rvec_gold, tvec_gold, camera_mat, alvision.Mat(1, 8, CV_32F, alvision.Scalar::all(0)), image_vec);
+    alvision.projectPoints(object, rvec_gold, tvec_gold, camera_mat, alvision.Mat(1, 8, CV_32F, alvision.alvision.Scalar.all(0)), image_vec);
 
     alvision.Mat rvec, tvec;
     std::Array<int> inliers;
     alvision.cuda::solvePnPRansac(object, alvision.Mat(1, (int)image_vec.size(), CV_32FC2, &image_vec[0]),
-                            camera_mat, alvision.Mat(1, 8, CV_32F, alvision.Scalar::all(0)),
+                            camera_mat, alvision.Mat(1, 8, CV_32F, alvision.alvision.Scalar.all(0)),
                             rvec, tvec, false, 200, 2.f, 100, &inliers);
 
     ASSERT_LE(alvision.norm(rvec - rvec_gold), 1e-3);

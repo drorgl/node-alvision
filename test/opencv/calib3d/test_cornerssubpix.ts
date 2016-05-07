@@ -55,38 +55,150 @@ import fs = require('fs');
 //using namespace std;
 //using namespace cv;
 
-class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest
+class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest {
+    constructor() {
+        super();
+        this.intrinsic_matrix_ = new alvision.Mat( new alvision.Size(3, 3), alvision.MatrixType.CV_64FC1);
+        this.distortion_coeffs_ = new alvision.Mat(new alvision.Size(1, 4), alvision.MatrixType.CV_64FC1);
+        this.image_size_ = new alvision.Size(640, 480);
+    }
+
+    protected intrinsic_matrix_: alvision.Mat;
+    protected distortion_coeffs_: alvision.Mat;
+    protected image_size_: alvision.Size;
+
+    run(iii: alvision.int): void {
+        var code = alvision.cvtest.FailureCode.OK;
+        var progress = 0;
+
+        var rng = this.ts.get_rng();
+
+        const runs_count = 20;
+        const max_pattern_size = 8;
+        const min_pattern_size = 5;
+        var bg = new alvision.Mat(this.image_size_, alvision.MatrixType.CV_8UC1, new alvision.Scalar(0));
+
+        var sum_dist = 0.0;
+        var count = 0;
+        for (var i = 0; i < runs_count; i++) {
+            const pattern_width = min_pattern_size + alvision.cvtest.randInt(rng).valueOf() % (max_pattern_size - min_pattern_size);
+            const pattern_height = min_pattern_size + alvision.cvtest.randInt(rng).valueOf() % (max_pattern_size - min_pattern_size);
+            var pattern_size: alvision.Size;
+            if (pattern_width > pattern_height) {
+                pattern_size = new alvision.Size(pattern_height, pattern_width);
+            }
+            else {
+                pattern_size = new alvision.Size(pattern_width, pattern_height);
+            }
+            var gen_chessboard = new ChessBoardGenerator(new alvision.Size(pattern_size.width + 1, pattern_size.height + 1));
+
+            // generates intrinsic camera and distortion matrices
+            this.generateIntrinsicParams();
+
+            var corners = new Array<alvision.Point2f>();
+            var chessboard_image = gen_chessboard(bg, intrinsic_matrix_, distortion_coeffs_, corners);
+
+            var test_corners = new Array<alvision.Point2f>();
+            var result = findChessboardCorners(chessboard_image, pattern_size, test_corners, 15);
+            if (!result) {
+                //#if 0
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Warning: chessboard was not detected! Writing image to test.png\n");
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Size = %d, %d\n", pattern_size.width, pattern_size.height);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Intrinsic params: fx = %f, fy = %f, cx = %f, cy = %f\n",
+                    this.intrinsic_matrix_.at<double>(0, 0), this.intrinsic_matrix_.at<double>(1, 1),
+                    this.intrinsic_matrix_.at<double>(0, 2), this.intrinsic_matrix_.at<double>(1, 2));
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Distortion matrix: %f, %f, %f, %f, %f\n",
+                    this.distortion_coeffs_.at<double>(0, 0), this.distortion_coeffs_.at<double>(0, 1),
+                    this.distortion_coeffs_.at<double>(0, 2), this.distortion_coeffs_.at<double>(0, 3),
+                    this.distortion_coeffs_.at<double>(0, 4));
+
+                alvision.imwrite("test.png", chessboard_image);
+                //#endif
+                continue;
+            }
+
+            var dist1 = 0.0;
+            var ret = calcDistance(corners, test_corners, dist1);
+            if (ret == 0) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "findChessboardCorners returns invalid corner coordinates!\n");
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+                break;
+            }
+
+            IplImage chessboard_image_header = chessboard_image;
+            cvFindCornerSubPix(&chessboard_image_header, (CvPoint2D32f *)& test_corners[0],
+                (int)test_corners.size(), cvSize(3, 3), cvSize(1, 1), cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 300, 0.1));
+            find4QuadCornerSubpix(chessboard_image, test_corners, Size(5, 5));
+
+            var dist2 = 0.0;
+            ret = calcDistance(corners, test_corners, dist2);
+            if (ret == 0) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "findCornerSubpix returns invalid corner coordinates!\n");
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+                break;
+            }
+
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error after findChessboardCorners: %f, after findCornerSubPix: %f\n",
+                dist1, dist2);
+            sum_dist += dist2;
+            count++;
+
+            const max_reduce_factor = 0.8;
+            if (dist1 < dist2 * max_reduce_factor) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "findCornerSubPix increases average error!\n");
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+                break;
+            }
+
+            progress = this.update_progress(progress, i - 1, runs_count, 0);
+        }
+        alvision.ASSERT_NE(0, count);
+        sum_dist /= count;
+        this.ts.printf(alvision.cvtest.TSConstants.LOG, "Average error after findCornerSubpix: %f\n", sum_dist);
+
+        if (code < 0)
+            this.ts.set_failed_test_info(code);
+    }
+    generateIntrinsicParams(): void {
+        var rng = this.ts.get_rng();
+        const max_focus_length = 1000.0;
+        const max_focus_diff = 5.0;
+
+        var fx = alvision.cvtest.randReal(rng) * max_focus_length;
+        var fy = fx + alvision.cvtest.randReal(rng) * max_focus_diff;
+        var cx = image_size_.width / 2;
+        var cy = image_size_.height / 2;
+
+        var k1 = 0.5 * alvision.cvtest.randReal(rng);
+        var k2 = 0.05 * alvision.cvtest.randReal(rng);
+        var p1 = 0.05 * alvision.cvtest.randReal(rng);
+        var p2 = 0.05 * alvision.cvtest.randReal(rng);
+        var k3 = 0.0;
+
+        this.intrinsic_matrix_ = new alvision.Mat(Mat_<double>(3, 3) << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0);
+        this.distortion_coeffs_ = new alvision.Mat(Mat_<double>(1, 5) << k1, k2, p1, p2, k3);
+    }
+}
+
+
+
+function calcDistance(set1: Array<alvision.Point2f>, set2: Array<alvision.Point2f>, mean_dist: alvision.double) : alvision.int
 {
-public:
-    CV_ChessboardSubpixelTest();
-
-protected:
-    Mat intrinsic_matrix_;
-    Mat distortion_coeffs_;
-    Size image_size_;
-
-    void run(int);
-    void generateIntrinsicParams();
-};
-
-
-int calcDistance(const Array<Point2f>& set1, const Array<Point2f>& set2, double& mean_dist)
-{
-    if(set1.size() != set2.size())
+    if(set1.length != set2.length)
     {
         return 0;
     }
 
-    std::Array<int> indices;
-    double sum_dist = 0.0;
-    for(size_t i = 0; i < set1.size(); i++)
+    var indices = new Array<alvision.int>() ;
+    var sum_dist = 0.0;
+    for(var i = 0; i < set1.length; i++)
     {
-        double min_dist = std::numeric_limits<double>::max();
-        int min_idx = -1;
+        var min_dist = std::numeric_limits<double>::max();
+        var min_idx = -1;
 
-        for(int j = 0; j < (int)set2.size(); j++)
+        for(var j = 0; j < set2.length; j++)
         {
-            double dist = norm(set1[i] - set2[j]);
+            var dist = norm(set1[i] - set2[j]);
             if(dist < min_dist)
             {
                 min_idx = j;
@@ -105,148 +217,22 @@ int calcDistance(const Array<Point2f>& set1, const Array<Point2f>& set2, double&
             // there are two points in set1 corresponding to the same point in set2
             return 0;
         }
-        indices.push_back(min_idx);
+        indices.push(min_idx);
 
 //        printf("dist %d = %f\n", (int)i, min_dist);
 
         sum_dist += min_dist*min_dist;
     }
 
-    mean_dist = sqrt(sum_dist/set1.size());
+    mean_dist = Math.sqrt(sum_dist/set1.length);
 //    printf("sum_dist = %f, set1.size() = %d, mean_dist = %f\n", sum_dist, (int)set1.size(), mean_dist);
 
     return 1;
 }
 
-CV_ChessboardSubpixelTest::CV_ChessboardSubpixelTest() :
-    intrinsic_matrix_(Size(3, 3), CV_64FC1), distortion_coeffs_(Size(1, 4), CV_64FC1),
-    image_size_(640, 480)
-{
-}
-
 /* ///////////////////// chess_corner_test ///////////////////////// */
-void CV_ChessboardSubpixelTest::run( int )
-{
-    int code = alvision.cvtest.TS::OK;
-    int  progress = 0;
 
-    RNG& rng = ts->get_rng();
 
-    const int runs_count = 20;
-    const int max_pattern_size = 8;
-    const int min_pattern_size = 5;
-    Mat bg(image_size_, CV_8UC1);
-    bg = Scalar(0);
-
-    double sum_dist = 0.0;
-    int count = 0;
-    for(int i = 0; i < runs_count; i++)
-    {
-        const int pattern_width = min_pattern_size + alvision.cvtest.randInt(rng) % (max_pattern_size - min_pattern_size);
-        const int pattern_height = min_pattern_size + alvision.cvtest.randInt(rng) % (max_pattern_size - min_pattern_size);
-        Size pattern_size;
-        if(pattern_width > pattern_height)
-        {
-            pattern_size = Size(pattern_height, pattern_width);
-        }
-        else
-        {
-            pattern_size = Size(pattern_width, pattern_height);
-        }
-        ChessBoardGenerator gen_chessboard(Size(pattern_size.width + 1, pattern_size.height + 1));
-
-        // generates intrinsic camera and distortion matrices
-        generateIntrinsicParams();
-
-        Array<Point2f> corners;
-        Mat chessboard_image = gen_chessboard(bg, intrinsic_matrix_, distortion_coeffs_, corners);
-
-        Array<Point2f> test_corners;
-        bool result = findChessboardCorners(chessboard_image, pattern_size, test_corners, 15);
-        if(!result)
-        {
-#if 0
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Warning: chessboard was not detected! Writing image to test.png\n");
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Size = %d, %d\n", pattern_size.width, pattern_size.height);
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Intrinsic params: fx = %f, fy = %f, cx = %f, cy = %f\n",
-                       intrinsic_matrix_.at<double>(0, 0), intrinsic_matrix_.at<double>(1, 1),
-                       intrinsic_matrix_.at<double>(0, 2), intrinsic_matrix_.at<double>(1, 2));
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Distortion matrix: %f, %f, %f, %f, %f\n",
-                       distortion_coeffs_.at<double>(0, 0), distortion_coeffs_.at<double>(0, 1),
-                       distortion_coeffs_.at<double>(0, 2), distortion_coeffs_.at<double>(0, 3),
-                       distortion_coeffs_.at<double>(0, 4));
-
-            imwrite("test.png", chessboard_image);
-#endif
-            continue;
-        }
-
-        double dist1 = 0.0;
-        int ret = calcDistance(corners, test_corners, dist1);
-        if(ret == 0)
-        {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "findChessboardCorners returns invalid corner coordinates!\n");
-            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
-            break;
-        }
-
-        IplImage chessboard_image_header = chessboard_image;
-        cvFindCornerSubPix(&chessboard_image_header, (CvPoint2D32f*)&test_corners[0],
-            (int)test_corners.size(), cvSize(3, 3), cvSize(1, 1), cvTermCriteria(CV_TERMCRIT_EPS|CV_TERMCRIT_ITER,300,0.1));
-        find4QuadCornerSubpix(chessboard_image, test_corners, Size(5, 5));
-
-        double dist2 = 0.0;
-        ret = calcDistance(corners, test_corners, dist2);
-        if(ret == 0)
-        {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "findCornerSubpix returns invalid corner coordinates!\n");
-            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
-            break;
-        }
-
-        ts->printf(alvision.cvtest.TSConstants.LOG, "Error after findChessboardCorners: %f, after findCornerSubPix: %f\n",
-                   dist1, dist2);
-        sum_dist += dist2;
-        count++;
-
-        const double max_reduce_factor = 0.8;
-        if(dist1 < dist2*max_reduce_factor)
-        {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "findCornerSubPix increases average error!\n");
-            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
-            break;
-        }
-
-        progress = update_progress( progress, i-1, runs_count, 0 );
-    }
-    ASSERT_NE(0, count);
-    sum_dist /= count;
-    ts->printf(alvision.cvtest.TSConstants.LOG, "Average error after findCornerSubpix: %f\n", sum_dist);
-
-    if( code < 0 )
-        this.ts.set_failed_test_info( code );
-}
-
-void CV_ChessboardSubpixelTest::generateIntrinsicParams()
-{
-    RNG& rng = ts->get_rng();
-    const double max_focus_length = 1000.0;
-    const double max_focus_diff = 5.0;
-
-    double fx = alvision.cvtest.randReal(rng)*max_focus_length;
-    double fy = fx + alvision.cvtest.randReal(rng)*max_focus_diff;
-    double cx = image_size_.width/2;
-    double cy = image_size_.height/2;
-
-    double k1 = 0.5*alvision.cvtest.randReal(rng);
-    double k2 = 0.05*alvision.cvtest.randReal(rng);
-    double p1 = 0.05*alvision.cvtest.randReal(rng);
-    double p2 = 0.05*alvision.cvtest.randReal(rng);
-    double k3 = 0.0;
-
-    intrinsic_matrix_ = (Mat_<double>(3, 3) << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0);
-    distortion_coeffs_ = (Mat_<double>(1, 5) << k1, k2, p1, p2, k3);
-}
 
 alvision.cvtest.TEST('Calib3d_ChessboardSubPixDetector', 'accuracy', () => { var test = new CV_ChessboardSubpixelTest(); test.safe_run(); });
 

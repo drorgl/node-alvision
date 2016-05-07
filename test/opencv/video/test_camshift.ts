@@ -89,49 +89,49 @@ class CV_TrackBaseTest  extends alvision.cvtest.BaseTest
     }
     run_func(): void {
     }
-    prepare_test_case(test_case_idx : alvision.int ) : alvision.int{
-    var rng = this.ts.get_rng();
-    alvision.cvtest.BaseTest::prepare_test_case(test_case_idx);
-    float m;
+    prepare_test_case(test_case_idx: alvision.int): alvision.int {
+        var rng = this.ts.get_rng();
+        super.prepare_test_case(test_case_idx);
+        var m: alvision.float;
 
-    clear();
+        this.clear();
 
-    box0.size.width = (float)exp((alvision.cvtest.randReal(rng) * (max_log_size - min_log_size) + min_log_size) * CV_LOG2);
-    box0.size.height = (float)exp((alvision.cvtest.randReal(rng) * (max_log_size - min_log_size) + min_log_size) * CV_LOG2);
-    box0.angle = (float)(alvision.cvtest.randReal(rng) * 180.);
+        this.box0.size.width = Math.exp((alvision.cvtest.randReal(rng).valueOf() * (this.max_log_size - this.min_log_size) + this.min_log_size) * Math.LOG2E);
+        this.box0.size.height = Math.exp((alvision.cvtest.randReal(rng) * (max_log_size - min_log_size) + min_log_size) * Math.LOG2E);
+        this.box0.angle = (alvision.cvtest.randReal(rng) * 180.);
 
-    if (box0.size.width > box0.size.height) {
-        float t;
-        CV_SWAP(box0.size.width, box0.size.height, t);
+        if (box0.size.width > box0.size.height) {
+            float t;
+            CV_SWAP(box0.size.width, box0.size.height, t);
+        }
+
+        m = MAX(box0.size.width, box0.size.height);
+        img_size.width = Math.round(alvision.cvtest.randReal(rng) * m * 0.5 + m + 1);
+        img_size.height = Math.round(alvision.cvtest.randReal(rng) * m * 0.5 + m + 1);
+        img_type = alvision.cvtest.randInt(rng) % 2 ? CV_32F : CV_8U;
+        img_type = CV_8U;
+
+        box0.center.x = (float)(img_size.width * 0.5 + (alvision.cvtest.randReal(rng) - 0.5) * (img_size.width - m));
+        box0.center.y = (float)(img_size.height * 0.5 + (alvision.cvtest.randReal(rng) - 0.5) * (img_size.height - m));
+
+        criteria = cvTermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 10, 0.1);
+
+        generate_object();
+
+        return 1;
     }
-
-    m = MAX(box0.size.width, box0.size.height);
-    img_size.width = cvRound(alvision.cvtest.randReal(rng) * m * 0.5 + m + 1);
-    img_size.height = cvRound(alvision.cvtest.randReal(rng) * m * 0.5 + m + 1);
-    img_type = alvision.cvtest.randInt(rng) % 2 ? CV_32F : CV_8U;
-    img_type = CV_8U;
-
-    box0.center.x = (float)(img_size.width * 0.5 + (alvision.cvtest.randReal(rng) - 0.5) * (img_size.width - m));
-    box0.center.y = (float)(img_size.height * 0.5 + (alvision.cvtest.randReal(rng) - 0.5) * (img_size.height - m));
-
-    criteria = cvTermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 10, 0.1);
-
-    generate_object();
-
-    return 1;
+    validate_test_results(test_case_idx: alvision.int): alvision.int {
+        return 0;
     }
-    int validate_test_results(int test_case_idx ){
-    return 0;
-    }
-    void generate_object(){
-    int x, y;
-    double cx = box0.center.x;
-    double cy = box0.center.y;
-    double width = box0.size.width * 0.5;
-    double height = box0.size.height * 0.5;
-    double angle = box0.angle * Math.PI / 180.;
-    double a = sin(angle), b = -cos(angle);
-    double inv_ww = 1. / (width * width), inv_hh = 1. / (height * height);
+     generate_object() : void{
+    //int x, y;
+    var cx = box0.center.x;
+    var cy = box0.center.y;
+    var width = box0.size.width * 0.5;
+    var height = box0.size.height * 0.5;
+    var angle = box0.angle * Math.PI / 180.;
+    var a = Math.sin(angle), b = -Math.cos(angle);
+    var inv_ww = 1. / (width * width), inv_hh = 1. / (height * height);
 
     img = cvCreateMat(img_size.height, img_size.width, img_type);
     cvZero(img);
@@ -157,12 +157,13 @@ class CV_TrackBaseTest  extends alvision.cvtest.BaseTest
 
     }
 
-    int min_log_size, max_log_size;
+    protected min_log_size: alvision.int
+protected max_log_size: alvision.int;
     CvMat* img;
     CvBox2D box0;
     CvSize img_size;
     CvTermCriteria criteria;
-    int img_type;
+    protected img_type: alvision.int;
 };
 
 
@@ -172,135 +173,136 @@ class CV_TrackBaseTest  extends alvision.cvtest.BaseTest
 
 class CV_CamShiftTest extends CV_TrackBaseTest
 {
+    run_func() {
+        cvCamShift(img, init_rect, criteria, &comp, &box);
 
-protected:
-    void run_func(void){
-    cvCamShift(img, init_rect, criteria, &comp, &box);
-}
-int prepare_test_case(int test_case_idx ){
-    RNG & rng = this.ts.get_rng();
-    double m;
-    int code = CV_TrackBaseTest::prepare_test_case(test_case_idx);
-    int i, area;
-
-    if (code <= 0)
-        return code;
-
-    area0 = cvCountNonZero(img);
-
-    for (i = 0; i < 100; i++) {
-        CvMat temp;
-
-        m = MAX(box0.size.width, box0.size.height) * 0.8;
-        init_rect.x = cvFloor(box0.center.x - m * (0.45 + alvision.cvtest.randReal(rng) * 0.2));
-        init_rect.y = cvFloor(box0.center.y - m * (0.45 + alvision.cvtest.randReal(rng) * 0.2));
-        init_rect.width = cvCeil(box0.center.x + m * (0.45 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.x);
-        init_rect.height = cvCeil(box0.center.y + m * (0.45 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.y);
-
-        if (init_rect.x < 0 || init_rect.y < 0 ||
-            init_rect.x + init_rect.width >= img_size.width ||
-            init_rect.y + init_rect.height >= img_size.height)
-            continue;
-
-        cvGetSubRect(img, &temp, init_rect);
-        area = cvCountNonZero( &temp);
-
-        if (area >= 0.1 * area0)
-            break;
     }
+    prepare_test_case(test_case_idx: alvision.int): alvision.int {
+        var rng = this.ts.get_rng();
+        double m;
+        var code = CV_TrackBaseTest::prepare_test_case(test_case_idx);
+        int  area;
 
-    return i < 100 ? code : 0;
-}
-int validate_test_results(int test_case_idx ){
-    int code = alvision.cvtest.TS::OK;
+        if (code <= 0)
+            return code;
 
-    double m = MAX(box0.size.width, box0.size.height), delta;
-    double diff_angle;
+        area0 = cvCountNonZero(img);
 
-    if (cvIsNaN(box.size.width) || cvIsInf(box.size.width) || box.size.width <= 0 ||
-        cvIsNaN(box.size.height) || cvIsInf(box.size.height) || box.size.height <= 0 ||
-        cvIsNaN(box.center.x) || cvIsInf(box.center.x) ||
-        cvIsNaN(box.center.y) || cvIsInf(box.center.y) ||
-        cvIsNaN(box.angle) || cvIsInf(box.angle) || box.angle < -180 || box.angle > 180 ||
-        cvIsNaN(comp.area) || cvIsInf(comp.area) || comp.area <= 0) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG, "Invalid CvBox2D or CvConnectedComp was returned by cvCamShift\n");
-        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
-        goto _exit_;
+        for (var i = 0; i < 100; i++) {
+            CvMat temp;
+
+            m = MAX(box0.size.width, box0.size.height) * 0.8;
+            init_rect.x = Math.floor(box0.center.x - m * (0.45 + alvision.cvtest.randReal(rng) * 0.2));
+            init_rect.y = Math.floor(box0.center.y - m * (0.45 + alvision.cvtest.randReal(rng) * 0.2));
+            init_rect.width = cvCeil(box0.center.x + m * (0.45 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.x);
+            init_rect.height = cvCeil(box0.center.y + m * (0.45 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.y);
+
+            if (init_rect.x < 0 || init_rect.y < 0 ||
+                init_rect.x + init_rect.width >= img_size.width ||
+                init_rect.y + init_rect.height >= img_size.height)
+                continue;
+
+            cvGetSubRect(img, &temp, init_rect);
+            area = cvCountNonZero( &temp);
+
+            if (area >= 0.1 * area0)
+                break;
+        }
+
+        return i < 100 ? code : 0;
     }
+    validate_test_results(test_case_idx: alvision.int): alvision.int {
+        var code = alvision.cvtest.FailureCode.OK;
 
-    box.angle = (float)(180 - box.angle);
+        var m = Math.max(box0.size.width, box0.size.height),
+            double        delta;
+        double diff_angle;
 
-    if (fabs(box.size.width - box0.size.width) > box0.size.width * 0.2 ||
-        fabs(box.size.height - box0.size.height) > box0.size.height * 0.3) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D size (=%.1f x %.1f, should be %.1f x %.1f)\n",
-            box.size.width, box.size.height, box0.size.width, box0.size.height);
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
+        if (cvIsNaN(box.size.width) || cvIsInf(box.size.width) || box.size.width <= 0 ||
+            cvIsNaN(box.size.height) || cvIsInf(box.size.height) || box.size.height <= 0 ||
+            cvIsNaN(box.center.x) || cvIsInf(box.center.x) ||
+            cvIsNaN(box.center.y) || cvIsInf(box.center.y) ||
+            cvIsNaN(box.angle) || cvIsInf(box.angle) || box.angle < -180 || box.angle > 180 ||
+            cvIsNaN(comp.area) || cvIsInf(comp.area) || comp.area <= 0) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Invalid CvBox2D or CvConnectedComp was returned by cvCamShift\n");
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+            goto _exit_;
+        }
 
-    if (fabs(box.center.x - box0.center.x) > m * 0.1 ||
-        fabs(box.center.y - box0.center.y) > m * 0.1) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
-            box.center.x, box.center.y, box0.center.x, box0.center.y);
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
+        box.angle = (float)(180 - box.angle);
 
-    if (box.angle < 0)
-        box.angle += 180;
+        if (fabs(box.size.width - box0.size.width) > box0.size.width * 0.2 ||
+            fabs(box.size.height - box0.size.height) > box0.size.height * 0.3) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D size (=%.1f x %.1f, should be %.1f x %.1f)\n",
+                box.size.width, box.size.height, box0.size.width, box0.size.height);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
 
-    diff_angle = fabs(box0.angle - box.angle);
-    diff_angle = MIN(diff_angle, fabs(box0.angle - box.angle + 180));
+        if (fabs(box.center.x - box0.center.x) > m * 0.1 ||
+            fabs(box.center.y - box0.center.y) > m * 0.1) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
+                box.center.x, box.center.y, box0.center.x, box0.center.y);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
 
-    if (fabs(diff_angle) > 30 && box0.size.height > box0.size.width * 1.2) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D angle (=%1.f, should be %1.f)\n",
-            box.angle, box0.angle);
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
+        if (box.angle < 0)
+            box.angle += 180;
 
-    delta = m * 0.7;
+        diff_angle = fabs(box0.angle - box.angle);
+        diff_angle = MIN(diff_angle, fabs(box0.angle - box.angle + 180));
 
-    if (comp.rect.x < box0.center.x - delta ||
-        comp.rect.y < box0.center.y - delta ||
-        comp.rect.x + comp.rect.width > box0.center.x + delta ||
-        comp.rect.y + comp.rect.height > box0.center.y + delta) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG,
-            "Incorrect CvConnectedComp ((%d,%d,%d,%d) is not within (%.1f,%.1f,%.1f,%.1f))\n",
-            comp.rect.x, comp.rect.y, comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height,
-            box0.center.x - delta, box0.center.y - delta, box0.center.x + delta, box0.center.y + delta);
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
+        if (fabs(diff_angle) > 30 && box0.size.height > box0.size.width * 1.2) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D angle (=%1.f, should be %1.f)\n",
+                box.angle, box0.angle);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
 
-    if (fabs(comp.area - area0) > area0 * 0.15) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG,
-            "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", comp.area, area0);
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
+        delta = m * 0.7;
 
-    _exit_:
+        if (comp.rect.x < box0.center.x - delta ||
+            comp.rect.y < box0.center.y - delta ||
+            comp.rect.x + comp.rect.width > box0.center.x + delta ||
+            comp.rect.y + comp.rect.height > box0.center.y + delta) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG,
+                "Incorrect CvConnectedComp ((%d,%d,%d,%d) is not within (%.1f,%.1f,%.1f,%.1f))\n",
+                comp.rect.x, comp.rect.y, comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height,
+                box0.center.x - delta, box0.center.y - delta, box0.center.x + delta, box0.center.y + delta);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
 
-    if (code < 0) {
-        #if 0 //defined _DEBUG && defined WIN32
+        if (fabs(comp.area - area0) > area0 * 0.15) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG,
+                "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", comp.area, area0);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
+
+        _exit_:
+
+        if (code < 0) {
+            #if 0 //defined _DEBUG && defined WIN32
         IplImage* dst = cvCreateImage(img_size, 8, 3);
-        cvNamedWindow("test", 1);
-        cvCmpS(img, 0, img, CV_CMP_GT);
-        cvCvtColor(img, dst, CV_GRAY2BGR);
-        cvRectangle(dst, cvPoint(init_rect.x, init_rect.y),
-            cvPoint(init_rect.x + init_rect.width, init_rect.y + init_rect.height),
-            CV_RGB(255, 0, 0), 3, 8, 0);
-        cvEllipseBox(dst, box, CV_RGB(0, 255, 0), 3, 8, 0);
-        cvShowImage("test", dst);
-        cvReleaseImage( &dst);
-        cvWaitKey();
-        #endif
-        this.ts.set_failed_test_info(code);
+            cvNamedWindow("test", 1);
+            cvCmpS(img, 0, img, CV_CMP_GT);
+            cvCvtColor(img, dst, CV_GRAY2BGR);
+            cvRectangle(dst, cvPoint(init_rect.x, init_rect.y),
+                cvPoint(init_rect.x + init_rect.width, init_rect.y + init_rect.height),
+                CV_RGB(255, 0, 0), 3, 8, 0);
+            cvEllipseBox(dst, box, CV_RGB(0, 255, 0), 3, 8, 0);
+            cvShowImage("test", dst);
+            cvReleaseImage( &dst);
+            cvWaitKey();
+            #endif
+            this.ts.set_failed_test_info(code);
+        }
+        return code;
     }
-    return code;
-}
-    void generate_object();
+    generate_object(): void {
+    }
 
     CvBox2D box;
     CvRect init_rect;
@@ -314,121 +316,121 @@ int validate_test_results(int test_case_idx ){
 
 class CV_MeanShiftTest extends CV_TrackBaseTest
 {
-
-protected:
-    void run_func(void){
-    cvMeanShift(img, init_rect, criteria, &comp);
-}
-int prepare_test_case(int test_case_idx ){
-    RNG & rng = this.ts.get_rng();
-    double m;
-    int code = CV_TrackBaseTest::prepare_test_case(test_case_idx);
-    int i;
-
-    if (code <= 0)
-        return code;
-
-    area0 = cvCountNonZero(img);
-
-    for (i = 0; i < 100; i++) {
-        CvMat temp;
-
-        m = (box0.size.width + box0.size.height) * 0.5;
-        init_rect.x = cvFloor(box0.center.x - m * (0.4 + alvision.cvtest.randReal(rng) * 0.2));
-        init_rect.y = cvFloor(box0.center.y - m * (0.4 + alvision.cvtest.randReal(rng) * 0.2));
-        init_rect.width = cvCeil(box0.center.x + m * (0.4 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.x);
-        init_rect.height = cvCeil(box0.center.y + m * (0.4 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.y);
-
-        if (init_rect.x < 0 || init_rect.y < 0 ||
-            init_rect.x + init_rect.width >= img_size.width ||
-            init_rect.y + init_rect.height >= img_size.height)
-            continue;
-
-        cvGetSubRect(img, &temp, init_rect);
-        area = cvCountNonZero( &temp);
-
-        if (area >= 0.5 * area0)
-            break;
+    run_func(): void {
+        cvMeanShift(img, init_rect, criteria, &comp);
     }
+    prepare_test_case(test_case_idx: alvision.int): alvision.int {
+        var rng = this.ts.get_rng();
+        double m;
+        var code = super.prepare_test_case(test_case_idx);
 
-    return i < 100 ? code : 0;
-}
-int validate_test_results(int test_case_idx ){
-    int code = alvision.cvtest.TS::OK;
-    CvPoint2D32f c;
-    double m = MAX(box0.size.width, box0.size.height), delta;
 
-    if (cvIsNaN(comp.area) || cvIsInf(comp.area) || comp.area <= 0) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG, "Invalid CvConnectedComp was returned by cvMeanShift\n");
-        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
-        goto _exit_;
+        if (code <= 0)
+            return code;
+
+        area0 = cvCountNonZero(img);
+
+        for (var i = 0; i < 100; i++) {
+            CvMat temp;
+
+            m = (box0.size.width + box0.size.height) * 0.5;
+            init_rect.x = Math.floor(box0.center.x - m * (0.4 + alvision.cvtest.randReal(rng) * 0.2));
+            init_rect.y = Math.floor(box0.center.y - m * (0.4 + alvision.cvtest.randReal(rng) * 0.2));
+            init_rect.width = cvCeil(box0.center.x + m * (0.4 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.x);
+            init_rect.height = cvCeil(box0.center.y + m * (0.4 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.y);
+
+            if (init_rect.x < 0 || init_rect.y < 0 ||
+                init_rect.x + init_rect.width >= img_size.width ||
+                init_rect.y + init_rect.height >= img_size.height)
+                continue;
+
+            cvGetSubRect(img, &temp, init_rect);
+            area = cvCountNonZero( &temp);
+
+            if (area >= 0.5 * area0)
+                break;
+        }
+
+        return i < 100 ? code : 0;
     }
+    validate_test_results(test_case_idx: alvision.int): alvision.int {
+        var code = alvision.cvtest.FailureCode.OK;
+        CvPoint2D32f c;
+        double m = MAX(box0.size.width, box0.size.height), delta;
 
-    c.x = (float)(comp.rect.x + comp.rect.width * 0.5);
-    c.y = (float)(comp.rect.y + comp.rect.height * 0.5);
+        if (cvIsNaN(comp.area) || cvIsInf(comp.area) || comp.area <= 0) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Invalid CvConnectedComp was returned by cvMeanShift\n");
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+            goto _exit_;
+        }
 
-    if (fabs(c.x - box0.center.x) > m * 0.1 ||
-        fabs(c.y - box0.center.y) > m * 0.1) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
-            c.x, c.y, box0.center.x, box0.center.y);
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
+        c.x = (float)(comp.rect.x + comp.rect.width * 0.5);
+        c.y = (float)(comp.rect.y + comp.rect.height * 0.5);
 
-    delta = m * 0.7;
+        if (fabs(c.x - box0.center.x) > m * 0.1 ||
+            fabs(c.y - box0.center.y) > m * 0.1) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
+                c.x, c.y, box0.center.x, box0.center.y);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
 
-    if (comp.rect.x < box0.center.x - delta ||
-        comp.rect.y < box0.center.y - delta ||
-        comp.rect.x + comp.rect.width > box0.center.x + delta ||
-        comp.rect.y + comp.rect.height > box0.center.y + delta) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG,
-            "Incorrect CvConnectedComp ((%d,%d,%d,%d) is not within (%.1f,%.1f,%.1f,%.1f))\n",
-            comp.rect.x, comp.rect.y, comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height,
-            box0.center.x - delta, box0.center.y - delta, box0.center.x + delta, box0.center.y + delta);
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
+        delta = m * 0.7;
 
-    if (fabs((double)(comp.area - area0)) > fabs((double)(area - area0)) + area0 * 0.05) {
-        ts ->printf(alvision.cvtest.TSConstants.LOG,
-            "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", comp.area, area0);
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
+        if (comp.rect.x < box0.center.x - delta ||
+            comp.rect.y < box0.center.y - delta ||
+            comp.rect.x + comp.rect.width > box0.center.x + delta ||
+            comp.rect.y + comp.rect.height > box0.center.y + delta) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG,
+                "Incorrect CvConnectedComp ((%d,%d,%d,%d) is not within (%.1f,%.1f,%.1f,%.1f))\n",
+                comp.rect.x, comp.rect.y, comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height,
+                box0.center.x - delta, box0.center.y - delta, box0.center.x + delta, box0.center.y + delta);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
 
-    _exit_:
+        if (fabs((double)(comp.area - area0)) > fabs((double)(area - area0)) + area0 * 0.05) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG,
+                "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", comp.area, area0);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
 
-    if (code < 0) {
-        #if 0// defined _DEBUG && defined WIN32
+        _exit_:
+
+        if (code < 0) {
+            #if 0// defined _DEBUG && defined WIN32
         IplImage* dst = cvCreateImage(img_size, 8, 3);
-        cvNamedWindow("test", 1);
-        cvCmpS(img, 0, img, CV_CMP_GT);
-        cvCvtColor(img, dst, CV_GRAY2BGR);
-        cvRectangle(dst, cvPoint(init_rect.x, init_rect.y),
-            cvPoint(init_rect.x + init_rect.width, init_rect.y + init_rect.height),
-            CV_RGB(255, 0, 0), 3, 8, 0);
-        cvRectangle(dst, cvPoint(comp.rect.x, comp.rect.y),
-            cvPoint(comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height),
-            CV_RGB(0, 255, 0), 3, 8, 0);
-        cvShowImage("test", dst);
-        cvReleaseImage( &dst);
-        cvWaitKey();
-        #endif
-        this.ts.set_failed_test_info(code);
+            cvNamedWindow("test", 1);
+            cvCmpS(img, 0, img, CV_CMP_GT);
+            cvCvtColor(img, dst, CV_GRAY2BGR);
+            cvRectangle(dst, cvPoint(init_rect.x, init_rect.y),
+                cvPoint(init_rect.x + init_rect.width, init_rect.y + init_rect.height),
+                CV_RGB(255, 0, 0), 3, 8, 0);
+            cvRectangle(dst, cvPoint(comp.rect.x, comp.rect.y),
+                cvPoint(comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height),
+                CV_RGB(0, 255, 0), 3, 8, 0);
+            cvShowImage("test", dst);
+            cvReleaseImage( &dst);
+            cvWaitKey();
+            #endif
+            this.ts.set_failed_test_info(code);
+        }
+        return code;
     }
-    return code;
-}
-    void generate_object();
+    generate_object(): void { }
 
     CvRect init_rect;
     CvConnectedComp comp;
-    int area0, area;
+
+    protected area0: alvision.int;
+    protected area: alvision.int;
 };
 
 
 
 
 alvision.cvtest.TEST('Video_CAMShift', 'accuracy', () => { var test = new CV_CamShiftTest(); test.safe_run(); test.clear();});
-alvision.cvtest.TEST('Video_MeanShift', 'accuracy', () => { var test = new CV_MeanShiftTest(); test.safe_run(); test.clear(); }
+alvision.cvtest.TEST('Video_MeanShift', 'accuracy', () => { var test = new CV_MeanShiftTest(); test.safe_run(); test.clear(); });
 
 /* End of file. */

@@ -58,10 +58,10 @@ class CV_AccumBaseTest extends alvision.cvtest.ArrayTest
 {
     constructor(){
         super();
-        test_array[INPUT].push_back(NULL);
-        test_array[INPUT_OUTPUT].push_back(NULL);
-        test_array[REF_INPUT_OUTPUT].push_back(NULL);
-        test_array[MASK].push_back(NULL);
+        test_array[INPUT].push(NULL);
+        test_array[INPUT_OUTPUT].push(NULL);
+        test_array[REF_INPUT_OUTPUT].push(NULL);
+        test_array[MASK].push(NULL);
         optional_mask = true;
         element_wise_relative_error = false;
     }
@@ -178,7 +178,7 @@ protected:
 
 CV_MultiplyAccTest::CV_MultiplyAccTest()
 {
-    test_array[INPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
 }
 
 

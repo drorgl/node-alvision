@@ -101,7 +101,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "match() on empty descriptors must not generate exception (1).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -111,7 +111,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "knnMatch() on empty descriptors must not generate exception (1).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -121,7 +121,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "radiusMatch() on empty descriptors must not generate exception (1).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -131,7 +131,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "add() on empty descriptors must not generate exception.\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -141,7 +141,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "match() on empty descriptors must not generate exception (2).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -151,7 +151,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "knnMatch() on empty descriptors must not generate exception (2).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
     }
 
     try
@@ -161,7 +161,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     catch(...)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "radiusMatch() on empty descriptors must not generate exception (2).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
     }
 
 }
@@ -173,7 +173,7 @@ void CV_DescriptorMatcherTest::generateData( Mat& query, Mat& train )
     // Generate query descriptors randomly.
     // Descriptor vector elements are integer values.
     Mat buf( queryDescCount, dim, CV_32SC1 );
-    rng.fill( buf, RNG::UNIFORM, Scalar::all(0), Scalar(3) );
+    rng.fill( buf, RNG::UNIFORM, alvision.Scalar.all(0), Scalar(3) );
     buf.convertTo( query, CV_32FC1 );
 
     // Generate train decriptors as follows:
@@ -210,7 +210,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect matches count while test match() function (1).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -225,7 +225,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "%f - too large bad matches part while test match() function (1).\n",
                             (float)badCount/(float)queryDescCount );
-                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
             }
         }
     }
@@ -238,7 +238,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
         if( (int)matches.size() != query.rows )
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect matches count while test match() function for the same query and test descriptors (1).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -251,7 +251,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
                 {
                     ts->printf( alvision.cvtest.TSConstants.LOG, "Bad match (i=%d, queryIdx=%d, trainIdx=%d, distance=%f) while test match() function for the same query and test descriptors (1).\n",
                                 i, match.queryIdx, match.trainIdx, match.distance );
-                    this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+                    this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 }
             }
         }
@@ -269,7 +269,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
         {
             masks[mi] = Mat(query.rows, train.rows/2, CV_8UC1, Scalar::all(1));
             for( int di = 0; di < queryDescCount/2; di++ )
-                masks[mi].col(di*countFactor).setTo(Scalar::all(0));
+                masks[mi].col(di*countFactor).setTo(alvision.Scalar.all(0));
         }
 
         dmatcher->match( query, matches, masks );
@@ -277,7 +277,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect matches count while test match() function (2).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -303,7 +303,7 @@ void CV_DescriptorMatcherTest::matchTest( const Mat& query, const Mat& train )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "%f - too large bad matches part while test match() function (2).\n",
                             (float)badCount/(float)queryDescCount );
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             }
         }
     }
@@ -323,7 +323,7 @@ void CV_DescriptorMatcherTest::knnMatchTest( const Mat& query, const Mat& train 
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect matches count while test knnMatch() function (1).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -348,7 +348,7 @@ void CV_DescriptorMatcherTest::knnMatchTest( const Mat& query, const Mat& train 
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "%f - too large bad matches part while test knnMatch() function (1).\n",
                             (float)badCount/(float)queryDescCount );
-                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
             }
         }
     }
@@ -366,7 +366,7 @@ void CV_DescriptorMatcherTest::knnMatchTest( const Mat& query, const Mat& train 
         {
             masks[mi] = Mat(query.rows, train.rows/2, CV_8UC1, Scalar::all(1));
             for( int di = 0; di < queryDescCount/2; di++ )
-                masks[mi].col(di*countFactor).setTo(Scalar::all(0));
+                masks[mi].col(di*countFactor).setTo(alvision.Scalar.all(0));
         }
 
         dmatcher->knnMatch( query, matches, knn, masks );
@@ -374,7 +374,7 @@ void CV_DescriptorMatcherTest::knnMatchTest( const Mat& query, const Mat& train 
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect matches count while test knnMatch() function (2).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -412,7 +412,7 @@ void CV_DescriptorMatcherTest::knnMatchTest( const Mat& query, const Mat& train 
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "%f - too large bad matches part while test knnMatch() function (2).\n",
                             (float)badCount/(float)queryDescCount );
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             }
         }
     }
@@ -430,7 +430,7 @@ void CV_DescriptorMatcherTest::radiusMatchTest( const Mat& query, const Mat& tra
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect matches count while test radiusMatch() function (1).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         }
         else
         {
@@ -450,7 +450,7 @@ void CV_DescriptorMatcherTest::radiusMatchTest( const Mat& query, const Mat& tra
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "%f - too large bad matches part while test radiusMatch() function (1).\n",
                             (float)badCount/(float)queryDescCount );
-                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
             }
         }
     }
@@ -469,16 +469,16 @@ void CV_DescriptorMatcherTest::radiusMatchTest( const Mat& query, const Mat& tra
         {
             masks[mi] = Mat(query.rows, train.rows/2, CV_8UC1, Scalar::all(1));
             for( int di = 0; di < queryDescCount/2; di++ )
-                masks[mi].col(di*countFactor).setTo(Scalar::all(0));
+                masks[mi].col(di*countFactor).setTo(alvision.Scalar.all(0));
         }
 
         dmatcher->radiusMatch( query, matches, radius, masks );
 
-        //int curRes = alvision.cvtest.TS::OK;
+        //int curRes = alvision.cvtest.FailureCode.OK;
         if( (int)matches.size() != queryDescCount )
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect matches count while test radiusMatch() function (1).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
         }
 
         int badCount = 0;
@@ -514,10 +514,10 @@ void CV_DescriptorMatcherTest::radiusMatchTest( const Mat& query, const Mat& tra
         }
         if( (float)badCount > (float)queryDescCount*badPart )
         {
-            //curRes = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            //curRes = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             ts->printf( alvision.cvtest.TSConstants.LOG, "%f - too large bad matches part while test radiusMatch() function (2).\n",
                         (float)badCount/(float)queryDescCount );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         }
     }
 }
@@ -556,7 +556,7 @@ TEST( Features2d_DMatch, read_write )
 {
     FileStorage fs(".xml", FileStorage::WRITE + FileStorage::MEMORY);
     Array<DMatch> matches;
-    matches.push_back(DMatch(1,2,3,4.5f));
+    matches.push(DMatch(1,2,3,4.5f));
     fs << "Match" << matches;
     String str = fs.releaseAndGetString();
     ASSERT_NE( strstr(str, "4.5"), (char*)0 );

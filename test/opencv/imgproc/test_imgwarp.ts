@@ -73,11 +73,11 @@ protected:
 
 CV_ImgWarpBaseTest::CV_ImgWarpBaseTest( bool warp_matrix )
 {
-    test_array[INPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
     if( warp_matrix )
-        test_array[INPUT].push_back(NULL);
-    test_array[INPUT_OUTPUT].push_back(NULL);
-    test_array[REF_INPUT_OUTPUT].push_back(NULL);
+        test_array[INPUT].push(NULL);
+    test_array[INPUT_OUTPUT].push(NULL);
+    test_array[REF_INPUT_OUTPUT].push(NULL);
     max_interpolation = 5;
     interpolation = 0;
     element_wise_relative_error = false;
@@ -186,11 +186,11 @@ int CV_ImgWarpBaseTest::prepare_test_case( int test_case_idx )
         {
         case CV_8U:
             for( j = 0; j < cols*cn; j++ )
-                ptr[j] = (uchar)cvRound(buffer[j]);
+                ptr[j] = (uchar)Math.round(buffer[j]);
             break;
         case CV_16U:
             for( j = 0; j < cols*cn; j++ )
-                ((ushort*)ptr)[j] = (ushort)cvRound(buffer[j]);
+                ((ushort*)ptr)[j] = (ushort)Math.round(buffer[j]);
             break;
         case CV_32F:
             for( j = 0; j < cols*cn; j++ )
@@ -315,14 +315,14 @@ void CV_ResizeTest::prepare_to_validation( int /*test_case_idx*/ )
         for( j = 0; j < dcols; j++ )
         {
             double f = ((j+0.5)*scale_x - 0.5);
-            i = cvRound(f);
+            i = Math.round(f);
             x_idx->data.i[j] = (i < 0 ? 0 : i >= src->cols ? src->cols - 1 : i)*elem_size;
         }
 
         for( j = 0; j < drows; j++ )
         {
             double f = ((j+0.5)*scale_y - 0.5);
-            i = cvRound(f);
+            i = Math.round(f);
             y_idx->data.i[j] = i < 0 ? 0 : i >= src->rows ? src->rows - 1 : i;
         }
     }
@@ -375,7 +375,7 @@ static void test_remap( const Mat& src, Mat& dst, const Mat& mapx, const Mat& ma
     int srows1 = MAX(srows - 2, 0);
 
     if( mask )
-        *mask = Scalar::all(0);
+        *mask = alvision.Scalar.all(0);
 
     for( y = 0; y < drows; y++ )
     {
@@ -388,8 +388,8 @@ static void test_remap( const Mat& src, Mat& dst, const Mat& mapx, const Mat& ma
         {
             float xs = mx[x];
             float ys = my[x];
-            int ixs = cvFloor(xs);
-            int iys = cvFloor(ys);
+            int ixs = Math.floor(xs);
+            int iys = Math.floor(ys);
 
             if( (unsigned)(ixs - delta - 1) >= (unsigned)scols1 ||
                 (unsigned)(iys - delta - 1) >= (unsigned)srows1 )
@@ -419,7 +419,7 @@ static void test_remap( const Mat& src, Mat& dst, const Mat& mapx, const Mat& ma
                     v00 = v00 + xs*(v01 - v00);
                     v10 = v10 + xs*(v11 - v10);
                     v00 = v00 + ys*(v10 - v00);
-                    dptr[k] = (uchar)cvRound(v00);
+                    dptr[k] = (uchar)Math.round(v00);
                 }
                 }
                 break;
@@ -436,7 +436,7 @@ static void test_remap( const Mat& src, Mat& dst, const Mat& mapx, const Mat& ma
                     v00 = v00 + xs*(v01 - v00);
                     v10 = v10 + xs*(v11 - v10);
                     v00 = v00 + ys*(v10 - v00);
-                    ((ushort*)dptr)[k] = (ushort)cvRound(v00);
+                    ((ushort*)dptr)[k] = (ushort)Math.round(v00);
                 }
                 }
                 break;
@@ -570,8 +570,8 @@ void CV_WarpAffineTest::prepare_to_validation( int /*test_case_idx*/ )
 
     Mat mask( dst.size(), CV_8U );
     test_remap( src, dst, mapx, mapy, &mask );
-    dst.setTo(Scalar::all(0), mask);
-    dst0.setTo(Scalar::all(0), mask);
+    dst.setTo(alvision.Scalar.all(0), mask);
+    dst0.setTo(alvision.Scalar.all(0), mask);
 }
 
 
@@ -696,8 +696,8 @@ void CV_WarpPerspectiveTest::prepare_to_validation( int /*test_case_idx*/ )
 
     Mat mask( dst.size(), CV_8U );
     test_remap( src, dst, mapx, mapy, &mask );
-    dst.setTo(Scalar::all(0), mask);
-    dst0.setTo(Scalar::all(0), mask);
+    dst.setTo(alvision.Scalar.all(0), mask);
+    dst0.setTo(alvision.Scalar.all(0), mask);
 }
 
 
@@ -721,8 +721,8 @@ protected:
 CV_RemapTest::CV_RemapTest() : CV_ImgWarpBaseTest( false )
 {
     //spatial_scale_zoom = spatial_scale_decimate;
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
 
     spatial_scale_decimate = spatial_scale_zoom;
 }
@@ -794,8 +794,8 @@ void CV_RemapTest::prepare_to_validation( int /*test_case_idx*/ )
     Mat mask( dst.size(), CV_8U );
     test_remap(test_mat[INPUT][0], dst, test_mat[INPUT][1],
                test_mat[INPUT][2], &mask, interpolation );
-    dst.setTo(Scalar::all(0), mask);
-    dst0.setTo(Scalar::all(0), mask);
+    dst.setTo(alvision.Scalar.all(0), mask);
+    dst0.setTo(alvision.Scalar.all(0), mask);
 }
 
 
@@ -830,9 +830,9 @@ private:
 CV_UndistortTest::CV_UndistortTest() : CV_ImgWarpBaseTest( false )
 {
     //spatial_scale_zoom = spatial_scale_decimate;
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
 
     spatial_scale_decimate = spatial_scale_zoom;
 }
@@ -968,8 +968,8 @@ void CV_UndistortTest::prepare_to_validation( int /*test_case_idx*/ )
     alvision.cvtest.initUndistortMap( test_mat[INPUT][1], test_mat[INPUT][2], dst.size(), mapx, mapy );
     Mat mask( dst.size(), CV_8U );
     test_remap( src, dst, mapx, mapy, &mask, interpolation );
-    dst.setTo(Scalar::all(0), mask);
-    dst0.setTo(Scalar::all(0), mask);
+    dst.setTo(alvision.Scalar.all(0), mask);
+    dst0.setTo(alvision.Scalar.all(0), mask);
 }
 
 
@@ -993,12 +993,12 @@ private:
 
 CV_UndistortMapTest::CV_UndistortMapTest()
 {
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
 
     element_wise_relative_error = false;
 }
@@ -1080,8 +1080,8 @@ int CV_UndistortMapTest::prepare_test_case( int test_case_idx )
 
     if (dualChannel)
     {
-        test_mat[REF_OUTPUT][1] = Scalar::all(0);
-        test_mat[OUTPUT][1] = Scalar::all(0);
+        test_mat[REF_OUTPUT][1] = alvision.Scalar.all(0);
+        test_mat[OUTPUT][1] = alvision.Scalar.all(0);
     }
 
     return code;
@@ -1122,7 +1122,7 @@ test_getQuadrangeSubPix( const Mat& src, Mat& dst, double* a )
             float* d = dst.ptr<float>(y) + x*cn;
             float sx = (float)(a[0]*x + a[1]*y + a[2]);
             float sy = (float)(a[3]*x + a[4]*y + a[5]);
-            int ix = cvFloor(sx), iy = cvFloor(sy);
+            int ix = Math.floor(sx), iy = Math.floor(sy);
             int dx = cn, dy = sstep;
             const float* s;
             sx -= ix; sy -= iy;
@@ -1185,8 +1185,8 @@ void CV_GetRectSubPixTest::get_test_array_types_and_sizes( int test_case_idx, Ar
     types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] = CV_MAKETYPE(dst_depth,cn);
 
     src_size = sizes[INPUT][0];
-    dst_size.width = cvRound(sqrt(alvision.cvtest.randReal(rng)*src_size.width) + 1);
-    dst_size.height = cvRound(sqrt(alvision.cvtest.randReal(rng)*src_size.height) + 1);
+    dst_size.width = Math.round(sqrt(alvision.cvtest.randReal(rng)*src_size.width) + 1);
+    dst_size.height = Math.round(sqrt(alvision.cvtest.randReal(rng)*src_size.height) + 1);
     dst_size.width = MIN(dst_size.width,src_size.width);
     dst_size.height = MIN(dst_size.width,src_size.height);
     sizes[INPUT_OUTPUT][0] = sizes[REF_INPUT_OUTPUT][0] = dst_size;
@@ -1296,8 +1296,8 @@ void CV_GetQuadSubPixTest::get_test_array_types_and_sizes( int test_case_idx, Ar
     sizes[INPUT][0] = sz;
     msz = MIN( sz.width, sz.height );
 
-    dsz.width = cvRound(sqrt(alvision.cvtest.randReal(rng)*msz) + 1);
-    dsz.height = cvRound(sqrt(alvision.cvtest.randReal(rng)*msz) + 1);
+    dsz.width = Math.round(sqrt(alvision.cvtest.randReal(rng)*msz) + 1);
+    dsz.height = Math.round(sqrt(alvision.cvtest.randReal(rng)*msz) + 1);
     dsz.width = MIN(dsz.width,msz);
     dsz.height = MIN(dsz.width,msz);
     dsz.width = MAX(dsz.width,min_size);
@@ -1401,8 +1401,8 @@ TEST(Imgproc_fitLine_vector_3d, regression)
     Point3f p21(4,4,4);
     Point3f p22(8,8,8);
 
-    points_vector.push_back(p21);
-    points_vector.push_back(p22);
+    points_vector.push(p21);
+    points_vector.push(p22);
 
     std::Array<float> line;
 
@@ -1420,9 +1420,9 @@ TEST(Imgproc_fitLine_vector_2d, regression)
     Point2f p22(8,8);
     Point2f p23(16,16);
 
-    points_vector.push_back(p21);
-    points_vector.push_back(p22);
-    points_vector.push_back(p23);
+    points_vector.push(p21);
+    points_vector.push(p22);
+    points_vector.push(p23);
 
     std::Array<float> line;
 

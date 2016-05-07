@@ -55,17 +55,16 @@ import fs = require('fs');
 
 class CV_KalmanTest extends alvision. cvtest.BaseTest
 {
-    run(int): void {
-        int code = alvision.cvtest.TS::OK;
-        const int Dim = 7;
-        const int Steps = 100;
-        const double max_init = 1;
-        const double max_noise = 0.1;
+    run(iii: int): void {
+        var code = alvision.cvtest.FailureCode.OK;
+        const  Dim = 7;
+        const  Steps = 100;
+        const  max_init = 1;
+        const  max_noise = 0.1;
 
-        const double EPSILON = 1.000;
-        RNG & rng = this.ts.get_rng();
+        const EPSILON = 1.000;
+        var rng = this.ts.get_rng();
         CvKalman * Kalm;
-        int i, j;
 
         CvMat * Sample = cvCreateMat(Dim, 1, CV_32F);
         CvMat * Temp = cvCreateMat(Dim, 1, CV_32F);
@@ -90,11 +89,11 @@ class CV_KalmanTest extends alvision. cvtest.BaseTest
         Mat _Sample = cvarrToMat(Sample);
         alvision.cvtest.randUni(rng, _Sample, cvScalarAll(-max_init), cvScalarAll(max_init));
         cvKalmanCorrect(Kalm, Sample);
-        for (i = 0; i < Steps; i++) {
+        for (var i = 0; i < Steps; i++) {
             cvKalmanPredict(Kalm);
-            for (j = 0; j < Dim; j++) {
+            for (var j = 0; j < Dim; j++) {
                 float t = 0;
-                for (int k= 0; k < Dim; k++)
+                for (var k= 0; k < Dim; k++)
                 {
                     t += Dyn.data.fl[j * Dim + k] * Sample ->data.fl[k];
                 }

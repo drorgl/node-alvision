@@ -168,7 +168,7 @@ CUDA_TEST_P(ORB, Accuracy)
     ASSERT_FALSE(image.empty());
 
     alvision.Mat mask(image.size(), CV_8UC1, alvision.Scalar::all(1));
-    mask(alvision.Range(0, image.rows / 2), alvision.Range(0, image.cols / 2)).setTo(alvision.Scalar::all(0));
+    mask(alvision.Range(0, image.rows / 2), alvision.Range(0, image.cols / 2)).setTo(alvision.alvision.Scalar.all(0));
 
     alvision.Ptr<alvision.cuda::ORB> orb =
             alvision.cuda::ORB::create(nFeatures, scaleFactor, nLevels, edgeThreshold, firstLevel,
@@ -262,7 +262,7 @@ PARAM_TEST_CASE(BruteForceMatcher, alvision.cuda::DeviceInfo, NormCode, Descript
         // Generate query descriptors randomly.
         // Descriptor vector elements are integer values.
         queryBuf.create(queryDescCount, dim, CV_32SC1);
-        rng.fill(queryBuf, alvision.RNG::UNIFORM, alvision.Scalar::all(0), alvision.Scalar::all(3));
+        rng.fill(queryBuf, alvision.RNG::UNIFORM, alvision.alvision.Scalar.all(0), alvision.Scalar::all(3));
         queryBuf.convertTo(queryBuf, CV_32FC1);
 
         // Generate train decriptors as follows:
@@ -336,7 +336,7 @@ CUDA_TEST_P(BruteForceMatcher, Match_Collection)
     {
         masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows/2, CV_8UC1, alvision.Scalar::all(1));
         for (int di = 0; di < queryDescCount/2; di++)
-            masks[mi].col(di * countFactor).setTo(alvision.Scalar::all(0));
+            masks[mi].col(di * countFactor).setTo(alvision.alvision.Scalar.all(0));
     }
 
     std::Array<alvision.DMatch> matches;
@@ -473,7 +473,7 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Collection)
     {
         masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, alvision.Scalar::all(1));
         for (int di = 0; di < queryDescCount / 2; di++)
-            masks[mi].col(di * countFactor).setTo(alvision.Scalar::all(0));
+            masks[mi].col(di * countFactor).setTo(alvision.alvision.Scalar.all(0));
     }
 
     std::Array< std::Array<alvision.DMatch> > matches;
@@ -536,7 +536,7 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Collection)
     {
         masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, alvision.Scalar::all(1));
         for (int di = 0; di < queryDescCount / 2; di++)
-            masks[mi].col(di * countFactor).setTo(alvision.Scalar::all(0));
+            masks[mi].col(di * countFactor).setTo(alvision.alvision.Scalar.all(0));
     }
 
     std::Array< std::Array<alvision.DMatch> > matches;
@@ -650,7 +650,7 @@ CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Collection)
     {
         masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, alvision.Scalar::all(1));
         for (int di = 0; di < queryDescCount / 2; di++)
-            masks[mi].col(di * countFactor).setTo(alvision.Scalar::all(0));
+            masks[mi].col(di * countFactor).setTo(alvision.alvision.Scalar.all(0));
     }
 
     if (!supportFeature(devInfo, alvision.cuda::GLOBAL_ATOMICS))

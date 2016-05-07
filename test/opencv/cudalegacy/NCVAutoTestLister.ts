@@ -70,7 +70,7 @@ public:
 
     void add(INCVTest *test)
     {
-        this->tests.push_back(test);
+        this->tests.push(test);
     }
 
     bool invoke()

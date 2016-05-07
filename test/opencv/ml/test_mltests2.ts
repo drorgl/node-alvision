@@ -120,7 +120,7 @@ Mat ann_get_new_responses( Ptr<TrainData> _data, map<int, int>& cls_map )
     for( si = 0; si < n; si++ )
     {
         int sidx = train_sidx_ptr ? train_sidx_ptr[si] : si;
-        int r = cvRound(responses.at<float>(sidx));
+        int r = Math.round(responses.at<float>(sidx));
         CV_DbgAssert( fabs(responses.at<float>(sidx) - r) < FLT_EPSILON );
         map<int,int>::iterator it = cls_map.find(r);
         if( it == cls_map.end() )
@@ -130,7 +130,7 @@ Mat ann_get_new_responses( Ptr<TrainData> _data, map<int, int>& cls_map )
     for( si = 0; si < n; si++ )
     {
         int sidx = train_sidx_ptr ? train_sidx_ptr[si] : si;
-        int r = cvRound(responses.at<float>(sidx));
+        int r = Math.round(responses.at<float>(sidx));
         int cidx = cls_map[r];
         new_responses.at<float>(sidx, cidx) = 1.f;
     }
@@ -172,7 +172,7 @@ float ann_calc_error( Ptr<StatModel> ann, Ptr<TrainData> _data, map<int, int>& c
         ann->predict( sample, output );
         Point best_cls;
         minMaxLoc(output, 0, 0, 0, &best_cls, 0);
-        int r = cvRound(responses.at<float>(si));
+        int r = Math.round(responses.at<float>(si));
         CV_DbgAssert( fabs(responses.at<float>(si) - r) < FLT_EPSILON );
         r = cls_map[r];
         int d = best_cls.x == r ? 0 : 1;
@@ -250,7 +250,7 @@ int CV_MLBaseTest::read_params( CvFileStorage* __fs )
             }
         }
     }
-    return alvision.cvtest.TS::OK;;
+    return alvision.cvtest.FailureCode.OK;;
 }
 
 void CV_MLBaseTest::run( int )
@@ -260,13 +260,13 @@ void CV_MLBaseTest::run( int )
     validationFS.open( filename, FileStorage::READ );
     read_params( *validationFS );
 
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
     for (int i = 0; i < test_case_count; i++)
     {
         int temp_code = run_test_case( i );
-        if (temp_code == alvision.cvtest.TS::OK)
+        if (temp_code == alvision.cvtest.FailureCode.OK)
             temp_code = validate_test_results( i );
-        if (temp_code != alvision.cvtest.TS::OK)
+        if (temp_code != alvision.cvtest.FailureCode.OK)
             code = temp_code;
     }
     if ( test_case_count <= 0)
@@ -311,7 +311,7 @@ int CV_MLBaseTest::prepare_test_case( int test_case_idx )
     }
 
     data->setTrainTestSplit(trainSampleCount);
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 string& CV_MLBaseTest::get_validation_filename()
@@ -451,9 +451,9 @@ int CV_MLBaseTest::train( int testCaseIdx )
     if( !is_trained )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "in test case %d model training was failed", testCaseIdx );
-        return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+        return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
     }
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 float CV_MLBaseTest::get_test_error( int /*testCaseIdx*/, Array<float> *resp )

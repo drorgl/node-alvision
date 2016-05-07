@@ -335,8 +335,8 @@ namespace
         dftSize.height = alvision.getOptimalDFTSize(A.rows + B.rows - 1);
 
         // allocate temporary buffers and initialize them with 0s
-        alvision.Mat tempA(dftSize, A.type(), alvision.Scalar::all(0));
-        alvision.Mat tempB(dftSize, B.type(), alvision.Scalar::all(0));
+        alvision.Mat tempA(dftSize, A.type(), alvision.alvision.Scalar.all(0));
+        alvision.Mat tempB(dftSize, B.type(), alvision.alvision.Scalar.all(0));
 
         // copy A and B to the top-left corners of tempA and tempB, respectively
         alvision.Mat roiA(tempA, alvision.Rect(0, 0, A.cols, A.rows));

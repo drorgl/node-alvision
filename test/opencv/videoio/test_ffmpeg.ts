@@ -280,7 +280,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    const std::Array<VideoWriter*>* writers;
 //};
 //
-//const Scalar WriteVideo_Invoker::ObjectColor(Scalar::all(0));
+//const Scalar WriteVideo_Invoker::ObjectColor(alvision.Scalar.all(0));
 //const Point WriteVideo_Invoker::Center(CreateVideoWriterInvoker::FrameSize.height / 2,
 //    CreateVideoWriterInvoker::FrameSize.width / 2);
 //
@@ -346,7 +346,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //                    ts->printf(SUM, "Video #: %d\n", range.start);
 //                    ts->printf(SUM, "Frame #: %d\n", i);
 //    #undef SUM
-//                    this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+//                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
 //                    ts->set_gtest_status();
 //
 //                    Mat diff;

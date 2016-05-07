@@ -203,8 +203,8 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
         for (i = 0; i < total; i++) {
             int d_radius = alvision.cvtest.randInt(rng) % 10 - 5;
             int d_angle = 360 / total;//alvision.cvtest.randInt( rng ) % 10 - 5;
-            pt.x = cvRound(center.x + radius * cos(angle * deg_to_rad));
-            pt.y = cvRound(center.x - radius * sin(angle * deg_to_rad));
+            pt.x = Math.round(center.x + radius * cos(angle * deg_to_rad));
+            pt.y = Math.round(center.x - radius * sin(angle * deg_to_rad));
             radius += d_radius;
             angle += d_angle;
             cvSeqPush(seq, &pt);
@@ -223,7 +223,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
 
     run(start_from: alvision.int /*start_from*/): void
 {
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
     CvMemStorage * storage = 0;
     ////////////// Variables ////////////////
     int IntervalsCount = 10;
@@ -266,7 +266,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
             if (DstSeq == NULL) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG,
                     "cvApproxPoly returned NULL for contour #%d, espilon = %g\n", i, Eps);
-                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
                 goto _exit_;
             } // if( DstSeq == NULL )
 
@@ -274,7 +274,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
             if (code != 0) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG,
                     "Incorrect result for the contour #%d approximated with epsilon=%g\n", i, Eps);
-                code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+                code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
                 goto _exit_;
             }
 

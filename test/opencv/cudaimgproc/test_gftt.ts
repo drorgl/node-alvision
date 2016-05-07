@@ -123,7 +123,7 @@ alvision.cvtest.CUDA_TEST_P('GoodFeaturesToTrack', 'EmptyCorners', () => {
     int maxCorners = 1000;
     double qualityLevel = 0.01;
 
-    alvision.cuda::GpuMat src(100, 100, CV_8UC1, alvision.Scalar::all(0));
+    alvision.cuda::GpuMat src(100, 100, CV_8UC1, alvision.alvision.Scalar.all(0));
     alvision.cuda::GpuMat corners(1, maxCorners, CV_32FC2);
 
     alvision.Ptr < alvision.cuda::CornersDetector > detector = alvision.cuda::createGoodFeaturesToTrackDetector(src.type(), maxCorners, qualityLevel, minDistance);

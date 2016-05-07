@@ -4501,7 +4501,7 @@ export var boundingRect: IboundingRect = alvision_module.boundingRect;
      */
 
 interface IcontourArea{
-    (contour : _st.InputArray, oriented : boolean /* = false*/): _st.double;
+    (contour : _st.InputArray, oriented? : boolean /* = false*/): _st.double;
 }
 
 export var contourArea: IcontourArea = alvision_module.contourArea;

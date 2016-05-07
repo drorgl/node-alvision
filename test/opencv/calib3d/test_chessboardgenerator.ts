@@ -53,67 +53,75 @@ import fs = require('fs');
 //
 //#include "opencv2/calib3d.hpp"
 
-namespace cv
-{
+//namespace cv
+//{
 
-class ChessBoardGenerator
-{
-public:
-    double sensorWidth;
-    double sensorHeight;
-    size_t squareEdgePointsNum;
-    double min_cos;
-    mutable double cov;
-    Size patternSize;
-    int rendererResolutionMultiplier;
+class ChessBoardGenerator {
+    public sensorWidth: alvision.double;
+    public sensorHeight: alvision.double;
+    public squareEdgePointsNum: alvision.size_t;
+    public min_cos: alvision.double;
+    public cov: alvision.double;
+    public patternSize: alvision.Size;
+    public rendererResolutionMultiplier: alvision.int;
 
-    ChessBoardGenerator(const Size& patternSize = Size(8, 6));
-    Mat operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, std::Array<Point2f>& corners) const;
-    Mat operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, std::Array<Point2f>& corners) const;
-    Mat operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, const Point3f& pos, std::Array<Point2f>& corners) const;
-    Size cornersSize() const;
+    constructor(patternSize: alvision.Size = new alvision.Size(8, 6)) {
+        this.sensorWidth = (32);
+        this.sensorHeight = (24);
+        this.squareEdgePointsNum = (200);
+        this.min_cos = (Math.sqrt(2.) * 0.5f);
+        this.cov = (0.5);
+            patternSize(_patternSize), rendererResolutionMultiplier(4), tvec(Mat::zeros(1, 3, CV_32F))
+        {
+            Rodrigues(Mat::eye(3, 3, CV_32F), rvec);
+    }
+    run(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, std::Array<Point2f>& corners): alvision.Mat { }
+    run(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, std::Array<Point2f>& corners): alvision.Mat { }
+    run(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, const Point3f& pos, std::Array<Point2f>& corners): alvision.Mat { }
+    public cornersSize(): alvision.Size { }
 
-    mutable std::Array<Point3f> corners3d;
-private:
-    void generateEdge(const Point3f& p1, const Point3f& p2, std::Array<Point3f>& out) const;
-    Mat generateChessBoard(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
+    public corners3d: Array<alvision.Point3f>;
+
+    private generateEdge(const Point3f& p1, const Point3f& p2, std::Array<Point3f>& out): void {
+    }
+
+    generateChessBoard(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
         const Point3f& zero, const Point3f& pb1, const Point3f& pb2,
-        float sqWidth, float sqHeight, const std::Array<Point3f>& whole, std::Array<Point2f>& corners) const;
-    void generateBasis(Point3f& pb1, Point3f& pb2) const;
+        float sqWidth, float sqHeight, const std::Array<Point3f>& whole, std::Array<Point2f>& corners): alvision.Mat {
+    }
+    generateBasis(Point3f& pb1, Point3f& pb2): void {
+    }
 
-    Mat rvec, tvec;
-};
-
+    private rvec: alvision.Mat;
+    private tvec: alvision.Mat;
 }
 
-
-#endif
-
+//}
 
 
+//#endif
+//
+//
+//
+//
+//#include "test_precomp.hpp"
+//#include "test_chessboardgenerator.hpp"
+//
+//#include < vector >
+//#include < iterator >
+//#include < algorithm >
+//
+//    using namespace cv;
+//using namespace std;
 
-#include "test_precomp.hpp"
-#include "test_chessboardgenerator.hpp"
-
-#include < vector >
-#include < iterator >
-#include < algorithm >
-
-    using namespace cv;
-using namespace std;
-
-ChessBoardGenerator::ChessBoardGenerator(const Size& _patternSize) : sensorWidth(32), sensorHeight(24),
-    squareEdgePointsNum(200), min_cos(std::sqrt(2.f)*0.5f), cov(0.5),
-        patternSize(_patternSize), rendererResolutionMultiplier(4), tvec(Mat::zeros(1, 3, CV_32F))
-{
-    Rodrigues(Mat::eye(3, 3, CV_32F), rvec);
+ChessBoardGenerator::ChessBoardGenerator(const Size& _patternSize) 
 }
 
 void alvision.ChessBoardGenerator::generateEdge(const Point3f& p1, const Point3f& p2, Array<Point3f>& out) const
     {
         Point3f step = (p2 - p1) * (1.f/squareEdgePointsNum);
     for(size_t n = 0; n < squareEdgePointsNum; ++n)
-out.push_back(p1 + step * (float)n);
+out.push(p1 + step * (float)n);
 }
 
 Size alvision.ChessBoardGenerator::cornersSize() const
@@ -189,7 +197,7 @@ if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
 corners3d.clear();
 for (int j = 0; j < patternSize.height - 1; ++j)
 for (int i = 0; i < patternSize.width - 1; ++i)
-corners3d.push_back(zero + (i + 1) * sqWidth * pb1 + (j + 1) * sqHeight * pb2);
+corners3d.push(zero + (i + 1) * sqWidth * pb1 + (j + 1) * sqHeight * pb2);
 corners.clear();
 projectPoints(Mat(corners3d), rvec, tvec, camMat, distCoeffs, corners);
 
@@ -211,13 +219,13 @@ var result = new alvision.Mat();
 if (rendererResolutionMultiplier == 1) {
     result = bg.clone();
     drawContours(result, whole_contour, -1, Scalar::all(255), FILLED, LINE_AA);
-    drawContours(result, squares_black, -1, Scalar::all(0), FILLED, LINE_AA);
+    drawContours(result, squares_black, -1, alvision.Scalar.all(0), FILLED, LINE_AA);
 }
 else {
     Mat tmp;
     resize(bg, tmp, bg.size() * rendererResolutionMultiplier);
     drawContours(tmp, whole_contour, -1, Scalar::all(255), FILLED, LINE_AA);
-    drawContours(tmp, squares_black, -1, Scalar::all(0), FILLED, LINE_AA);
+    drawContours(tmp, squares_black, -1, alvision.Scalar.all(0), FILLED, LINE_AA);
     resize(tmp, result, bg.size(), 0, 0, INTER_AREA);
 }
 

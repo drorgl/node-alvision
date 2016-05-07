@@ -688,7 +688,7 @@ bool CV_UMatTest::TestUMat()
     catch (const test_excep& e)
     {
         ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return false;
     }
     return true;
@@ -703,7 +703,7 @@ void CV_UMatTest::run( int /* start_from */)
     if (!TestUMat())
         return;
 
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 }
 
 TEST(Core_UMat, base) { CV_UMatTest test; test.safe_run(); }
@@ -763,7 +763,7 @@ TEST(UMat, CopyToIfDeviceCopyIsObsolete)
 {
     UMat um(7, 2, CV_8UC1);
     Mat m(um.size(), um.type());
-    m.setTo(Scalar::all(0));
+    m.setTo(alvision.Scalar.all(0));
 
     {
         // make obsolete device copy of UMat
@@ -876,7 +876,7 @@ TEST(UMat, DISABLED_bug_with_unmap)
             Mat m = Mat(1000, 1000, CV_8UC1);
             UMat u = m.getUMat(ACCESS_READ);
             UMat dst;
-            add(u, Scalar::all(0), dst); // start async operation
+            add(u, alvision.Scalar.all(0), dst); // start async operation
             u.release();
             m.release();
         }

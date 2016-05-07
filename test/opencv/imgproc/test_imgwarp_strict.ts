@@ -47,16 +47,16 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
+//#include "test_precomp.hpp"
+//
+//#include <cmath>
+//#include <vector>
+//#include <iostream>
+//
+//using namespace cv;
 
-#include <cmath>
-#include <vector>
-#include <iostream>
-
-using namespace cv;
-
-namespace
-{
+//namespace
+//{
     void __wrap_printf_func(const char* fmt, ...)
     {
         va_list args;
@@ -67,23 +67,29 @@ namespace
         va_end(args);
     }
 
-    #define PRINT_TO_LOG __wrap_printf_func
-}
-
-#define SHOW_IMAGE
-#undef SHOW_IMAGE
+    //#define PRINT_TO_LOG __wrap_printf_func
+//}
+//
+//#define SHOW_IMAGE
+//#undef SHOW_IMAGE
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ImageWarpBaseTest
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class CV_ImageWarpBaseTest :
-    public alvision.cvtest.BaseTest
+class CV_ImageWarpBaseTest extends alvision.cvtest.BaseTest
 {
-public:
-    enum { cell_size = 10 };
+    const cell_size = 10 ;
 
-    CV_ImageWarpBaseTest();
+    constructor() {
+        super();
+        this.interpolation = (-1);
+        this.src = new alvision.Mat();
+        this.dst = new alvision.Mat();
+        this.reference_dst = new alvision.Mat();
+        this.test_case_count = 40;
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
     virtual ~CV_ImageWarpBaseTest();
 
     virtual void run(int);
@@ -106,11 +112,7 @@ protected:
 };
 
 CV_ImageWarpBaseTest::CV_ImageWarpBaseTest() :
-    BaseTest(), interpolation(-1),
-    src(), dst(), reference_dst()
-{
-    test_case_count = 40;
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+    
 }
 
 CV_ImageWarpBaseTest::~CV_ImageWarpBaseTest()
@@ -181,9 +183,9 @@ void CV_ImageWarpBaseTest::generate_test_data()
     {
         src = Scalar::all(255);
         for (y = cell_size; y < src.rows; y += cell_size)
-            line(src, Point2i(0, y), Point2i(src.cols, y), Scalar::all(0), 1);
+            line(src, Point2i(0, y), Point2i(src.cols, y), alvision.Scalar.all(0), 1);
         for (x = cell_size; x < src.cols; x += cell_size)
-            line(src, Point2i(x, 0), Point2i(x, src.rows), Scalar::all(0), 1);
+            line(src, Point2i(x, 0), Point2i(x, src.rows), alvision.Scalar.all(0), 1);
     }
 
     // generating an interpolation type
@@ -279,12 +281,12 @@ void CV_ImageWarpBaseTest::validate_results() const
                 double scale_x = static_cast<double>(ssize.width) / dsize.width;
                 double scale_y = static_cast<double>(ssize.height) / dsize.height;
                 bool area_fast = interpolation == INTER_AREA &&
-                    fabs(scale_x - cvRound(scale_x)) < FLT_EPSILON &&
-                    fabs(scale_y - cvRound(scale_y)) < FLT_EPSILON;
+                    fabs(scale_x - Math.round(scale_x)) < FLT_EPSILON &&
+                    fabs(scale_y - Math.round(scale_y)) < FLT_EPSILON;
                 if (area_fast)
                 {
-                    scale_y = cvRound(scale_y);
-                    scale_x = cvRound(scale_x);
+                    scale_y = Math.round(scale_y);
+                    scale_x = Math.round(scale_x);
                 }
 
                 PRINT_TO_LOG("Interpolation: %s\n", interpolation_to_string(area_fast ? INTER_LANCZOS4 + 1 : interpolation));
@@ -317,7 +319,7 @@ void CV_ImageWarpBaseTest::validate_results() const
                 std::cout << "opencv result:\n" << dst(Range(rmin, rmax), Range(cmin, cmax)) << std::endl;
                 std::cout << "reference result:\n" << reference_dst(Range(rmin, rmax), Range(cmin, cmax)) << std::endl;
 
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 return;
             }
     }
@@ -432,12 +434,12 @@ void CV_Resize_Test::generate_test_data()
     scale_y = src.rows / static_cast<double>(dst.rows);
 
     area_fast = interpolation == INTER_AREA &&
-        fabs(scale_x - cvRound(scale_x)) < FLT_EPSILON &&
-        fabs(scale_y - cvRound(scale_y)) < FLT_EPSILON;
+        fabs(scale_x - Math.round(scale_x)) < FLT_EPSILON &&
+        fabs(scale_y - Math.round(scale_y)) < FLT_EPSILON;
     if (area_fast)
     {
-        scale_x = cvRound(scale_x);
-        scale_y = cvRound(scale_y);
+        scale_x = Math.round(scale_x);
+        scale_y = Math.round(scale_y);
     }
 }
 
@@ -475,7 +477,7 @@ void CV_Resize_Test::resize_area()
     for (int dy = 0; dy < dsize.height; ++dy)
     {
         float* yD = reference_dst.ptr<float>(dy);
-        int isy0 = cvFloor(fsy0), isy1 = std::min(cvFloor(fsy1), ssize.height - 1);
+        int isy0 = Math.floor(fsy0), isy1 = std::min(Math.floor(fsy1), ssize.height - 1);
         CV_Assert(isy1 <= ssize.height && isy0 < ssize.height);
 
         double fsx0 = 0, fsx1 = scale_x;
@@ -483,7 +485,7 @@ void CV_Resize_Test::resize_area()
         for (int dx = 0; dx < dsize.width; ++dx)
         {
             float* xyD = yD + cn * dx;
-            int isx0 = cvFloor(fsx0), isx1 = std::min(ssize.width - 1, cvFloor(fsx1));
+            int isx0 = Math.floor(fsx0), isx1 = std::min(ssize.width - 1, Math.floor(fsx1));
 
             CV_Assert(isx1 <= ssize.width);
             CV_Assert(isx0 < ssize.width);
@@ -585,7 +587,7 @@ void CV_Resize_Test::generate_buffer(double scale, dim& _dim)
     for (size_t dx = 0; dx < length; ++dx)
     {
         double fsx = scale * (dx + 0.5) - 0.5;
-        int isx = cvFloor(fsx);
+        int isx = Math.floor(fsx);
         _dim[dx] = std::make_pair(isx, fsx - isx);
     }
 }
@@ -599,9 +601,9 @@ void CV_Resize_Test::resize_generic()
     if (interpolation == INTER_NEAREST)
     {
         for (int dx = 0; dx < dsize.width; ++dx)
-            dims[0][dx].first = std::min(cvFloor(dx * scale_x), ssize.width - 1);
+            dims[0][dx].first = std::min(Math.floor(dx * scale_x), ssize.width - 1);
         for (int dy = 0; dy < dsize.height; ++dy)
-            dims[1][dy].first = std::min(cvFloor(dy * scale_y), ssize.height - 1);
+            dims[1][dy].first = std::min(Math.floor(dy * scale_y), ssize.height - 1);
     }
     else
     {
@@ -807,12 +809,12 @@ void CV_Remap_Test::prepare_test_data_for_reference_func()
     Mat kernel = getStructuringElement(CV_MOP_ERODE, Size(ksize, ksize));
     Mat mask(src.size(), CV_8UC1, Scalar::all(255)), dst_mask;
     alvision.erode(src, erode_src, kernel);
-    alvision.erode(mask, dst_mask, kernel, Point(-1, -1), 1, BORDER_CONSTANT, Scalar::all(0));
+    alvision.erode(mask, dst_mask, kernel, Point(-1, -1), 1, BORDER_CONSTANT, alvision.Scalar.all(0));
     bitwise_not(dst_mask, mask);
     src.copyTo(erode_src, mask);
     dst_mask.release();
 
-    mask = Scalar::all(0);
+    mask = alvision.Scalar.all(0);
     kernel = getStructuringElement(CV_MOP_DILATE, kernel.size());
     alvision.dilate(src, dilate_src, kernel);
     alvision.dilate(mask, dst_mask, kernel, Point(-1, -1), 1, BORDER_CONSTANT, Scalar::all(255));
@@ -911,7 +913,7 @@ void CV_Remap_Test::remap_generic(const Mat& _src, Mat& _dst)
         {
             float* xyD = yD + dx * cn;
             float sx = yMx[dx * 2], sy = yMx[dx * 2 + 1];
-            int isx = cvFloor(sx), isy = cvFloor(sy);
+            int isx = Math.floor(sx), isy = Math.floor(sy);
 
             inter_func((yMy[dx] & (INTER_TAB_SIZE - 1)) / static_cast<float>(INTER_TAB_SIZE), w);
             inter_func(((yMy[dx] >> INTER_BITS) & (INTER_TAB_SIZE - 1)) / static_cast<float>(INTER_TAB_SIZE), w + ksize);
@@ -973,7 +975,7 @@ void CV_Remap_Test::remap_generic(const Mat& _src, Mat& _dst)
 void CV_Remap_Test::validate_results() const
 {
     CV_ImageWarpBaseTest::validate_results();
-    if (alvision.cvtest.TS::ptr()->get_err_code() == alvision.cvtest.TS::FAIL_BAD_ACCURACY)
+    if (alvision.cvtest.TS::ptr()->get_err_code() == alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY)
     {
         PRINT_TO_LOG("BorderType: %s\n", borderType_to_string());
         PRINT_TO_LOG("BorderValue: (%f, %f, %f, %f)\n",

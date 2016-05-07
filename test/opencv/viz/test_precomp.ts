@@ -43,38 +43,38 @@
 //
 //M*/
 
-#ifdef __GNUC__
-#  pragma GCC diagnostic ignored "-Wmissing-declarations"
-#  if defined __clang__ || defined __APPLE__
-#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
-#    pragma GCC diagnostic ignored "-Wextra"
-#  endif
-#endif
+//#ifdef __GNUC__
+//#  pragma GCC diagnostic ignored "-Wmissing-declarations"
+//#  if defined __clang__ || defined __APPLE__
+//#    pragma GCC diagnostic ignored "-Wmissing-prototypes"
+//#    pragma GCC diagnostic ignored "-Wextra"
+//#  endif
+//#endif
+//
+//#ifndef __OPENCV_TEST_PRECOMP_HPP__
+//#define __OPENCV_TEST_PRECOMP_HPP__
+//
+//#include <opencv2/core/version.hpp>
+//#include <opencv2/viz/vizcore.hpp>
+//
+//namespace cv
+//{
+//    Mat imread(const String& filename, int flags = 1);
+//}
+//
+//#if CV_MAJOR_VERSION < 3
+//    #include "opencv2/ts/ts.hpp"
+//#else
+//    #include "opencv2/ts.hpp"
+//#endif
 
-#ifndef __OPENCV_TEST_PRECOMP_HPP__
-#define __OPENCV_TEST_PRECOMP_HPP__
+//#include <iostream>
+//#include <fstream>
+//#include <string>
+//#include <limits>
 
-#include <opencv2/core/version.hpp>
-#include <opencv2/viz/vizcore.hpp>
-
-namespace cv
-{
-    Mat imread(const String& filename, int flags = 1);
-}
-
-#if CV_MAJOR_VERSION < 3
-    #include "opencv2/ts/ts.hpp"
-#else
-    #include "opencv2/ts.hpp"
-#endif
-
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <limits>
-
-namespace cv
-{
+//namespace cv
+//{
     struct Path
     {
         static String combine(const String& item1, const String& item2);
@@ -97,7 +97,7 @@ namespace cv
             double x = 2 * cos(i * 3 * Math.PI/180.0) * (1.0 + 0.5 * cos(1.2 + i * 1.2 * Math.PI/180.0));
             double y = 0.25 + i/270.0 + sin(j * Math.PI/180.0) * 0.2 * sin(0.6 + j * 1.5 * Math.PI/180.0);
             double z = 2 * sin(i * 3 * Math.PI/180.0) * (1.0 + 0.5 * cos(1.2 + i * Math.PI/180.0));
-            result.push_back(viz::makeCameraPose(Vec3d(x, y, z), Vec3d::all(0.0), Vec3d(0.0, 1.0, 0.0)));
+            result.push(viz::makeCameraPose(Vec3d(x, y, z), Vec3d::all(0.0), Vec3d(0.0, 1.0, 0.0)));
         }
         return result;
     }
@@ -107,9 +107,9 @@ namespace cv
         Mat chs[3]; split(image, chs);
         return 0.114 * chs[0] + 0.58 * chs[1] + 0.3 * chs[2];
     }
-}
-
-#endif
+//}
+//
+//#endif
 
 
 #include "test_precomp.hpp"

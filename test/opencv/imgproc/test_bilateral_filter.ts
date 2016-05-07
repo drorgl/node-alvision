@@ -162,7 +162,7 @@ namespace cvtest {
                         var gauss_color_coeff : alvision.double = -0.5 / (sigma_color.valueOf() * sigma_color.valueOf());
 
                         if (d <= 0)
-                            radius = Math.round(sigma_space.valueOf() * 1.5); //cvRound
+                            radius = Math.round(sigma_space.valueOf() * 1.5); //Math.round
                         else
                             radius = d.valueOf() / 2;
                         radius = Math.max(radius, 1);
@@ -221,7 +221,7 @@ namespace cvtest {
                         for (i = -radius, maxk = 0; i <= radius; i++)
                             for (j = -radius; j <= radius; j++) {
                                 var r = Math.sqrt(i * i + j * j);
-                                //double r = std::sqrt((double)i* i + (double)j* j);
+                                //double r = Math.sqrt((double)i* i + (double)j* j);
                                 if (r > radius)
                                     continue;
                                 
@@ -251,7 +251,7 @@ namespace cvtest {
                                 //float val = sptr[j + space_ofs[k]];
                                 //float alpha = (float)(std::abs(val - val0) * scale_index);
                                 var idx: alvision.int = Math.floor(alpha.valueOf());
-                                //int idx = cvFloor(alpha);
+                                //int idx = Math.floor(alpha);
                                 
                                 alpha = alpha.valueOf() - idx.valueOf();
                                 var w: alvision.float = space_weight[k].valueOf() * (expLUT[idx.valueOf()].valueOf() + alpha.valueOf() * (expLUT[idx.valueOf() + 1].valueOf() - expLUT[idx.valueOf()].valueOf()));

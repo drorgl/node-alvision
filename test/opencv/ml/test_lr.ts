@@ -118,17 +118,17 @@ void CV_LRTest::run( int /*start_from*/ )
     p->predict(tdata->getSamples(), responses);
 
     // calculate error
-    int test_code = alvision.cvtest.TS::OK;
+    int test_code = alvision.cvtest.FailureCode.OK;
     float error = 0.0f;
     if(!calculateError(responses, tdata->getResponses(), error))
     {
         ts->printf(alvision.cvtest.TSConstants.LOG, "Bad prediction labels\n" );
-        test_code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+        test_code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
     }
     else if(error > 0.05f)
     {
         ts->printf(alvision.cvtest.TSConstants.LOG, "Bad accuracy of (%f)\n", error);
-        test_code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        test_code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 
     {
@@ -154,7 +154,7 @@ protected:
 
 void CV_LRTest_SaveLoad::run( int /*start_from*/ )
 {
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
 
     // initialize varibles from the popular Iris Dataset
     string dataFileName = ts->get_data_path() + "iris.data";
@@ -217,7 +217,7 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
     if(errorCount>0)
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "Different prediction results before writing and after reading (errorCount=%d).\n", errorCount );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 
     remove( filename );

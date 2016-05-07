@@ -76,14 +76,14 @@ static
 Mat rotateImage(const Mat& srcImage, float angle, Mat& dstImage, Mat& dstMask)
 {
     // angle - rotation around Oz in degrees
-    float diag = std::sqrt(static_cast<float>(srcImage.cols * srcImage.cols + srcImage.rows * srcImage.rows));
+    float diag = Math.sqrt(static_cast<float>(srcImage.cols * srcImage.cols + srcImage.rows * srcImage.rows));
     Mat LUShift = Mat::eye(3, 3, CV_32FC1); // left up
     LUShift.at<float>(0,2) = static_cast<float>(-srcImage.cols/2);
     LUShift.at<float>(1,2) = static_cast<float>(-srcImage.rows/2);
     Mat RDShift = Mat::eye(3, 3, CV_32FC1); // right down
     RDShift.at<float>(0,2) = diag/2;
     RDShift.at<float>(1,2) = diag/2;
-    Size sz(cvRound(diag), cvRound(diag));
+    Size sz(Math.round(diag), Math.round(diag));
 
     Mat srcMask(srcImage.size(), CV_8UC1, Scalar(255));
 
@@ -189,7 +189,7 @@ void matchKeyPoints(const Array<KeyPoint>& keypoints0, const Mat& H,
             }
         }
 
-        matches.push_back(DMatch(i0, nearestPointIndex, maxIntersectRatio));
+        matches.push(DMatch(i0, nearestPointIndex, maxIntersectRatio));
         if(nearestPointIndex >= 0)
             usedMask[nearestPointIndex] = 1;
     }
@@ -276,7 +276,7 @@ protected:
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
                            keyPointMatchesRatio, minKeyPointMatchesRatio);
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 return;
             }
 
@@ -287,7 +287,7 @@ protected:
                 {
                     ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect angleInliersRatio: curr = %f, min = %f.\n",
                                angleInliersRatio, minAngleInliersRatio);
-                    this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                     return;
                 }
             }
@@ -296,7 +296,7 @@ protected:
                 << " - angleInliersRatio " << static_cast<float>(angleInliersCount) / keyPointMatchesCount << std::endl;
 #endif
         }
-        this.ts.set_failed_test_info( alvision.cvtest.TS::OK );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.OK );
     }
 
     Ptr<FeatureDetector> featureDetector;
@@ -375,14 +375,14 @@ protected:
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
                            descInliersRatio, minDescInliersRatio);
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 return;
             }
 #if SHOW_DEBUG_LOG
             std::cout << "descInliersRatio " << static_cast<float>(descInliersCount) / keypoints0.size() << std::endl;
 #endif
         }
-        this.ts.set_failed_test_info( alvision.cvtest.TS::OK );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.OK );
     }
 
     Ptr<FeatureDetector> featureDetector;
@@ -443,7 +443,7 @@ protected:
                     "reduced size (%d, %d), keypoints count = %d\n",
                     image0.cols, image0.rows, keypoints0.size(),
                     image1.cols, image1.rows, keypoints1.size());
-                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
@@ -479,7 +479,7 @@ protected:
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
                            keyPointMatchesRatio, minKeyPointMatchesRatio);
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 return;
             }
 
@@ -490,7 +490,7 @@ protected:
                 {
                     ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect scaleInliersRatio: curr = %f, min = %f.\n",
                                scaleInliersRatio, minScaleInliersRatio);
-                    this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                     return;
                 }
             }
@@ -499,7 +499,7 @@ protected:
                 << " - scaleInliersRatio " << static_cast<float>(scaleInliersCount) / keyPointMatchesCount << std::endl;
 #endif
         }
-        this.ts.set_failed_test_info( alvision.cvtest.TS::OK );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.OK );
     }
 
     Ptr<FeatureDetector> featureDetector;
@@ -579,14 +579,14 @@ protected:
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
                            descInliersRatio, minDescInliersRatio);
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 return;
             }
 #if SHOW_DEBUG_LOG
             std::cout << "descInliersRatio " << static_cast<float>(descInliersCount) / keypoints0.size() << std::endl;
 #endif
         }
-        this.ts.set_failed_test_info( alvision.cvtest.TS::OK );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.OK );
     }
 
     Ptr<FeatureDetector> featureDetector;

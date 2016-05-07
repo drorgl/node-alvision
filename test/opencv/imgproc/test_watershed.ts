@@ -48,93 +48,82 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <string>
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//#include <string>
+//
+//using namespace cv;
+//using namespace std;
 
 class CV_WatershedTest  extends alvision.cvtest.BaseTest
 {
-public:
-    CV_WatershedTest();
-    ~CV_WatershedTest();
-protected:
-    void run(int);
+    run(iii: alvision.int): void {
+        var exp_path = this.ts.get_data_path() + "watershed/wshed_exp.png";
+        var exp = alvision.imread(exp_path, 0);
+        var orig = alvision.imread(this.ts.get_data_path() + "inpaint/orig.png");
+        var fs = new alvision.FileStorage (this.ts.get_data_path() + "watershed/comp.xml", FileStorage::READ);
+
+        if (orig.empty() || !fs.isOpened()) {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+            return;
+        }
+
+        CvSeq * cnts = (CvSeq *)fs["contours"].readObj();
+
+        var markers = new alvision.Mat (orig.size(), CV_32SC1);
+        markers = Scalar(0);
+        IplImage iplmrks = markers;
+
+        var colors = new Array<alvision.uchar>(1);
+        for (var i = 0; cnts != 0; cnts = cnts ->h_next, ++i )
+        {
+            cvDrawContours( &iplmrks, cnts, Scalar::all(i + 1), Scalar::all(i + 1), -1, CV_FILLED);
+            Point * p = (Point *)cvGetSeqElem(cnts, 0);
+
+            //expected image was added with 1 in order to save to png
+            //so now we substract 1 to get real color
+            if (!exp.empty())
+                colors.push(exp.ptr(p ->y)[p ->x] - 1);
+        }
+        fs.release();
+        const int compNum = (int)(colors.size() - 1);
+
+        alvision.watershed(orig, markers);
+
+        for (var j = 0; j < markers.rows; ++j)
+        {
+            int * line = markers.ptr<int>(j);
+            for (int i = 0; i < markers.cols; ++i)
+            {
+                int & pixel = line[i];
+
+                if (pixel == -1) // border
+                    continue;
+
+                if (pixel <= 0 || pixel > compNum)
+                    continue; // bad result, doing nothing and going to get error latter;
+
+                // repaint in saved color to compare with expected;
+                if (!exp.empty())
+                    pixel = colors[pixel];
+            }
+        }
+
+        var markers8U = new alvision.Mat();
+        markers.convertTo(markers8U, CV_8U, 1, 1);
+
+        if (exp.empty() || orig.size() != exp.size()) {
+            alvision.imwrite(exp_path, markers8U);
+            exp = markers8U;
+        }
+
+        if (0 != alvision.norm(markers8U, exp,alvision.NormTypes. NORM_INF)) {
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
+            return;
+        }
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
 };
 
-CV_WatershedTest::CV_WatershedTest() {}
-CV_WatershedTest::~CV_WatershedTest() {}
 
-void CV_WatershedTest::run( int /* start_from */)
-{
-    string exp_path = string(ts->get_data_path()) + "watershed/wshed_exp.png";
-    Mat exp = imread(exp_path, 0);
-    Mat orig = imread(string(ts->get_data_path()) + "inpaint/orig.png");
-    FileStorage fs(string(ts->get_data_path()) + "watershed/comp.xml", FileStorage::READ);
 
-    if (orig.empty() || !fs.isOpened())
-    {
-        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
-        return;
-    }
-
-    CvSeq* cnts = (CvSeq*)fs["contours"].readObj();
-
-    Mat markers(orig.size(), CV_32SC1);
-    markers = Scalar(0);
-    IplImage iplmrks = markers;
-
-    Array<unsigned char> colors(1);
-    for(int i = 0; cnts != 0; cnts = cnts->h_next, ++i )
-    {
-        cvDrawContours( &iplmrks, cnts, Scalar::all(i + 1), Scalar::all(i + 1), -1, CV_FILLED);
-        Point* p = (Point*)cvGetSeqElem(cnts, 0);
-
-        //expected image was added with 1 in order to save to png
-        //so now we substract 1 to get real color
-        if(!exp.empty())
-            colors.push_back(exp.ptr(p->y)[p->x] - 1);
-    }
-    fs.release();
-    const int compNum = (int)(colors.size() - 1);
-
-    watershed(orig, markers);
-
-    for(int j = 0; j < markers.rows; ++j)
-    {
-        int* line = markers.ptr<int>(j);
-        for(int i = 0; i < markers.cols; ++i)
-        {
-            int& pixel = line[i];
-
-            if (pixel == -1) // border
-                continue;
-
-            if (pixel <= 0 || pixel > compNum)
-                continue; // bad result, doing nothing and going to get error latter;
-
-            // repaint in saved color to compare with expected;
-            if(!exp.empty())
-                pixel = colors[pixel];
-        }
-    }
-
-    Mat markers8U;
-    markers.convertTo(markers8U, CV_8U, 1, 1);
-
-    if( exp.empty() || orig.size() != exp.size() )
-    {
-        imwrite(exp_path, markers8U);
-        exp = markers8U;
-    }
-
-    if (0 != norm(markers8U, exp, NORM_INF))
-    {
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_MISMATCH );
-        return;
-    }
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
-}
-
-TEST(Imgproc_Watershed, regression) { CV_WatershedTest test; test.safe_run(); }
+alvision.cvtest.TEST('Imgproc_Watershed', 'regression', () => { var test = new CV_WatershedTest (); test.safe_run(); });

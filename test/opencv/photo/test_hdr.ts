@@ -79,8 +79,8 @@ function loadExposureSeq(path: string, images: Array<alvision.Mat>, times?: Arra
     while(list_file >> name >> val) {
         Mat img = imread(path + name);
         ASSERT_FALSE(img.empty()) << "Could not load input image " << path + name;
-        images.push_back(img);
-        times.push_back(1 / val);
+        images.push(img);
+        times.push(1 / val);
     }
     list_file.close();
 }

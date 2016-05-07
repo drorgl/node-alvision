@@ -93,7 +93,7 @@ class Core_RotatedRectConstructorTest extends alvision.cvtest.BaseTest
         if (count_match == 3)
             return alvision.cvtest.FailureCode.OK;
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "RotatedRect end points don't match those supplied in constructor");
-        this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
         return alvision.cvtest.FailureCode.OK;
     }
 

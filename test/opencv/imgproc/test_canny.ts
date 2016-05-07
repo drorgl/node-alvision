@@ -135,15 +135,15 @@ class CV_CannyTest extends alvision.cvtest.ArrayTest
 
         if (err != Math.round(err.valueOf()) || Math.round(err.valueOf()) % 255 != 0) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Some of the pixels, produced by Canny, are not 0's or 255's; the difference is %g\n", err);
-            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             return code;
         }
 
-        nz0 = cvRound(alvision.cvtest.norm(test_mat[REF_OUTPUT][0], CV_L1) / 255);
+        nz0 = Math.round(alvision.cvtest.norm(test_mat[REF_OUTPUT][0], CV_L1) / 255);
         err = (err / 255 / MAX(nz0, 100)) * 100;
         if (err > 1) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Too high percentage of non-matching edge pixels = %g%%\n", err);
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
         return code;
@@ -264,7 +264,7 @@ function test_Canny(  src : alvision.Mat, dst : alvision.Mat,
         }
     }
 
-    dst = Scalar::all(0);
+    dst = alvision.Scalar.all(0);
 
     // hysteresis threshold
     for( y = 0; y < height; y++ )

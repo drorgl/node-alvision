@@ -218,6 +218,7 @@ export interface Point2f extends Point_<_st.float> { }
 export interface Point2d extends Point_<_st.double> { }
 export interface Point extends Point2i { }
 
+
 export var Point2i: Point_Static<_st.int> = alvision_module.Point2i;
 export var Point2f: Point_Static<_st.float> = alvision_module.Point2f;
 export var Point2d: Point_Static<_st.double> = alvision_module.Point2d;
@@ -1284,35 +1285,41 @@ contours with self-intersections, e.g. a zero area (m00) for butterfly-shaped co
 export interface MomentsStatic {
     //public:
     //! the default constructor
-    //Moments();
+    new (): Moments;
     //! the full constructor
-    //Moments(double m00, double m10, double m01, double m20, double m11,
-    //    double m02, double m30, double m21, double m12, double m03 );
-}
-//class CV_EXPORTS_W_MAP Moments
-export interface Moments
-{
-  
-    ////! the conversion from CvMoments
+    new (m00: _st.double, m10: _st.double, m01: _st.double, m20: _st.double, m11: _st.double ,
+        m02: _st.double, m30: _st.double, m21: _st.double, m12: _st.double, m03: _st.double): Moments;
+
+        ////! the conversion from CvMoments
     //Moments( const CvMoments& moments );
     ////! the conversion to CvMoments
     //operator CvMoments() const;
 
+}
+//class CV_EXPORTS_W_MAP Moments
+export interface Moments
+{
     //! @name spatial moments
     //! @{
     //CV_PROP_RW double  m00, m10, m01, m20, m11, m02, m30, m21, m12, m03;
+    m00: _st.double, m10: _st.double, m01: _st.double, m20: _st.double, m11: _st.double, m02: _st.double, m30: _st.double, m21: _st.double, m12: _st.double, m03: _st.double;
+
     //! @}
 
     //! @name central moments
     //! @{
     //CV_PROP_RW double  mu20, mu11, mu02, mu30, mu21, mu12, mu03;
+    mu20: _st.double, mu11: _st.double, mu02: _st.double, mu30: _st.double, mu21: _st.double, mu12: _st.double, mu03: _st.double;
     //! @}
 
     //! @name central normalized moments
     //! @{
     //CV_PROP_RW double  nu20, nu11, nu02, nu30, nu21, nu12, nu03;
+    nu20: _st.double, nu11: _st.double, nu02: _st.double, nu30: _st.double, nu21: _st.double, nu12: _st.double, nu03: _st.double;
     //! @}
 };
+
+export var Moments: MomentsStatic = alvision_module.Moments;
 
 //template <> class DataType<Moments>
 //{

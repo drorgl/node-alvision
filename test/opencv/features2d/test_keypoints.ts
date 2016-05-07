@@ -88,7 +88,7 @@ protected:
         if(keypoints.empty())
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "Detector can't find keypoints in image.\n");
-            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             return;
         }
 
@@ -100,25 +100,25 @@ protected:
             if(!r.contains(kp.pt))
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "KeyPoint::pt is out of image (x=%f, y=%f).\n", kp.pt.x, kp.pt.y);
-                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
             if(kp.size <= 0.f)
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "KeyPoint::size is not positive (%f).\n", kp.size);
-                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
             if((kp.angle < 0.f && kp.angle != -1.f) || kp.angle >= 360.f)
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "KeyPoint::angle is out of range [0, 360). It's %f.\n", kp.angle);
-                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
         }
-        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
     }
 
     Ptr<FeatureDetector> detector;

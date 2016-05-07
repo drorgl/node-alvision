@@ -424,7 +424,7 @@ export enum FileStorageMode
 ///** @brief XML/YAML file storage class that encapsulates all the information necessary for writing or reading
 //data to/from a file.
 // */
-interface FileStorage
+export interface FileStorage
 {
 //public:
 //    enum
@@ -545,8 +545,8 @@ export var FileStorage: FileStorageStatic = alvision_module.FileStorage;
 //Note that file nodes are only used for navigating file storages opened for reading. When a file
 //storage is opened for writing, no data is stored in memory after it is written.
 // */
-//class CV_EXPORTS_W_SIMPLE FileNode
-//{
+interface FileNode
+{
 //public:
 //    //! type of the file storage node
 //    enum Type
@@ -663,7 +663,7 @@ export var FileStorage: FileStorageStatic = alvision_module.FileStorage;
 //    // do not use wrapper pointer classes for better efficiency
 //    const CvFileStorage* fs;
 //    const CvFileNode* node;
-//};
+};
 
 
 ///** @brief used to iterate through sequences and mappings.

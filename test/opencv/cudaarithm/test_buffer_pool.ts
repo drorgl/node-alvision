@@ -70,7 +70,7 @@ struct BufferPoolTest : TestWithParam<DeviceInfo>
             GpuMat buf0 = pool.getBuffer(Size(640, 480), CV_8UC1);
             EXPECT_FALSE( buf0.empty() );
 
-            buf0.setTo(Scalar::all(0), stream);
+            buf0.setTo(alvision.Scalar.all(0), stream);
 
             GpuMat buf1 = pool.getBuffer(Size(640, 480), CV_8UC1);
             EXPECT_FALSE( buf1.empty() );

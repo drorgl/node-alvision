@@ -73,10 +73,10 @@ protected:
 
 CV_FilterBaseTest::CV_FilterBaseTest( bool _fp_kernel ) : fp_kernel(_fp_kernel)
 {
-    test_array[INPUT].push_back(NULL);
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
     max_aperture_size = 13;
     inplace = false;
     aperture_size = cvSize(0,0);
@@ -114,7 +114,7 @@ void CV_FilterBaseTest::get_minmax_bounds( int i, int j, int type, Scalar& low, 
             }
             else
             {
-                low = Scalar::all(0);
+                low = alvision.Scalar.all(0);
                 high = Scalar::all(2);
             }
         }
@@ -294,19 +294,19 @@ void CV_MorphologyBaseTest::prepare_to_validation( int /*test_case_idx*/ )
         {
             alvision.cvtest.erode( src, temp, _element, _anchor, _border );
             alvision.cvtest.dilate( src, dst, _element, _anchor, _border );
-            alvision.cvtest.add( dst, 1, temp, -1, Scalar::all(0), dst, dst.type() );
+            alvision.cvtest.add( dst, 1, temp, -1, alvision.Scalar.all(0), dst, dst.type() );
         }
         else if( optype == CV_MOP_TOPHAT )
         {
             alvision.cvtest.erode( src, temp, _element, _anchor, _border );
             alvision.cvtest.dilate( temp, dst, _element, _anchor, _border );
-            alvision.cvtest.add( src, 1, dst, -1, Scalar::all(0), dst, dst.type() );
+            alvision.cvtest.add( src, 1, dst, -1, alvision.Scalar.all(0), dst, dst.type() );
         }
         else if( optype == CV_MOP_BLACKHAT )
         {
             alvision.cvtest.dilate( src, temp, _element, _anchor, _border );
             alvision.cvtest.erode( temp, dst, _element, _anchor, _border );
-            alvision.cvtest.add( dst, 1, src, -1, Scalar::all(0), dst, dst.type() );
+            alvision.cvtest.add( dst, 1, src, -1, alvision.Scalar.all(0), dst, dst.type() );
         }
         else
             CV_Error( CV_StsBadArg, "Unknown operation" );
@@ -1228,9 +1228,9 @@ CV_FeatureSelBaseTest::CV_FeatureSelBaseTest( int _width_factor )
     max_aperture_size = 7;
     max_block_size = 21;
     // 1 input, 1 output, temp arrays are allocated in the reference functions
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
     element_wise_relative_error = false;
     width_factor = _width_factor;
 }
@@ -1585,13 +1585,13 @@ protected:
 
 CV_IntegralTest::CV_IntegralTest()
 {
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
     element_wise_relative_error = true;
 }
 
@@ -1888,7 +1888,7 @@ protected:
                        fidx == 8 || fidx == 9 ? "morphologyEx" :
                        "unknown???");
 
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         }
     }
 };
@@ -1902,7 +1902,7 @@ TEST(Imgproc_Blur, borderTypes)
     /// ksize > src_roi.size()
     Mat src(3, 3, CV_8UC1, alvision.Scalar::all(255)), dst;
     Mat src_roi = src(Rect(1, 1, 1, 1));
-    src_roi.setTo(alvision.Scalar::all(0));
+    src_roi.setTo(alvision.alvision.Scalar.all(0));
 
     // should work like !BORDER_ISOLATED
     blur(src_roi, dst, kernelSize, Point(-1, -1), BORDER_REPLICATE);

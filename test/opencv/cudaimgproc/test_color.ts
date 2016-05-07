@@ -685,7 +685,7 @@ CUDA_TEST_P(CvtColor, XYZ42BGR)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -704,7 +704,7 @@ CUDA_TEST_P(CvtColor, XYZ42BGRA)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -820,7 +820,7 @@ CUDA_TEST_P(CvtColor, YCrCb42RGB)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -839,7 +839,7 @@ CUDA_TEST_P(CvtColor, YCrCb42RGBA)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -1057,7 +1057,7 @@ CUDA_TEST_P(CvtColor, HSV42BGR)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -1079,7 +1079,7 @@ CUDA_TEST_P(CvtColor, HSV42BGRA)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -1135,7 +1135,7 @@ CUDA_TEST_P(CvtColor, HLS42RGB)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -1157,7 +1157,7 @@ CUDA_TEST_P(CvtColor, HLS42RGBA)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
 
@@ -1376,7 +1376,7 @@ CUDA_TEST_P(CvtColor, HSV42RGB_FULL)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -1398,7 +1398,7 @@ CUDA_TEST_P(CvtColor, HSV42RGBA_FULL)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -1454,7 +1454,7 @@ CUDA_TEST_P(CvtColor, HLS42RGB_FULL)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -1476,7 +1476,7 @@ CUDA_TEST_P(CvtColor, HLS42RGBA_FULL)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -1535,7 +1535,7 @@ CUDA_TEST_P(CvtColor, YUV42BGR)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;
@@ -1554,7 +1554,7 @@ CUDA_TEST_P(CvtColor, YUV42BGRA)
 
     alvision.Mat channels[4];
     alvision.split(src, channels);
-    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    channels[3] = alvision.Mat(src.size(), depth, alvision.alvision.Scalar.all(0));
     alvision.merge(channels, 4, src);
 
     alvision.cuda::GpuMat dst;

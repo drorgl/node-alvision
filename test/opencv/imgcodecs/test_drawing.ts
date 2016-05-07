@@ -244,10 +244,10 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
             float err = (float)alvision.cvtest.norm(v,alvision.NormTypes. NORM_L2);
             if (err != 0) {
                 this.ts.printf(ts ->LOG, "LineIterator works incorrect");
-                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             }
         }
-        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
         return 0;
     }
 }
@@ -410,11 +410,11 @@ class CV_DrawingTest_C extends CV_DrawingTest {
             float err = (float)alvision.cvtest.norm(v,alvision.NormTypes. NORM_L2);
             if (err != 0) {
                 this.ts.printf(ts ->LOG, "CvLineIterator works incorrect");
-                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             }
             CV_NEXT_LINE_POINT(it);
         }
-        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
         return 0;
     }
 
@@ -518,7 +518,7 @@ class CV_DrawingTest_UTF8 extends alvision.cvtest.BaseTest {
                     Mat img(textSize + Size(0, baseline), CV_8UC3, Scalar(255, 255, 255));
                     putText(img, *line, textOrg, *font | italic, fontScale, color, thickness, CV_AA);
 
-                    results.push_back(img);
+                    results.push(img);
                     bigSize.width = max(bigSize.width, img.size().width);
                     bigSize.height += img.size().height + 1;
                 }

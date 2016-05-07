@@ -75,11 +75,11 @@ protected:
 
 CV_DisTransTest::CV_DisTransTest()
 {
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
+    test_array[REF_OUTPUT].push(NULL);
     optional_mask = false;
     element_wise_relative_error = true;
 }
@@ -127,7 +127,7 @@ void CV_DisTransTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Sc
     alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
     if( i == INPUT && CV_MAT_DEPTH(type) == CV_8U )
     {
-        low = Scalar::all(0);
+        low = alvision.Scalar.all(0);
         high = Scalar::all(10);
     }
 }

@@ -103,11 +103,11 @@ import fs = require('fs');
                 //"Frame count returned by cvGetCaptureProperty function: %d\n",
                 //i + 1, ext[i], time_sec * fps, FrameCount, framecount);
 
-            //if ((FrameCount != cvRound(time_sec * fps) ||
+            //if ((FrameCount != Math.round(time_sec * fps) ||
                 //FrameCount != framecount) && ext[i] != "mpg") {
                 //this.ts.printf(alvision.cvtest.TSConstants.LOG, "FAILED\n");
                 //this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: actual frame count and returned frame count are not matched.\n");
-                //this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                //this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 //return;
             //}
         //}

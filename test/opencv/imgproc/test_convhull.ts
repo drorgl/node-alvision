@@ -331,7 +331,7 @@ void CV_BaseShapeDescrTest::generate_point_set( void* pointsSet )
         }
         if( point_type == CV_32S )
             for( k = 0; k < n; k++ )
-                pi[k] = cvRound(alvision.cvtest.randReal(rng)*a[k] + b[k]);
+                pi[k] = Math.round(alvision.cvtest.randReal(rng)*a[k] + b[k]);
         else
             for( k = 0; k < n; k++ )
                 pf[k] = (float)(alvision.cvtest.randReal(rng)*a[k] + b[k]);
@@ -350,7 +350,7 @@ int CV_BaseShapeDescrTest::prepare_test_case( int test_case_idx )
     alvision.cvtest.BaseTest::prepare_test_case( test_case_idx );
 
     clear();
-    size = cvRound( exp((alvision.cvtest.randReal(rng) * (max_log_size - min_log_size) + min_log_size)*CV_LOG2) );
+    size = Math.round( exp((alvision.cvtest.randReal(rng) * (max_log_size - min_log_size) + min_log_size)*Math.LOG2E) );
     use_storage = alvision.cvtest.randInt(rng) % 2;
     point_type = CV_MAKETYPE(alvision.cvtest.randInt(rng) %
         (enable_flt_points ? 2 : 1) ? CV_32F : CV_32S, dims);
@@ -607,7 +607,7 @@ int CV_ConvHullTest::validate_test_results( int test_case_idx )
             if( idx < 0 || idx >= point_count )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "Invalid convex hull point #%d\n", i );
-                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
             h[i] = p[idx];
@@ -628,7 +628,7 @@ int CV_ConvHullTest::validate_test_results( int test_case_idx )
             if( (t < 0) ^ (orientation != CV_COUNTER_CLOCKWISE) )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "The convex hull is not convex or has a wrong orientation (vtx %d)\n", i );
-                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
             pt0 = pt1;
@@ -645,7 +645,7 @@ int CV_ConvHullTest::validate_test_results( int test_case_idx )
         if( pptresult < 0 )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "The point #%d is outside of the convex hull\n", i );
-            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             goto _exit_;
         }
 
@@ -656,7 +656,7 @@ int CV_ConvHullTest::validate_test_results( int test_case_idx )
     if( alvision.cvtest.norm( _mask, Mat::zeros(_mask.dims, _mask.size, _mask.type()), NORM_L1 ) != hull_count )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "Not every convex hull vertex coincides with some input point\n" );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -732,7 +732,7 @@ int CV_MinAreaRectTest::validate_test_results( int test_case_idx )
         if( fabs(d0 - d1) + fabs(x0 - x1) + fabs(y0 - y1) > eps*MAX(d0,d1) )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "The bounding box is not a rectangle\n" );
-            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             goto _exit_;
         }
     }
@@ -746,9 +746,9 @@ int CV_MinAreaRectTest::validate_test_results( int test_case_idx )
     IplImage* img = cvCreateImage( cvSize(500,500), 8, 3 );
     cvZero(img);
     for( i = 0; i < point_count; i++ )
-        cvCircle(img,cvPoint(cvRound(p[i].x*a+b),cvRound(p[i].y*c+d)), 3, CV_RGB(0,255,0), -1 );
+        cvCircle(img,cvPoint(Math.round(p[i].x*a+b),Math.round(p[i].y*c+d)), 3, CV_RGB(0,255,0), -1 );
     for( i = 0; i < n; i++ )
-        bp[i] = cvPoint(cvRound(box_pt[i].x*a+b),cvRound(box_pt[i].y*c+d));
+        bp[i] = cvPoint(Math.round(box_pt[i].x*a+b),Math.round(box_pt[i].y*c+d));
     cvPolyLine( img, &bpp, &n, 1, 1, CV_RGB(255,255,0), 1, CV_AA, 0 );
     cvShowImage( "test", img );
     cvWaitKey();
@@ -765,7 +765,7 @@ int CV_MinAreaRectTest::validate_test_results( int test_case_idx )
         if( pptresult < -eps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "The point #%d is outside of the box\n", i );
-            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             goto _exit_;
         }
 
@@ -783,7 +783,7 @@ int CV_MinAreaRectTest::validate_test_results( int test_case_idx )
     if( mask[0] + mask[1] + mask[2] + mask[3] != 4 )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "Not every box side has a point nearby\n" );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -823,7 +823,7 @@ std::Array<alvision.Point2f> CV_MinTriangleTest::getTriangleMiddlePoints()
     std::Array<alvision.Point2f> triangleMiddlePoints;
 
     for (int i = 0; i < 3; i++) {
-        triangleMiddlePoints.push_back(cvTsMiddlePoint(triangle[i], triangle[(i + 1) % 3]));
+        triangleMiddlePoints.push(cvTsMiddlePoint(triangle[i], triangle[(i + 1) % 3]));
     }
 
     return triangleMiddlePoints;
@@ -856,9 +856,9 @@ int CV_MinTriangleTest::validate_test_results( int test_case_idx )
     IplImage* img = cvCreateImage( cvSize(500,500), 8, 3 );
     cvZero(img);
     for( i = 0; i < point_count; i++ )
-        cvCircle(img,cvPoint(cvRound(p[i].x*a+b),cvRound(p[i].y*c+d)), 3, CV_RGB(0,255,0), -1 );
+        cvCircle(img,cvPoint(Math.round(p[i].x*a+b),Math.round(p[i].y*c+d)), 3, CV_RGB(0,255,0), -1 );
     for( i = 0; i < n; i++ )
-        bp[i] = cvPoint(cvRound(triangle[i].x*a+b),cvRound(triangle[i].y*c+d));
+        bp[i] = cvPoint(Math.round(triangle[i].x*a+b),Math.round(triangle[i].y*c+d));
     cvPolyLine( img, &bpp, &n, 1, 1, CV_RGB(255,255,0), 1, CV_AA, 0 );
     cvShowImage( "test", img );
     cvWaitKey();
@@ -911,19 +911,19 @@ int CV_MinTriangleTest::validate_test_results( int test_case_idx )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG,
             "All points should be enclosed by the triangle.\n" );
-            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         }
         else if (errorMiddlePoints)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG,
             "All triangle edges middle points should touch the convex hull of the points.\n" );
-            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
         else if (errorFlush)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG,
             "At least one edge of the enclosing triangle should be flush with one edge of the polygon.\n" );
-            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
     }
 
@@ -985,9 +985,9 @@ int CV_MinCircleTest::validate_test_results( int test_case_idx )
     IplImage* img = cvCreateImage( cvSize(500,500), 8, 3 );
     cvZero(img);
     for( i = 0; i < point_count; i++ )
-        cvCircle(img,cvPoint(cvRound(p[i].x*a+b),cvRound(p[i].y*a+d)), 3, CV_RGB(0,255,0), -1 );
-    cvCircle( img, cvPoint(cvRound(center.x*a+b),cvRound(center.y*a+d)),
-              cvRound(radius*a), CV_RGB(255,255,0), 1 );
+        cvCircle(img,cvPoint(Math.round(p[i].x*a+b),Math.round(p[i].y*a+d)), 3, CV_RGB(0,255,0), -1 );
+    cvCircle( img, cvPoint(Math.round(center.x*a+b),Math.round(center.y*a+d)),
+              Math.round(radius*a), CV_RGB(255,255,0), 1 );
     cvShowImage( "test", img );
     cvWaitKey();
     cvReleaseImage(&img);
@@ -1002,7 +1002,7 @@ int CV_MinCircleTest::validate_test_results( int test_case_idx )
         if( d > radius )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "The point #%d is outside of the circle\n", i );
-            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             goto _exit_;
         }
 
@@ -1014,7 +1014,7 @@ int CV_MinCircleTest::validate_test_results( int test_case_idx )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG,
             "There should be at at least 3 points near the circle boundary or 2 points on the diameter\n" );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1120,12 +1120,12 @@ int CV_PerimeterTest::validate_test_results( int test_case_idx )
     if( cvIsNaN(result) || cvIsInf(result) )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "cvArcLength() returned invalid value (%g)\n", result );
-        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
     }
     else if( fabs(result - result0) > FLT_EPSILON*100*result0 )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "The function returned %g, while the correct result is %g\n", result, result0 );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 
     if( code < 0 )
@@ -1222,8 +1222,8 @@ void CV_FitEllipseTest::generate_point_set( void* pointsSet )
             pp = ((CvPoint*)data) + i;
         if( point_type == CV_32SC2 )
         {
-            pp->x = cvRound(p.x);
-            pp->y = cvRound(p.y);
+            pp->x = Math.round(p.x);
+            pp->y = Math.round(p.y);
         }
         else
             *(CvPoint2D32f*)pp = p;
@@ -1260,7 +1260,7 @@ int CV_FitEllipseTest::validate_test_results( int test_case_idx )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "Some of the computed ellipse parameters are invalid (x=%g,y=%g,w=%g,h=%g,angle=%g)\n",
             box.center.x, box.center.y, box.size.width, box.size.height, box.angle );
-        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         goto _exit_;
     }
 
@@ -1279,7 +1279,7 @@ int CV_FitEllipseTest::validate_test_results( int test_case_idx )
             "(x=%.1f,y=%.1f,w=%.1f,h=%.1f), while it should be (x=%.1f,y=%.1f,w=%.1f,h=%.1f)\n",
             box.center.x, box.center.y, box.size.width, box.size.height,
             box0.center.x, box0.center.y, box0.size.width, box0.size.height );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1291,7 +1291,7 @@ int CV_FitEllipseTest::validate_test_results( int test_case_idx )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "Incorrect ellipse angle (=%1.f, should be %1.f)\n",
             box.angle, box0.angle );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1301,8 +1301,8 @@ _exit_:
     if( code < 0 )
     {
     cvNamedWindow( "test", 0 );
-    IplImage* img = cvCreateImage( cvSize(cvRound(low_high_range*4),
-        cvRound(low_high_range*4)), 8, 3 );
+    IplImage* img = cvCreateImage( cvSize(Math.round(low_high_range*4),
+        Math.round(low_high_range*4)), 8, 3 );
     cvZero( img );
 
     box.center.x += (float)low_high_range*2;
@@ -1312,8 +1312,8 @@ _exit_:
     for( int i = 0; i < points2->rows + points2->cols - 1; i++ )
     {
         CvPoint pt;
-        pt.x = cvRound(points2->data.fl[i*2] + low_high_range*2);
-        pt.y = cvRound(points2->data.fl[i*2+1] + low_high_range*2);
+        pt.x = Math.round(points2->data.fl[i*2] + low_high_range*2);
+        pt.y = Math.round(points2->data.fl[i*2+1] + low_high_range*2);
         cvCircle( img, pt, 1, CV_RGB(255,255,255), -1, 8 );
     }
 
@@ -1341,17 +1341,17 @@ protected:
     {
         Size sz(50, 50);
         Array<Array<Point> > c;
-        c.push_back(Array<Point>());
+        c.push(Array<Point>());
         int scale = 1;
         Point ofs = Point(0,0);//sz.width/2, sz.height/2) - Point(4,4)*scale;
-        c[0].push_back(Point(2, 0)*scale+ofs);
-        c[0].push_back(Point(0, 2)*scale+ofs);
-        c[0].push_back(Point(0, 6)*scale+ofs);
-        c[0].push_back(Point(2, 8)*scale+ofs);
-        c[0].push_back(Point(6, 8)*scale+ofs);
-        c[0].push_back(Point(8, 6)*scale+ofs);
-        c[0].push_back(Point(8, 2)*scale+ofs);
-        c[0].push_back(Point(6, 0)*scale+ofs);
+        c[0].push(Point(2, 0)*scale+ofs);
+        c[0].push(Point(0, 2)*scale+ofs);
+        c[0].push(Point(0, 6)*scale+ofs);
+        c[0].push(Point(2, 8)*scale+ofs);
+        c[0].push(Point(6, 8)*scale+ofs);
+        c[0].push(Point(8, 6)*scale+ofs);
+        c[0].push(Point(8, 2)*scale+ofs);
+        c[0].push(Point(6, 0)*scale+ofs);
 
         RotatedRect e = fitEllipse(c[0]);
         CV_Assert( fabs(e.center.x - 4) <= 1. &&
@@ -1516,7 +1516,7 @@ void CV_FitLineTest::generate_point_set( void* pointsSet )
             p[k] = (float)((alvision.cvtest.randReal(rng)-0.5)*max_noise*2 + t*line0[k] + line0[k+n]);
 
             if( point_type == CV_32S )
-                pi[k] = cvRound(p[k]);
+                pi[k] = Math.round(p[k]);
             else
                 pf[k] = p[k];
         }
@@ -1568,7 +1568,7 @@ int CV_FitLineTest::validate_test_results( int test_case_idx )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "Some of the computed line parameters are invalid (line[%d]=%g)\n",
                 k, line[k] );
-            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             goto _exit_;
         }
     }
@@ -1600,7 +1600,7 @@ int CV_FitLineTest::validate_test_results( int test_case_idx )
             ts->printf( alvision.cvtest.TSConstants.LOG,
                 "The computed line vector (%.2f,%.2f,%.2f) is different from the actual (%.2f,%.2f,%.2f)\n",
                 line[0], line[1], line[2], line0[0], line0[1], line0[2] );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1621,7 +1621,7 @@ int CV_FitLineTest::validate_test_results( int test_case_idx )
             ts->printf( alvision.cvtest.TSConstants.LOG,
                 "The computed line point (%.2f,%.2f,%.2f) is too far from the actual line\n",
                 line[3]+line0[3], line[4]+line0[4], line[5]+line0[5] );
-        code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         goto _exit_;
     }
 
@@ -1695,8 +1695,8 @@ cvTsGenerateTousledBlob( CvPoint2D32f center, CvSize2D32f axes,
 
         if( point_type == CV_32SC2 )
         {
-            pp->x = cvRound(p.x);
-            pp->y = cvRound(p.y);
+            pp->x = Math.round(p.x);
+            pp->y = Math.round(p.y);
         }
         else
             *(CvPoint2D32f*)pp = p;
@@ -1743,7 +1743,7 @@ void CV_ContourMomentsTest::generate_point_set( void* pointsSet )
     axes.height = (float)((alvision.cvtest.randReal(rng)*0.9 + 0.1)*low_high_range);
     max_sz = MAX(axes.width, axes.height);
 
-    img_size.width = img_size.height = cvRound(low_high_range*2.2);
+    img_size.width = img_size.height = Math.round(low_high_range*2.2);
 
     center.x = (float)(img_size.width*0.5 + (alvision.cvtest.randReal(rng)-0.5)*(img_size.width - max_sz*2)*0.8);
     center.y = (float)(img_size.height*0.5 + (alvision.cvtest.randReal(rng)-0.5)*(img_size.height - max_sz*2)*0.8);
@@ -1814,7 +1814,7 @@ int CV_ContourMomentsTest::validate_test_results( int test_case_idx )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG,
                 "The contour %s is invalid (=%g)\n", i < n ? "moment" : "area", v );
-            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             break;
         }
 
@@ -1823,7 +1823,7 @@ int CV_ContourMomentsTest::validate_test_results( int test_case_idx )
             ts->printf( alvision.cvtest.TSConstants.LOG,
                 "The computed contour %s is %g, while it should be %g\n",
                 i < n ? "moment" : "area", v, v0 );
-            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             break;
         }
     }
@@ -1874,16 +1874,16 @@ void CV_PerimeterAreaSliceTest::run( int )
         CvSeq* contour = cvCreateSeq(CV_SEQ_POLYGON, sizeof(CvSeq), sizeof(CvPoint), storage);
         double dphi = Math.PI*2/n;
         CvPoint center;
-        center.x = rng.uniform(cvCeil(max_r), cvFloor(640-max_r));
-        center.y = rng.uniform(cvCeil(max_r), cvFloor(480-max_r));
+        center.x = rng.uniform(cvCeil(max_r), Math.floor(640-max_r));
+        center.y = rng.uniform(cvCeil(max_r), Math.floor(480-max_r));
 
         for( int j = 0; j < n; j++ )
         {
             CvPoint pt;
             double r = rng.uniform(min_r, max_r);
             double phi = j*dphi;
-            pt.x = cvRound(center.x + r*cos(phi));
-            pt.y = cvRound(center.y - r*sin(phi));
+            pt.x = Math.round(center.x + r*cos(phi));
+            pt.y = Math.round(center.y - r*sin(phi));
             cvSeqPush(contour, &pt);
         }
 
@@ -1907,7 +1907,7 @@ void CV_PerimeterAreaSliceTest::run( int )
         {
             ts->printf(alvision.cvtest.TSConstants.LOG,
                        "The contour area slice is computed differently (%g vs %g)\n", area0, area1 );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }*/
 
@@ -1917,11 +1917,11 @@ void CV_PerimeterAreaSliceTest::run( int )
         {
             ts->printf(alvision.cvtest.TSConstants.LOG,
                        "The contour arc length is computed differently (%g vs %g)\n", len0, len1 );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
     }
-    this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 }
 
 

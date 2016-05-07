@@ -61,7 +61,7 @@ PARAM_TEST_CASE(HoughLines, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
 {
     static void generateLines(alvision.Mat& img)
     {
-        img.setTo(alvision.Scalar::all(0));
+        img.setTo(alvision.alvision.Scalar.all(0));
 
         alvision.line(img, alvision.Point(20, 0), alvision.Point(20, img.rows), alvision.Scalar::all(255));
         alvision.line(img, alvision.Point(0, 50), alvision.Point(img.cols, 50), alvision.Scalar::all(255));
@@ -71,7 +71,7 @@ PARAM_TEST_CASE(HoughLines, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
 
     static void drawLines(alvision.Mat& dst, const std::Array<alvision.Vec2f>& lines)
     {
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
 
         for (size_t i = 0; i < lines.size(); ++i)
         {
@@ -79,10 +79,10 @@ PARAM_TEST_CASE(HoughLines, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
             alvision.Point pt1, pt2;
             double a = std::cos(theta), b = std::sin(theta);
             double x0 = a*rho, y0 = b*rho;
-            pt1.x = cvRound(x0 + 1000*(-b));
-            pt1.y = cvRound(y0 + 1000*(a));
-            pt2.x = cvRound(x0 - 1000*(-b));
-            pt2.y = cvRound(y0 - 1000*(a));
+            pt1.x = Math.round(x0 + 1000*(-b));
+            pt1.y = Math.round(y0 + 1000*(a));
+            pt2.x = Math.round(x0 - 1000*(-b));
+            pt2.y = Math.round(y0 - 1000*(a));
             alvision.line(dst, pt1, pt2, alvision.Scalar::all(255));
         }
     }
@@ -128,7 +128,7 @@ PARAM_TEST_CASE(HoughCircles, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
 {
     static void drawCircles(alvision.Mat& dst, const std::Array<alvision.Vec3f>& circles, bool fill)
     {
-        dst.setTo(alvision.Scalar::all(0));
+        dst.setTo(alvision.alvision.Scalar.all(0));
 
         for (size_t i = 0; i < circles.size(); ++i)
             alvision.circle(dst, alvision.Point2f(circles[i][0], circles[i][1]), (int)circles[i][2], alvision.Scalar::all(255), fill ? -1 : 1);
@@ -218,7 +218,7 @@ CUDA_TEST_P(GeneralizedHough, Ballard)
     pos_gold[1] = alvision.Point(2 * templCenter.x + 40, templCenter.y + 10);
     pos_gold[2] = alvision.Point(2 * templCenter.x + 40, 2 * templCenter.y + 40);
 
-    alvision.Mat image(templ.rows * 3, templ.cols * 3, CV_8UC1, alvision.Scalar::all(0));
+    alvision.Mat image(templ.rows * 3, templ.cols * 3, CV_8UC1, alvision.alvision.Scalar.all(0));
     for (size_t i = 0; i < gold_count; ++i)
     {
         alvision.Rect rec(pos_gold[i].x - templCenter.x, pos_gold[i].y - templCenter.y, templ.cols, templ.rows);

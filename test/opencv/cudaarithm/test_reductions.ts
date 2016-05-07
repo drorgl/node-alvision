@@ -191,7 +191,7 @@ namespace
     {
         const int cn = src.channels();
 
-        alvision.Scalar sum = alvision.Scalar::all(0);
+        alvision.Scalar sum = alvision.alvision.Scalar.all(0);
 
         for (int y = 0; y < src.rows; ++y)
         {
@@ -228,7 +228,7 @@ namespace
     {
         const int cn = src.channels();
 
-        alvision.Scalar sum = alvision.Scalar::all(0);
+        alvision.Scalar sum = alvision.alvision.Scalar.all(0);
 
         for (int y = 0; y < src.rows; ++y)
         {
@@ -958,11 +958,11 @@ CUDA_TEST_P(Normalize, WithMask)
     alvision.Mat mask = randomMat(size, CV_8UC1, 0, 2);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    dst.setTo(alvision.Scalar::all(0));
+    dst.setTo(alvision.alvision.Scalar.all(0));
     alvision.cuda::normalize(loadMat(src, useRoi), dst, alpha, beta, norm_type, type, loadMat(mask, useRoi));
 
     alvision.Mat dst_gold(size, type);
-    dst_gold.setTo(alvision.Scalar::all(0));
+    dst_gold.setTo(alvision.alvision.Scalar.all(0));
     alvision.normalize(src, dst_gold, alpha, beta, norm_type, type, mask);
 
     EXPECT_MAT_NEAR(dst_gold, dst, type < CV_32F ? 1.0 : 1e-4);

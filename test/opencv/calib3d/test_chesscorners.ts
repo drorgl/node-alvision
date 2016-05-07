@@ -146,7 +146,7 @@ const double precise_success_error_level = 2;
 /* ///////////////////// chess_corner_test ///////////////////////// */
 void CV_ChessboardDetectorTest::run( int /*start_from */)
 {
-    this.ts.set_failed_test_info( alvision.cvtest.TS::OK );
+    this.ts.set_failed_test_info( alvision.cvtest.FailureCode.OK );
 
     /*if (!checkByGenerator())
         return;*/
@@ -154,19 +154,19 @@ void CV_ChessboardDetectorTest::run( int /*start_from */)
     {
         case CHESSBOARD:
             checkByGenerator();
-            if (ts->get_err_code() != alvision.cvtest.TS::OK)
+            if (ts->get_err_code() != alvision.cvtest.FailureCode.OK)
             {
                 break;
             }
 
             run_batch("negative_list.dat");
-            if (ts->get_err_code() != alvision.cvtest.TS::OK)
+            if (ts->get_err_code() != alvision.cvtest.FailureCode.OK)
             {
                 break;
             }
 
             run_batch("chessboard_list.dat");
-            if (ts->get_err_code() != alvision.cvtest.TS::OK)
+            if (ts->get_err_code() != alvision.cvtest.FailureCode.OK)
             {
                 break;
             }
@@ -266,7 +266,7 @@ void CV_ChessboardDetectorTest::run_batch( const string& filename )
         if( result ^ doesContatinChessboard || v.size() != count_exp )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "chessboard is detected incorrectly in %s\n", img_file );
-            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
             return;
         }
 
@@ -279,7 +279,7 @@ void CV_ChessboardDetectorTest::run_batch( const string& filename )
             if( err > rough_success_error_level )
             {
                 ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of corner guesses\n" );
-                ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                 continue;
             }
 #endif
@@ -298,7 +298,7 @@ void CV_ChessboardDetectorTest::run_batch( const string& filename )
             if( err > precise_success_error_level )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "Image %s: bad accuracy of adjusted corners %f\n", img_file, err );
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                 return;
             }
 #endif
@@ -383,7 +383,7 @@ bool CV_ChessboardDetectorTest::checkByGenerator()
     //theRNG() = *ts->get_rng();
 
     Mat bg(Size(800, 600), CV_8UC3, Scalar::all(255));
-    randu(bg, Scalar::all(0), Scalar::all(255));
+    randu(bg, alvision.Scalar.all(0), Scalar::all(255));
     GaussianBlur(bg, bg, Size(7,7), 3.0);
 
     Mat_<float> camMat(3, 3);
@@ -422,7 +422,7 @@ bool CV_ChessboardDetectorTest::checkByGenerator()
         if (!found)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "Chess board corners not found\n" );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             res = false;
             return res;
         }
@@ -431,7 +431,7 @@ bool CV_ChessboardDetectorTest::checkByGenerator()
         if( err > rough_success_error_level )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of corner guesses" );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             res = false;
             return res;
         }
@@ -466,8 +466,8 @@ bool CV_ChessboardDetectorTest::checkByGenerator()
 
         Array< Array<Point> > cnts(1);
         Array<Point>& cnt = cnts[0];
-        cnt.push_back(cg[  0]); cnt.push_back(cg[0+2]);
-        cnt.push_back(cg[7+0]); cnt.push_back(cg[7+2]);
+        cnt.push(cg[  0]); cnt.push(cg[0+2]);
+        cnt.push(cg[7+0]); cnt.push(cg[7+2]);
         alvision.drawContours(cb, cnts, -1, Scalar::all(128), FILLED);
 
         found = findChessboardCorners(cb, cbg.cornersSize(), corners_found);

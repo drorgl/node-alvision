@@ -126,7 +126,7 @@ int Core_ReduceTest::checkOp( const Mat& src, int dstType, int opType, const Mat
             support = true;
     }
     if( !support )
-        return alvision.cvtest.TS::OK;
+        return alvision.cvtest.FailureCode.OK;
 
     double eps = 0.0;
     if ( opType == CV_REDUCE_SUM || opType == CV_REDUCE_AVG )
@@ -165,14 +165,14 @@ int Core_ReduceTest::checkOp( const Mat& src, int dstType, int opType, const Mat
         sprintf( msg, "bad accuracy with srcType = %s, dstType = %s, opType = %s, dim = %s",
                 srcTypeStr, dstTypeStr, opTypeStr, dimStr );
         ts->printf( alvision.cvtest.TSConstants.LOG, msg );
-        return alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 int Core_ReduceTest::checkCase( int srcType, int dstType, int dim, Size sz )
 {
-    int code = alvision.cvtest.TS::OK, tempCode;
+    int code = alvision.cvtest.FailureCode.OK, tempCode;
     Mat src, sum, avg, max, min;
 
     src.create( sz, srcType );
@@ -197,96 +197,96 @@ int Core_ReduceTest::checkCase( int srcType, int dstType, int dim, Size sz )
 
     // 1. sum
     tempCode = checkOp( src, dstType, CV_REDUCE_SUM, sum, dim );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // 2. avg
     tempCode = checkOp( src, dstType, CV_REDUCE_AVG, avg, dim );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // 3. max
     tempCode = checkOp( src, dstType, CV_REDUCE_MAX, max, dim );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // 4. min
     tempCode = checkOp( src, dstType, CV_REDUCE_MIN, min, dim );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     return code;
 }
 
 int Core_ReduceTest::checkDim( int dim, Size sz )
 {
-    int code = alvision.cvtest.TS::OK, tempCode;
+    int code = alvision.cvtest.FailureCode.OK, tempCode;
 
     // CV_8UC1
     tempCode = checkCase( CV_8UC1, CV_8UC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkCase( CV_8UC1, CV_32SC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkCase( CV_8UC1, CV_32FC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkCase( CV_8UC1, CV_64FC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // CV_16UC1
     tempCode = checkCase( CV_16UC1, CV_32FC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkCase( CV_16UC1, CV_64FC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // CV_16SC1
     tempCode = checkCase( CV_16SC1, CV_32FC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkCase( CV_16SC1, CV_64FC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // CV_32FC1
     tempCode = checkCase( CV_32FC1, CV_32FC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkCase( CV_32FC1, CV_64FC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // CV_64FC1
     tempCode = checkCase( CV_64FC1, CV_64FC1, dim, sz );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     return code;
 }
 
 int Core_ReduceTest::checkSize( Size sz )
 {
-    int code = alvision.cvtest.TS::OK, tempCode;
+    int code = alvision.cvtest.FailureCode.OK, tempCode;
 
     tempCode = checkDim( 0, sz ); // rows
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkDim( 1, sz ); // cols
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     return code;
 }
 
 void Core_ReduceTest::run( int )
 {
-    int code = alvision.cvtest.TS::OK, tempCode;
+    int code = alvision.cvtest.FailureCode.OK, tempCode;
 
     tempCode = checkSize( Size(1,1) );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkSize( Size(1,100) );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkSize( Size(100,1) );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     tempCode = checkSize( Size(1000,500) );
-    code = tempCode != alvision.cvtest.TS::OK ? tempCode : code;
+    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     this.ts.set_failed_test_info( code );
 }
@@ -352,7 +352,7 @@ protected:
             if( err > eigenEps )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of eigen(); err = %f\n", err );
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                 return;
             }
         }
@@ -362,7 +362,7 @@ protected:
         if( err > evalEps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "pca.eigenvalues is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
         // check pca eigenvectors
@@ -386,7 +386,7 @@ protected:
                     ts->printf( alvision.cvtest.TSConstants.LOG, "max diff is %g at (i=%d, j=%d) (%g vs %g)\n",
                                mval, mloc.y, mloc.x, rPCA.eigenvectors.at<float>(mloc.y, mloc.x),
                                subEvec.at<float>(mloc.y, mloc.x));
-                    this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                    this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                     return;
                 }
             }
@@ -402,7 +402,7 @@ protected:
             if( err > prjEps )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                 return;
             }
             // check pca backProject
@@ -411,7 +411,7 @@ protected:
             if( err > backPrjEps )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                 return;
             }
         }
@@ -424,14 +424,14 @@ protected:
         if( err > diffPrjEps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
         err = alvision.cvtest.norm(cPCA.backProject(ocvPrjTestPoints), rBackPrjTestPoints.t(), CV_RELATIVE_L2 );
         if( err > diffBackPrjEps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -448,14 +448,14 @@ protected:
         if( err > diffPrjEps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
         err = alvision.cvtest.norm(cPCA.backProject(rvPrjTestPoints), rBackPrjTestPoints.t(), CV_RELATIVE_L2 );
         if( err > diffBackPrjEps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -479,14 +479,14 @@ protected:
         if( err > diffPrjEps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
         err = alvision.cvtest.norm(backPrjTestPoints, rBackPrjTestPoints, CV_RELATIVE_L2);
         if( err > diffBackPrjEps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
 
@@ -507,14 +507,14 @@ protected:
         if( err > diffPrjEps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
         err = alvision.cvtest.norm(backPrjTestPoints, rBackPrjTestPoints.t(), CV_RELATIVE_L2);
         if( err > diffBackPrjEps )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
     #endif
@@ -530,19 +530,19 @@ protected:
         if( err > 0 )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         }
         err = alvision.cvtest.norm( rPCA.eigenvalues, lPCA.eigenvalues, CV_RELATIVE_L2 );
         if( err > 0 )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         }
         err = alvision.cvtest.norm( rPCA.mean, lPCA.mean, CV_RELATIVE_L2 );
         if( err > 0 )
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         }
     }
 };
@@ -802,7 +802,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
                 if( M0.count(sidx) == 0 )
                     break;
             }
-            all_idxs.push_back(sidx);
+            all_idxs.push(sidx);
             M0[sidx] = all_vals[i];
             if( all_vals[i] == min_val )
                 min_sidx = sidx;
@@ -940,7 +940,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
         }
     }
 
-    this.ts.set_failed_test_info(errcount == 0 ? alvision.cvtest.TS::OK : alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+    this.ts.set_failed_test_info(errcount == 0 ? alvision.cvtest.FailureCode.OK : alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
 }
 
 
@@ -1012,27 +1012,27 @@ protected:
         Size mSize(rng.uniform(minMSize, maxMSize), rng.uniform(minMSize, maxMSize));
         size_t mvSize = rng.uniform(1, maxMvSize);
 
-        int res = alvision.cvtest.TS::OK, curRes = res;
+        int res = alvision.cvtest.FailureCode.OK, curRes = res;
         curRes = run_case(CV_8U, mvSize, mSize, rng);
-        res = curRes != alvision.cvtest.TS::OK ? curRes : res;
+        res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
         curRes = run_case(CV_8S, mvSize, mSize, rng);
-        res = curRes != alvision.cvtest.TS::OK ? curRes : res;
+        res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
         curRes = run_case(CV_16U, mvSize, mSize, rng);
-        res = curRes != alvision.cvtest.TS::OK ? curRes : res;
+        res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
         curRes = run_case(CV_16S, mvSize, mSize, rng);
-        res = curRes != alvision.cvtest.TS::OK ? curRes : res;
+        res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
         curRes = run_case(CV_32S, mvSize, mSize, rng);
-        res = curRes != alvision.cvtest.TS::OK ? curRes : res;
+        res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
         curRes = run_case(CV_32F, mvSize, mSize, rng);
-        res = curRes != alvision.cvtest.TS::OK ? curRes : res;
+        res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
         curRes = run_case(CV_64F, mvSize, mSize, rng);
-        res = curRes != alvision.cvtest.TS::OK ? curRes : res;
+        res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
         this.ts.set_failed_test_info(res);
     }
@@ -1069,19 +1069,19 @@ protected:
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "%s incorrect depth of dst (%d instead of %d)\n",
                        commonLog, dst.depth(), depth);
-            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
         if(dst.size() != size)
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "%s incorrect size of dst (%d x %d instead of %d x %d)\n",
                        commonLog, dst.rows, dst.cols, size.height, size.width);
-            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
         if(dst.channels() != channels)
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect channels count of dst (%d instead of %d)\n",
                        commonLog, dst.channels(), channels);
-            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
 
         int diffElemCount = calcDiffElemCount(src, dst);
@@ -1089,10 +1089,10 @@ protected:
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
                        commonLog, static_cast<float>(diffElemCount)/(channels*size.area()));
-            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
 
-        return alvision.cvtest.TS::OK;
+        return alvision.cvtest.FailureCode.OK;
     }
 };
 
@@ -1118,7 +1118,7 @@ protected:
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "%s incorrect count of matrices in dst (%d instead of %d)\n",
                        commonLog, dst.size(), channels);
-            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
         for(size_t i = 0; i < dst.size(); i++)
         {
@@ -1126,19 +1126,19 @@ protected:
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "%s incorrect size of dst[%d] (%d x %d instead of %d x %d)\n",
                            commonLog, i, dst[i].rows, dst[i].cols, size.height, size.width);
-                return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+                return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             }
             if(dst[i].depth() != depth)
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect depth of dst[%d] (%d instead of %d)\n",
                            commonLog, i, dst[i].depth(), depth);
-                return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+                return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             }
             if(dst[i].channels() != 1)
             {
                 ts->printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect channels count of dst[%d] (%d instead of %d)\n",
                            commonLog, i, dst[i].channels(), 1);
-                return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+                return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             }
         }
 
@@ -1147,10 +1147,10 @@ protected:
         {
             ts->printf(alvision.cvtest.TSConstants.LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
                        commonLog, static_cast<float>(diffElemCount)/(channels*size.area()));
-            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+            return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
 
-        return alvision.cvtest.TS::OK;
+        return alvision.cvtest.FailureCode.OK;
     }
 };
 

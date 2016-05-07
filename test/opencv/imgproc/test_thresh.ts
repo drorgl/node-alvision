@@ -47,282 +47,224 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
 class CV_ThreshTest extends alvision.cvtest.ArrayTest
 {
-public:
-    CV_ThreshTest();
+    constructor() {
+        super();
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.optional_mask = false;
+        this.element_wise_relative_error = true;
+    }
 
-protected:
-    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
-    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    void prepare_to_validation( int );
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
+        var rng = this.ts.get_rng();
+        var depth = alvision.cvtest.randInt(rng).valueOf() % 3, cn = alvision.cvtest.randInt(rng).valueOf() % 4 + 1;
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        depth = depth == 0 ? alvision.MatrixType.CV_8U : depth == 1 ? alvision.MatrixType.CV_16S : alvision.MatrixType.CV_32F;
 
-    int thresh_type;
-    float thresh_val;
-    float max_val;
+        types[this.INPUT][0] = types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(depth, cn);
+        this.thresh_type = alvision.cvtest.randInt(rng).valueOf() % 5;
+
+        if (depth == alvision.MatrixType.CV_8U) {
+            this.thresh_val = (alvision.cvtest.randReal(rng).valueOf() * 350. - 50.);
+            this.max_val = (alvision.cvtest.randReal(rng).valueOf() * 350. - 50.);
+            if (alvision.cvtest.randInt(rng).valueOf() % 4 == 0)
+                this.max_val = 255.;
+        }
+        else if (depth == alvision.MatrixType.CV_16S) {
+            var min_val =  alvision.SHRT_MIN - 100.;
+            this.max_val = alvision.SHRT_MAX + 100.;
+            this.thresh_val = (alvision.cvtest.randReal(rng).valueOf() * (this.max_val.valueOf() - min_val) + min_val);
+            this.max_val = (alvision.cvtest.randReal(rng).valueOf() * (this.max_val.valueOf() - min_val) + min_val);
+            if (alvision.cvtest.randInt(rng).valueOf() % 4 == 0)
+                this.max_val = alvision.SHRT_MAX;
+        }
+        else {
+            this.thresh_val = (alvision.cvtest.randReal(rng).valueOf() * 1000. - 500.);
+            this.max_val = (alvision.cvtest.randReal(rng).valueOf() * 1000. - 500.);
+        }
+    }
+    get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
+        return alvision.FLT_EPSILON * 10;
+    }
+    run_func(): void {
+        alvision.threshold(this.test_array[this.INPUT][0], this.test_array[this.OUTPUT][0],
+            this.thresh_val, this.max_val, this.thresh_type);
+    }
+    prepare_to_validation(test_case_idx: alvision.int): void {
+        test_threshold(this.test_mat[this.INPUT][0], this.test_mat[this.REF_OUTPUT][0],
+            this.thresh_val, this.max_val, this.thresh_type);
+    }
+
+    protected thresh_type: alvision.int;
+    protected thresh_val: alvision.float;
+    protected max_val: alvision.float;
 };
 
 
-CV_ThreshTest::CV_ThreshTest()
-{
-    test_array[INPUT].push_back(NULL);
-    test_array[OUTPUT].push_back(NULL);
-    test_array[REF_OUTPUT].push_back(NULL);
-    optional_mask = false;
-    element_wise_relative_error = true;
-}
-
-
-void CV_ThreshTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
-{
-    RNG& rng = ts->get_rng();
-    int depth = alvision.cvtest.randInt(rng) % 3, cn = alvision.cvtest.randInt(rng) % 4 + 1;
-    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    depth = depth == 0 ? CV_8U : depth == 1 ? CV_16S : CV_32F;
-
-    types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(depth,cn);
-    thresh_type = alvision.cvtest.randInt(rng) % 5;
-
-    if( depth == CV_8U )
-    {
-        thresh_val = (float)(alvision.cvtest.randReal(rng)*350. - 50.);
-        max_val = (float)(alvision.cvtest.randReal(rng)*350. - 50.);
-        if( alvision.cvtest.randInt(rng)%4 == 0 )
-            max_val = 255.f;
-    }
-    else if( depth == CV_16S )
-    {
-        float min_val = SHRT_MIN-100.f;
-        max_val = SHRT_MAX+100.f;
-        thresh_val = (float)(alvision.cvtest.randReal(rng)*(max_val - min_val) + min_val);
-        max_val = (float)(alvision.cvtest.randReal(rng)*(max_val - min_val) + min_val);
-        if( alvision.cvtest.randInt(rng)%4 == 0 )
-            max_val = (float)SHRT_MAX;
-    }
-    else
-    {
-        thresh_val = (float)(alvision.cvtest.randReal(rng)*1000. - 500.);
-        max_val = (float)(alvision.cvtest.randReal(rng)*1000. - 500.);
-    }
-}
-
-
-double CV_ThreshTest::get_success_error_level( int /*test_case_idx*/, int /*i*/, int /*j*/ )
-{
-    return FLT_EPSILON*10;
-}
-
-
-void CV_ThreshTest::run_func()
-{
-    cvThreshold( test_array[INPUT][0], test_array[OUTPUT][0],
-                 thresh_val, max_val, thresh_type );
-}
-
-
-static void test_threshold( const Mat& _src, Mat& _dst,
-                            float thresh, float maxval, int thresh_type )
-{
-    int i, j;
-    int depth = _src.depth(), cn = _src.channels();
-    int width_n = _src.cols*cn, height = _src.rows;
-    int ithresh = cvFloor(thresh);
+function test_threshold(_src: alvision.Mat, _dst: alvision.Mat,
+    thresh: alvision.float, maxval: alvision.float, thresh_type: alvision.int): void {
+    //int i, j;
+    var depth = _src.depth(), cn = _src.channels();
+    var width_n = _src.cols.valueOf() * cn.valueOf(), height = _src.rows;
+    var ithresh = Math.floor(thresh.valueOf());
     int imaxval, ithresh2;
 
-    if( depth == CV_8U )
-    {
+    if (depth == CV_8U) {
         ithresh2 = saturate_cast<uchar>(ithresh);
         imaxval = saturate_cast<uchar>(maxval);
     }
-    else if( depth == CV_16S )
-    {
+    else if (depth == CV_16S) {
         ithresh2 = saturate_cast<short>(ithresh);
         imaxval = saturate_cast<short>(maxval);
     }
-    else
-    {
-        ithresh2 = cvRound(ithresh);
-        imaxval = cvRound(maxval);
+    else {
+        ithresh2 = Math.round(ithresh);
+        imaxval = Math.round(maxval);
     }
 
-    assert( depth == CV_8U || depth == CV_16S || depth == CV_32F );
+    assert(depth == alvision.MatrixType.CV_8U || depth == alvision.MatrixType.CV_16S || depth == alvision.MatrixType.CV_32F);
 
-    switch( thresh_type )
-    {
-    case CV_THRESH_BINARY:
-        for( i = 0; i < height; i++ )
-        {
-            if( depth == CV_8U )
-            {
-                const uchar* src = _src.ptr<uchar>(i);
-                uchar* dst = _dst.ptr<uchar>(i);
-                for( j = 0; j < width_n; j++ )
-                    dst[j] = (uchar)(src[j] > ithresh ? imaxval : 0);
-            }
-            else if( depth == CV_16S )
-            {
-                const short* src = _src.ptr<short>(i);
-                short* dst = _dst.ptr<short>(i);
-                for( j = 0; j < width_n; j++ )
-                    dst[j] = (short)(src[j] > ithresh ? imaxval : 0);
-            }
-            else
-            {
-                const float* src = _src.ptr<float>(i);
-                float* dst = _dst.ptr<float>(i);
-                for( j = 0; j < width_n; j++ )
-                    dst[j] = src[j] > thresh ? maxval : 0.f;
-            }
-        }
-        break;
-    case CV_THRESH_BINARY_INV:
-        for( i = 0; i < height; i++ )
-        {
-            if( depth == CV_8U )
-            {
-                const uchar* src = _src.ptr<uchar>(i);
-                uchar* dst = _dst.ptr<uchar>(i);
-                for( j = 0; j < width_n; j++ )
-                    dst[j] = (uchar)(src[j] > ithresh ? 0 : imaxval);
-            }
-            else if( depth == CV_16S )
-            {
-                const short* src = _src.ptr<short>(i);
-                short* dst = _dst.ptr<short>(i);
-                for( j = 0; j < width_n; j++ )
-                    dst[j] = (short)(src[j] > ithresh ? 0 : imaxval);
-            }
-            else
-            {
-                const float* src = _src.ptr<float>(i);
-                float* dst = _dst.ptr<float>(i);
-                for( j = 0; j < width_n; j++ )
-                    dst[j] = src[j] > thresh ? 0.f : maxval;
-            }
-        }
-        break;
-    case CV_THRESH_TRUNC:
-        for( i = 0; i < height; i++ )
-        {
-            if( depth == CV_8U )
-            {
-                const uchar* src = _src.ptr<uchar>(i);
-                uchar* dst = _dst.ptr<uchar>(i);
-                for( j = 0; j < width_n; j++ )
-                {
-                    int s = src[j];
-                    dst[j] = (uchar)(s > ithresh ? ithresh2 : s);
+    switch (thresh_type) {
+        case CV_THRESH_BINARY:
+            for (i = 0; i < height; i++) {
+                if (depth == CV_8U) {
+                    const uchar* src = _src.ptr<uchar>(i);
+                    uchar * dst = _dst.ptr<uchar>(i);
+                    for (j = 0; j < width_n; j++)
+                        dst[j] = (uchar)(src[j] > ithresh ? imaxval : 0);
+                }
+                else if (depth == CV_16S) {
+                    const short* src = _src.ptr<short>(i);
+                    short * dst = _dst.ptr<short>(i);
+                    for (j = 0; j < width_n; j++)
+                        dst[j] = (short)(src[j] > ithresh ? imaxval : 0);
+                }
+                else {
+                    const float* src = _src.ptr<float>(i);
+                    float * dst = _dst.ptr<float>(i);
+                    for (j = 0; j < width_n; j++)
+                        dst[j] = src[j] > thresh ? maxval : 0.f;
                 }
             }
-            else if( depth == CV_16S )
-            {
-                const short* src = _src.ptr<short>(i);
-                short* dst = _dst.ptr<short>(i);
-                for( j = 0; j < width_n; j++ )
-                {
-                    int s = src[j];
-                    dst[j] = (short)(s > ithresh ? ithresh2 : s);
+            break;
+        case CV_THRESH_BINARY_INV:
+            for (i = 0; i < height; i++) {
+                if (depth == CV_8U) {
+                    const uchar* src = _src.ptr<uchar>(i);
+                    uchar * dst = _dst.ptr<uchar>(i);
+                    for (j = 0; j < width_n; j++)
+                        dst[j] = (uchar)(src[j] > ithresh ? 0 : imaxval);
+                }
+                else if (depth == CV_16S) {
+                    const short* src = _src.ptr<short>(i);
+                    short * dst = _dst.ptr<short>(i);
+                    for (j = 0; j < width_n; j++)
+                        dst[j] = (short)(src[j] > ithresh ? 0 : imaxval);
+                }
+                else {
+                    const float* src = _src.ptr<float>(i);
+                    float * dst = _dst.ptr<float>(i);
+                    for (j = 0; j < width_n; j++)
+                        dst[j] = src[j] > thresh ? 0.f : maxval;
                 }
             }
-            else
-            {
-                const float* src = _src.ptr<float>(i);
-                float* dst = _dst.ptr<float>(i);
-                for( j = 0; j < width_n; j++ )
-                {
-                    float s = src[j];
-                    dst[j] = s > thresh ? thresh : s;
+            break;
+        case CV_THRESH_TRUNC:
+            for (i = 0; i < height; i++) {
+                if (depth == CV_8U) {
+                    const uchar* src = _src.ptr<uchar>(i);
+                    uchar * dst = _dst.ptr<uchar>(i);
+                    for (j = 0; j < width_n; j++) {
+                        int s = src[j];
+                        dst[j] = (uchar)(s > ithresh ? ithresh2 : s);
+                    }
+                }
+                else if (depth == CV_16S) {
+                    const short* src = _src.ptr<short>(i);
+                    short * dst = _dst.ptr<short>(i);
+                    for (j = 0; j < width_n; j++) {
+                        int s = src[j];
+                        dst[j] = (short)(s > ithresh ? ithresh2 : s);
+                    }
+                }
+                else {
+                    const float* src = _src.ptr<float>(i);
+                    float * dst = _dst.ptr<float>(i);
+                    for (j = 0; j < width_n; j++) {
+                        float s = src[j];
+                        dst[j] = s > thresh ? thresh : s;
+                    }
                 }
             }
-        }
-        break;
-    case CV_THRESH_TOZERO:
-        for( i = 0; i < height; i++ )
-        {
-            if( depth == CV_8U )
-            {
-                const uchar* src = _src.ptr<uchar>(i);
-                uchar* dst = _dst.ptr<uchar>(i);
-                for( j = 0; j < width_n; j++ )
-                {
-                    int s = src[j];
-                    dst[j] = (uchar)(s > ithresh ? s : 0);
+            break;
+        case CV_THRESH_TOZERO:
+            for (i = 0; i < height; i++) {
+                if (depth == CV_8U) {
+                    const uchar* src = _src.ptr<uchar>(i);
+                    uchar * dst = _dst.ptr<uchar>(i);
+                    for (j = 0; j < width_n; j++) {
+                        int s = src[j];
+                        dst[j] = (uchar)(s > ithresh ? s : 0);
+                    }
+                }
+                else if (depth == CV_16S) {
+                    const short* src = _src.ptr<short>(i);
+                    short * dst = _dst.ptr<short>(i);
+                    for (j = 0; j < width_n; j++) {
+                        int s = src[j];
+                        dst[j] = (short)(s > ithresh ? s : 0);
+                    }
+                }
+                else {
+                    const float* src = _src.ptr<float>(i);
+                    float * dst = _dst.ptr<float>(i);
+                    for (j = 0; j < width_n; j++) {
+                        float s = src[j];
+                        dst[j] = s > thresh ? s : 0.f;
+                    }
                 }
             }
-            else if( depth == CV_16S )
-            {
-                const short* src = _src.ptr<short>(i);
-                short* dst = _dst.ptr<short>(i);
-                for( j = 0; j < width_n; j++ )
-                {
-                    int s = src[j];
-                    dst[j] = (short)(s > ithresh ? s : 0);
+            break;
+        case CV_THRESH_TOZERO_INV:
+            for (i = 0; i < height; i++) {
+                if (depth == CV_8U) {
+                    const uchar* src = _src.ptr<uchar>(i);
+                    uchar * dst = _dst.ptr<uchar>(i);
+                    for (j = 0; j < width_n; j++) {
+                        int s = src[j];
+                        dst[j] = (uchar)(s > ithresh ? 0 : s);
+                    }
+                }
+                else if (depth == CV_16S) {
+                    const short* src = _src.ptr<short>(i);
+                    short * dst = _dst.ptr<short>(i);
+                    for (j = 0; j < width_n; j++) {
+                        int s = src[j];
+                        dst[j] = (short)(s > ithresh ? 0 : s);
+                    }
+                }
+                else {
+                    const float* src = _src.ptr<float>(i);
+                    float * dst = _dst.ptr<float>(i);
+                    for (j = 0; j < width_n; j++) {
+                        float s = src[j];
+                        dst[j] = s > thresh ? 0.f : s;
+                    }
                 }
             }
-            else
-            {
-                const float* src = _src.ptr<float>(i);
-                float* dst = _dst.ptr<float>(i);
-                for( j = 0; j < width_n; j++ )
-                {
-                    float s = src[j];
-                    dst[j] = s > thresh ? s : 0.f;
-                }
-            }
-        }
-        break;
-    case CV_THRESH_TOZERO_INV:
-        for( i = 0; i < height; i++ )
-        {
-            if( depth == CV_8U )
-            {
-                const uchar* src = _src.ptr<uchar>(i);
-                uchar* dst = _dst.ptr<uchar>(i);
-                for( j = 0; j < width_n; j++ )
-                {
-                    int s = src[j];
-                    dst[j] = (uchar)(s > ithresh ? 0 : s);
-                }
-            }
-            else if( depth == CV_16S )
-            {
-                const short* src = _src.ptr<short>(i);
-                short* dst = _dst.ptr<short>(i);
-                for( j = 0; j < width_n; j++ )
-                {
-                    int s = src[j];
-                    dst[j] = (short)(s > ithresh ? 0 : s);
-                }
-            }
-            else
-            {
-                const float* src = _src.ptr<float>(i);
-                float* dst = _dst.ptr<float>(i);
-                for( j = 0; j < width_n; j++ )
-                {
-                    float s = src[j];
-                    dst[j] = s > thresh ? 0.f : s;
-                }
-            }
-        }
-        break;
-    default:
-        assert(0);
+            break;
+        default:
+            assert(0);
     }
 }
 
 
-void CV_ThreshTest::prepare_to_validation( int /*test_case_idx*/ )
-{
-    test_threshold( test_mat[INPUT][0], test_mat[REF_OUTPUT][0],
-                   thresh_val, max_val, thresh_type );
-}
-
-TEST(Imgproc_Threshold, accuracy) { CV_ThreshTest test; test.safe_run(); }
+alvision.cvtest.TEST('Imgproc_Threshold', 'accuracy', () => { var test = new CV_ThreshTest(); test.safe_run(); });

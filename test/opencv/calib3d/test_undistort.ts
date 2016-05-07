@@ -151,14 +151,14 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
 {
     constructor(){
         super();
-        test_array[INPUT].push_back(NULL); // points matrix
-        test_array[INPUT].push_back(NULL); // camera matrix
-        test_array[INPUT].push_back(NULL); // distortion coeffs
-        test_array[INPUT].push_back(NULL); // R matrix
-        test_array[INPUT].push_back(NULL); // P matrix
-        test_array[OUTPUT].push_back(NULL); // distorted dst points
-        test_array[TEMP].push_back(NULL); // dst points
-        test_array[REF_OUTPUT].push_back(NULL);
+        test_array[INPUT].push(NULL); // points matrix
+        test_array[INPUT].push(NULL); // camera matrix
+        test_array[INPUT].push(NULL); // distortion coeffs
+        test_array[INPUT].push(NULL); // R matrix
+        test_array[INPUT].push(NULL); // P matrix
+        test_array[OUTPUT].push(NULL); // distorted dst points
+        test_array[TEMP].push(NULL); // dst points
+        test_array[REF_OUTPUT].push(NULL);
 
         useCPlus = useDstMat = false;
         zero_new_cam = zero_distortion = zero_R = false;
@@ -187,7 +187,7 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
         Mat _proj(test_mat[INPUT][4].size(), CV_64F, &proj[0]);
         Mat _points(test_mat[INPUT][0].size(), CV_64FC2, &points[0]);
 
-        _proj = Scalar::all(0);
+        _proj = alvision.Scalar.all(0);
 
         //Generating points
         for (int i = 0; i < N_POINTS; i++ )
@@ -575,13 +575,13 @@ private:
 
 CV_InitUndistortRectifyMapTest::CV_InitUndistortRectifyMapTest()
 {
-    test_array[INPUT].push_back(NULL); // test points matrix
-    test_array[INPUT].push_back(NULL); // camera matrix
-    test_array[INPUT].push_back(NULL); // distortion coeffs
-    test_array[INPUT].push_back(NULL); // R matrix
-    test_array[INPUT].push_back(NULL); // new camera matrix
-    test_array[OUTPUT].push_back(NULL); // distorted dst points
-    test_array[REF_OUTPUT].push_back(NULL);
+    test_array[INPUT].push(NULL); // test points matrix
+    test_array[INPUT].push(NULL); // camera matrix
+    test_array[INPUT].push(NULL); // distortion coeffs
+    test_array[INPUT].push(NULL); // R matrix
+    test_array[INPUT].push(NULL); // new camera matrix
+    test_array[OUTPUT].push(NULL); // distorted dst points
+    test_array[REF_OUTPUT].push(NULL);
 
     useCPlus = false;
     zero_distortion = zero_new_cam = zero_R = false;
@@ -710,7 +710,7 @@ int CV_InitUndistortRectifyMapTest::prepare_test_case(int test_case_idx)
     }
 
     //Generating new camera matrix
-    _new_cam = Scalar::all(0);
+    _new_cam = alvision.Scalar.all(0);
     new_cam[8] = 1;
 
     //new_cam[0] = cam[0];

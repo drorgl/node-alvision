@@ -69,7 +69,7 @@ CV_POSITTest::CV_POSITTest()
 
 void CV_POSITTest::run( int start_from )
 {
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
 
     /* fixed parameters output */
     /*float rot[3][3]={  0.49010f,  0.85057f, 0.19063f,

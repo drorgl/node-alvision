@@ -162,7 +162,7 @@ protected:
 
     void run(int)
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 
         Array<Point3f> points, points_dls;
         const int pointsCount = 500;
@@ -189,7 +189,7 @@ protected:
                 {
                     ts->printf( alvision.cvtest.TSConstants.LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
                         method, totalTestsCount - successfulTestsCount, totalTestsCount, maxError, mode);
-                    this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 }
                 cout << "mode: " << mode << ", method: " << method << " -> "
                      << ((double)successfulTestsCount / totalTestsCount) * 100 << "%"
@@ -279,7 +279,7 @@ TEST(DISABLED_Calib3d_SolvePnPRansac, concurrency)
     camera_mat.at<float>(2, 0) = 0.f;
     camera_mat.at<float>(2, 1) = 0.f;
 
-    Mat dist_coef(1, 8, CV_32F, alvision.Scalar::all(0));
+    Mat dist_coef(1, 8, CV_32F, alvision.alvision.Scalar.all(0));
 
     Array<alvision.Point2f> image_vec;
     Mat rvec_gold(1, 3, CV_32FC1);

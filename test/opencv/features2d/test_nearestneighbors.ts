@@ -82,17 +82,17 @@ protected:
 
 int NearestNeighborTest::checkGetPoins( const Mat& )
 {
-   return alvision.cvtest.TS::OK;
+   return alvision.cvtest.FailureCode.OK;
 }
 
 int NearestNeighborTest::checkFindBoxed()
 {
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 int NearestNeighborTest::checkFind( const Mat& data )
 {
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
     int pointsCount = 1000;
     float noise = 0.2f;
 
@@ -111,7 +111,7 @@ int NearestNeighborTest::checkFind( const Mat& data )
 
     code = findNeighbors( points, results );
 
-    if( code == alvision.cvtest.TS::OK )
+    if( code == alvision.cvtest.FailureCode.OK )
     {
         int correctMatches = 0;
         for( int pi = 0; pi < pointsCount; pi++ )
@@ -124,7 +124,7 @@ int NearestNeighborTest::checkFind( const Mat& data )
         if (correctPerc < .75)
         {
             ts->printf( alvision.cvtest.TSConstants.LOG, "correct_perc = %d\n", correctPerc );
-            code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         }
     }
 
@@ -132,28 +132,28 @@ int NearestNeighborTest::checkFind( const Mat& data )
 }
 
 void NearestNeighborTest::run( int /*start_from*/ ) {
-    int code = alvision.cvtest.TS::OK, tempCode;
+    int code = alvision.cvtest.FailureCode.OK, tempCode;
     Mat desc( featuresCount, dims, CV_32FC1 );
     randu( desc, Scalar(minValue), Scalar(maxValue) );
 
     createModel( desc );
 
     tempCode = checkGetPoins( desc );
-    if( tempCode != alvision.cvtest.TS::OK )
+    if( tempCode != alvision.cvtest.FailureCode.OK )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of GetPoints \n" );
         code = tempCode;
     }
 
     tempCode = checkFindBoxed();
-    if( tempCode != alvision.cvtest.TS::OK )
+    if( tempCode != alvision.cvtest.FailureCode.OK )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of FindBoxed \n" );
         code = tempCode;
     }
 
     tempCode = checkFind( desc );
-    if( tempCode != alvision.cvtest.TS::OK )
+    if( tempCode != alvision.cvtest.FailureCode.OK )
     {
         ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of Find \n" );
         code = tempCode;
@@ -206,9 +206,9 @@ int CV_FlannTest::knnSearch( Mat& points, Mat& neighbors )
 
     // compare results
     if( alvision.cvtest.norm( neighbors, neighbors1, NORM_L1 ) != 0 )
-        return alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
 
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 int CV_FlannTest::radiusSearch( Mat& points, Mat& neighbors )
@@ -238,9 +238,9 @@ int CV_FlannTest::radiusSearch( Mat& points, Mat& neighbors )
     }
     // compare results
     if( alvision.cvtest.norm( neighbors, neighbors1, NORM_L1 ) != 0 )
-        return alvision.cvtest.TS::FAIL_BAD_ACCURACY;
+        return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
 
-    return alvision.cvtest.TS::OK;
+    return alvision.cvtest.FailureCode.OK;
 }
 
 void CV_FlannTest::releaseModel()

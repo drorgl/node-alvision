@@ -63,14 +63,14 @@ CV_SLMLTest::CV_SLMLTest( const char* _modelName ) : CV_MLBaseTest( _modelName )
 
 int CV_SLMLTest::run_test_case( int testCaseIdx )
 {
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
     code = prepare_test_case( testCaseIdx );
 
-    if( code == alvision.cvtest.TS::OK )
+    if( code == alvision.cvtest.FailureCode.OK )
     {
         data->setTrainTestSplit(data->getNTrainSamples(), true);
         code = train( testCaseIdx );
-        if( code == alvision.cvtest.TS::OK )
+        if( code == alvision.cvtest.FailureCode.OK )
         {
             get_test_error( testCaseIdx, &test_resps1 );
             fname1 = tempfile(".yml.gz");
@@ -88,7 +88,7 @@ int CV_SLMLTest::run_test_case( int testCaseIdx )
 
 int CV_SLMLTest::validate_test_results( int testCaseIdx )
 {
-    int code = alvision.cvtest.TS::OK;
+    int code = alvision.cvtest.FailureCode.OK;
 
     // 1. compare files
     FILE *fs1 = fopen(fname1, "rb"), *fs2 = fopen(fname2, "rb");
@@ -104,7 +104,7 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
     }
 
     if( sz1 != sz2 )
-        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
 
     if( code >= 0 )
     {
@@ -120,7 +120,7 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
                            "in test case %d first (%s) and second (%s) saved files differ in %d-th kb\n",
                            testCaseIdx, fname1, fname2,
                            (int)pos );
-                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
                 break;
             }
             pos += r1;
@@ -149,7 +149,7 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
             if( fabs(*it1 - *it2) > FLT_EPSILON )
             {
                 ts->printf( alvision.cvtest.TSConstants.LOG, "in test case %d responses predicted before saving and after loading is different", testCaseIdx );
-                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
                 break;
             }
         }
@@ -194,7 +194,7 @@ protected:
     {
         using namespace alvision.ml;
 
-        int code = alvision.cvtest.TS::OK;
+        int code = alvision.cvtest.FailureCode.OK;
         string filename = ts->get_data_path() + "legacy/" + modelName + suffix;
         bool isTree = modelName == CV_BOOST || modelName == CV_DTREE || modelName == CV_RTREES;
         Ptr<StatModel> model;
