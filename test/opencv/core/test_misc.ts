@@ -30,7 +30,7 @@
 //TEST(Core_SaturateCast, NegativeNotClipped)
 //{
 //    double d = -1.0;
-//    unsigned int val = cv::saturate_cast<unsigned int>(d);
+//    unsigned int val = alvision.saturate_cast<unsigned int>(d);
 
 //    ASSERT_EQ(0xffffffff, val);
 //}

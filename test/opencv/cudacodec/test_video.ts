@@ -52,7 +52,7 @@ import fs = require('fs');
 //
 //#ifdef HAVE_NVCUVID
 //
-//PARAM_TEST_CASE(Video, cv::cuda::DeviceInfo, std::string)
+//PARAM_TEST_CASE(Video, alvision.cuda::DeviceInfo, std::string)
 //{
 //};
 
@@ -61,13 +61,13 @@ import fs = require('fs');
 
 CUDA_TEST_P(Video, Reader)
 {
-    cv::cuda::setDevice(GET_PARAM(0).deviceID());
+    alvision.cuda::setDevice(GET_PARAM(0).deviceID());
 
-    const std::string inputFile = std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "video/" + GET_PARAM(1);
+    const std::string inputFile = std::alvision.cvtest.TS.ptr().get_data_path() + "video/" + GET_PARAM(1);
 
-    cv::Ptr<cv::cudacodec::VideoReader> reader = cv::cudacodec::createVideoReader(inputFile);
+    alvision.Ptr<alvision.cudacodec::VideoReader> reader = alvision.cudacodec::createVideoReader(inputFile);
 
-    cv::cuda::GpuMat frame;
+    alvision.cuda::GpuMat frame;
 
     for (int i = 0; i < 10; ++i)
     {
@@ -83,20 +83,20 @@ CUDA_TEST_P(Video, Reader)
 
 CUDA_TEST_P(Video, Writer)
 {
-    cv::cuda::setDevice(GET_PARAM(0).deviceID());
+    alvision.cuda::setDevice(GET_PARAM(0).deviceID());
 
-    const std::string inputFile = std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "video/" + GET_PARAM(1);
+    const std::string inputFile = std::alvision.cvtest.TS.ptr().get_data_path() + "video/" + GET_PARAM(1);
 
-    std::string outputFile = cv::tempfile(".avi");
+    std::string outputFile = alvision.tempfile(".avi");
     const double FPS = 25.0;
 
-    cv::VideoCapture reader(inputFile);
+    alvision.VideoCapture reader(inputFile);
     ASSERT_TRUE(reader.isOpened());
 
-    cv::Ptr<cv::cudacodec::VideoWriter> d_writer;
+    alvision.Ptr<alvision.cudacodec::VideoWriter> d_writer;
 
-    cv::Mat frame;
-    cv::cuda::GpuMat d_frame;
+    alvision.Mat frame;
+    alvision.cuda::GpuMat d_frame;
 
     for (int i = 0; i < 10; ++i)
     {
@@ -106,7 +106,7 @@ CUDA_TEST_P(Video, Writer)
         d_frame.upload(frame);
 
         if (d_writer.empty())
-            d_writer = cv::cudacodec::createVideoWriter(outputFile, frame.size(), FPS);
+            d_writer = alvision.cudacodec::createVideoWriter(outputFile, frame.size(), FPS);
 
         d_writer->write(d_frame);
     }

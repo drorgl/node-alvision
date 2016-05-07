@@ -470,7 +470,7 @@ export interface Vec<T> extends Matx<T> {
     //_Tp& operator[](int i);
     //const _Tp& operator()(int i) const;
     //_Tp& operator()(int i);
-    val(i: _st.int): T;
+    valGet(i: _st.int): T;
 
     //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_AddOp);
     //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_SubOp);

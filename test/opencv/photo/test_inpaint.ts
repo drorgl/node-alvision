@@ -75,18 +75,22 @@ class CV_InpaintTest extends alvision.cvtest.BaseTest
         alvision.cvtColor(mask, mask1ch,alvision.ColorConversionCodes. COLOR_BGR2GRAY);
 
         var test = orig.clone();
-        test.setTo(new alvision.Scalar.all(255), mask1ch);
+        test.setTo( alvision.Scalar.all(255), mask1ch);
 
-        Mat res1, res2;
-        alvision.inpaint(test, mask1ch, res1, 5, INPAINT_NS);
-        alvision.inpaint(test, mask1ch, res2, 5, INPAINT_TELEA);
+        var res1 = new alvision.Mat();
+        var res2 = new alvision.Mat();
 
-        Mat diff1, diff2;
+        alvision.inpaint(test, mask1ch, res1, 5, alvision.INPAINT.INPAINT_NS);
+        alvision.inpaint(test, mask1ch, res2, 5, alvision.INPAINT.INPAINT_TELEA);
+
+        var diff1 = new alvision.Mat();
+        var diff2 = new alvision.Mat();
+
         alvision.absdiff(orig, res1, diff1);
         alvision.absdiff(orig, res2, diff2);
 
-        var n1 = alvision.cvtest.norm(diff1.reshape(1), NORM_INF, inv_mask.reshape(1));
-        var n2 = alvision.cvtest.norm(diff2.reshape(1), NORM_INF, inv_mask.reshape(1));
+        var n1 = alvision.cvtest.norm(diff1.reshape(1), alvision.NormTypes.NORM_INF, inv_mask.reshape(1));
+        var n2 = alvision.cvtest.norm(diff2.reshape(1), alvision.NormTypes.NORM_INF, inv_mask.reshape(1));
 
         if (n1 != 0 || n2 != 0) {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
@@ -96,12 +100,12 @@ class CV_InpaintTest extends alvision.cvtest.BaseTest
         alvision.absdiff(exp1, res1, diff1);
         alvision.absdiff(exp2, res2, diff2);
 
-        n1 = alvision.cvtest.norm(diff1.reshape(1), NORM_INF, mask.reshape(1));
-        n2 = alvision.cvtest.norm(diff2.reshape(1), NORM_INF, mask.reshape(1));
+        n1 = alvision.cvtest.norm(diff1.reshape(1), alvision.NormTypes.NORM_INF, mask.reshape(1));
+        n2 = alvision.cvtest.norm(diff2.reshape(1), alvision.NormTypes.NORM_INF, mask.reshape(1));
 
         const jpeg_thres = 3;
         if (n1 > jpeg_thres || n2 > jpeg_thres) {
-            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
             return;
         }
 

@@ -70,7 +70,7 @@ using namespace std;
 #define MESSAGE_ERROR_ORDER "Eigen values are not sorted in ascending order."
 
 const int COUNT_NORM_TYPES = 3;
-const int NORM_TYPE[COUNT_NORM_TYPES] = {cv::NORM_L1, cv::NORM_L2, cv::NORM_INF};
+const int NORM_TYPE[COUNT_NORM_TYPES] = {alvision.NORM_L1, alvision.NORM_L2, alvision.NORM_INF};
 
 enum TASK_TYPE_EIGEN {VALUES, VECTORS};
 
@@ -83,7 +83,7 @@ public:
 
 protected:
 
-    bool test_values(const cv::Mat& src);												// complex test for eigen without vectors
+    bool test_values(const alvision.Mat& src);												// complex test for eigen without vectors
     bool check_full(int type);													// compex test for symmetric matrix
     virtual void run (int) = 0;													// main testing method
 
@@ -93,13 +93,13 @@ protected:
     float eps_val_64, eps_vec_64;
     int ntests;
 
-    bool check_pair_count(const cv::Mat& src, const cv::Mat& evalues, int low_index = -1, int high_index = -1);
-    bool check_pair_count(const cv::Mat& src, const cv::Mat& evalues, const cv::Mat& evectors, int low_index = -1, int high_index = -1);
-    bool check_pairs_order(const cv::Mat& eigen_values);											// checking order of eigen values & vectors (it should be none up)
-    bool check_orthogonality(const cv::Mat& U);												// checking is matrix of eigen vectors orthogonal
-    bool test_pairs(const cv::Mat& src);													// complex test for eigen with vectors
+    bool check_pair_count(const alvision.Mat& src, const alvision.Mat& evalues, int low_index = -1, int high_index = -1);
+    bool check_pair_count(const alvision.Mat& src, const alvision.Mat& evalues, const alvision.Mat& evectors, int low_index = -1, int high_index = -1);
+    bool check_pairs_order(const alvision.Mat& eigen_values);											// checking order of eigen values & vectors (it should be none up)
+    bool check_orthogonality(const alvision.Mat& U);												// checking is matrix of eigen vectors orthogonal
+    bool test_pairs(const alvision.Mat& src);													// complex test for eigen with vectors
 
-    void print_information(const size_t norm_idx, const cv::Mat& src, double diff, double max_diff);
+    void print_information(const size_t norm_idx, const alvision.Mat& src, double diff, double max_diff);
 };
 
 class Core_EigenTest_Scalar : public Core_EigenTest
@@ -152,8 +152,8 @@ void Core_EigenTest_Scalar_32::run(int)
 {
     for (int i = 0; i < ntests; ++i)
     {
-        float value = cv::randu<float>();
-        cv::Mat src(1, 1, CV_32FC1, Scalar::all((float)value));
+        float value = alvision.randu<float>();
+        alvision.Mat src(1, 1, CV_32FC1, Scalar::all((float)value));
         test_values(src);
     }
 }
@@ -162,8 +162,8 @@ void Core_EigenTest_Scalar_64::run(int)
 {
     for (int i = 0; i < ntests; ++i)
     {
-        float value = cv::randu<float>();
-        cv::Mat src(1, 1, CV_64FC1, Scalar::all((double)value));
+        float value = alvision.randu<float>();
+        alvision.Mat src(1, 1, CV_64FC1, Scalar::all((double)value));
         test_values(src);
     }
 }
@@ -176,7 +176,7 @@ Core_EigenTest::Core_EigenTest()
   eps_val_64(1e-4f), eps_vec_64(1e-3f), ntests(100) {}
 Core_EigenTest::~Core_EigenTest() {}
 
-bool Core_EigenTest::check_pair_count(const cv::Mat& src, const cv::Mat& evalues, int low_index, int high_index)
+bool Core_EigenTest::check_pair_count(const alvision.Mat& src, const alvision.Mat& evalues, int low_index, int high_index)
 {
     int n = src.rows, s = sign(high_index);
     if (!( (evalues.rows == n - max<int>(0, low_index) - ((int)((n/2.0)*(s*s-s)) + (1+s-s*s)*(n - (high_index+1)))) && (evalues.cols == 1)))
@@ -190,7 +190,7 @@ bool Core_EigenTest::check_pair_count(const cv::Mat& src, const cv::Mat& evalues
     return true;
 }
 
-bool Core_EigenTest::check_pair_count(const cv::Mat& src, const cv::Mat& evalues, const cv::Mat& evectors, int low_index, int high_index)
+bool Core_EigenTest::check_pair_count(const alvision.Mat& src, const alvision.Mat& evalues, const alvision.Mat& evectors, int low_index, int high_index)
 {
     int n = src.rows, s = sign(high_index);
     int right_eigen_pair_count = n - max<int>(0, low_index) - ((int)((n/2.0)*(s*s-s)) + (1+s-s*s)*(n - (high_index+1)));
@@ -216,13 +216,13 @@ bool Core_EigenTest::check_pair_count(const cv::Mat& src, const cv::Mat& evalues
     return true;
 }
 
-void Core_EigenTest::print_information(const size_t norm_idx, const cv::Mat& src, double diff, double max_diff)
+void Core_EigenTest::print_information(const size_t norm_idx, const alvision.Mat& src, double diff, double max_diff)
 {
     switch (NORM_TYPE[norm_idx])
     {
-    case cv::NORM_L1: std::cout << "L1"; break;
-    case cv::NORM_L2: std::cout << "L2"; break;
-    case cv::NORM_INF: std::cout << "INF"; break;
+    case alvision.NORM_L1: std::cout << "L1"; break;
+    case alvision.NORM_L2: std::cout << "L2"; break;
+    case alvision.NORM_INF: std::cout << "INF"; break;
     default: break;
     }
 
@@ -232,13 +232,13 @@ void Core_EigenTest::print_information(const size_t norm_idx, const cv::Mat& src
     cout << "Maximum allowed difference: " << max_diff << endl; cout << endl;
 }
 
-bool Core_EigenTest::check_orthogonality(const cv::Mat& U)
+bool Core_EigenTest::check_orthogonality(const alvision.Mat& U)
 {
     int type = U.type();
     double eps_vec = type == CV_32FC1 ? eps_vec_32 : eps_vec_64;
-    cv::Mat UUt; cv::mulTransposed(U, UUt, false);
+    alvision.Mat UUt; alvision.mulTransposed(U, UUt, false);
 
-    cv::Mat E = Mat::eye(U.rows, U.cols, type);
+    alvision.Mat E = Mat::eye(U.rows, U.cols, type);
 
     for (int i = 0; i < COUNT_NORM_TYPES; ++i)
     {
@@ -255,7 +255,7 @@ bool Core_EigenTest::check_orthogonality(const cv::Mat& U)
     return true;
 }
 
-bool Core_EigenTest::check_pairs_order(const cv::Mat& eigen_values)
+bool Core_EigenTest::check_pairs_order(const alvision.Mat& eigen_values)
 {
     switch (eigen_values.type())
     {
@@ -295,14 +295,14 @@ bool Core_EigenTest::check_pairs_order(const cv::Mat& eigen_values)
     return true;
 }
 
-bool Core_EigenTest::test_pairs(const cv::Mat& src)
+bool Core_EigenTest::test_pairs(const alvision.Mat& src)
 {
     int type = src.type();
     double eps_vec = type == CV_32FC1 ? eps_vec_32 : eps_vec_64;
 
-    cv::Mat eigen_values, eigen_vectors;
+    alvision.Mat eigen_values, eigen_vectors;
 
-    cv::eigen(src, eigen_values, eigen_vectors);
+    alvision.eigen(src, eigen_values, eigen_vectors);
 
     if (!check_pair_count(src, eigen_values, eigen_vectors))
         return false;
@@ -313,12 +313,12 @@ bool Core_EigenTest::test_pairs(const cv::Mat& src)
     if (!check_pairs_order(eigen_values))
         return false;
 
-    cv::Mat eigen_vectors_t; cv::transpose(eigen_vectors, eigen_vectors_t);
+    alvision.Mat eigen_vectors_t; alvision.transpose(eigen_vectors, eigen_vectors_t);
 
-    cv::Mat src_evec(src.rows, src.cols, type);
+    alvision.Mat src_evec(src.rows, src.cols, type);
     src_evec = src*eigen_vectors_t;
 
-    cv::Mat eval_evec(src.rows, src.cols, type);
+    alvision.Mat eval_evec(src.rows, src.cols, type);
 
     switch (type)
     {
@@ -326,7 +326,7 @@ bool Core_EigenTest::test_pairs(const cv::Mat& src)
         {
             for (int i = 0; i < src.cols; ++i)
             {
-                cv::Mat tmp = eigen_values.at<float>(i, 0) * eigen_vectors_t.col(i);
+                alvision.Mat tmp = eigen_values.at<float>(i, 0) * eigen_vectors_t.col(i);
                 for (int j = 0; j < src.rows; ++j) eval_evec.at<float>(j, i) = tmp.at<float>(j, 0);
             }
 
@@ -337,7 +337,7 @@ bool Core_EigenTest::test_pairs(const cv::Mat& src)
         {
             for (int i = 0; i < src.cols; ++i)
             {
-                cv::Mat tmp = eigen_values.at<double>(i, 0) * eigen_vectors_t.col(i);
+                alvision.Mat tmp = eigen_values.at<double>(i, 0) * eigen_vectors_t.col(i);
                 for (int j = 0; j < src.rows; ++j) eval_evec.at<double>(j, i) = tmp.at<double>(j, 0);
             }
 
@@ -347,7 +347,7 @@ bool Core_EigenTest::test_pairs(const cv::Mat& src)
     default:;
     }
 
-    cv::Mat disparity = src_evec - eval_evec;
+    alvision.Mat disparity = src_evec - eval_evec;
 
     for (int i = 0; i < COUNT_NORM_TYPES; ++i)
     {
@@ -364,17 +364,17 @@ bool Core_EigenTest::test_pairs(const cv::Mat& src)
     return true;
 }
 
-bool Core_EigenTest::test_values(const cv::Mat& src)
+bool Core_EigenTest::test_values(const alvision.Mat& src)
 {
     int type = src.type();
     double eps_val = type == CV_32FC1 ? eps_val_32 : eps_val_64;
 
-    cv::Mat eigen_values_1, eigen_values_2, eigen_vectors;
+    alvision.Mat eigen_values_1, eigen_values_2, eigen_vectors;
 
     if (!test_pairs(src)) return false;
 
-    cv::eigen(src, eigen_values_1, eigen_vectors);
-    cv::eigen(src, eigen_values_2);
+    alvision.eigen(src, eigen_values_1, eigen_vectors);
+    alvision.eigen(src, eigen_values_2);
 
     if (!check_pair_count(src, eigen_values_2)) return false;
 
@@ -403,12 +403,12 @@ bool Core_EigenTest::check_full(int type)
     {
         int src_size = (int)(std::pow(2.0, (rand()%MAX_DEGREE)+1.));
 
-        cv::Mat src(src_size, src_size, type);
+        alvision.Mat src(src_size, src_size, type);
 
         for (int j = 0; j < src.rows; ++j)
             for (int k = j; k < src.cols; ++k)
-                if (type == CV_32FC1)  src.at<float>(k, j) = src.at<float>(j, k) = cv::randu<float>();
-        else	src.at<double>(k, j) = src.at<double>(j, k) = cv::randu<double>();
+                if (type == CV_32FC1)  src.at<float>(k, j) = src.at<float>(j, k) = alvision.randu<float>();
+        else	src.at<double>(k, j) = src.at<double>(j, k) = alvision.randu<double>();
 
         if (!test_values(src)) return false;
     }

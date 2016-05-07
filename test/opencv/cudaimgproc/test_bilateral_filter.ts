@@ -57,10 +57,10 @@ import fs = require('fs');
 ////////////////////////////////////////////////////////
 // BilateralFilter
 
-PARAM_TEST_CASE(BilateralFilter, cv::cuda::DeviceInfo, cv::Size, MatType)
+PARAM_TEST_CASE(BilateralFilter, alvision.cuda::DeviceInfo, alvision.Size, MatType)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int type;
     int kernel_size;
     float sigma_color;
@@ -76,28 +76,28 @@ PARAM_TEST_CASE(BilateralFilter, cv::cuda::DeviceInfo, cv::Size, MatType)
         sigma_color = 10.f;
         sigma_spatial = 3.5f;
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(BilateralFilter, Accuracy)
 {
-    cv::Mat src = randomMat(size, type);
+    alvision.Mat src = randomMat(size, type);
 
     src.convertTo(src, type);
-    cv::cuda::GpuMat dst;
+    alvision.cuda::GpuMat dst;
 
-    cv::cuda::bilateralFilter(loadMat(src), dst, kernel_size, sigma_color, sigma_spatial);
+    alvision.cuda::bilateralFilter(loadMat(src), dst, kernel_size, sigma_color, sigma_spatial);
 
-    cv::Mat dst_gold;
-    cv::bilateralFilter(src, dst_gold, kernel_size, sigma_color, sigma_spatial);
+    alvision.Mat dst_gold;
+    alvision.bilateralFilter(src, dst_gold, kernel_size, sigma_color, sigma_spatial);
 
     EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-3 : 1.0);
 }
 
 INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, BilateralFilter, testing::Combine(
     ALL_DEVICES,
-    testing::Values(cv::Size(128, 128), cv::Size(113, 113), cv::Size(639, 481)),
+    testing::Values(alvision.Size(128, 128), alvision.Size(113, 113), alvision.Size(639, 481)),
     testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_32FC1), MatType(CV_32FC3))
     ));
 

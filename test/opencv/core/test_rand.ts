@@ -168,7 +168,7 @@ void Core_RandTest::run( int )
             hist[c].create(1, hsz, CV_32S);
         }
 
-        cv::RNG saved_rng = tested_rng;
+        alvision.RNG saved_rng = tested_rng;
         int maxk = fast_algo ? 0 : 1;
         for( k = 0; k <= maxk; k++ )
         {
@@ -184,8 +184,8 @@ void Core_RandTest::run( int )
 
         if( maxk >= 1 && alvision.cvtest.norm(arr[0], arr[1], NORM_INF) > eps)
         {
-            ts->printf( alvision.cvtest.TS::LOG, "RNG output depends on the array lengths (some generated numbers get lost?)" );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "RNG output depends on the array lengths (some generated numbers get lost?)" );
+            this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
             return;
         }
 
@@ -232,26 +232,26 @@ void Core_RandTest::run( int )
 
             if( dist_type == CV_RAND_UNI && W[c] != SZ )
             {
-                ts->printf( alvision.cvtest.TS::LOG, "Uniform RNG gave values out of the range [%g,%g) on channel %d/%d\n",
+                ts->printf( alvision.cvtest.TSConstants.LOG, "Uniform RNG gave values out of the range [%g,%g) on channel %d/%d\n",
                            A[c], B[c], c, cn);
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
             if( dist_type == CV_RAND_NORMAL && W[c] < SZ*.90)
             {
-                ts->printf( alvision.cvtest.TS::LOG, "Normal RNG gave too many values out of the range (%g+4*%g,%g+4*%g) on channel %d/%d\n",
+                ts->printf( alvision.cvtest.TSConstants.LOG, "Normal RNG gave too many values out of the range (%g+4*%g,%g+4*%g) on channel %d/%d\n",
                            A[c], B[c], A[c], B[c], c, cn);
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
             double refval = 0, realval = 0;
 
             if( !check_pdf(hist[c], 1./W[c], dist_type, refval, realval) )
             {
-                ts->printf( alvision.cvtest.TS::LOG, "RNG failed Chi-square test "
+                ts->printf( alvision.cvtest.TSConstants.LOG, "RNG failed Chi-square test "
                            "(got %g vs probable maximum %g) on channel %d/%d\n",
                            realval, refval, c, cn);
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
         }
@@ -296,14 +296,14 @@ void Core_RandTest::run( int )
             int sdim = SDIM % 2;
             double V0 = sdim + 1;
             for( sdim += 2; sdim <= SDIM; sdim += 2 )
-                V0 *= 2*CV_PI/sdim;
+                V0 *= 2*Math.PI/sdim;
 
             if( fabs(V - V0) > 0.3*fabs(V0) )
             {
-                ts->printf( alvision.cvtest.TS::LOG, "RNG failed %d-dim sphere volume test (got %g instead of %g)\n",
+                ts->printf( alvision.cvtest.TSConstants.LOG, "RNG failed %d-dim sphere volume test (got %g instead of %g)\n",
                            SDIM, V, V0);
-                ts->printf( alvision.cvtest.TS::LOG, "depth = %d, N0 = %d\n", depth, N0);
-                this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+                ts->printf( alvision.cvtest.TSConstants.LOG, "depth = %d, N0 = %d\n", depth, N0);
+                this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
         }
@@ -350,7 +350,7 @@ TEST(Core_Rand, range) { Core_RandRangeTest test; test.safe_run(); }
 
 TEST(Core_RNG_MT19937, regression)
 {
-    cv::RNG_MT19937 rng;
+    alvision.RNG_MT19937 rng;
     int actual[61] = {0, };
     const size_t length = (sizeof(actual) / sizeof(actual[0]));
     for (int i = 0; i < 10000; ++i )

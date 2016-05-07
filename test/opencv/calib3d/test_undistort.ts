@@ -48,31 +48,31 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include "opencv2/imgproc/imgproc_c.h"
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//#include "opencv2/imgproc/imgproc_c.h"
+//
+//using namespace cv;
+//using namespace std;
 
 class CV_DefaultNewCameraMatrixTest extends alvision.cvtest.ArrayTest {
     constructor() {
         super();
 
-        test_array[INPUT].push_back(NULL);
-        test_array[OUTPUT].push_back(NULL);
-        test_array[REF_OUTPUT].push_back(NULL);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
 
-        matrix_type = 0;
-        center_principal_point = false;
+        this.matrix_type = 0;
+        this.center_principal_point = false;
     }
 
     protected prepare_test_case(test_case_idx: alvision.int): alvision.int {
-        int code = alvision.cvtest.ArrayTest::prepare_test_case(test_case_idx);
+        int code = super.prepare_test_case(test_case_idx);
 
         if (code <= 0)
             return code;
 
-        RNG & rng = ts ->get_rng();
+        RNG & rng = this.ts.get_rng();
 
         img_size.width = alvision.cvtest.randInt(rng) % MAX_X + 1;
         img_size.height = alvision.cvtest.randInt(rng) % MAX_Y + 1;
@@ -122,12 +122,12 @@ class CV_DefaultNewCameraMatrixTest extends alvision.cvtest.ArrayTest {
     }
     protected get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
-        RNG & rng = ts ->get_rng();
+        RNG & rng = this.ts.get_rng();
         matrix_type = types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = alvision.cvtest.randInt(rng) % 2 ? CV_64F : CV_32F;
         sizes[INPUT][0] = sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(3, 3);
     }
     protected run_func(): void {
-        new_camera_mat = cv::getDefaultNewCameraMatrix(camera_mat, img_size, center_principal_point);
+        new_camera_mat = alvision.getDefaultNewCameraMatrix(camera_mat, img_size, center_principal_point);
     }
 
 
@@ -166,8 +166,8 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
  
        protected int prepare_test_case (int test_case_idx){
 
-        RNG & rng = ts ->get_rng();
-        int code = alvision.cvtest.ArrayTest::prepare_test_case(test_case_idx);
+        RNG & rng = this.ts.get_rng();
+        int code = super.prepare_test_case(test_case_idx);
 
         if (code <= 0)
             return code;
@@ -254,9 +254,9 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
         //Generating R matrix
         Mat _rot(3, 3, CV_64F);
         Mat rotation(1, 3, CV_64F);
-        rotation.at<double>(0) = CV_PI * (alvision.cvtest.randReal(rng) - (double)0.5); // phi
-        rotation.at<double>(1) = CV_PI * (alvision.cvtest.randReal(rng) - (double)0.5); // ksi
-        rotation.at<double>(2) = CV_PI * (alvision.cvtest.randReal(rng) - (double)0.5); //khi
+        rotation.at<double>(0) = Math.PI * (alvision.cvtest.randReal(rng) - (double)0.5); // phi
+        rotation.at<double>(1) = Math.PI * (alvision.cvtest.randReal(rng) - (double)0.5); // ksi
+        rotation.at<double>(2) = Math.PI * (alvision.cvtest.randReal(rng) - (double)0.5); //khi
         alvision.cvtest.Rodrigues(rotation, _rot);
 
         //copying data
@@ -349,7 +349,7 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
         delete [] r_points;
 
     }
-    protected void get_test_array_types_and_sizes(int test_case_idx, vector<vector<Size>>& sizes, vector<vector<int>>& types){
+    protected void get_test_array_types_and_sizes(int test_case_idx, Array<Array<Size>>& sizes, Array<Array<int>>& types){
         alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
     RNG& rng = ts->get_rng();
         useCPlus = ((alvision.cvtest.randInt(rng) % 2)!=0);
@@ -396,18 +396,18 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
     protected void run_func(){
 
     if (useCPlus) {
-        cv::Mat input2, input3, input4;
-        input2 = zero_distortion ? cv ::Mat() : cv::Mat(test_mat[INPUT][2]);
-        input3 = zero_R ? cv ::Mat() : cv::Mat(test_mat[INPUT][3]);
-        input4 = zero_new_cam ? cv ::Mat() : cv::Mat(test_mat[INPUT][4]);
+        alvision.Mat input2, input3, input4;
+        input2 = zero_distortion ? cv ::Mat() : alvision.Mat(test_mat[INPUT][2]);
+        input3 = zero_R ? cv ::Mat() : alvision.Mat(test_mat[INPUT][3]);
+        input4 = zero_new_cam ? cv ::Mat() : alvision.Mat(test_mat[INPUT][4]);
 
         if (useDstMat) {
-            //cv::undistortPoints(src_points,dst_points_mat,camera_mat,distortion_coeffs,R,P);
-            cv::undistortPoints(src_points, dst_points_mat, camera_mat, input2, input3, input4);
+            //alvision.undistortPoints(src_points,dst_points_mat,camera_mat,distortion_coeffs,R,P);
+            alvision.undistortPoints(src_points, dst_points_mat, camera_mat, input2, input3, input4);
         }
         else {
-            //cv::undistortPoints(src_points,dst_points,camera_mat,distortion_coeffs,R,P);
-            cv::undistortPoints(src_points, dst_points, camera_mat, input2, input3, input4);
+            //alvision.undistortPoints(src_points,dst_points,camera_mat,distortion_coeffs,R,P);
+            alvision.undistortPoints(src_points, dst_points, camera_mat, input2, input3, input4);
         }
     }
     else {
@@ -442,15 +442,15 @@ class CV_UndistortPointsTest alvision.cvtest.ArrayTest
     private bool zero_distortion;
     private bool zero_R;
     
-    private cv::Size img_size;
-    private cv::Mat dst_points_mat;
+    private alvision.Size img_size;
+    private alvision.Mat dst_points_mat;
     
-    private cv::Mat camera_mat;
-    private cv::Mat R;
-    private cv::Mat P;
-    private cv::Mat distortion_coeffs;
-    private cv::Mat src_points;
-    private std::vector<cv::Point2f> dst_points;
+    private alvision.Mat camera_mat;
+    private alvision.Mat R;
+    private alvision.Mat P;
+    private alvision.Mat distortion_coeffs;
+    private alvision.Mat src_points;
+    private std::Array<alvision.Point2f> dst_points;
 };
 
 
@@ -560,14 +560,14 @@ private:
     bool zero_R;
 
 
-    cv::Size img_size;
+    alvision.Size img_size;
 
-    cv::Mat camera_mat;
-    cv::Mat R;
-    cv::Mat new_camera_mat;
-    cv::Mat distortion_coeffs;
-    cv::Mat mapx;
-    cv::Mat mapy;
+    alvision.Mat camera_mat;
+    alvision.Mat R;
+    alvision.Mat new_camera_mat;
+    alvision.Mat distortion_coeffs;
+    alvision.Mat mapx;
+    alvision.Mat mapy;
     CvMat* _mapx;
     CvMat* _mapy;
     int mat_type;
@@ -589,7 +589,7 @@ CV_InitUndistortRectifyMapTest::CV_InitUndistortRectifyMapTest()
     mat_type = 0;
 }
 
-void CV_InitUndistortRectifyMapTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_InitUndistortRectifyMapTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx,sizes,types);
     RNG& rng = ts->get_rng();
@@ -634,7 +634,7 @@ void CV_InitUndistortRectifyMapTest::get_test_array_types_and_sizes( int test_ca
 int CV_InitUndistortRectifyMapTest::prepare_test_case(int test_case_idx)
 {
     RNG& rng = ts->get_rng();
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
 
     if (code <= 0)
         return code;
@@ -666,9 +666,9 @@ int CV_InitUndistortRectifyMapTest::prepare_test_case(int test_case_idx)
 
     int dist_size = test_mat[INPUT][2].cols > test_mat[INPUT][2].rows ? test_mat[INPUT][2].cols : test_mat[INPUT][2].rows;
     double cam[9] = {0,0,0,0,0,0,0,0,1};
-    vector<double> dist(dist_size);
-    vector<double> new_cam(test_mat[INPUT][4].cols * test_mat[INPUT][4].rows);
-    vector<Point2d> points(N_POINTS);
+    Array<double> dist(dist_size);
+    Array<double> new_cam(test_mat[INPUT][4].cols * test_mat[INPUT][4].rows);
+    Array<Point2d> points(N_POINTS);
 
     Mat _camera(3,3,CV_64F,cam);
     Mat _distort(test_mat[INPUT][2].size(),CV_64F,&dist[0]);
@@ -727,9 +727,9 @@ int CV_InitUndistortRectifyMapTest::prepare_test_case(int test_case_idx)
     //Generating R matrix
     Mat _rot(3,3,CV_64F);
     Mat rotation(1,3,CV_64F);
-    rotation.at<double>(0) = CV_PI/8*(alvision.cvtest.randReal(rng) - (double)0.5); // phi
-    rotation.at<double>(1) = CV_PI/8*(alvision.cvtest.randReal(rng) - (double)0.5); // ksi
-    rotation.at<double>(2) = CV_PI/3*(alvision.cvtest.randReal(rng) - (double)0.5); //khi
+    rotation.at<double>(0) = Math.PI/8*(alvision.cvtest.randReal(rng) - (double)0.5); // phi
+    rotation.at<double>(1) = Math.PI/8*(alvision.cvtest.randReal(rng) - (double)0.5); // ksi
+    rotation.at<double>(2) = Math.PI/3*(alvision.cvtest.randReal(rng) - (double)0.5); //khi
     alvision.cvtest.Rodrigues(rotation, _rot);
 
     //cvSetIdentity(_rot);
@@ -761,10 +761,10 @@ void CV_InitUndistortRectifyMapTest::prepare_to_validation(int/* test_case_idx*/
     int dist_size = test_mat[INPUT][2].cols > test_mat[INPUT][2].rows ? test_mat[INPUT][2].cols : test_mat[INPUT][2].rows;
     double cam[9] = {0,0,0,0,0,0,0,0,1};
     double rot[9] = {1,0,0,0,1,0,0,0,1};
-    vector<double> dist(dist_size);
-    vector<double> new_cam(test_mat[INPUT][4].cols * test_mat[INPUT][4].rows);
-    vector<Point2d> points(N_POINTS);
-    vector<Point2d> r_points(N_POINTS);
+    Array<double> dist(dist_size);
+    Array<double> new_cam(test_mat[INPUT][4].cols * test_mat[INPUT][4].rows);
+    Array<Point2d> points(N_POINTS);
+    Array<Point2d> r_points(N_POINTS);
     //Run reference calculations
     Mat ref_points(test_mat[INPUT][0].size(),CV_64FC2,&r_points[0]);
     Mat _camera(3,3,CV_64F,cam);
@@ -781,11 +781,11 @@ void CV_InitUndistortRectifyMapTest::prepare_to_validation(int/* test_case_idx*/
     //Applying precalculated undistort rectify map
     if (!useCPlus)
     {
-        mapx = cv::Mat(_mapx);
-        mapy = cv::Mat(_mapy);
+        mapx = alvision.Mat(_mapx);
+        mapy = alvision.Mat(_mapy);
     }
-    cv::Mat map1,map2;
-    cv::convertMaps(mapx,mapy,map1,map2,CV_32FC1);
+    alvision.Mat map1,map2;
+    alvision.convertMaps(mapx,mapy,map1,map2,CV_32FC1);
     CvMat _map1 = map1;
     CvMat _map2 = map2;
     const Point2d* sptr = (const Point2d*)test_mat[INPUT][0].data;
@@ -799,7 +799,7 @@ void CV_InitUndistortRectifyMapTest::prepare_to_validation(int/* test_case_idx*/
 
     //---
 
-    cv::undistortPoints(_points, ref_points, _camera,
+    alvision.undistortPoints(_points, ref_points, _camera,
                         zero_distortion ? Mat() : _distort,
                         zero_R ? Mat::eye(3,3,CV_64F) : _rot,
                         zero_new_cam ? _camera : _new_cam);
@@ -838,11 +838,11 @@ void CV_InitUndistortRectifyMapTest::prepare_to_validation(int/* test_case_idx*/
     //Applying precalculated undistort rectify map
     if (!useCPlus)
     {
-        mapx = cv::cvarrToMat(_mapx);
-        mapy = cv::cvarrToMat(_mapy);
+        mapx = alvision.cvarrToMat(_mapx);
+        mapy = alvision.cvarrToMat(_mapy);
     }
-    cv::Mat map1,map2;
-    cv::convertMaps(mapx,mapy,map1,map2,CV_32FC1);
+    alvision.Mat map1,map2;
+    alvision.convertMaps(mapx,mapy,map1,map2,CV_32FC1);
     CvMat _map1 = map1;
     CvMat _map2 = map2;
     for (int i=0;i<N_POINTS;i++)
@@ -876,11 +876,11 @@ void CV_InitUndistortRectifyMapTest::run_func()
 {
     if (useCPlus)
     {
-        cv::Mat input2,input3,input4;
-        input2 = zero_distortion ? cv::Mat() : test_mat[INPUT][2];
-        input3 = zero_R ? cv::Mat() : test_mat[INPUT][3];
-        input4 = zero_new_cam ? cv::Mat() : test_mat[INPUT][4];
-        cv::initUndistortRectifyMap(camera_mat,input2,input3,input4,img_size,mat_type,mapx,mapy);
+        alvision.Mat input2,input3,input4;
+        input2 = zero_distortion ? alvision.Mat() : test_mat[INPUT][2];
+        input3 = zero_R ? alvision.Mat() : test_mat[INPUT][3];
+        input4 = zero_new_cam ? alvision.Mat() : test_mat[INPUT][4];
+        alvision.initUndistortRectifyMap(camera_mat,input2,input3,input4,img_size,mat_type,mapx,mapy);
     }
     else
     {

@@ -63,7 +63,7 @@ class CV_KalmanTest extends alvision. cvtest.BaseTest
         const double max_noise = 0.1;
 
         const double EPSILON = 1.000;
-        RNG & rng = ts ->get_rng();
+        RNG & rng = this.ts.get_rng();
         CvKalman * Kalm;
         int i, j;
 
@@ -112,7 +112,7 @@ class CV_KalmanTest extends alvision. cvtest.BaseTest
         cvReleaseKalman(&Kalm);
 
         if (code < 0)
-            ts ->set_failed_test_info(code);
+            this.ts.set_failed_test_info(code);
     }
 };
 

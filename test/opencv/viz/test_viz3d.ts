@@ -55,19 +55,19 @@
 
 //this.cvtest.TEST('Viz_viz3d', 'DISABLED_develop')
 //{
-//    //cv::Mat cloud = cv::viz::readCloud(get_dragon_ply_file_path());
+//    //alvision.Mat cloud = alvision.viz::readCloud(get_dragon_ply_file_path());
 //    var cloud = alvision.viz.readCloud(get_dragon_ply_file_path());
 
-//    cv::viz::Viz3d viz("abc");
+//    alvision.viz::Viz3d viz("abc");
 //    viz.setBackgroundMeshLab();
-//    viz.showWidget("coo", cv::viz::WCoordinateSystem(1));
-//    viz.showWidget("cloud", cv::viz::WPaintedCloud(cloud));
+//    viz.showWidget("coo", alvision.viz::WCoordinateSystem(1));
+//    viz.showWidget("cloud", alvision.viz::WPaintedCloud(cloud));
 
 //    //---->>>>> <to_test_in_future>
-//    //std::vector<cv::Affine3d> gt, es;
-//    //cv::viz::readTrajectory(gt, "d:/Datasets/trajs/gt%05d.xml");
-//    //cv::viz::readTrajectory(es, "d:/Datasets/trajs/es%05d.xml");
-//    //cv::Mat cloud = cv::viz::readCloud(get_dragon_ply_file_path());
+//    //std::Array<alvision.Affine3d> gt, es;
+//    //alvision.viz::readTrajectory(gt, "d:/Datasets/trajs/gt%05d.xml");
+//    //alvision.viz::readTrajectory(es, "d:/Datasets/trajs/es%05d.xml");
+//    //alvision.Mat cloud = alvision.viz::readCloud(get_dragon_ply_file_path());
 //    //---->>>>> </to_test_in_future>
 
 //    viz.spin();

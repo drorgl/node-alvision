@@ -1,4 +1,4 @@
-/*M///////////////////////////////////////////////////////////////////////////////////////
+ï»¿/*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
 //
@@ -945,7 +945,7 @@ including std::sort().
 
     //! download data from GpuMat
         //explicit Mat(const cuda::GpuMat& m);
-        new (m: _cuda.cuda.GpuMat): Mat;
+        new (m: _cuda.GpuMat): Mat;
 
     //! destructor - calls release()
     //~Mat();
@@ -1162,7 +1162,7 @@ export interface Mat
     The method creates a full copy of the array. The original step[] is not taken into account. So, the
     array copy is a continuous array occupying total()*elemSize() bytes.
      */
-    //Mat clone() const;
+    clone(): Mat;
 
     /** @brief Copies the matrix to another one.
 
@@ -2255,7 +2255,7 @@ interface UMatStatic {
 
 /** @todo document */
 //class CV_EXPORTS UMat
-interface UMat
+export interface UMat
 {
    
 //    //! builds matrix from std::vector with or without copying the data
@@ -2592,11 +2592,11 @@ export interface SparseMat
 //    /*!
 //        @param [out] m - output matrix; if it does not have a proper size or type before the operation,
 //            it is reallocated
-//        @param [in] rtype – desired output matrix type or, rather, the depth since the number of channels
+//        @param [in] rtype â€“ desired output matrix type or, rather, the depth since the number of channels
 //            are the same as the input has; if rtype is negative, the output matrix will have the
 //            same type as the input.
-//        @param [in] alpha – optional scale factor
-//        @param [in] beta – optional delta added to the scaled values
+//        @param [in] alpha â€“ optional scale factor
+//        @param [in] beta â€“ optional delta added to the scaled values
 //    */
 //    void convertTo(Mat & m, int rtype, double alpha= 1, double beta= 0) const;
 //
@@ -3322,7 +3322,7 @@ interface MatOp
 //    virtual void divide(const MatExpr& expr1, const MatExpr& expr2, MatExpr& res, double scale= 1) const;
 //    virtual void divide(double s, const MatExpr& expr, MatExpr& res) const;
 
-//    virtual void abs(const MatExpr& expr, MatExpr& res) const;
+    abs(expr: MatExpr, res: MatExpr): void;
 
 //    virtual void transpose(const MatExpr& expr, MatExpr& res) const;
 //    virtual void matmul(const MatExpr& expr1, const MatExpr& expr2, MatExpr& res) const;

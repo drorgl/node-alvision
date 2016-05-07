@@ -75,7 +75,7 @@ void CV_WatershedTest::run( int /* start_from */)
 
     if (orig.empty() || !fs.isOpened())
     {
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_TEST_DATA );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
         return;
     }
 
@@ -85,7 +85,7 @@ void CV_WatershedTest::run( int /* start_from */)
     markers = Scalar(0);
     IplImage iplmrks = markers;
 
-    vector<unsigned char> colors(1);
+    Array<unsigned char> colors(1);
     for(int i = 0; cnts != 0; cnts = cnts->h_next, ++i )
     {
         cvDrawContours( &iplmrks, cnts, Scalar::all(i + 1), Scalar::all(i + 1), -1, CV_FILLED);

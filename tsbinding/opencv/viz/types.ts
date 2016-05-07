@@ -65,224 +65,219 @@ import * as _features2d from './../features2d'
 ////
 ////namespace cv
 ////{
-    namespace viz
-    {
+namespace viz {
 
-////! @addtogroup viz
-////! @{
+    ////! @addtogroup viz
+    ////! @{
 
-//        /** @brief This class a represents BGR color.
-//        */
-        interface Color extends _types.Scalar
-        {
-//        public:
-//            Color();
-//            Color(double gray);
-//            Color(double blue, double green, double red);
+    //        /** @brief This class a represents BGR color.
+    //        */
+    interface Color extends _types.Scalar {
+        //        public:
+        //            Color();
+        //            Color(double gray);
+        //            Color(double blue, double green, double red);
 
-//            Color(const Scalar& color);
+        //            Color(const Scalar& color);
 
-//            operator Vec3b() const;
+        //            operator Vec3b() const;
 
-//            static Color black();
-//            static Color blue();
-//            static Color green();
-//            static Color cyan();
+        //            static Color black();
+        //            static Color blue();
+        //            static Color green();
+        //            static Color cyan();
 
-//            static Color red();
-//            static Color magenta();
-//            static Color yellow();
-//            static Color white();
+        //            static Color red();
+        //            static Color magenta();
+        //            static Color yellow();
+        //            static Color white();
 
-//            static Color gray();
+        //            static Color gray();
 
-//            static Color mlab();
+        //            static Color mlab();
 
-//            static Color navy();
-//            static Color olive();
-//            static Color maroon();
-//            static Color teal();
-//            static Color rose();
-//            static Color azure();
-//            static Color lime();
-//            static Color gold();
-//            static Color brown();
-//            static Color orange();
-//            static Color chartreuse();
-//            static Color orange_red();
-//            static Color purple();
-//            static Color indigo();
+        //            static Color navy();
+        //            static Color olive();
+        //            static Color maroon();
+        //            static Color teal();
+        //            static Color rose();
+        //            static Color azure();
+        //            static Color lime();
+        //            static Color gold();
+        //            static Color brown();
+        //            static Color orange();
+        //            static Color chartreuse();
+        //            static Color orange_red();
+        //            static Color purple();
+        //            static Color indigo();
 
-//            static Color pink();
-//            static Color cherry();
-//            static Color bluberry();
-//            static Color raspberry();
-//            static Color silver();
-//            static Color violet();
-//            static Color apricot();
-//            static Color turquoise();
-//            static Color celestial_blue();
-//            static Color amethyst();
+        //            static Color pink();
+        //            static Color cherry();
+        //            static Color bluberry();
+        //            static Color raspberry();
+        //            static Color silver();
+        //            static Color violet();
+        //            static Color apricot();
+        //            static Color turquoise();
+        //            static Color celestial_blue();
+        //            static Color amethyst();
 
-//            static Color not_set();
-//        };
+        //            static Color not_set();
+    };
 
-//        /** @brief This class wraps mesh attributes, and it can load a mesh from a ply file. :
-//        */
-//        class CV_EXPORTS Mesh
-//        {
-//        public:
-//            enum {
-//                LOAD_AUTO = 0,
-//                LOAD_PLY = 1,
-//                LOAD_OBJ = 2
-//            };
+    //        /** @brief This class wraps mesh attributes, and it can load a mesh from a ply file. :
+    //        */
+    interface Mesh {
+        //        public:
+        //            enum {
+        //                LOAD_AUTO = 0,
+        //                LOAD_PLY = 1,
+        //                LOAD_OBJ = 2
+        //            };
 
-//            Mat cloud, colors, normals;
+        //            Mat cloud, colors, normals;
 
-//            //! Raw integer list of the form: (n,id1,id2,...,idn, n,id1,id2,...,idn, ...)
-//            //! where n is the number of points in the poligon, and id is a zero-offset index into an associated cloud.
-//            Mat polygons;
+        //            //! Raw integer list of the form: (n,id1,id2,...,idn, n,id1,id2,...,idn, ...)
+        //            //! where n is the number of points in the poligon, and id is a zero-offset index into an associated cloud.
+        //            Mat polygons;
 
-//            Mat texture, tcoords;
+        //            Mat texture, tcoords;
 
-//            /** @brief Loads a mesh from a ply or a obj file.
+        //            /** @brief Loads a mesh from a ply or a obj file.
 
-//            @param file File name
-//            @param type File type (for now only PLY and OBJ are supported)
+        //            @param file File name
+        //            @param type File type (for now only PLY and OBJ are supported)
 
-//            **File type** can be one of the following:
-//            -   **LOAD_PLY**
-//            -   **LOAD_OBJ**
-//             */
-//            static Mesh load(const String& file, int type = LOAD_PLY);
+        //            **File type** can be one of the following:
+        //            -   **LOAD_PLY**
+        //            -   **LOAD_OBJ**
+        //             */
+        //            static Mesh load(const String& file, int type = LOAD_PLY);
 
-//        };
+    };
 
-//        /** @brief This class wraps intrinsic parameters of a camera.
+    //        /** @brief This class wraps intrinsic parameters of a camera.
 
-//        It provides several constructors that can extract the intrinsic parameters from field of
-//        view, intrinsic matrix and projection matrix. :
-//         */
-//        class CV_EXPORTS Camera
-//        {
-//        public:
+    //        It provides several constructors that can extract the intrinsic parameters from field of
+    //        view, intrinsic matrix and projection matrix. :
+    //         */
+    interface Camera {
+        //        public:
 
-//            /** @brief Constructs a Camera.
+        //            /** @brief Constructs a Camera.
 
-//            @param fx Horizontal focal length.
-//            @param fy Vertical focal length.
-//            @param cx x coordinate of the principal point.
-//            @param cy y coordinate of the principal point.
-//            @param window_size Size of the window. This together with focal length and principal
-//            point determines the field of view.
-//             */
-//            Camera(double fx, double fy, double cx, double cy, const Size &window_size);
-//            /** @overload
-//            @param fov Field of view (horizontal, vertical)
-//            @param window_size Size of the window. Principal point is at the center of the window
-//            by default.
-//            */
-//            explicit Camera(const Vec2d &fov, const Size &window_size);
-//            /** @overload
-//            @param K Intrinsic matrix of the camera.
-//            @param window_size Size of the window. This together with intrinsic matrix determines
-//            the field of view.
-//            */
-//            explicit Camera(const Matx33d &K, const Size &window_size);
-//            /** @overload
-//            @param proj Projection matrix of the camera.
-//            @param window_size Size of the window. This together with projection matrix determines
-//            the field of view.
-//            */
-//            explicit Camera(const Matx44d &proj, const Size &window_size);
+        //            @param fx Horizontal focal length.
+        //            @param fy Vertical focal length.
+        //            @param cx x coordinate of the principal point.
+        //            @param cy y coordinate of the principal point.
+        //            @param window_size Size of the window. This together with focal length and principal
+        //            point determines the field of view.
+        //             */
+        //            Camera(double fx, double fy, double cx, double cy, const Size &window_size);
+        //            /** @overload
+        //            @param fov Field of view (horizontal, vertical)
+        //            @param window_size Size of the window. Principal point is at the center of the window
+        //            by default.
+        //            */
+        //            explicit Camera(const Vec2d &fov, const Size &window_size);
+        //            /** @overload
+        //            @param K Intrinsic matrix of the camera.
+        //            @param window_size Size of the window. This together with intrinsic matrix determines
+        //            the field of view.
+        //            */
+        //            explicit Camera(const Matx33d &K, const Size &window_size);
+        //            /** @overload
+        //            @param proj Projection matrix of the camera.
+        //            @param window_size Size of the window. This together with projection matrix determines
+        //            the field of view.
+        //            */
+        //            explicit Camera(const Matx44d &proj, const Size &window_size);
 
-//            const Vec2d & getClip() const { return clip_; }
-//            void setClip(const Vec2d &clip) { clip_ = clip; }
+        //            const Vec2d & getClip() const { return clip_; }
+        //            void setClip(const Vec2d &clip) { clip_ = clip; }
 
-//            const Size & getWindowSize() const { return window_size_; }
-//            void setWindowSize(const Size &window_size);
+        //            const Size & getWindowSize() const { return window_size_; }
+        //            void setWindowSize(const Size &window_size);
 
-//            const Vec2d& getFov() const { return fov_; }
-//            void setFov(const Vec2d& fov) { fov_ = fov; }
+        //            const Vec2d& getFov() const { return fov_; }
+        //            void setFov(const Vec2d& fov) { fov_ = fov; }
 
-//            const Vec2d& getPrincipalPoint() const { return principal_point_; }
-//            const Vec2d& getFocalLength() const { return focal_; }
+        //            const Vec2d& getPrincipalPoint() const { return principal_point_; }
+        //            const Vec2d& getFocalLength() const { return focal_; }
 
-//            /** @brief Computes projection matrix using intrinsic parameters of the camera.
+        //            /** @brief Computes projection matrix using intrinsic parameters of the camera.
 
-//            @param proj Output projection matrix.
-//             */
-//            void computeProjectionMatrix(Matx44d &proj) const;
+        //            @param proj Output projection matrix.
+        //             */
+        //            void computeProjectionMatrix(Matx44d &proj) const;
 
-//            /** @brief Creates a Kinect Camera.
+        //            /** @brief Creates a Kinect Camera.
 
-//            @param window_size Size of the window. This together with intrinsic matrix of a Kinect Camera
-//            determines the field of view.
-//             */
-//            static Camera KinectCamera(const Size &window_size);
+        //            @param window_size Size of the window. This together with intrinsic matrix of a Kinect Camera
+        //            determines the field of view.
+        //             */
+        //            static Camera KinectCamera(const Size &window_size);
 
-//        private:
-//            void init(double fx, double fy, double cx, double cy, const Size &window_size);
+        //        private:
+        //            void init(double fx, double fy, double cx, double cy, const Size &window_size);
 
-//            Vec2d clip_;
-//            Vec2d fov_;
-//            Size window_size_;
-//            Vec2d principal_point_;
-//            Vec2d focal_;
-//        };
+        //            Vec2d clip_;
+        //            Vec2d fov_;
+        //            Size window_size_;
+        //            Vec2d principal_point_;
+        //            Vec2d focal_;
+    };
 
-//        /** @brief This class represents a keyboard event.
-//        */
-//        class CV_EXPORTS KeyboardEvent
-//        {
-//        public:
-//            enum { NONE = 0, ALT = 1, CTRL = 2, SHIFT = 4 };
-//            enum Action { KEY_UP = 0, KEY_DOWN = 1 };
+    //        /** @brief This class represents a keyboard event.
+    //        */
+    interface KeyboardEvent {
+        //        public:
+        //            enum { NONE = 0, ALT = 1, CTRL = 2, SHIFT = 4 };
+        //            enum Action { KEY_UP = 0, KEY_DOWN = 1 };
 
-//            /** @brief Constructs a KeyboardEvent.
+        //            /** @brief Constructs a KeyboardEvent.
 
-//            @param action Signals if key is pressed or released.
-//            @param symbol Name of the key.
-//            @param code Code of the key.
-//            @param modifiers Signals if alt, ctrl or shift are pressed or their combination.
-//             */
-//            KeyboardEvent(Action action, const String& symbol, unsigned char code, int modifiers);
+        //            @param action Signals if key is pressed or released.
+        //            @param symbol Name of the key.
+        //            @param code Code of the key.
+        //            @param modifiers Signals if alt, ctrl or shift are pressed or their combination.
+        //             */
+        //            KeyboardEvent(Action action, const String& symbol, unsigned char code, int modifiers);
 
-//            Action action;
-//            String symbol;
-//            unsigned char code;
-//            int modifiers;
-//        };
+        //            Action action;
+        //            String symbol;
+        //            unsigned char code;
+        //            int modifiers;
+        //        };
 
-//        /** @brief This class represents a mouse event.
-//        */
-//        class CV_EXPORTS MouseEvent
-//        {
-//        public:
-//            enum Type { MouseMove = 1, MouseButtonPress, MouseButtonRelease, MouseScrollDown, MouseScrollUp, MouseDblClick } ;
-//            enum MouseButton { NoButton = 0, LeftButton, MiddleButton, RightButton, VScroll } ;
+        //        /** @brief This class represents a mouse event.
+        //        */
+        //        class CV_EXPORTS MouseEvent
+        //        {
+        //        public:
+        //            enum Type { MouseMove = 1, MouseButtonPress, MouseButtonRelease, MouseScrollDown, MouseScrollUp, MouseDblClick } ;
+        //            enum MouseButton { NoButton = 0, LeftButton, MiddleButton, RightButton, VScroll } ;
 
-//            /** @brief Constructs a MouseEvent.
+        //            /** @brief Constructs a MouseEvent.
 
-//            @param type Type of the event. This can be **MouseMove**, **MouseButtonPress**,
-//            **MouseButtonRelease**, **MouseScrollDown**, **MouseScrollUp**, **MouseDblClick**.
-//            @param button Mouse button. This can be **NoButton**, **LeftButton**, **MiddleButton**,
-//            **RightButton**, **VScroll**.
-//            @param pointer Position of the event.
-//            @param modifiers Signals if alt, ctrl or shift are pressed or their combination.
-//             */
-//            MouseEvent(const Type& type, const MouseButton& button, const Point& pointer, int modifiers);
+        //            @param type Type of the event. This can be **MouseMove**, **MouseButtonPress**,
+        //            **MouseButtonRelease**, **MouseScrollDown**, **MouseScrollUp**, **MouseDblClick**.
+        //            @param button Mouse button. This can be **NoButton**, **LeftButton**, **MiddleButton**,
+        //            **RightButton**, **VScroll**.
+        //            @param pointer Position of the event.
+        //            @param modifiers Signals if alt, ctrl or shift are pressed or their combination.
+        //             */
+        //            MouseEvent(const Type& type, const MouseButton& button, const Point& pointer, int modifiers);
 
-//            Type type;
-//            MouseButton button;
-//            Point pointer;
-//            int modifiers;
-//        };
+        //            Type type;
+        //            MouseButton button;
+        //            Point pointer;
+        //            int modifiers;
+    };
 
-////! @} viz
+    ////! @} viz
 
-   } /* namespace viz */
+} /* namespace viz */
 ////} /* namespace cv */
 
 ////! @cond IGNORED

@@ -57,9 +57,9 @@ OutputLevel nvidiaTestOutputLevel = OutputLevelNone;
 using namespace cvtest;
 using namespace testing;
 
-struct NVidiaTest : TestWithParam<cv::cuda::DeviceInfo>
+struct NVidiaTest : TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     std::string _path;
 
@@ -67,8 +67,8 @@ struct NVidiaTest : TestWithParam<cv::cuda::DeviceInfo>
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
-        _path = TS::ptr()->get_data_path().c_str();
+        alvision.cuda::setDevice(devInfo.deviceID());
+        _path = TS::ptr()->get_data_path();
         _path = _path + "haarcascade/";
     }
 };

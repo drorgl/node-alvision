@@ -52,82 +52,86 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-template <typename T, typename compute>
-class ShapeBaseTest  extends alvision.cvtest.BaseTest
-{
-public:
-    typedef Point_<T> PointType;
-    ShapeBaseTest(int _NSN, int _NP, float _CURRENT_MAX_ACCUR)
-        : NSN(_NSN), NP(_NP), CURRENT_MAX_ACCUR(_CURRENT_MAX_ACCUR)
-    {
+//template <typename T, typename compute>
+class ShapeBaseTest<T, compute> extends alvision.cvtest.BaseTest {
+    //typedef Point_<T> PointType;
+    constructor(_NSN: alvision.int, _NP: alvision.int, _CURRENT_MAX_ACCUR: alvision.float){
+        super();
+        this.NSN = (_NSN);
+        this.NP = (_NP);
+        this.CURRENT_MAX_ACCUR = (_CURRENT_MAX_ACCUR);
         // generate file list
-        vector<string> shapeNames;
-        shapeNames.push_back("apple"); //ok
-        shapeNames.push_back("children"); // ok
-        shapeNames.push_back("device7"); // ok
-        shapeNames.push_back("Heart"); // ok
-        shapeNames.push_back("teddy"); // ok
-        for (vector<string>::const_iterator i = shapeNames.begin(); i != shapeNames.end(); ++i)
-        {
-            for (int j = 0; j < NSN; ++j)
-            {
-                stringstream filename;
-                filename << alvision.cvtest.TS::ptr()->get_data_path()
-                         << "shape/mpeg_test/" << *i << "-" << j + 1 << ".png";
-                filenames.push_back(filename.str());
+        //vector < string > shapeNames;
+        var shapeNames = new Array<string>();
+        shapeNames.push("apple"); //ok
+        shapeNames.push("children"); // ok
+        shapeNames.push("device7"); // ok
+        shapeNames.push("Heart"); // ok
+        shapeNames.push("teddy"); // ok
+        for (var i = 0; i < shapeNames.length; i++) {
+            for (var j = 0; j < this.NSN; ++j) {
+                var filename = "";
+                filename += alvision.cvtest.TS.ptr().get_data_path()
+                    + "shape/mpeg_test/" + shapeNames[i] + "-" + j + 1 + ".png";
+                this.filenames.push(filename);
             }
         }
         // distance matrix
-        const int totalCount = (int)filenames.size();
-        distanceMat = Mat::zeros(totalCount, totalCount, CV_32F);
+        const totalCount = this.filenames.length;//(int)filenames.size();
+        this.distanceMat = alvision.Mat.from(alvision.Mat.zeros(totalCount, totalCount, alvision.MatrixType.CV_32F));
     }
 
-protected:
-    void run(int)
-    {
-        mpegTest();
-        displayMPEGResults();
+    run(iii: alvision.int): void {
+        this.mpegTest();
+        this.displayMPEGResults();
     }
 
-    vector<PointType> convertContourType(const Mat& currentQuery) const
-    {
-        vector<vector<Point> > _contoursQuery;
-        findContours(currentQuery, _contoursQuery, RETR_LIST, CHAIN_APPROX_NONE);
+    convertContourType(currentQuery: alvision.Mat): Array<alvision.Point_<T>> {
+        var _contoursQuery = new Array<Array<alvision.Point>>();// vector < vector < Point > > 
 
-        vector <PointType> contoursQuery;
-        for (size_t border=0; border<_contoursQuery.size(); border++)
+
+        alvision.findContours(currentQuery, _contoursQuery, alvision.RetrievalModes.RETR_LIST, alvision.ContourApproximationModes.CHAIN_APPROX_NONE);
+
+        var contoursQuery = new Array<alvision.Point_<T>>();
+        for (var border= 0; border < _contoursQuery.length; border++)
         {
-            for (size_t p=0; p<_contoursQuery[border].size(); p++)
+            for (var p= 0; p < _contoursQuery[border].length; p++)
             {
-                contoursQuery.push_back(PointType((T)_contoursQuery[border][p].x,
-                                                  (T)_contoursQuery[border][p].y));
+                contoursQuery.push(new alvision.Point_<T>(<T>_contoursQuery[border][p].x,
+                    <T>_contoursQuery[border][p].y));
             }
         }
 
         // In case actual number of points is less than n
-        for (int add=(int)contoursQuery.size()-1; add<NP; add++)
+        for (var add= contoursQuery.length - 1; add < this.NP; add++)
         {
-            contoursQuery.push_back(contoursQuery[contoursQuery.size()-add+1]); //adding dummy values
+            contoursQuery.push(contoursQuery[contoursQuery.length - add + 1]); //adding dummy values
         }
 
         // Uniformly sampling
         random_shuffle(contoursQuery.begin(), contoursQuery.end());
-        int nStart=NP;
-        vector<PointType> cont;
-        for (int i=0; i<nStart; i++)
+        var nStart= this.NP;
+        var cont = new Array<alvision.Point_<T>>(); 
+        for (var i= 0; i < nStart; i++)
         {
-            cont.push_back(contoursQuery[i]);
+            cont.push(contoursQuery[i]);
         }
         return cont;
     }
 
-    void mpegTest()
-    {
+    mpegTest(): void {
         // query contours (normal v flipped, h flipped) and testing contour
-        vector<PointType> contoursQuery1, contoursQuery2, contoursQuery3, contoursTesting;
+        //vector < PointType > contoursQuery1, contoursQuery2, contoursQuery3, contoursTesting;
+        var contoursQuery1 =  new Array<alvision.Point_<T>>();
+        var contoursQuery2  = new Array<alvision.Point_<T>>();
+        var contoursQuery3  = new Array<alvision.Point_<T>>();
+        var contoursTesting = new Array<alvision.Point_<T>>();
+
+
+
+
         // reading query and computing its properties
-        for (vector<string>::const_iterator a = filenames.begin(); a != filenames.end(); ++a)
-        {
+        for (Array<string>::const_iterator a = filenames.begin(); a != filenames.end(); ++a) {
             // read current image
             int aIndex = (int)(a - filenames.begin());
             Mat currentQuery = imread(*a, IMREAD_GRAYSCALE);
@@ -135,74 +139,69 @@ protected:
             flip(currentQuery, flippedHQuery, 0);
             flip(currentQuery, flippedVQuery, 1);
             // compute border of the query and its flipped versions
-            contoursQuery1=convertContourType(currentQuery);
-            contoursQuery2=convertContourType(flippedHQuery);
-            contoursQuery3=convertContourType(flippedVQuery);
+            contoursQuery1 = convertContourType(currentQuery);
+            contoursQuery2 = convertContourType(flippedHQuery);
+            contoursQuery3 = convertContourType(flippedVQuery);
             // compare with all the rest of the images: testing
-            for (vector<string>::const_iterator b = filenames.begin(); b != filenames.end(); ++b)
-            {
+            for (Array<string>::const_iterator b = filenames.begin(); b != filenames.end(); ++b) {
                 int bIndex = (int)(b - filenames.begin());
                 float distance = 0;
                 // skip self-comparisson
-                if (a != b)
-                {
+                if (a != b) {
                     // read testing image
                     Mat currentTest = imread(*b, IMREAD_GRAYSCALE);
                     // compute border of the testing
-                    contoursTesting=convertContourType(currentTest);
+                    contoursTesting = convertContourType(currentTest);
                     // compute shape distance
                     distance = cmp(contoursQuery1, contoursQuery2,
-                                   contoursQuery3, contoursTesting);
+                        contoursQuery3, contoursTesting);
                 }
                 distanceMat.at<float>(aIndex, bIndex) = distance;
             }
         }
     }
 
-    void displayMPEGResults()
-    {
-        const int FIRST_MANY=2*NSN;
+    displayMPEGResults(): void {
+        const FIRST_MANY= 2 * this.NSN.valueOf();
 
-        int corrects=0;
-        int divi=0;
-        for (int row=0; row<distanceMat.rows; row++)
+        var corrects= 0;
+        var divi= 0;
+        for (var row= 0; row < this.distanceMat.rows; row++)
         {
-            if (row%NSN==0) //another group
+            if (row % this.NSN.valueOf() == 0) //another group
             {
-                divi+=NSN;
+                divi += this.NSN.valueOf();
             }
-            for (int col=divi-NSN; col<divi; col++)
+            for (var col= divi - this.NSN.valueOf(); col < divi; col++)
             {
-                int nsmall=0;
-                for (int i=0; i<distanceMat.cols; i++)
+                var nsmall= 0;
+                for (var i= 0; i < this.distanceMat.cols; i++)
                 {
-                    if (distanceMat.at<float>(row,col) > distanceMat.at<float>(row,i))
-                    {
+                    if (this.distanceMat.atGet<alvision.float>("float",row, col) > distanceMat.atGet<alvision.float>("float",row, i)) {
                         nsmall++;
                     }
                 }
-                if (nsmall<=FIRST_MANY)
-                {
+                if (nsmall <= FIRST_MANY) {
                     corrects++;
                 }
             }
         }
-        float porc = 100*float(corrects)/(NSN*distanceMat.rows);
+        var porc = 100 * corrects / (this.NSN.valueOf() * this.distanceMat.rows.valueOf());
         std::cout << "Test result: " << porc << "%" << std::endl;
-        if (porc >= CURRENT_MAX_ACCUR)
-            this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
+        if (porc >= this.CURRENT_MAX_ACCUR)
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
         else
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
     }
 
-protected:
-    int NSN;
-    int NP;
-    float CURRENT_MAX_ACCUR;
-    vector<string> filenames;
-    Mat distanceMat;
-    compute cmp;
-};
+
+    protected NSN: alvision.int;
+    protected NP: alvision.int;
+    protected CURRENT_MAX_ACCUR: alvision.float;
+    protected filenames: Array<string>
+    protected distanceMat: alvision.Mat;
+    protected cmp: compute;
+}
 
 //------------------------------------------------------------------------
 //                       Test Shape_SCD.regression
@@ -210,36 +209,35 @@ protected:
 
 class computeShapeDistance_Chi
 {
-    Ptr <ShapeContextDistanceExtractor> mysc;
-public:
-    computeShapeDistance_Chi()
+    mysc: alvision.ShapeContextDistanceExtractor ;
+    constructor()
     {
-        const int angularBins=12;
-        const int radialBins=4;
-        const float minRad=0.2f;
-        const float maxRad=2;
-        mysc = createShapeContextDistanceExtractor(angularBins, radialBins, minRad, maxRad);
-        mysc->setIterations(1);
-        mysc->setCostExtractor(createChiHistogramCostExtractor(30,0.15f));
-        mysc->setTransformAlgorithm( createThinPlateSplineShapeTransformer() );
+        const  angularBins=12;
+        const  radialBins=4;
+        const  minRad=0.2;
+        const  maxRad=2;
+        this.mysc = alvision.createShapeContextDistanceExtractor(angularBins, radialBins, minRad, maxRad);
+        this.mysc.setIterations(1);
+        this.mysc.setCostExtractor(alvision.createChiHistogramCostExtractor(30,0.15));
+        this.mysc.setTransformAlgorithm( alvision.createThinPlateSplineShapeTransformer() );
     }
-    float operator()(vector <Point2f>& query1, vector <Point2f>& query2,
-                     vector <Point2f>& query3, vector <Point2f>& testq)
+
+    run(query1: Array<alvision.Point2f>, query2: Array<alvision.Point2f>,
+        query3: Array<alvision.Point2f>, testq: Array<alvision.Point2f>): alvision.float
     {
-        return std::min(mysc->computeDistance(query1, testq),
-                        std::min(mysc->computeDistance(query2, testq),
-                                 mysc->computeDistance(query3, testq)));
+        return Math.min(this.mysc.computeDistance(query1, testq).valueOf(),
+            Math.min(this.mysc.computeDistance(query2, testq).valueOf(),
+                this.mysc.computeDistance(query3, testq).valueOf()));
     }
 };
 
-TEST(Shape_SCD, regression)
-{
-    const int NSN_val=5;//10;//20; //number of shapes per class
-    const int NP_val=120; //number of points simplifying the contour
-    const float CURRENT_MAX_ACCUR_val=95; //99% and 100% reached in several tests, 95 is fixed as minimum boundary
-    ShapeBaseTest<float, computeShapeDistance_Chi> test(NSN_val, NP_val, CURRENT_MAX_ACCUR_val);
+alvision.cvtest.TEST('Shape_SCD', 'regression', () => {
+    const NSN_val= 5;//10;//20; //number of shapes per class
+    const NP_val= 120; //number of points simplifying the contour
+    const CURRENT_MAX_ACCUR_val= 95; //99% and 100% reached in several tests, 95 is fixed as minimum boundary
+    var test = new ShapeBaseTest<alvision.float, computeShapeDistance_Chi>(NSN_val, NP_val, CURRENT_MAX_ACCUR_val);
     test.safe_run();
-}
+});
 
 //------------------------------------------------------------------------
 //                       Test ShapeEMD_SCD.regression
@@ -247,36 +245,34 @@ TEST(Shape_SCD, regression)
 
 class computeShapeDistance_EMD
 {
-    Ptr <ShapeContextDistanceExtractor> mysc;
-public:
-    computeShapeDistance_EMD()
+    mysc: alvision.ShapeContextDistanceExtractor;
+    constructor()
     {
-        const int angularBins=12;
-        const int radialBins=4;
-        const float minRad=0.2f;
-        const float maxRad=2;
-        mysc = createShapeContextDistanceExtractor(angularBins, radialBins, minRad, maxRad);
-        mysc->setIterations(1);
-        mysc->setCostExtractor( createEMDL1HistogramCostExtractor() );
-        mysc->setTransformAlgorithm( createThinPlateSplineShapeTransformer() );
+        const  angularBins=12;
+        const  radialBins=4;
+        const  minRad=0.2;
+        const  maxRad=2;
+        this.mysc = alvision.createShapeContextDistanceExtractor(angularBins, radialBins, minRad, maxRad);
+        this.mysc.setIterations(1);
+        this.mysc.setCostExtractor( alvision.createEMDL1HistogramCostExtractor() );
+        this.mysc.setTransformAlgorithm( alvision.createThinPlateSplineShapeTransformer() );
     }
-    float operator()(vector <Point2f>& query1, vector <Point2f>& query2,
-                     vector <Point2f>& query3, vector <Point2f>& testq)
+    run(query1: Array<alvision.Point2f> ,query2 : Array<alvision.Point2f>,
+        query3: Array<alvision.Point2f>, testq: Array<alvision.Point2f>  ) : alvision.float
     {
-        return std::min(mysc->computeDistance(query1, testq),
-                        std::min(mysc->computeDistance(query2, testq),
-                                 mysc->computeDistance(query3, testq)));
+        return Math.min(this.mysc.computeDistance(query1, testq).valueOf(),
+                        Math.min(this.mysc.computeDistance(query2, testq).valueOf(),
+                                 this.mysc.computeDistance(query3, testq).valueOf()));
     }
 };
 
-TEST(ShapeEMD_SCD, regression)
-{
-    const int NSN_val=5;//10;//20; //number of shapes per class
-    const int NP_val=100; //number of points simplifying the contour
-    const float CURRENT_MAX_ACCUR_val=95; //98% and 99% reached in several tests, 95 is fixed as minimum boundary
-    ShapeBaseTest<float, computeShapeDistance_EMD> test(NSN_val, NP_val, CURRENT_MAX_ACCUR_val);
+alvision.cvtest.TEST('ShapeEMD_SCD', 'regression', () => {
+    const  NSN_val= 5;//10;//20; //number of shapes per class
+    const  NP_val= 100; //number of points simplifying the contour
+    const CURRENT_MAX_ACCUR_val= 95; //98% and 99% reached in several tests, 95 is fixed as minimum boundary
+    var test = new ShapeBaseTest<alvision.float, computeShapeDistance_EMD> (NSN_val, NP_val, CURRENT_MAX_ACCUR_val);
     test.safe_run();
-}
+});
 
 //------------------------------------------------------------------------
 //                       Test Hauss.regression
@@ -284,26 +280,24 @@ TEST(ShapeEMD_SCD, regression)
 
 class computeShapeDistance_Haussdorf
 {
-    Ptr <HausdorffDistanceExtractor> haus;
-public:
-    computeShapeDistance_Haussdorf()
+    haus: alvision.HausdorffDistanceExtractor;
+    constructor()
     {
-        haus = createHausdorffDistanceExtractor();
+        this.haus = alvision.createHausdorffDistanceExtractor();
     }
-    float operator()(vector<Point> &query1, vector<Point> &query2,
-                     vector<Point> &query3, vector<Point> &testq)
+    run(query1: Array<alvision.Point>, query2: Array<alvision.Point> ,
+        query3: Array<alvision.Point>, testq: Array<alvision.Point> ): alvision.float 
     {
-        return std::min(haus->computeDistance(query1,testq),
-                        std::min(haus->computeDistance(query2,testq),
-                                 haus->computeDistance(query3,testq)));
+        return Math.min(this.haus.computeDistance(query1,testq).valueOf(),
+                        Math.min(this.haus.computeDistance(query2,testq).valueOf(),
+                                 this.haus.computeDistance(query3,testq).valueOf()));
     }
 };
 
-TEST(Hauss, regression)
-{
-    const int NSN_val=5;//10;//20; //number of shapes per class
-    const int NP_val = 180; //number of points simplifying the contour
-    const float CURRENT_MAX_ACCUR_val=85; //90% and 91% reached in several tests, 85 is fixed as minimum boundary
-    ShapeBaseTest<int, computeShapeDistance_Haussdorf> test(NSN_val, NP_val, CURRENT_MAX_ACCUR_val);
+alvision.cvtest.TEST('Hauss', 'regression', () => {
+    const NSN_val= 5;//10;//20; //number of shapes per class
+    const NP_val = 180; //number of points simplifying the contour
+    const CURRENT_MAX_ACCUR_val= 85; //90% and 91% reached in several tests, 85 is fixed as minimum boundary
+    var test = new ShapeBaseTest<alvision.int, computeShapeDistance_Haussdorf>(NSN_val, NP_val, CURRENT_MAX_ACCUR_val);
     test.safe_run();
-}
+});

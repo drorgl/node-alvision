@@ -57,19 +57,19 @@ using namespace cvtest;
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplate8U
 
-CV_ENUM(TemplateMethod, cv::TM_SQDIFF, cv::TM_SQDIFF_NORMED, cv::TM_CCORR, cv::TM_CCORR_NORMED, cv::TM_CCOEFF, cv::TM_CCOEFF_NORMED)
-#define ALL_TEMPLATE_METHODS testing::Values(TemplateMethod(cv::TM_SQDIFF), TemplateMethod(cv::TM_SQDIFF_NORMED), TemplateMethod(cv::TM_CCORR), TemplateMethod(cv::TM_CCORR_NORMED), TemplateMethod(cv::TM_CCOEFF), TemplateMethod(cv::TM_CCOEFF_NORMED))
+CV_ENUM(TemplateMethod, alvision.TM_SQDIFF, alvision.TM_SQDIFF_NORMED, alvision.TM_CCORR, alvision.TM_CCORR_NORMED, alvision.TM_CCOEFF, alvision.TM_CCOEFF_NORMED)
+#define ALL_TEMPLATE_METHODS testing::Values(TemplateMethod(alvision.TM_SQDIFF), TemplateMethod(alvision.TM_SQDIFF_NORMED), TemplateMethod(alvision.TM_CCORR), TemplateMethod(alvision.TM_CCORR_NORMED), TemplateMethod(alvision.TM_CCOEFF), TemplateMethod(alvision.TM_CCOEFF_NORMED))
 
 namespace
 {
-    IMPLEMENT_PARAM_CLASS(TemplateSize, cv::Size);
+    IMPLEMENT_PARAM_CLASS(TemplateSize, alvision.Size);
 }
 
-PARAM_TEST_CASE(MatchTemplate8U, cv::cuda::DeviceInfo, cv::Size, TemplateSize, Channels, TemplateMethod)
+PARAM_TEST_CASE(MatchTemplate8U, alvision.cuda::DeviceInfo, alvision.Size, TemplateSize, Channels, TemplateMethod)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
-    cv::Size templ_size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
+    alvision.Size templ_size;
     int cn;
     int method;
 
@@ -81,24 +81,24 @@ PARAM_TEST_CASE(MatchTemplate8U, cv::cuda::DeviceInfo, cv::Size, TemplateSize, C
         cn = GET_PARAM(3);
         method = GET_PARAM(4);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(MatchTemplate8U, Accuracy)
 {
-    cv::Mat image = randomMat(size, CV_MAKETYPE(CV_8U, cn));
-    cv::Mat templ = randomMat(templ_size, CV_MAKETYPE(CV_8U, cn));
+    alvision.Mat image = randomMat(size, CV_MAKETYPE(CV_8U, cn));
+    alvision.Mat templ = randomMat(templ_size, CV_MAKETYPE(CV_8U, cn));
 
-    cv::Ptr<cv::cuda::TemplateMatching> alg = cv::cuda::createTemplateMatching(image.type(), method);
+    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), method);
 
-    cv::cuda::GpuMat dst;
+    alvision.cuda::GpuMat dst;
     alg->match(loadMat(image), loadMat(templ), dst);
 
-    cv::Mat dst_gold;
-    cv::matchTemplate(image, templ, dst_gold, method);
+    alvision.Mat dst_gold;
+    alvision.matchTemplate(image, templ, dst_gold, method);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
     ASSERT_EQ(dst_gold.size(), h_dst.size());
     ASSERT_EQ(dst_gold.type(), h_dst.type());
     for (int y = 0; y < h_dst.rows; ++y)
@@ -115,18 +115,18 @@ CUDA_TEST_P(MatchTemplate8U, Accuracy)
 INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MatchTemplate8U, testing::Combine(
     ALL_DEVICES,
     DIFFERENT_SIZES,
-    testing::Values(TemplateSize(cv::Size(5, 5)), TemplateSize(cv::Size(16, 16)), TemplateSize(cv::Size(30, 30))),
+    testing::Values(TemplateSize(alvision.Size(5, 5)), TemplateSize(alvision.Size(16, 16)), TemplateSize(alvision.Size(30, 30))),
     testing::Values(Channels(1), Channels(3), Channels(4)),
     ALL_TEMPLATE_METHODS));
 
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplate32F
 
-PARAM_TEST_CASE(MatchTemplate32F, cv::cuda::DeviceInfo, cv::Size, TemplateSize, Channels, TemplateMethod)
+PARAM_TEST_CASE(MatchTemplate32F, alvision.cuda::DeviceInfo, alvision.Size, TemplateSize, Channels, TemplateMethod)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
-    cv::Size templ_size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
+    alvision.Size templ_size;
     int cn;
     int method;
 
@@ -140,24 +140,24 @@ PARAM_TEST_CASE(MatchTemplate32F, cv::cuda::DeviceInfo, cv::Size, TemplateSize, 
         cn = GET_PARAM(3);
         method = GET_PARAM(4);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(MatchTemplate32F, Regression)
 {
-    cv::Mat image = randomMat(size, CV_MAKETYPE(CV_32F, cn));
-    cv::Mat templ = randomMat(templ_size, CV_MAKETYPE(CV_32F, cn));
+    alvision.Mat image = randomMat(size, CV_MAKETYPE(CV_32F, cn));
+    alvision.Mat templ = randomMat(templ_size, CV_MAKETYPE(CV_32F, cn));
 
-    cv::Ptr<cv::cuda::TemplateMatching> alg = cv::cuda::createTemplateMatching(image.type(), method);
+    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), method);
 
-    cv::cuda::GpuMat dst;
+    alvision.cuda::GpuMat dst;
     alg->match(loadMat(image), loadMat(templ), dst);
 
-    cv::Mat dst_gold;
-    cv::matchTemplate(image, templ, dst_gold, method);
+    alvision.Mat dst_gold;
+    alvision.matchTemplate(image, templ, dst_gold, method);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
     ASSERT_EQ(dst_gold.size(), h_dst.size());
     ASSERT_EQ(dst_gold.type(), h_dst.type());
     for (int y = 0; y < h_dst.rows; ++y)
@@ -174,16 +174,16 @@ CUDA_TEST_P(MatchTemplate32F, Regression)
 INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MatchTemplate32F, testing::Combine(
     ALL_DEVICES,
     DIFFERENT_SIZES,
-    testing::Values(TemplateSize(cv::Size(5, 5)), TemplateSize(cv::Size(16, 16)), TemplateSize(cv::Size(30, 30))),
+    testing::Values(TemplateSize(alvision.Size(5, 5)), TemplateSize(alvision.Size(16, 16)), TemplateSize(alvision.Size(30, 30))),
     testing::Values(Channels(1), Channels(3), Channels(4)),
-    testing::Values(TemplateMethod(cv::TM_SQDIFF), TemplateMethod(cv::TM_CCORR))));
+    testing::Values(TemplateMethod(alvision.TM_SQDIFF), TemplateMethod(alvision.TM_CCORR))));
 
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplateBlackSource
 
-PARAM_TEST_CASE(MatchTemplateBlackSource, cv::cuda::DeviceInfo, TemplateMethod)
+PARAM_TEST_CASE(MatchTemplateBlackSource, alvision.cuda::DeviceInfo, TemplateMethod)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     int method;
 
     virtual void SetUp()
@@ -191,44 +191,44 @@ PARAM_TEST_CASE(MatchTemplateBlackSource, cv::cuda::DeviceInfo, TemplateMethod)
         devInfo = GET_PARAM(0);
         method = GET_PARAM(1);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(MatchTemplateBlackSource, Accuracy)
 {
-    cv::Mat image = readImage("matchtemplate/black.png");
+    alvision.Mat image = readImage("matchtemplate/black.png");
     ASSERT_FALSE(image.empty());
 
-    cv::Mat pattern = readImage("matchtemplate/cat.png");
+    alvision.Mat pattern = readImage("matchtemplate/cat.png");
     ASSERT_FALSE(pattern.empty());
 
-    cv::Ptr<cv::cuda::TemplateMatching> alg = cv::cuda::createTemplateMatching(image.type(), method);
+    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), method);
 
-    cv::cuda::GpuMat d_dst;
+    alvision.cuda::GpuMat d_dst;
     alg->match(loadMat(image), loadMat(pattern), d_dst);
 
-    cv::Mat dst(d_dst);
+    alvision.Mat dst(d_dst);
 
     double maxValue;
-    cv::Point maxLoc;
-    cv::minMaxLoc(dst, NULL, &maxValue, NULL, &maxLoc);
+    alvision.Point maxLoc;
+    alvision.minMaxLoc(dst, NULL, &maxValue, NULL, &maxLoc);
 
-    cv::Point maxLocGold = cv::Point(284, 12);
+    alvision.Point maxLocGold = alvision.Point(284, 12);
 
     ASSERT_EQ(maxLocGold, maxLoc);
 }
 
 INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MatchTemplateBlackSource, testing::Combine(
     ALL_DEVICES,
-    testing::Values(TemplateMethod(cv::TM_CCOEFF_NORMED), TemplateMethod(cv::TM_CCORR_NORMED))));
+    testing::Values(TemplateMethod(alvision.TM_CCOEFF_NORMED), TemplateMethod(alvision.TM_CCORR_NORMED))));
 
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplate_CCOEF_NORMED
 
-PARAM_TEST_CASE(MatchTemplate_CCOEF_NORMED, cv::cuda::DeviceInfo, std::pair<std::string, std::string>)
+PARAM_TEST_CASE(MatchTemplate_CCOEF_NORMED, alvision.cuda::DeviceInfo, std::pair<std::string, std::string>)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     std::string imageName;
     std::string patternName;
 
@@ -238,35 +238,35 @@ PARAM_TEST_CASE(MatchTemplate_CCOEF_NORMED, cv::cuda::DeviceInfo, std::pair<std:
         imageName = GET_PARAM(1).first;
         patternName = GET_PARAM(1).second;
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(MatchTemplate_CCOEF_NORMED, Accuracy)
 {
-    cv::Mat image = readImage(imageName);
+    alvision.Mat image = readImage(imageName);
     ASSERT_FALSE(image.empty());
 
-    cv::Mat pattern = readImage(patternName);
+    alvision.Mat pattern = readImage(patternName);
     ASSERT_FALSE(pattern.empty());
 
-    cv::Ptr<cv::cuda::TemplateMatching> alg = cv::cuda::createTemplateMatching(image.type(), cv::TM_CCOEFF_NORMED);
+    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), alvision.TM_CCOEFF_NORMED);
 
-    cv::cuda::GpuMat d_dst;
+    alvision.cuda::GpuMat d_dst;
     alg->match(loadMat(image), loadMat(pattern), d_dst);
 
-    cv::Mat dst(d_dst);
+    alvision.Mat dst(d_dst);
 
-    cv::Point minLoc, maxLoc;
+    alvision.Point minLoc, maxLoc;
     double minVal, maxVal;
-    cv::minMaxLoc(dst, &minVal, &maxVal, &minLoc, &maxLoc);
+    alvision.minMaxLoc(dst, &minVal, &maxVal, &minLoc, &maxLoc);
 
-    cv::Mat dstGold;
-    cv::matchTemplate(image, pattern, dstGold, cv::TM_CCOEFF_NORMED);
+    alvision.Mat dstGold;
+    alvision.matchTemplate(image, pattern, dstGold, alvision.TM_CCOEFF_NORMED);
 
     double minValGold, maxValGold;
-    cv::Point minLocGold, maxLocGold;
-    cv::minMaxLoc(dstGold, &minValGold, &maxValGold, &minLocGold, &maxLocGold);
+    alvision.Point minLocGold, maxLocGold;
+    alvision.minMaxLoc(dstGold, &minValGold, &maxValGold, &minLocGold, &maxLocGold);
 
     ASSERT_EQ(minLocGold, minLoc);
     ASSERT_EQ(maxLocGold, maxLoc);
@@ -281,36 +281,36 @@ INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MatchTemplate_CCOEF_NORMED, testing::Combi
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplate_CanFindBigTemplate
 
-struct MatchTemplate_CanFindBigTemplate : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct MatchTemplate_CanFindBigTemplate : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(MatchTemplate_CanFindBigTemplate, SQDIFF_NORMED)
 {
-    cv::Mat scene = readImage("matchtemplate/scene.png");
+    alvision.Mat scene = readImage("matchtemplate/scene.png");
     ASSERT_FALSE(scene.empty());
 
-    cv::Mat templ = readImage("matchtemplate/template.png");
+    alvision.Mat templ = readImage("matchtemplate/template.png");
     ASSERT_FALSE(templ.empty());
 
-    cv::Ptr<cv::cuda::TemplateMatching> alg = cv::cuda::createTemplateMatching(scene.type(), cv::TM_SQDIFF_NORMED);
+    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(scene.type(), alvision.TM_SQDIFF_NORMED);
 
-    cv::cuda::GpuMat d_result;
+    alvision.cuda::GpuMat d_result;
     alg->match(loadMat(scene), loadMat(templ), d_result);
 
-    cv::Mat result(d_result);
+    alvision.Mat result(d_result);
 
     double minVal;
-    cv::Point minLoc;
-    cv::minMaxLoc(result, &minVal, 0, &minLoc, 0);
+    alvision.Point minLoc;
+    alvision.minMaxLoc(result, &minVal, 0, &minLoc, 0);
 
     ASSERT_GE(minVal, 0);
     ASSERT_LT(minVal, 1e-3);
@@ -320,22 +320,22 @@ CUDA_TEST_P(MatchTemplate_CanFindBigTemplate, SQDIFF_NORMED)
 
 CUDA_TEST_P(MatchTemplate_CanFindBigTemplate, SQDIFF)
 {
-    cv::Mat scene = readImage("matchtemplate/scene.png");
+    alvision.Mat scene = readImage("matchtemplate/scene.png");
     ASSERT_FALSE(scene.empty());
 
-    cv::Mat templ = readImage("matchtemplate/template.png");
+    alvision.Mat templ = readImage("matchtemplate/template.png");
     ASSERT_FALSE(templ.empty());
 
-    cv::Ptr<cv::cuda::TemplateMatching> alg = cv::cuda::createTemplateMatching(scene.type(), cv::TM_SQDIFF);
+    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(scene.type(), alvision.TM_SQDIFF);
 
-    cv::cuda::GpuMat d_result;
+    alvision.cuda::GpuMat d_result;
     alg->match(loadMat(scene), loadMat(templ), d_result);
 
-    cv::Mat result(d_result);
+    alvision.Mat result(d_result);
 
     double minVal;
-    cv::Point minLoc;
-    cv::minMaxLoc(result, &minVal, 0, &minLoc, 0);
+    alvision.Point minLoc;
+    alvision.minMaxLoc(result, &minVal, 0, &minLoc, 0);
 
     ASSERT_GE(minVal, 0);
     ASSERT_EQ(344, minLoc.x);

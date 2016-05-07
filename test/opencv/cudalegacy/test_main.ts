@@ -54,7 +54,7 @@ import fs = require('fs');
 
 using namespace std;
 using namespace cv;
-using namespace cv::cuda;
+using namespace alvision.cuda;
 using namespace cvtest;
 using namespace testing;
 

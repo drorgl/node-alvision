@@ -57,11 +57,11 @@ using namespace cvtest;
 ////////////////////////////////////////////////////////////////////////////////
 // MeanShift
 
-struct MeanShift : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct MeanShift : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
-    cv::Mat img;
+    alvision.Mat img;
 
     int spatialRad;
     int colorRad;
@@ -70,7 +70,7 @@ struct MeanShift : testing::TestWithParam<cv::cuda::DeviceInfo>
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
 
         img = readImageType("meanshift/cones.png", CV_8UC4);
         ASSERT_FALSE(img.empty());
@@ -82,45 +82,45 @@ struct MeanShift : testing::TestWithParam<cv::cuda::DeviceInfo>
 
 CUDA_TEST_P(MeanShift, Filtering)
 {
-    cv::Mat img_template;
-    if (supportFeature(devInfo, cv::cuda::FEATURE_SET_COMPUTE_20))
+    alvision.Mat img_template;
+    if (supportFeature(devInfo, alvision.cuda::FEATURE_SET_COMPUTE_20))
         img_template = readImage("meanshift/con_result.png");
     else
         img_template = readImage("meanshift/con_result_CC1X.png");
     ASSERT_FALSE(img_template.empty());
 
-    cv::cuda::GpuMat d_dst;
-    cv::cuda::meanShiftFiltering(loadMat(img), d_dst, spatialRad, colorRad);
+    alvision.cuda::GpuMat d_dst;
+    alvision.cuda::meanShiftFiltering(loadMat(img), d_dst, spatialRad, colorRad);
 
     ASSERT_EQ(CV_8UC4, d_dst.type());
 
-    cv::Mat dst(d_dst);
+    alvision.Mat dst(d_dst);
 
-    cv::Mat result;
-    cv::cvtColor(dst, result, cv::COLOR_BGRA2BGR);
+    alvision.var result = new alvision.Mat();
+    alvision.cvtColor(dst, result, alvision.COLOR_BGRA2BGR);
 
     EXPECT_MAT_NEAR(img_template, result, 0.0);
 }
 
 CUDA_TEST_P(MeanShift, Proc)
 {
-    cv::FileStorage fs;
-    if (supportFeature(devInfo, cv::cuda::FEATURE_SET_COMPUTE_20))
-        fs.open(std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "meanshift/spmap.yaml", cv::FileStorage::READ);
+    alvision.FileStorage fs;
+    if (supportFeature(devInfo, alvision.cuda::FEATURE_SET_COMPUTE_20))
+        fs.open(std::alvision.cvtest.TS.ptr().get_data_path() + "meanshift/spmap.yaml", alvision.FileStorage::READ);
     else
-        fs.open(std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "meanshift/spmap_CC1X.yaml", cv::FileStorage::READ);
+        fs.open(std::alvision.cvtest.TS.ptr().get_data_path() + "meanshift/spmap_CC1X.yaml", alvision.FileStorage::READ);
     ASSERT_TRUE(fs.isOpened());
 
-    cv::Mat spmap_template;
+    alvision.Mat spmap_template;
     fs["spmap"] >> spmap_template;
     ASSERT_FALSE(spmap_template.empty());
 
-    cv::cuda::GpuMat rmap_filtered;
-    cv::cuda::meanShiftFiltering(loadMat(img), rmap_filtered, spatialRad, colorRad);
+    alvision.cuda::GpuMat rmap_filtered;
+    alvision.cuda::meanShiftFiltering(loadMat(img), rmap_filtered, spatialRad, colorRad);
 
-    cv::cuda::GpuMat rmap;
-    cv::cuda::GpuMat spmap;
-    cv::cuda::meanShiftProc(loadMat(img), rmap, spmap, spatialRad, colorRad);
+    alvision.cuda::GpuMat rmap;
+    alvision.cuda::GpuMat spmap;
+    alvision.cuda::meanShiftProc(loadMat(img), rmap, spmap, spatialRad, colorRad);
 
     ASSERT_EQ(CV_8UC4, rmap.type());
 
@@ -138,9 +138,9 @@ namespace
     IMPLEMENT_PARAM_CLASS(MinSize, int);
 }
 
-PARAM_TEST_CASE(MeanShiftSegmentation, cv::cuda::DeviceInfo, MinSize)
+PARAM_TEST_CASE(MeanShiftSegmentation, alvision.cuda::DeviceInfo, MinSize)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     int minsize;
 
     virtual void SetUp()
@@ -148,29 +148,29 @@ PARAM_TEST_CASE(MeanShiftSegmentation, cv::cuda::DeviceInfo, MinSize)
         devInfo = GET_PARAM(0);
         minsize = GET_PARAM(1);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(MeanShiftSegmentation, Regression)
 {
-    cv::Mat img = readImageType("meanshift/cones.png", CV_8UC4);
+    alvision.Mat img = readImageType("meanshift/cones.png", CV_8UC4);
     ASSERT_FALSE(img.empty());
 
     std::ostringstream path;
     path << "meanshift/cones_segmented_sp10_sr10_minsize" << minsize;
-    if (supportFeature(devInfo, cv::cuda::FEATURE_SET_COMPUTE_20))
+    if (supportFeature(devInfo, alvision.cuda::FEATURE_SET_COMPUTE_20))
         path << ".png";
     else
         path << "_CC1X.png";
-    cv::Mat dst_gold = readImage(path.str());
+    alvision.Mat dst_gold = readImage(path);
     ASSERT_FALSE(dst_gold.empty());
 
-    cv::Mat dst;
-    cv::cuda::meanShiftSegmentation(loadMat(img), dst, 10, 10, minsize);
+    alvision.Mat dst;
+    alvision.cuda::meanShiftSegmentation(loadMat(img), dst, 10, 10, minsize);
 
-    cv::Mat dst_rgb;
-    cv::cvtColor(dst, dst_rgb, cv::COLOR_BGRA2BGR);
+    alvision.Mat dst_rgb;
+    alvision.cvtColor(dst, dst_rgb, alvision.COLOR_BGRA2BGR);
 
     EXPECT_MAT_SIMILAR(dst_gold, dst_rgb, 1e-3);
 }

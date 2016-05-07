@@ -65,11 +65,11 @@ class CV_VideoPositioningTest extends alvision.cvtest.BaseTest
 run_test(method : METHOD) : void{
     var src_dir = this.ts.get_data_path();
 
-    this.ts.printf(alvision.cvtest.TS::LOG, "\n\nSource files directory: %s\n", (src_dir + "video/"));
+    this.ts.printf(alvision.cvtest.TSConstants.LOG, "\n\nSource files directory: %s\n", (src_dir + "video/"));
 
     var ext = ["avi", "mov", "mp4", "mpg"];
 
-    var n = (int)(sizeof(ext) / sizeof(ext[0]));
+    var n = ext.length;//(int)(sizeof(ext) / sizeof(ext[0]));
 
     var failed_videos = 0;
 
@@ -80,14 +80,15 @@ run_test(method : METHOD) : void{
             continue;
         var file_path = src_dir + "video/big_buck_bunny." + ext[i];
 
-        this.ts.printf(alvision.cvtest.TS::LOG, "\nReading video file in %s...\n", file_path);
+        this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nReading video file in %s...\n", file_path);
 
         var cap = alvision.cvCreateFileCapture(file_path);
 
         if (!cap) {
-            this.ts.printf(alvision.cvtest.TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i + 1, ext[i]);
-            this.ts.printf(alvision.cvtest.TS::LOG, "Error: cannot read source video file.\n");
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i + 1, ext[i]);
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read source video file.\n");
+            //this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             failed_videos++; continue;
         }
 
@@ -109,10 +110,10 @@ run_test(method : METHOD) : void{
             {
                 if (!failed_frames)
                 {
-                    ts->printf(alvision.cvtest.TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\n", i+1, ext[i].c_str());
+                    ts->printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\n", i+1, ext[i]);
                 }
                 failed_frames++;
-                ts->printf(alvision.cvtest.TS::LOG, "\nIteration: %d\n\nError: cannot read a frame with index %d.\n", j, idx.at(j));
+                ts->printf(alvision.cvtest.TSConstants.LOG, "\nIteration: %d\n\nError: cannot read a frame with index %d.\n", j, idx.at(j));
                 this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_EXCEPTION);
                 flag = !flag;
             } */
@@ -121,15 +122,15 @@ run_test(method : METHOD) : void{
 
             if (idx.at(j) != val) {
                 if (!(failed_frames || failed_positions)) {
-                    ts ->printf(alvision.cvtest.TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\n", i + 1, ext[i].c_str());
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\n", i + 1, ext[i]);
                 }
                 failed_positions++;
                 if (!failed_frames) {
-                    ts ->printf(alvision.cvtest.TS::LOG, "\nIteration: %d\n", j);
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nIteration: %d\n", j);
                 }
-                ts ->printf(alvision.cvtest.TS::LOG, "Required pos: %d\nReturned pos: %d\n", idx.at(j), val);
-                ts ->printf(alvision.cvtest.TS::LOG, "Error: required and returned positions are not matched.\n");
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Required pos: %d\nReturned pos: %d\n", idx.at(j), val);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: required and returned positions are not matched.\n");
+                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
                 flag = true;
             }
 
@@ -143,8 +144,8 @@ run_test(method : METHOD) : void{
         cvReleaseCapture(&cap);
     }
 
-    this.ts.printf(alvision.cvtest.TS::LOG, "\nSuccessfull experiments: %d (%d%%)\n", n - failed_videos, 100 * (n - failed_videos) / n);
-    this.ts.printf(alvision.cvtest.TS::LOG, "Failed experiments: %d (%d%%)\n", failed_videos, 100 * failed_videos / n);
+    this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nSuccessfull experiments: %d (%d%%)\n", n - failed_videos, 100 * (n - failed_videos) / n);
+    this.ts.printf(alvision.cvtest.TSConstants.LOG, "Failed experiments: %d (%d%%)\n", failed_videos, 100 * failed_videos / n);
 }
 
     generate_idx_seq(CvCapture * cap, int method) : void{

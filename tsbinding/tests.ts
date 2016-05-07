@@ -344,7 +344,7 @@ tape("ffmpeg", (ffm)=> {
                             switch (istream.mediatype) {
                                 case alvision.mediatype.audio:
                                     //matchingMatrix[istream.id] = new alvision.Matrix(1, 1024 * 1024 /*(int)MAX_AUDIO_LENGTH*/, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_16U, 2)/*CV_MAKETYPE(CV_16U, 2)*/);
-                                    matchingMatrix[istream.id] = new alvision.Matrix(2, 1024 * 1024 /*(int)MAX_AUDIO_LENGTH*/, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_16U, 1)/*CV_MAKETYPE(CV_16U, 2)*/);
+                                    matchingMatrix[istream.id] = new alvision.Mat(2, 1024 * 1024 /*(int)MAX_AUDIO_LENGTH*/, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_16U, 1)/*CV_MAKETYPE(CV_16U, 2)*/);
 
                                     var audioConfig = {
                                         id: 'out_' + istream.id,
@@ -361,7 +361,7 @@ tape("ffmpeg", (ffm)=> {
                                     break;
                                 case alvision.mediatype.video:
                                     var iaudiostream = <alvision.IVideoStreamInfo>istream;
-                                    matchingMatrix[istream.id] = new alvision.Matrix(iaudiostream.height, iaudiostream.width, alvision.MatrixType.CV_8UC3);
+                                    matchingMatrix[istream.id] = new alvision.Mat(iaudiostream.height, iaudiostream.width, alvision.MatrixType.CV_8UC3);
 
                                     var videoConfig = {
                                         id: 'out_' + istream.id,
@@ -482,7 +482,7 @@ tape("ffmpeg", (ffm)=> {
                             switch (istream.mediatype) {
                                 case alvision.mediatype.audio:// "audio":
                                     //matchingMatrix[istream.id] = new alvision.Matrix(1, 1024 * 1024 /*(int)MAX_AUDIO_LENGTH*/, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_16U, 2)/*CV_MAKETYPE(CV_16U, 2)*/);
-                                    matchingMatrix[istream.id] = new alvision.Matrix(2, 1024 * 1024 /*(int)MAX_AUDIO_LENGTH*/, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_16U, 1)/*CV_MAKETYPE(CV_16U, 2)*/);
+                                    matchingMatrix[istream.id] = new alvision.Mat(2, 1024 * 1024 /*(int)MAX_AUDIO_LENGTH*/, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_16U, 1)/*CV_MAKETYPE(CV_16U, 2)*/);
 
                                     var audioConfig = {
                                         id: 'out_' + istream.id,
@@ -498,7 +498,7 @@ tape("ffmpeg", (ffm)=> {
                                     ffmo.AddStream(audioConfig);
                                     break;
                                 case alvision.mediatype.video:// "video":
-                                    matchingMatrix[istream.id] = new alvision.Matrix(istream.height, istream.width, alvision.MatrixType.CV_8UC3);
+                                    matchingMatrix[istream.id] = new alvision.Mat(istream.height, istream.width, alvision.MatrixType.CV_8UC3);
 
                                     t.ok(istream.AddFilter, "AddFilter exists");
                                     t.doesNotThrow(function () {

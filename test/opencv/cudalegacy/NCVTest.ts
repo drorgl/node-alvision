@@ -215,7 +215,7 @@ private:
         bool bReasonMem = (0 == report.statsText["rcode"].compare("Memory FAILED"));
         std::string fname = "TestDump_";
         fname += (bReasonMem ? "m_" : "") + this->testName + ".log";
-        std::ofstream stream(fname.c_str(), std::ios::trunc | std::ios::out);
+        std::ofstream stream(fname, std::ios::trunc | std::ios::out);
         if (!stream.is_open()) return;
 
         stream << "NCV Test Failure Log: " << this->testName << std::endl;

@@ -63,9 +63,9 @@ namespace
     IMPLEMENT_PARAM_CLASS(L2gradient, bool)
 }
 
-PARAM_TEST_CASE(Canny, cv::cuda::DeviceInfo, AppertureSize, L2gradient, UseRoi)
+PARAM_TEST_CASE(Canny, alvision.cuda::DeviceInfo, AppertureSize, L2gradient, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     int apperture_size;
     bool useL2gradient;
     bool useRoi;
@@ -77,25 +77,25 @@ PARAM_TEST_CASE(Canny, cv::cuda::DeviceInfo, AppertureSize, L2gradient, UseRoi)
         useL2gradient = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(Canny, Accuracy)
 {
-    cv::Mat img = readImage("stereobm/aloe-L.png", cv::IMREAD_GRAYSCALE);
+    alvision.Mat img = readImage("stereobm/aloe-L.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
     ASSERT_FALSE(img.empty());
 
     double low_thresh = 50.0;
     double high_thresh = 100.0;
 
-    cv::Ptr<cv::cuda::CannyEdgeDetector> canny = cv::cuda::createCannyEdgeDetector(low_thresh, high_thresh, apperture_size, useL2gradient);
+    alvision.Ptr<alvision.cuda::CannyEdgeDetector> canny = alvision.cuda::createCannyEdgeDetector(low_thresh, high_thresh, apperture_size, useL2gradient);
 
-    cv::cuda::GpuMat edges;
+    alvision.cuda::GpuMat edges;
     canny->detect(loadMat(img, useRoi), edges);
 
-    cv::Mat edges_gold;
-    cv::Canny(img, edges_gold, low_thresh, high_thresh, apperture_size, useL2gradient);
+    alvision.Mat edges_gold;
+    alvision.Canny(img, edges_gold, low_thresh, high_thresh, apperture_size, useL2gradient);
 
     EXPECT_MAT_SIMILAR(edges_gold, edges, 2e-2);
 }

@@ -108,7 +108,8 @@ enum CAP{ CAP_ANY          = 0,     // autodetect
      };
 
 // generic properties (based on DC1394 properties)
-export enum CAP_PROP{ CAP_PROP_POS_MSEC       =0,
+export enum CAP_PROP{
+        CAP_PROP_POS_MSEC = 0,
        CAP_PROP_POS_FRAMES     =1,
        CAP_PROP_POS_AVI_RATIO  =2,
        CAP_PROP_FRAME_WIDTH    =3,
@@ -469,7 +470,7 @@ enum VIDEOWRITER_PROP{ VIDEOWRITER_PROP_QUALITY = 1,    // Quality (0..100%) of 
 // gPhoto2 properties, if propertyId is less than 0 then work on widget with that __additive inversed__ camera setting ID
 // Get IDs by using CAP_PROP_GPHOTO2_WIDGET_ENUMERATE.
 // @see CvCaptureCAM_GPHOTO2 for more info
-enum CAP_PROP{ CAP_PROP_GPHOTO2_PREVIEW           = 17001, // Capture only preview from liveview mode.
+export enum CAP_PROP{ CAP_PROP_GPHOTO2_PREVIEW           = 17001, // Capture only preview from liveview mode.
        CAP_PROP_GPHOTO2_WIDGET_ENUMERATE  = 17002, // Readonly, returns (const char *).
        CAP_PROP_GPHOTO2_RELOAD_CONFIG     = 17003, // Trigger, only by set. Reload camera settings.
        CAP_PROP_GPHOTO2_RELOAD_ON_CHANGE  = 17004, // Reload all settings on set.
@@ -727,15 +728,14 @@ export var VideoCapture: VideoCaptureStatic = alvision_module.VideoCapture;
 
 /** @brief Video writer class.
  */
-interface VideoWriter
-{
-//public:
-//    /** @brief VideoWriter constructors
+
+interface VideoWriterStatic {
+    //    /** @brief VideoWriter constructors
 //
 //    The constructors/functions initialize video writers. On Linux FFMPEG is used to write videos; on
 //    Windows FFMPEG or VFW is used; on MacOSX QTKit is used.
 //     */
-//    CV_WRAP VideoWriter();
+    new (): VideoWriter;
 //
 //    /** @overload
 //    @param filename Name of the output video file.
@@ -750,10 +750,26 @@ interface VideoWriter
 //    @param isColor If it is not zero, the encoder will expect and encode color frames, otherwise it
 //    will work with grayscale frames (the flag is currently supported on Windows only).
 //    */
-//    CV_WRAP VideoWriter(const String& filename, int fourcc, double fps,
-//                Size frameSize, bool isColor = true);
+    new (filename : string, fourcc : _st.int, fps : _st.double,
+        frameSize: _types.Size , isColor? : boolean /* = true*/): VideoWriter;
 //
 //    virtual ~VideoWriter();
+    //    /** @brief Concatenates 4 chars to a fourcc code
+//
+//    This static method constructs the fourcc code of the codec to be used in the constructor
+//    VideoWriter::VideoWriter or VideoWriter::open.
+//     */
+    fourcc(c1: _st.char, c2: _st.char,
+        c3 : _st.char, c4 : _st.char): _st.int;
+    //    static Ptr<IVideoWriter> create(const String& filename, int fourcc, double fps,
+//                                    Size frameSize, bool isColor = true);
+
+}
+
+interface VideoWriter
+{
+//public:
+
 //
 //    /** @brief Initializes or reinitializes video writer.
 //
@@ -763,26 +779,26 @@ interface VideoWriter
 //    CV_WRAP virtual bool open(const String& filename, int fourcc, double fps,
 //                      Size frameSize, bool isColor = true);
 //
-//    /** @brief Returns true if video writer has been successfully initialized.
-//    */
-//    CV_WRAP virtual bool isOpened() const;
-//
-//    /** @brief Closes the video writer.
-//
-//    The methods are automatically called by subsequent VideoWriter::open and by the VideoWriter
-//    destructor.
-//     */
-//    CV_WRAP virtual void release();
+    /** @brief Returns true if video writer has been successfully initialized.
+    */
+    isOpened(): boolean;
+
+    /** @brief Closes the video writer.
+
+    The methods are automatically called by subsequent VideoWriter::open and by the VideoWriter
+    destructor.
+     */
+    release(): void;
 //    virtual VideoWriter& operator << (const Mat& image);
 //
-//    /** @brief Writes the next video frame
-//
-//    @param image The written frame
-//
-//    The functions/methods write the specified image to video file. It must have the same size as has
-//    been specified when opening the video writer.
-//     */
-//    CV_WRAP virtual void write(const Mat& image);
+    /** @brief Writes the next video frame
+
+    @param image The written frame
+
+    The functions/methods write the specified image to video file. It must have the same size as has
+    been specified when opening the video writer.
+     */
+    write(image : _mat.Mat): void;
 //
 //    /** @brief Sets a property in the VideoWriter.
 //
@@ -805,20 +821,15 @@ interface VideoWriter
 //     */
 //    CV_WRAP virtual double get(int propId) const;
 //
-//    /** @brief Concatenates 4 chars to a fourcc code
-//
-//    This static method constructs the fourcc code of the codec to be used in the constructor
-//    VideoWriter::VideoWriter or VideoWriter::open.
-//     */
-//    CV_WRAP static int fourcc(char c1, char c2, char c3, char c4);
 //
 //protected:
 //    Ptr<CvVideoWriter> writer;
 //    Ptr<IVideoWriter> iwriter;
 //
-//    static Ptr<IVideoWriter> create(const String& filename, int fourcc, double fps,
-//                                    Size frameSize, bool isColor = true);
 };
+
+
+export var VideoWriter: VideoWriterStatic = alvision_module.VideoWriter;
 
 //template<> CV_EXPORTS void DefaultDeleter<CvCapture>::operator ()(CvCapture* obj) const;
 //template<> CV_EXPORTS void DefaultDeleter<CvVideoWriter>::operator ()(CvVideoWriter* obj) const;

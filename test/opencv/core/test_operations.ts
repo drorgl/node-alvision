@@ -119,7 +119,7 @@ CV_OperationsTest::~CV_OperationsTest() {}
 
 template<typename _Tp> void CV_OperationsTest::TestType(Size sz, _Tp value)
 {
-    cv::Mat_<_Tp> m(sz);
+    alvision.Mat_<_Tp> m(sz);
     CV_Assert(m.cols == sz.width && m.rows == sz.height && m.depth() == DataType<_Tp>::depth &&
               m.channels() == DataType<_Tp>::channels &&
               m.elemSize() == sizeof(_Tp) && m.step == m.elemSize()*m.cols);
@@ -435,7 +435,7 @@ bool CV_OperationsTest::TestMat()
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TS::LOG, "%s\n", e.s.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return false;
     }
@@ -463,7 +463,7 @@ bool CV_OperationsTest::SomeMatFunctions()
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TS::LOG, "%s\n", e.s.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return false;
     }
@@ -489,7 +489,7 @@ bool CV_OperationsTest::TestSubMatAccess()
         //std::cout << "[Nav Grok] S frame =" << std::endl << T_bs << std::endl;
 
         // set up display coords, really just the S frame
-        std::vector<float>coords;
+        std::Array<float>coords;
 
         for (int i=0; i<16; i++)
         {
@@ -500,7 +500,7 @@ bool CV_OperationsTest::TestSubMatAccess()
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TS::LOG, "%s\n", e.s.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return false;
     }
@@ -709,22 +709,22 @@ bool CV_OperationsTest::TestTemplateMat()
         Mat_<uchar> rect(eye, Rect(0, 0, 1, 1));
         if (rect.cols != 1 || rect.rows != 1 || rect(0,0) != uchar_data[0]) throw test_excep();
 
-        //cv::Mat_<_Tp>::adjustROI(int,int,int,int)
-        //cv::Mat_<_Tp>::cross(const Mat_&) const
-        //cv::Mat_<_Tp>::Mat_(const vector<_Tp>&,bool)
-        //cv::Mat_<_Tp>::Mat_(int,int,_Tp*,size_t)
-        //cv::Mat_<_Tp>::Mat_(int,int,const _Tp&)
-        //cv::Mat_<_Tp>::Mat_(Size,const _Tp&)
-        //cv::Mat_<_Tp>::mul(const Mat_<_Tp>&,double) const
-        //cv::Mat_<_Tp>::mul(const MatExpr_<MatExpr_Op2_<Mat_<_Tp>,double,Mat_<_Tp>,MatOp_DivRS_<Mat> >,Mat_<_Tp> >&,double) const
-        //cv::Mat_<_Tp>::mul(const MatExpr_<MatExpr_Op2_<Mat_<_Tp>,double,Mat_<_Tp>,MatOp_Scale_<Mat> >,Mat_<_Tp> >&,double) const
-        //cv::Mat_<_Tp>::operator Mat_<T2>() const
-        //cv::Mat_<_Tp>::operator MatExpr_<Mat_<_Tp>,Mat_<_Tp> >() const
-        //cv::Mat_<_Tp>::operator()(const Range&,const Range&) const
-        //cv::Mat_<_Tp>::operator()(const Rect&) const
+        //alvision.Mat_<_Tp>::adjustROI(int,int,int,int)
+        //alvision.Mat_<_Tp>::cross(const Mat_&) const
+        //alvision.Mat_<_Tp>::Mat_(const Array<_Tp>&,bool)
+        //alvision.Mat_<_Tp>::Mat_(int,int,_Tp*,size_t)
+        //alvision.Mat_<_Tp>::Mat_(int,int,const _Tp&)
+        //alvision.Mat_<_Tp>::Mat_(Size,const _Tp&)
+        //alvision.Mat_<_Tp>::mul(const Mat_<_Tp>&,double) const
+        //alvision.Mat_<_Tp>::mul(const MatExpr_<MatExpr_Op2_<Mat_<_Tp>,double,Mat_<_Tp>,MatOp_DivRS_<Mat> >,Mat_<_Tp> >&,double) const
+        //alvision.Mat_<_Tp>::mul(const MatExpr_<MatExpr_Op2_<Mat_<_Tp>,double,Mat_<_Tp>,MatOp_Scale_<Mat> >,Mat_<_Tp> >&,double) const
+        //alvision.Mat_<_Tp>::operator Mat_<T2>() const
+        //alvision.Mat_<_Tp>::operator MatExpr_<Mat_<_Tp>,Mat_<_Tp> >() const
+        //alvision.Mat_<_Tp>::operator()(const Range&,const Range&) const
+        //alvision.Mat_<_Tp>::operator()(const Rect&) const
 
-        //cv::Mat_<_Tp>::operator=(const MatExpr_Base&)
-        //cv::Mat_<_Tp>::operator[](int) const
+        //alvision.Mat_<_Tp>::operator=(const MatExpr_Base&)
+        //alvision.Mat_<_Tp>::operator[](int) const
 
 
         ///////////////////////////////
@@ -778,7 +778,7 @@ bool CV_OperationsTest::TestTemplateMat()
         if (Mat3w(1, 1).channels() != 3) throw test_excep();
         if (Mat3s(1, 1).channels() != 3) throw test_excep();
 
-        vector<Mat_<float> > mvf, mvf2;
+        Array<Mat_<float> > mvf, mvf2;
         Mat_<Vec2f> mf2;
         mvf.push_back(Mat_<float>::ones(4, 3));
         mvf.push_back(Mat_<float>::zeros(4, 3));
@@ -809,18 +809,18 @@ bool CV_OperationsTest::TestTemplateMat()
 
         Size size(2, 5);
         TestType<float>(size, 1.f);
-        cv::Vec3f val1 = 1.f;
-        TestType<cv::Vec3f>(size, val1);
-        cv::Matx31f val2 = 1.f;
-        TestType<cv::Matx31f>(size, val2);
-        cv::Matx41f val3 = 1.f;
-        TestType<cv::Matx41f>(size, val3);
-        cv::Matx32f val4 = 1.f;
-        TestType<cv::Matx32f>(size, val4);
+        alvision.Vec3f val1 = 1.f;
+        TestType<alvision.Vec3f>(size, val1);
+        alvision.Matx31f val2 = 1.f;
+        TestType<alvision.Matx31f>(size, val2);
+        alvision.Matx41f val3 = 1.f;
+        TestType<alvision.Matx41f>(size, val3);
+        alvision.Matx32f val4 = 1.f;
+        TestType<alvision.Matx32f>(size, val4);
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TS::LOG, "%s\n", e.s.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return false;
     }
@@ -830,7 +830,7 @@ bool CV_OperationsTest::TestTemplateMat()
 bool CV_OperationsTest::TestMatND()
 {
     int sizes[] = { 3, 3, 3};
-    cv::MatND nd(3, sizes, CV_32F);
+    alvision.MatND nd(3, sizes, CV_32F);
 
     return true;
 }
@@ -894,7 +894,7 @@ bool CV_OperationsTest::TestMatxMultiplication()
     }
     catch(const test_excep&)
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+        this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
         return false;
     }
     return true;
@@ -916,7 +916,7 @@ bool CV_OperationsTest::TestMatxElementwiseDivison()
     }
     catch(const test_excep&)
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+        this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
         return false;
     }
     return true;
@@ -927,26 +927,26 @@ bool CV_OperationsTest::TestVec()
 {
     try
     {
-        cv::Mat hsvImage_f(5, 5, CV_32FC3), hsvImage_b(5, 5, CV_8UC3);
+        alvision.Mat hsvImage_f(5, 5, CV_32FC3), hsvImage_b(5, 5, CV_8UC3);
         int i = 0,j = 0;
-        cv::Vec3f a;
+        alvision.Vec3f a;
 
         //these compile
-        cv::Vec3b b = a;
-        hsvImage_f.at<cv::Vec3f>(i,j) = cv::Vec3f((float)i,0,1);
-        hsvImage_b.at<cv::Vec3b>(i,j) = cv::Vec3b(cv::Vec3f((float)i,0,1));
+        alvision.Vec3b b = a;
+        hsvImage_f.at<alvision.Vec3f>(i,j) = alvision.Vec3f((float)i,0,1);
+        hsvImage_b.at<alvision.Vec3b>(i,j) = alvision.Vec3b(alvision.Vec3f((float)i,0,1));
 
         //these don't
-        b = cv::Vec3f(1,0,0);
-        cv::Vec3b c;
-        c = cv::Vec3f(0,0,1);
-        hsvImage_b.at<cv::Vec3b>(i,j) = cv::Vec3f((float)i,0,1);
-        hsvImage_b.at<cv::Vec3b>(i,j) = a;
-        hsvImage_b.at<cv::Vec3b>(i,j) = cv::Vec3f(1,2,3);
+        b = alvision.Vec3f(1,0,0);
+        alvision.Vec3b c;
+        c = alvision.Vec3f(0,0,1);
+        hsvImage_b.at<alvision.Vec3b>(i,j) = alvision.Vec3f((float)i,0,1);
+        hsvImage_b.at<alvision.Vec3b>(i,j) = a;
+        hsvImage_b.at<alvision.Vec3b>(i,j) = alvision.Vec3f(1,2,3);
     }
     catch(const test_excep&)
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+        this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
         return false;
     }
     return true;
@@ -1030,8 +1030,8 @@ bool CV_OperationsTest::operations1()
         add(Mat::zeros(6, 1, CV_64F), 1, c, noArray(), c.type());
         CV_Assert( alvision.cvtest.norm(Matx61f(1.f, 1.f, 1.f, 1.f, 1.f, 1.f), c, CV_C) == 0 );
 
-        vector<Point2f> pt2d(3);
-        vector<Point3d> pt3d(2);
+        Array<Point2f> pt2d(3);
+        Array<Point3d> pt3d(2);
 
         CV_Assert( Mat(pt2d).checkVector(2) == 3 && Mat(pt2d).checkVector(3) < 0 &&
                    Mat(pt3d).checkVector(2) < 0 && Mat(pt3d).checkVector(3) == 2 );
@@ -1175,7 +1175,7 @@ protected:
             int sizes[MAX_DIM], idx[MAX_DIM];
             for( int iter = 0; iter < 100; iter++ )
             {
-                ts->printf(alvision.cvtest.TS::LOG, ".");
+                ts->printf(alvision.cvtest.TSConstants.LOG, ".");
                 ts->update_context(this, iter, true);
                 int k, dims = rng.uniform(1, MAX_DIM+1), p = 1;
                 for( k = 0; k < dims; k++ )

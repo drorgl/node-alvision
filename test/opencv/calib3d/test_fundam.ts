@@ -531,7 +531,7 @@ public:
 protected:
     int read_params( CvFileStorage* fs );
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
@@ -571,7 +571,7 @@ int CV_RodriguesTest::read_params( CvFileStorage* fs )
 
 
 void CV_RodriguesTest::get_test_array_types_and_sizes(
-    int /*test_case_idx*/, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+    int /*test_case_idx*/, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
@@ -636,15 +636,15 @@ void CV_RodriguesTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
         Mat _r( arr.rows, arr.cols, CV_MAKETYPE(CV_64F,arr.channels()), r );
         RNG& rng = ts->get_rng();
 
-        r[0] = alvision.cvtest.randReal(rng)*CV_PI*2;
-        r[1] = alvision.cvtest.randReal(rng)*CV_PI*2;
-        r[2] = alvision.cvtest.randReal(rng)*CV_PI*2;
+        r[0] = alvision.cvtest.randReal(rng)*Math.PI*2;
+        r[1] = alvision.cvtest.randReal(rng)*Math.PI*2;
+        r[2] = alvision.cvtest.randReal(rng)*Math.PI*2;
 
         theta0 = sqrt(r[0]*r[0] + r[1]*r[1] + r[2]*r[2]);
-        theta1 = fmod(theta0, CV_PI*2);
+        theta1 = fmod(theta0, Math.PI*2);
 
-        if( theta1 > CV_PI )
-            theta1 = -(CV_PI*2 - theta1);
+        if( theta1 > Math.PI )
+            theta1 = -(Math.PI*2 - theta1);
 
         f = theta1/(theta0 ? theta0 : 1);
         r[0] *= f;
@@ -660,7 +660,7 @@ void CV_RodriguesTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
 
 int CV_RodriguesTest::prepare_test_case( int test_case_idx )
 {
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
     return code;
 }
 
@@ -683,19 +683,19 @@ void CV_RodriguesTest::run_func()
     }
     else
     {
-        cv::Mat v = test_mat[INPUT][0], M = test_mat[OUTPUT][0], v2 = test_mat[OUTPUT][2];
-        cv::Mat M0 = M, v2_0 = v2;
+        alvision.Mat v = test_mat[INPUT][0], M = test_mat[OUTPUT][0], v2 = test_mat[OUTPUT][2];
+        alvision.Mat M0 = M, v2_0 = v2;
         if( !calc_jacobians )
         {
-            cv::Rodrigues(v, M);
-            cv::Rodrigues(M, v2);
+            alvision.Rodrigues(v, M);
+            alvision.Rodrigues(M, v2);
         }
         else
         {
-            cv::Mat J1 = test_mat[OUTPUT][1], J2 = test_mat[OUTPUT][3];
-            cv::Mat J1_0 = J1, J2_0 = J2;
-            cv::Rodrigues(v, M, J1);
-            cv::Rodrigues(M, v2, J2);
+            alvision.Mat J1 = test_mat[OUTPUT][1], J2 = test_mat[OUTPUT][3];
+            alvision.Mat J1_0 = J1, J2_0 = J2;
+            alvision.Rodrigues(v, M, J1);
+            alvision.Rodrigues(M, v2, J2);
             if( J1.data != J1_0.data )
             {
                 if( J1.size() != J1_0.size() )
@@ -737,10 +737,10 @@ void CV_RodriguesTest::prepare_to_validation( int /*test_case_idx*/ )
     alvision.cvtest.copy( vec, vec2 );
 
     theta0 = norm( vec2, CV_L2 );
-    theta1 = fmod( theta0, CV_PI*2 );
+    theta1 = fmod( theta0, Math.PI*2 );
 
-    if( theta1 > CV_PI )
-        theta1 = -(CV_PI*2 - theta1);
+    if( theta1 > Math.PI )
+        theta1 = -(Math.PI*2 - theta1);
     vec2 *= theta1/(theta0 ? theta0 : 1);
 
     if( calc_jacobians )
@@ -773,7 +773,7 @@ public:
 protected:
     int read_params( CvFileStorage* fs );
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
@@ -834,7 +834,7 @@ int CV_FundamentalMatTest::read_params( CvFileStorage* fs )
 
 
 void CV_FundamentalMatTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
@@ -934,9 +934,9 @@ void CV_FundamentalMatTest::fill_array( int test_case_idx, int i, int j, Mat& ar
         double r[3];
         Mat rot_vec( 3, 1, CV_64F, r );
         Mat rot_mat( 3, 3, CV_64F, t, 4*sizeof(t[0]) );
-        r[0] = alvision.cvtest.randReal(rng)*CV_PI*2;
-        r[1] = alvision.cvtest.randReal(rng)*CV_PI*2;
-        r[2] = alvision.cvtest.randReal(rng)*CV_PI*2;
+        r[0] = alvision.cvtest.randReal(rng)*Math.PI*2;
+        r[1] = alvision.cvtest.randReal(rng)*Math.PI*2;
+        r[2] = alvision.cvtest.randReal(rng)*Math.PI*2;
 
         alvision.cvtest.Rodrigues( rot_vec, rot_mat );
         t[3] = alvision.cvtest.randReal(rng)*cube_size;
@@ -959,7 +959,7 @@ void CV_FundamentalMatTest::fill_array( int test_case_idx, int i, int j, Mat& ar
 
 int CV_FundamentalMatTest::prepare_test_case( int test_case_idx )
 {
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         const Mat& _3d = test_mat[INPUT][2];
@@ -983,7 +983,7 @@ int CV_FundamentalMatTest::prepare_test_case( int test_case_idx )
 
 void CV_FundamentalMatTest::run_func()
 {
-    // cvFindFundamentalMat calls cv::findFundamentalMat
+    // cvFindFundamentalMat calls alvision.findFundamentalMat
     CvMat _input0 = test_mat[INPUT][0], _input1 = test_mat[INPUT][1];
     CvMat F = test_mat[TEMP][0], mask = test_mat[TEMP][1];
     f_result = cvFindFundamentalMat( &_input0, &_input1, &F, method, MAX(sigma*3, 0.01), 0, &mask );
@@ -1000,8 +1000,8 @@ void CV_FundamentalMatTest::prepare_to_validation( int test_case_idx )
 
     Mat invA1, invA2, R=Rt.colRange(0, 3), T;
 
-    cv::invert(A1, invA1, CV_SVD);
-    cv::invert(A2, invA2, CV_SVD);
+    alvision.invert(A1, invA1, CV_SVD);
+    alvision.invert(A2, invA2, CV_SVD);
 
     double tx = Rt.at<double>(0, 3);
     double ty = Rt.at<double>(1, 3);
@@ -1010,9 +1010,9 @@ void CV_FundamentalMatTest::prepare_to_validation( int test_case_idx )
     double _t_x[] = { 0, -tz, ty, tz, 0, -tx, -ty, tx, 0 };
 
     // F = (A2^-T)*[t]_x*R*(A1^-1)
-    cv::gemm( invA2, Mat( 3, 3, CV_64F, _t_x ), 1, Mat(), 0, T, CV_GEMM_A_T );
-    cv::gemm( R, invA1, 1, Mat(), 0, invA2 );
-    cv::gemm( T, invA2, 1, Mat(), 0, F0 );
+    alvision.gemm( invA2, Mat( 3, 3, CV_64F, _t_x ), 1, Mat(), 0, T, CV_GEMM_A_T );
+    alvision.gemm( R, invA1, 1, Mat(), 0, invA2 );
+    alvision.gemm( T, invA2, 1, Mat(), 0, F0 );
     F0 *= 1./f0[8];
 
     uchar* status = test_mat[TEMP][1].ptr();
@@ -1058,7 +1058,7 @@ void CV_FundamentalMatTest::prepare_to_validation( int test_case_idx )
 
     f_prop2[0] = f_result != 0;
     f_prop2[1] = f[8];
-    f_prop2[2] = cv::determinant( F );
+    f_prop2[2] = alvision.determinant( F );
 }
 /******************************* find essential matrix ***********************************/
 class CV_EssentialMatTest extends alvision.cvtest.ArrayTest
@@ -1069,7 +1069,7 @@ public:
 protected:
     int read_params( CvFileStorage* fs );
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void run_func();
@@ -1133,7 +1133,7 @@ int CV_EssentialMatTest::read_params( CvFileStorage* fs )
 
 
 void CV_EssentialMatTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
@@ -1234,9 +1234,9 @@ void CV_EssentialMatTest::fill_array( int test_case_idx, int i, int j, Mat& arr 
         double r[3];
         Mat rot_vec( 3, 1, CV_64F, r );
         Mat rot_mat( 3, 3, CV_64F, t, 4*sizeof(t[0]) );
-        r[0] = alvision.cvtest.randReal(rng)*CV_PI*2;
-        r[1] = alvision.cvtest.randReal(rng)*CV_PI*2;
-        r[2] = alvision.cvtest.randReal(rng)*CV_PI*2;
+        r[0] = alvision.cvtest.randReal(rng)*Math.PI*2;
+        r[1] = alvision.cvtest.randReal(rng)*Math.PI*2;
+        r[2] = alvision.cvtest.randReal(rng)*Math.PI*2;
 
         alvision.cvtest.Rodrigues( rot_vec, rot_mat );
         t[3] = alvision.cvtest.randReal(rng)*cube_size;
@@ -1258,7 +1258,7 @@ void CV_EssentialMatTest::fill_array( int test_case_idx, int i, int j, Mat& arr 
 
 int CV_EssentialMatTest::prepare_test_case( int test_case_idx )
 {
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         const Mat& _3d = test_mat[INPUT][2];
@@ -1286,11 +1286,11 @@ void CV_EssentialMatTest::run_func()
     Mat _input0(test_mat[INPUT][0]), _input1(test_mat[INPUT][1]);
     Mat K(test_mat[INPUT][4]);
     double focal(K.at<double>(0, 0));
-    cv::Point2d pp(K.at<double>(0, 2), K.at<double>(1, 2));
+    alvision.Point2d pp(K.at<double>(0, 2), K.at<double>(1, 2));
 
     RNG& rng = ts->get_rng();
     Mat E, mask1(test_mat[TEMP][1]);
-    E = cv::findEssentialMat( _input0, _input1, focal, pp, method, 0.99, MAX(sigma*3, 0.0001), mask1 );
+    E = alvision.findEssentialMat( _input0, _input1, focal, pp, method, 0.99, MAX(sigma*3, 0.0001), mask1 );
     if (E.rows > 3)
     {
         int count = E.rows / 3;
@@ -1337,7 +1337,7 @@ void CV_EssentialMatTest::prepare_to_validation( int test_case_idx )
 
     Mat invA, R=Rt0.colRange(0, 3), T1, T2;
 
-    cv::invert(A, invA, CV_SVD);
+    alvision.invert(A, invA, CV_SVD);
 
     double tx = Rt0.at<double>(0, 3);
     double ty = Rt0.at<double>(1, 3);
@@ -1346,9 +1346,9 @@ void CV_EssentialMatTest::prepare_to_validation( int test_case_idx )
     double _t_x[] = { 0, -tz, ty, tz, 0, -tx, -ty, tx, 0 };
 
     // F = (A2^-T)*[t]_x*R*(A1^-1)
-    cv::gemm( invA, Mat( 3, 3, CV_64F, _t_x ), 1, Mat(), 0, T1, CV_GEMM_A_T );
-    cv::gemm( R, invA, 1, Mat(), 0, T2 );
-    cv::gemm( T1, T2, 1, Mat(), 0, F0 );
+    alvision.gemm( invA, Mat( 3, 3, CV_64F, _t_x ), 1, Mat(), 0, T1, CV_GEMM_A_T );
+    alvision.gemm( R, invA, 1, Mat(), 0, T2 );
+    alvision.gemm( T1, T2, 1, Mat(), 0, F0 );
     F0 *= 1./f0[8];
 
     uchar* status = test_mat[TEMP][1].ptr();
@@ -1367,8 +1367,8 @@ void CV_EssentialMatTest::prepare_to_validation( int test_case_idx )
     test_convertHomogeneous( test_mat[INPUT][1], p2 );
 
     alvision.cvtest.convert(test_mat[TEMP][0], E, E.type());
-    cv::gemm( invA, E, 1, Mat(), 0, T1, CV_GEMM_A_T );
-    cv::gemm( T1, invA, 1, Mat(), 0, F );
+    alvision.gemm( invA, E, 1, Mat(), 0, T1, CV_GEMM_A_T );
+    alvision.gemm( T1, invA, 1, Mat(), 0, F );
 
     for( i = 0; i < pt_count; i++ )
     {
@@ -1403,8 +1403,8 @@ void CV_EssentialMatTest::prepare_to_validation( int test_case_idx )
 
     double* pose_prop1 = test_mat[REF_OUTPUT][2].ptr<double>();
     double* pose_prop2 = test_mat[OUTPUT][2].ptr<double>();
-    double terr1 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) + test_mat[TEMP][3], NORM_L2);
-    double terr2 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) - test_mat[TEMP][3], NORM_L2);
+    double terr1 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) + test_mat[TEMP][3],alvision.NormTypes. NORM_L2);
+    double terr2 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) - test_mat[TEMP][3],alvision.NormTypes. NORM_L2);
     Mat rvec;
     Rodrigues(Rt0.colRange(0, 3), rvec);
     pose_prop1[0] = 0;
@@ -1461,7 +1461,7 @@ int CV_ConvertHomogeneousTest::read_params( CvFileStorage* fs )
 
 
 void CV_ConvertHomogeneousTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int pt_depth1 = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
@@ -1596,7 +1596,7 @@ int CV_ComputeEpilinesTest::read_params( CvFileStorage* fs )
 
 
 void CV_ComputeEpilinesTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int fm_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
@@ -1694,7 +1694,7 @@ void CV_ComputeEpilinesTest::prepare_to_validation( int /*test_case_idx*/ )
     test_convertHomogeneous( test_mat[INPUT][0], pt );
     test_mat[INPUT][1].convertTo(F, CV_64F);
     if( which_image == 2 )
-        cv::transpose( F, F );
+        alvision.transpose( F, F );
 
     for( int i = 0; i < pt_count; i++ )
     {

@@ -78,9 +78,9 @@ private:
     Mat src;
     int current_type;
 
-    void generate_src_data(cv::Size size, int type);
-    void generate_src_data(cv::Size size, int type, int count_non_zero);
-    void generate_src_stat_data(cv::Size size, int type, int distribution);
+    void generate_src_data(alvision.Size size, int type);
+    void generate_src_data(alvision.Size size, int type, int count_non_zero);
+    void generate_src_stat_data(alvision.Size size, int type, int distribution);
 
     int get_count_non_zero();
 
@@ -90,7 +90,7 @@ private:
 CV_CountNonZeroTest::CV_CountNonZeroTest(): eps_32(std::numeric_limits<float>::min()), eps_64(std::numeric_limits<double>::min()), src(Mat()), current_type(-1) {}
 CV_CountNonZeroTest::~CV_CountNonZeroTest() {}
 
-void CV_CountNonZeroTest::generate_src_data(cv::Size size, int type)
+void CV_CountNonZeroTest::generate_src_data(alvision.Size size, int type)
 {
     src.create(size, CV_MAKETYPE(type, 1));
 
@@ -98,18 +98,18 @@ void CV_CountNonZeroTest::generate_src_data(cv::Size size, int type)
         for (int i = 0; i < size.height; ++i)
             switch (type)
             {
-            case CV_8U: { src.at<uchar>(i, j) = cv::randu<uchar>(); break; }
-            case CV_8S: { src.at<char>(i, j) = cv::randu<uchar>() - 128; break; }
-            case CV_16U: { src.at<ushort>(i, j) = cv::randu<ushort>(); break; }
-            case CV_16S: { src.at<short>(i, j) = cv::randu<short>(); break; }
-            case CV_32S: { src.at<int>(i, j) = cv::randu<int>(); break; }
-            case CV_32F: { src.at<float>(i, j) = cv::randu<float>(); break; }
-            case CV_64F: { src.at<double>(i, j) = cv::randu<double>(); break; }
+            case CV_8U: { src.at<uchar>(i, j) = alvision.randu<uchar>(); break; }
+            case CV_8S: { src.at<char>(i, j) = alvision.randu<uchar>() - 128; break; }
+            case CV_16U: { src.at<ushort>(i, j) = alvision.randu<ushort>(); break; }
+            case CV_16S: { src.at<short>(i, j) = alvision.randu<short>(); break; }
+            case CV_32S: { src.at<int>(i, j) = alvision.randu<int>(); break; }
+            case CV_32F: { src.at<float>(i, j) = alvision.randu<float>(); break; }
+            case CV_64F: { src.at<double>(i, j) = alvision.randu<double>(); break; }
             default: break;
             }
 }
 
-void CV_CountNonZeroTest::generate_src_data(cv::Size size, int type, int count_non_zero)
+void CV_CountNonZeroTest::generate_src_data(alvision.Size size, int type, int count_non_zero)
 {
     src = Mat::zeros(size, CV_MAKETYPE(type, 1));
 
@@ -121,13 +121,13 @@ void CV_CountNonZeroTest::generate_src_data(cv::Size size, int type, int count_n
 
         switch (type)
         {
-        case CV_8U: { if (!src.at<uchar>(i, j)) {src.at<uchar>(i, j) = cv::randu<uchar>(); n += (src.at<uchar>(i, j) > 0);} break; }
-        case CV_8S: { if (!src.at<char>(i, j)) {src.at<char>(i, j) = cv::randu<uchar>() - 128; n += abs(sign(src.at<char>(i, j)));} break; }
-        case CV_16U: { if (!src.at<ushort>(i, j)) {src.at<ushort>(i, j) = cv::randu<ushort>(); n += (src.at<ushort>(i, j) > 0);} break; }
-        case CV_16S: { if (!src.at<short>(i, j)) {src.at<short>(i, j) = cv::randu<short>(); n += abs(sign(src.at<short>(i, j)));} break; }
-        case CV_32S: { if (!src.at<int>(i, j)) {src.at<int>(i, j) = cv::randu<int>(); n += abs(sign(src.at<int>(i, j)));} break; }
-        case CV_32F: { if (fabs(src.at<float>(i, j)) <= eps_32) {src.at<float>(i, j) = cv::randu<float>(); n += (fabs(src.at<float>(i, j)) > eps_32);} break; }
-        case CV_64F: { if (fabs(src.at<double>(i, j)) <= eps_64) {src.at<double>(i, j) = cv::randu<double>(); n += (fabs(src.at<double>(i, j)) > eps_64);} break; }
+        case CV_8U: { if (!src.at<uchar>(i, j)) {src.at<uchar>(i, j) = alvision.randu<uchar>(); n += (src.at<uchar>(i, j) > 0);} break; }
+        case CV_8S: { if (!src.at<char>(i, j)) {src.at<char>(i, j) = alvision.randu<uchar>() - 128; n += abs(sign(src.at<char>(i, j)));} break; }
+        case CV_16U: { if (!src.at<ushort>(i, j)) {src.at<ushort>(i, j) = alvision.randu<ushort>(); n += (src.at<ushort>(i, j) > 0);} break; }
+        case CV_16S: { if (!src.at<short>(i, j)) {src.at<short>(i, j) = alvision.randu<short>(); n += abs(sign(src.at<short>(i, j)));} break; }
+        case CV_32S: { if (!src.at<int>(i, j)) {src.at<int>(i, j) = alvision.randu<int>(); n += abs(sign(src.at<int>(i, j)));} break; }
+        case CV_32F: { if (fabs(src.at<float>(i, j)) <= eps_32) {src.at<float>(i, j) = alvision.randu<float>(); n += (fabs(src.at<float>(i, j)) > eps_32);} break; }
+        case CV_64F: { if (fabs(src.at<double>(i, j)) <= eps_64) {src.at<double>(i, j) = alvision.randu<double>(); n += (fabs(src.at<double>(i, j)) > eps_64);} break; }
 
         default: break;
         }
@@ -135,7 +135,7 @@ void CV_CountNonZeroTest::generate_src_data(cv::Size size, int type, int count_n
 
 }
 
-void CV_CountNonZeroTest::generate_src_stat_data(cv::Size size, int type, int distribution)
+void CV_CountNonZeroTest::generate_src_stat_data(alvision.Size size, int type, int distribution)
 {
     src.create(size, CV_MAKETYPE(type, 1));
 
@@ -237,7 +237,7 @@ void CV_CountNonZeroTest::run(int)
             }
 
         case 3: {
-                int distribution = cv::randu<uchar>()%2;
+                int distribution = alvision.randu<uchar>()%2;
                 generate_src_stat_data(Size(w, h), current_type, distribution);
                 int right = get_count_non_zero(), result = countNonZero(src);
                 if (right != result)

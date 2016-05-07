@@ -64,65 +64,69 @@ import fs = require('fs');
 ////////////////////////////////////////////////////////
 // Brute Force Non local means
 
-TEST(CUDA_BruteForceNonLocalMeans, Regression)
-{
-    using cv::cuda::GpuMat;
+alvision.cvtest.TEST('CUDA_BruteForceNonLocalMeans', 'Regression', () => {
+   // using alvision.cuda::GpuMat;
 
-    cv::Mat bgr  = readImage("../gpu/denoising/lena_noised_gaussian_sigma=20_multi_0.png", cv::IMREAD_COLOR);
-    ASSERT_FALSE(bgr.empty());
-    cv::resize(bgr, bgr, cv::Size(256, 256));
+    var bgr = readImage("../gpu/denoising/lena_noised_gaussian_sigma=20_multi_0.png", alvision.ImreadModes.IMREAD_COLOR);
+    alvision.ASSERT_FALSE(bgr.empty());
+    alvision.resize(bgr, bgr, new alvision.Size(256, 256));
 
-    cv::Mat gray;
-    cv::cvtColor(bgr, gray, cv::COLOR_BGR2GRAY);
+    var gray = new alvision.Mat();
+    alvision.cvtColor(bgr, gray, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
 
-    GpuMat dbgr, dgray;
-    cv::cuda::nonLocalMeans(GpuMat(bgr),  dbgr, 20);
-    cv::cuda::nonLocalMeans(GpuMat(gray), dgray, 20);
+    //GpuMat dbgr, dgray;
+    var dbgr = new alvision.GpuMat();
+    var dgray = new alvision.GpuMat();
 
-#if 0
-    dumpImage("../gpu/denoising/nlm_denoised_lena_bgr.png", cv::Mat(dbgr));
-    dumpImage("../gpu/denoising/nlm_denoised_lena_gray.png", cv::Mat(dgray));
-#endif
+    alvision.nonLocalMeans(new alvision.GpuMat(bgr), dbgr, 20);
+    alvision.nonLocalMeans(new alvision.GpuMat(gray), dgray, 20);
 
-    cv::Mat bgr_gold  = readImage("../gpu/denoising/nlm_denoised_lena_bgr.png", cv::IMREAD_COLOR);
-    cv::Mat gray_gold  = readImage("../gpu/denoising/nlm_denoised_lena_gray.png", cv::IMREAD_GRAYSCALE);
-    ASSERT_FALSE(bgr_gold.empty() || gray_gold.empty());
-    cv::resize(bgr_gold, bgr_gold, cv::Size(256, 256));
-    cv::resize(gray_gold, gray_gold, cv::Size(256, 256));
+    //#if 0
+    alvision.dumpImage("../gpu/denoising/nlm_denoised_lena_bgr.png",  new alvision.Mat(dbgr));
+    alvision.dumpImage("../gpu/denoising/nlm_denoised_lena_gray.png", new alvision.Mat(dgray));
+    //#endif
 
-    EXPECT_MAT_NEAR(bgr_gold, dbgr, 1e-4);
-    EXPECT_MAT_NEAR(gray_gold, dgray, 1e-4);
-}
+    var bgr_gold = alvision.readImage("../gpu/denoising/nlm_denoised_lena_bgr.png", alvision.ImreadModes.IMREAD_COLOR);
+    var gray_gold  = alvision.readImage("../gpu/denoising/nlm_denoised_lena_gray.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+    alvision.ASSERT_FALSE(bgr_gold.empty() || gray_gold.empty());
+    alvision.resize(bgr_gold, bgr_gold,   new alvision.Size(256, 256));
+    alvision.resize(gray_gold, gray_gold, new alvision.Size(256, 256));
+
+    alvision.EXPECT_MAT_NEAR(bgr_gold, dbgr, 1e-4);
+    alvision.EXPECT_MAT_NEAR(gray_gold, dgray, 1e-4);
+});
 
 ////////////////////////////////////////////////////////
 // Fast Force Non local means
 
-TEST(CUDA_FastNonLocalMeans, Regression)
-{
-    using cv::cuda::GpuMat;
+alvision.cvtest.TEST('CUDA_FastNonLocalMeans', 'Regression', () => {
+    //using alvision.cuda::GpuMat;
 
-    cv::Mat bgr  = readImage("../gpu/denoising/lena_noised_gaussian_sigma=20_multi_0.png", cv::IMREAD_COLOR);
-    ASSERT_FALSE(bgr.empty());
+    var bgr = alvision.readImage("../gpu/denoising/lena_noised_gaussian_sigma=20_multi_0.png", alvision.ImreadModes.IMREAD_COLOR);
+    alvision.ASSERT_FALSE(bgr.empty());
 
-    cv::Mat gray;
-    cv::cvtColor(bgr, gray, cv::COLOR_BGR2GRAY);
+    var gray = new alvision.Mat();
+    alvision.cvtColor(bgr, gray, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
 
-    GpuMat dbgr, dgray;
+    //GpuMat dbgr, dgray;
+    var dbgr = new alvision.GpuMat();
+    var dgray = new alvision.GpuMat();
 
-    cv::cuda::fastNlMeansDenoising(GpuMat(gray),  dgray, 20);
-    cv::cuda::fastNlMeansDenoisingColored(GpuMat(bgr),  dbgr, 20, 10);
 
-#if 0
-    dumpImage("../gpu/denoising/fnlm_denoised_lena_bgr.png", cv::Mat(dbgr));
-    dumpImage("../gpu/denoising/fnlm_denoised_lena_gray.png", cv::Mat(dgray));
-#endif
+    alvision.fastNlMeansDenoising(       new alvision.GpuMat(gray), dgray, 20);
+    alvision.fastNlMeansDenoisingColored(new alvision.GpuMat(bgr), dbgr, 20, 10);
 
-    cv::Mat bgr_gold  = readImage("../gpu/denoising/fnlm_denoised_lena_bgr.png", cv::IMREAD_COLOR);
-    cv::Mat gray_gold  = readImage("../gpu/denoising/fnlm_denoised_lena_gray.png", cv::IMREAD_GRAYSCALE);
-    ASSERT_FALSE(bgr_gold.empty() || gray_gold.empty());
+    //#if 0
+    alvision.dumpImage("../gpu/denoising/fnlm_denoised_lena_bgr.png",  new alvision.Mat(dbgr));
+    alvision.dumpImage("../gpu/denoising/fnlm_denoised_lena_gray.png", new alvision.Mat(dgray));
+    //#endif
 
-    EXPECT_MAT_NEAR(bgr_gold, dbgr, 1);
-    EXPECT_MAT_NEAR(gray_gold, dgray, 1);
-}
+    var bgr_gold = alvision.readImage("../gpu/denoising/fnlm_denoised_lena_bgr.png", alvision.ImreadModes.IMREAD_COLOR);
+    var gray_gold  = alvision.readImage("../gpu/denoising/fnlm_denoised_lena_gray.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+    alvision.ASSERT_FALSE(bgr_gold.empty() || gray_gold.empty());
 
-#endif // HAVE_CUDA
+    alvision.EXPECT_MAT_NEAR(bgr_gold, dbgr, 1);
+    alvision.EXPECT_MAT_NEAR(gray_gold, dgray, 1);
+});
+
+//#endif // HAVE_CUDA

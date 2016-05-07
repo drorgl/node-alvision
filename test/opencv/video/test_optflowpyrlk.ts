@@ -82,26 +82,26 @@ void CV_OptFlowPyrLKTest::run( int )
 
     IplImage imgI;
     IplImage imgJ;
-    cv::Mat  imgI2, imgJ2;
+    alvision.Mat  imgI2, imgJ2;
 
     int  n = 0, i = 0;
 
-    sprintf( filename, "%soptflow/%s", ts->get_data_path().c_str(), "lk_prev.dat" );
+    sprintf( filename, "%soptflow/%s", ts->get_data_path(), "lk_prev.dat" );
     _u = (CvMat*)cvLoad( filename );
 
     if( !_u )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "could not read %s\n", filename );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "could not read %s\n", filename );
         code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
     }
 
-    sprintf( filename, "%soptflow/%s", ts->get_data_path().c_str(), "lk_next.dat" );
+    sprintf( filename, "%soptflow/%s", ts->get_data_path(), "lk_next.dat" );
     _v = (CvMat*)cvLoad( filename );
 
     if( !_v )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "could not read %s\n", filename );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "could not read %s\n", filename );
         code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
     }
@@ -109,7 +109,7 @@ void CV_OptFlowPyrLKTest::run( int )
     if( _u->cols != 2 || CV_MAT_TYPE(_u->type) != CV_32F ||
         _v->cols != 2 || CV_MAT_TYPE(_v->type) != CV_32F || _v->rows != _u->rows )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "the loaded matrices of points are not valid\n" );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "the loaded matrices of points are not valid\n" );
         code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
 
@@ -123,25 +123,25 @@ void CV_OptFlowPyrLKTest::run( int )
     v2 = (CvPoint2D32f*)_v2->data.fl;
 
     /* read first image */
-    sprintf( filename, "%soptflow/%s", ts->get_data_path().c_str(), "rock_1.bmp" );
-    imgI2 = cv::imread( filename, cv::IMREAD_UNCHANGED );
+    sprintf( filename, "%soptflow/%s", ts->get_data_path(), "rock_1.bmp" );
+    imgI2 = alvision.imread( filename, alvision.IMREAD_UNCHANGED );
     imgI = imgI2;
 
     if( imgI2.empty() )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "could not read %s\n", filename );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "could not read %s\n", filename );
         code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
     }
 
     /* read second image */
-    sprintf( filename, "%soptflow/%s", ts->get_data_path().c_str(), "rock_2.bmp" );
-    imgJ2 = cv::imread( filename, cv::IMREAD_UNCHANGED );
+    sprintf( filename, "%soptflow/%s", ts->get_data_path(), "rock_2.bmp" );
+    imgJ2 = alvision.imread( filename, alvision.IMREAD_UNCHANGED );
     imgJ = imgJ2;
 
     if( imgJ2.empty() )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "could not read %s\n", filename );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "could not read %s\n", filename );
         code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
     }
@@ -183,7 +183,7 @@ void CV_OptFlowPyrLKTest::run( int )
             {
                 merr_i = i;
                 merr_k++;
-                ts->printf( alvision.cvtest.TS::LOG, "The algorithm lost the point #%d\n", i );
+                ts->printf( alvision.cvtest.TSConstants.LOG, "The algorithm lost the point #%d\n", i );
                 code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
                 goto _exit_;
             }
@@ -192,7 +192,7 @@ void CV_OptFlowPyrLKTest::run( int )
 
     if( pt_exceed > bad_points_max )
     {
-        ts->printf( alvision.cvtest.TS::LOG,
+        ts->printf( alvision.cvtest.TSConstants.LOG,
                    "The number of poorly tracked points is too big (>=%d)\n", pt_exceed );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
@@ -200,7 +200,7 @@ void CV_OptFlowPyrLKTest::run( int )
 
     if( max_err > 1 )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Maximum tracking error is too big (=%g) at %d\n", max_err, merr_i );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Maximum tracking error is too big (=%g) at %d\n", max_err, merr_i );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         goto _exit_;
     }
@@ -222,31 +222,31 @@ TEST(Video_OpticalFlowPyrLK, accuracy) { CV_OptFlowPyrLKTest test; test.safe_run
 TEST(Video_OpticalFlowPyrLK, submat)
 {
     // see bug #2075
-    std::string path = alvision.cvtest.TS::ptr()->get_data_path() + "../cv/shared/lena.png";
+    std::string path = alvision.cvtest.TS.ptr().get_data_path() + "../cv/shared/lena.png";
 
-    cv::Mat lenaImg = cv::imread(path);
+    alvision.Mat lenaImg = alvision.imread(path);
     ASSERT_FALSE(lenaImg.empty());
 
-    cv::Mat wholeImage;
-    cv::resize(lenaImg, wholeImage, cv::Size(1024, 1024));
+    alvision.Mat wholeImage;
+    alvision.resize(lenaImg, wholeImage, alvision.Size(1024, 1024));
 
-    cv::Mat img1 = wholeImage(cv::Rect(0, 0, 640, 360)).clone();
-    cv::Mat img2 = wholeImage(cv::Rect(40, 60, 640, 360));
+    alvision.Mat img1 = wholeImage(alvision.Rect(0, 0, 640, 360)).clone();
+    alvision.Mat img2 = wholeImage(alvision.Rect(40, 60, 640, 360));
 
-    std::vector<uchar> status;
-    std::vector<float> error;
-    std::vector<cv::Point2f> prev;
-    std::vector<cv::Point2f> next;
+    std::Array<uchar> status;
+    std::Array<float> error;
+    std::Array<alvision.Point2f> prev;
+    std::Array<alvision.Point2f> next;
 
-    cv::RNG rng(123123);
+    alvision.RNG rng(123123);
 
     for(int i = 0; i < 50; ++i)
     {
         int x = rng.uniform(0, 640);
         int y = rng.uniform(0, 360);
 
-        prev.push_back(cv::Point2f((float)x, (float)y));
+        prev.push_back(alvision.Point2f((float)x, (float)y));
     }
 
-    ASSERT_NO_THROW(cv::calcOpticalFlowPyrLK(img1, img2, prev, next, status, error));
+    ASSERT_NO_THROW(alvision.calcOpticalFlowPyrLK(img1, img2, prev, next, status, error));
 }

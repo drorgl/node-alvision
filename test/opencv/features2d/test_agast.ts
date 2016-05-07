@@ -128,16 +128,16 @@ class CV_AgastTest extends alvision.cvtest.BaseTest
         read(fs["exp_kps2"], exp_kps2, Mat());
         fs.release();
 
-        if (exp_kps1.size != kps1.size || 0 != alvision.cvtest.norm(exp_kps1, kps1, NORM_L2) ||
-            exp_kps2.size != kps2.size || 0 != alvision.cvtest.norm(exp_kps2, kps2, NORM_L2))
+        if (exp_kps1.size != kps1.size || 0 != alvision.cvtest.norm(exp_kps1, kps1,alvision.NormTypes. NORM_L2) ||
+            exp_kps2.size != kps2.size || 0 != alvision.cvtest.norm(exp_kps2, kps2,alvision.NormTypes. NORM_L2))
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return;
         }
 
-        /*cv::namedWindow("Img1"); cv::imshow("Img1", image1);
-        cv::namedWindow("Img2"); cv::imshow("Img2", image2);
-        cv::waitKey(0);*/
+        /*alvision.namedWindow("Img1"); alvision.imshow("Img1", image1);
+        alvision.namedWindow("Img2"); alvision.imshow("Img2", image2);
+        alvision.waitKey(0);*/
     }
 
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);

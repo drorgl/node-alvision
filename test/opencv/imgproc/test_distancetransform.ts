@@ -64,7 +64,7 @@ protected:
     void prepare_to_validation( int );
 
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
 
     int mask_size;
     int dist_type;
@@ -86,7 +86,7 @@ CV_DisTransTest::CV_DisTransTest()
 
 
 void CV_DisTransTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -134,7 +134,7 @@ void CV_DisTransTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Sc
 
 int CV_DisTransTest::prepare_test_case( int test_case_idx )
 {
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         // the function's response to an "all-nonzeros" image is not determined,

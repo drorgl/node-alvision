@@ -78,9 +78,9 @@ IMPLEMENT_PARAM_CLASS(UseGray, bool)
     IMPLEMENT_PARAM_CLASS(DetectShadow, bool)
 }
 
-PARAM_TEST_CASE(MOG2, cv::cuda::DeviceInfo, std::string, UseGray, DetectShadow, UseRoi)
+PARAM_TEST_CASE(MOG2, alvision.cuda::DeviceInfo, std::string, UseGray, DetectShadow, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     std::string inputFile;
     bool useGray;
     bool detectShadow;
@@ -89,9 +89,9 @@ PARAM_TEST_CASE(MOG2, cv::cuda::DeviceInfo, std::string, UseGray, DetectShadow, 
     virtual void SetUp()
     {
         devInfo = GET_PARAM(0);
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
 
-        inputFile = std::string(alvision.cvtest.TS::ptr()->get_data_path()) + "video/" + GET_PARAM(1);
+        inputFile = std::alvision.cvtest.TS.ptr().get_data_path() + "video/" + GET_PARAM(1);
         useGray = GET_PARAM(2);
         detectShadow = GET_PARAM(3);
         useRoi = GET_PARAM(4);
@@ -100,20 +100,20 @@ PARAM_TEST_CASE(MOG2, cv::cuda::DeviceInfo, std::string, UseGray, DetectShadow, 
 
 CUDA_TEST_P(MOG2, Update)
 {
-    cv::VideoCapture cap(inputFile);
+    alvision.VideoCapture cap(inputFile);
     ASSERT_TRUE(cap.isOpened());
 
-    cv::Mat frame;
+    alvision.Mat frame;
     cap >> frame;
     ASSERT_FALSE(frame.empty());
 
-    cv::Ptr<cv::BackgroundSubtractorMOG2> mog2 = cv::cuda::createBackgroundSubtractorMOG2();
+    alvision.Ptr<alvision.BackgroundSubtractorMOG2> mog2 = alvision.cuda::createBackgroundSubtractorMOG2();
     mog2->setDetectShadows(detectShadow);
-    cv::cuda::GpuMat foreground = createMat(frame.size(), CV_8UC1, useRoi);
+    alvision.cuda::GpuMat foreground = createMat(frame.size(), CV_8UC1, useRoi);
 
-    cv::Ptr<cv::BackgroundSubtractorMOG2> mog2_gold = cv::createBackgroundSubtractorMOG2();
+    alvision.Ptr<alvision.BackgroundSubtractorMOG2> mog2_gold = alvision.createBackgroundSubtractorMOG2();
     mog2_gold->setDetectShadows(detectShadow);
-    cv::Mat foreground_gold;
+    alvision.Mat foreground_gold;
 
     for (int i = 0; i < 10; ++i)
     {
@@ -122,9 +122,9 @@ CUDA_TEST_P(MOG2, Update)
 
         if (useGray)
         {
-            cv::Mat temp;
-            cv::cvtColor(frame, temp, cv::COLOR_BGR2GRAY);
-            cv::swap(temp, frame);
+            alvision.Mat temp;
+            alvision.cvtColor(frame, temp, alvision.COLOR_BGR2GRAY);
+            alvision.swap(temp, frame);
         }
 
         mog2->apply(loadMat(frame, useRoi), foreground);
@@ -147,18 +147,18 @@ CUDA_TEST_P(MOG2, getBackgroundImage)
     if (useGray)
         return;
 
-    cv::VideoCapture cap(inputFile);
+    alvision.VideoCapture cap(inputFile);
     ASSERT_TRUE(cap.isOpened());
 
-    cv::Mat frame;
+    alvision.Mat frame;
 
-    cv::Ptr<cv::BackgroundSubtractorMOG2> mog2 = cv::cuda::createBackgroundSubtractorMOG2();
+    alvision.Ptr<alvision.BackgroundSubtractorMOG2> mog2 = alvision.cuda::createBackgroundSubtractorMOG2();
     mog2->setDetectShadows(detectShadow);
-    cv::cuda::GpuMat foreground;
+    alvision.cuda::GpuMat foreground;
 
-    cv::Ptr<cv::BackgroundSubtractorMOG2> mog2_gold = cv::createBackgroundSubtractorMOG2();
+    alvision.Ptr<alvision.BackgroundSubtractorMOG2> mog2_gold = alvision.createBackgroundSubtractorMOG2();
     mog2_gold->setDetectShadows(detectShadow);
-    cv::Mat foreground_gold;
+    alvision.Mat foreground_gold;
 
     for (int i = 0; i < 10; ++i)
     {
@@ -170,10 +170,10 @@ CUDA_TEST_P(MOG2, getBackgroundImage)
         mog2_gold->apply(frame, foreground_gold);
     }
 
-    cv::cuda::GpuMat background = createMat(frame.size(), frame.type(), useRoi);
+    alvision.cuda::GpuMat background = createMat(frame.size(), frame.type(), useRoi);
     mog2->getBackgroundImage(background);
 
-    cv::Mat background_gold;
+    alvision.Mat background_gold;
     mog2_gold->getBackgroundImage(background_gold);
 
     ASSERT_MAT_NEAR(background_gold, background, 1);

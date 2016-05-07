@@ -72,8 +72,8 @@ import fs = require('fs');
 #define COUNT_NORM_TYPES 3
 #define METHODS_COUNT 4
 
-int NORM_TYPE[COUNT_NORM_TYPES] = {cv::NORM_L1, cv::NORM_L2, cv::NORM_INF};
-int METHOD[METHODS_COUNT] = {0, cv::RANSAC, cv::LMEDS, cv::RHO};
+int NORM_TYPE[COUNT_NORM_TYPES] = {alvision.NORM_L1, alvision.NORM_L2, alvision.NORM_INF};
+int METHOD[METHODS_COUNT] = {0, alvision.RANSAC, alvision.LMEDS, alvision.RHO};
 
 using namespace cv;
 using namespace std;
@@ -95,8 +95,8 @@ protected:
 
 private:
     float max_diff, max_2diff;
-    bool check_matrix_size(const cv::Mat& H);
-    bool check_matrix_diff(const cv::Mat& original, const cv::Mat& found, const int norm_type, double &diff);
+    bool check_matrix_size(const alvision.Mat& H);
+    bool check_matrix_diff(const alvision.Mat& original, const alvision.Mat& found, const int norm_type, double &diff);
     int check_ransac_mask_1(const Mat& src, const Mat& mask);
     int check_ransac_mask_2(const Mat& original_mask, const Mat& found_mask);
 
@@ -120,12 +120,12 @@ CV_HomographyTest::CV_HomographyTest() : max_diff(1e-2f), max_2diff(2e-2f)
 
 CV_HomographyTest::~CV_HomographyTest() {}
 
-bool CV_HomographyTest::check_matrix_size(const cv::Mat& H)
+bool CV_HomographyTest::check_matrix_size(const alvision.Mat& H)
 {
     return (H.rows == 3) && (H.cols == 3);
 }
 
-bool CV_HomographyTest::check_matrix_diff(const cv::Mat& original, const cv::Mat& found, const int norm_type, double &diff)
+bool CV_HomographyTest::check_matrix_diff(const alvision.Mat& original, const alvision.Mat& found, const int norm_type, double &diff)
 {
     diff = alvision.cvtest.norm(original, found, norm_type);
     return diff <= max_diff;
@@ -152,7 +152,7 @@ void CV_HomographyTest::print_information_1(int j, int N, int _method, const Mat
     cout << "Type of srcPoints: "; if ((j>-1) && (j<2)) cout << "Mat of CV_32FC2"; else  cout << "vector <Point2f>";
     cout << "   Type of dstPoints: "; if (j % 2 == 0) cout << "Mat of CV_32FC2"; else cout << "vector <Point2f>"; cout << endl;
     cout << "Count of points: " << N << endl; cout << endl;
-    cout << "Method: "; if (_method == 0) cout << 0; else if (_method == 8) cout << "RANSAC"; else if (_method == cv::RHO) cout << "RHO"; else cout << "LMEDS"; cout << endl;
+    cout << "Method: "; if (_method == 0) cout << 0; else if (_method == 8) cout << "RANSAC"; else if (_method == alvision.RHO) cout << "RHO"; else cout << "LMEDS"; cout << endl;
     cout << "Homography matrix:" << endl; cout << endl;
     cout << H << endl; cout << endl;
     cout << "Number of rows: " << H.rows << "   Number of cols: " << H.cols << endl; cout << endl;
@@ -164,7 +164,7 @@ void CV_HomographyTest::print_information_2(int j, int N, int _method, const Mat
     cout << "Type of srcPoints: "; if ((j>-1) && (j<2)) cout << "Mat of CV_32FC2"; else  cout << "vector <Point2f>";
     cout << "   Type of dstPoints: "; if (j % 2 == 0) cout << "Mat of CV_32FC2"; else cout << "vector <Point2f>"; cout << endl;
     cout << "Count of points: " << N << endl; cout << endl;
-    cout << "Method: "; if (_method == 0) cout << 0; else if (_method == 8) cout << "RANSAC"; else if (_method == cv::RHO) cout << "RHO"; else cout << "LMEDS"; cout << endl;
+    cout << "Method: "; if (_method == 0) cout << 0; else if (_method == 8) cout << "RANSAC"; else if (_method == alvision.RHO) cout << "RHO"; else cout << "LMEDS"; cout << endl;
     cout << "Original matrix:" << endl; cout << endl;
     cout << H << endl; cout << endl;
     cout << "Found matrix:" << endl; cout << endl;
@@ -180,7 +180,7 @@ void CV_HomographyTest::print_information_3(int _method, int j, int N, const Mat
     cout << "Type of srcPoints: "; if ((j>-1) && (j<2)) cout << "Mat of CV_32FC2"; else  cout << "vector <Point2f>";
     cout << "   Type of dstPoints: "; if (j % 2 == 0) cout << "Mat of CV_32FC2"; else cout << "vector <Point2f>"; cout << endl;
     cout << "Count of points: " << N << endl; cout << endl;
-    cout << "Method: "; if (_method == RANSAC) cout << "RANSAC" << endl; else if (_method == cv::RHO) cout << "RHO" << endl; else cout << _method << endl;
+    cout << "Method: "; if (_method == RANSAC) cout << "RANSAC" << endl; else if (_method == alvision.RHO) cout << "RHO" << endl; else cout << _method << endl;
     cout << "Found mask:" << endl; cout << endl;
     cout << mask << endl; cout << endl;
     cout << "Number of rows: " << mask.rows << "   Number of cols: " << mask.cols << endl; cout << endl;
@@ -216,7 +216,7 @@ void CV_HomographyTest::print_information_5(int _method, int j, int N, int l, do
 void CV_HomographyTest::print_information_6(int _method, int j, int N, int k, double diff, bool value)
 {
     cout << endl; cout << "Checking for inliers/outliers mask..." << endl; cout << endl;
-    cout << "Method: "; if (_method == RANSAC) cout << "RANSAC" << endl; else if (_method == cv::RHO) cout << "RHO" << endl; else cout << _method << endl;
+    cout << "Method: "; if (_method == RANSAC) cout << "RANSAC" << endl; else if (_method == alvision.RHO) cout << "RHO" << endl; else cout << _method << endl;
     cout << "Type of srcPoints: "; if ((j>-1) && (j<2)) cout << "Mat of CV_32FC2"; else  cout << "vector <Point2f>";
     cout << "   Type of dstPoints: "; if (j % 2 == 0) cout << "Mat of CV_32FC2"; else cout << "vector <Point2f>"; cout << endl;
     cout << "Count of points: " << N << "   " << endl;
@@ -229,7 +229,7 @@ void CV_HomographyTest::print_information_6(int _method, int j, int N, int k, do
 void CV_HomographyTest::print_information_7(int _method, int j, int N, int k, double diff, bool original_value, bool found_value)
 {
     cout << endl; cout << "Checking for inliers/outliers mask..." << endl; cout << endl;
-    cout << "Method: "; if (_method == RANSAC) cout << "RANSAC" << endl; else if (_method == cv::RHO) cout << "RHO" << endl; else cout << _method << endl;
+    cout << "Method: "; if (_method == RANSAC) cout << "RANSAC" << endl; else if (_method == alvision.RHO) cout << "RHO" << endl; else cout << _method << endl;
     cout << "Type of srcPoints: "; if ((j>-1) && (j<2)) cout << "Mat of CV_32FC2"; else  cout << "vector <Point2f>";
     cout << "   Type of dstPoints: "; if (j % 2 == 0) cout << "Mat of CV_32FC2"; else cout << "vector <Point2f>"; cout << endl;
     cout << "Count of points: " << N << "   " << endl;
@@ -242,7 +242,7 @@ void CV_HomographyTest::print_information_7(int _method, int j, int N, int k, do
 void CV_HomographyTest::print_information_8(int _method, int j, int N, int k, int l, double diff)
 {
     cout << endl; cout << "Checking for reprojection error of inlier..." << endl; cout << endl;
-    cout << "Method: "; if (_method == RANSAC) cout << "RANSAC" << endl; else if (_method == cv::RHO) cout << "RHO" << endl; else cout << _method << endl;
+    cout << "Method: "; if (_method == RANSAC) cout << "RANSAC" << endl; else if (_method == alvision.RHO) cout << "RHO" << endl; else cout << _method << endl;
     cout << "Sigma of normal noise: " << sigma << endl;
     cout << "Type of srcPoints: "; if ((j>-1) && (j<2)) cout << "Mat of CV_32FC2"; else  cout << "vector <Point2f>";
     cout << "   Type of dstPoints: "; if (j % 2 == 0) cout << "Mat of CV_32FC2"; else cout << "vector <Point2f>"; cout << endl;
@@ -267,10 +267,10 @@ void CV_HomographyTest::run(int)
             src_data[2*i+1] = (float)alvision.cvtest.randReal(rng)*image_size;
         }
 
-        cv::Mat src_mat_2f(1, N, CV_32FC2, src_data),
+        alvision.Mat src_mat_2f(1, N, CV_32FC2, src_data),
         src_mat_2d(2, N, CV_32F, src_data),
         src_mat_3d(3, N, CV_32F);
-        cv::Mat dst_mat_2f, dst_mat_2d, dst_mat_3d;
+        alvision.Mat dst_mat_2f, dst_mat_2d, dst_mat_3d;
 
         vector <Point2f> src_vec, dst_vec;
 
@@ -284,7 +284,7 @@ void CV_HomographyTest::run(int)
             src_vec.push_back(Point2f(tmp[0], tmp[1]));
         }
 
-        double fi = alvision.cvtest.randReal(rng)*2*CV_PI;
+        double fi = alvision.cvtest.randReal(rng)*2*Math.PI;
 
         double t_x = alvision.cvtest.randReal(rng)*sqrt(image_size*1.0),
         t_y = alvision.cvtest.randReal(rng)*sqrt(image_size*1.0);
@@ -293,7 +293,7 @@ void CV_HomographyTest::run(int)
                             sin(fi),  cos(fi), t_y,
                             0.0f,     0.0f, 1.0f };
 
-        cv::Mat H_64(3, 3, CV_64F, Hdata), H_32;
+        alvision.Mat H_64(3, 3, CV_64F, Hdata), H_32;
 
         H_64.convertTo(H_32, CV_32F);
 
@@ -319,10 +319,10 @@ void CV_HomographyTest::run(int)
             case 0:
             case LMEDS:
                 {
-                    Mat H_res_64 [4] = { cv::findHomography(src_mat_2f, dst_mat_2f, method),
-                                         cv::findHomography(src_mat_2f, dst_vec, method),
-                                         cv::findHomography(src_vec, dst_mat_2f, method),
-                                         cv::findHomography(src_vec, dst_vec, method) };
+                    Mat H_res_64 [4] = { alvision.findHomography(src_mat_2f, dst_mat_2f, method),
+                                         alvision.findHomography(src_mat_2f, dst_vec, method),
+                                         alvision.findHomography(src_vec, dst_mat_2f, method),
+                                         alvision.findHomography(src_vec, dst_vec, method) };
 
                     for (int j = 0; j < 4; ++j)
                     {
@@ -347,15 +347,15 @@ void CV_HomographyTest::run(int)
 
                     continue;
                 }
-            case cv::RHO:
+            case alvision.RHO:
             case RANSAC:
                 {
-                    cv::Mat mask [4]; double diff;
+                    alvision.Mat mask [4]; double diff;
 
-                    Mat H_res_64 [4] = { cv::findHomography(src_mat_2f, dst_mat_2f, method, reproj_threshold, mask[0]),
-                                         cv::findHomography(src_mat_2f, dst_vec, method, reproj_threshold, mask[1]),
-                                         cv::findHomography(src_vec, dst_mat_2f, method, reproj_threshold, mask[2]),
-                                         cv::findHomography(src_vec, dst_vec, method, reproj_threshold, mask[3]) };
+                    Mat H_res_64 [4] = { alvision.findHomography(src_mat_2f, dst_mat_2f, method, reproj_threshold, mask[0]),
+                                         alvision.findHomography(src_mat_2f, dst_vec, method, reproj_threshold, mask[1]),
+                                         alvision.findHomography(src_vec, dst_mat_2f, method, reproj_threshold, mask[2]),
+                                         alvision.findHomography(src_vec, dst_vec, method, reproj_threshold, mask[3]) };
 
                     for (int j = 0; j < 4; ++j)
                     {
@@ -405,7 +405,7 @@ void CV_HomographyTest::run(int)
         Mat noise_2f(1, N, CV_32FC2);
         rng.fill(noise_2f, RNG::NORMAL, Scalar::all(0), Scalar::all(sigma));
 
-        cv::Mat mask(N, 1, CV_8UC1);
+        alvision.Mat mask(N, 1, CV_8UC1);
 
         for (int i = 0; i < N; ++i)
         {
@@ -422,10 +422,10 @@ void CV_HomographyTest::run(int)
             case 0:
             case LMEDS:
                 {
-                    Mat H_res_64 [4] = { cv::findHomography(src_mat_2f, dst_mat_2f),
-                                         cv::findHomography(src_mat_2f, dst_vec),
-                                         cv::findHomography(src_vec, dst_mat_2f),
-                                         cv::findHomography(src_vec, dst_vec) };
+                    Mat H_res_64 [4] = { alvision.findHomography(src_mat_2f, dst_mat_2f),
+                                         alvision.findHomography(src_mat_2f, dst_vec),
+                                         alvision.findHomography(src_vec, dst_mat_2f),
+                                         alvision.findHomography(src_vec, dst_vec) };
 
                     for (int j = 0; j < 4; ++j)
                     {
@@ -439,7 +439,7 @@ void CV_HomographyTest::run(int)
 
                         Mat H_res_32; H_res_64[j].convertTo(H_res_32, CV_32F);
 
-                        cv::Mat dst_res_3d(3, N, CV_32F), noise_2d(2, N, CV_32F);
+                        alvision.Mat dst_res_3d(3, N, CV_32F), noise_2d(2, N, CV_32F);
 
                         for (int k = 0; k < N; ++k)
                         {
@@ -454,9 +454,9 @@ void CV_HomographyTest::run(int)
                             noise_2d.at<float>(0, k) = a[0]; noise_2d.at<float>(1, k) = a[1];
 
                             for (int l = 0; l < COUNT_NORM_TYPES; ++l)
-                                if (cv::norm(tmp_mat_3d, dst_mat_3d.col(k), NORM_TYPE[l]) - cv::norm(noise_2d.col(k), NORM_TYPE[l]) > max_2diff)
+                                if (alvision.norm(tmp_mat_3d, dst_mat_3d.col(k), NORM_TYPE[l]) - alvision.norm(noise_2d.col(k), NORM_TYPE[l]) > max_2diff)
                                 {
-                                print_information_4(method, j, N, k, l, cv::norm(tmp_mat_3d, dst_mat_3d.col(k), NORM_TYPE[l]) - cv::norm(noise_2d.col(k), NORM_TYPE[l]));
+                                print_information_4(method, j, N, k, l, alvision.norm(tmp_mat_3d, dst_mat_3d.col(k), NORM_TYPE[l]) - alvision.norm(noise_2d.col(k), NORM_TYPE[l]));
                                 CV_Error(CALIB3D_HOMOGRAPHY_ERROR_REPROJ_DIFF, MESSAGE_REPROJ_DIFF_1);
                                 return;
                             }
@@ -464,9 +464,9 @@ void CV_HomographyTest::run(int)
                         }
 
                         for (int l = 0; l < COUNT_NORM_TYPES; ++l)
-                            if (cv::norm(dst_res_3d, dst_mat_3d, NORM_TYPE[l]) - cv::norm(noise_2d, NORM_TYPE[l]) > max_diff)
+                            if (alvision.norm(dst_res_3d, dst_mat_3d, NORM_TYPE[l]) - alvision.norm(noise_2d, NORM_TYPE[l]) > max_diff)
                             {
-                            print_information_5(method, j, N, l, cv::norm(dst_res_3d, dst_mat_3d, NORM_TYPE[l]) - cv::norm(noise_2d, NORM_TYPE[l]));
+                            print_information_5(method, j, N, l, alvision.norm(dst_res_3d, dst_mat_3d, NORM_TYPE[l]) - alvision.norm(noise_2d, NORM_TYPE[l]));
                             CV_Error(CALIB3D_HOMOGRAPHY_ERROR_REPROJ_DIFF, MESSAGE_REPROJ_DIFF_2);
                             return;
                         }
@@ -475,15 +475,15 @@ void CV_HomographyTest::run(int)
 
                     continue;
                 }
-            case cv::RHO:
+            case alvision.RHO:
             case RANSAC:
                 {
-                    cv::Mat mask_res [4];
+                    alvision.Mat mask_res [4];
 
-                    Mat H_res_64 [4] = { cv::findHomography(src_mat_2f, dst_mat_2f, method, reproj_threshold, mask_res[0]),
-                                         cv::findHomography(src_mat_2f, dst_vec, method, reproj_threshold, mask_res[1]),
-                                         cv::findHomography(src_vec, dst_mat_2f, method, reproj_threshold, mask_res[2]),
-                                         cv::findHomography(src_vec, dst_vec, method, reproj_threshold, mask_res[3]) };
+                    Mat H_res_64 [4] = { alvision.findHomography(src_mat_2f, dst_mat_2f, method, reproj_threshold, mask_res[0]),
+                                         alvision.findHomography(src_mat_2f, dst_vec, method, reproj_threshold, mask_res[1]),
+                                         alvision.findHomography(src_vec, dst_mat_2f, method, reproj_threshold, mask_res[2]),
+                                         alvision.findHomography(src_vec, dst_vec, method, reproj_threshold, mask_res[3]) };
 
                     for (int j = 0; j < 4; ++j)
                     {
@@ -511,9 +511,9 @@ void CV_HomographyTest::run(int)
                             return;
                         }
 
-                        cv::Mat H_res_32; H_res_64[j].convertTo(H_res_32, CV_32F);
+                        alvision.Mat H_res_32; H_res_64[j].convertTo(H_res_32, CV_32F);
 
-                        cv::Mat dst_res_3d = H_res_32*src_mat_3d;
+                        alvision.Mat dst_res_3d = H_res_32*src_mat_3d;
 
                         for (int k = 0; k < N; ++k)
                         {
@@ -526,7 +526,7 @@ void CV_HomographyTest::run(int)
                             dst_mat_3d.at<float>(0, k) = p[0];
                             dst_mat_3d.at<float>(1, k) = p[1];
 
-                            double diff = cv::norm(dst_res_3d.col(k), dst_mat_3d.col(k), NORM_L2);
+                            double diff = alvision.norm(dst_res_3d.col(k), dst_mat_3d.col(k),alvision.NormTypes. NORM_L2);
 
                             if (mask_res[j].at<bool>(k, 0) != (diff <= reproj_threshold))
                             {
@@ -548,16 +548,16 @@ void CV_HomographyTest::run(int)
                                 dst_mat_3d.at<float>(0, k) -= a[0];
                                 dst_mat_3d.at<float>(1, k) -= a[1];
 
-                                cv::Mat noise_2d(2, 1, CV_32F);
+                                alvision.Mat noise_2d(2, 1, CV_32F);
                                 noise_2d.at<float>(0, 0) = a[0]; noise_2d.at<float>(1, 0) = a[1];
 
                                 for (int l = 0; l < COUNT_NORM_TYPES; ++l)
                                 {
-                                    diff = cv::norm(dst_res_3d.col(k), dst_mat_3d.col(k), NORM_TYPE[l]);
+                                    diff = alvision.norm(dst_res_3d.col(k), dst_mat_3d.col(k), NORM_TYPE[l]);
 
-                                    if (diff - cv::norm(noise_2d, NORM_TYPE[l]) > max_2diff)
+                                    if (diff - alvision.norm(noise_2d, NORM_TYPE[l]) > max_2diff)
                                     {
-                                        print_information_8(method, j, N, k, l, diff - cv::norm(noise_2d, NORM_TYPE[l]));
+                                        print_information_8(method, j, N, k, l, diff - alvision.norm(noise_2d, NORM_TYPE[l]));
                                         CV_Error(CALIB3D_HOMOGRAPHY_ERROR_RANSAC_DIFF, MESSAGE_RANSAC_DIFF);
                                         return;
                                     }

@@ -22,7 +22,48 @@ export * from './opencv/Affine';
 export * from './opencv/base';
 
 export * from './opencv/core';
+export * from './opencv/core/opengl';
+
+//import * as cuda1 from './opencv/cuda';
+//import * as cuda2 from './opencv/photo/cuda';
+//export var cuda = {};
 export * from './opencv/cuda';
+export * from './opencv/photo/cuda';
+//import * as c1 from './opencv/cuda';
+//import * as c2 from './opencv/photo/cuda';
+//export module x { }
+
+//export module cuda {
+//    //export import cuda = c2
+//    //export import cuda = c2;
+//}
+
+
+
+//export cuda1.cuda;// + cuda2.cuda;
+//cuda = cuda2.cuda;
+//cuda = cuda2.cuda;
+
+//export module cuda { };
+
+
+//export import xxxx = {xx, xxx }};
+
+//import xxxxx = module("./opencv/cuda");
+//export * from module('./opencv/cuda');
+
+
+//export import cuda = xx = xxx;
+//export import cuda = xxx;
+
+//export namespace cuda {
+//    export * from  xx;
+//    //export * from module('./opencv/cuda');
+//    //export * from './opencv/photo/cuda';
+//    //export * from './opencv/photo/cuda';
+//}
+
+
 export * from './opencv/cvdef';
 export * from './opencv/HighGUI';
 export * from './opencv/imgproc';
@@ -34,9 +75,13 @@ export * from './opencv/mat';
 export * from './opencv/Matx';
 export * from './opencv/static';
 export * from './opencv/types';
+
 export * from './opencv/ts';
+export * from './opencv/ts/cuda_test';
+
 export * from './opencv/persistence';
 export * from './opencv/photo';
+
 
 export * from './opencv/tiff';
 
@@ -46,26 +91,22 @@ export * from './opencv/calib3d/circlesgrid';
 export * from './opencv/ml';
 
 export * from './opencv/stitching';
+export * from './opencv/superres';
 
-export * from './opencv/stitching/warpers';
-export * from './opencv/stitching/detail/blenders';
-export * from './opencv/stitching/detail/camera';
-export * from './opencv/stitching/detail/exposure_compensate';
-export * from './opencv/stitching/detail/matchers';
-export * from './opencv/stitching/detail/motion_estimators';
-export * from './opencv/stitching/detail/seam_finders';
 
 export * from './opencv/viz';
-export * from './opencv/viz/types';
-export * from './opencv/viz/viz3d';
-export * from './opencv/viz/vizcore';
-export * from './opencv/viz/widget_accessor';
-export * from './opencv/viz/widgets';
+
+
+export * from './opencv/shape/emdL1';
+export * from './opencv/shape/hist_cost';
+export * from './opencv/shape/shape_distance';
+export * from './opencv/shape/shape_transformer';
+
 
 export * from './opencv/videoio';
 
 export * from './opencv/static';
-export * from './opencv/test';
+//export * from './opencv/test';
 
 export var version: string = alvision_module.version;
 

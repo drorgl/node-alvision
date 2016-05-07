@@ -63,7 +63,7 @@ static
 Mat generateHomography(float angle)
 {
     // angle - rotation around Oz in degrees
-    float angleRadian = static_cast<float>(angle * CV_PI / 180);
+    float angleRadian = static_cast<float>(angle * Math.PI / 180);
     Mat H = Mat::eye(3, 3, CV_32FC1);
     H.at<float>(0,0) = H.at<float>(1,1) = std::cos(angleRadian);
     H.at<float>(0,1) = -std::sin(angleRadian);
@@ -94,10 +94,10 @@ Mat rotateImage(const Mat& srcImage, float angle, Mat& dstImage, Mat& dstMask)
     return H;
 }
 
-void rotateKeyPoints(const vector<KeyPoint>& src, const Mat& H, float angle, vector<KeyPoint>& dst)
+void rotateKeyPoints(const Array<KeyPoint>& src, const Mat& H, float angle, Array<KeyPoint>& dst)
 {
     // suppose that H is rotation given from rotateImage() and angle has value passed to rotateImage()
-    vector<Point2f> srcCenters, dstCenters;
+    Array<Point2f> srcCenters, dstCenters;
     KeyPoint::convert(src, srcCenters);
 
     perspectiveTransform(srcCenters, dstCenters, H);
@@ -113,7 +113,7 @@ void rotateKeyPoints(const vector<KeyPoint>& src, const Mat& H, float angle, vec
     }
 }
 
-void scaleKeyPoints(const vector<KeyPoint>& src, vector<KeyPoint>& dst, float scale)
+void scaleKeyPoints(const Array<KeyPoint>& src, Array<KeyPoint>& dst, float scale)
 {
     dst.resize(src.size());
     for(size_t i = 0; i < src.size(); i++)
@@ -134,7 +134,7 @@ float calcCirclesIntersectArea(const Point2f& p0, float r0, const Point2f& p1, f
     float minR = std::min(r0, r1);
     float maxR = std::max(r0, r1);
     if(c + minR <= maxR)
-        return static_cast<float>(CV_PI * minR * minR);
+        return static_cast<float>(Math.PI * minR * minR);
 
     float cos_halfA0 = (sqr_r0 + sqr_c - sqr_r1) / (2 * r0 * c);
     float cos_halfA1 = (sqr_r1 + sqr_c - sqr_r0) / (2 * r1 * c);
@@ -150,16 +150,16 @@ static
 float calcIntersectRatio(const Point2f& p0, float r0, const Point2f& p1, float r1)
 {
     float intersectArea = calcCirclesIntersectArea(p0, r0, p1, r1);
-    float unionArea = static_cast<float>(CV_PI) * (r0 * r0 + r1 * r1) - intersectArea;
+    float unionArea = static_cast<float>(Math.PI) * (r0 * r0 + r1 * r1) - intersectArea;
     return intersectArea / unionArea;
 }
 
 static
-void matchKeyPoints(const vector<KeyPoint>& keypoints0, const Mat& H,
-                    const vector<KeyPoint>& keypoints1,
-                    vector<DMatch>& matches)
+void matchKeyPoints(const Array<KeyPoint>& keypoints0, const Mat& H,
+                    const Array<KeyPoint>& keypoints1,
+                    Array<DMatch>& matches)
 {
-    vector<Point2f> points0;
+    Array<Point2f> points0;
     KeyPoint::convert(keypoints0, points0);
     Mat points0t;
     if(H.empty())
@@ -168,7 +168,7 @@ void matchKeyPoints(const vector<KeyPoint>& keypoints0, const Mat& H,
         perspectiveTransform(Mat(points0), points0t, H);
 
     matches.clear();
-    vector<uchar> usedMask(keypoints1.size(), 0);
+    Array<uchar> usedMask(keypoints1.size(), 0);
     for(int i0 = 0; i0 < static_cast<int>(keypoints0.size()); i0++)
     {
         int nearestPointIndex = -1;
@@ -218,12 +218,12 @@ protected:
         Mat image0 = imread(imageFilename), image1, mask1;
         if(image0.empty())
         {
-            ts->printf(alvision.cvtest.TS::LOG, "Image %s can not be read.\n", imageFilename.c_str());
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
-        vector<KeyPoint> keypoints0;
+        Array<KeyPoint> keypoints0;
         featureDetector->detect(image0, keypoints0);
         if(keypoints0.size() < 15)
             CV_Error(Error::StsAssert, "Detector gives too few points in a test image\n");
@@ -233,10 +233,10 @@ protected:
         {
             Mat H = rotateImage(image0, static_cast<float>(angle), image1, mask1);
 
-            vector<KeyPoint> keypoints1;
+            Array<KeyPoint> keypoints1;
             featureDetector->detect(image1, keypoints1, mask1);
 
-            vector<DMatch> matches;
+            Array<DMatch> matches;
             matchKeyPoints(keypoints0, H, keypoints1, matches);
 
             int angleInliersCount = 0;
@@ -274,7 +274,7 @@ protected:
             float keyPointMatchesRatio = static_cast<float>(keyPointMatchesCount) / keypoints0.size();
             if(keyPointMatchesRatio < minKeyPointMatchesRatio)
             {
-                ts->printf(alvision.cvtest.TS::LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
+                ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
                            keyPointMatchesRatio, minKeyPointMatchesRatio);
                 this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                 return;
@@ -285,7 +285,7 @@ protected:
                 float angleInliersRatio = static_cast<float>(angleInliersCount) / keyPointMatchesCount;
                 if(angleInliersRatio < minAngleInliersRatio)
                 {
-                    ts->printf(alvision.cvtest.TS::LOG, "Incorrect angleInliersRatio: curr = %f, min = %f.\n",
+                    ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect angleInliersRatio: curr = %f, min = %f.\n",
                                angleInliersRatio, minAngleInliersRatio);
                     this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                     return;
@@ -330,12 +330,12 @@ protected:
         Mat image0 = imread(imageFilename), image1, mask1;
         if(image0.empty())
         {
-            ts->printf(alvision.cvtest.TS::LOG, "Image %s can not be read.\n", imageFilename.c_str());
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
-        vector<KeyPoint> keypoints0;
+        Array<KeyPoint> keypoints0;
         Mat descriptors0;
         featureDetector->detect(image0, keypoints0);
         if(keypoints0.size() < 15)
@@ -350,12 +350,12 @@ protected:
         {
             Mat H = rotateImage(image0, static_cast<float>(angle), image1, mask1);
 
-            vector<KeyPoint> keypoints1;
+            Array<KeyPoint> keypoints1;
             rotateKeyPoints(keypoints0, H, static_cast<float>(angle), keypoints1);
             Mat descriptors1;
             descriptorExtractor->compute(image1, keypoints1, descriptors1);
 
-            vector<DMatch> descMatches;
+            Array<DMatch> descMatches;
             bfmatcher.match(descriptors0, descriptors1, descMatches);
 
             int descInliersCount = 0;
@@ -373,7 +373,7 @@ protected:
             float descInliersRatio = static_cast<float>(descInliersCount) / keypoints0.size();
             if(descInliersRatio < minDescInliersRatio)
             {
-                ts->printf(alvision.cvtest.TS::LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
+                ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
                            descInliersRatio, minDescInliersRatio);
                 this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                 return;
@@ -414,12 +414,12 @@ protected:
         Mat image0 = imread(imageFilename);
         if(image0.empty())
         {
-            ts->printf(alvision.cvtest.TS::LOG, "Image %s can not be read.\n", imageFilename.c_str());
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
-        vector<KeyPoint> keypoints0;
+        Array<KeyPoint> keypoints0;
         featureDetector->detect(image0, keypoints0);
         if(keypoints0.size() < 15)
             CV_Error(Error::StsAssert, "Detector gives too few points in a test image\n");
@@ -430,26 +430,26 @@ protected:
             Mat image1;
             resize(image0, image1, Size(), 1./scale, 1./scale);
 
-            vector<KeyPoint> keypoints1, osiKeypoints1; // osi - original size image
+            Array<KeyPoint> keypoints1, osiKeypoints1; // osi - original size image
             featureDetector->detect(image1, keypoints1);
             if(keypoints1.size() < 15)
                 CV_Error(Error::StsAssert, "Detector gives too few points in a test image\n");
 
             if(keypoints1.size() > keypoints0.size())
             {
-                ts->printf(alvision.cvtest.TS::LOG, "Strange behavior of the detector. "
+                ts->printf(alvision.cvtest.TSConstants.LOG, "Strange behavior of the detector. "
                     "It gives more points count in an image of the smaller size.\n"
                     "original size (%d, %d), keypoints count = %d\n"
                     "reduced size (%d, %d), keypoints count = %d\n",
                     image0.cols, image0.rows, keypoints0.size(),
                     image1.cols, image1.rows, keypoints1.size());
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
             scaleKeyPoints(keypoints1, osiKeypoints1, scale);
 
-            vector<DMatch> matches;
+            Array<DMatch> matches;
             // image1 is query image (it's reduced image0)
             // image0 is train image
             matchKeyPoints(osiKeypoints1, Mat(), keypoints0, matches);
@@ -477,7 +477,7 @@ protected:
             float keyPointMatchesRatio = static_cast<float>(keyPointMatchesCount) / keypoints1.size();
             if(keyPointMatchesRatio < minKeyPointMatchesRatio)
             {
-                ts->printf(alvision.cvtest.TS::LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
+                ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
                            keyPointMatchesRatio, minKeyPointMatchesRatio);
                 this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                 return;
@@ -488,7 +488,7 @@ protected:
                 float scaleInliersRatio = static_cast<float>(scaleInliersCount) / keyPointMatchesCount;
                 if(scaleInliersRatio < minScaleInliersRatio)
                 {
-                    ts->printf(alvision.cvtest.TS::LOG, "Incorrect scaleInliersRatio: curr = %f, min = %f.\n",
+                    ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect scaleInliersRatio: curr = %f, min = %f.\n",
                                scaleInliersRatio, minScaleInliersRatio);
                     this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                     return;
@@ -533,12 +533,12 @@ protected:
         Mat image0 = imread(imageFilename);
         if(image0.empty())
         {
-            ts->printf(alvision.cvtest.TS::LOG, "Image %s can not be read.\n", imageFilename.c_str());
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
-        vector<KeyPoint> keypoints0;
+        Array<KeyPoint> keypoints0;
         featureDetector->detect(image0, keypoints0);
         if(keypoints0.size() < 15)
             CV_Error(Error::StsAssert, "Detector gives too few points in a test image\n");
@@ -553,12 +553,12 @@ protected:
             Mat image1;
             resize(image0, image1, Size(), 1./scale, 1./scale);
 
-            vector<KeyPoint> keypoints1;
+            Array<KeyPoint> keypoints1;
             scaleKeyPoints(keypoints0, keypoints1, 1.0f/scale);
             Mat descriptors1;
             descriptorExtractor->compute(image1, keypoints1, descriptors1);
 
-            vector<DMatch> descMatches;
+            Array<DMatch> descMatches;
             bfmatcher.match(descriptors0, descriptors1, descMatches);
 
             const float minIntersectRatio = 0.5f;
@@ -577,7 +577,7 @@ protected:
             float descInliersRatio = static_cast<float>(descInliersCount) / keypoints0.size();
             if(descInliersRatio < minDescInliersRatio)
             {
-                ts->printf(alvision.cvtest.TS::LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
+                ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
                            descInliersRatio, minDescInliersRatio);
                 this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                 return;

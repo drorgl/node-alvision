@@ -213,38 +213,38 @@
 //        //C++ tests
 //        useCPlus = true;
 
-//        camera_mat = cv::cvarrToMat(&_camera_mat_orig);
-//        distortion_coeffs = cv::cvarrToMat(&_distortion_coeffs_orig);
-//        P = cv::cvarrToMat(&_P_orig);
-//        R = cv::cvarrToMat(&_R_orig);
-//        src_points = cv::cvarrToMat(&_src_points_orig);
+//        camera_mat = alvision.cvarrToMat(&_camera_mat_orig);
+//        distortion_coeffs = alvision.cvarrToMat(&_distortion_coeffs_orig);
+//        P = alvision.cvarrToMat(&_P_orig);
+//        R = alvision.cvarrToMat(&_R_orig);
+//        src_points = alvision.cvarrToMat(&_src_points_orig);
 
 //        temp = cvCreateMat(2, 2, CV_32FC2);
-//        src_points = cv::cvarrToMat(temp);
+//        src_points = alvision.cvarrToMat(temp);
 //        errcount += run_test_case(CV_StsAssert, "Invalid input data matrix size");
-//        src_points = cv::cvarrToMat(&_src_points_orig);
+//        src_points = alvision.cvarrToMat(&_src_points_orig);
 //        cvReleaseMat(&temp);
 
 //        temp = cvCreateMat(1, 4, CV_64FC2);
-//        src_points = cv::cvarrToMat(temp);
+//        src_points = alvision.cvarrToMat(temp);
 //        errcount += run_test_case(CV_StsAssert, "Invalid input data matrix type");
-//        src_points = cv::cvarrToMat(&_src_points_orig);
+//        src_points = alvision.cvarrToMat(&_src_points_orig);
 //        cvReleaseMat(&temp);
 
-//        src_points = cv::Mat();
+//        src_points = alvision.Mat();
 //        errcount += run_test_case(CV_StsAssert, "Input data matrix is not continuous");
-//        src_points = cv::cvarrToMat(&_src_points_orig);
+//        src_points = alvision.cvarrToMat(&_src_points_orig);
 //        cvReleaseMat(&temp);
 
 
 
 //        //------------
 //        cvReleaseImage(&temp_img);
-//        ts ->set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
+//        this.ts.set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
 //    }
 //    protected run_func(): void {
 //        if (useCPlus) {
-//            cv::undistortPoints(src_points, dst_points, camera_mat, distortion_coeffs, R, P);
+//            alvision.undistortPoints(src_points, dst_points, camera_mat, distortion_coeffs, R, P);
 //        }
 //        else {
 //            cvUndistortPoints(_src_points, _dst_points, _camera_mat, _distortion_coeffs, matR, matP);
@@ -321,12 +321,12 @@
 //        //C++ tests
 //        useCPlus = true;
 
-//        camera_mat = cv::cvarrToMat(&_camera_mat_orig);
-//        distortion_coeffs = cv::cvarrToMat(&_distortion_coeffs_orig);
-//        new_camera_mat = cv::cvarrToMat(&_new_camera_mat_orig);
-//        R = cv::cvarrToMat(&_R_orig);
-//        mapx = cv::cvarrToMat(&_mapx_orig);
-//        mapy = cv::cvarrToMat(&_mapy_orig);
+//        camera_mat = alvision.cvarrToMat(&_camera_mat_orig);
+//        distortion_coeffs = alvision.cvarrToMat(&_distortion_coeffs_orig);
+//        new_camera_mat = alvision.cvarrToMat(&_new_camera_mat_orig);
+//        R = alvision.cvarrToMat(&_R_orig);
+//        mapx = alvision.cvarrToMat(&_mapx_orig);
+//        mapy = alvision.cvarrToMat(&_mapy_orig);
 
 
 //        mat_type = CV_64F;
@@ -334,31 +334,31 @@
 //        mat_type = mat_type_orig;
 
 //        temp = cvCreateMat(3, 2, CV_32FC1);
-//        camera_mat = cv::cvarrToMat(temp);
+//        camera_mat = alvision.cvarrToMat(temp);
 //        errcount += run_test_case(CV_StsAssert, "Invalid camera data matrix size");
-//        camera_mat = cv::cvarrToMat(&_camera_mat_orig);
+//        camera_mat = alvision.cvarrToMat(&_camera_mat_orig);
 //        cvReleaseMat(&temp);
 
 //        temp = cvCreateMat(4, 3, CV_32FC1);
-//        R = cv::cvarrToMat(temp);
+//        R = alvision.cvarrToMat(temp);
 //        errcount += run_test_case(CV_StsAssert, "Invalid R data matrix size");
-//        R = cv::cvarrToMat(&_R_orig);
+//        R = alvision.cvarrToMat(&_R_orig);
 //        cvReleaseMat(&temp);
 
 //        temp = cvCreateMat(6, 1, CV_32FC1);
-//        distortion_coeffs = cv::cvarrToMat(temp);
+//        distortion_coeffs = alvision.cvarrToMat(temp);
 //        errcount += run_test_case(CV_StsAssert, "Invalid distortion coefficients data matrix size");
-//        distortion_coeffs = cv::cvarrToMat(&_distortion_coeffs_orig);
+//        distortion_coeffs = alvision.cvarrToMat(&_distortion_coeffs_orig);
 //        cvReleaseMat(&temp);
 
 //        //------------
 //        delete [] arr_mapx;
 //        delete [] arr_mapy;
-//        ts ->set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
+//        this.ts.set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
 //    }
 //    protected run_func() : void{
 //    if (useCPlus) {
-//        cv::initUndistortRectifyMap(camera_mat, distortion_coeffs, R, new_camera_mat, img_size, mat_type, mapx, mapy);
+//        alvision.initUndistortRectifyMap(camera_mat, distortion_coeffs, R, new_camera_mat, img_size, mat_type, mapx, mapy);
 //    }
 //    else {
 //        cvInitUndistortRectifyMap(_camera_mat, _distortion_coeffs, matR, _new_camera_mat, _mapx, _mapy);
@@ -367,7 +367,7 @@
 
 //private:
 //    //common
-//    cv::Size img_size;
+//    alvision.Size img_size;
 //    bool useCPlus;
 
 //    //C
@@ -380,12 +380,12 @@
 
 
 //    //C++
-//    cv::Mat camera_mat;
-//    cv::Mat R;
-//    cv::Mat new_camera_mat;
-//    cv::Mat distortion_coeffs;
-//    cv::Mat mapx;
-//    cv::Mat mapy;
+//    alvision.Mat camera_mat;
+//    alvision.Mat R;
+//    alvision.Mat new_camera_mat;
+//    alvision.Mat distortion_coeffs;
+//    alvision.Mat mapx;
+//    alvision.Mat mapy;
 //    int mat_type;
 
 //};
@@ -456,20 +456,20 @@
 //        //C++ tests
 //        useCPlus = true;
 
-//        camera_mat = cv::cvarrToMat(&_camera_mat_orig);
-//        distortion_coeffs = cv::cvarrToMat(&_distortion_coeffs_orig);
-//        new_camera_mat = cv::cvarrToMat(&_new_camera_mat_orig);
-//        src = cv::cvarrToMat(&_src_orig);
-//        dst = cv::cvarrToMat(&_dst_orig);
+//        camera_mat = alvision.cvarrToMat(&_camera_mat_orig);
+//        distortion_coeffs = alvision.cvarrToMat(&_distortion_coeffs_orig);
+//        new_camera_mat = alvision.cvarrToMat(&_new_camera_mat_orig);
+//        src = alvision.cvarrToMat(&_src_orig);
+//        dst = alvision.cvarrToMat(&_dst_orig);
 
 //        //------------
 //        delete [] arr_src;
 //        delete [] arr_dst;
-//        ts ->set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
+//        this.ts.set_failed_test_info(errcount > 0 ? cvtest ::TS::FAIL_BAD_ARG_CHECK : alvision.cvtest.TS::OK);
 //    }
 //    protected run_func(): void {
 //        if (useCPlus) {
-//            cv::undistort(src, dst, camera_mat, distortion_coeffs, new_camera_mat);
+//            alvision.undistort(src, dst, camera_mat, distortion_coeffs, new_camera_mat);
 //        }
 //        else {
 //            cvUndistort2(_src, _dst, _camera_mat, _distortion_coeffs, _new_camera_mat);
@@ -490,11 +490,11 @@
 
 
 //    //C++
-//    cv::Mat camera_mat;
-//    cv::Mat new_camera_mat;
-//    cv::Mat distortion_coeffs;
-//    cv::Mat src;
-//    cv::Mat dst;
+//    alvision.Mat camera_mat;
+//    alvision.Mat new_camera_mat;
+//    alvision.Mat distortion_coeffs;
+//    alvision.Mat src;
+//    alvision.Mat dst;
 
 //};
 

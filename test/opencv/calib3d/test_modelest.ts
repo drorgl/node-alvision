@@ -119,7 +119,7 @@ CV_ModelEstimator2_Test::CV_ModelEstimator2_Test()
 }
 
 void CV_ModelEstimator2_Test::get_test_array_types_and_sizes( int /*test_case_idx*/,
-                                                              vector<vector<Size> > &sizes, vector<vector<int> > &types )
+                                                              Array<Array<Size> > &sizes, Array<Array<int> > &types )
 {
     RNG &rng = ts->get_rng();
     checkPartialSubsets = (alvision.cvtest.randInt(rng) % 2 == 0);

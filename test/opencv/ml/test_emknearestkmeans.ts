@@ -51,12 +51,12 @@ import fs = require('fs');
 //
 //using namespace std;
 //using namespace cv;
-//using cv::ml::TrainData;
-//using cv::ml::EM;
-//using cv::ml::KNearest;
+//using alvision.ml::TrainData;
+//using alvision.ml::EM;
+//using alvision.ml::KNearest;
 
 static
-void defaultDistribs( Mat& means, vector<Mat>& covs, int type=CV_32FC1 )
+void defaultDistribs( Mat& means, Array<Mat>& covs, int type=CV_32FC1 )
 {
     float mp0[] = {0.0f, 0.0f}, cp0[] = {0.67f, 0.0f, 0.0f, 0.67f};
     float mp1[] = {5.0f, 0.0f}, cp1[] = {1.0f, 0.0f, 0.0f, 1.0f};
@@ -82,9 +82,9 @@ void defaultDistribs( Mat& means, vector<Mat>& covs, int type=CV_32FC1 )
 
 // generate points sets by normal distributions
 static
-void generateData( Mat& data, Mat& labels, const vector<int>& sizes, const Mat& _means, const vector<Mat>& covs, int dataType, int labelType )
+void generateData( Mat& data, Mat& labels, const Array<int>& sizes, const Mat& _means, const Array<Mat>& covs, int dataType, int labelType )
 {
-    vector<int>::const_iterator sit = sizes.begin();
+    Array<int>::const_iterator sit = sizes.begin();
     int total = 0;
     for( ; sit != sizes.end(); ++sit )
         total += *sit;
@@ -95,10 +95,10 @@ void generateData( Mat& data, Mat& labels, const vector<int>& sizes, const Mat& 
     labels.create( data.rows, 1, labelType );
 
     randn( data, Scalar::all(-1.0), Scalar::all(1.0) );
-    vector<Mat> means(sizes.size());
+    Array<Mat> means(sizes.size());
     for(int i = 0; i < _means.rows; i++)
         means[i] = _means.row(i);
-    vector<Mat>::const_iterator mit = means.begin(), cit = covs.begin();
+    Array<Mat>::const_iterator mit = means.begin(), cit = covs.begin();
     int bi, ei = 0;
     sit = sizes.begin();
     for( int p = 0, l = 0; sit != sizes.end(); ++sit, ++mit, ++cit, l++ )
@@ -124,11 +124,11 @@ void generateData( Mat& data, Mat& labels, const vector<int>& sizes, const Mat& 
 }
 
 static
-int maxIdx( const vector<int>& count )
+int maxIdx( const Array<int>& count )
 {
     int idx = -1;
     int maxVal = -1;
-    vector<int>::const_iterator it = count.begin();
+    Array<int>::const_iterator it = count.begin();
     for( int i = 0; it != count.end(); ++it, i++ )
     {
         if( *it > maxVal)
@@ -142,7 +142,7 @@ int maxIdx( const vector<int>& count )
 }
 
 static
-bool getLabelsMap( const Mat& labels, const vector<int>& sizes, vector<int>& labelsMap, bool checkClusterUniq=true )
+bool getLabelsMap( const Mat& labels, const Array<int>& sizes, Array<int>& labelsMap, bool checkClusterUniq=true )
 {
     size_t total = 0, nclusters = sizes.size();
     for(size_t i = 0; i < sizes.size(); i++)
@@ -156,11 +156,11 @@ bool getLabelsMap( const Mat& labels, const vector<int>& sizes, vector<int>& lab
 
     labelsMap.resize(nclusters);
 
-    vector<bool> buzy(nclusters, false);
+    Array<bool> buzy(nclusters, false);
     int startIndex = 0;
     for( size_t clusterIndex = 0; clusterIndex < sizes.size(); clusterIndex++ )
     {
-        vector<int> count( nclusters, 0 );
+        Array<int> count( nclusters, 0 );
         for( int i = startIndex; i < startIndex + sizes[clusterIndex]; i++)
         {
             int lbl = isFlt ? (int)labels.at<float>(i) : labels.at<int>(i);
@@ -189,7 +189,7 @@ bool getLabelsMap( const Mat& labels, const vector<int>& sizes, vector<int>& lab
 }
 
 static
-bool calcErr( const Mat& labels, const Mat& origLabels, const vector<int>& sizes, float& err, bool labelsEquivalent = true, bool checkClusterUniq=true )
+bool calcErr( const Mat& labels, const Mat& origLabels, const Array<int>& sizes, float& err, bool labelsEquivalent = true, bool checkClusterUniq=true )
 {
     err = 0;
     CV_Assert( !labels.empty() && !origLabels.empty() );
@@ -199,7 +199,7 @@ bool calcErr( const Mat& labels, const Mat& origLabels, const vector<int>& sizes
     CV_Assert( labels.type() == CV_32SC1 || labels.type() == CV_32FC1 );
     CV_Assert( origLabels.type() == labels.type() );
 
-    vector<int> labelsMap;
+    Array<int> labelsMap;
     bool isFlt = labels.type() == CV_32FC1;
     if( !labelsEquivalent )
     {
@@ -239,9 +239,9 @@ void CV_KMeansTest::run( int /*start_from*/ )
     int pointsCount = sizesArr[0]+ sizesArr[1] + sizesArr[2];
 
     Mat data( pointsCount, 2, CV_32FC1 ), labels;
-    vector<int> sizes( sizesArr, sizesArr + sizeof(sizesArr) / sizeof(sizesArr[0]) );
+    Array<int> sizes( sizesArr, sizesArr + sizeof(sizesArr) / sizeof(sizesArr[0]) );
     Mat means;
-    vector<Mat> covs;
+    Array<Mat> covs;
     defaultDistribs( means, covs );
     generateData( data, labels, sizes, means, covs, CV_32FC1, CV_32SC1 );
 
@@ -252,12 +252,12 @@ void CV_KMeansTest::run( int /*start_from*/ )
     kmeans( data, 3, bestLabels, TermCriteria( TermCriteria::COUNT, iters, 0.0), 0, KMEANS_PP_CENTERS, noArray() );
     if( !calcErr( bestLabels, labels, sizes, err , false ) )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad output labels if flag==KMEANS_PP_CENTERS.\n" );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad output labels if flag==KMEANS_PP_CENTERS.\n" );
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if( err > 0.01f )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad accuracy (%f) if flag==KMEANS_PP_CENTERS.\n", err );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad accuracy (%f) if flag==KMEANS_PP_CENTERS.\n", err );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
@@ -265,12 +265,12 @@ void CV_KMeansTest::run( int /*start_from*/ )
     kmeans( data, 3, bestLabels, TermCriteria( TermCriteria::COUNT, iters, 0.0), 0, KMEANS_RANDOM_CENTERS, noArray() );
     if( !calcErr( bestLabels, labels, sizes, err, false ) )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad output labels if flag==KMEANS_RANDOM_CENTERS.\n" );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad output labels if flag==KMEANS_RANDOM_CENTERS.\n" );
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if( err > 0.01f )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad accuracy (%f) if flag==KMEANS_RANDOM_CENTERS.\n", err );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad accuracy (%f) if flag==KMEANS_RANDOM_CENTERS.\n", err );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
@@ -282,12 +282,12 @@ void CV_KMeansTest::run( int /*start_from*/ )
     kmeans( data, 3, bestLabels, TermCriteria( TermCriteria::COUNT, iters, 0.0), 0, KMEANS_USE_INITIAL_LABELS, noArray() );
     if( !calcErr( bestLabels, labels, sizes, err, false ) )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad output labels if flag==KMEANS_USE_INITIAL_LABELS.\n" );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad output labels if flag==KMEANS_USE_INITIAL_LABELS.\n" );
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if( err > 0.01f )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad accuracy (%f) if flag==KMEANS_USE_INITIAL_LABELS.\n", err );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad accuracy (%f) if flag==KMEANS_USE_INITIAL_LABELS.\n", err );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
@@ -309,9 +309,9 @@ void CV_KNearestTest::run( int /*start_from*/ )
 
     // train data
     Mat trainData( pointsCount, 2, CV_32FC1 ), trainLabels;
-    vector<int> sizes( sizesArr, sizesArr + sizeof(sizesArr) / sizeof(sizesArr[0]) );
+    Array<int> sizes( sizesArr, sizesArr + sizeof(sizesArr) / sizeof(sizesArr[0]) );
     Mat means;
-    vector<Mat> covs;
+    Array<Mat> covs;
     defaultDistribs( means, covs );
     generateData( trainData, trainLabels, sizes, means, covs, CV_32FC1, CV_32FC1 );
 
@@ -328,12 +328,12 @@ void CV_KNearestTest::run( int /*start_from*/ )
     float err;
     if( !calcErr( bestLabels, testLabels, sizes, err, true ) )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad output labels.\n" );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad output labels.\n" );
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if( err > 0.01f )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad accuracy (%f) on test data.\n", err );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad accuracy (%f) on test data.\n", err );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
@@ -344,12 +344,12 @@ void CV_KNearestTest::run( int /*start_from*/ )
     knearestKdt->findNearest(testData, 4, bestLabels);
     if( !calcErr( bestLabels, testLabels, sizes, err, true ) )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad output labels.\n" );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad output labels.\n" );
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if( err > 0.01f )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad accuracy (%f) on test data.\n", err );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad accuracy (%f) on test data.\n", err );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
@@ -360,9 +360,9 @@ class EM_Params
 {
 public:
     EM_Params(int _nclusters=10, int _covMatType=EM::COV_MAT_DIAGONAL, int _startStep=EM::START_AUTO_STEP,
-           const cv::TermCriteria& _termCrit=cv::TermCriteria(cv::TermCriteria::COUNT+cv::TermCriteria::EPS, 100, FLT_EPSILON),
-           const cv::Mat* _probs=0, const cv::Mat* _weights=0,
-           const cv::Mat* _means=0, const std::vector<cv::Mat>* _covs=0)
+           const alvision.TermCriteria& _termCrit=alvision.TermCriteria(alvision.TermCriteria::COUNT+alvision.TermCriteria::EPS, 100, FLT_EPSILON),
+           const alvision.Mat* _probs=0, const alvision.Mat* _weights=0,
+           const alvision.Mat* _means=0, const std::Array<alvision.Mat>* _covs=0)
         : nclusters(_nclusters), covMatType(_covMatType), startStep(_startStep),
         probs(_probs), weights(_weights), means(_means), covs(_covs), termCrit(_termCrit)
     {}
@@ -372,12 +372,12 @@ public:
     int startStep;
 
     // all 4 following matrices should have type CV_32FC1
-    const cv::Mat* probs;
-    const cv::Mat* weights;
-    const cv::Mat* means;
-    const std::vector<cv::Mat>* covs;
+    const alvision.Mat* probs;
+    const alvision.Mat* weights;
+    const alvision.Mat* means;
+    const std::Array<alvision.Mat>* covs;
 
-    cv::TermCriteria termCrit;
+    alvision.TermCriteria termCrit;
 };
 
 //--------------------------------------------------------------------------------------------
@@ -388,19 +388,19 @@ public:
 protected:
     virtual void run( int start_from );
     int runCase( int caseIndex, const EM_Params& params,
-                  const cv::Mat& trainData, const cv::Mat& trainLabels,
-                  const cv::Mat& testData, const cv::Mat& testLabels,
-                  const vector<int>& sizes);
+                  const alvision.Mat& trainData, const alvision.Mat& trainLabels,
+                  const alvision.Mat& testData, const alvision.Mat& testLabels,
+                  const Array<int>& sizes);
 };
 
 int CV_EMTest::runCase( int caseIndex, const EM_Params& params,
-                        const cv::Mat& trainData, const cv::Mat& trainLabels,
-                        const cv::Mat& testData, const cv::Mat& testLabels,
-                        const vector<int>& sizes )
+                        const alvision.Mat& trainData, const alvision.Mat& trainLabels,
+                        const alvision.Mat& testData, const alvision.Mat& testLabels,
+                        const Array<int>& sizes )
 {
     int code = alvision.cvtest.TS::OK;
 
-    cv::Mat labels;
+    alvision.Mat labels;
     float err;
 
     Ptr<EM> em = EM::create();
@@ -419,12 +419,12 @@ int CV_EMTest::runCase( int caseIndex, const EM_Params& params,
     // check train error
     if( !calcErr( labels, trainLabels, sizes, err , false, false ) )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Case index %i : Bad output labels.\n", caseIndex );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Case index %i : Bad output labels.\n", caseIndex );
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if( err > 0.008f )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Case index %i : Bad accuracy (%f) on train data.\n", caseIndex, err );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Case index %i : Bad accuracy (%f) on train data.\n", caseIndex, err );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
@@ -438,12 +438,12 @@ int CV_EMTest::runCase( int caseIndex, const EM_Params& params,
     }
     if( !calcErr( labels, testLabels, sizes, err, false, false ) )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Case index %i : Bad output labels.\n", caseIndex );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Case index %i : Bad output labels.\n", caseIndex );
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if( err > 0.008f )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Case index %i : Bad accuracy (%f) on test data.\n", caseIndex, err );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Case index %i : Bad accuracy (%f) on test data.\n", caseIndex, err );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
@@ -457,12 +457,12 @@ void CV_EMTest::run( int /*start_from*/ )
 
     // Points distribution
     Mat means;
-    vector<Mat> covs;
+    Array<Mat> covs;
     defaultDistribs( means, covs, CV_64FC1 );
 
     // train data
     Mat trainData( pointsCount, 2, CV_64FC1 ), trainLabels;
-    vector<int> sizes( sizesArr, sizesArr + sizeof(sizesArr) / sizeof(sizesArr[0]) );
+    Array<int> sizes( sizesArr, sizesArr + sizeof(sizesArr) / sizeof(sizesArr[0]) );
     generateData( trainData, trainLabels, sizes, means, covs, CV_64FC1, CV_32SC1 );
 
     // test data
@@ -471,9 +471,9 @@ void CV_EMTest::run( int /*start_from*/ )
 
     EM_Params params;
     params.nclusters = 3;
-    Mat probs(trainData.rows, params.nclusters, CV_64FC1, cv::Scalar(1));
+    Mat probs(trainData.rows, params.nclusters, CV_64FC1, alvision.Scalar(1));
     params.probs = &probs;
-    Mat weights(1, params.nclusters, CV_64FC1, cv::Scalar(1));
+    Mat weights(1, params.nclusters, CV_64FC1, alvision.Scalar(1));
     params.weights = &weights;
     params.means = &means;
     params.covs = &covs;
@@ -563,7 +563,7 @@ protected:
             firstResult.at<int>(i) = static_cast<int>(em->predict2(samples.row(i), noArray())[1]);
 
         // Write out
-        string filename = cv::tempfile(".xml");
+        string filename = alvision.tempfile(".xml");
         {
             FileStorage fs = FileStorage(filename, FileStorage::WRITE);
             try
@@ -574,7 +574,7 @@ protected:
             }
             catch(...)
             {
-                ts->printf( alvision.cvtest.TS::LOG, "Crash in write method.\n" );
+                ts->printf( alvision.cvtest.TSConstants.LOG, "Crash in write method.\n" );
                 this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_EXCEPTION );
             }
         }
@@ -588,11 +588,11 @@ protected:
         }
         catch(...)
         {
-            ts->printf( alvision.cvtest.TS::LOG, "Crash in read method.\n" );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "Crash in read method.\n" );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_EXCEPTION );
         }
 
-        remove( filename.c_str() );
+        remove( filename );
 
         int errCaseCount = 0;
         for( int i = 0; i < samples.rows; i++)
@@ -600,7 +600,7 @@ protected:
 
         if( errCaseCount > 0 )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "Different prediction results before writeing and after reading (errCaseCount=%d).\n", errCaseCount );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "Different prediction results before writeing and after reading (errCaseCount=%d).\n", errCaseCount );
             code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         }
 
@@ -624,15 +624,15 @@ protected:
 
         if( data.empty() )
         {
-            ts->printf(alvision.cvtest.TS::LOG, "File with spambase dataset cann't be read.\n");
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "File with spambase dataset cann't be read.\n");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
         }
 
         Mat samples = data->getSamples();
         CV_Assert(samples.cols == 57);
         Mat responses = data->getResponses();
 
-        vector<int> trainSamplesMask(samples.rows, 0);
+        Array<int> trainSamplesMask(samples.rows, 0);
         int trainSamplesCount = (int)(0.5f * samples.rows);
         for(int i = 0; i < trainSamplesCount; i++)
             trainSamplesMask[i] = 1;
@@ -692,13 +692,13 @@ protected:
         int code = alvision.cvtest.TS::OK;
         if(trainError > maxTrainError)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "Too large train classification error (calc = %f, valid=%f).\n", trainError, maxTrainError);
-            code = alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Too large train classification error (calc = %f, valid=%f).\n", trainError, maxTrainError);
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
         }
         if(testError > maxTestError)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "Too large test classification error (calc = %f, valid=%f).\n", testError, maxTestError);
-            code = alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Too large test classification error (calc = %f, valid=%f).\n", testError, maxTestError);
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
         }
 
         this.ts.set_failed_test_info(code);

@@ -54,17 +54,17 @@ import fs = require('fs');
 #include "opencv2/core.hpp"
 #include "opencv2/imgproc.hpp"
 
-template <typename T> T readVal(const cv::Mat& src, int y, int x, int c, int border_type, cv::Scalar borderVal = cv::Scalar())
+template <typename T> T readVal(const alvision.Mat& src, int y, int x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
 {
-    if (border_type == cv::BORDER_CONSTANT)
-        return (y >= 0 && y < src.rows && x >= 0 && x < src.cols) ? src.at<T>(y, x * src.channels() + c) : cv::saturate_cast<T>(borderVal.val[c]);
+    if (border_type == alvision.BORDER_CONSTANT)
+        return (y >= 0 && y < src.rows && x >= 0 && x < src.cols) ? src.at<T>(y, x * src.channels() + c) : alvision.saturate_cast<T>(borderVal.val[c]);
 
-    return src.at<T>(cv::borderInterpolate(y, src.rows, border_type), cv::borderInterpolate(x, src.cols, border_type) * src.channels() + c);
+    return src.at<T>(alvision.borderInterpolate(y, src.rows, border_type), alvision.borderInterpolate(x, src.cols, border_type) * src.channels() + c);
 }
 
 template <typename T> struct NearestInterpolator
 {
-    static T getValue(const cv::Mat& src, float y, float x, int c, int border_type, cv::Scalar borderVal = cv::Scalar())
+    static T getValue(const alvision.Mat& src, float y, float x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
     {
         return readVal<T>(src, int(y), int(x), c, border_type, borderVal);
     }
@@ -72,7 +72,7 @@ template <typename T> struct NearestInterpolator
 
 template <typename T> struct LinearInterpolator
 {
-    static T getValue(const cv::Mat& src, float y, float x, int c, int border_type, cv::Scalar borderVal = cv::Scalar())
+    static T getValue(const alvision.Mat& src, float y, float x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
     {
         int x1 = cvFloor(x);
         int y1 = cvFloor(y);
@@ -86,7 +86,7 @@ template <typename T> struct LinearInterpolator
         res += readVal<T>(src, y2, x1, c, border_type, borderVal) * ((x2 - x) * (y - y1));
         res += readVal<T>(src, y2, x2, c, border_type, borderVal) * ((x - x1) * (y - y1));
 
-        return cv::saturate_cast<T>(res);
+        return alvision.saturate_cast<T>(res);
     }
 };
 
@@ -109,7 +109,7 @@ template <typename T> struct CubicInterpolator
         }
     }
 
-    static T getValue(const cv::Mat& src, float y, float x, int c, int border_type, cv::Scalar borderVal = cv::Scalar())
+    static T getValue(const alvision.Mat& src, float y, float x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
     {
         const float xmin = ceilf(x - 2.0f);
         const float xmax = floorf(x + 2.0f);
@@ -132,7 +132,7 @@ template <typename T> struct CubicInterpolator
 
         float res = (!wsum)? 0 : sum / wsum;
 
-        return cv::saturate_cast<T>(res);
+        return alvision.saturate_cast<T>(res);
     }
 };
 

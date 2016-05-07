@@ -50,8 +50,8 @@ import fs = require('fs');
 //#include "test_precomp.hpp"
 //#include <cstdlib>
 
-static void mytest(cv::Ptr<cv::ConjGradSolver> solver,cv::Ptr<cv::MinProblemSolver::Function> ptr_F,cv::Mat& x,
-        cv::Mat& etalon_x,double etalon_res){
+static void mytest(alvision.Ptr<alvision.ConjGradSolver> solver,alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F,alvision.Mat& x,
+        alvision.Mat& etalon_x,double etalon_res){
     solver->setFunction(ptr_F);
     //int ndim=MAX(step.cols,step.rows);
     double res=solver->minimize(x);
@@ -61,7 +61,7 @@ static void mytest(cv::Ptr<cv::ConjGradSolver> solver,cv::Ptr<cv::MinProblemSolv
     std::cout<<"etalon_x:\n\t"<<etalon_x<<std::endl;
     double tol = 1e-2;
     ASSERT_TRUE(std::abs(res-etalon_res)<tol);
-    /*for(cv::Mat_<double>::iterator it1=x.begin<double>(),it2=etalon_x.begin<double>();it1!=x.end<double>();it1++,it2++){
+    /*for(alvision.Mat_<double>::iterator it1=x.begin<double>(),it2=etalon_x.begin<double>();it1!=x.end<double>();it1++,it2++){
         ASSERT_TRUE(std::abs((*it1)-(*it2))<tol);
     }*/
     std::cout<<"--------------------------\n";
@@ -80,7 +80,7 @@ public:
         }
     }*/
 };
-class RosenbrockF_CG:public cv::MinProblemSolver::Function{
+class RosenbrockF_CG:public alvision.MinProblemSolver::Function{
     int getDims() const { return 2; }
     double calc(const double* x)const{
         return 100*(x[1]-x[0]*x[0])*(x[1]-x[0]*x[0])+(1-x[0])*(1-x[0]);
@@ -92,21 +92,21 @@ class RosenbrockF_CG:public cv::MinProblemSolver::Function{
 };
 
 alvision.cvtest.TEST('Core_ConjGradSolver', 'regression_basic',()=>{
-    cv::Ptr<cv::ConjGradSolver> solver=cv::ConjGradSolver::create();
+    alvision.Ptr<alvision.ConjGradSolver> solver=alvision.ConjGradSolver::create();
 //#if 1
     {
-        cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new SphereF_CG());
-        cv::Mat x=(cv::Mat_<double>(4,1)<<50.0,10.0,1.0,-10.0),
-            etalon_x=(cv::Mat_<double>(1,4)<<0.0,0.0,0.0,0.0);
+        alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F(new SphereF_CG());
+        alvision.Mat x=(alvision.Mat_<double>(4,1)<<50.0,10.0,1.0,-10.0),
+            etalon_x=(alvision.Mat_<double>(1,4)<<0.0,0.0,0.0,0.0);
         double etalon_res=0.0;
         mytest(solver,ptr_F,x,etalon_x,etalon_res);
     }
 //#endif
 //#if 1
     {
-        cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new RosenbrockF_CG());
-        cv::Mat x=(cv::Mat_<double>(2,1)<<0.0,0.0),
-            etalon_x=(cv::Mat_<double>(2,1)<<1.0,1.0);
+        alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F(new RosenbrockF_CG());
+        alvision.Mat x=(alvision.Mat_<double>(2,1)<<0.0,0.0),
+            etalon_x=(alvision.Mat_<double>(2,1)<<1.0,1.0);
         double etalon_res=0.0;
         mytest(solver,ptr_F,x,etalon_x,etalon_res);
     }

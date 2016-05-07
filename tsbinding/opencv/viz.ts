@@ -55,6 +55,12 @@ import * as _base from './base'
 import * as _affine from './Affine'
 import * as _features2d from './features2d'
 
+export * from './viz/types';
+export * from './viz/viz3d';
+export * from './viz/vizcore';
+export * from './viz/widget_accessor';
+export * from './viz/widgets';
+
 //#ifndef __OPENCV_VIZ_HPP__
 //#define __OPENCV_VIZ_HPP__
 //

@@ -76,7 +76,7 @@ bool CV_GrabcutTest::verify(const Mat& mask, const Mat& exp)
     int nonIntersectArea = countNonZero( mask != exp );
 
     float curRatio = (float)nonIntersectArea / (float)expArea;
-    ts->printf( alvision.cvtest.TS::LOG, "nonIntersectArea/expArea = %f\n", curRatio );
+    ts->printf( alvision.cvtest.TSConstants.LOG, "nonIntersectArea/expArea = %f\n", curRatio );
     return curRatio < maxDiffRatio;
 }
 
@@ -151,7 +151,7 @@ TEST(Imgproc_GrabCut, repeatability)
 {
     alvision.cvtest.TS& ts = *alvision.cvtest.TS::ptr();
 
-    Mat image_1 = imread(string(ts.get_data_path()) + "grabcut/image1652.ppm", IMREAD_COLOR);
+    Mat image_1 = imread(string(ts.get_data_path()) + "grabcut/image1652.ppm",alvision.ImreadModes. IMREAD_COLOR);
     Mat mask_1 = imread(string(ts.get_data_path()) + "grabcut/mask1652.ppm", IMREAD_GRAYSCALE);
     Rect roi_1(0, 0, 150, 150);
 

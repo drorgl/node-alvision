@@ -48,9 +48,6 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-function remove(filename: string): void {
-    fs.unlinkSync(filename);
-}
 
 
 //#include "test_precomp.hpp"
@@ -129,7 +126,7 @@ alvision.cvtest.TEST('Imgcodecs_imread', 'regression', () => {
 //    stringstream ss;
 //    string s;
 //    ss << i;
-//    s = ss.str();
+//    s = ss;
 
 //    return s;
 //}
@@ -833,7 +830,7 @@ for (var i = 0; i < 2; i++)
 //    ];
 //
 //    var filename = alvision.tempfile(".tiff");
-//    std::ofstream outfile(filename.c_str(), std::ofstream::binary);
+//    std::ofstream outfile(filename, std::ofstream::binary);
 //    outfile.write(reinterpret_cast <const char *>(sample_data), sizeof sample_data);
 //    outfile.close();
 //
@@ -859,7 +856,7 @@ class CV_GrfmtReadTifMultiPage extends alvision.cvtest.BaseTest
         for (var i = 0; i < page_count; i++)
         {
             //char buffer[256];
-            //sprintf(buffer, "%smultipage_p%d.tif", folder.c_str(), i + 1);
+            //sprintf(buffer, "%smultipage_p%d.tif", folder, i + 1);
             //const string filepath(buffer);
 
             var filepath = util.format("%smultipage_p%d.tif", folder, i + 1);
@@ -906,7 +903,7 @@ alvision.cvtest.TEST('Imgcodecs_Tiff', 'decode_multipage', () => {
 //
 //    FILE * wfile = NULL;
 //
-//    wfile = fopen(output.c_str(), "rb");
+//    wfile = fopen(output, "rb");
 //    if (wfile != NULL) {
 //        fseek(wfile, 0, SEEK_END);
 //        size_t wfile_size = ftell(wfile);

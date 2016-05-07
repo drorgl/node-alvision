@@ -58,7 +58,7 @@ import fs = require('fs');
 //
 //using namespace testing;
 //using namespace cv;
-//using namespace cv::cuda;
+//using namespace alvision.cuda;
 
 struct BufferPoolTest : TestWithParam<DeviceInfo>
 {

@@ -80,7 +80,7 @@ CV_ThreshTest::CV_ThreshTest()
 
 
 void CV_ThreshTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int depth = alvision.cvtest.randInt(rng) % 3, cn = alvision.cvtest.randInt(rng) % 4 + 1;

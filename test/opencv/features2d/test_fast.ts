@@ -74,7 +74,7 @@ void CV_FastTest::run( int )
 
     if (image1.empty() || image2.empty())
     {
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_TEST_DATA );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
         return;
     }
 
@@ -82,21 +82,21 @@ void CV_FastTest::run( int )
     cvtColor(image1, gray1, COLOR_BGR2GRAY);
     cvtColor(image2, gray2, COLOR_BGR2GRAY);
 
-    vector<KeyPoint> keypoints1;
-    vector<KeyPoint> keypoints2;
+    Array<KeyPoint> keypoints1;
+    Array<KeyPoint> keypoints2;
     FAST(gray1, keypoints1, 30, true, type);
     FAST(gray2, keypoints2, (type > 0 ? 30 : 20), true, type);
 
     for(size_t i = 0; i < keypoints1.size(); ++i)
     {
         const KeyPoint& kp = keypoints1[i];
-        cv::circle(image1, kp.pt, cvRound(kp.size/2), Scalar(255, 0, 0));
+        alvision.circle(image1, kp.pt, cvRound(kp.size/2), Scalar(255, 0, 0));
     }
 
     for(size_t i = 0; i < keypoints2.size(); ++i)
     {
         const KeyPoint& kp = keypoints2[i];
-        cv::circle(image2, kp.pt, cvRound(kp.size/2), Scalar(255, 0, 0));
+        alvision.circle(image2, kp.pt, cvRound(kp.size/2), Scalar(255, 0, 0));
     }
 
     Mat kps1(1, (int)(keypoints1.size() * sizeof(KeyPoint)), CV_8U, &keypoints1[0]);
@@ -108,7 +108,7 @@ void CV_FastTest::run( int )
         fs.open(xml, FileStorage::WRITE);
         if (!fs.isOpened())
         {
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
         fs << "exp_kps1" << kps1;
@@ -117,7 +117,7 @@ void CV_FastTest::run( int )
         fs.open(xml, FileStorage::READ);
         if (!fs.isOpened())
         {
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
     }
@@ -127,16 +127,16 @@ void CV_FastTest::run( int )
     read( fs["exp_kps2"], exp_kps2, Mat() );
     fs.release();
 
-     if ( exp_kps1.size != kps1.size || 0 != alvision.cvtest.norm(exp_kps1, kps1, NORM_L2) ||
-          exp_kps2.size != kps2.size || 0 != alvision.cvtest.norm(exp_kps2, kps2, NORM_L2))
+     if ( exp_kps1.size != kps1.size || 0 != alvision.cvtest.norm(exp_kps1, kps1,alvision.NormTypes. NORM_L2) ||
+          exp_kps2.size != kps2.size || 0 != alvision.cvtest.norm(exp_kps2, kps2,alvision.NormTypes. NORM_L2))
     {
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return;
     }
 
-    /*cv::namedWindow("Img1"); cv::imshow("Img1", image1);
-    cv::namedWindow("Img2"); cv::imshow("Img2", image2);
-    cv::waitKey(0);*/
+    /*alvision.namedWindow("Img1"); alvision.imshow("Img1", image1);
+    alvision.namedWindow("Img2"); alvision.imshow("Img2", image2);
+    alvision.waitKey(0);*/
   }
 
   this.ts.set_failed_test_info(alvision.cvtest.TS::OK);

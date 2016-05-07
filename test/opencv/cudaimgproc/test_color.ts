@@ -57,14 +57,14 @@ using namespace cvtest;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // cvtColor
 
-PARAM_TEST_CASE(CvtColor, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
+PARAM_TEST_CASE(CvtColor, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int depth;
     bool useRoi;
 
-    cv::Mat img;
+    alvision.Mat img;
 
     virtual void SetUp()
     {
@@ -73,7 +73,7 @@ PARAM_TEST_CASE(CvtColor, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
         depth = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
 
         img = randomMat(size, CV_MAKE_TYPE(depth, 3), 0.0, depth == CV_32F ? 1.0 : 255.0);
     }
@@ -81,163 +81,163 @@ PARAM_TEST_CASE(CvtColor, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
 
 CUDA_TEST_P(CvtColor, BGR2RGB)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 CUDA_TEST_P(CvtColor, BGR2RGBA)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2RGBA);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2RGBA);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2RGBA);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2RGBA);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 CUDA_TEST_P(CvtColor, BGR2BGRA)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2BGRA);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2BGRA);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2BGRA);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2BGRA);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 CUDA_TEST_P(CvtColor, BGRA2RGB)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGRA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGRA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGRA2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGRA2RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGRA2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGRA2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 CUDA_TEST_P(CvtColor, BGRA2BGR)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGRA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGRA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGRA2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGRA2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGRA2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGRA2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 CUDA_TEST_P(CvtColor, BGRA2RGBA)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGRA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGRA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGRA2RGBA);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGRA2RGBA);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGRA2RGBA);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGRA2RGBA);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 CUDA_TEST_P(CvtColor, BGR2GRAY)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2GRAY);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, RGB2GRAY)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2GRAY);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, GRAY2BGR)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2GRAY);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2GRAY);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_GRAY2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_GRAY2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_GRAY2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_GRAY2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 CUDA_TEST_P(CvtColor, GRAY2BGRA)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2GRAY);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2GRAY);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_GRAY2BGRA, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_GRAY2BGRA, 4);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_GRAY2BGRA, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_GRAY2BGRA, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 CUDA_TEST_P(CvtColor, BGRA2GRAY)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGRA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGRA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGRA2GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGRA2GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGRA2GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGRA2GRAY);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, RGBA2GRAY)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGBA2GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGBA2GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGBA2GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGBA2GRAY);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
@@ -247,13 +247,13 @@ CUDA_TEST_P(CvtColor, BGR2BGR565)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2BGR565);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2BGR565);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2BGR565);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2BGR565);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -263,13 +263,13 @@ CUDA_TEST_P(CvtColor, RGB2BGR565)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2BGR565);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2BGR565);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2BGR565);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2BGR565);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -279,14 +279,14 @@ CUDA_TEST_P(CvtColor, BGR5652BGR)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR565);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR565);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5652BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5652BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5652BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5652BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -296,14 +296,14 @@ CUDA_TEST_P(CvtColor, BGR5652RGB)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR565);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR565);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5652RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5652RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5652RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5652RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -313,14 +313,14 @@ CUDA_TEST_P(CvtColor, BGRA2BGR565)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGRA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGRA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGRA2BGR565);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGRA2BGR565);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGRA2BGR565);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGRA2BGR565);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -330,14 +330,14 @@ CUDA_TEST_P(CvtColor, RGBA2BGR565)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGBA2BGR565);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGBA2BGR565);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGBA2BGR565);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGBA2BGR565);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -347,14 +347,14 @@ CUDA_TEST_P(CvtColor, BGR5652BGRA)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR565);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR565);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5652BGRA, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5652BGRA, 4);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5652BGRA, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5652BGRA, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -364,14 +364,14 @@ CUDA_TEST_P(CvtColor, BGR5652RGBA)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR565);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR565);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5652RGBA, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5652RGBA, 4);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5652RGBA, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5652RGBA, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -381,14 +381,14 @@ CUDA_TEST_P(CvtColor, GRAY2BGR565)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2GRAY);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2GRAY);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_GRAY2BGR565);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_GRAY2BGR565);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_GRAY2BGR565);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_GRAY2BGR565);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -398,14 +398,14 @@ CUDA_TEST_P(CvtColor, BGR5652GRAY)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR565);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR565);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5652GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5652GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5652GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5652GRAY);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -415,13 +415,13 @@ CUDA_TEST_P(CvtColor, BGR2BGR555)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2BGR555);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2BGR555);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2BGR555);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2BGR555);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -431,13 +431,13 @@ CUDA_TEST_P(CvtColor, RGB2BGR555)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2BGR555);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2BGR555);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2BGR555);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2BGR555);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -447,14 +447,14 @@ CUDA_TEST_P(CvtColor, BGR5552BGR)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR555);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR555);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5552BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5552BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5552BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5552BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -464,14 +464,14 @@ CUDA_TEST_P(CvtColor, BGR5552RGB)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR555);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR555);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5552RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5552RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5552RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5552RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -481,14 +481,14 @@ CUDA_TEST_P(CvtColor, BGRA2BGR555)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGRA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGRA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGRA2BGR555);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGRA2BGR555);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGRA2BGR555);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGRA2BGR555);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -498,14 +498,14 @@ CUDA_TEST_P(CvtColor, RGBA2BGR555)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGBA2BGR555);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGBA2BGR555);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGBA2BGR555);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGBA2BGR555);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -515,14 +515,14 @@ CUDA_TEST_P(CvtColor, BGR5552BGRA)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR555);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR555);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5552BGRA, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5552BGRA, 4);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5552BGRA, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5552BGRA, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -532,14 +532,14 @@ CUDA_TEST_P(CvtColor, BGR5552RGBA)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR555);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR555);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5552RGBA, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5552RGBA, 4);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5552RGBA, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5552RGBA, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -549,14 +549,14 @@ CUDA_TEST_P(CvtColor, GRAY2BGR555)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2GRAY);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2GRAY);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_GRAY2BGR555);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_GRAY2BGR555);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_GRAY2BGR555);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_GRAY2BGR555);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -566,284 +566,284 @@ CUDA_TEST_P(CvtColor, BGR5552GRAY)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGR555);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGR555);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR5552GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR5552GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR5552GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR5552GRAY);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 CUDA_TEST_P(CvtColor, BGR2XYZ)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2XYZ);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2XYZ);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2XYZ);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2XYZ);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, RGB2XYZ)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2XYZ);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2XYZ);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2XYZ);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2XYZ);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, BGR2XYZ4)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2XYZ, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2XYZ, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2XYZ);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2XYZ);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, BGRA2XYZ4)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2BGRA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2BGRA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2XYZ, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2XYZ, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2XYZ);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2XYZ);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, XYZ2BGR)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2XYZ);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2XYZ);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_XYZ2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_XYZ2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_XYZ2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_XYZ2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, XYZ2RGB)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2XYZ);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2XYZ);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_XYZ2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_XYZ2RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_XYZ2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_XYZ2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, XYZ42BGR)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2XYZ);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2XYZ);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_XYZ2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_XYZ2BGR);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_XYZ2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_XYZ2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, XYZ42BGRA)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2XYZ);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2XYZ);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_XYZ2BGR, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_XYZ2BGR, 4);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_XYZ2BGR, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_XYZ2BGR, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, BGR2YCrCb)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2YCrCb);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2YCrCb);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2YCrCb);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2YCrCb);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
 
 CUDA_TEST_P(CvtColor, RGB2YCrCb)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2YCrCb);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2YCrCb);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2YCrCb);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2YCrCb);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
 
 CUDA_TEST_P(CvtColor, BGR2YCrCb4)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2YCrCb, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2YCrCb, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2YCrCb);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2YCrCb);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
 
 CUDA_TEST_P(CvtColor, RGBA2YCrCb4)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2YCrCb, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2YCrCb, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2YCrCb);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2YCrCb);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
 
 CUDA_TEST_P(CvtColor, YCrCb2BGR)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2YCrCb);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2YCrCb);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_YCrCb2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_YCrCb2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_YCrCb2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_YCrCb2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, YCrCb2RGB)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2YCrCb);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2YCrCb);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_YCrCb2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_YCrCb2RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_YCrCb2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_YCrCb2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, YCrCb42RGB)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2YCrCb);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2YCrCb);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_YCrCb2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_YCrCb2RGB);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_YCrCb2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_YCrCb2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, YCrCb42RGBA)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2YCrCb);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2YCrCb);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_YCrCb2RGB, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_YCrCb2RGB, 4);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_YCrCb2RGB, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_YCrCb2RGB, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
@@ -853,13 +853,13 @@ CUDA_TEST_P(CvtColor, BGR2HSV)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2HSV);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2HSV);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2HSV);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2HSV);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -869,13 +869,13 @@ CUDA_TEST_P(CvtColor, RGB2HSV)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HSV);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HSV);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HSV);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HSV);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -885,21 +885,21 @@ CUDA_TEST_P(CvtColor, RGB2HSV4)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HSV, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HSV, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HSV);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HSV);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -909,22 +909,22 @@ CUDA_TEST_P(CvtColor, RGBA2HSV4)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HSV, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HSV, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HSV);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HSV);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -934,13 +934,13 @@ CUDA_TEST_P(CvtColor, BGR2HLS)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2HLS);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2HLS);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2HLS);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2HLS);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -950,13 +950,13 @@ CUDA_TEST_P(CvtColor, RGB2HLS)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HLS);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HLS);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HLS);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HLS);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -966,21 +966,21 @@ CUDA_TEST_P(CvtColor, RGB2HLS4)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HLS, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HLS, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HLS);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HLS);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -990,22 +990,22 @@ CUDA_TEST_P(CvtColor, RGBA2HLS4)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HLS, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HLS, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HLS);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HLS);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1015,14 +1015,14 @@ CUDA_TEST_P(CvtColor, HSV2BGR)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HSV);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HSV);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HSV2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HSV2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HSV2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HSV2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1032,14 +1032,14 @@ CUDA_TEST_P(CvtColor, HSV2RGB)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HSV);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HSV);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HSV2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HSV2RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HSV2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HSV2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1049,19 +1049,19 @@ CUDA_TEST_P(CvtColor, HSV42BGR)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HSV);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HSV);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HSV2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HSV2BGR);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HSV2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HSV2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1071,19 +1071,19 @@ CUDA_TEST_P(CvtColor, HSV42BGRA)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HSV);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HSV);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HSV2BGR, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HSV2BGR, 4);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HSV2BGR, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HSV2BGR, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1093,14 +1093,14 @@ CUDA_TEST_P(CvtColor, HLS2BGR)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HLS);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HLS);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HLS2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HLS2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HLS2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HLS2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1110,14 +1110,14 @@ CUDA_TEST_P(CvtColor, HLS2RGB)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HLS);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HLS);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HLS2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HLS2RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HLS2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HLS2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1127,19 +1127,19 @@ CUDA_TEST_P(CvtColor, HLS42RGB)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HLS);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HLS);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HLS2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HLS2RGB);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HLS2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HLS2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1149,20 +1149,20 @@ CUDA_TEST_P(CvtColor, HLS42RGBA)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HLS);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HLS);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HLS2RGB, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HLS2RGB, 4);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HLS2RGB, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HLS2RGB, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1172,13 +1172,13 @@ CUDA_TEST_P(CvtColor, BGR2HSV_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2HSV_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2HSV_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2HSV_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2HSV_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1188,13 +1188,13 @@ CUDA_TEST_P(CvtColor, RGB2HSV_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HSV_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HSV_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HSV_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HSV_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1204,21 +1204,21 @@ CUDA_TEST_P(CvtColor, RGB2HSV4_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HSV_FULL, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HSV_FULL, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HSV_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HSV_FULL);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1228,22 +1228,22 @@ CUDA_TEST_P(CvtColor, RGBA2HSV4_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HSV_FULL, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HSV_FULL, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HSV_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HSV_FULL);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1253,13 +1253,13 @@ CUDA_TEST_P(CvtColor, BGR2HLS_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2HLS_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2HLS_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2HLS_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2HLS_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1269,13 +1269,13 @@ CUDA_TEST_P(CvtColor, RGB2HLS_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HLS_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HLS_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HLS_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HLS_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1285,21 +1285,21 @@ CUDA_TEST_P(CvtColor, RGB2HLS4_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HLS_FULL, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HLS_FULL, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HLS_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HLS_FULL);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1309,22 +1309,22 @@ CUDA_TEST_P(CvtColor, RGBA2HLS4_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2HLS_FULL, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2HLS_FULL, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2HLS_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2HLS_FULL);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1334,14 +1334,14 @@ CUDA_TEST_P(CvtColor, HSV2BGR_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HSV_FULL);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HSV_FULL);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HSV2BGR_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HSV2BGR_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HSV2BGR_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HSV2BGR_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1351,14 +1351,14 @@ CUDA_TEST_P(CvtColor, HSV2RGB_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HSV_FULL);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HSV_FULL);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HSV2RGB_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HSV2RGB_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HSV2RGB_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HSV2RGB_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1368,19 +1368,19 @@ CUDA_TEST_P(CvtColor, HSV42RGB_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HSV_FULL);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HSV_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HSV2RGB_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HSV2RGB_FULL);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HSV2RGB_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HSV2RGB_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1390,19 +1390,19 @@ CUDA_TEST_P(CvtColor, HSV42RGBA_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HSV_FULL);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HSV_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HSV2RGB_FULL, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HSV2RGB_FULL, 4);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HSV2RGB_FULL, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HSV2RGB_FULL, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1412,14 +1412,14 @@ CUDA_TEST_P(CvtColor, HLS2BGR_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HLS_FULL);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HLS_FULL);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HLS2BGR_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HLS2BGR_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HLS2BGR_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HLS2BGR_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1429,14 +1429,14 @@ CUDA_TEST_P(CvtColor, HLS2RGB_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HLS_FULL);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HLS_FULL);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HLS2RGB_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HLS2RGB_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HLS2RGB_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HLS2RGB_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1446,19 +1446,19 @@ CUDA_TEST_P(CvtColor, HLS42RGB_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HLS_FULL);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HLS_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HLS2RGB_FULL);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HLS2RGB_FULL);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HLS2RGB_FULL);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HLS2RGB_FULL);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
@@ -1468,154 +1468,154 @@ CUDA_TEST_P(CvtColor, HLS42RGBA_FULL)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2HLS_FULL);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2HLS_FULL);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_HLS2RGB_FULL, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_HLS2RGB_FULL, 4);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_HLS2RGB_FULL, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_HLS2RGB_FULL, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_32F ? 1e-2 : 1);
 }
 
 CUDA_TEST_P(CvtColor, BGR2YUV)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2YUV);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2YUV);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2YUV);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2YUV);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, RGB2YUV)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2YUV);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2YUV);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2YUV);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2YUV);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, YUV2BGR)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2YUV);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2YUV);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_YUV2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_YUV2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_YUV2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_YUV2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, YUV42BGR)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2YUV);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2YUV);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_YUV2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_YUV2BGR);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_YUV2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_YUV2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, YUV42BGRA)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2YUV);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2YUV);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_YUV2BGR, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_YUV2BGR, 4);
 
-    cv::Mat channels[4];
-    cv::split(src, channels);
-    channels[3] = cv::Mat(src.size(), depth, cv::Scalar::all(0));
-    cv::merge(channels, 4, src);
+    alvision.Mat channels[4];
+    alvision.split(src, channels);
+    channels[3] = alvision.Mat(src.size(), depth, alvision.Scalar::all(0));
+    alvision.merge(channels, 4, src);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_YUV2BGR, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_YUV2BGR, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, YUV2RGB)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_RGB2YUV);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_RGB2YUV);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_YUV2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_YUV2RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_YUV2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_YUV2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, BGR2YUV4)
 {
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2YUV, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2YUV, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2YUV);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2YUV);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, 1e-5);
 }
 
 CUDA_TEST_P(CvtColor, RGBA2YUV4)
 {
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2YUV, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2YUV, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2YUV);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2YUV);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, 1e-5);
 }
@@ -1625,13 +1625,13 @@ CUDA_TEST_P(CvtColor, BGR2Lab)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2Lab);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2Lab);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2Lab);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2Lab);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1641,13 +1641,13 @@ CUDA_TEST_P(CvtColor, RGB2Lab)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2Lab);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2Lab);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2Lab);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2Lab);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1657,22 +1657,22 @@ CUDA_TEST_P(CvtColor, BGRA2Lab4)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2Lab, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2Lab, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2Lab);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2Lab);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1682,13 +1682,13 @@ CUDA_TEST_P(CvtColor, LBGR2Lab)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_LBGR2Lab);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_LBGR2Lab);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_LBGR2Lab);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_LBGR2Lab);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1698,13 +1698,13 @@ CUDA_TEST_P(CvtColor, LRGB2Lab)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_LRGB2Lab);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_LRGB2Lab);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_LRGB2Lab);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_LRGB2Lab);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1714,22 +1714,22 @@ CUDA_TEST_P(CvtColor, LBGRA2Lab4)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_LBGR2Lab, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_LBGR2Lab, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_LBGR2Lab);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_LBGR2Lab);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1739,14 +1739,14 @@ CUDA_TEST_P(CvtColor, Lab2BGR)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Lab);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Lab);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Lab2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Lab2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Lab2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Lab2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-5);
 }
@@ -1756,14 +1756,14 @@ CUDA_TEST_P(CvtColor, Lab2RGB)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Lab);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Lab);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Lab2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Lab2RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Lab2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Lab2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-5);
 }
@@ -1773,16 +1773,16 @@ CUDA_TEST_P(CvtColor, Lab2BGRA)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Lab);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Lab);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Lab2BGR, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Lab2BGR, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Lab2BGR, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Lab2BGR, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-5);
 }
@@ -1792,14 +1792,14 @@ CUDA_TEST_P(CvtColor, Lab2LBGR)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Lab);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Lab);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Lab2LBGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Lab2LBGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Lab2LBGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Lab2LBGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-5);
 }
@@ -1809,14 +1809,14 @@ CUDA_TEST_P(CvtColor, Lab2LRGB)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Lab);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Lab);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Lab2LRGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Lab2LRGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Lab2LRGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Lab2LRGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-5);
 }
@@ -1826,14 +1826,14 @@ CUDA_TEST_P(CvtColor, Lab2LRGBA)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Lab);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Lab);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Lab2LRGB, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Lab2LRGB, 4);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Lab2LRGB, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Lab2LRGB, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-5);
 }
@@ -1843,13 +1843,13 @@ CUDA_TEST_P(CvtColor, BGR2Luv)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2Luv);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2Luv);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2Luv);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2Luv);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1859,13 +1859,13 @@ CUDA_TEST_P(CvtColor, RGB2Luv)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGB2Luv);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGB2Luv);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGB2Luv);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGB2Luv);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1875,22 +1875,22 @@ CUDA_TEST_P(CvtColor, BGRA2Luv4)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BGR2Luv, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BGR2Luv, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGR2Luv);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGR2Luv);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1900,13 +1900,13 @@ CUDA_TEST_P(CvtColor, LBGR2Luv)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_LBGR2Luv);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_LBGR2Luv);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_LBGR2Luv);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_LBGR2Luv);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1916,13 +1916,13 @@ CUDA_TEST_P(CvtColor, LRGB2Luv)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src = img;
+    alvision.Mat src = img;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_LRGB2Luv);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_LRGB2Luv);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_LRGB2Luv);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_LRGB2Luv);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1932,22 +1932,22 @@ CUDA_TEST_P(CvtColor, LBGRA2Luv4)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2RGBA);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2RGBA);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_LBGR2Luv, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_LBGR2Luv, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_LBGR2Luv);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_LBGR2Luv);
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat channels[4];
-    cv::split(h_dst, channels);
-    cv::merge(channels, 3, h_dst);
+    alvision.Mat channels[4];
+    alvision.split(h_dst, channels);
+    alvision.merge(channels, 3, h_dst);
 
     EXPECT_MAT_NEAR(dst_gold, h_dst, depth == CV_8U ? 1 : 1e-3);
 }
@@ -1957,14 +1957,14 @@ CUDA_TEST_P(CvtColor, Luv2BGR)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Luv);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Luv);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Luv2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Luv2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Luv2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Luv2BGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-4);
 }
@@ -1974,14 +1974,14 @@ CUDA_TEST_P(CvtColor, Luv2RGB)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Luv);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Luv);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Luv2RGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Luv2RGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Luv2RGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Luv2RGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-4);
 }
@@ -1991,16 +1991,16 @@ CUDA_TEST_P(CvtColor, Luv2BGRA)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Luv);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Luv);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Luv2BGR, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Luv2BGR, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Luv2BGR, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Luv2BGR, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-4);
 }
@@ -2010,14 +2010,14 @@ CUDA_TEST_P(CvtColor, Luv2LBGR)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Luv);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Luv);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Luv2LBGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Luv2LBGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Luv2LBGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Luv2LBGR);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-4);
 }
@@ -2027,14 +2027,14 @@ CUDA_TEST_P(CvtColor, Luv2LRGB)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Luv);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Luv);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Luv2LRGB);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Luv2LRGB);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Luv2LRGB);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Luv2LRGB);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-4);
 }
@@ -2044,14 +2044,14 @@ CUDA_TEST_P(CvtColor, Luv2LRGBA)
     if (depth == CV_16U)
         return;
 
-    cv::Mat src;
-    cv::cvtColor(img, src, cv::COLOR_BGR2Luv);
+    alvision.Mat src;
+    alvision.cvtColor(img, src, alvision.COLOR_BGR2Luv);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_Luv2LRGB, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_Luv2LRGB, 4);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_Luv2LRGB, 4);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_Luv2LRGB, 4);
 
     EXPECT_MAT_NEAR(dst_gold, dst, depth == CV_8U ? 1 : 1e-4);
 }
@@ -2063,13 +2063,13 @@ CUDA_TEST_P(CvtColor, RGBA2mRGBA)
     if (depth != CV_8U)
         return;
 
-    cv::Mat src = randomMat(size, CV_MAKE_TYPE(depth, 4));
+    alvision.Mat src = randomMat(size, CV_MAKE_TYPE(depth, 4));
 
-    cv::cuda::GpuMat dst = createMat(src.size(), src.type(), useRoi);
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_RGBA2mRGBA);
+    alvision.cuda::GpuMat dst = createMat(src.size(), src.type(), useRoi);
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_RGBA2mRGBA);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_RGBA2mRGBA);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_RGBA2mRGBA);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1);
 }
@@ -2081,15 +2081,15 @@ CUDA_TEST_P(CvtColor, BayerBG2BGR)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerBG2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerBG2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerBG2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerBG2BGR);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
 }
 
 CUDA_TEST_P(CvtColor, BayerBG2BGR4)
@@ -2097,22 +2097,22 @@ CUDA_TEST_P(CvtColor, BayerBG2BGR4)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerBG2BGR, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerBG2BGR, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerBG2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerBG2BGR);
 
-    cv::Mat dst4(dst);
-    cv::Mat dst3;
-    cv::cvtColor(dst4, dst3, cv::COLOR_BGRA2BGR);
+    alvision.Mat dst4(dst);
+    alvision.Mat dst3;
+    alvision.cvtColor(dst4, dst3, alvision.COLOR_BGRA2BGR);
 
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst3(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst3(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
 }
 
 CUDA_TEST_P(CvtColor, BayerGB2BGR)
@@ -2120,15 +2120,15 @@ CUDA_TEST_P(CvtColor, BayerGB2BGR)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerGB2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerGB2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerGB2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerGB2BGR);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
 }
 
 CUDA_TEST_P(CvtColor, BayerGB2BGR4)
@@ -2136,21 +2136,21 @@ CUDA_TEST_P(CvtColor, BayerGB2BGR4)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerGB2BGR, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerGB2BGR, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerGB2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerGB2BGR);
 
-    cv::Mat dst4(dst);
-    cv::Mat dst3;
-    cv::cvtColor(dst4, dst3, cv::COLOR_BGRA2BGR);
+    alvision.Mat dst4(dst);
+    alvision.Mat dst3;
+    alvision.cvtColor(dst4, dst3, alvision.COLOR_BGRA2BGR);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst3(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst3(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
 }
 
 CUDA_TEST_P(CvtColor, BayerRG2BGR)
@@ -2158,15 +2158,15 @@ CUDA_TEST_P(CvtColor, BayerRG2BGR)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerRG2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerRG2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerRG2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerRG2BGR);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
 }
 
 CUDA_TEST_P(CvtColor, BayerRG2BGR4)
@@ -2174,21 +2174,21 @@ CUDA_TEST_P(CvtColor, BayerRG2BGR4)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerRG2BGR, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerRG2BGR, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerRG2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerRG2BGR);
 
-    cv::Mat dst4(dst);
-    cv::Mat dst3;
-    cv::cvtColor(dst4, dst3, cv::COLOR_BGRA2BGR);
+    alvision.Mat dst4(dst);
+    alvision.Mat dst3;
+    alvision.cvtColor(dst4, dst3, alvision.COLOR_BGRA2BGR);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst3(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst3(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
 }
 
 CUDA_TEST_P(CvtColor, BayerGR2BGR)
@@ -2196,15 +2196,15 @@ CUDA_TEST_P(CvtColor, BayerGR2BGR)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerGR2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerGR2BGR);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerGR2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerGR2BGR);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
 }
 
 CUDA_TEST_P(CvtColor, BayerGR2BGR4)
@@ -2212,21 +2212,21 @@ CUDA_TEST_P(CvtColor, BayerGR2BGR4)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerGR2BGR, 4);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerGR2BGR, 4);
 
     ASSERT_EQ(4, dst.channels());
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerGR2BGR);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerGR2BGR);
 
-    cv::Mat dst4(dst);
-    cv::Mat dst3;
-    cv::cvtColor(dst4, dst3, cv::COLOR_BGRA2BGR);
+    alvision.Mat dst4(dst);
+    alvision.Mat dst3;
+    alvision.cvtColor(dst4, dst3, alvision.COLOR_BGRA2BGR);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst3(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst3(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 0);
 }
 
 CUDA_TEST_P(CvtColor, BayerBG2Gray)
@@ -2234,15 +2234,15 @@ CUDA_TEST_P(CvtColor, BayerBG2Gray)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerBG2GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerBG2GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerBG2GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerBG2GRAY);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 2);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 2);
 }
 
 CUDA_TEST_P(CvtColor, BayerGB2Gray)
@@ -2250,15 +2250,15 @@ CUDA_TEST_P(CvtColor, BayerGB2Gray)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerGB2GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerGB2GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerGB2GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerGB2GRAY);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 2);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 2);
 }
 
 CUDA_TEST_P(CvtColor, BayerRG2Gray)
@@ -2266,15 +2266,15 @@ CUDA_TEST_P(CvtColor, BayerRG2Gray)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerRG2GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerRG2GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerRG2GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerRG2GRAY);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 2);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 2);
 }
 
 CUDA_TEST_P(CvtColor, BayerGR2Gray)
@@ -2282,15 +2282,15 @@ CUDA_TEST_P(CvtColor, BayerGR2Gray)
     if ((depth != CV_8U && depth != CV_16U) || useRoi)
         return;
 
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::cvtColor(loadMat(src, useRoi), dst, cv::COLOR_BayerGR2GRAY);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::cvtColor(loadMat(src, useRoi), dst, alvision.COLOR_BayerGR2GRAY);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BayerGR2GRAY);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BayerGR2GRAY);
 
-    EXPECT_MAT_NEAR(dst_gold(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(cv::Rect(1, 1, dst.cols - 2, dst.rows - 2)), 2);
+    EXPECT_MAT_NEAR(dst_gold(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), dst(alvision.Rect(1, 1, dst.cols - 2, dst.rows - 2)), 2);
 }
 
 INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, CvtColor, testing::Combine(
@@ -2302,18 +2302,18 @@ INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, CvtColor, testing::Combine(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // Demosaicing
 
-struct Demosaicing : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct Demosaicing : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 
-    static void mosaic(const cv::Mat_<cv::Vec3b>& src, cv::Mat_<uchar>& dst, cv::Point firstRed)
+    static void mosaic(const alvision.Mat_<alvision.Vec3b>& src, alvision.Mat_<uchar>& dst, alvision.Point firstRed)
     {
         dst.create(src.size());
 
@@ -2321,9 +2321,9 @@ struct Demosaicing : testing::TestWithParam<cv::cuda::DeviceInfo>
         {
             for (int x = 0; x < src.cols; ++x)
             {
-                cv::Vec3b pix = src(y, x);
+                alvision.Vec3b pix = src(y, x);
 
-                cv::Point alternate;
+                alvision.Point alternate;
                 alternate.x = (x + firstRed.x) % 2;
                 alternate.y = (y + firstRed.y) % 2;
 
@@ -2364,112 +2364,112 @@ struct Demosaicing : testing::TestWithParam<cv::cuda::DeviceInfo>
 
 CUDA_TEST_P(Demosaicing, BayerBG2BGR)
 {
-    cv::Mat img = readImage("stereobm/aloe-L.png");
+    alvision.Mat img = readImage("stereobm/aloe-L.png");
     ASSERT_FALSE(img.empty()) << "Can't load input image";
 
-    cv::Mat_<uchar> src;
-    mosaic(img, src, cv::Point(1, 1));
+    alvision.Mat_<uchar> src;
+    mosaic(img, src, alvision.Point(1, 1));
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::demosaicing(loadMat(src), dst, cv::COLOR_BayerBG2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::demosaicing(loadMat(src), dst, alvision.COLOR_BayerBG2BGR);
 
     EXPECT_MAT_SIMILAR(img, dst, 2e-2);
 }
 
 CUDA_TEST_P(Demosaicing, BayerGB2BGR)
 {
-    cv::Mat img = readImage("stereobm/aloe-L.png");
+    alvision.Mat img = readImage("stereobm/aloe-L.png");
     ASSERT_FALSE(img.empty()) << "Can't load input image";
 
-    cv::Mat_<uchar> src;
-    mosaic(img, src, cv::Point(0, 1));
+    alvision.Mat_<uchar> src;
+    mosaic(img, src, alvision.Point(0, 1));
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::demosaicing(loadMat(src), dst, cv::COLOR_BayerGB2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::demosaicing(loadMat(src), dst, alvision.COLOR_BayerGB2BGR);
 
     EXPECT_MAT_SIMILAR(img, dst, 2e-2);
 }
 
 CUDA_TEST_P(Demosaicing, BayerRG2BGR)
 {
-    cv::Mat img = readImage("stereobm/aloe-L.png");
+    alvision.Mat img = readImage("stereobm/aloe-L.png");
     ASSERT_FALSE(img.empty()) << "Can't load input image";
 
-    cv::Mat_<uchar> src;
-    mosaic(img, src, cv::Point(0, 0));
+    alvision.Mat_<uchar> src;
+    mosaic(img, src, alvision.Point(0, 0));
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::demosaicing(loadMat(src), dst, cv::COLOR_BayerRG2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::demosaicing(loadMat(src), dst, alvision.COLOR_BayerRG2BGR);
 
     EXPECT_MAT_SIMILAR(img, dst, 2e-2);
 }
 
 CUDA_TEST_P(Demosaicing, BayerGR2BGR)
 {
-    cv::Mat img = readImage("stereobm/aloe-L.png");
+    alvision.Mat img = readImage("stereobm/aloe-L.png");
     ASSERT_FALSE(img.empty()) << "Can't load input image";
 
-    cv::Mat_<uchar> src;
-    mosaic(img, src, cv::Point(1, 0));
+    alvision.Mat_<uchar> src;
+    mosaic(img, src, alvision.Point(1, 0));
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::demosaicing(loadMat(src), dst, cv::COLOR_BayerGR2BGR);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::demosaicing(loadMat(src), dst, alvision.COLOR_BayerGR2BGR);
 
     EXPECT_MAT_SIMILAR(img, dst, 2e-2);
 }
 
 CUDA_TEST_P(Demosaicing, BayerBG2BGR_MHT)
 {
-    cv::Mat img = readImage("stereobm/aloe-L.png");
+    alvision.Mat img = readImage("stereobm/aloe-L.png");
     ASSERT_FALSE(img.empty()) << "Can't load input image";
 
-    cv::Mat_<uchar> src;
-    mosaic(img, src, cv::Point(1, 1));
+    alvision.Mat_<uchar> src;
+    mosaic(img, src, alvision.Point(1, 1));
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::demosaicing(loadMat(src), dst, cv::cuda::COLOR_BayerBG2BGR_MHT);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::demosaicing(loadMat(src), dst, alvision.cuda::COLOR_BayerBG2BGR_MHT);
 
     EXPECT_MAT_SIMILAR(img, dst, 5e-3);
 }
 
 CUDA_TEST_P(Demosaicing, BayerGB2BGR_MHT)
 {
-    cv::Mat img = readImage("stereobm/aloe-L.png");
+    alvision.Mat img = readImage("stereobm/aloe-L.png");
     ASSERT_FALSE(img.empty()) << "Can't load input image";
 
-    cv::Mat_<uchar> src;
-    mosaic(img, src, cv::Point(0, 1));
+    alvision.Mat_<uchar> src;
+    mosaic(img, src, alvision.Point(0, 1));
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::demosaicing(loadMat(src), dst, cv::cuda::COLOR_BayerGB2BGR_MHT);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::demosaicing(loadMat(src), dst, alvision.cuda::COLOR_BayerGB2BGR_MHT);
 
     EXPECT_MAT_SIMILAR(img, dst, 5e-3);
 }
 
 CUDA_TEST_P(Demosaicing, BayerRG2BGR_MHT)
 {
-    cv::Mat img = readImage("stereobm/aloe-L.png");
+    alvision.Mat img = readImage("stereobm/aloe-L.png");
     ASSERT_FALSE(img.empty()) << "Can't load input image";
 
-    cv::Mat_<uchar> src;
-    mosaic(img, src, cv::Point(0, 0));
+    alvision.Mat_<uchar> src;
+    mosaic(img, src, alvision.Point(0, 0));
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::demosaicing(loadMat(src), dst, cv::cuda::COLOR_BayerRG2BGR_MHT);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::demosaicing(loadMat(src), dst, alvision.cuda::COLOR_BayerRG2BGR_MHT);
 
     EXPECT_MAT_SIMILAR(img, dst, 5e-3);
 }
 
 CUDA_TEST_P(Demosaicing, BayerGR2BGR_MHT)
 {
-    cv::Mat img = readImage("stereobm/aloe-L.png");
+    alvision.Mat img = readImage("stereobm/aloe-L.png");
     ASSERT_FALSE(img.empty()) << "Can't load input image";
 
-    cv::Mat_<uchar> src;
-    mosaic(img, src, cv::Point(1, 0));
+    alvision.Mat_<uchar> src;
+    mosaic(img, src, alvision.Point(1, 0));
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::demosaicing(loadMat(src), dst, cv::cuda::COLOR_BayerGR2BGR_MHT);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::demosaicing(loadMat(src), dst, alvision.cuda::COLOR_BayerGR2BGR_MHT);
 
     EXPECT_MAT_SIMILAR(img, dst, 5e-3);
 }
@@ -2479,10 +2479,10 @@ INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, Demosaicing, ALL_DEVICES);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // swapChannels
 
-PARAM_TEST_CASE(SwapChannels, cv::cuda::DeviceInfo, cv::Size, UseRoi)
+PARAM_TEST_CASE(SwapChannels, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     bool useRoi;
 
     virtual void SetUp()
@@ -2491,22 +2491,22 @@ PARAM_TEST_CASE(SwapChannels, cv::cuda::DeviceInfo, cv::Size, UseRoi)
         size = GET_PARAM(1);
         useRoi = GET_PARAM(2);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(SwapChannels, Accuracy)
 {
-    cv::Mat src = readImageType("stereobm/aloe-L.png", CV_8UC4);
+    alvision.Mat src = readImageType("stereobm/aloe-L.png", CV_8UC4);
     ASSERT_FALSE(src.empty());
 
-    cv::cuda::GpuMat d_src = loadMat(src, useRoi);
+    alvision.cuda::GpuMat d_src = loadMat(src, useRoi);
 
     const int dstOrder[] = {2, 1, 0, 3};
-    cv::cuda::swapChannels(d_src, dstOrder);
+    alvision.cuda::swapChannels(d_src, dstOrder);
 
-    cv::Mat dst_gold;
-    cv::cvtColor(src, dst_gold, cv::COLOR_BGRA2RGBA);
+    alvision.Mat dst_gold;
+    alvision.cvtColor(src, dst_gold, alvision.COLOR_BGRA2RGBA);
 
     EXPECT_MAT_NEAR(dst_gold, d_src, 0.0);
 }

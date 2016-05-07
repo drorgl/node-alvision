@@ -56,61 +56,62 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-class CV_FramecountTest extends alvision. cvtest.BaseTest
-{
-    run(ii : alvision.int): void {
-        const time_sec = 5, fps = 25;
 
-        const ext = ["avi", "mov", "mp4"];
+//class CV_FramecountTest extends alvision. cvtest.BaseTest
+//{
+    //run(ii : alvision.int): void {
+        //const time_sec = 5, fps = 25;
 
-        //const n = sizeof(ext) / sizeof(ext[0]);
+        //const ext = ["avi", "mov", "mp4"];
 
-        const src_dir = this.ts.get_data_path();
+        ////const n = sizeof(ext) / sizeof(ext[0]);
 
-        this.ts.printf(alvision.cvtest.TS::LOG, "\n\nSource files directory: %s\n", (src_dir + "video/").c_str());
+        //const src_dir = this.ts.get_data_path();
 
-        Ptr < CvCapture > cap;
+        //this.ts.printf(alvision.cvtest.TSConstants.LOG, "\n\nSource files directory: %s\n", (src_dir + "video/"));
+
+        //Ptr < CvCapture > cap;
         
 
-        for (size_t i = 0; i < n; ++i)
-        {
-            string file_path = src_dir + "video/big_buck_bunny." + ext[i];
+        //for (size_t i = 0; i < n; ++i)
+        //{
+            //string file_path = src_dir + "video/big_buck_bunny." + ext[i];
 
-            cap.reset(cvCreateFileCapture(file_path.c_str()));
-            if (!cap) {
-                ts ->printf(alvision.cvtest.TS::LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i + 1, ext[i].c_str());
-                ts ->printf(alvision.cvtest.TS::LOG, "Error: cannot read source video file.\n");
-                ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
-                return;
-            }
+            //cap.reset(cvCreateFileCapture(file_path));
+            //if (!cap) {
+                //this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i + 1, ext[i]);
+                //this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read source video file.\n");
+                //this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+                //return;
+            //}
 
-            //cvSetCaptureProperty(cap, CV_CAP_PROP_POS_FRAMES, 0);
-            IplImage * frame; int FrameCount = 0;
+            ////cvSetCaptureProperty(cap, CV_CAP_PROP_POS_FRAMES, 0);
+            //IplImage * frame; int FrameCount = 0;
 
-            for (; ;) {
-                frame = cvQueryFrame(cap);
-                if (!frame)
-                    break;
-                FrameCount++;
-            }
+            //for (; ;) {
+                //frame = cvQueryFrame(cap);
+                //if (!frame)
+                    //break;
+                //FrameCount++;
+            //}
 
-            int framecount = (int)cvGetCaptureProperty(cap, CAP_PROP_FRAME_COUNT);
+            //int framecount = (int)cvGetCaptureProperty(cap, CAP_PROP_FRAME_COUNT);
 
-            ts ->printf(alvision.cvtest.TS::LOG, "\nFile information (video %d): \n"\
-                "\nName: big_buck_bunny.%s\nActual frame count: %d\n"\
-                "Frame count computed in the cycle of queries of frames: %d\n"\
-                "Frame count returned by cvGetCaptureProperty function: %d\n",
-                i + 1, ext[i].c_str(), time_sec * fps, FrameCount, framecount);
+            //this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n"\
+                //"\nName: big_buck_bunny.%s\nActual frame count: %d\n"\
+                //"Frame count computed in the cycle of queries of frames: %d\n"\
+                //"Frame count returned by cvGetCaptureProperty function: %d\n",
+                //i + 1, ext[i], time_sec * fps, FrameCount, framecount);
 
-            if ((FrameCount != cvRound(time_sec * fps) ||
-                FrameCount != framecount) && ext[i] != "mpg") {
-                ts ->printf(alvision.cvtest.TS::LOG, "FAILED\n");
-                ts ->printf(alvision.cvtest.TS::LOG, "\nError: actual frame count and returned frame count are not matched.\n");
-                ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
-                return;
-            }
-        }
-    }
-};
+            //if ((FrameCount != cvRound(time_sec * fps) ||
+                //FrameCount != framecount) && ext[i] != "mpg") {
+                //this.ts.printf(alvision.cvtest.TSConstants.LOG, "FAILED\n");
+                //this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: actual frame count and returned frame count are not matched.\n");
+                //this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+                //return;
+            //}
+        //}
+    //}
+//};
 
-alvision.cvtest.TEST('Videoio_Video', 'framecount', () => { var test = new CV_FramecountTest(); test.safe_run(); });
+//alvision.cvtest.TEST('Videoio_Video', 'framecount', () => { var test = new CV_FramecountTest(); test.safe_run(); });

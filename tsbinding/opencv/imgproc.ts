@@ -2456,8 +2456,8 @@ export var morphologyEx: ImorphologyEx = alvision_module.morphologyEx;
 
 interface Iresize{
     (src: _st.InputArray, dst: _st.OutputArray,
-    dsize : _types.Size, fx : _st.double /* = 0*/, fy : _st.double /* = 0*/,
-    interpolation: InterpolationFlags /* = INTER_LINEAR*/): void;
+    dsize : _types.Size, fx? : _st.double /* = 0*/, fy? : _st.double /* = 0*/,
+    interpolation?: InterpolationFlags /* = INTER_LINEAR*/): void;
 }
 
 export var resize: Iresize = alvision_module.resize;
@@ -4396,10 +4396,10 @@ export var connectedComponentsWithStats: IconnectedComponentsWithStats = alvisio
 interface IfindContours{
     (image: _st.InputOutputArray, contours : _st.OutputArrayOfArrays,
         hierarchy: _st.OutputArray, mode: RetrievalModes,
-    method: _st.int, offset: _types.Point /* = Point()*/): void;
+        method: ContourApproximationModes, offset?: _types.Point /* = Point()*/): void;
 
     (image: _st.InputOutputArray, contours : _st.OutputArrayOfArrays,
-        mode: RetrievalModes, method: _st.int, offset: _types.Point /* = Point()*/): void;
+        mode: RetrievalModes, method: ContourApproximationModes, offset?: _types.Point /* = Point()*/): void;
 }
 
 export var findContours: IfindContours = alvision_module.findContours;

@@ -27,17 +27,17 @@
 
 enum { CV_TRAIN_ERROR=0, CV_TEST_ERROR=1 };
 
-using cv::Ptr;
-using cv::ml::StatModel;
-using cv::ml::TrainData;
-using cv::ml::NormalBayesClassifier;
-using cv::ml::SVM;
-using cv::ml::KNearest;
-using cv::ml::ParamGrid;
-using cv::ml::ANN_MLP;
-using cv::ml::DTrees;
-using cv::ml::Boost;
-using cv::ml::RTrees;
+using alvision.Ptr;
+using alvision.ml::StatModel;
+using alvision.ml::TrainData;
+using alvision.ml::NormalBayesClassifier;
+using alvision.ml::SVM;
+using alvision.ml::KNearest;
+using alvision.ml::ParamGrid;
+using alvision.ml::ANN_MLP;
+using alvision.ml::DTrees;
+using alvision.ml::Boost;
+using alvision.ml::RTrees;
 
 class CV_MLBaseTest  extends alvision.cvtest.BaseTest
 {
@@ -53,14 +53,14 @@ protected:
     virtual int validate_test_results( int testCaseIdx ) = 0;
 
     int train( int testCaseIdx );
-    float get_test_error( int testCaseIdx, std::vector<float> *resp = 0 );
+    float get_test_error( int testCaseIdx, std::Array<float> *resp = 0 );
     void save( const char* filename );
     void load( const char* filename );
 
     Ptr<TrainData> data;
     std::string modelName, validationFN;
-    std::vector<std::string> dataSetNames;
-    cv::FileStorage validationFS;
+    std::Array<std::string> dataSetNames;
+    alvision.FileStorage validationFS;
 
     Ptr<StatModel> model;
 
@@ -88,7 +88,7 @@ protected:
     virtual int run_test_case( int testCaseIdx );
     virtual int validate_test_results( int testCaseIdx );
 
-    std::vector<float> test_resps1, test_resps2; // predicted responses for test data
+    std::Array<float> test_resps1, test_resps2; // predicted responses for test data
     std::string fname1, fname2;
 };
 

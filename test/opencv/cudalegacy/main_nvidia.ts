@@ -298,7 +298,7 @@ void generateHaarApplicationTests(NCVAutoTestLister &testLister, NCVTestSourcePr
     }
 }
 
-static void devNullOutput(const cv::String& msg)
+static void devNullOutput(const alvision.String& msg)
 {
     (void)msg;
 }
@@ -307,7 +307,7 @@ static void devNullOutput(const cv::String& msg)
 
 bool nvidia_NPPST_Integral_Image(const std::string& test_data_path, OutputLevel outputLevel)
 {
-    path = test_data_path.c_str();
+    path = test_data_path;
     ncvSetDebugOutputHandler(devNullOutput);
 
     NCVAutoTestLister testListerII("NPPST Integral Image", outputLevel);

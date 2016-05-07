@@ -61,7 +61,7 @@ public:
     CV_ColorCvtBaseTest( bool custom_inv_transform, bool allow_32f, bool allow_16u );
 
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void prepare_to_validation( int /*test_case_idx*/ );
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
@@ -126,7 +126,7 @@ void CV_ColorCvtBaseTest::get_minmax_bounds( int i, int j, int type, Scalar& low
 
 
 void CV_ColorCvtBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int depth, cn;
@@ -160,7 +160,7 @@ void CV_ColorCvtBaseTest::get_test_array_types_and_sizes( int test_case_idx,
 
 int CV_ColorCvtBaseTest::prepare_test_case( int test_case_idx )
 {
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
     if( code > 0 && inplace )
         alvision.cvtest.copy( test_mat[INPUT][0], test_mat[OUTPUT][0] );
     return code;
@@ -169,12 +169,12 @@ int CV_ColorCvtBaseTest::prepare_test_case( int test_case_idx )
 void CV_ColorCvtBaseTest::run_func()
 {
     CvArr* out0 = test_array[OUTPUT][0];
-    cv::Mat _out0 = cv::cvarrToMat(out0), _out1 = cv::cvarrToMat(test_array[OUTPUT][1]);
+    alvision.Mat _out0 = alvision.cvarrToMat(out0), _out1 = alvision.cvarrToMat(test_array[OUTPUT][1]);
 
     if(!test_cpp)
         cvCvtColor( inplace ? out0 : test_array[INPUT][0], out0, fwd_code );
     else
-        cv::cvtColor( cv::cvarrToMat(inplace ? out0 : test_array[INPUT][0]), _out0, fwd_code, _out0.channels());
+        alvision.cvtColor( alvision.cvarrToMat(inplace ? out0 : test_array[INPUT][0]), _out0, fwd_code, _out0.channels());
 
     if( inplace )
     {
@@ -184,7 +184,7 @@ void CV_ColorCvtBaseTest::run_func()
     if(!test_cpp)
         cvCvtColor( out0, test_array[OUTPUT][1], inv_code );
     else
-        cv::cvtColor(cv::cvarrToMat(out0), _out1, inv_code, _out1.channels());
+        alvision.cvtColor(alvision.cvarrToMat(out0), _out1, inv_code, _out1.channels());
 }
 
 
@@ -218,8 +218,8 @@ void CV_ColorCvtBaseTest::convert_forward( const Mat& src, Mat& dst )
     int depth = src.depth();
     int cn = src.channels(), dst_cn = dst.channels();
     int cols = src.cols, dst_cols_n = dst.cols*dst_cn;
-    vector<float> _src_buf(src.cols*3);
-    vector<float> _dst_buf(dst.cols*3);
+    Array<float> _src_buf(src.cols*3);
+    Array<float> _dst_buf(dst.cols*3);
     float* src_buf = &_src_buf[0];
     float* dst_buf = &_dst_buf[0];
     int i, j;
@@ -313,8 +313,8 @@ void CV_ColorCvtBaseTest::convert_backward( const Mat& src, const Mat& dst, Mat&
         int depth = src.depth();
         int src_cn = dst.channels(), cn = dst2.channels();
         int cols_n = src.cols*src_cn, dst_cols = dst.cols;
-        vector<float> _src_buf(src.cols*3);
-        vector<float> _dst_buf(dst.cols*3);
+        Array<float> _src_buf(src.cols*3);
+        Array<float> _dst_buf(dst.cols*3);
         float* src_buf = &_src_buf[0];
         float* dst_buf = &_dst_buf[0];
         int i, j;
@@ -444,7 +444,7 @@ CV_ColorGrayTest::CV_ColorGrayTest() : CV_ColorCvtBaseTest( true, true, true )
 }
 
 
-void CV_ColorGrayTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_ColorGrayTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     int cn = CV_MAT_CN(types[INPUT][0]);
@@ -517,7 +517,7 @@ CV_ColorYCrCbTest::CV_ColorYCrCbTest() : CV_ColorCvtBaseTest( true, true, true )
 }
 
 
-void CV_ColorYCrCbTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_ColorYCrCbTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
@@ -610,7 +610,7 @@ CV_ColorHSVTest::CV_ColorHSVTest() : CV_ColorCvtBaseTest( true, true, false )
 }
 
 
-void CV_ColorHSVTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_ColorHSVTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     RNG& rng = ts->get_rng();
@@ -749,7 +749,7 @@ CV_ColorHLSTest::CV_ColorHLSTest() : CV_ColorCvtBaseTest( true, true, false )
 }
 
 
-void CV_ColorHLSTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_ColorHLSTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
@@ -914,7 +914,7 @@ CV_ColorXYZTest::CV_ColorXYZTest() : CV_ColorCvtBaseTest( true, true, true )
 }
 
 
-void CV_ColorXYZTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_ColorXYZTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
@@ -1001,7 +1001,7 @@ CV_ColorLabTest::CV_ColorLabTest() : CV_ColorCvtBaseTest( true, true, false )
 }
 
 
-void CV_ColorLabTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_ColorLabTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
@@ -1142,7 +1142,7 @@ CV_ColorLuvTest::CV_ColorLuvTest() : CV_ColorCvtBaseTest( true, true, false )
 }
 
 
-void CV_ColorLuvTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_ColorLuvTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
@@ -1292,7 +1292,7 @@ CV_ColorRGBTest::CV_ColorRGBTest() : CV_ColorCvtBaseTest( true, true, true )
 }
 
 
-void CV_ColorRGBTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_ColorRGBTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -1563,7 +1563,7 @@ CV_ColorBayerTest::CV_ColorBayerTest() : CV_ColorCvtBaseTest( false, false, true
 }
 
 
-void CV_ColorBayerTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void CV_ColorBayerTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -1588,8 +1588,8 @@ void CV_ColorBayerTest::run_func()
         cvCvtColor( test_array[INPUT][0], test_array[OUTPUT][0], fwd_code );
     else
     {
-        cv::Mat _out = cv::cvarrToMat(test_array[OUTPUT][0]);
-        cv::cvtColor(cv::cvarrToMat(test_array[INPUT][0]), _out, fwd_code, _out.channels());
+        alvision.Mat _out = alvision.cvarrToMat(test_array[OUTPUT][0]);
+        alvision.cvtColor(alvision.cvarrToMat(test_array[INPUT][0]), _out, fwd_code, _out.channels());
     }
 }
 
@@ -1700,7 +1700,7 @@ TEST(Imgproc_ColorBayer, regression)
 
     Mat given = imread(string(ts->get_data_path()) + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
     Mat gold = imread(string(ts->get_data_path()) + "/cvtcolor/bayer_gold.png", IMREAD_UNCHANGED);
-    Mat result;
+    var result = new alvision.Mat();
 
     CV_Assert( !given.empty() && !gold.empty() );
 
@@ -1723,7 +1723,7 @@ TEST(Imgproc_ColorBayerVNG, regression)
     Mat given = imread(string(ts->get_data_path()) + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
     string goldfname = string(ts->get_data_path()) + "/cvtcolor/bayerVNG_gold.png";
     Mat gold = imread(goldfname, IMREAD_UNCHANGED);
-    Mat result;
+    var result = new alvision.Mat();
 
     CV_Assert( !given.empty() );
 
@@ -1894,7 +1894,7 @@ static void getTestMatrix(Mat& src)
             if (b < 0) b = 0; else if (b > 1) b = 1;
             if (g < 0) g = 0; else if (g > 1) g = 1;
             if (r < 0) r = 0; else if (r > 1) r = 1;
-            src.at<cv::Vec3f>(i, j) = cv::Vec3f(b, g, r);
+            src.at<alvision.Vec3f>(i, j) = alvision.Vec3f(b, g, r);
         }
     }
 }
@@ -1925,11 +1925,11 @@ static void validateResult(const Mat& reference, const Mat& actual, const Mat& s
 
                 if (mode >= 0)
                 {
-                    cv::Mat lab;
-                    cv::cvtColor(src, lab, mode);
-                    std::cout << "lab: " << lab(cv::Rect(y, x / cn, 1, 1)) << std::endl;
+                    alvision.Mat lab;
+                    alvision.cvtColor(src, lab, mode);
+                    std::cout << "lab: " << lab(alvision.Rect(y, x / cn, 1, 1)) << std::endl;
                 }
-                std::cout << "src: " << src(cv::Rect(y, x / cn, 1, 1)) << std::endl;
+                std::cout << "src: " << src(alvision.Rect(y, x / cn, 1, 1)) << std::endl;
 
                 this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                 ts->set_gtest_status();
@@ -1949,13 +1949,13 @@ TEST(Imgproc_ColorLab_Full, accuracy)
     bool srgb = rng.uniform(0., 1.) > 0.5;
 
     // Convert test image to LAB
-    cv::Mat lab;
+    alvision.Mat lab;
     int forward_code = blueInd ? srgb ? CV_BGR2Lab : CV_LBGR2Lab : srgb ? CV_RGB2Lab : CV_LRGB2Lab;
     int inverse_code = blueInd ? srgb ? CV_Lab2BGR : CV_Lab2LBGR : srgb ? CV_Lab2RGB : CV_Lab2LRGB;
-    cv::cvtColor(src, lab, forward_code);
+    alvision.cvtColor(src, lab, forward_code);
     // Convert LAB image back to BGR(RGB)
-    cv::Mat recons;
-    cv::cvtColor(lab, recons, inverse_code);
+    alvision.Mat recons;
+    alvision.cvtColor(lab, recons, inverse_code);
 
     validateResult(src, recons, src, forward_code);
 }
@@ -2135,7 +2135,7 @@ TEST(ImgProc_BayerEdgeAwareDemosaicing, accuracy)
             CV_Assert(!bayer.empty() && (bayer.type() == CV_8UC1 || bayer.type() == CV_16UC1));
 
             Mat actual;
-            cv::demosaicing(bayer, actual, CV_BayerBG2BGR_EA + i);
+            alvision.demosaicing(bayer, actual, CV_BayerBG2BGR_EA + i);
 
             if (t == 0)
                 checkData<unsigned char>(actual, reference, ts, types[i], next, "CV_8U");

@@ -66,7 +66,7 @@ protected:
     void fill_array( int test_case_idx, int i, int j, Mat& arr );
 
     /*int write_default_params(CvFileStorage* fs);
-    void get_timing_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types
+    void get_timing_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types
                                                 CvSize** whole_sizes, bool *are_images );
     void print_timing_params( int test_case_idx, char* ptr, int params_left );*/
     CvPoint seed_pt;
@@ -96,8 +96,8 @@ CV_FloodFillTest::CV_FloodFillTest()
 
 
 void CV_FloodFillTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                       vector<vector<Size> >& sizes,
-                                                       vector<vector<int> >& types )
+                                                       Array<Array<Size> >& sizes,
+                                                       Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int depth, cn;
@@ -217,14 +217,14 @@ void CV_FloodFillTest::run_func()
     }
     else
     {
-        cv::Mat img = cv::cvarrToMat(test_array[INPUT_OUTPUT][0]),
-            mask = test_array[INPUT_OUTPUT][1] ? cv::cvarrToMat(test_array[INPUT_OUTPUT][1]) : cv::Mat();
-        cv::Rect rect;
+        alvision.Mat img = alvision.cvarrToMat(test_array[INPUT_OUTPUT][0]),
+            mask = test_array[INPUT_OUTPUT][1] ? alvision.cvarrToMat(test_array[INPUT_OUTPUT][1]) : alvision.Mat();
+        alvision.Rect rect;
         int area;
         if( mask.empty() )
-            area = cv::floodFill( img, seed_pt, new_val, &rect, l_diff, u_diff, flags );
+            area = alvision.floodFill( img, seed_pt, new_val, &rect, l_diff, u_diff, flags );
         else
-            area = cv::floodFill( img, mask, seed_pt, new_val, &rect, l_diff, u_diff, flags );
+            area = alvision.floodFill( img, mask, seed_pt, new_val, &rect, l_diff, u_diff, flags );
         odata[0] = area;
         odata[1] = rect.x;
         odata[2] = rect.y;

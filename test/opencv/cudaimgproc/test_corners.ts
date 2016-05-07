@@ -63,9 +63,9 @@ namespace
     IMPLEMENT_PARAM_CLASS(ApertureSize, int);
 }
 
-PARAM_TEST_CASE(CornerHarris, cv::cuda::DeviceInfo, MatType, BorderType, BlockSize, ApertureSize)
+PARAM_TEST_CASE(CornerHarris, alvision.cuda::DeviceInfo, MatType, BorderType, BlockSize, ApertureSize)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     int type;
     int borderType;
     int blockSize;
@@ -79,24 +79,24 @@ PARAM_TEST_CASE(CornerHarris, cv::cuda::DeviceInfo, MatType, BorderType, BlockSi
         blockSize = GET_PARAM(3);
         apertureSize = GET_PARAM(4);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(CornerHarris, Accuracy)
 {
-    cv::Mat src = readImageType("stereobm/aloe-L.png", type);
+    alvision.Mat src = readImageType("stereobm/aloe-L.png", type);
     ASSERT_FALSE(src.empty());
 
     double k = randomDouble(0.1, 0.9);
 
-    cv::Ptr<cv::cuda::CornernessCriteria> harris = cv::cuda::createHarrisCorner(src.type(), blockSize, apertureSize, k, borderType);
+    alvision.Ptr<alvision.cuda::CornernessCriteria> harris = alvision.cuda::createHarrisCorner(src.type(), blockSize, apertureSize, k, borderType);
 
-    cv::cuda::GpuMat dst;
+    alvision.cuda::GpuMat dst;
     harris->compute(loadMat(src), dst);
 
-    cv::Mat dst_gold;
-    cv::cornerHarris(src, dst_gold, blockSize, apertureSize, k, borderType);
+    alvision.Mat dst_gold;
+    alvision.cornerHarris(src, dst_gold, blockSize, apertureSize, k, borderType);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.02);
 }
@@ -104,16 +104,16 @@ CUDA_TEST_P(CornerHarris, Accuracy)
 INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, CornerHarris, testing::Combine(
     ALL_DEVICES,
     testing::Values(MatType(CV_8UC1), MatType(CV_32FC1)),
-    testing::Values(BorderType(cv::BORDER_REFLECT101), BorderType(cv::BORDER_REPLICATE), BorderType(cv::BORDER_REFLECT)),
+    testing::Values(BorderType(alvision.BORDER_REFLECT101), BorderType(alvision.BORDER_REPLICATE), BorderType(alvision.BORDER_REFLECT)),
     testing::Values(BlockSize(3), BlockSize(5), BlockSize(7)),
     testing::Values(ApertureSize(0), ApertureSize(3), ApertureSize(5), ApertureSize(7))));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // cornerMinEigen
 
-PARAM_TEST_CASE(CornerMinEigen, cv::cuda::DeviceInfo, MatType, BorderType, BlockSize, ApertureSize)
+PARAM_TEST_CASE(CornerMinEigen, alvision.cuda::DeviceInfo, MatType, BorderType, BlockSize, ApertureSize)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     int type;
     int borderType;
     int blockSize;
@@ -127,22 +127,22 @@ PARAM_TEST_CASE(CornerMinEigen, cv::cuda::DeviceInfo, MatType, BorderType, Block
         blockSize = GET_PARAM(3);
         apertureSize = GET_PARAM(4);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(CornerMinEigen, Accuracy)
 {
-    cv::Mat src = readImageType("stereobm/aloe-L.png", type);
+    alvision.Mat src = readImageType("stereobm/aloe-L.png", type);
     ASSERT_FALSE(src.empty());
 
-    cv::Ptr<cv::cuda::CornernessCriteria> minEigenVal = cv::cuda::createMinEigenValCorner(src.type(), blockSize, apertureSize, borderType);
+    alvision.Ptr<alvision.cuda::CornernessCriteria> minEigenVal = alvision.cuda::createMinEigenValCorner(src.type(), blockSize, apertureSize, borderType);
 
-    cv::cuda::GpuMat dst;
+    alvision.cuda::GpuMat dst;
     minEigenVal->compute(loadMat(src), dst);
 
-    cv::Mat dst_gold;
-    cv::cornerMinEigenVal(src, dst_gold, blockSize, apertureSize, borderType);
+    alvision.Mat dst_gold;
+    alvision.cornerMinEigenVal(src, dst_gold, blockSize, apertureSize, borderType);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.02);
 }
@@ -150,7 +150,7 @@ CUDA_TEST_P(CornerMinEigen, Accuracy)
 INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, CornerMinEigen, testing::Combine(
     ALL_DEVICES,
     testing::Values(MatType(CV_8UC1), MatType(CV_32FC1)),
-    testing::Values(BorderType(cv::BORDER_REFLECT101), BorderType(cv::BORDER_REPLICATE), BorderType(cv::BORDER_REFLECT)),
+    testing::Values(BorderType(alvision.BORDER_REFLECT101), BorderType(alvision.BORDER_REPLICATE), BorderType(alvision.BORDER_REFLECT)),
     testing::Values(BlockSize(3), BlockSize(5), BlockSize(7)),
     testing::Values(ApertureSize(0), ApertureSize(3), ApertureSize(5), ApertureSize(7))));
 

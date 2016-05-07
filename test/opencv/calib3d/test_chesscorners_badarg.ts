@@ -70,7 +70,7 @@ protected:
     Mat img;
     Size pattern_size;
     int flags;
-    vector<Point2f> corners;
+    Array<Point2f> corners;
 
     /* c interface */
     CvMat arr;
@@ -116,7 +116,7 @@ void CV_ChessboardDetectorBadArgTest::run( int /*start_from */)
     distCoeffs << 1.2f, 0.2f, 0.f, 0.f, 0.f;
 
     ChessBoardGenerator cbg(Size(8,6));
-    vector<Point2f> exp_corn;
+    Array<Point2f> exp_corn;
     Mat cb = cbg(bg, camMat, distCoeffs, exp_corn);
 
     /* /*//*/ */
@@ -132,7 +132,7 @@ void CV_ChessboardDetectorBadArgTest::run( int /*start_from */)
     cb.convertTo(img, CV_32F);
     errors += run_test_case( CV_StsUnsupportedFormat, "Not 8-bit image" );
 
-    cv::merge(vector<Mat>(2, cb), img);
+    alvision.merge(Array<Mat>(2, cb), img);
     errors += run_test_case( CV_StsUnsupportedFormat, "2 channel image" );
 
     cpp = false;

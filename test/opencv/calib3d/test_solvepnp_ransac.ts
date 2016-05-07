@@ -71,7 +71,7 @@ public:
     }
     ~CV_solvePnPRansac_Test() {}
 protected:
-    void generate3DPointCloud(vector<Point3f>& points, Point3f pmin = Point3f(-1,
+    void generate3DPointCloud(Array<Point3f>& points, Point3f pmin = Point3f(-1,
         -1, 5), Point3f pmax = Point3f(1, 1, 10))
     {
         const Point3f delta = pmax - pmin;
@@ -120,10 +120,10 @@ protected:
         }
     }
 
-    virtual bool runTest(RNG& rng, int mode, int method, const vector<Point3f>& points, const double* epsilon, double& maxError)
+    virtual bool runTest(RNG& rng, int mode, int method, const Array<Point3f>& points, const double* epsilon, double& maxError)
     {
         Mat rvec, tvec;
-        vector<int> inliers;
+        Array<int> inliers;
         Mat trueRvec, trueTvec;
         Mat intrinsics, distCoeffs;
         generateCameraMatrix(intrinsics, rng);
@@ -134,7 +134,7 @@ protected:
             generateDistCoeffs(distCoeffs, rng);
         generatePose(trueRvec, trueTvec, rng);
 
-        vector<Point2f> projectedPoints;
+        Array<Point2f> projectedPoints;
         projectedPoints.resize(points.size());
         projectPoints(Mat(points), trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints);
         for (size_t i = 0; i < projectedPoints.size(); i++)
@@ -164,7 +164,7 @@ protected:
     {
         this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 
-        vector<Point3f> points, points_dls;
+        Array<Point3f> points, points_dls;
         const int pointsCount = 500;
         points.resize(pointsCount);
         generate3DPointCloud(points);
@@ -187,7 +187,7 @@ protected:
                 //cout <<  maxError << " " << successfulTestsCount << endl;
                 if (successfulTestsCount < 0.7*totalTestsCount)
                 {
-                    ts->printf( alvision.cvtest.TS::LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
+                    ts->printf( alvision.cvtest.TSConstants.LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
                         method, totalTestsCount - successfulTestsCount, totalTestsCount, maxError, mode);
                     this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
                 }
@@ -216,7 +216,7 @@ public:
 
     ~CV_solvePnP_Test() {}
 protected:
-    virtual bool runTest(RNG& rng, int mode, int method, const vector<Point3f>& points, const double* epsilon, double& maxError)
+    virtual bool runTest(RNG& rng, int mode, int method, const Array<Point3f>& points, const double* epsilon, double& maxError)
     {
         Mat rvec, tvec;
         Mat trueRvec, trueTvec;
@@ -229,19 +229,19 @@ protected:
             generateDistCoeffs(distCoeffs, rng);
         generatePose(trueRvec, trueTvec, rng);
 
-        std::vector<Point3f> opoints;
+        std::Array<Point3f> opoints;
         if (method == 2)
         {
-            opoints = std::vector<Point3f>(points.begin(), points.begin()+4);
+            opoints = std::Array<Point3f>(points.begin(), points.begin()+4);
         }
         else if(method == 3)
         {
-            opoints = std::vector<Point3f>(points.begin(), points.begin()+50);
+            opoints = std::Array<Point3f>(points.begin(), points.begin()+50);
         }
         else
             opoints = points;
 
-        vector<Point2f> projectedPoints;
+        Array<Point2f> projectedPoints;
         projectedPoints.resize(opoints.size());
         projectPoints(Mat(opoints), trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints);
 
@@ -279,9 +279,9 @@ TEST(DISABLED_Calib3d_SolvePnPRansac, concurrency)
     camera_mat.at<float>(2, 0) = 0.f;
     camera_mat.at<float>(2, 1) = 0.f;
 
-    Mat dist_coef(1, 8, CV_32F, cv::Scalar::all(0));
+    Mat dist_coef(1, 8, CV_32F, alvision.Scalar::all(0));
 
-    vector<cv::Point2f> image_vec;
+    Array<alvision.Point2f> image_vec;
     Mat rvec_gold(1, 3, CV_32FC1);
     randu(rvec_gold, 0, 1);
     Mat tvec_gold(1, 3, CV_32FC1);
@@ -295,7 +295,7 @@ TEST(DISABLED_Calib3d_SolvePnPRansac, concurrency)
 
     {
         // limit concurrency to get deterministic result
-        cv::theRNG().state = 20121010;
+        alvision.theRNG().state = 20121010;
         tbb::task_scheduler_init one_thread(1);
         solvePnPRansac(object, image, camera_mat, dist_coef, rvec1, tvec1);
     }
@@ -307,14 +307,14 @@ TEST(DISABLED_Calib3d_SolvePnPRansac, concurrency)
         // parallel executions
         for(int i = 0; i < 10; ++i)
         {
-            cv::theRNG().state = 20121010;
+            alvision.theRNG().state = 20121010;
             solvePnPRansac(object, image, camera_mat, dist_coef, rvec, tvec);
         }
     }
 
     {
         // single thread again
-        cv::theRNG().state = 20121010;
+        alvision.theRNG().state = 20121010;
         tbb::task_scheduler_init one_thread(1);
         solvePnPRansac(object, image, camera_mat, dist_coef, rvec2, tvec2);
     }

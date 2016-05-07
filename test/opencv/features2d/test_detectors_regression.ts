@@ -69,7 +69,7 @@ public:
 
 protected:
     bool isSimilarKeypoints( const KeyPoint& p1, const KeyPoint& p2 );
-    void compareKeypointSets( const vector<KeyPoint>& validKeypoints, const vector<KeyPoint>& calcKeypoints );
+    void compareKeypointSets( const Array<KeyPoint>& validKeypoints, const Array<KeyPoint>& calcKeypoints );
 
     void emptyDataTest();
     void regressionTest(); // TODO test of detect() with mask
@@ -84,35 +84,35 @@ void CV_FeatureDetectorTest::emptyDataTest()
 {
     // One image.
     Mat image;
-    vector<KeyPoint> keypoints;
+    Array<KeyPoint> keypoints;
     try
     {
         fdetector->detect( image, keypoints );
     }
     catch(...)
     {
-        ts->printf( alvision.cvtest.TS::LOG, "detect() on empty image must not generate exception (1).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "detect() on empty image must not generate exception (1).\n" );
+        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
     }
 
     if( !keypoints.empty() )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "detect() on empty image must return empty keypoints vector (1).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "detect() on empty image must return empty keypoints vector (1).\n" );
+        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
         return;
     }
 
     // Several images.
-    vector<Mat> images;
-    vector<vector<KeyPoint> > keypointCollection;
+    Array<Mat> images;
+    Array<Array<KeyPoint> > keypointCollection;
     try
     {
         fdetector->detect( images, keypointCollection );
     }
     catch(...)
     {
-        ts->printf( alvision.cvtest.TS::LOG, "detect() on empty image vector must not generate exception (2).\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "detect() on empty image vector must not generate exception (2).\n" );
+        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
     }
 }
 
@@ -132,7 +132,7 @@ bool CV_FeatureDetectorTest::isSimilarKeypoints( const KeyPoint& p1, const KeyPo
             p1.class_id == p2.class_id );
 }
 
-void CV_FeatureDetectorTest::compareKeypointSets( const vector<KeyPoint>& validKeypoints, const vector<KeyPoint>& calcKeypoints )
+void CV_FeatureDetectorTest::compareKeypointSets( const Array<KeyPoint>& validKeypoints, const Array<KeyPoint>& calcKeypoints )
 {
     const float maxCountRatioDif = 0.01f;
 
@@ -140,9 +140,9 @@ void CV_FeatureDetectorTest::compareKeypointSets( const vector<KeyPoint>& validK
     float countRatio = (float)validKeypoints.size() / (float)calcKeypoints.size();
     if( countRatio < 1 - maxCountRatioDif || countRatio > 1.f + maxCountRatioDif )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Bad keypoints count ratio (validCount = %d, calcCount = %d).\n",
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Bad keypoints count ratio (validCount = %d, calcCount = %d).\n",
                     validKeypoints.size(), calcKeypoints.size() );
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+        this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
         return;
     }
 
@@ -168,15 +168,15 @@ void CV_FeatureDetectorTest::compareKeypointSets( const vector<KeyPoint>& validK
         if( !isSimilarKeypoints( validKeypoints[v], calcKeypoints[nearestIdx] ) )
             badPointCount++;
     }
-    ts->printf( alvision.cvtest.TS::LOG, "badPointCount = %d; validPointCount = %d; calcPointCount = %d\n",
+    ts->printf( alvision.cvtest.TSConstants.LOG, "badPointCount = %d; validPointCount = %d; calcPointCount = %d\n",
                 badPointCount, validKeypoints.size(), calcKeypoints.size() );
     if( badPointCount > 0.9 * commonPointCount )
     {
-        ts->printf( alvision.cvtest.TS::LOG, " - Bad accuracy!\n" );
+        ts->printf( alvision.cvtest.TSConstants.LOG, " - Bad accuracy!\n" );
         this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
         return;
     }
-    ts->printf( alvision.cvtest.TS::LOG, " - OK\n" );
+    ts->printf( alvision.cvtest.TSConstants.LOG, " - OK\n" );
 }
 
 void CV_FeatureDetectorTest::regressionTest()
@@ -189,15 +189,15 @@ void CV_FeatureDetectorTest::regressionTest()
     Mat image = imread( imgFilename );
     if( image.empty() )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Image %s can not be read.\n", imgFilename.c_str() );
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_TEST_DATA );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imgFilename );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
         return;
     }
 
     FileStorage fs( resFilename, FileStorage::READ );
 
     // Compute keypoints.
-    vector<KeyPoint> calcKeypoints;
+    Array<KeyPoint> calcKeypoints;
     fdetector->detect( image, calcKeypoints );
 
     if( fs.isOpened() ) // Compare computed and valid keypoints.
@@ -205,12 +205,12 @@ void CV_FeatureDetectorTest::regressionTest()
         // TODO compare saved feature detector params with current ones
 
         // Read validation keypoints set.
-        vector<KeyPoint> validKeypoints;
+        Array<KeyPoint> validKeypoints;
         read( fs["keypoints"], validKeypoints );
         if( validKeypoints.empty() )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "Keypoints can not be read.\n" );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_TEST_DATA );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "Keypoints can not be read.\n" );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
             return;
         }
 
@@ -221,8 +221,8 @@ void CV_FeatureDetectorTest::regressionTest()
         fs.open( resFilename, FileStorage::WRITE );
         if( !fs.isOpened() )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "File %s can not be opened to write.\n", resFilename.c_str() );
-            this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_TEST_DATA );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "File %s can not be opened to write.\n", resFilename );
+            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
             return;
         }
         else
@@ -240,8 +240,8 @@ void CV_FeatureDetectorTest::run( int /*start_from*/ )
 {
     if( !fdetector )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Feature detector is empty.\n" );
-        this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_TEST_DATA );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Feature detector is empty.\n" );
+        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
         return;
     }
 

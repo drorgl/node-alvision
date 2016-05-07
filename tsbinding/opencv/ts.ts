@@ -14,7 +14,7 @@ import path = require("path");
 import colors = require("colors");
 import async = require("async");
 import util = require('util');
-
+import fs = require('fs');
 
 //#ifndef __OPENCV_GTESTCV_HPP__
 //#define __OPENCV_GTESTCV_HPP__
@@ -117,14 +117,14 @@ export namespace cvtest {
     //
     //CV_EXPORTS string vec2str(const string& sep, const int* v, size_t nelems);
     //
-    //inline int clipInt( int val, int min_val, int max_val )
-    //{
-    //    if( val < min_val )
-    //        val = min_val;
-    //    if( val > max_val )
-    //        val = max_val;
-    //    return val;
-    //}
+    export function clipInt(val : _st.int, min_val : _st.int, max_val : _st.int ): _st.int 
+    {
+        if( val < min_val )
+            val = min_val;
+        if( val > max_val )
+            val = max_val;
+        return val;
+    }
     //
     interface IgetMinVal {
         (depth: _st.int): _st.double;
@@ -361,17 +361,23 @@ export namespace cvtest {
         run(start_from: _st.int): void {
             var test_case_idx: _st.int
             var count = this.get_test_case_count();
-            var t_start: _st.int64 = cvGetTickCount();
-            var freq: _st.double = cv::getTickFrequency();
+            //var t_start: _st.int64 = cvGetTickCount();
+            //var freq: _st.double = cv::getTickFrequency();
+
+            //var time = process.hrtime();
+            //var diff[0] * 1e9 + diff[1]
+
             var ff: boolean = this.can_do_fast_forward();
-            var progress: _st.int = 0,
+            var progress: _st.int = 0;
             var code: _st.int;
-            var t1: _st.int64 = t_start;
+            //var t1: _st.int64 = t_start;
 
             for (test_case_idx = ff && start_from >= 0 ? start_from : 0;
                 count < 0 || test_case_idx < count; test_case_idx = test_case_idx.valueOf() + 1) {
                 this.ts.update_context(this, test_case_idx, ff);
-                progress = this.update_progress(progress, test_case_idx, count, (t1.valueOf() - t_start.valueOf()) / (freq.valueOf() * 1000));
+
+                //DROR: this doesn't make any sense, dt will always be 0...
+                progress = this.update_progress(progress, test_case_idx, count, 0);// (t1.valueOf() - t_start.valueOf()) / (freq.valueOf() * 1000));
 
                 code = this.prepare_test_case(test_case_idx);
                 if (code < 0 || this.ts.get_err_code() < 0)
@@ -393,7 +399,7 @@ export namespace cvtest {
         //    // the wrapper for run that cares of exceptions
         safe_run(start_from?: _st.int /*= 0*/): void {
             this.read_params(this.ts.get_file_storage());
-            this.ts.update_context(0, -1, true);
+            this.ts.update_context(null, -1, true);
             this.ts.update_context(this, -1, true);
 
             try {
@@ -401,7 +407,7 @@ export namespace cvtest {
             }
             catch (exc) {
                 //todo, check if correct!
-                var errorStr = exc.message() + cvErrorStr(exc.code);
+                var errorStr = exc.message(); //+ cvErrorStr(exc.code);
                 var buf = util.format("OpenCV Error:\n\t % s(%s) in %s, file % s, line % d",
                     errorStr, exc.err.c_str(), exc.func.size() > 0 ?
                         exc.func.c_str() : "unknown function", exc.file.c_str(), exc.line);
@@ -864,7 +870,7 @@ export abstract class BadArgTest extends BaseTest
         try {
             f();
         }
-        catch (e : Error) {
+        catch (e) {
             thrown = true;
             if (e.code != expected_code) {
                 this.ts.printf(TSConstants.LOG, "%s (test case #%d): the error code %d is different from the expected %d\n",
@@ -1066,4 +1072,14 @@ namespace cvtest { namespace ocl {
 //#endif // __FSTREAM_EMULATED__
 //#endif // WINRT
 //
-    }
+
+interface IdumpImage {
+    (fileName : string, image : _mat.Mat): void;
+}
+    export var dumpImage: IdumpImage = alvision_module.dumpImage;
+    //CV_EXPORTS void dumpImage(const std::string& fileName, const cv::Mat& image);
+}
+
+export function remove(filename: string): void {
+    fs.unlinkSync(filename);
+}

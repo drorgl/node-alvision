@@ -114,6 +114,7 @@
 		
 		
 		,'tsbinding/opencv/core.ts'
+		,'tsbinding/opencv/core/opengl.ts'
 		
 		,'tsbinding/opencv/cuda.ts'
 		,'tsbinding/opencv/cudaimgproc.ts'
@@ -127,13 +128,31 @@
 		,'tsbinding/opencv/mat.ts'
 		,'tsbinding/opencv/Matx.ts'
 		,'tsbinding/opencv/persistence.ts'
+		
 		,'tsbinding/opencv/photo.ts'
+		,'tsbinding/opencv/photo/cuda.ts'
+		#,'tsbinding/opencv/photo/photo_c.ts'
+		
 		,'tsbinding/opencv/static.ts'
 		,'tsbinding/opencv/videoio.ts'
 		
+		,'tsbinding/opencv/superres.ts'
+		
+		,'tsbinding/opencv/shape/emdL1.ts'
+		,'tsbinding/opencv/shape/hist_cost.ts'
+		,'tsbinding/opencv/shape/shape_distance.ts'
+		,'tsbinding/opencv/shape/shape_transformer.ts'
+		
+		
+		
+		
+		
 		,'tsbinding/opencv/test.ts'
 		,'tsbinding/opencv/tiff.ts'
+		
 		,'tsbinding/opencv/ts.ts'
+		#,'tsbinding/opencv/ts/cuda_test.ts'
+		
 		,'tsbinding/opencv/types.ts'
 		
 		,'tsbinding/opencv/ml.ts'

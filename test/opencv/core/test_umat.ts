@@ -57,8 +57,8 @@ using namespace cv;
 namespace cvtest {
 namespace ocl {
 
-#define UMAT_TEST_SIZES testing::Values(cv::Size(1, 1), cv::Size(1,128), cv::Size(128, 1), \
-    cv::Size(128, 128), cv::Size(640, 480), cv::Size(751, 373), cv::Size(1200, 1200))
+#define UMAT_TEST_SIZES testing::Values(alvision.Size(1, 1), alvision.Size(1,128), alvision.Size(128, 1), \
+    alvision.Size(128, 128), alvision.Size(640, 480), alvision.Size(751, 373), alvision.Size(1200, 1200))
 
 /////////////////////////////// Basic Tests ////////////////////////////////
 
@@ -268,7 +268,7 @@ TEST_P(UMatBasicTests, DISABLED_GetUMat)
 }
 
 INSTANTIATE_TEST_CASE_P(UMat, UMatBasicTests, Combine(testing::Values(CV_8U), testing::Values(1, 2),
-    testing::Values(cv::Size(1, 1), cv::Size(1, 128), cv::Size(128, 1), cv::Size(128, 128), cv::Size(640, 480)), Bool()));
+    testing::Values(alvision.Size(1, 1), alvision.Size(1, 128), alvision.Size(128, 1), alvision.Size(128, 128), alvision.Size(640, 480)), Bool()));
 
 //////////////////////////////////////////////////////////////// Reshape ////////////////////////////////////////////////////////////////////////
 
@@ -524,7 +524,7 @@ TEST_P(UMatTestUMatOperations, diag)
     EXPECT_MAT_NEAR(b, ub, 0);
     new_diag = randomMat(Size(ua.rows, 1), type, -100, 100);
     new_diag.copyTo(ub);
-    ua = cv::UMat::diag(ub);
+    ua = alvision.UMat::diag(ub);
     EXPECT_MAT_NEAR(ua.diag(), new_diag.t(), 0);
 }
 
@@ -540,7 +540,7 @@ TEST(UMat, BufferPoolGrowing)
     const int ITERATIONS = 200;
 #endif
     const Size sz(1920, 1080);
-    BufferPoolController* c = cv::ocl::getOpenCLAllocator()->getBufferPoolController();
+    BufferPoolController* c = alvision.ocl::getOpenCLAllocator()->getBufferPoolController();
     if (c)
     {
         size_t oldMaxReservedSize = c->getMaxReservedSize();
@@ -642,8 +642,8 @@ bool CV_UMatTest::TestUMat()
         std::cout << "ra: " << ra << std::endl;
         std::cout << "rb: " << rb << std::endl;*/
 
-        cv::max(ra, rb, rc);
-        cv::max(ura, urb, urc);
+        alvision.max(ra, rb, rc);
+        alvision.max(ura, urb, urc);
         urc.copyTo(rc0);
 
         /*std::cout << "==============================================\nafter op:\n";
@@ -654,17 +654,17 @@ bool CV_UMatTest::TestUMat()
 
         {
             UMat tmp = rc0.getUMat(ACCESS_WRITE);
-            cv::max(ura, urb, tmp);
+            alvision.max(ura, urb, tmp);
         }
         CHECK_DIFF(rc0, rc);
 
         ura.copyTo(urc);
-        cv::max(urc, urb, urc);
+        alvision.max(urc, urb, urc);
         urc.copyTo(rc0);
         CHECK_DIFF(rc0, rc);
 
         rc = ra ^ rb;
-        cv::bitwise_xor(ura, urb, urc);
+        alvision.bitwise_xor(ura, urb, urc);
         urc.copyTo(rc0);
 
         /*std::cout << "==============================================\nafter op:\n";
@@ -674,20 +674,20 @@ bool CV_UMatTest::TestUMat()
         CHECK_DIFF(rc0, rc);
 
         rc = ra + rb;
-        cv::add(ura, urb, urc);
+        alvision.add(ura, urb, urc);
         urc.copyTo(rc0);
 
         CHECK_DIFF(rc0, rc);
 
-        cv::subtract(ra, Scalar::all(5), rc);
-        cv::subtract(ura, Scalar::all(5), urc);
+        alvision.subtract(ra, Scalar::all(5), rc);
+        alvision.subtract(ura, Scalar::all(5), urc);
         urc.copyTo(rc0);
 
         CHECK_DIFF(rc0, rc);
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TS::LOG, "%s\n", e.s.c_str());
+        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         return false;
     }
@@ -697,8 +697,8 @@ bool CV_UMatTest::TestUMat()
 void CV_UMatTest::run( int /* start_from */)
 {
     printf("Use OpenCL: %s\nHave OpenCL: %s\n",
-           cv::ocl::useOpenCL() ? "TRUE" : "FALSE",
-           cv::ocl::haveOpenCL() ? "TRUE" : "FALSE" );
+           alvision.ocl::useOpenCL() ? "TRUE" : "FALSE",
+           alvision.ocl::haveOpenCL() ? "TRUE" : "FALSE" );
 
     if (!TestUMat())
         return;
@@ -751,12 +751,12 @@ TEST(UMat, Sync)
 
     {
         Mat m = um.getMat(ACCESS_WRITE);
-        m.setTo(cv::Scalar::all(17));
+        m.setTo(alvision.Scalar::all(17));
     }
 
-    um.setTo(cv::Scalar::all(19));
+    um.setTo(alvision.Scalar::all(19));
 
-    EXPECT_EQ(0, alvision.cvtest.norm(um.getMat(ACCESS_READ), cv::Mat(um.size(), um.type(), 19), NORM_INF));
+    EXPECT_EQ(0, alvision.cvtest.norm(um.getMat(ACCESS_READ), alvision.Mat(um.size(), um.type(), 19), NORM_INF));
 }
 
 TEST(UMat, CopyToIfDeviceCopyIsObsolete)
@@ -780,19 +780,19 @@ TEST(UMat, CopyToIfDeviceCopyIsObsolete)
 TEST(UMat, setOpenCL)
 {
     // save the current state
-    bool useOCL = cv::ocl::useOpenCL();
+    bool useOCL = alvision.ocl::useOpenCL();
 
     Mat m = (Mat_<uchar>(3,3)<<0,1,2,3,4,5,6,7,8);
 
-    cv::ocl::setUseOpenCL(true);
+    alvision.ocl::setUseOpenCL(true);
     UMat um1;
     m.copyTo(um1);
 
-    cv::ocl::setUseOpenCL(false);
+    alvision.ocl::setUseOpenCL(false);
     UMat um2;
     m.copyTo(um2);
 
-    cv::ocl::setUseOpenCL(true);
+    alvision.ocl::setUseOpenCL(true);
     countNonZero(um1);
     countNonZero(um2);
 
@@ -803,7 +803,7 @@ TEST(UMat, setOpenCL)
     EXPECT_MAT_NEAR(um1, m, 0);
     EXPECT_MAT_NEAR(um1, um2, 0);
 
-    cv::ocl::setUseOpenCL(false);
+    alvision.ocl::setUseOpenCL(false);
     countNonZero(um1);
     countNonZero(um2);
 
@@ -815,7 +815,7 @@ TEST(UMat, setOpenCL)
     EXPECT_MAT_NEAR(um1, m, 0);
 
     // reset state to the previous one
-    cv::ocl::setUseOpenCL(useOCL);
+    alvision.ocl::setUseOpenCL(useOCL);
 }
 
 TEST(UMat, ReadBufferRect)
@@ -830,18 +830,18 @@ TEST(UMat, ReadBufferRect)
 // Use iGPU or OPENCV_OPENCL_DEVICE=:CPU: to catch problem
 TEST(UMat, DISABLED_synchronization_map_unmap)
 {
-    class TestParallelLoopBody : public cv::ParallelLoopBody
+    class TestParallelLoopBody : public alvision.ParallelLoopBody
     {
         UMat u_;
     public:
         TestParallelLoopBody(const UMat& u) : u_(u) { }
-        void operator() (const cv::Range& range) const
+        void operator() (const alvision.Range& range) const
         {
             printf("range: %d, %d -- begin\n", range.start, range.end);
             for (int i = 0; i < 10; i++)
             {
                 printf("%d: %d map...\n", range.start, i);
-                Mat m = u_.getMat(cv::ACCESS_READ);
+                Mat m = u_.getMat(alvision.ACCESS_READ);
 
                 printf("%d: %d unmap...\n", range.start, i);
                 m.release();
@@ -852,9 +852,9 @@ TEST(UMat, DISABLED_synchronization_map_unmap)
     try
     {
         UMat u(1000, 1000, CV_32FC1);
-        parallel_for_(cv::Range(0, 2), TestParallelLoopBody(u));
+        parallel_for_(alvision.Range(0, 2), TestParallelLoopBody(u));
     }
-    catch (const cv::Exception& e)
+    catch (const alvision.Exception& e)
     {
         FAIL() << "Exception: " << e.what();
         ADD_FAILURE();
@@ -880,7 +880,7 @@ TEST(UMat, DISABLED_bug_with_unmap)
             u.release();
             m.release();
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
             printf("i = %d... %s\n", i, e.what());
             ADD_FAILURE();
@@ -922,7 +922,7 @@ TEST(UMat, DISABLED_bug_with_unmap_in_class)
         l.processData(m);
         UMat result = l.getResult();
     }
-    catch (const cv::Exception& e)
+    catch (const alvision.Exception& e)
     {
         printf("exception... %s\n", e.what());
         ADD_FAILURE();

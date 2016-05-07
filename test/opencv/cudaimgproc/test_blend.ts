@@ -59,7 +59,7 @@ using namespace cvtest;
 namespace
 {
     template <typename T>
-    void blendLinearGold(const cv::Mat& img1, const cv::Mat& img2, const cv::Mat& weights1, const cv::Mat& weights2, cv::Mat& result_gold)
+    void blendLinearGold(const alvision.Mat& img1, const alvision.Mat& img2, const alvision.Mat& weights1, const alvision.Mat& weights2, alvision.Mat& result_gold)
     {
         result_gold.create(img1.size(), img1.type());
 
@@ -83,10 +83,10 @@ namespace
     }
 }
 
-PARAM_TEST_CASE(Blend, cv::cuda::DeviceInfo, cv::Size, MatType, UseRoi)
+PARAM_TEST_CASE(Blend, alvision.cuda::DeviceInfo, alvision.Size, MatType, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int type;
     bool useRoi;
 
@@ -97,7 +97,7 @@ PARAM_TEST_CASE(Blend, cv::cuda::DeviceInfo, cv::Size, MatType, UseRoi)
         type = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
@@ -105,15 +105,15 @@ CUDA_TEST_P(Blend, Accuracy)
 {
     int depth = CV_MAT_DEPTH(type);
 
-    cv::Mat img1 = randomMat(size, type, 0.0, depth == CV_8U ? 255.0 : 1.0);
-    cv::Mat img2 = randomMat(size, type, 0.0, depth == CV_8U ? 255.0 : 1.0);
-    cv::Mat weights1 = randomMat(size, CV_32F, 0, 1);
-    cv::Mat weights2 = randomMat(size, CV_32F, 0, 1);
+    alvision.Mat img1 = randomMat(size, type, 0.0, depth == CV_8U ? 255.0 : 1.0);
+    alvision.Mat img2 = randomMat(size, type, 0.0, depth == CV_8U ? 255.0 : 1.0);
+    alvision.Mat weights1 = randomMat(size, CV_32F, 0, 1);
+    alvision.Mat weights2 = randomMat(size, CV_32F, 0, 1);
 
-    cv::cuda::GpuMat result;
-    cv::cuda::blendLinear(loadMat(img1, useRoi), loadMat(img2, useRoi), loadMat(weights1, useRoi), loadMat(weights2, useRoi), result);
+    alvision.cuda::Gpuvar result = new alvision.Mat();
+    alvision.cuda::blendLinear(loadMat(img1, useRoi), loadMat(img2, useRoi), loadMat(weights1, useRoi), loadMat(weights2, useRoi), result);
 
-    cv::Mat result_gold;
+    alvision.Mat result_gold;
     if (depth == CV_8U)
         blendLinearGold<uchar>(img1, img2, weights1, weights2, result_gold);
     else

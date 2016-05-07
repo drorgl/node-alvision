@@ -82,21 +82,21 @@ namespace cv
         static String change_extension(const String& file, const String& ext);
     };
 
-    inline cv::String get_dragon_ply_file_path()
+    inline alvision.String get_dragon_ply_file_path()
     {
-        return Path::combine(alvision.cvtest.TS::ptr()->get_data_path(), "dragon.ply");
+        return Path::combine(alvision.cvtest.TS.ptr().get_data_path(), "dragon.ply");
     }
 
     template<typename _Tp>
-    inline std::vector< Affine3<_Tp> > generate_test_trajectory()
+    inline std::Array< Affine3<_Tp> > generate_test_trajectory()
     {
-        std::vector< Affine3<_Tp> > result;
+        std::Array< Affine3<_Tp> > result;
 
         for (int i = 0, j = 0; i <= 270; i += 3, j += 10)
         {
-            double x = 2 * cos(i * 3 * CV_PI/180.0) * (1.0 + 0.5 * cos(1.2 + i * 1.2 * CV_PI/180.0));
-            double y = 0.25 + i/270.0 + sin(j * CV_PI/180.0) * 0.2 * sin(0.6 + j * 1.5 * CV_PI/180.0);
-            double z = 2 * sin(i * 3 * CV_PI/180.0) * (1.0 + 0.5 * cos(1.2 + i * CV_PI/180.0));
+            double x = 2 * cos(i * 3 * Math.PI/180.0) * (1.0 + 0.5 * cos(1.2 + i * 1.2 * Math.PI/180.0));
+            double y = 0.25 + i/270.0 + sin(j * Math.PI/180.0) * 0.2 * sin(0.6 + j * 1.5 * Math.PI/180.0);
+            double z = 2 * sin(i * 3 * Math.PI/180.0) * (1.0 + 0.5 * cos(1.2 + i * Math.PI/180.0));
             result.push_back(viz::makeCameraPose(Vec3d(x, y, z), Vec3d::all(0.0), Vec3d(0.0, 1.0, 0.0)));
         }
         return result;
@@ -114,7 +114,7 @@ namespace cv
 
 #include "test_precomp.hpp"
 
-cv::String cv::Path::combine(const String& item1, const String& item2)
+alvision.String alvision.Path::combine(const String& item1, const String& item2)
 {
     if (item1.empty())
         return item2;
@@ -128,10 +128,10 @@ cv::String cv::Path::combine(const String& item1, const String& item2)
     return item1 + (need_append ? "/" : "") + item2;
 }
 
-cv::String cv::Path::combine(const String& item1, const String& item2, const String& item3)
+alvision.String alvision.Path::combine(const String& item1, const String& item2, const String& item3)
 { return combine(combine(item1, item2), item3); }
 
-cv::String cv::Path::change_extension(const String& file, const String& ext)
+alvision.String alvision.Path::change_extension(const String& file, const String& ext)
 {
     String::size_type pos = file.find_last_of('.');
     return pos == String::npos ? file : file.substr(0, pos+1) + ext;

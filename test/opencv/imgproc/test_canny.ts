@@ -107,44 +107,43 @@ class CV_CannyTest extends alvision.cvtest.ArrayTest
 
         return code;
     }
-    run_func() : void
-{
-    if (!this.test_cpp)
-        alvision.cvCanny(test_array[INPUT][0], test_array[OUTPUT][0], threshold1, threshold2,
-            aperture_size + (use_true_gradient ? CV_CANNY_L2_GRADIENT : 0));
-    else {
-        cv::Mat _out = cv::cvarrToMat(test_array[OUTPUT][0]);
-        cv::Canny(cv::cvarrToMat(test_array[INPUT][0]), _out, threshold1, threshold2,
-            aperture_size + (use_true_gradient ? CV_CANNY_L2_GRADIENT : 0));
+    run_func(): void {
+        if (!this.test_cpp)
+            alvision.cvCanny(test_array[INPUT][0], test_array[OUTPUT][0], threshold1, threshold2,
+                aperture_size + (use_true_gradient ? CV_CANNY_L2_GRADIENT : 0));
+        else {
+            alvision.Mat _out = alvision.cvarrToMat(test_array[OUTPUT][0]);
+            alvision.Canny(alvision.cvarrToMat(test_array[INPUT][0]), _out, threshold1, threshold2,
+                aperture_size + (use_true_gradient ? CV_CANNY_L2_GRADIENT : 0));
+        }
     }
+
+    prepare_to_validation(int): void {
+        var src = this.test_mat[this.INPUT][0], dst = this.test_mat[this.REF_OUTPUT][0];
+        test_Canny(src, dst, threshold1, threshold2, aperture_size, use_true_gradient);
     }
 
-    prepare_to_validation(int) : void
-{
-    Mat src = test_mat[INPUT][0], dst = test_mat[REF_OUTPUT][0];
-    test_Canny(src, dst, threshold1, threshold2, aperture_size, use_true_gradient);
-}
 
+    validate_test_results( test_case_idx : alvision.int ) : alvision.int {
+        var code = alvision.cvtest.FailureCode.OK,
+        var nz0;
+        this.prepare_to_validation(test_case_idx);
 
-    validate_test_results(int test_case_idx ) : alvision.int {
-        int code = alvision.cvtest.TS::OK, nz0;
-        prepare_to_validation(test_case_idx);
-
-        double err = alvision.cvtest.norm(test_mat[OUTPUT][0], test_mat[REF_OUTPUT][0], CV_L1);
+        var err = alvision.cvtest.norm(this.test_mat[this.OUTPUT][0], this.test_mat[this.REF_OUTPUT][0], alvision.NormTypes.NORM_L1);
         if (err == 0)
             return code;
 
-        if (err != cvRound(err) || cvRound(err) % 255 != 0) {
-            ts ->printf(alvision.cvtest.TS::LOG, "Some of the pixels, produced by Canny, are not 0's or 255's; the difference is %g\n", err);
-            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+        if (err != Math.round(err.valueOf()) || Math.round(err.valueOf()) % 255 != 0) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Some of the pixels, produced by Canny, are not 0's or 255's; the difference is %g\n", err);
+            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
             return code;
         }
 
         nz0 = cvRound(alvision.cvtest.norm(test_mat[REF_OUTPUT][0], CV_L1) / 255);
         err = (err / 255 / MAX(nz0, 100)) * 100;
         if (err > 1) {
-            ts ->printf(alvision.cvtest.TS::LOG, "Too high percentage of non-matching edge pixels = %g%%\n", err);
-            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Too high percentage of non-matching edge pixels = %g%%\n", err);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
         }
 
         return code;
@@ -192,8 +191,8 @@ function test_Canny(  src : alvision.Mat, dst : alvision.Mat,
 {
     int m = aperture_size;
     Point anchor(m/2, m/2);
-    const double tan_pi_8 = tan(CV_PI/8.);
-    const double tan_3pi_8 = tan(CV_PI*3/8);
+    const double tan_pi_8 = tan(Math.PI/8.);
+    const double tan_3pi_8 = tan(Math.PI*3/8);
     float lowThreshold = (float)MIN(threshold1, threshold2);
     float highThreshold = (float)MAX(threshold1, threshold2);
 

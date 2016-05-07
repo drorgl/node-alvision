@@ -63,9 +63,9 @@ namespace
     IMPLEMENT_PARAM_CLASS(FAST_NonmaxSuppression, bool)
 }
 
-PARAM_TEST_CASE(FAST, cv::cuda::DeviceInfo, FAST_Threshold, FAST_NonmaxSuppression)
+PARAM_TEST_CASE(FAST, alvision.cuda::DeviceInfo, FAST_Threshold, FAST_NonmaxSuppression)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     int threshold;
     bool nonmaxSuppression;
 
@@ -75,36 +75,36 @@ PARAM_TEST_CASE(FAST, cv::cuda::DeviceInfo, FAST_Threshold, FAST_NonmaxSuppressi
         threshold = GET_PARAM(1);
         nonmaxSuppression = GET_PARAM(2);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(FAST, Accuracy)
 {
-    cv::Mat image = readImage("features2d/aloe.png", cv::IMREAD_GRAYSCALE);
+    alvision.Mat image = readImage("features2d/aloe.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
     ASSERT_FALSE(image.empty());
 
-    cv::Ptr<cv::cuda::FastFeatureDetector> fast = cv::cuda::FastFeatureDetector::create(threshold, nonmaxSuppression);
+    alvision.Ptr<alvision.cuda::FastFeatureDetector> fast = alvision.cuda::FastFeatureDetector::create(threshold, nonmaxSuppression);
 
-    if (!supportFeature(devInfo, cv::cuda::GLOBAL_ATOMICS))
+    if (!supportFeature(devInfo, alvision.cuda::GLOBAL_ATOMICS))
     {
         try
         {
-            std::vector<cv::KeyPoint> keypoints;
+            std::Array<alvision.KeyPoint> keypoints;
             fast->detect(loadMat(image), keypoints);
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsNotImplemented, e.code);
+            ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }
     }
     else
     {
-        std::vector<cv::KeyPoint> keypoints;
+        std::Array<alvision.KeyPoint> keypoints;
         fast->detect(loadMat(image), keypoints);
 
-        std::vector<cv::KeyPoint> keypoints_gold;
-        cv::FAST(image, keypoints_gold, threshold, nonmaxSuppression);
+        std::Array<alvision.KeyPoint> keypoints_gold;
+        alvision.FAST(image, keypoints_gold, threshold, nonmaxSuppression);
 
         ASSERT_KEYPOINTS_EQ(keypoints_gold, keypoints);
     }
@@ -130,11 +130,11 @@ namespace
     IMPLEMENT_PARAM_CLASS(ORB_BlurForDescriptor, bool)
 }
 
-CV_ENUM(ORB_ScoreType, cv::ORB::HARRIS_SCORE, cv::ORB::FAST_SCORE)
+CV_ENUM(ORB_ScoreType, alvision.ORB::HARRIS_SCORE, alvision.ORB::FAST_SCORE)
 
-PARAM_TEST_CASE(ORB, cv::cuda::DeviceInfo, ORB_FeaturesCount, ORB_ScaleFactor, ORB_LevelsCount, ORB_EdgeThreshold, ORB_firstLevel, ORB_WTA_K, ORB_ScoreType, ORB_PatchSize, ORB_BlurForDescriptor)
+PARAM_TEST_CASE(ORB, alvision.cuda::DeviceInfo, ORB_FeaturesCount, ORB_ScaleFactor, ORB_LevelsCount, ORB_EdgeThreshold, ORB_firstLevel, ORB_WTA_K, ORB_ScoreType, ORB_PatchSize, ORB_BlurForDescriptor)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     int nFeatures;
     float scaleFactor;
     int nLevels;
@@ -158,50 +158,50 @@ PARAM_TEST_CASE(ORB, cv::cuda::DeviceInfo, ORB_FeaturesCount, ORB_ScaleFactor, O
         patchSize = GET_PARAM(8);
         blurForDescriptor = GET_PARAM(9);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(ORB, Accuracy)
 {
-    cv::Mat image = readImage("features2d/aloe.png", cv::IMREAD_GRAYSCALE);
+    alvision.Mat image = readImage("features2d/aloe.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
     ASSERT_FALSE(image.empty());
 
-    cv::Mat mask(image.size(), CV_8UC1, cv::Scalar::all(1));
-    mask(cv::Range(0, image.rows / 2), cv::Range(0, image.cols / 2)).setTo(cv::Scalar::all(0));
+    alvision.Mat mask(image.size(), CV_8UC1, alvision.Scalar::all(1));
+    mask(alvision.Range(0, image.rows / 2), alvision.Range(0, image.cols / 2)).setTo(alvision.Scalar::all(0));
 
-    cv::Ptr<cv::cuda::ORB> orb =
-            cv::cuda::ORB::create(nFeatures, scaleFactor, nLevels, edgeThreshold, firstLevel,
+    alvision.Ptr<alvision.cuda::ORB> orb =
+            alvision.cuda::ORB::create(nFeatures, scaleFactor, nLevels, edgeThreshold, firstLevel,
                                   WTA_K, scoreType, patchSize, 20, blurForDescriptor);
 
-    if (!supportFeature(devInfo, cv::cuda::GLOBAL_ATOMICS))
+    if (!supportFeature(devInfo, alvision.cuda::GLOBAL_ATOMICS))
     {
         try
         {
-            std::vector<cv::KeyPoint> keypoints;
-            cv::cuda::GpuMat descriptors;
+            std::Array<alvision.KeyPoint> keypoints;
+            alvision.cuda::GpuMat descriptors;
             orb->detectAndComputeAsync(loadMat(image), loadMat(mask), keypoints, descriptors);
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsNotImplemented, e.code);
+            ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }
     }
     else
     {
-        std::vector<cv::KeyPoint> keypoints;
-        cv::cuda::GpuMat descriptors;
+        std::Array<alvision.KeyPoint> keypoints;
+        alvision.cuda::GpuMat descriptors;
         orb->detectAndCompute(loadMat(image), loadMat(mask), keypoints, descriptors);
 
-        cv::Ptr<cv::ORB> orb_gold = cv::ORB::create(nFeatures, scaleFactor, nLevels, edgeThreshold, firstLevel, WTA_K, scoreType, patchSize);
+        alvision.Ptr<alvision.ORB> orb_gold = alvision.ORB::create(nFeatures, scaleFactor, nLevels, edgeThreshold, firstLevel, WTA_K, scoreType, patchSize);
 
-        std::vector<cv::KeyPoint> keypoints_gold;
-        cv::Mat descriptors_gold;
+        std::Array<alvision.KeyPoint> keypoints_gold;
+        alvision.Mat descriptors_gold;
         orb_gold->detectAndCompute(image, mask, keypoints_gold, descriptors_gold);
 
-        cv::BFMatcher matcher(cv::NORM_HAMMING);
-        std::vector<cv::DMatch> matches;
-        matcher.match(descriptors_gold, cv::Mat(descriptors), matches);
+        alvision.BFMatcher matcher(alvision.NORM_HAMMING);
+        std::Array<alvision.DMatch> matches;
+        matcher.match(descriptors_gold, alvision.Mat(descriptors), matches);
 
         int matchedCount = getMatchedPointsCount(keypoints_gold, keypoints, matches);
         double matchedRatio = static_cast<double>(matchedCount) / keypoints.size();
@@ -218,7 +218,7 @@ INSTANTIATE_TEST_CASE_P(CUDA_Features2D, ORB,  testing::Combine(
     testing::Values(ORB_EdgeThreshold(31)),
     testing::Values(ORB_firstLevel(0)),
     testing::Values(ORB_WTA_K(2), ORB_WTA_K(3), ORB_WTA_K(4)),
-    testing::Values(ORB_ScoreType(cv::ORB::HARRIS_SCORE)),
+    testing::Values(ORB_ScoreType(alvision.ORB::HARRIS_SCORE)),
     testing::Values(ORB_PatchSize(31), ORB_PatchSize(29)),
     testing::Values(ORB_BlurForDescriptor(false), ORB_BlurForDescriptor(true))));
 
@@ -231,9 +231,9 @@ namespace
     IMPLEMENT_PARAM_CLASS(UseMask, bool)
 }
 
-PARAM_TEST_CASE(BruteForceMatcher, cv::cuda::DeviceInfo, NormCode, DescriptorSize, UseMask)
+PARAM_TEST_CASE(BruteForceMatcher, alvision.cuda::DeviceInfo, NormCode, DescriptorSize, UseMask)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     int normCode;
     int dim;
     bool useMask;
@@ -241,7 +241,7 @@ PARAM_TEST_CASE(BruteForceMatcher, cv::cuda::DeviceInfo, NormCode, DescriptorSiz
     int queryDescCount;
     int countFactor;
 
-    cv::Mat query, train;
+    alvision.Mat query, train;
 
     virtual void SetUp()
     {
@@ -250,19 +250,19 @@ PARAM_TEST_CASE(BruteForceMatcher, cv::cuda::DeviceInfo, NormCode, DescriptorSiz
         dim = GET_PARAM(2);
         useMask = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
 
         queryDescCount = 300; // must be even number because we split train data in some cases in two
         countFactor = 4; // do not change it
 
-        cv::RNG& rng = alvision.cvtest.TS::ptr()->get_rng();
+        alvision.RNG& rng = alvision.cvtest.TS::ptr()->get_rng();
 
-        cv::Mat queryBuf, trainBuf;
+        alvision.Mat queryBuf, trainBuf;
 
         // Generate query descriptors randomly.
         // Descriptor vector elements are integer values.
         queryBuf.create(queryDescCount, dim, CV_32SC1);
-        rng.fill(queryBuf, cv::RNG::UNIFORM, cv::Scalar::all(0), cv::Scalar::all(3));
+        rng.fill(queryBuf, alvision.RNG::UNIFORM, alvision.Scalar::all(0), alvision.Scalar::all(3));
         queryBuf.convertTo(queryBuf, CV_32FC1);
 
         // Generate train decriptors as follows:
@@ -274,11 +274,11 @@ PARAM_TEST_CASE(BruteForceMatcher, cv::cuda::DeviceInfo, NormCode, DescriptorSiz
         float step = 1.f / countFactor;
         for (int qIdx = 0; qIdx < queryDescCount; qIdx++)
         {
-            cv::Mat queryDescriptor = queryBuf.row(qIdx);
+            alvision.Mat queryDescriptor = queryBuf.row(qIdx);
             for (int c = 0; c < countFactor; c++)
             {
                 int tIdx = qIdx * countFactor + c;
-                cv::Mat trainDescriptor = trainBuf.row(tIdx);
+                alvision.Mat trainDescriptor = trainBuf.row(tIdx);
                 queryDescriptor.copyTo(trainDescriptor);
                 int elem = rng(dim);
                 float diff = rng.uniform(step * c, step * (c + 1));
@@ -293,17 +293,17 @@ PARAM_TEST_CASE(BruteForceMatcher, cv::cuda::DeviceInfo, NormCode, DescriptorSiz
 
 CUDA_TEST_P(BruteForceMatcher, Match_Single)
 {
-    cv::Ptr<cv::cuda::DescriptorMatcher> matcher =
-            cv::cuda::DescriptorMatcher::createBFMatcher(normCode);
+    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
+            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
 
-    cv::cuda::GpuMat mask;
+    alvision.cuda::GpuMat mask;
     if (useMask)
     {
         mask.create(query.rows, train.rows, CV_8UC1);
-        mask.setTo(cv::Scalar::all(1));
+        mask.setTo(alvision.Scalar::all(1));
     }
 
-    std::vector<cv::DMatch> matches;
+    std::Array<alvision.DMatch> matches;
     matcher->match(loadMat(query), loadMat(train), matches, mask);
 
     ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
@@ -311,7 +311,7 @@ CUDA_TEST_P(BruteForceMatcher, Match_Single)
     int badCount = 0;
     for (size_t i = 0; i < matches.size(); i++)
     {
-        cv::DMatch match = matches[i];
+        alvision.DMatch match = matches[i];
         if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i * countFactor) || (match.imgIdx != 0))
             badCount++;
     }
@@ -321,29 +321,29 @@ CUDA_TEST_P(BruteForceMatcher, Match_Single)
 
 CUDA_TEST_P(BruteForceMatcher, Match_Collection)
 {
-    cv::Ptr<cv::cuda::DescriptorMatcher> matcher =
-            cv::cuda::DescriptorMatcher::createBFMatcher(normCode);
+    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
+            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
 
-    cv::cuda::GpuMat d_train(train);
+    alvision.cuda::GpuMat d_train(train);
 
     // make add() twice to test such case
-    matcher->add(std::vector<cv::cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
-    matcher->add(std::vector<cv::cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
+    matcher->add(std::Array<alvision.cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
+    matcher->add(std::Array<alvision.cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
 
     // prepare masks (make first nearest match illegal)
-    std::vector<cv::cuda::GpuMat> masks(2);
+    std::Array<alvision.cuda::GpuMat> masks(2);
     for (int mi = 0; mi < 2; mi++)
     {
-        masks[mi] = cv::cuda::GpuMat(query.rows, train.rows/2, CV_8UC1, cv::Scalar::all(1));
+        masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows/2, CV_8UC1, alvision.Scalar::all(1));
         for (int di = 0; di < queryDescCount/2; di++)
-            masks[mi].col(di * countFactor).setTo(cv::Scalar::all(0));
+            masks[mi].col(di * countFactor).setTo(alvision.Scalar::all(0));
     }
 
-    std::vector<cv::DMatch> matches;
+    std::Array<alvision.DMatch> matches;
     if (useMask)
-        matcher->match(cv::cuda::GpuMat(query), matches, masks);
+        matcher->match(alvision.cuda::GpuMat(query), matches, masks);
     else
-        matcher->match(cv::cuda::GpuMat(query), matches);
+        matcher->match(alvision.cuda::GpuMat(query), matches);
 
     ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
 
@@ -351,7 +351,7 @@ CUDA_TEST_P(BruteForceMatcher, Match_Collection)
     int shift = useMask ? 1 : 0;
     for (size_t i = 0; i < matches.size(); i++)
     {
-        cv::DMatch match = matches[i];
+        alvision.DMatch match = matches[i];
 
         if ((int)i < queryDescCount / 2)
         {
@@ -376,19 +376,19 @@ CUDA_TEST_P(BruteForceMatcher, Match_Collection)
 
 CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Single)
 {
-    cv::Ptr<cv::cuda::DescriptorMatcher> matcher =
-            cv::cuda::DescriptorMatcher::createBFMatcher(normCode);
+    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
+            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
 
     const int knn = 2;
 
-    cv::cuda::GpuMat mask;
+    alvision.cuda::GpuMat mask;
     if (useMask)
     {
         mask.create(query.rows, train.rows, CV_8UC1);
-        mask.setTo(cv::Scalar::all(1));
+        mask.setTo(alvision.Scalar::all(1));
     }
 
-    std::vector< std::vector<cv::DMatch> > matches;
+    std::Array< std::Array<alvision.DMatch> > matches;
     matcher->knnMatch(loadMat(query), loadMat(train), matches, knn, mask);
 
     ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
@@ -403,7 +403,7 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Single)
             int localBadCount = 0;
             for (int k = 0; k < knn; k++)
             {
-                cv::DMatch match = matches[i][k];
+                alvision.DMatch match = matches[i][k];
                 if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i * countFactor + k) || (match.imgIdx != 0))
                     localBadCount++;
             }
@@ -416,19 +416,19 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Single)
 
 CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Single)
 {
-    cv::Ptr<cv::cuda::DescriptorMatcher> matcher =
-            cv::cuda::DescriptorMatcher::createBFMatcher(normCode);
+    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
+            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
 
     const int knn = 3;
 
-    cv::cuda::GpuMat mask;
+    alvision.cuda::GpuMat mask;
     if (useMask)
     {
         mask.create(query.rows, train.rows, CV_8UC1);
-        mask.setTo(cv::Scalar::all(1));
+        mask.setTo(alvision.Scalar::all(1));
     }
 
-    std::vector< std::vector<cv::DMatch> > matches;
+    std::Array< std::Array<alvision.DMatch> > matches;
     matcher->knnMatch(loadMat(query), loadMat(train), matches, knn, mask);
 
     ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
@@ -443,7 +443,7 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Single)
             int localBadCount = 0;
             for (int k = 0; k < knn; k++)
             {
-                cv::DMatch match = matches[i][k];
+                alvision.DMatch match = matches[i][k];
                 if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i * countFactor + k) || (match.imgIdx != 0))
                     localBadCount++;
             }
@@ -456,32 +456,32 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Single)
 
 CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Collection)
 {
-    cv::Ptr<cv::cuda::DescriptorMatcher> matcher =
-            cv::cuda::DescriptorMatcher::createBFMatcher(normCode);
+    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
+            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
 
     const int knn = 2;
 
-    cv::cuda::GpuMat d_train(train);
+    alvision.cuda::GpuMat d_train(train);
 
     // make add() twice to test such case
-    matcher->add(std::vector<cv::cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
-    matcher->add(std::vector<cv::cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
+    matcher->add(std::Array<alvision.cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
+    matcher->add(std::Array<alvision.cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
 
     // prepare masks (make first nearest match illegal)
-    std::vector<cv::cuda::GpuMat> masks(2);
+    std::Array<alvision.cuda::GpuMat> masks(2);
     for (int mi = 0; mi < 2; mi++ )
     {
-        masks[mi] = cv::cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, cv::Scalar::all(1));
+        masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, alvision.Scalar::all(1));
         for (int di = 0; di < queryDescCount / 2; di++)
-            masks[mi].col(di * countFactor).setTo(cv::Scalar::all(0));
+            masks[mi].col(di * countFactor).setTo(alvision.Scalar::all(0));
     }
 
-    std::vector< std::vector<cv::DMatch> > matches;
+    std::Array< std::Array<alvision.DMatch> > matches;
 
     if (useMask)
-        matcher->knnMatch(cv::cuda::GpuMat(query), matches, knn, masks);
+        matcher->knnMatch(alvision.cuda::GpuMat(query), matches, knn, masks);
     else
-        matcher->knnMatch(cv::cuda::GpuMat(query), matches, knn);
+        matcher->knnMatch(alvision.cuda::GpuMat(query), matches, knn);
 
     ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
 
@@ -496,7 +496,7 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Collection)
             int localBadCount = 0;
             for (int k = 0; k < knn; k++)
             {
-                cv::DMatch match = matches[i][k];
+                alvision.DMatch match = matches[i][k];
                 {
                     if ((int)i < queryDescCount / 2)
                     {
@@ -519,32 +519,32 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Collection)
 
 CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Collection)
 {
-    cv::Ptr<cv::cuda::DescriptorMatcher> matcher =
-            cv::cuda::DescriptorMatcher::createBFMatcher(normCode);
+    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
+            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
 
     const int knn = 3;
 
-    cv::cuda::GpuMat d_train(train);
+    alvision.cuda::GpuMat d_train(train);
 
     // make add() twice to test such case
-    matcher->add(std::vector<cv::cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
-    matcher->add(std::vector<cv::cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
+    matcher->add(std::Array<alvision.cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
+    matcher->add(std::Array<alvision.cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
 
     // prepare masks (make first nearest match illegal)
-    std::vector<cv::cuda::GpuMat> masks(2);
+    std::Array<alvision.cuda::GpuMat> masks(2);
     for (int mi = 0; mi < 2; mi++ )
     {
-        masks[mi] = cv::cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, cv::Scalar::all(1));
+        masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, alvision.Scalar::all(1));
         for (int di = 0; di < queryDescCount / 2; di++)
-            masks[mi].col(di * countFactor).setTo(cv::Scalar::all(0));
+            masks[mi].col(di * countFactor).setTo(alvision.Scalar::all(0));
     }
 
-    std::vector< std::vector<cv::DMatch> > matches;
+    std::Array< std::Array<alvision.DMatch> > matches;
 
     if (useMask)
-        matcher->knnMatch(cv::cuda::GpuMat(query), matches, knn, masks);
+        matcher->knnMatch(alvision.cuda::GpuMat(query), matches, knn, masks);
     else
-        matcher->knnMatch(cv::cuda::GpuMat(query), matches, knn);
+        matcher->knnMatch(alvision.cuda::GpuMat(query), matches, knn);
 
     ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
 
@@ -559,7 +559,7 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Collection)
             int localBadCount = 0;
             for (int k = 0; k < knn; k++)
             {
-                cv::DMatch match = matches[i][k];
+                alvision.DMatch match = matches[i][k];
                 {
                     if ((int)i < queryDescCount / 2)
                     {
@@ -582,33 +582,33 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Collection)
 
 CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Single)
 {
-    cv::Ptr<cv::cuda::DescriptorMatcher> matcher =
-            cv::cuda::DescriptorMatcher::createBFMatcher(normCode);
+    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
+            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
 
     const float radius = 1.f / countFactor;
 
-    if (!supportFeature(devInfo, cv::cuda::GLOBAL_ATOMICS))
+    if (!supportFeature(devInfo, alvision.cuda::GLOBAL_ATOMICS))
     {
         try
         {
-            std::vector< std::vector<cv::DMatch> > matches;
+            std::Array< std::Array<alvision.DMatch> > matches;
             matcher->radiusMatch(loadMat(query), loadMat(train), matches, radius);
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsNotImplemented, e.code);
+            ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }
     }
     else
     {
-        cv::cuda::GpuMat mask;
+        alvision.cuda::GpuMat mask;
         if (useMask)
         {
             mask.create(query.rows, train.rows, CV_8UC1);
-            mask.setTo(cv::Scalar::all(1));
+            mask.setTo(alvision.Scalar::all(1));
         }
 
-        std::vector< std::vector<cv::DMatch> > matches;
+        std::Array< std::Array<alvision.DMatch> > matches;
         matcher->radiusMatch(loadMat(query), loadMat(train), matches, radius, mask);
 
         ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
@@ -620,7 +620,7 @@ CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Single)
                 badCount++;
             else
             {
-                cv::DMatch match = matches[i][0];
+                alvision.DMatch match = matches[i][0];
                 if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i*countFactor) || (match.imgIdx != 0))
                     badCount++;
             }
@@ -632,47 +632,47 @@ CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Single)
 
 CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Collection)
 {
-    cv::Ptr<cv::cuda::DescriptorMatcher> matcher =
-            cv::cuda::DescriptorMatcher::createBFMatcher(normCode);
+    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
+            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
 
     const int n = 3;
     const float radius = 1.f / countFactor * n;
 
-    cv::cuda::GpuMat d_train(train);
+    alvision.cuda::GpuMat d_train(train);
 
     // make add() twice to test such case
-    matcher->add(std::vector<cv::cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
-    matcher->add(std::vector<cv::cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
+    matcher->add(std::Array<alvision.cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
+    matcher->add(std::Array<alvision.cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
 
     // prepare masks (make first nearest match illegal)
-    std::vector<cv::cuda::GpuMat> masks(2);
+    std::Array<alvision.cuda::GpuMat> masks(2);
     for (int mi = 0; mi < 2; mi++)
     {
-        masks[mi] = cv::cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, cv::Scalar::all(1));
+        masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, alvision.Scalar::all(1));
         for (int di = 0; di < queryDescCount / 2; di++)
-            masks[mi].col(di * countFactor).setTo(cv::Scalar::all(0));
+            masks[mi].col(di * countFactor).setTo(alvision.Scalar::all(0));
     }
 
-    if (!supportFeature(devInfo, cv::cuda::GLOBAL_ATOMICS))
+    if (!supportFeature(devInfo, alvision.cuda::GLOBAL_ATOMICS))
     {
         try
         {
-            std::vector< std::vector<cv::DMatch> > matches;
-            matcher->radiusMatch(cv::cuda::GpuMat(query), matches, radius, masks);
+            std::Array< std::Array<alvision.DMatch> > matches;
+            matcher->radiusMatch(alvision.cuda::GpuMat(query), matches, radius, masks);
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsNotImplemented, e.code);
+            ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }
     }
     else
     {
-        std::vector< std::vector<cv::DMatch> > matches;
+        std::Array< std::Array<alvision.DMatch> > matches;
 
         if (useMask)
-            matcher->radiusMatch(cv::cuda::GpuMat(query), matches, radius, masks);
+            matcher->radiusMatch(alvision.cuda::GpuMat(query), matches, radius, masks);
         else
-            matcher->radiusMatch(cv::cuda::GpuMat(query), matches, radius);
+            matcher->radiusMatch(alvision.cuda::GpuMat(query), matches, radius);
 
         ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
 
@@ -688,7 +688,7 @@ CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Collection)
                 int localBadCount = 0;
                 for (int k = 0; k < needMatchCount; k++)
                 {
-                    cv::DMatch match = matches[i][k];
+                    alvision.DMatch match = matches[i][k];
                     {
                         if ((int)i < queryDescCount / 2)
                         {
@@ -712,7 +712,7 @@ CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Collection)
 
 INSTANTIATE_TEST_CASE_P(CUDA_Features2D, BruteForceMatcher, testing::Combine(
     ALL_DEVICES,
-    testing::Values(NormCode(cv::NORM_L1), NormCode(cv::NORM_L2)),
+    testing::Values(NormCode(alvision.NORM_L1), NormCode(alvision.NORM_L2)),
     testing::Values(DescriptorSize(57), DescriptorSize(64), DescriptorSize(83), DescriptorSize(128), DescriptorSize(179), DescriptorSize(256), DescriptorSize(304)),
     testing::Values(UseMask(false), UseMask(true))));
 

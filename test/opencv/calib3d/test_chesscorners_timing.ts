@@ -83,15 +83,15 @@ void CV_ChessboardDetectorTimingTest::run( int start_from )
     int  idx, max_idx;
     int  progress = 0;
 
-    filepath = cv::format("%scv/cameracalibration/", ts->get_data_path().c_str() );
-    filename = cv::format("%schessboard_timing_list.dat", filepath.c_str() );
-    CvFileStorage* fs = cvOpenFileStorage( filename.c_str(), 0, CV_STORAGE_READ );
+    filepath = alvision.format("%scv/cameracalibration/", ts->get_data_path() );
+    filename = alvision.format("%schessboard_timing_list.dat", filepath );
+    CvFileStorage* fs = cvOpenFileStorage( filename, 0, CV_STORAGE_READ );
     CvFileNode* board_list = fs ? cvGetFileNodeByName( fs, 0, "boards" ) : 0;
 
     if( !fs || !board_list || !CV_NODE_IS_SEQ(board_list->tag) ||
         board_list->data.seq->total % 4 != 0 )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "chessboard_timing_list.dat can not be readed or is not valid" );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "chessboard_timing_list.dat can not be readed or is not valid" );
         code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
         goto _exit_;
     }
@@ -113,14 +113,14 @@ void CV_ChessboardDetectorTimingTest::run( int start_from )
         ts->update_context( this, idx-1, true );
 
         /* read the image */
-        filename = cv::format("%s%s", filepath.c_str(), imgname );
+        filename = alvision.format("%s%s", filepath, imgname );
 
-        cv::Mat img2 = cv::imread( filename );
+        alvision.Mat img2 = alvision.imread( filename );
         img = img2;
 
         if( img2.empty() )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "one of chessboard images can't be read: %s\n", filename.c_str() );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "one of chessboard images can't be read: %s\n", filename );
             if( max_idx == 1 )
             {
                 code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
@@ -129,7 +129,7 @@ void CV_ChessboardDetectorTimingTest::run( int start_from )
             continue;
         }
 
-        ts->printf(alvision.cvtest.TS::LOG, "%s: chessboard %d:\n", imgname, is_chessboard);
+        ts->printf(alvision.cvtest.TSConstants.LOG, "%s: chessboard %d:\n", imgname, is_chessboard);
 
         gray = cvCreateImage( cvSize( img.width, img.height ), IPL_DEPTH_8U, 1 );
         thresh = cvCreateImage( cvSize( img.width, img.height ), IPL_DEPTH_8U, 1 );
@@ -154,24 +154,24 @@ void CV_ChessboardDetectorTimingTest::run( int start_from )
 
         if( result != is_chessboard )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "Error: chessboard was %sdetected in the image %s\n",
+            ts->printf( alvision.cvtest.TSConstants.LOG, "Error: chessboard was %sdetected in the image %s\n",
                        result ? "" : "not ", imgname );
-            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
             goto _exit_;
         }
         if(result != result1)
         {
-            ts->printf( alvision.cvtest.TS::LOG, "Warning: results differ cvCheckChessboard %d, cvFindChessboardCorners %d\n",
+            ts->printf( alvision.cvtest.TSConstants.LOG, "Warning: results differ cvCheckChessboard %d, cvFindChessboardCorners %d\n",
                        result, result1);
         }
 
         int num_pixels = gray->width*gray->height;
         float check_chessboard_time = float(_time01 - _time0)/(float)cvGetTickFrequency(); // in us
-        ts->printf(alvision.cvtest.TS::LOG, "    cvCheckChessboard time s: %f, us per pixel: %f\n",
+        ts->printf(alvision.cvtest.TSConstants.LOG, "    cvCheckChessboard time s: %f, us per pixel: %f\n",
                    check_chessboard_time*1e-6, check_chessboard_time/num_pixels);
 
         float find_chessboard_time = float(_time1 - _time01)/(float)cvGetTickFrequency();
-        ts->printf(alvision.cvtest.TS::LOG, "    cvFindChessboard time s: %f, us per pixel: %f\n",
+        ts->printf(alvision.cvtest.TSConstants.LOG, "    cvFindChessboard time s: %f, us per pixel: %f\n",
                    find_chessboard_time*1e-6, find_chessboard_time/num_pixels);
 
         cvReleaseMat( &_v );

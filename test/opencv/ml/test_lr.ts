@@ -69,7 +69,7 @@ import fs = require('fs');
 //
 //using namespace std;
 //using namespace cv;
-//using namespace cv::ml;
+//using namespace alvision.ml;
 
 static bool calculateError( const Mat& _p_labels, const Mat& _o_labels, float& error)
 {
@@ -122,12 +122,12 @@ void CV_LRTest::run( int /*start_from*/ )
     float error = 0.0f;
     if(!calculateError(responses, tdata->getResponses(), error))
     {
-        ts->printf(alvision.cvtest.TS::LOG, "Bad prediction labels\n" );
-        test_code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Bad prediction labels\n" );
+        test_code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if(error > 0.05f)
     {
-        ts->printf(alvision.cvtest.TS::LOG, "Bad accuracy of (%f)\n", error);
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Bad accuracy of (%f)\n", error);
         test_code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
@@ -181,7 +181,7 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
     }
     catch(...)
     {
-        ts->printf(alvision.cvtest.TS::LOG, "Crash in write method.\n" );
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Crash in write method.\n" );
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_EXCEPTION);
     }
 
@@ -194,7 +194,7 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
     }
     catch(...)
     {
-        ts->printf(alvision.cvtest.TS::LOG, "Crash in write method.\n" );
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Crash in write method.\n" );
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_EXCEPTION);
     }
 
@@ -216,11 +216,11 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
 
     if(errorCount>0)
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Different prediction results before writing and after reading (errorCount=%d).\n", errorCount );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Different prediction results before writing and after reading (errorCount=%d).\n", errorCount );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
 
-    remove( filename.c_str() );
+    remove( filename );
 
     this.ts.set_failed_test_info( code );
 }

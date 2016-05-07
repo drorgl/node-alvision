@@ -58,7 +58,7 @@ public:
     CV_FilterBaseTest( bool _fp_kernel );
 
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     int read_params( CvFileStorage* fs );
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
@@ -133,8 +133,8 @@ void CV_FilterBaseTest::get_minmax_bounds( int i, int j, int type, Scalar& low, 
 
 
 void CV_FilterBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                        vector<vector<Size> >& sizes,
-                                                        vector<vector<int> >& types )
+                                                        Array<Array<Size> >& sizes,
+                                                        Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int depth = alvision.cvtest.randInt(rng) % CV_32F;
@@ -160,7 +160,7 @@ void CV_FilterBaseTest::get_test_array_types_and_sizes( int test_case_idx,
 
 int CV_FilterBaseTest::prepare_test_case( int test_case_idx )
 {
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         if( inplace && test_mat[INPUT][0].type() == test_mat[OUTPUT][0].type())
@@ -181,7 +181,7 @@ public:
 
 protected:
     void prepare_to_validation( int test_case_idx );
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     int optype, optype_min, optype_max;
@@ -199,7 +199,7 @@ CV_MorphologyBaseTest::CV_MorphologyBaseTest() : CV_FilterBaseTest( false )
 
 
 void CV_MorphologyBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     CV_FilterBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -228,7 +228,7 @@ double CV_MorphologyBaseTest::get_success_error_level( int /*test_case_idx*/, in
 int CV_MorphologyBaseTest::prepare_test_case( int test_case_idx )
 {
     int code = CV_FilterBaseTest::prepare_test_case( test_case_idx );
-    vector<int> eldata;
+    Array<int> eldata;
 
     if( code <= 0 )
         return code;
@@ -408,7 +408,7 @@ CV_FilterTest::CV_FilterTest() : CV_FilterBaseTest( true )
 
 
 void CV_FilterTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_FilterBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     RNG& rng = ts->get_rng();
@@ -462,7 +462,7 @@ CV_DerivBaseTest::CV_DerivBaseTest() : CV_FilterBaseTest( true )
 
 
 void CV_DerivBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     CV_FilterBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -493,7 +493,7 @@ protected:
     void prepare_to_validation( int test_case_idx );
     void run_func();
     void get_test_array_types_and_sizes( int test_case_idx,
-        vector<vector<Size> >& sizes, vector<vector<int> >& types );
+        Array<Array<Size> >& sizes, Array<Array<int> >& types );
     int dx, dy, origin;
 };
 
@@ -502,8 +502,8 @@ CV_SobelTest::CV_SobelTest() {}
 
 
 void CV_SobelTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                   vector<vector<Size> >& sizes,
-                                                   vector<vector<int> >& types )
+                                                   Array<Array<Size> >& sizes,
+                                                   Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     CV_DerivBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -546,7 +546,7 @@ void CV_SobelTest::run_func()
 {
     cvSobel( test_array[inplace ? OUTPUT : INPUT][0],
              test_array[OUTPUT][0], dx, dy, _aperture_size );
-    /*cv::Sobel( test_mat[inplace ? OUTPUT : INPUT][0],
+    /*alvision.Sobel( test_mat[inplace ? OUTPUT : INPUT][0],
                test_mat[OUTPUT][0], test_mat[OUTPUT][0].depth(),
                dx, dy, _aperture_size, 1, 0, border );*/
 }
@@ -568,7 +568,7 @@ public:
     CV_LaplaceTest();
 
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void prepare_to_validation( int test_case_idx );
     void run_func();
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
@@ -581,7 +581,7 @@ CV_LaplaceTest::CV_LaplaceTest()
 
 
 void CV_LaplaceTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_DerivBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     if( _aperture_size <= 1 )
@@ -642,7 +642,7 @@ CV_SmoothBaseTest::CV_SmoothBaseTest() : CV_FilterBaseTest( true )
 
 
 void CV_SmoothBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     CV_FilterBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -673,7 +673,7 @@ public:
     CV_BlurTest();
 
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void prepare_to_validation( int test_case_idx );
     void run_func();
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
@@ -687,7 +687,7 @@ CV_BlurTest::CV_BlurTest()
 
 
 void CV_BlurTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     CV_SmoothBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -760,7 +760,7 @@ double CV_GaussianBlurTest::get_success_error_level( int /*test_case_idx*/, int 
 
 
 void CV_GaussianBlurTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int kernel_case = alvision.cvtest.randInt(rng) % 2;
@@ -787,7 +787,7 @@ void CV_GaussianBlurTest::run_func()
 // make sure to update this one too.
 #define SMALL_GAUSSIAN_SIZE 7
 static void
-calcGaussianKernel( int n, double sigma, vector<float>& kernel )
+calcGaussianKernel( int n, double sigma, Array<float>& kernel )
 {
     static const float small_gaussian_tab[][SMALL_GAUSSIAN_SIZE] =
     {
@@ -826,7 +826,7 @@ calcGaussianKernel( int n, double sigma, vector<float>& kernel )
 
 static Mat calcGaussianKernel2D( Size ksize, double sigma )
 {
-    vector<float> kx, ky;
+    Array<float> kx, ky;
     Mat kernel(ksize, CV_32F);
 
     calcGaussianKernel( kernel.cols, sigma, kx );
@@ -869,7 +869,7 @@ CV_MedianBlurTest::CV_MedianBlurTest()
 
 
 void CV_MedianBlurTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_SmoothBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     int depth = CV_8U;
@@ -914,8 +914,8 @@ struct median_pair
 static void test_medianFilter( const Mat& src, Mat& dst, int m )
 {
     int i, j, k, l, m2 = m*m, n;
-    vector<int> col_buf(m+1);
-    vector<median_pair> _buf0(m*m+1), _buf1(m*m+1);
+    Array<int> col_buf(m+1);
+    Array<median_pair> _buf0(m*m+1), _buf1(m*m+1);
     median_pair *buf0 = &_buf0[0], *buf1 = &_buf1[0];
     int step = (int)(src.step/src.elemSize());
 
@@ -1059,8 +1059,8 @@ double CV_PyramidBaseTest::get_success_error_level( int /*test_case_idx*/, int /
 
 
 void CV_PyramidBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                         vector<vector<Size> >& sizes,
-                                                         vector<vector<int> >& types )
+                                                         Array<Array<Size> >& sizes,
+                                                         Array<Array<int> >& types )
 {
     const int channels[] = {1, 3, 4};
     const int depthes[] = {CV_8U, CV_16S, CV_16U, CV_32F};
@@ -1270,7 +1270,7 @@ void CV_FeatureSelBaseTest::get_minmax_bounds( int i, int j, int type, Scalar& l
 
 
 void CV_FeatureSelBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -1579,7 +1579,7 @@ protected:
     void run_func();
     void prepare_to_validation( int );
 
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
 };
 
 
@@ -1609,7 +1609,7 @@ void CV_IntegralTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Sc
 
 
 void CV_IntegralTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int depth = alvision.cvtest.randInt(rng) % 2, sum_depth;
@@ -1652,7 +1652,7 @@ double CV_IntegralTest::get_success_error_level( int, int i, int j )
 
 int CV_IntegralTest::prepare_test_case( int test_case_idx )
 {
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
     return code > 0 && ((test_array[OUTPUT][2] && test_mat[OUTPUT][2].channels() > 1) ||
         test_mat[OUTPUT][0].depth() < test_mat[INPUT][0].depth()) ? 0 : code;
 }
@@ -1875,7 +1875,7 @@ protected:
         }
         catch(...)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "Combination of depths %d => %d in %s is not supported (yet it should be)",
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Combination of depths %d => %d in %s is not supported (yet it should be)",
                        depths[i][0], depths[i][1],
                        fidx == 0 ? "filter2D (small kernel)" :
                        fidx == 1 ? "filter2D (large kernel)" :
@@ -1900,9 +1900,9 @@ TEST(Imgproc_Blur, borderTypes)
     Size kernelSize(3, 3);
 
     /// ksize > src_roi.size()
-    Mat src(3, 3, CV_8UC1, cv::Scalar::all(255)), dst;
+    Mat src(3, 3, CV_8UC1, alvision.Scalar::all(255)), dst;
     Mat src_roi = src(Rect(1, 1, 1, 1));
-    src_roi.setTo(cv::Scalar::all(0));
+    src_roi.setTo(alvision.Scalar::all(0));
 
     // should work like !BORDER_ISOLATED
     blur(src_roi, dst, kernelSize, Point(-1, -1), BORDER_REPLICATE);
@@ -1913,7 +1913,7 @@ TEST(Imgproc_Blur, borderTypes)
     EXPECT_EQ(0, dst.at<uchar>(0, 0));
 
     /// ksize <= src_roi.size()
-    src = Mat(5, 5, CV_8UC1, cv::Scalar(255));
+    src = Mat(5, 5, CV_8UC1, alvision.Scalar(255));
     src_roi = src(Rect(1, 1, 3, 3));
     src_roi.setTo(0);
     src.at<uchar>(2, 2) = 255;

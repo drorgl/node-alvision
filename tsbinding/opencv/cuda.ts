@@ -74,7 +74,7 @@ import * as _base from './Base';
  */
 
 //namespace cv {
-    export namespace cuda {
+    //export namespace cuda {
 
         //! @addtogroup cudacore_struct
         //! @{
@@ -107,21 +107,21 @@ import * as _base from './Base';
          */
 
         interface GpuMatStatic {
-            //            //! default constructor
-//            explicit GpuMat(Allocator * allocator = defaultAllocator());
+            //! default constructor
+            //explicit GpuMat(Allocator * allocator = defaultAllocator());
             new (): GpuMat;
-//
-//            //! constructs GpuMat of the specified size and type
-//            GpuMat(int rows, int cols, int type, Allocator * allocator = defaultAllocator());
-//            GpuMat(Size size, int type, Allocator * allocator = defaultAllocator());
-//
-//            //! constucts GpuMat and fills it with the specified value _s
-//            GpuMat(int rows, int cols, int type, Scalar s, Allocator * allocator = defaultAllocator());
-//            GpuMat(Size size, int type, Scalar s, Allocator * allocator = defaultAllocator());
-//
-//            //! copy constructor
-//            GpuMat(const GpuMat& m);
-//
+
+            //! constructs GpuMat of the specified size and type
+            new (rows: _st.int, cols: _st.int, type: _st.int/*, Allocator * allocator = defaultAllocator()*/): GpuMat;
+            new (size: _types.Size, type: _st.int /*,Allocator * allocator = defaultAllocator()*/): GpuMat;
+
+            //! constucts GpuMat and fills it with the specified value _s
+            new (rows: _st.int, cols: _st.int, type: _st.int, s: _types.Scalar /*, Allocator * allocator = defaultAllocator()*/): GpuMat;
+            new (size: _types.Size, type: _st.int, s: _types.Scalar /*, Allocator * allocator = defaultAllocator()*/): GpuMat;
+
+            //! copy constructor
+            //GpuMat(const GpuMat& m);
+
 //            //! constructor for GpuMat headers pointing to user-allocated data
 //            GpuMat(int rows, int cols, int type, void* data, size_t step = Mat::AUTO_STEP);
 //            GpuMat(Size size, int type, void* data, size_t step = Mat::AUTO_STEP);
@@ -131,7 +131,7 @@ import * as _base from './Base';
 //            GpuMat(const GpuMat& m, Rect roi);
 //
 //            //! builds GpuMat from host memory (Blocking call)
-//            explicit GpuMat(InputArray arr, Allocator * allocator = defaultAllocator());
+            new (arr: _st.InputArray /*, Allocator * allocator = defaultAllocator()*/): GpuMat;
 //
 //            //! destructor - calls release()
 //            ~GpuMat();

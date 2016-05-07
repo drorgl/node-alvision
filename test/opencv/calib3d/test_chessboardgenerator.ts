@@ -68,17 +68,17 @@ public:
     int rendererResolutionMultiplier;
 
     ChessBoardGenerator(const Size& patternSize = Size(8, 6));
-    Mat operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, std::vector<Point2f>& corners) const;
-    Mat operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, std::vector<Point2f>& corners) const;
-    Mat operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, const Point3f& pos, std::vector<Point2f>& corners) const;
+    Mat operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, std::Array<Point2f>& corners) const;
+    Mat operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, std::Array<Point2f>& corners) const;
+    Mat operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, const Point3f& pos, std::Array<Point2f>& corners) const;
     Size cornersSize() const;
 
-    mutable std::vector<Point3f> corners3d;
+    mutable std::Array<Point3f> corners3d;
 private:
-    void generateEdge(const Point3f& p1, const Point3f& p2, std::vector<Point3f>& out) const;
+    void generateEdge(const Point3f& p1, const Point3f& p2, std::Array<Point3f>& out) const;
     Mat generateChessBoard(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
         const Point3f& zero, const Point3f& pb1, const Point3f& pb2,
-        float sqWidth, float sqHeight, const std::vector<Point3f>& whole, std::vector<Point2f>& corners) const;
+        float sqWidth, float sqHeight, const std::Array<Point3f>& whole, std::Array<Point2f>& corners) const;
     void generateBasis(Point3f& pb1, Point3f& pb2) const;
 
     Mat rvec, tvec;
@@ -109,14 +109,14 @@ ChessBoardGenerator::ChessBoardGenerator(const Size& _patternSize) : sensorWidth
     Rodrigues(Mat::eye(3, 3, CV_32F), rvec);
 }
 
-void cv::ChessBoardGenerator::generateEdge(const Point3f& p1, const Point3f& p2, vector<Point3f>& out) const
+void alvision.ChessBoardGenerator::generateEdge(const Point3f& p1, const Point3f& p2, Array<Point3f>& out) const
     {
         Point3f step = (p2 - p1) * (1.f/squareEdgePointsNum);
     for(size_t n = 0; n < squareEdgePointsNum; ++n)
 out.push_back(p1 + step * (float)n);
 }
 
-Size cv::ChessBoardGenerator::cornersSize() const
+Size alvision.ChessBoardGenerator::cornersSize() const
     {
         return Size(patternSize.width - 1, patternSize.height - 1);
 }
@@ -128,7 +128,7 @@ struct Mult
     Point2f operator()(const Point2f& p)const { return p * m; }
 };
 
-void cv::ChessBoardGenerator::generateBasis(Point3f & pb1, Point3f & pb2) const
+void alvision.ChessBoardGenerator::generateBasis(Point3f & pb1, Point3f & pb2) const
     {
         RNG& rng = theRNG();
 
@@ -157,12 +157,12 @@ pb2 = Point3f(b2[0] / len_b1, b2[1] / len_b2, b2[2] / len_b2);
 }
 
 
-Mat cv::ChessBoardGenerator::generateChessBoard(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
+Mat alvision.ChessBoardGenerator::generateChessBoard(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
 const Point3f& zero, const Point3f& pb1, const Point3f& pb2,
-    float sqWidth, float sqHeight, const vector<Point3f>& whole,
-        vector<Point2f>& corners) const
+    float sqWidth, float sqHeight, const Array<Point3f>& whole,
+        Array<Point2f>& corners) const
             {
-                vector< vector<Point>>squares_black;
+                Array< Array<Point>>squares_black;
 for (int i = 0; i < patternSize.width; ++i)
 for (int j = 0; j < patternSize.height; ++j)
 if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
@@ -207,7 +207,7 @@ vector < vector < Point > > whole_contour(1);
 transform(temp_whole2d.begin(), temp_whole2d.end(),
     back_inserter(whole_contour.front()), Mult(rendererResolutionMultiplier));
 
-Mat result;
+var result = new alvision.Mat();
 if (rendererResolutionMultiplier == 1) {
     result = bg.clone();
     drawContours(result, whole_contour, -1, Scalar::all(255), FILLED, LINE_AA);
@@ -224,7 +224,7 @@ else {
 return result;
 }
 
-Mat cv::ChessBoardGenerator::operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, vector<Point2f>& corners) const
+Mat alvision.ChessBoardGenerator::operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, Array<Point2f>& corners) const
     {
         cov = std::min(cov, 0.8);
 double fovx, fovy, focalLen;
@@ -236,8 +236,8 @@ calibrationMatrixValues(camMat, bg.size(), sensorWidth, sensorHeight,
 RNG & rng = theRNG();
 
 float d1 = static_cast<float>(rng.uniform(0.1, 10.0));
-float ah = static_cast<float>(rng.uniform(-fovx / 2 * cov, fovx / 2 * cov) * CV_PI / 180);
-float av = static_cast<float>(rng.uniform(-fovy / 2 * cov, fovy / 2 * cov) * CV_PI / 180);
+float ah = static_cast<float>(rng.uniform(-fovx / 2 * cov, fovx / 2 * cov) * Math.PI / 180);
+float av = static_cast<float>(rng.uniform(-fovy / 2 * cov, fovy / 2 * cov) * Math.PI / 180);
 
 Point3f p;
 p.z = cos(ah) * d1;
@@ -247,7 +247,7 @@ p.y = p.z * tan(av);
 Point3f pb1, pb2;
 generateBasis(pb1, pb2);
 
-float cbHalfWidth = static_cast<float>(norm(p) * sin(std::min(fovx, fovy) * 0.5 * CV_PI / 180));
+float cbHalfWidth = static_cast<float>(norm(p) * sin(std::min(fovx, fovy) * 0.5 * Math.PI / 180));
 float cbHalfHeight = cbHalfWidth * patternSize.height / patternSize.width;
 
 float cbHalfWidthEx  = cbHalfWidth * (patternSize.width + 1) / patternSize.width;
@@ -287,8 +287,8 @@ return generateChessBoard(bg, camMat, distCoeffs, zero, pb1, pb2, sqWidth, sqHei
 }
 
 
-Mat cv::ChessBoardGenerator::operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
-const Size2f& squareSize, vector<Point2f>& corners) const
+Mat alvision.ChessBoardGenerator::operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
+const Size2f& squareSize, Array<Point2f>& corners) const
     {
         cov = std::min(cov, 0.8);
 double fovx, fovy, focalLen;
@@ -300,8 +300,8 @@ calibrationMatrixValues(camMat, bg.size(), sensorWidth, sensorHeight,
 RNG & rng = theRNG();
 
 float d1 = static_cast<float>(rng.uniform(0.1, 10.0));
-float ah = static_cast<float>(rng.uniform(-fovx / 2 * cov, fovx / 2 * cov) * CV_PI / 180);
-float av = static_cast<float>(rng.uniform(-fovy / 2 * cov, fovy / 2 * cov) * CV_PI / 180);
+float ah = static_cast<float>(rng.uniform(-fovx / 2 * cov, fovx / 2 * cov) * Math.PI / 180);
+float av = static_cast<float>(rng.uniform(-fovy / 2 * cov, fovy / 2 * cov) * Math.PI / 180);
 
 Point3f p;
 p.z = cos(ah) * d1;
@@ -345,8 +345,8 @@ return generateChessBoard(bg, camMat, distCoeffs, zero, pb1, pb2,
     squareSize.width, squareSize.height, pts3d, corners);
 }
 
-Mat cv::ChessBoardGenerator::operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
-const Size2f& squareSize, const Point3f& pos, vector<Point2f>& corners) const
+Mat alvision.ChessBoardGenerator::operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
+const Size2f& squareSize, const Point3f& pos, Array<Point2f>& corners) const
     {
         cov = std::min(cov, 0.8);
 Point3f p = pos;

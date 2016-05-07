@@ -55,95 +55,91 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-static const double numerical_precision = 100.;
+static const numerical_precision = 100.;
 
-TEST(Photo_NPR_EdgePreserveSmoothing_RecursiveFilter, regression)
-{
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
-    string original_path = folder + "test1.png";
+alvision.cvtest.TEST('Photo_NPR_EdgePreserveSmoothing_RecursiveFilter', 'regression', () => {
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "npr/";
+    var original_path = folder + "test1.png";
 
-    Mat source = imread(original_path, IMREAD_COLOR);
+    var source = alvision.imread(original_path,alvision.ImreadModes. IMREAD_COLOR);
 
-    ASSERT_FALSE(source.empty()) << "Could not load input image " << original_path;
+    alvision.ASSERT_FALSE(source.empty(), "Could not load input image " + original_path);
 
-    Mat result;
-    edgePreservingFilter(source,result,1);
+    var result = new alvision.Mat();
+    alvision.edgePreservingFilter(source, result, 1);
 
-    Mat reference = imread(folder + "smoothened_RF_reference.png");
-    double error = alvision.cvtest.norm(reference, result, NORM_L1);
-    EXPECT_LE(error, numerical_precision);
-}
+    var reference = alvision.imread(folder + "smoothened_RF_reference.png");
+    var error = alvision.cvtest.norm(reference, result,alvision.NormTypes. NORM_L1);
+    alvision.EXPECT_LE(error, numerical_precision);
+});
 
-TEST(Photo_NPR_EdgePreserveSmoothing_NormConvFilter, regression)
-{
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
-    string original_path = folder + "test1.png";
+alvision.cvtest.TEST('Photo_NPR_EdgePreserveSmoothing_NormConvFilter', 'regression', () => {
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "npr/";
+    var original_path = folder + "test1.png";
 
-    Mat source = imread(original_path, IMREAD_COLOR);
+    var source = alvision.imread(original_path,alvision.ImreadModes. IMREAD_COLOR);
 
-    ASSERT_FALSE(source.empty()) << "Could not load input image " << original_path;
+    alvision.ASSERT_FALSE(source.empty(), "Could not load input image " + original_path);
 
-    Mat result;
-    edgePreservingFilter(source,result,2);
+    var result = new alvision.Mat();
+    alvision.edgePreservingFilter(source, result, 2);
 
-    Mat reference = imread(folder + "smoothened_NCF_reference.png");
-    double error = alvision.cvtest.norm(reference, result, NORM_L1);
-    EXPECT_LE(error, numerical_precision);
+    var reference = alvision.imread(folder + "smoothened_NCF_reference.png");
+    var error = alvision.cvtest.norm(reference, result,alvision.NormTypes.NORM_L1);
+    alvision.EXPECT_LE(error, numerical_precision);
 
-}
+});
 
-TEST(Photo_NPR_DetailEnhance, regression)
-{
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
-    string original_path = folder + "test1.png";
+alvision.cvtest.TEST('Photo_NPR_DetailEnhance', 'regression', () => {
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "npr/";
+    var original_path = folder + "test1.png";
 
-    Mat source = imread(original_path, IMREAD_COLOR);
+    var source = alvision.imread(original_path,alvision.ImreadModes. IMREAD_COLOR);
 
-    ASSERT_FALSE(source.empty()) << "Could not load input image " << original_path;
+    alvision.ASSERT_FALSE(source.empty(), "Could not load input image " + original_path);
 
-    Mat result;
-    detailEnhance(source,result);
+    var result = new alvision.Mat();
+    alvision.detailEnhance(source, result);
 
-    Mat reference = imread(folder + "detail_enhanced_reference.png");
-    double error = alvision.cvtest.norm(reference, result, NORM_L1);
-    EXPECT_LE(error, numerical_precision);
-}
+    var reference = alvision.imread(folder + "detail_enhanced_reference.png");
+    var error = alvision.cvtest.norm(reference, result,alvision.NormTypes.NORM_L1);
+    alvision.EXPECT_LE(error, numerical_precision);
+});
 
-TEST(Photo_NPR_PencilSketch, regression)
-{
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
-    string original_path = folder + "test1.png";
+alvision.cvtest.TEST('Photo_NPR_PencilSketch', 'regression', () => {
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "npr/";
+    var original_path = folder + "test1.png";
 
-    Mat source = imread(original_path, IMREAD_COLOR);
+    var source = alvision.imread(original_path,alvision.ImreadModes. IMREAD_COLOR);
 
-    ASSERT_FALSE(source.empty()) << "Could not load input image " << original_path;
+    alvision.ASSERT_FALSE(source.empty(), "Could not load input image " + original_path);
 
-    Mat pencil_result, color_pencil_result;
-    pencilSketch(source,pencil_result, color_pencil_result, 10, 0.1f, 0.03f);
+    var pencil_result = new alvision.Mat(), color_pencil_result = new alvision.Mat();
 
-    Mat pencil_reference = imread(folder + "pencil_sketch_reference.png", 0 /* == grayscale*/);
-    double pencil_error = norm(pencil_reference, pencil_result, NORM_L1);
-    EXPECT_LE(pencil_error, numerical_precision);
+    alvision.pencilSketch(source, pencil_result, color_pencil_result, 10, 0.1, 0.03);
 
-    Mat color_pencil_reference = imread(folder + "color_pencil_sketch_reference.png");
-    double color_pencil_error = alvision.cvtest.norm(color_pencil_reference, color_pencil_result, NORM_L1);
-    EXPECT_LE(color_pencil_error, numerical_precision);
-}
+    var pencil_reference = alvision.imread(folder + "pencil_sketch_reference.png", 0 /* == grayscale*/);
+    var pencil_error = alvision.norm(pencil_reference, pencil_result,alvision.NormTypes. NORM_L1);
+    alvision.EXPECT_LE(pencil_error, numerical_precision);
 
-TEST(Photo_NPR_Stylization, regression)
-{
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "npr/";
-    string original_path = folder + "test1.png";
+    var color_pencil_reference = alvision.imread(folder + "color_pencil_sketch_reference.png");
+    var color_pencil_error = alvision.cvtest.norm(color_pencil_reference, color_pencil_result,alvision.NormTypes. NORM_L1);
+    alvision.EXPECT_LE(color_pencil_error, numerical_precision);
+});
 
-    Mat source = imread(original_path, IMREAD_COLOR);
+alvision.cvtest.TEST('Photo_NPR_Stylization', 'regression', () => {
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "npr/";
+    var original_path = folder + "test1.png";
 
-    ASSERT_FALSE(source.empty()) << "Could not load input image " << original_path;
+    var source = alvision.imread(original_path, alvision.ImreadModes.IMREAD_COLOR);
 
-    Mat result;
-    stylization(source,result);
+    alvision.ASSERT_FALSE(source.empty(),"Could not load input image " + original_path);
 
-    Mat stylized_reference = imread(folder + "stylized_reference.png");
-    double stylized_error = alvision.cvtest.norm(stylized_reference, result, NORM_L1);
-    EXPECT_LE(stylized_error, numerical_precision);
+    var result = new alvision.Mat();
+    alvision.stylization(source, result);
 
-}
+    var stylized_reference = alvision.imread(folder + "stylized_reference.png");
+    var stylized_error = alvision.cvtest.norm(stylized_reference, result,alvision.NormTypes. NORM_L1);
+    alvision.EXPECT_LE(stylized_error, numerical_precision);
+
+});

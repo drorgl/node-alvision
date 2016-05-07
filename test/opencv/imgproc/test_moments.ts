@@ -47,17 +47,17 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-using namespace cv;
-using namespace std;
-
-#define OCL_TUNING_MODE 0
-#if OCL_TUNING_MODE
-#define OCL_TUNING_MODE_ONLY(code) code
-#else
-#define OCL_TUNING_MODE_ONLY(code)
-#endif
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
+//
+//#define OCL_TUNING_MODE 0
+//#if OCL_TUNING_MODE
+//#define OCL_TUNING_MODE_ONLY(code) code
+//#else
+//#define OCL_TUNING_MODE_ONLY(code)
+//#endif
 
 // image moments
 class CV_MomentsTest extends alvision.cvtest.ArrayTest
@@ -68,7 +68,7 @@ public:
 protected:
 
     enum { MOMENT_COUNT = 25 };
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void prepare_to_validation( int /*test_case_idx*/ );
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
@@ -115,7 +115,7 @@ void CV_MomentsTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Sca
 }
 
 void CV_MomentsTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
@@ -164,7 +164,7 @@ double CV_MomentsTest::get_success_error_level( int /*test_case_idx*/, int /*i*/
 
 int CV_MomentsTest::prepare_test_case( int test_case_idx )
 {
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         int cn = test_mat[INPUT][0].channels();
@@ -345,7 +345,7 @@ protected:
 
     enum { MOMENT_COUNT = 18, HU_MOMENT_COUNT = 7 };
 
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void prepare_to_validation( int /*test_case_idx*/ );
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
@@ -371,7 +371,7 @@ void CV_HuMomentsTest::get_minmax_bounds( int i, int j, int type, Scalar& low, S
 
 
 void CV_HuMomentsTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC1;
@@ -389,7 +389,7 @@ double CV_HuMomentsTest::get_success_error_level( int /*test_case_idx*/, int /*i
 
 int CV_HuMomentsTest::prepare_test_case( int test_case_idx )
 {
-    int code = alvision.cvtest.ArrayTest::prepare_test_case( test_case_idx );
+    int code = super.prepare_test_case( test_case_idx );
     if( code > 0 )
     {
         // ...
@@ -453,7 +453,7 @@ protected:
     {
         try
         {
-            vector<Point> points;
+            Array<Point> points;
             points.push_back(Point(50, 56));
             points.push_back(Point(53, 53));
             points.push_back(Point(46, 54));

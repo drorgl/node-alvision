@@ -59,59 +59,59 @@ using namespace cvtest;
 
 //#define BROX_DUMP
 
-struct BroxOpticalFlow : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct BroxOpticalFlow : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(BroxOpticalFlow, Regression)
 {
-    cv::Mat frame0 = readImageType("opticalflow/frame0.png", CV_32FC1);
+    alvision.Mat frame0 = readImageType("opticalflow/frame0.png", CV_32FC1);
     ASSERT_FALSE(frame0.empty());
 
-    cv::Mat frame1 = readImageType("opticalflow/frame1.png", CV_32FC1);
+    alvision.Mat frame1 = readImageType("opticalflow/frame1.png", CV_32FC1);
     ASSERT_FALSE(frame1.empty());
 
-    cv::Ptr<cv::cuda::BroxOpticalFlow> brox =
-            cv::cuda::BroxOpticalFlow::create(0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale_factor*/,
+    alvision.Ptr<alvision.cuda::BroxOpticalFlow> brox =
+            alvision.cuda::BroxOpticalFlow::create(0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale_factor*/,
                                               10 /*inner_iterations*/, 77 /*outer_iterations*/, 10 /*solver_iterations*/);
 
-    cv::cuda::GpuMat flow;
+    alvision.cuda::GpuMat flow;
     brox->calc(loadMat(frame0), loadMat(frame1), flow);
 
-    cv::cuda::GpuMat flows[2];
-    cv::cuda::split(flow, flows);
+    alvision.cuda::GpuMat flows[2];
+    alvision.cuda::split(flow, flows);
 
-    cv::cuda::GpuMat u = flows[0];
-    cv::cuda::GpuMat v = flows[1];
+    alvision.cuda::GpuMat u = flows[0];
+    alvision.cuda::GpuMat v = flows[1];
 
-    std::string fname(alvision.cvtest.TS::ptr()->get_data_path());
+    std::string fname(alvision.cvtest.TS.ptr().get_data_path());
     if (devInfo.majorVersion() >= 2)
         fname += "opticalflow/brox_optical_flow_cc20.bin";
     else
         fname += "opticalflow/brox_optical_flow.bin";
 
 #ifndef BROX_DUMP
-    std::ifstream f(fname.c_str(), std::ios_base::binary);
+    std::ifstream f(fname, std::ios_base::binary);
 
     int rows, cols;
 
     f.read((char*) &rows, sizeof(rows));
     f.read((char*) &cols, sizeof(cols));
 
-    cv::Mat u_gold(rows, cols, CV_32FC1);
+    alvision.Mat u_gold(rows, cols, CV_32FC1);
 
     for (int i = 0; i < u_gold.rows; ++i)
         f.read(u_gold.ptr<char>(i), u_gold.cols * sizeof(float));
 
-    cv::Mat v_gold(rows, cols, CV_32FC1);
+    alvision.Mat v_gold(rows, cols, CV_32FC1);
 
     for (int i = 0; i < v_gold.rows; ++i)
         f.read(v_gold.ptr<char>(i), v_gold.cols * sizeof(float));
@@ -119,13 +119,13 @@ CUDA_TEST_P(BroxOpticalFlow, Regression)
     EXPECT_MAT_SIMILAR(u_gold, u, 1e-3);
     EXPECT_MAT_SIMILAR(v_gold, v, 1e-3);
 #else
-    std::ofstream f(fname.c_str(), std::ios_base::binary);
+    std::ofstream f(fname, std::ios_base::binary);
 
     f.write((char*) &u.rows, sizeof(u.rows));
     f.write((char*) &u.cols, sizeof(u.cols));
 
-    cv::Mat h_u(u);
-    cv::Mat h_v(v);
+    alvision.Mat h_u(u);
+    alvision.Mat h_v(v);
 
     for (int i = 0; i < u.rows; ++i)
         f.write(h_u.ptr<char>(i), u.cols * sizeof(float));
@@ -137,35 +137,35 @@ CUDA_TEST_P(BroxOpticalFlow, Regression)
 
 CUDA_TEST_P(BroxOpticalFlow, OpticalFlowNan)
 {
-    cv::Mat frame0 = readImageType("opticalflow/frame0.png", CV_32FC1);
+    alvision.Mat frame0 = readImageType("opticalflow/frame0.png", CV_32FC1);
     ASSERT_FALSE(frame0.empty());
 
-    cv::Mat frame1 = readImageType("opticalflow/frame1.png", CV_32FC1);
+    alvision.Mat frame1 = readImageType("opticalflow/frame1.png", CV_32FC1);
     ASSERT_FALSE(frame1.empty());
 
-    cv::Mat r_frame0, r_frame1;
-    cv::resize(frame0, r_frame0, cv::Size(1380,1000));
-    cv::resize(frame1, r_frame1, cv::Size(1380,1000));
+    alvision.Mat r_frame0, r_frame1;
+    alvision.resize(frame0, r_frame0, alvision.Size(1380,1000));
+    alvision.resize(frame1, r_frame1, alvision.Size(1380,1000));
 
-    cv::Ptr<cv::cuda::BroxOpticalFlow> brox =
-            cv::cuda::BroxOpticalFlow::create(0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale_factor*/,
+    alvision.Ptr<alvision.cuda::BroxOpticalFlow> brox =
+            alvision.cuda::BroxOpticalFlow::create(0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale_factor*/,
                                               10 /*inner_iterations*/, 77 /*outer_iterations*/, 10 /*solver_iterations*/);
 
-    cv::cuda::GpuMat flow;
+    alvision.cuda::GpuMat flow;
     brox->calc(loadMat(frame0), loadMat(frame1), flow);
 
-    cv::cuda::GpuMat flows[2];
-    cv::cuda::split(flow, flows);
+    alvision.cuda::GpuMat flows[2];
+    alvision.cuda::split(flow, flows);
 
-    cv::cuda::GpuMat u = flows[0];
-    cv::cuda::GpuMat v = flows[1];
+    alvision.cuda::GpuMat u = flows[0];
+    alvision.cuda::GpuMat v = flows[1];
 
-    cv::Mat h_u, h_v;
+    alvision.Mat h_u, h_v;
     u.download(h_u);
     v.download(h_v);
 
-    EXPECT_TRUE(cv::checkRange(h_u));
-    EXPECT_TRUE(cv::checkRange(h_v));
+    EXPECT_TRUE(alvision.checkRange(h_u));
+    EXPECT_TRUE(alvision.checkRange(h_v));
 };
 
 INSTANTIATE_TEST_CASE_P(CUDA_OptFlow, BroxOpticalFlow, ALL_DEVICES);
@@ -178,9 +178,9 @@ namespace
     IMPLEMENT_PARAM_CLASS(UseGray, bool)
 }
 
-PARAM_TEST_CASE(PyrLKOpticalFlow, cv::cuda::DeviceInfo, UseGray)
+PARAM_TEST_CASE(PyrLKOpticalFlow, alvision.cuda::DeviceInfo, UseGray)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     bool useGray;
 
     virtual void SetUp()
@@ -188,49 +188,49 @@ PARAM_TEST_CASE(PyrLKOpticalFlow, cv::cuda::DeviceInfo, UseGray)
         devInfo = GET_PARAM(0);
         useGray = GET_PARAM(1);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(PyrLKOpticalFlow, Sparse)
 {
-    cv::Mat frame0 = readImage("opticalflow/frame0.png", useGray ? cv::IMREAD_GRAYSCALE : cv::IMREAD_COLOR);
+    alvision.Mat frame0 = readImage("opticalflow/frame0.png", useGray ? alvision.ImreadModes.IMREAD_GRAYSCALE : alvision.ImreadModes.IMREAD_COLOR);
     ASSERT_FALSE(frame0.empty());
 
-    cv::Mat frame1 = readImage("opticalflow/frame1.png", useGray ? cv::IMREAD_GRAYSCALE : cv::IMREAD_COLOR);
+    alvision.Mat frame1 = readImage("opticalflow/frame1.png", useGray ? alvision.ImreadModes.IMREAD_GRAYSCALE : alvision.ImreadModes.IMREAD_COLOR);
     ASSERT_FALSE(frame1.empty());
 
-    cv::Mat gray_frame;
+    alvision.Mat gray_frame;
     if (useGray)
         gray_frame = frame0;
     else
-        cv::cvtColor(frame0, gray_frame, cv::COLOR_BGR2GRAY);
+        alvision.cvtColor(frame0, gray_frame, alvision.COLOR_BGR2GRAY);
 
-    std::vector<cv::Point2f> pts;
-    cv::goodFeaturesToTrack(gray_frame, pts, 1000, 0.01, 0.0);
+    std::Array<alvision.Point2f> pts;
+    alvision.goodFeaturesToTrack(gray_frame, pts, 1000, 0.01, 0.0);
 
-    cv::cuda::GpuMat d_pts;
-    cv::Mat pts_mat(1, (int) pts.size(), CV_32FC2, (void*) &pts[0]);
+    alvision.cuda::GpuMat d_pts;
+    alvision.Mat pts_mat(1, (int) pts.size(), CV_32FC2, (void*) &pts[0]);
     d_pts.upload(pts_mat);
 
-    cv::Ptr<cv::cuda::SparsePyrLKOpticalFlow> pyrLK =
-            cv::cuda::SparsePyrLKOpticalFlow::create();
+    alvision.Ptr<alvision.cuda::SparsePyrLKOpticalFlow> pyrLK =
+            alvision.cuda::SparsePyrLKOpticalFlow::create();
 
-    cv::cuda::GpuMat d_nextPts;
-    cv::cuda::GpuMat d_status;
+    alvision.cuda::GpuMat d_nextPts;
+    alvision.cuda::GpuMat d_status;
     pyrLK->calc(loadMat(frame0), loadMat(frame1), d_pts, d_nextPts, d_status);
 
-    std::vector<cv::Point2f> nextPts(d_nextPts.cols);
-    cv::Mat nextPts_mat(1, d_nextPts.cols, CV_32FC2, (void*) &nextPts[0]);
+    std::Array<alvision.Point2f> nextPts(d_nextPts.cols);
+    alvision.Mat nextPts_mat(1, d_nextPts.cols, CV_32FC2, (void*) &nextPts[0]);
     d_nextPts.download(nextPts_mat);
 
-    std::vector<unsigned char> status(d_status.cols);
-    cv::Mat status_mat(1, d_status.cols, CV_8UC1, (void*) &status[0]);
+    std::Array<unsigned char> status(d_status.cols);
+    alvision.Mat status_mat(1, d_status.cols, CV_8UC1, (void*) &status[0]);
     d_status.download(status_mat);
 
-    std::vector<cv::Point2f> nextPts_gold;
-    std::vector<unsigned char> status_gold;
-    cv::calcOpticalFlowPyrLK(frame0, frame1, pts, nextPts_gold, status_gold, cv::noArray());
+    std::Array<alvision.Point2f> nextPts_gold;
+    std::Array<unsigned char> status_gold;
+    alvision.calcOpticalFlowPyrLK(frame0, frame1, pts, nextPts_gold, status_gold, alvision.noArray());
 
     ASSERT_EQ(nextPts_gold.size(), nextPts.size());
     ASSERT_EQ(status_gold.size(), status.size());
@@ -238,8 +238,8 @@ CUDA_TEST_P(PyrLKOpticalFlow, Sparse)
     size_t mistmatch = 0;
     for (size_t i = 0; i < nextPts.size(); ++i)
     {
-        cv::Point2i a = nextPts[i];
-        cv::Point2i b = nextPts_gold[i];
+        alvision.Point2i a = nextPts[i];
+        alvision.Point2i b = nextPts_gold[i];
 
         if (status[i] != status_gold[i])
         {
@@ -276,9 +276,9 @@ namespace
     IMPLEMENT_PARAM_CLASS(UseInitFlow, bool)
 }
 
-PARAM_TEST_CASE(FarnebackOpticalFlow, cv::cuda::DeviceInfo, PyrScale, PolyN, FarnebackOptFlowFlags, UseInitFlow)
+PARAM_TEST_CASE(FarnebackOpticalFlow, alvision.cuda::DeviceInfo, PyrScale, PolyN, FarnebackOptFlowFlags, UseInitFlow)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     double pyrScale;
     int polyN;
     int flags;
@@ -292,40 +292,40 @@ PARAM_TEST_CASE(FarnebackOpticalFlow, cv::cuda::DeviceInfo, PyrScale, PolyN, Far
         flags = GET_PARAM(3);
         useInitFlow = GET_PARAM(4);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(FarnebackOpticalFlow, Accuracy)
 {
-    cv::Mat frame0 = readImage("opticalflow/rubberwhale1.png", cv::IMREAD_GRAYSCALE);
+    alvision.Mat frame0 = readImage("opticalflow/rubberwhale1.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
     ASSERT_FALSE(frame0.empty());
 
-    cv::Mat frame1 = readImage("opticalflow/rubberwhale2.png", cv::IMREAD_GRAYSCALE);
+    alvision.Mat frame1 = readImage("opticalflow/rubberwhale2.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
     ASSERT_FALSE(frame1.empty());
 
     double polySigma = polyN <= 5 ? 1.1 : 1.5;
 
-    cv::Ptr<cv::cuda::FarnebackOpticalFlow> farn =
-            cv::cuda::FarnebackOpticalFlow::create();
+    alvision.Ptr<alvision.cuda::FarnebackOpticalFlow> farn =
+            alvision.cuda::FarnebackOpticalFlow::create();
     farn->setPyrScale(pyrScale);
     farn->setPolyN(polyN);
     farn->setPolySigma(polySigma);
     farn->setFlags(flags);
 
-    cv::cuda::GpuMat d_flow;
+    alvision.cuda::GpuMat d_flow;
     farn->calc(loadMat(frame0), loadMat(frame1), d_flow);
 
-    cv::Mat flow;
+    alvision.Mat flow;
     if (useInitFlow)
     {
         d_flow.download(flow);
 
-        farn->setFlags(farn->getFlags() | cv::OPTFLOW_USE_INITIAL_FLOW);
+        farn->setFlags(farn->getFlags() | alvision.OPTFLOW_USE_INITIAL_FLOW);
         farn->calc(loadMat(frame0), loadMat(frame1), d_flow);
     }
 
-    cv::calcOpticalFlowFarneback(
+    alvision.calcOpticalFlowFarneback(
         frame0, frame1, flow, farn->getPyrScale(), farn->getNumLevels(), farn->getWinSize(),
         farn->getNumIters(), farn->getPolyN(), farn->getPolySigma(), farn->getFlags());
 
@@ -336,7 +336,7 @@ INSTANTIATE_TEST_CASE_P(CUDA_OptFlow, FarnebackOpticalFlow, testing::Combine(
     ALL_DEVICES,
     testing::Values(PyrScale(0.3), PyrScale(0.5), PyrScale(0.8)),
     testing::Values(PolyN(5), PolyN(7)),
-    testing::Values(FarnebackOptFlowFlags(0), FarnebackOptFlowFlags(cv::OPTFLOW_FARNEBACK_GAUSSIAN)),
+    testing::Values(FarnebackOptFlowFlags(0), FarnebackOptFlowFlags(alvision.OPTFLOW_FARNEBACK_GAUSSIAN)),
     testing::Values(UseInitFlow(false), UseInitFlow(true))));
 
 //////////////////////////////////////////////////////
@@ -347,9 +347,9 @@ namespace
     IMPLEMENT_PARAM_CLASS(Gamma, double)
 }
 
-PARAM_TEST_CASE(OpticalFlowDual_TVL1, cv::cuda::DeviceInfo, Gamma)
+PARAM_TEST_CASE(OpticalFlowDual_TVL1, alvision.cuda::DeviceInfo, Gamma)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     double gamma;
 
     virtual void SetUp()
@@ -357,33 +357,33 @@ PARAM_TEST_CASE(OpticalFlowDual_TVL1, cv::cuda::DeviceInfo, Gamma)
         devInfo = GET_PARAM(0);
         gamma = GET_PARAM(1);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(OpticalFlowDual_TVL1, Accuracy)
 {
-    cv::Mat frame0 = readImage("opticalflow/rubberwhale1.png", cv::IMREAD_GRAYSCALE);
+    alvision.Mat frame0 = readImage("opticalflow/rubberwhale1.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
     ASSERT_FALSE(frame0.empty());
 
-    cv::Mat frame1 = readImage("opticalflow/rubberwhale2.png", cv::IMREAD_GRAYSCALE);
+    alvision.Mat frame1 = readImage("opticalflow/rubberwhale2.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
     ASSERT_FALSE(frame1.empty());
 
-    cv::Ptr<cv::cuda::OpticalFlowDual_TVL1> d_alg =
-            cv::cuda::OpticalFlowDual_TVL1::create();
+    alvision.Ptr<alvision.cuda::OpticalFlowDual_TVL1> d_alg =
+            alvision.cuda::OpticalFlowDual_TVL1::create();
     d_alg->setNumIterations(10);
     d_alg->setGamma(gamma);
 
-    cv::cuda::GpuMat d_flow;
+    alvision.cuda::GpuMat d_flow;
     d_alg->calc(loadMat(frame0), loadMat(frame1), d_flow);
 
-    cv::Ptr<cv::DualTVL1OpticalFlow> alg = cv::createOptFlow_DualTVL1();
+    alvision.Ptr<alvision.DualTVL1OpticalFlow> alg = alvision.createOptFlow_DualTVL1();
     alg->setMedianFiltering(1);
     alg->setInnerIterations(1);
     alg->setOuterIterations(d_alg->getNumIterations());
     alg->setGamma(gamma);
 
-    cv::Mat flow;
+    alvision.Mat flow;
     alg->calc(frame0, frame1, flow);
 
     EXPECT_MAT_SIMILAR(flow, d_flow, 4e-3);

@@ -287,7 +287,7 @@ void CV_ImageWarpBaseTest::validate_results() const
                     scale_x = cvRound(scale_x);
                 }
 
-                PRINT_TO_LOG("Interpolation: %s\n", interpolation_to_string(area_fast ? INTER_LANCZOS4 + 1 : interpolation).c_str());
+                PRINT_TO_LOG("Interpolation: %s\n", interpolation_to_string(area_fast ? INTER_LANCZOS4 + 1 : interpolation));
                 PRINT_TO_LOG("Scale (x, y): (%lf, %lf)\n", scale_x, scale_y);
                 PRINT_TO_LOG("Elemsize: %d\n", src.elemSize1());
                 PRINT_TO_LOG("Channels: %d\n", cn);
@@ -359,7 +359,7 @@ private:
     void resize_area();
     double getWeight(double a, double b, int x);
 
-    typedef std::vector<std::pair<int, double> > dim;
+    typedef std::Array<std::pair<int, double> > dim;
     void generate_buffer(double scale, dim& _dim);
     void resize_1d(const Mat& _src, Mat& _dst, int dy, const dim& _dim);
 };
@@ -407,10 +407,10 @@ namespace
         }
 
         float sum = 0;
-        double y0=-(x+3)*CV_PI*0.25, s0 = sin(y0), c0=cos(y0);
+        double y0=-(x+3)*Math.PI*0.25, s0 = sin(y0), c0=cos(y0);
         for(int i = 0; i < 8; i++ )
         {
-            double y = -(x+3-i)*CV_PI*0.25;
+            double y = -(x+3-i)*Math.PI*0.25;
             coeffs[i] = (float)((cs[i][0]*s0 + cs[i][1]*c0)/(y*y));
             sum += coeffs[i];
         }
@@ -443,7 +443,7 @@ void CV_Resize_Test::generate_test_data()
 
 void CV_Resize_Test::run_func()
 {
-    cv::resize(src, dst, dst.size(), 0, 0, interpolation);
+    alvision.resize(src, dst, dst.size(), 0, 0, interpolation);
 }
 
 void CV_Resize_Test::run_reference_func()
@@ -806,16 +806,16 @@ void CV_Remap_Test::prepare_test_data_for_reference_func()
     const int ksize = 3;
     Mat kernel = getStructuringElement(CV_MOP_ERODE, Size(ksize, ksize));
     Mat mask(src.size(), CV_8UC1, Scalar::all(255)), dst_mask;
-    cv::erode(src, erode_src, kernel);
-    cv::erode(mask, dst_mask, kernel, Point(-1, -1), 1, BORDER_CONSTANT, Scalar::all(0));
+    alvision.erode(src, erode_src, kernel);
+    alvision.erode(mask, dst_mask, kernel, Point(-1, -1), 1, BORDER_CONSTANT, Scalar::all(0));
     bitwise_not(dst_mask, mask);
     src.copyTo(erode_src, mask);
     dst_mask.release();
 
     mask = Scalar::all(0);
     kernel = getStructuringElement(CV_MOP_DILATE, kernel.size());
-    cv::dilate(src, dilate_src, kernel);
-    cv::dilate(mask, dst_mask, kernel, Point(-1, -1), 1, BORDER_CONSTANT, Scalar::all(255));
+    alvision.dilate(src, dilate_src, kernel);
+    alvision.dilate(mask, dst_mask, kernel, Point(-1, -1), 1, BORDER_CONSTANT, Scalar::all(255));
     src.copyTo(dilate_src, dst_mask);
     dst_mask.release();
 */
@@ -1041,7 +1041,7 @@ void CV_WarpAffine_Test::generate_test_data()
 
 void CV_WarpAffine_Test::run_func()
 {
-    cv::warpAffine(src, dst, M, dst.size(), interpolation, borderType, borderValue);
+    alvision.warpAffine(src, dst, M, dst.size(), interpolation, borderType, borderValue);
 }
 
 void CV_WarpAffine_Test::prepare_test_data_for_reference_func()
@@ -1106,7 +1106,7 @@ void CV_WarpAffine_Test::warpAffine(const Mat& _src, Mat& _dst)
     }
 
     CV_Assert(mapx.type() == CV_16SC2 && ((inter == INTER_NEAREST && mapy.empty()) || mapy.type() == CV_16SC1));
-    cv::remap(_src, _dst, mapx, mapy, inter, borderType, borderValue);
+    alvision.remap(_src, _dst, mapx, mapy, inter, borderType, borderValue);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1162,7 +1162,7 @@ void CV_WarpPerspective_Test::generate_test_data()
 
 void CV_WarpPerspective_Test::run_func()
 {
-    cv::warpPerspective(src, dst, M, dst.size(), interpolation, borderType, borderValue);
+    alvision.warpPerspective(src, dst, M, dst.size(), interpolation, borderType, borderValue);
 }
 
 void CV_WarpPerspective_Test::run_reference_func()
@@ -1233,7 +1233,7 @@ void CV_WarpPerspective_Test::warpPerspective(const Mat& _src, Mat& _dst)
     }
 
     CV_Assert(mapx.type() == CV_16SC2 && ((inter == INTER_NEAREST && mapy.empty()) || mapy.type() == CV_16SC1));
-    cv::remap(_src, _dst, mapx, mapy, inter, borderType, borderValue);
+    alvision.remap(_src, _dst, mapx, mapy, inter, borderType, borderValue);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -56,9 +56,9 @@ using namespace cvtest;
 
 namespace
 {
-    cv::Mat createTransfomMatrix(cv::Size srcSize, double angle)
+    alvision.Mat createTransfomMatrix(alvision.Size srcSize, double angle)
     {
-        cv::Mat M(3, 3, CV_64FC1);
+        alvision.Mat M(3, 3, CV_64FC1);
 
         M.at<double>(0, 0) = std::cos(angle); M.at<double>(0, 1) = -std::sin(angle); M.at<double>(0, 2) = srcSize.width / 2;
         M.at<double>(1, 0) = std::sin(angle); M.at<double>(1, 1) =  std::cos(angle); M.at<double>(1, 2) = 0.0;
@@ -71,10 +71,10 @@ namespace
 ///////////////////////////////////////////////////////////////////
 // Test buildWarpPerspectiveMaps
 
-PARAM_TEST_CASE(BuildWarpPerspectiveMaps, cv::cuda::DeviceInfo, cv::Size, Inverse)
+PARAM_TEST_CASE(BuildWarpPerspectiveMaps, alvision.cuda::DeviceInfo, alvision.Size, Inverse)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     bool inverse;
 
     virtual void SetUp()
@@ -83,29 +83,29 @@ PARAM_TEST_CASE(BuildWarpPerspectiveMaps, cv::cuda::DeviceInfo, cv::Size, Invers
         size = GET_PARAM(1);
         inverse = GET_PARAM(2);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(BuildWarpPerspectiveMaps, Accuracy)
 {
-    cv::Mat M = createTransfomMatrix(size, CV_PI / 4);
+    alvision.Mat M = createTransfomMatrix(size, Math.PI / 4);
 
-    cv::cuda::GpuMat xmap, ymap;
-    cv::cuda::buildWarpPerspectiveMaps(M, inverse, size, xmap, ymap);
+    alvision.cuda::GpuMat xmap, ymap;
+    alvision.cuda::buildWarpPerspectiveMaps(M, inverse, size, xmap, ymap);
 
-    cv::Mat src = randomMat(randomSize(200, 400), CV_8UC1);
-    int interpolation = cv::INTER_NEAREST;
-    int borderMode = cv::BORDER_CONSTANT;
+    alvision.Mat src = randomMat(randomSize(200, 400), CV_8UC1);
+    int interpolation = alvision.INTER_NEAREST;
+    int borderMode = alvision.BORDER_CONSTANT;
     int flags = interpolation;
     if (inverse)
-        flags |= cv::WARP_INVERSE_MAP;
+        flags |= alvision.WARP_INVERSE_MAP;
 
-    cv::Mat dst;
-    cv::remap(src, dst, cv::Mat(xmap), cv::Mat(ymap), interpolation, borderMode);
+    alvision.Mat dst;
+    alvision.remap(src, dst, alvision.Mat(xmap), alvision.Mat(ymap), interpolation, borderMode);
 
-    cv::Mat dst_gold;
-    cv::warpPerspective(src, dst_gold, M, size, flags, borderMode);
+    alvision.Mat dst_gold;
+    alvision.warpPerspective(src, dst_gold, M, size, flags, borderMode);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
@@ -120,7 +120,7 @@ INSTANTIATE_TEST_CASE_P(CUDA_Warping, BuildWarpPerspectiveMaps, testing::Combine
 
 namespace
 {
-    template <typename T, template <typename> class Interpolator> void warpPerspectiveImpl(const cv::Mat& src, const cv::Mat& M, cv::Size dsize, cv::Mat& dst, int borderType, cv::Scalar borderVal)
+    template <typename T, template <typename> class Interpolator> void warpPerspectiveImpl(const alvision.Mat& src, const alvision.Mat& M, alvision.Size dsize, alvision.Mat& dst, int borderType, alvision.Scalar borderVal)
     {
         const int cn = src.channels();
 
@@ -141,9 +141,9 @@ namespace
         }
     }
 
-    void warpPerspectiveGold(const cv::Mat& src, const cv::Mat& M, bool inverse, cv::Size dsize, cv::Mat& dst, int interpolation, int borderType, cv::Scalar borderVal)
+    void warpPerspectiveGold(const alvision.Mat& src, const alvision.Mat& M, bool inverse, alvision.Size dsize, alvision.Mat& dst, int interpolation, int borderType, alvision.Scalar borderVal)
     {
-        typedef void (*func_t)(const cv::Mat& src, const cv::Mat& M, cv::Size dsize, cv::Mat& dst, int borderType, cv::Scalar borderVal);
+        typedef void (*func_t)(const alvision.Mat& src, const alvision.Mat& M, alvision.Size dsize, alvision.Mat& dst, int borderType, alvision.Scalar borderVal);
 
         static const func_t nearest_funcs[] =
         {
@@ -181,8 +181,8 @@ namespace
             funcs[interpolation][src.depth()](src, M, dsize, dst, borderType, borderVal);
         else
         {
-            cv::Mat iM;
-            cv::invert(M, iM);
+            alvision.Mat iM;
+            alvision.invert(M, iM);
             funcs[interpolation][src.depth()](src, iM, dsize, dst, borderType, borderVal);
         }
     }
@@ -191,10 +191,10 @@ namespace
 ///////////////////////////////////////////////////////////////////
 // Test
 
-PARAM_TEST_CASE(WarpPerspective, cv::cuda::DeviceInfo, cv::Size, MatType, Inverse, Interpolation, BorderType, UseRoi)
+PARAM_TEST_CASE(WarpPerspective, alvision.cuda::DeviceInfo, alvision.Size, MatType, Inverse, Interpolation, BorderType, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int type;
     bool inverse;
     int interpolation;
@@ -211,23 +211,23 @@ PARAM_TEST_CASE(WarpPerspective, cv::cuda::DeviceInfo, cv::Size, MatType, Invers
         borderType = GET_PARAM(5);
         useRoi = GET_PARAM(6);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(WarpPerspective, Accuracy)
 {
-    cv::Mat src = randomMat(size, type);
-    cv::Mat M = createTransfomMatrix(size, CV_PI / 3);
+    alvision.Mat src = randomMat(size, type);
+    alvision.Mat M = createTransfomMatrix(size, Math.PI / 3);
     int flags = interpolation;
     if (inverse)
-        flags |= cv::WARP_INVERSE_MAP;
-    cv::Scalar val = randomScalar(0.0, 255.0);
+        flags |= alvision.WARP_INVERSE_MAP;
+    alvision.Scalar val = randomScalar(0.0, 255.0);
 
-    cv::cuda::GpuMat dst = createMat(size, type, useRoi);
-    cv::cuda::warpPerspective(loadMat(src, useRoi), dst, M, size, flags, borderType, val);
+    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
+    alvision.cuda::warpPerspective(loadMat(src, useRoi), dst, M, size, flags, borderType, val);
 
-    cv::Mat dst_gold;
+    alvision.Mat dst_gold;
     warpPerspectiveGold(src, M, inverse, size, dst_gold, interpolation, borderType, val);
 
     EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-1 : 1.0);
@@ -238,16 +238,16 @@ INSTANTIATE_TEST_CASE_P(CUDA_Warping, WarpPerspective, testing::Combine(
     DIFFERENT_SIZES,
     testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_16UC1), MatType(CV_16UC3), MatType(CV_16UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
     DIRECT_INVERSE,
-    testing::Values(Interpolation(cv::INTER_NEAREST), Interpolation(cv::INTER_LINEAR), Interpolation(cv::INTER_CUBIC)),
-    testing::Values(BorderType(cv::BORDER_REFLECT101), BorderType(cv::BORDER_REPLICATE), BorderType(cv::BORDER_REFLECT), BorderType(cv::BORDER_WRAP)),
+    testing::Values(Interpolation(alvision.INTER_NEAREST), Interpolation(alvision.INTER_LINEAR), Interpolation(alvision.INTER_CUBIC)),
+    testing::Values(BorderType(alvision.BORDER_REFLECT101), BorderType(alvision.BORDER_REPLICATE), BorderType(alvision.BORDER_REFLECT), BorderType(alvision.BORDER_WRAP)),
     WHOLE_SUBMAT));
 
 ///////////////////////////////////////////////////////////////////
 // Test NPP
 
-PARAM_TEST_CASE(WarpPerspectiveNPP, cv::cuda::DeviceInfo, MatType, Inverse, Interpolation)
+PARAM_TEST_CASE(WarpPerspectiveNPP, alvision.cuda::DeviceInfo, MatType, Inverse, Interpolation)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
     int type;
     bool inverse;
     int interpolation;
@@ -259,25 +259,25 @@ PARAM_TEST_CASE(WarpPerspectiveNPP, cv::cuda::DeviceInfo, MatType, Inverse, Inte
         inverse = GET_PARAM(2);
         interpolation = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(WarpPerspectiveNPP, Accuracy)
 {
-    cv::Mat src = readImageType("stereobp/aloe-L.png", type);
+    alvision.Mat src = readImageType("stereobp/aloe-L.png", type);
     ASSERT_FALSE(src.empty());
 
-    cv::Mat M = createTransfomMatrix(src.size(), CV_PI / 4);
+    alvision.Mat M = createTransfomMatrix(src.size(), Math.PI / 4);
     int flags = interpolation;
     if (inverse)
-        flags |= cv::WARP_INVERSE_MAP;
+        flags |= alvision.WARP_INVERSE_MAP;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::warpPerspective(loadMat(src), dst, M, src.size(), flags);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::warpPerspective(loadMat(src), dst, M, src.size(), flags);
 
-    cv::Mat dst_gold;
-    warpPerspectiveGold(src, M, inverse, src.size(), dst_gold, interpolation, cv::BORDER_CONSTANT, cv::Scalar::all(0));
+    alvision.Mat dst_gold;
+    warpPerspectiveGold(src, M, inverse, src.size(), dst_gold, interpolation, alvision.BORDER_CONSTANT, alvision.Scalar::all(0));
 
     EXPECT_MAT_SIMILAR(dst_gold, dst, 2e-2);
 }
@@ -286,6 +286,6 @@ INSTANTIATE_TEST_CASE_P(CUDA_Warping, WarpPerspectiveNPP, testing::Combine(
     ALL_DEVICES,
     testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
     DIRECT_INVERSE,
-    testing::Values(Interpolation(cv::INTER_NEAREST), Interpolation(cv::INTER_LINEAR), Interpolation(cv::INTER_CUBIC))));
+    testing::Values(Interpolation(alvision.INTER_NEAREST), Interpolation(alvision.INTER_LINEAR), Interpolation(alvision.INTER_CUBIC))));
 
 #endif // HAVE_CUDA

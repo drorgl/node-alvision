@@ -71,7 +71,7 @@ import fs = require('fs');
 //}
 //ostream& operator<<(ostream& out, const Mat& mat) { return out << Mat_<double>(mat); }
 
-function calcRvec(const vector<Point3f>& points, const Size& cornerSize) : alvision.Mat
+function calcRvec(const Array<Point3f>& points, const Size& cornerSize) : alvision.Mat
 {
     Point3f p00 = points[0];
     Point3f p10 = points[1];
@@ -119,7 +119,7 @@ protected:
             camMat_est.at<double>(2, 0) != 0 || camMat_est.at<double>(2, 1) != 0 ||
             camMat_est.at<double>(2, 2) != 1)
         {
-            ts->printf( alvision.cvtest.TS::LOG, "Bad shape of camera matrix returned \n");
+            ts->printf( alvision.cvtest.TSConstants.LOG, "Bad shape of camera matrix returned \n");
             this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
         }
 
@@ -138,8 +138,8 @@ protected:
         {
             this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
         }
-        ts->printf( alvision.cvtest.TS::LOG, "%d) Expected  [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx, fy, cx, cy);
-        ts->printf( alvision.cvtest.TS::LOG, "%d) Estimated [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx_e, fy_e, cx_e, cy_e);
+        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Expected  [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx, fy, cx, cy);
+        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Estimated [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx_e, fy_e, cx_e, cy_e);
     }
 
     void compareDistCoeffs(const Mat_<double>& distCoeffs, const Mat& distCoeffs_est)
@@ -166,12 +166,12 @@ protected:
             // commented according to vp123's recomendation. TODO - improve accuaracy
             //this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY); ss
         }
-        ts->printf( alvision.cvtest.TS::LOG, "%d) DistCoeff exp=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1, k2, p1, p2, k3);
-        ts->printf( alvision.cvtest.TS::LOG, "%d) DistCoeff est=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1_e, k2_e, p1_e, p2_e, k3_e);
-        ts->printf( alvision.cvtest.TS::LOG, "%d) AbsError = [%.5f %.5f %.5f %.5f %.5f]\n", r, fabs(k1-k1_e), fabs(k2-k2_e), fabs(p1-p1_e), fabs(p2-p2_e), fabs(k3-k3_e));
+        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) DistCoeff exp=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1, k2, p1, p2, k3);
+        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) DistCoeff est=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1_e, k2_e, p1_e, p2_e, k3_e);
+        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) AbsError = [%.5f %.5f %.5f %.5f %.5f]\n", r, fabs(k1-k1_e), fabs(k2-k2_e), fabs(p1-p1_e), fabs(p2-p2_e), fabs(k3-k3_e));
     }
 
-    void compareShiftVecs(const vector<Mat>& tvecs, const vector<Mat>& tvecs_est)
+    void compareShiftVecs(const Array<Mat>& tvecs, const Array<Mat>& tvecs_est)
     {
         const double eps = 1e-2;
         const double dlt = 1e-4;
@@ -188,11 +188,11 @@ protected:
                 if (err_count++ < errMsgNum)
                 {
                     if (err_count == errMsgNum)
-                        ts->printf( alvision.cvtest.TS::LOG, "%d) ...\n", r);
+                        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) ...\n", r);
                     else
                     {
-                        ts->printf( alvision.cvtest.TS::LOG, "%d) Bad accuracy in returned tvecs. Index = %d\n", r, i);
-                        ts->printf( alvision.cvtest.TS::LOG, "%d) norm(tvec_est - tvec) = %f, norm(tvec_exp) = %f \n", r, norm(tvec_est - tvec), norm(tvec));
+                        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Bad accuracy in returned tvecs. Index = %d\n", r, i);
+                        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) norm(tvec_est - tvec) = %f, norm(tvec_exp) = %f \n", r, norm(tvec_est - tvec), norm(tvec));
                     }
                 }
                 this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
@@ -200,7 +200,7 @@ protected:
         }
     }
 
-    void compareRotationVecs(const vector<Mat>& rvecs, const vector<Mat>& rvecs_est)
+    void compareRotationVecs(const Array<Mat>& rvecs, const Array<Mat>& rvecs_est)
     {
         const double eps = 2e-2;
         const double dlt = 1e-4;
@@ -213,17 +213,17 @@ protected:
             Rodrigues(rvecs[i], rmat);
             Rodrigues(rvecs_est[i], rmat_est);
 
-            if (alvision.cvtest.norm(rmat_est, rmat, NORM_L2) > eps* (alvision.cvtest.norm(rmat, NORM_L2) + dlt))
+            if (alvision.cvtest.norm(rmat_est, rmat,alvision.NormTypes. NORM_L2) > eps* (alvision.cvtest.norm(rmat,alvision.NormTypes. NORM_L2) + dlt))
             {
                 if (err_count++ < errMsgNum)
                 {
                     if (err_count == errMsgNum)
-                        ts->printf( alvision.cvtest.TS::LOG, "%d) ...\n", r);
+                        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) ...\n", r);
                     else
                     {
-                        ts->printf( alvision.cvtest.TS::LOG, "%d) Bad accuracy in returned rvecs (rotation matrs). Index = %d\n", r, i);
-                        ts->printf( alvision.cvtest.TS::LOG, "%d) norm(rot_mat_est - rot_mat_exp) = %f, norm(rot_mat_exp) = %f \n", r,
-                                   alvision.cvtest.norm(rmat_est, rmat, NORM_L2), alvision.cvtest.norm(rmat, NORM_L2));
+                        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Bad accuracy in returned rvecs (rotation matrs). Index = %d\n", r, i);
+                        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) norm(rot_mat_est - rot_mat_exp) = %f, norm(rot_mat_exp) = %f \n", r,
+                                   alvision.cvtest.norm(rmat_est, rmat,alvision.NormTypes. NORM_L2), alvision.cvtest.norm(rmat,alvision.NormTypes. NORM_L2));
 
                     }
                 }
@@ -232,13 +232,13 @@ protected:
         }
     }
 
-    double reprojectErrorWithoutIntrinsics(const vector<Point3f>& cb3d, const vector<Mat>& _rvecs_exp, const vector<Mat>& _tvecs_exp,
-        const vector<Mat>& rvecs_est, const vector<Mat>& tvecs_est)
+    double reprojectErrorWithoutIntrinsics(const Array<Point3f>& cb3d, const Array<Mat>& _rvecs_exp, const Array<Mat>& _tvecs_exp,
+        const Array<Mat>& rvecs_est, const Array<Mat>& tvecs_est)
     {
         const static Mat eye33 = Mat::eye(3, 3, CV_64F);
         const static Mat zero15 = Mat::zeros(1, 5, CV_64F);
         Mat _chessboard3D(cb3d);
-        vector<Point2f> uv_exp, uv_est;
+        Array<Point2f> uv_exp, uv_est;
         double res = 0;
 
         for(size_t i = 0; i < rvecs_exp.size(); ++i)
@@ -253,11 +253,11 @@ protected:
 
     Size2f sqSile;
 
-    vector<Point3f> chessboard3D;
-    vector<Mat> boards, rvecs_exp, tvecs_exp, rvecs_spnp, tvecs_spnp;
-    vector< vector<Point3f> > objectPoints;
-    vector< vector<Point2f> > imagePoints_art;
-    vector< vector<Point2f> > imagePoints_findCb;
+    Array<Point3f> chessboard3D;
+    Array<Mat> boards, rvecs_exp, tvecs_exp, rvecs_spnp, tvecs_spnp;
+    Array< Array<Point3f> > objectPoints;
+    Array< Array<Point2f> > imagePoints_art;
+    Array< Array<Point2f> > imagePoints_findCb;
 
 
     void prepareForTest(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, size_t brdsNum, const ChessBoardGenerator& cbg)
@@ -278,7 +278,7 @@ protected:
         imagePoints_art.clear();
         imagePoints_findCb.clear();
 
-        vector<Point2f> corners_art, corners_fcb;
+        Array<Point2f> corners_art, corners_fcb;
         for(size_t i = 0; i < brdsNum; ++i)
         {
             for(;;)
@@ -288,7 +288,7 @@ protected:
                     break;
             }
 
-            //cv::namedWindow("CB"); imshow("CB", boards[i]); cv::waitKey();
+            //alvision.namedWindow("CB"); imshow("CB", boards[i]); alvision.waitKey();
 
             imagePoints_art.push_back(corners_art);
             imagePoints_findCb.push_back(corners_fcb);
@@ -304,7 +304,7 @@ protected:
     {
         const TermCriteria tc(TermCriteria::EPS|TermCriteria::MAX_ITER, 30, 0.1);
 
-        vector< vector<Point2f> > imagePoints;
+        Array< Array<Point2f> > imagePoints;
 
         switch(flag)
         {
@@ -316,7 +316,7 @@ protected:
             {
                 Mat gray;
                 cvtColor(boards[i], gray, COLOR_BGR2GRAY);
-                vector<Point2f> tmp = imagePoints_findCb[i];
+                Array<Point2f> tmp = imagePoints_findCb[i];
                 cornerSubPix(gray, tmp, Size(5, 5), Size(-1,-1), tc);
                 imagePoints.push_back(tmp);
             }
@@ -326,7 +326,7 @@ protected:
             {
                 Mat gray;
                 cvtColor(boards[i], gray, COLOR_BGR2GRAY);
-                vector<Point2f> tmp = imagePoints_findCb[i];
+                Array<Point2f> tmp = imagePoints_findCb[i];
                 find4QuadCornerSubpix(gray, tmp, Size(5, 5));
                 imagePoints.push_back(tmp);
             }
@@ -336,7 +336,7 @@ protected:
         }
 
         Mat camMat_est = Mat::eye(3, 3, CV_64F), distCoeffs_est = Mat::zeros(1, 5, CV_64F);
-        vector<Mat> rvecs_est, tvecs_est;
+        Array<Mat> rvecs_est, tvecs_est;
 
         int flags = /*CALIB_FIX_K3|*/CALIB_FIX_K4|CALIB_FIX_K5|CALIB_FIX_K6; //CALIB_FIX_K3; //CALIB_FIX_ASPECT_RATIO |  | CALIB_ZERO_TANGENT_DIST;
         TermCriteria criteria = TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 100, DBL_EPSILON);
@@ -346,7 +346,7 @@ protected:
         const double thres = 1;
         if (rep_error > thres)
         {
-            ts->printf( alvision.cvtest.TS::LOG, "%d) Too big reproject error = %f\n", r, rep_error);
+            ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error = %f\n", r, rep_error);
             this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
         }
 
@@ -361,11 +361,11 @@ protected:
         const double thres2 = 0.01;
         if (rep_errorWOI > thres2)
         {
-            ts->printf( alvision.cvtest.TS::LOG, "%d) Too big reproject error without intrinsics = %f\n", r, rep_errorWOI);
+            ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error without intrinsics = %f\n", r, rep_errorWOI);
             this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
         }
 
-        ts->printf( alvision.cvtest.TS::LOG, "%d) Testing solvePnP...\n", r);
+        ts->printf( alvision.cvtest.TSConstants.LOG, "%d) Testing solvePnP...\n", r);
         rvecs_spnp.resize(brdsNum);
         tvecs_spnp.resize(brdsNum);
         for(size_t i = 0; i < brdsNum; ++i)
@@ -415,22 +415,22 @@ protected:
             cbg.cov = 0.8;
 
             progress = update_progress(progress, r, repeat_num, 0);
-            ts->printf( alvision.cvtest.TS::LOG, "\n");
+            ts->printf( alvision.cvtest.TSConstants.LOG, "\n");
             prepareForTest(bg, camMat, distCoeffs, brds_num, cbg);
 
-            ts->printf( alvision.cvtest.TS::LOG, "artificial corners\n");
+            ts->printf( alvision.cvtest.TSConstants.LOG, "artificial corners\n");
             runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), ARTIFICIAL_CORNERS);
             progress = update_progress(progress, r, repeat_num, 0);
 
-            ts->printf( alvision.cvtest.TS::LOG, "findChessboard corners\n");
+            ts->printf( alvision.cvtest.TSConstants.LOG, "findChessboard corners\n");
             runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), JUST_FIND_CORNERS);
             progress = update_progress(progress, r, repeat_num, 0);
 
-            ts->printf( alvision.cvtest.TS::LOG, "cornersSubPix corners\n");
+            ts->printf( alvision.cvtest.TSConstants.LOG, "cornersSubPix corners\n");
             runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), USE_CORNERS_SUBPIX);
             progress = update_progress(progress, r, repeat_num, 0);
 
-            ts->printf( alvision.cvtest.TS::LOG, "4quad corners\n");
+            ts->printf( alvision.cvtest.TSConstants.LOG, "4quad corners\n");
             runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), USE_4QUAD_CORNERS);
             progress = update_progress(progress, r, repeat_num, 0);
         }

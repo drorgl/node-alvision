@@ -64,7 +64,7 @@ public:
 protected:
     int read_params( CvFileStorage* fs );
     void run_func(void);
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     int validate_test_results( int test_case_idx );
     virtual void init_hist( int test_case_idx, int i );
 
@@ -88,9 +88,9 @@ protected:
     double low, high, range_delta;
     CvSize img_size;
 
-    vector<CvHistogram*> hist;
-    vector<float> _ranges;
-    vector<float*> ranges;
+    Array<CvHistogram*> hist;
+    Array<float> _ranges;
+    Array<float*> ranges;
     bool test_cpp;
 };
 
@@ -328,7 +328,7 @@ public:
 
 protected:
     void run_func(void);
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     int validate_test_results( int test_case_idx );
     void init_hist( int test_case_idx, int i );
 
@@ -554,20 +554,20 @@ int CV_QueryHistTest::validate_test_results( int /*test_case_idx*/ )
 
         if( cvIsNaN(v) || cvIsInf(v) )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "The bin #%d has invalid value\n", i );
-            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf( alvision.cvtest.TSConstants.LOG, "The bin #%d has invalid value\n", i );
+            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
         }
         else if( fabs(v - v0) > FLT_EPSILON )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "The bin #%d = %g, while it should be %g\n", i, v, v0 );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "The bin #%d = %g, while it should be %g\n", i, v, v0 );
             code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
         }
 
         if( code < 0 )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "The bin index = (" );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "The bin index = (" );
             for( j = 0; j < cdims; j++ )
-                ts->printf( alvision.cvtest.TS::LOG, "%d%s", indices->data.i[i*cdims + j],
+                ts->printf( alvision.cvtest.TSConstants.LOG, "%d%s", indices->data.i[i*cdims + j],
                                         j < cdims-1 ? ", " : ")\n" );
             break;
         }
@@ -638,10 +638,10 @@ void CV_MinMaxHistTest::run_func(void)
 {
     if( hist_type != CV_HIST_ARRAY && test_cpp )
     {
-        cv::SparseMat h;
+        alvision.SparseMat h;
         ((CvSparseMat*)hist[0]->bins)->copyToSparseMat(h);
         double _min_val = 0, _max_val = 0;
-        cv::minMaxLoc(h, &_min_val, &_max_val, min_idx, max_idx );
+        alvision.minMaxLoc(h, &_min_val, &_max_val, min_idx, max_idx );
         min_val = (float)_min_val;
         max_val = (float)_max_val;
     }
@@ -657,14 +657,14 @@ int CV_MinMaxHistTest::validate_test_results( int /*test_case_idx*/ )
     if( cvIsNaN(min_val) || cvIsInf(min_val) ||
         cvIsNaN(max_val) || cvIsInf(max_val) )
     {
-        ts->printf( alvision.cvtest.TS::LOG,
+        ts->printf( alvision.cvtest.TSConstants.LOG,
             "The extrema histogram bin values are invalid (min = %g, max = %g)\n", min_val, max_val );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if( fabs(min_val - min_val0) > FLT_EPSILON ||
              fabs(max_val - max_val0) > FLT_EPSILON )
     {
-        ts->printf( alvision.cvtest.TS::LOG,
+        ts->printf( alvision.cvtest.TSConstants.LOG,
             "The extrema histogram bin values are incorrect: (min = %g, should be = %g), (max = %g, should be = %g)\n",
             min_val, min_val0, max_val, max_val0 );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
@@ -676,7 +676,7 @@ int CV_MinMaxHistTest::validate_test_results( int /*test_case_idx*/ )
         {
             if( min_idx[i] != min_idx0[i] || max_idx[i] != max_idx0[i] )
             {
-                ts->printf( alvision.cvtest.TS::LOG,
+                ts->printf( alvision.cvtest.TSConstants.LOG,
                     "The %d-th coordinates of extrema histogram bin values are incorrect: "
                     "(min = %d, should be = %d), (max = %d, should be = %d)\n",
                     i, min_idx[i], min_idx0[i], max_idx[i], max_idx0[i] );
@@ -699,7 +699,7 @@ public:
     CV_NormHistTest();
 
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void run_func(void);
     int validate_test_results( int test_case_idx );
     double factor;
@@ -736,9 +736,9 @@ void CV_NormHistTest::run_func(void)
 {
     if( hist_type != CV_HIST_ARRAY && test_cpp )
     {
-        cv::SparseMat h;
+        alvision.SparseMat h;
         ((CvSparseMat*)hist[0]->bins)->copyToSparseMat(h);
-        cv::normalize(h, h, factor, CV_L1);
+        alvision.normalize(h, h, factor, CV_L1);
         cvReleaseSparseMat((CvSparseMat**)&hist[0]->bins);
         hist[0]->bins = cvCreateSparseMat(h);
     }
@@ -775,13 +775,13 @@ int CV_NormHistTest::validate_test_results( int /*test_case_idx*/ )
 
     if( cvIsNaN(sum) || cvIsInf(sum) )
     {
-        ts->printf( alvision.cvtest.TS::LOG,
+        ts->printf( alvision.cvtest.TSConstants.LOG,
             "The normalized histogram has invalid sum =%g\n", sum );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
     else if( fabs(sum - factor) > FLT_EPSILON*10*fabs(factor) )
     {
-        ts->printf( alvision.cvtest.TS::LOG,
+        ts->printf( alvision.cvtest.TSConstants.LOG,
             "The normalized histogram has incorrect sum =%g, while it should be =%g\n", sum, factor );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
@@ -802,7 +802,7 @@ public:
     void clear();
 
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void run_func(void);
     int validate_test_results( int test_case_idx );
     CvMat* indices;
@@ -922,13 +922,13 @@ int CV_ThreshHistTest::validate_test_results( int /*test_case_idx*/ )
             if( v0 <= threshold ) v0 = 0.f;
             if( cvIsNaN(v) || cvIsInf(v) )
             {
-                ts->printf( alvision.cvtest.TS::LOG, "The %d-th bin is invalid (=%g)\n", i, v );
-                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                ts->printf( alvision.cvtest.TSConstants.LOG, "The %d-th bin is invalid (=%g)\n", i, v );
+                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
                 break;
             }
             else if( fabs(v0 - v) > FLT_EPSILON*10*fabs(v0) )
             {
-                ts->printf( alvision.cvtest.TS::LOG, "The %d-th bin is incorrect (=%g, should be =%g)\n", i, v, v0 );
+                ts->printf( alvision.cvtest.TSConstants.LOG, "The %d-th bin is incorrect (=%g, should be =%g)\n", i, v, v0 );
                 code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
                 break;
             }
@@ -939,9 +939,9 @@ int CV_ThreshHistTest::validate_test_results( int /*test_case_idx*/ )
     {
         if( sparse->heap->active_count > 0 )
         {
-            ts->printf( alvision.cvtest.TS::LOG,
+            ts->printf( alvision.cvtest.TSConstants.LOG,
                 "There some extra histogram bins in the sparse histogram after the thresholding\n" );
-            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
         }
     }
 
@@ -960,7 +960,7 @@ public:
 
     CV_CompareHistTest();
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void run_func(void);
     int validate_test_results( int test_case_idx );
     double result[MAX_METHOD+1];
@@ -988,11 +988,11 @@ void CV_CompareHistTest::run_func(void)
     int k;
     if( hist_type != CV_HIST_ARRAY && test_cpp )
     {
-        cv::SparseMat h0, h1;
+        alvision.SparseMat h0, h1;
         ((CvSparseMat*)hist[0]->bins)->copyToSparseMat(h0);
         ((CvSparseMat*)hist[1]->bins)->copyToSparseMat(h1);
         for( k = 0; k < MAX_METHOD; k++ )
-            result[k] = cv::compareHist(h0, h1, k);
+            result[k] = alvision.compareHist(h0, h1, k);
     }
     else
         for( k = 0; k < MAX_METHOD; k++ )
@@ -1103,14 +1103,14 @@ int CV_CompareHistTest::validate_test_results( int /*test_case_idx*/ )
 
         if( cvIsNaN(v) || cvIsInf(v) )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "The comparison result using the method #%d (%s) is invalid (=%g)\n",
+            ts->printf( alvision.cvtest.TSConstants.LOG, "The comparison result using the method #%d (%s) is invalid (=%g)\n",
                 i, method_name, v );
-            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
             break;
         }
         else if( fabs(v0 - v) > FLT_EPSILON*14*MAX(fabs(v0),0.1) )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "The comparison result using the method #%d (%s)\n\tis inaccurate (=%g, should be =%g)\n",
+            ts->printf( alvision.cvtest.TSConstants.LOG, "The comparison result using the method #%d (%s)\n\tis inaccurate (=%g, should be =%g)\n",
                 i, method_name, v, v0 );
             code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
             break;
@@ -1133,7 +1133,7 @@ public:
     void clear();
 
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void run_func(void);
     int validate_test_results( int test_case_idx );
     IplImage* images[CV_MAX_DIM+1];
@@ -1319,7 +1319,7 @@ int CV_CalcHistTest::validate_test_results( int /*test_case_idx*/ )
     diff = cvCompareHist( hist[0], hist[1], CV_COMP_CHISQR );
     if( diff > DBL_EPSILON )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "The histogram does not match to the reference one\n" );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "The histogram does not match to the reference one\n" );
         code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
 
     }
@@ -1344,7 +1344,7 @@ public:
     void clear();
 
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void run_func(void);
     int validate_test_results( int test_case_idx );
     IplImage* images[CV_MAX_DIM+3];
@@ -1563,7 +1563,7 @@ public:
     void clear();
 
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void run_func(void);
     int validate_test_results( int test_case_idx );
     IplImage* images[CV_MAX_DIM+2];
@@ -1756,7 +1756,7 @@ public:
 
     CV_BayesianProbTest();
 protected:
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void run_func(void);
     int validate_test_results( int test_case_idx );
     void init_hist( int test_case_idx, int i );
@@ -1829,15 +1829,15 @@ int CV_BayesianProbTest::validate_test_results( int /*test_case_idx*/ )
 
             if( cvIsNaN(v) || cvIsInf(v) )
             {
-                ts->printf( alvision.cvtest.TS::LOG,
+                ts->printf( alvision.cvtest.TSConstants.LOG,
                     "The element #%d in the destination histogram #%d is invalid (=%g)\n",
                     i, j, v );
-                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
                 break;
             }
             else if( fabs(v0 - v) > err_level*fabs(v0) )
             {
-                ts->printf( alvision.cvtest.TS::LOG,
+                ts->printf( alvision.cvtest.TSConstants.LOG,
                     "The element #%d in the destination histogram #%d is inaccurate (=%g, should be =%g)\n",
                     i, j, v, v0 );
                 code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;

@@ -64,7 +64,7 @@ public:
 
 protected:
     int read_params( CvFileStorage* fs );
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     int validate_test_results( int test_case_idx );
     void run_func();
 
@@ -281,11 +281,11 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
     if( count != count2 )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "The number of contours retrieved with different "
+        ts->printf( alvision.cvtest.TSConstants.LOG, "The number of contours retrieved with different "
             "approximation methods is not the same\n"
             "(%d contour(s) for method %d vs %d contour(s) for method %d)\n",
             count, approx_method, count2, CV_CHAIN_CODE );
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
     }
 
     if( retr_mode != CV_RETR_EXTERNAL && approx_method < CV_CHAIN_APPROX_TC89_L1 )
@@ -322,11 +322,11 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
             if( count3 != count )
             {
-                ts->printf( alvision.cvtest.TS::LOG,
+                ts->printf( alvision.cvtest.TSConstants.LOG,
                     "The returned number of retrieved contours (using the approx_method = %d) does not match\n"
                     "to the actual number of contours in the tree/list (returned %d, actual %d)\n",
                     i == 0 ? approx_method : 0, count, count3 );
-                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
         }
@@ -343,10 +343,10 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
             if( !seq1 || !seq2 )
             {
-                ts->printf( alvision.cvtest.TS::LOG,
+                ts->printf( alvision.cvtest.TSConstants.LOG,
                     "There are NULL pointers in the original contour tree or the "
                     "tree produced by cvApproxChains\n" );
-                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
 
@@ -355,10 +355,10 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
             if( seq1->total != seq2->total )
             {
-                ts->printf( alvision.cvtest.TS::LOG,
+                ts->printf( alvision.cvtest.TSConstants.LOG,
                     "The original contour #%d has %d points, while the corresponding contour has %d point\n",
                     count3, seq1->total, seq2->total );
-                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
 
@@ -372,10 +372,10 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
                 if( pt1.x != pt2.x || pt1.y != pt2.y )
                 {
-                    ts->printf( alvision.cvtest.TS::LOG,
+                    ts->printf( alvision.cvtest.TSConstants.LOG,
                     "The point #%d in the contour #%d is different from the corresponding point "
                     "in the approximated chain ((%d,%d) vs (%d,%d)", count3, i, pt1.x, pt1.y, pt2.x, pt2.y );
-                    code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                    code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
                     goto _exit_;
                 }
             }
@@ -422,7 +422,7 @@ TEST(Core_Drawing, _914)
 TEST(Core_Drawing, polylines_empty)
 {
     Mat img(100, 100, CV_8UC1, Scalar(0));
-    vector<Point> pts; // empty
+    Array<Point> pts; // empty
     polylines(img, pts, false, Scalar(255));
     int cnt = countNonZero(img);
     ASSERT_EQ(cnt, 0);
@@ -431,7 +431,7 @@ TEST(Core_Drawing, polylines_empty)
 TEST(Core_Drawing, polylines)
 {
     Mat img(100, 100, CV_8UC1, Scalar(0));
-    vector<Point> pts;
+    Array<Point> pts;
     pts.push_back(Point(0, 0));
     pts.push_back(Point(20, 0));
     polylines(img, pts, false, Scalar(255));
@@ -486,7 +486,7 @@ TEST(Imgproc_FindContours, hilbert)
         p = q;
     }
     dilate(img, img, Mat());
-    vector<vector<Point> > contours;
+    Array<Array<Point> > contours;
     findContours(img, contours, noArray(), RETR_LIST, CHAIN_APPROX_SIMPLE);
     printf("ncontours = %d, contour[0].npoints=%d\n", (int)contours.size(), (int)contours[0].size());
     img.setTo(Scalar::all(0));

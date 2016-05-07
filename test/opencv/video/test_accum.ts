@@ -88,7 +88,7 @@ get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array < Array
 
 
 void CV_AccumBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                        vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                        Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     
 }

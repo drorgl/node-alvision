@@ -60,11 +60,11 @@ using namespace cvtest;
 namespace
 {
     template <typename T, template <typename> class Interpolator>
-    void resizeImpl(const cv::Mat& src, cv::Mat& dst, double fx, double fy)
+    void resizeImpl(const alvision.Mat& src, alvision.Mat& dst, double fx, double fy)
     {
         const int cn = src.channels();
 
-        cv::Size dsize(cv::saturate_cast<int>(src.cols * fx), cv::saturate_cast<int>(src.rows * fy));
+        alvision.Size dsize(alvision.saturate_cast<int>(src.cols * fx), alvision.saturate_cast<int>(src.rows * fy));
 
         dst.create(dsize, src.type());
 
@@ -76,14 +76,14 @@ namespace
             for (int x = 0; x < dsize.width; ++x)
             {
                 for (int c = 0; c < cn; ++c)
-                    dst.at<T>(y, x * cn + c) = Interpolator<T>::getValue(src, y * ify, x * ifx, c, cv::BORDER_REPLICATE);
+                    dst.at<T>(y, x * cn + c) = Interpolator<T>::getValue(src, y * ify, x * ifx, c, alvision.BORDER_REPLICATE);
             }
         }
     }
 
-    void resizeGold(const cv::Mat& src, cv::Mat& dst, double fx, double fy, int interpolation)
+    void resizeGold(const alvision.Mat& src, alvision.Mat& dst, double fx, double fy, int interpolation)
     {
-        typedef void (*func_t)(const cv::Mat& src, cv::Mat& dst, double fx, double fy);
+        typedef void (*func_t)(const alvision.Mat& src, alvision.Mat& dst, double fx, double fy);
 
         static const func_t nearest_funcs[] =
         {
@@ -125,10 +125,10 @@ namespace
 ///////////////////////////////////////////////////////////////////
 // Test
 
-PARAM_TEST_CASE(Resize, cv::cuda::DeviceInfo, cv::Size, MatType, double, Interpolation, UseRoi)
+PARAM_TEST_CASE(Resize, alvision.cuda::DeviceInfo, alvision.Size, MatType, double, Interpolation, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     double coeff;
     int interpolation;
     int type;
@@ -143,18 +143,18 @@ PARAM_TEST_CASE(Resize, cv::cuda::DeviceInfo, cv::Size, MatType, double, Interpo
         interpolation = GET_PARAM(4);
         useRoi = GET_PARAM(5);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(Resize, Accuracy)
 {
-    cv::Mat src = randomMat(size, type);
+    alvision.Mat src = randomMat(size, type);
 
-    cv::cuda::GpuMat dst = createMat(cv::Size(cv::saturate_cast<int>(src.cols * coeff), cv::saturate_cast<int>(src.rows * coeff)), type, useRoi);
-    cv::cuda::resize(loadMat(src, useRoi), dst, cv::Size(), coeff, coeff, interpolation);
+    alvision.cuda::GpuMat dst = createMat(alvision.Size(alvision.saturate_cast<int>(src.cols * coeff), alvision.saturate_cast<int>(src.rows * coeff)), type, useRoi);
+    alvision.cuda::resize(loadMat(src, useRoi), dst, alvision.Size(), coeff, coeff, interpolation);
 
-    cv::Mat dst_gold;
+    alvision.Mat dst_gold;
     resizeGold(src, dst_gold, coeff, coeff, interpolation);
 
     EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-2 : 1.0);
@@ -165,15 +165,15 @@ INSTANTIATE_TEST_CASE_P(CUDA_Warping, Resize, testing::Combine(
     DIFFERENT_SIZES,
     testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_16UC1), MatType(CV_16UC3), MatType(CV_16UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
     testing::Values(0.3, 0.5, 1.5, 2.0),
-    testing::Values(Interpolation(cv::INTER_NEAREST), Interpolation(cv::INTER_LINEAR), Interpolation(cv::INTER_CUBIC)),
+    testing::Values(Interpolation(alvision.INTER_NEAREST), Interpolation(alvision.INTER_LINEAR), Interpolation(alvision.INTER_CUBIC)),
     WHOLE_SUBMAT));
 
 /////////////////
 
-PARAM_TEST_CASE(ResizeSameAsHost, cv::cuda::DeviceInfo, cv::Size, MatType, double, Interpolation, UseRoi)
+PARAM_TEST_CASE(ResizeSameAsHost, alvision.cuda::DeviceInfo, alvision.Size, MatType, double, Interpolation, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     double coeff;
     int interpolation;
     int type;
@@ -188,20 +188,20 @@ PARAM_TEST_CASE(ResizeSameAsHost, cv::cuda::DeviceInfo, cv::Size, MatType, doubl
         interpolation = GET_PARAM(4);
         useRoi = GET_PARAM(5);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 // downscaling only: used for classifiers
 CUDA_TEST_P(ResizeSameAsHost, Accuracy)
 {
-    cv::Mat src = randomMat(size, type);
+    alvision.Mat src = randomMat(size, type);
 
-    cv::cuda::GpuMat dst = createMat(cv::Size(cv::saturate_cast<int>(src.cols * coeff), cv::saturate_cast<int>(src.rows * coeff)), type, useRoi);
-    cv::cuda::resize(loadMat(src, useRoi), dst, cv::Size(), coeff, coeff, interpolation);
+    alvision.cuda::GpuMat dst = createMat(alvision.Size(alvision.saturate_cast<int>(src.cols * coeff), alvision.saturate_cast<int>(src.rows * coeff)), type, useRoi);
+    alvision.cuda::resize(loadMat(src, useRoi), dst, alvision.Size(), coeff, coeff, interpolation);
 
-    cv::Mat dst_gold;
-    cv::resize(src, dst_gold, cv::Size(), coeff, coeff, interpolation);
+    alvision.Mat dst_gold;
+    alvision.resize(src, dst_gold, alvision.Size(), coeff, coeff, interpolation);
 
     EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-2 : 1.0);
 }
@@ -211,7 +211,7 @@ INSTANTIATE_TEST_CASE_P(CUDA_Warping, ResizeSameAsHost, testing::Combine(
     DIFFERENT_SIZES,
     testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_16UC1), MatType(CV_16UC3), MatType(CV_16UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
     testing::Values(0.3, 0.5),
-    testing::Values(Interpolation(cv::INTER_NEAREST), Interpolation(cv::INTER_AREA)),
+    testing::Values(Interpolation(alvision.INTER_NEAREST), Interpolation(alvision.INTER_AREA)),
     WHOLE_SUBMAT));
 
 #endif // HAVE_CUDA

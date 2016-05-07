@@ -2,6 +2,7 @@
 var alvision_module = require('../../lib/bindings.js');
 
 export interface double extends Number { };
+export interface char extends String { };
 export interface uchar { };
 export interface schar { };
 export interface short { };

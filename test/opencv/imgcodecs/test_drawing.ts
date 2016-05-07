@@ -78,7 +78,7 @@ class CV_DrawingTest extends alvision.cvtest.BaseTest {
         if (valImg.empty()) {
             alvision.imwrite(filename, testImg);
             //ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-            //this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+            //this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
         }
         else {
             // image should match exactly
@@ -112,7 +112,7 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
         img.create(imgSize, alvision.MatrixType.CV_8UC3);
 
         var polyline = new Array<alvision.Point>();
-        //vector<Point> polyline(4);
+        //Array<Point> polyline(4);
         polyline[0] = new alvision.Point(0, 0);
         polyline[1] = new alvision.Point(imgSize.width, 0);
         polyline[2] = new alvision.Point(imgSize.width, imgSize.height);
@@ -151,7 +151,7 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
         alvision.polylines(img, polyline, 1, false, new alvision.Scalar(0, 0, 150), 4, CV_AA);
         //n = 0;
     
-        for (vector<Point>::const_iterator it = polyline.begin(); n < (int)polyline.size() - 1; ++it, n++ )
+        for (Array<Point>::const_iterator it = polyline.begin(); n < (int)polyline.size() - 1; ++it, n++ )
         {
             alvision.line(img, *it, *(it + 1), new alvision.Scalar(50, 250, 100));
         }
@@ -241,10 +241,10 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
         for (int i = 0; i < it.count; ++it, i++ )
         {
             Vec3b v = (Vec3b)(*(*it)) - img.at<Vec3b>(300, i);
-            float err = (float)alvision.cvtest.norm(v, NORM_L2);
+            float err = (float)alvision.cvtest.norm(v,alvision.NormTypes. NORM_L2);
             if (err != 0) {
-                ts ->printf(ts ->LOG, "LineIterator works incorrect");
-                ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+                this.ts.printf(ts ->LOG, "LineIterator works incorrect");
+                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
             }
         }
         this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
@@ -306,7 +306,7 @@ class CV_DrawingTest_C extends CV_DrawingTest {
         CV_Assert(actualSize == n);
         cvPolyLine( &img, &pts, &n, 1, false, cvScalar(0, 0, 150), 4, CV_AA);
         n = 0;
-        for (vector<CvPoint>::const_iterator it = polyline.begin(); n < (int)polyline.size() - 1; ++it, n++ )
+        for (Array<CvPoint>::const_iterator it = polyline.begin(); n < (int)polyline.size() - 1; ++it, n++ )
         {
             cvLine( &img, *it, *(it + 1), cvScalar(50, 250, 100));
         }
@@ -341,63 +341,63 @@ class CV_DrawingTest_C extends CV_DrawingTest {
         cvInitFont( &font, FONT_HERSHEY_SCRIPT_SIMPLEX, 2, 2, 0, 3);
         int baseline = 0;
         CvSize textSize;
-        cvGetTextSize(text1.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text1, &font, &textSize, &baseline);
         baseline += font.thickness;
         CvPoint textOrg = cvPoint((imgSize.width - textSize.width) / 2, (imgSize.height + textSize.height) / 2);
         cvRectangle( &img, cvPoint(textOrg.x, textOrg.y + baseline),
             cvPoint(textOrg.x + textSize.width, textOrg.y - textSize.height), cvScalar(0, 0, 255));
         cvLine( &img, cvPoint(textOrg.x, textOrg.y + font.thickness),
             cvPoint(textOrg.x + textSize.width, textOrg.y + font.thickness), cvScalar(0, 0, 255));
-        cvPutText( &img, text1.c_str(), textOrg, &font, cvScalar(150, 0, 150));
+        cvPutText( &img, text1, textOrg, &font, cvScalar(150, 0, 150));
 
         int dist = 5;
         string text2 = "abcdefghijklmnopqrstuvwxyz1234567890";
         CvScalar color = cvScalar(200, 0, 0);
         cvInitFont( &font, FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text2, &font, &textSize, &baseline);
         textOrg = cvPoint(5, 5 + textSize.height + dist);
-        cvPutText(&img, text2.c_str(), textOrg, &font, color);
+        cvPutText(&img, text2, textOrg, &font, color);
 
         cvInitFont( &font, FONT_HERSHEY_PLAIN, 1, 1, 0, 1, CV_AA);
-        cvGetTextSize(text2.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text2, &font, &textSize, &baseline);
         textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2.c_str(), textOrg, &font, color);
+        cvPutText(&img, text2, textOrg, &font, color);
 
         cvInitFont( &font, FONT_HERSHEY_DUPLEX, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text2, &font, &textSize, &baseline);
         textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2.c_str(), textOrg, &font, color);
+        cvPutText(&img, text2, textOrg, &font, color);
 
         cvInitFont( &font, FONT_HERSHEY_COMPLEX, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text2, &font, &textSize, &baseline);
         textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2.c_str(), textOrg, &font, color);
+        cvPutText(&img, text2, textOrg, &font, color);
 
         cvInitFont( &font, FONT_HERSHEY_TRIPLEX, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text2, &font, &textSize, &baseline);
         textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2.c_str(), textOrg, &font, color);
+        cvPutText(&img, text2, textOrg, &font, color);
 
         cvInitFont( &font, FONT_HERSHEY_COMPLEX_SMALL, 1, 1, 0, 1, CV_AA);
-        cvGetTextSize(text2.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text2, &font, &textSize, &baseline);
         textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist + 180);
-        cvPutText(&img, text2.c_str(), textOrg, &font, color);
+        cvPutText(&img, text2, textOrg, &font, color);
 
         cvInitFont( &font, FONT_HERSHEY_SCRIPT_SIMPLEX, 1, 1, 0, 1, CV_AA);
-        cvGetTextSize(text2.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text2, &font, &textSize, &baseline);
         textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2.c_str(), textOrg, &font, color);
+        cvPutText(&img, text2, textOrg, &font, color);
 
         cvInitFont( &font, FONT_HERSHEY_SCRIPT_COMPLEX, 1, 1, 0, 1, CV_AA);
-        cvGetTextSize(text2.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text2, &font, &textSize, &baseline);
         textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2.c_str(), textOrg, &font, color);
+        cvPutText(&img, text2, textOrg, &font, color);
 
         dist = 15;
         cvInitFont( &font, FONT_ITALIC, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2.c_str(), &font, &textSize, &baseline);
+        cvGetTextSize(text2, &font, &textSize, &baseline);
         textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2.c_str(), textOrg, &font, color);
+        cvPutText(&img, text2, textOrg, &font, color);
     }
 
     checkLineIterator(_img: alvision.Mat): alvision.int {
@@ -407,10 +407,10 @@ class CV_DrawingTest_C extends CV_DrawingTest {
         for (int i = 0; i < count; i++ )
         {
             Vec3b v = (Vec3b)(*(it.ptr)) - _img.at<Vec3b>(300, i);
-            float err = (float)alvision.cvtest.norm(v, NORM_L2);
+            float err = (float)alvision.cvtest.norm(v,alvision.NormTypes. NORM_L2);
             if (err != 0) {
-                ts ->printf(ts ->LOG, "CvLineIterator works incorrect");
-                ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+                this.ts.printf(ts ->LOG, "CvLineIterator works incorrect");
+                this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
             }
             CV_NEXT_LINE_POINT(it);
         }
@@ -504,10 +504,10 @@ class CV_DrawingTest_UTF8 extends alvision.cvtest.BaseTest {
 
         var bigSize = new alvision.Size(0, 0);
         
-        for (vector<int>::const_iterator font = fonts.begin(); font != fonts.end(); ++font) {
+        for (Array<int>::const_iterator font = fonts.begin(); font != fonts.end(); ++font) {
             for (int italic = 0; italic <= FONT_ITALIC; italic += FONT_ITALIC)
             {
-                for (vector<string>::const_iterator line = lines.begin(); line != lines.end(); ++line) {
+                for (Array<string>::const_iterator line = lines.begin(); line != lines.end(); ++line) {
                     const float fontScale = 1;
                     const int thickness = 1;
                     const Scalar color(20, 20, 20);
@@ -527,7 +527,7 @@ class CV_DrawingTest_UTF8 extends alvision.cvtest.BaseTest {
 
         var shift = 0;
         var  result = new alvision.Mat(bigSize, alvision.MatrixType.CV_8UC3,new alvision. Scalar(100, 100, 100));
-        for (vector<Mat>::const_iterator img = results.begin(); img != results.end(); ++img) {
+        for (Array<Mat>::const_iterator img = results.begin(); img != results.end(); ++img) {
             var roi = new alvision.Rect(new alvision.Point(0, shift), img.size());
             var sub = new alvision.Mat(result, roi);
             img.copyTo(sub);

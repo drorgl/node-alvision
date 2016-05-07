@@ -59,11 +59,11 @@ using namespace cvtest;
 
 namespace
 {
-    template <typename T, template <typename> class Interpolator> void remapImpl(const cv::Mat& src, const cv::Mat& xmap, const cv::Mat& ymap, cv::Mat& dst, int borderType, cv::Scalar borderVal)
+    template <typename T, template <typename> class Interpolator> void remapImpl(const alvision.Mat& src, const alvision.Mat& xmap, const alvision.Mat& ymap, alvision.Mat& dst, int borderType, alvision.Scalar borderVal)
     {
         const int cn = src.channels();
 
-        cv::Size dsize = xmap.size();
+        alvision.Size dsize = xmap.size();
 
         dst.create(dsize, src.type());
 
@@ -77,9 +77,9 @@ namespace
         }
     }
 
-    void remapGold(const cv::Mat& src, const cv::Mat& xmap, const cv::Mat& ymap, cv::Mat& dst, int interpolation, int borderType, cv::Scalar borderVal)
+    void remapGold(const alvision.Mat& src, const alvision.Mat& xmap, const alvision.Mat& ymap, alvision.Mat& dst, int interpolation, int borderType, alvision.Scalar borderVal)
     {
-        typedef void (*func_t)(const cv::Mat& src, const cv::Mat& xmap, const cv::Mat& ymap, cv::Mat& dst, int borderType, cv::Scalar borderVal);
+        typedef void (*func_t)(const alvision.Mat& src, const alvision.Mat& xmap, const alvision.Mat& ymap, alvision.Mat& dst, int borderType, alvision.Scalar borderVal);
 
         static const func_t nearest_funcs[] =
         {
@@ -120,17 +120,17 @@ namespace
 ///////////////////////////////////////////////////////////////////
 // Test
 
-PARAM_TEST_CASE(Remap, cv::cuda::DeviceInfo, cv::Size, MatType, Interpolation, BorderType, UseRoi)
+PARAM_TEST_CASE(Remap, alvision.cuda::DeviceInfo, alvision.Size, MatType, Interpolation, BorderType, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int type;
     int interpolation;
     int borderType;
     bool useRoi;
 
-    cv::Mat xmap;
-    cv::Mat ymap;
+    alvision.Mat xmap;
+    alvision.Mat ymap;
 
     virtual void SetUp()
     {
@@ -141,11 +141,11 @@ PARAM_TEST_CASE(Remap, cv::cuda::DeviceInfo, cv::Size, MatType, Interpolation, B
         borderType = GET_PARAM(4);
         useRoi = GET_PARAM(5);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
 
         // rotation matrix
 
-        const double aplha = CV_PI / 4;
+        const double aplha = Math.PI / 4;
         static double M[2][3] = { {std::cos(aplha), -std::sin(aplha), size.width / 2.0},
                                   {std::sin(aplha),  std::cos(aplha), 0.0}};
 
@@ -165,13 +165,13 @@ PARAM_TEST_CASE(Remap, cv::cuda::DeviceInfo, cv::Size, MatType, Interpolation, B
 
 CUDA_TEST_P(Remap, Accuracy)
 {
-    cv::Mat src = randomMat(size, type);
-    cv::Scalar val = randomScalar(0.0, 255.0);
+    alvision.Mat src = randomMat(size, type);
+    alvision.Scalar val = randomScalar(0.0, 255.0);
 
-    cv::cuda::GpuMat dst = createMat(xmap.size(), type, useRoi);
-    cv::cuda::remap(loadMat(src, useRoi), dst, loadMat(xmap, useRoi), loadMat(ymap, useRoi), interpolation, borderType, val);
+    alvision.cuda::GpuMat dst = createMat(xmap.size(), type, useRoi);
+    alvision.cuda::remap(loadMat(src, useRoi), dst, loadMat(xmap, useRoi), loadMat(ymap, useRoi), interpolation, borderType, val);
 
-    cv::Mat dst_gold;
+    alvision.Mat dst_gold;
     remapGold(src, xmap, ymap, dst_gold, interpolation, borderType, val);
 
     EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-3 : 1.0);
@@ -181,8 +181,8 @@ INSTANTIATE_TEST_CASE_P(CUDA_Warping, Remap, testing::Combine(
     ALL_DEVICES,
     DIFFERENT_SIZES,
     testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
-    testing::Values(Interpolation(cv::INTER_NEAREST), Interpolation(cv::INTER_LINEAR), Interpolation(cv::INTER_CUBIC)),
-    testing::Values(BorderType(cv::BORDER_REFLECT101), BorderType(cv::BORDER_REPLICATE), BorderType(cv::BORDER_CONSTANT), BorderType(cv::BORDER_REFLECT), BorderType(cv::BORDER_WRAP)),
+    testing::Values(Interpolation(alvision.INTER_NEAREST), Interpolation(alvision.INTER_LINEAR), Interpolation(alvision.INTER_CUBIC)),
+    testing::Values(BorderType(alvision.BORDER_REFLECT101), BorderType(alvision.BORDER_REPLICATE), BorderType(alvision.BORDER_CONSTANT), BorderType(alvision.BORDER_REFLECT), BorderType(alvision.BORDER_WRAP)),
     WHOLE_SUBMAT));
 
 #endif // HAVE_CUDA

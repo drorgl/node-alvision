@@ -122,7 +122,7 @@ void CV_RotatedRectangleIntersectionTest::test1()
     rect2.size.height = 2;
     rect2.angle = 34.0f;
 
-    vector<Point2f> vertices;
+    Array<Point2f> vertices;
 
     int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
@@ -148,14 +148,14 @@ void CV_RotatedRectangleIntersectionTest::test2()
     rect2.size.height = 2;
     rect2.angle = 0;
 
-    vector<Point2f> vertices;
+    Array<Point2f> vertices;
 
     int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
     CV_Assert(ret == INTERSECT_PARTIAL);
     CV_Assert(vertices.size() == 4);
 
-    vector<Point2f> possibleVertices(4);
+    Array<Point2f> possibleVertices(4);
 
     possibleVertices[0] = Point2f(0.0f, 0.0f);
     possibleVertices[1] = Point2f(1.0f, 1.0f);
@@ -196,14 +196,14 @@ void CV_RotatedRectangleIntersectionTest::test3()
     rect2.size.height = 20;
     rect2.angle = 45.0f;
 
-    vector<Point2f> vertices;
+    Array<Point2f> vertices;
 
     int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
     CV_Assert(ret == INTERSECT_PARTIAL);
     CV_Assert(vertices.size() == 3);
 
-    vector<Point2f> possibleVertices(3);
+    Array<Point2f> possibleVertices(3);
 
     possibleVertices[0] = Point2f(1.0f, 1.0f);
     possibleVertices[1] = Point2f(0.0f, 1.0f);
@@ -244,14 +244,14 @@ void CV_RotatedRectangleIntersectionTest::test4()
     rect2.size.height = 2;
     rect2.angle = 0;
 
-    vector<Point2f> vertices;
+    Array<Point2f> vertices;
 
     int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
     CV_Assert(ret == INTERSECT_FULL);
     CV_Assert(vertices.size() == 4);
 
-    vector<Point2f> possibleVertices(4);
+    Array<Point2f> possibleVertices(4);
 
     possibleVertices[0] = Point2f(-1.0f, 1.0f);
     possibleVertices[1] = Point2f(1.0f, -1.0f);
@@ -293,14 +293,14 @@ void CV_RotatedRectangleIntersectionTest::test5()
     rect2.size.height = 2;
     rect2.angle = 45.0f;
 
-    vector<Point2f> vertices;
+    Array<Point2f> vertices;
 
     int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
     CV_Assert(ret == INTERSECT_PARTIAL);
     CV_Assert(vertices.size() == 8);
 
-    vector<Point2f> possibleVertices(8);
+    Array<Point2f> possibleVertices(8);
 
     possibleVertices[0] = Point2f(-1.0f, -0.414214f);
     possibleVertices[1] = Point2f(-1.0f, 0.414214f);
@@ -346,14 +346,14 @@ void CV_RotatedRectangleIntersectionTest::test6()
     rect2.size.height = 10;
     rect2.angle = 0;
 
-    vector<Point2f> vertices;
+    Array<Point2f> vertices;
 
     int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
     CV_Assert(ret == INTERSECT_PARTIAL);
     CV_Assert(vertices.size() == 4);
 
-    vector<Point2f> possibleVertices(4);
+    Array<Point2f> possibleVertices(4);
 
     possibleVertices[0] = Point2f(1.0f, 1.0f);
     possibleVertices[1] = Point2f(1.0f, -1.0f);
@@ -395,14 +395,14 @@ void CV_RotatedRectangleIntersectionTest::test7()
     rect2.size.height = 2;
     rect2.angle = 0;
 
-    vector<Point2f> vertices;
+    Array<Point2f> vertices;
 
     int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
     CV_Assert(ret == INTERSECT_FULL);
     CV_Assert(vertices.size() == 4);
 
-    vector<Point2f> possibleVertices(4);
+    Array<Point2f> possibleVertices(4);
 
     possibleVertices[0] = Point2f(1.0f, 1.0f);
     possibleVertices[1] = Point2f(1.0f, -1.0f);
@@ -444,7 +444,7 @@ void CV_RotatedRectangleIntersectionTest::test8()
     rect2.size.height = 2;
     rect2.angle = 0;
 
-    vector<Point2f> vertices;
+    Array<Point2f> vertices;
 
     int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
@@ -476,14 +476,14 @@ void CV_RotatedRectangleIntersectionTest::test9()
     rect2.size.height = 123.45f;
     rect2.angle = 0;
 
-    vector<Point2f> vertices;
+    Array<Point2f> vertices;
 
     int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
     CV_Assert(ret == INTERSECT_PARTIAL);
     CV_Assert(vertices.size() == 2);
 
-    vector<Point2f> possibleVertices(2);
+    Array<Point2f> possibleVertices(2);
 
     possibleVertices[0] = Point2f(1.0f, 1.0f);
     possibleVertices[1] = Point2f(1.0f, -1.0f);

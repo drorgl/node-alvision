@@ -53,23 +53,26 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-void loadImage(string path, Mat &img)
+function loadImage(path : string): alvision.Mat
 {
-    img = imread(path, -1);
-    ASSERT_FALSE(img.empty()) << "Could not load input image " << path;
+    var img = alvision.imread(path, -1);
+    alvision.ASSERT_FALSE(img.empty(), "Could not load input image " + path);
+    return img;
 }
 
-void checkEqual(Mat img0, Mat img1, double threshold, const string& name)
+function checkEqual(img0 : alvision.Mat, img1 : alvision.Mat, threshold : alvision.double , name : string): void
 {
-    double max = 1.0;
-    minMaxLoc(abs(img0 - img1), NULL, &max);
-    ASSERT_FALSE(max > threshold) << "max=" << max << " threshold=" << threshold << " method=" << name;
+    var max = 1.0;
+    alvision.minMaxLoc(alvision.Mat.from(alvision.MatExpr.abs(alvision.MatExpr.op_Substraction(img0, img1))), (minVal, maxVal, minIdx, maxIdx) => { max = maxVal });
+    alvision.ASSERT_FALSE(max > threshold, "max=" + max + " threshold=" + threshold + " method=" + name);
 }
 
-static vector<float> DEFAULT_VECTOR;
-void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times = DEFAULT_VECTOR)
+//static Array < float > DEFAULT_VECTOR;
+var DEFAULT_VECTOR = new Array<alvision.float>();
+
+function loadExposureSeq(path: string, images: Array<alvision.Mat>, times?: Array<alvision.float>  = DEFAULT_VECTOR): void
 {
-    ifstream list_file((path + "list.txt").c_str());
+    ifstream list_file((path + "list.txt"));
     ASSERT_TRUE(list_file.is_open());
     string name;
     float val;
@@ -82,12 +85,11 @@ void loadExposureSeq(String path, vector<Mat>& images, vector<float>& times = DE
     list_file.close();
 }
 
-void loadResponseCSV(String path, Mat& response)
-{
-    response = Mat(256, 1, CV_32FC3);
-    ifstream resp_file(path.c_str());
-    for(int i = 0; i < 256; i++) {
-        for(int c = 0; c < 3; c++) {
+function loadResponseCSV(path: string, response: alvision.Mat): void {
+    response = alvision.Mat(256, 1, alvision.MatrixType.CV_32FC3); //DROR: might not work
+    ifstream resp_file(path);
+    for (int i = 0; i < 256; i++) {
+        for (int c = 0; c < 3; c++) {
             resp_file >> response.at<Vec3f>(i)[c];
             resp_file.ignore(1);
         }
@@ -95,171 +97,175 @@ void loadResponseCSV(String path, Mat& response)
     resp_file.close();
 }
 
-TEST(Photo_Tonemap, regression)
-{
-    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/tonemap/";
+alvision.cvtest.TEST('Photo_Tonemap', 'regression', () => {
+    var test_path = alvision.cvtest.TS.ptr().get_data_path() + "hdr/tonemap/";
 
-    Mat img, expected, result;
-    loadImage(test_path + "image.hdr", img);
-    float gamma = 2.2f;
+    var result = new alvision.Mat();
+    var img = loadImage(test_path + "image.hdr");
+    var gamma = 2.2;
 
-    Ptr<Tonemap> linear = createTonemap(gamma);
-    linear->process(img, result);
-    loadImage(test_path + "linear.png", expected);
-    result.convertTo(result, CV_8UC3, 255);
+    var linear = alvision.createTonemap(gamma);
+
+    linear.process(img, result);
+    var expected = loadImage(test_path + "linear.png");
+    result.convertTo(result, alvision.MatrixType.CV_8UC3, 255);
     checkEqual(result, expected, 3, "Simple");
 
-    Ptr<TonemapDrago> drago = createTonemapDrago(gamma);
-    drago->process(img, result);
-    loadImage(test_path + "drago.png", expected);
-    result.convertTo(result, CV_8UC3, 255);
+    var drago = alvision.createTonemapDrago(gamma);
+
+    drago.process(img, result);
+    expected = loadImage(test_path + "drago.png");
+    result.convertTo(result, alvision.MatrixType.CV_8UC3, 255);
     checkEqual(result, expected, 3, "Drago");
 
-    Ptr<TonemapDurand> durand = createTonemapDurand(gamma);
-    durand->process(img, result);
-    loadImage(test_path + "durand.png", expected);
-    result.convertTo(result, CV_8UC3, 255);
+    var durand = alvision.createTonemapDurand(gamma);
+    durand.process(img, result);
+    expected = loadImage(test_path + "durand.png");
+    result.convertTo(result, alvision.MatrixType.CV_8UC3, 255);
     checkEqual(result, expected, 3, "Durand");
 
-    Ptr<TonemapReinhard> reinhard = createTonemapReinhard(gamma);
-    reinhard->process(img, result);
-    loadImage(test_path + "reinhard.png", expected);
-    result.convertTo(result, CV_8UC3, 255);
+    var reinhard = alvision.createTonemapReinhard(gamma);
+    reinhard.process(img, result);
+    expected = loadImage(test_path + "reinhard.png");
+    result.convertTo(result,alvision.MatrixType. CV_8UC3, 255);
     checkEqual(result, expected, 3, "Reinhard");
 
-    Ptr<TonemapMantiuk> mantiuk = createTonemapMantiuk(gamma);
-    mantiuk->process(img, result);
-    loadImage(test_path + "mantiuk.png", expected);
-    result.convertTo(result, CV_8UC3, 255);
+    var mantiuk = alvision.createTonemapMantiuk(gamma);
+    mantiuk.process(img, result);
+    expected = loadImage(test_path + "mantiuk.png");
+    result.convertTo(result, alvision.MatrixType.CV_8UC3, 255);
     checkEqual(result, expected, 3, "Mantiuk");
-}
+});
 
-TEST(Photo_AlignMTB, regression)
+alvision.cvtest.TEST('Photo_AlignMTB', 'regression',()=>
 {
-    const int TESTS_COUNT = 100;
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "shared/";
+    const TESTS_COUNT = 100;
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "shared/";
 
-    string file_name = folder + "lena.png";
-    Mat img;
-    loadImage(file_name, img);
-    cvtColor(img, img, COLOR_RGB2GRAY);
+    var file_name = folder + "lena.png";
+    var img = loadImage(file_name);
+    alvision.cvtColor(img, img,alvision.ColorConversionCodes. COLOR_RGB2GRAY);
 
-    int max_bits = 5;
-    int max_shift = 32;
+    var max_bits = 5;
+    var max_shift = 32;
     srand(static_cast<unsigned>(time(0)));
-    int errors = 0;
+    var errors = 0;
 
-    Ptr<AlignMTB> align = createAlignMTB(max_bits);
+    var align = alvision.createAlignMTB(max_bits);
 
-    for(int i = 0; i < TESTS_COUNT; i++) {
-        Point shift(rand() % max_shift, rand() % max_shift);
-        Mat res;
-        align->shiftMat(img, res, shift);
-        Point calc = align->calculateShift(img, res);
+    for(var i = 0; i < TESTS_COUNT; i++) {
+        var shift = new alvision.Point(rand() % max_shift, rand() % max_shift);
+        var res = new alvision.Mat();
+        align.shiftMat(img, res, shift);
+        var calc = align.calculateShift(img, res);
         errors += (calc != -shift);
     }
-    ASSERT_TRUE(errors < 5) << errors << " errors";
-}
+    alvision.ASSERT_TRUE(errors < 5, errors+ " errors");
+});
 
-TEST(Photo_MergeMertens, regression)
-{
-    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
+alvision.cvtest.TEST('Photo_MergeMertens', 'regression', () => {
+    var test_path = alvision.cvtest.TS.ptr().get_data_path() + "hdr/";
 
-    vector<Mat> images;
-    loadExposureSeq((test_path + "exposures/").c_str() , images);
+    var images = new Array<alvision.Mat>();
 
-    Ptr<MergeMertens> merge = createMergeMertens();
+    loadExposureSeq((test_path + "exposures/"), images);
 
-    Mat result, expected;
-    loadImage(test_path + "merge/mertens.png", expected);
-    merge->process(images, result);
-    result.convertTo(result, CV_8UC3, 255);
+    var merge = alvision.createMergeMertens();
+
+    var result = new alvision.Mat();
+
+    var expected = loadImage(test_path + "merge/mertens.png");
+    merge.process(images, result);
+    result.convertTo(result, alvision.MatrixType.CV_8UC3, 255);
     checkEqual(expected, result, 3, "Mertens");
 
-    Mat uniform(100, 100, CV_8UC3);
-    uniform = Scalar(0, 255, 0);
+    var uniform = new alvision.Mat(100, 100, alvision.MatrixType.CV_8UC3, new alvision.Scalar(0, 255, 0));
 
-    images.clear();
-    images.push_back(uniform);
+    images = new Array<alvision.Mat>();
+    images.push(uniform);
 
-    merge->process(images, result);
-    result.convertTo(result, CV_8UC3, 255);
-    checkEqual(uniform, result, 1e-2f, "Mertens");
-}
+    merge.process(images, result);
+    result.convertTo(result, alvision.MatrixType.CV_8UC3, 255);
+    checkEqual(uniform, result, 1e-2, "Mertens");
+});
 
-TEST(Photo_MergeDebevec, regression)
-{
-    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
+alvision.cvtest.TEST('Photo_MergeDebevec', 'regression', () => {
+    var test_path = alvision.cvtest.TS.ptr().get_data_path() + "hdr/";
 
-    vector<Mat> images;
-    vector<float> times;
-    Mat response;
+    var images = new Array<alvision.Mat>();
+    var times = new Array<alvision.float>();
+
+    var response = new alvision.Mat();
     loadExposureSeq(test_path + "exposures/", images, times);
     loadResponseCSV(test_path + "exposures/response.csv", response);
 
-    Ptr<MergeDebevec> merge = createMergeDebevec();
+    var merge = alvision.createMergeDebevec();
 
-    Mat result, expected;
-    loadImage(test_path + "merge/debevec.hdr", expected);
-    merge->process(images, result, times, response);
+    var result = new alvision.Mat();
 
-    Ptr<Tonemap> map = createTonemap();
-    map->process(result, result);
-    map->process(expected, expected);
+    var expected = loadImage(test_path + "merge/debevec.hdr");
+    merge.process(images, result, times, response);
 
-    checkEqual(expected, result, 1e-2f, "Debevec");
-}
+    var map = alvision.createTonemap();
+    map.process(result, result);
+    map.process(expected, expected);
 
-TEST(Photo_MergeRobertson, regression)
-{
-    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
+    checkEqual(expected, result, 1e-2, "Debevec");
+});
 
-    vector<Mat> images;
-    vector<float> times;
+alvision.cvtest.TEST('Photo_MergeRobertson', 'regression', () => {
+    var test_path = alvision.cvtest.TS.ptr().get_data_path() + "hdr/";
+
+    var images = new Array<alvision.Mat>();
+    var times = new Array<alvision.float>();
+
     loadExposureSeq(test_path + "exposures/", images, times);
 
-    Ptr<MergeRobertson> merge = createMergeRobertson();
+    var merge = alvision.createMergeRobertson();
 
-    Mat result, expected;
-    loadImage(test_path + "merge/robertson.hdr", expected);
-    merge->process(images, result, times);
-    Ptr<Tonemap> map = createTonemap();
-    map->process(result, result);
-    map->process(expected, expected);
+    var response = new alvision.Mat()
 
-    checkEqual(expected, result, 1e-2f, "MergeRobertson");
-}
+    var expected = loadImage(test_path + "merge/robertson.hdr");
 
-TEST(Photo_CalibrateDebevec, regression)
-{
-    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
+    merge.process(images, response, times);
+    var map = alvision.createTonemap();
+    map.process(response, response);
+    map.process(expected, expected);
 
-    vector<Mat> images;
-    vector<float> times;
-    Mat response, expected;
+    checkEqual(expected, response, 1e-2, "MergeRobertson");
+});
+
+alvision.cvtest.TEST('Photo_CalibrateDebevec', 'regression', () => {
+    var test_path = alvision.cvtest.TS.ptr().get_data_path() + "hdr/";
+
+    var images = new Array<alvision.Mat>();
+    var times = new Array<alvision.float>();
+
+    var response = new alvision.Mat(), expected = new alvision.Mat();
+
     loadExposureSeq(test_path + "exposures/", images, times);
     loadResponseCSV(test_path + "calibrate/debevec.csv", expected);
-    Ptr<CalibrateDebevec> calibrate = createCalibrateDebevec();
 
-    calibrate->process(images, response, times);
-    Mat diff = abs(response - expected);
-    diff = diff.mul(1.0f / response);
-    double max;
-    minMaxLoc(diff, NULL, &max);
-    ASSERT_FALSE(max > 0.1);
-}
+    var calibrate = alvision.createCalibrateDebevec();
 
-TEST(Photo_CalibrateRobertson, regression)
-{
-    string test_path = string(alvision.cvtest.TS::ptr()->get_data_path()) + "hdr/";
+    calibrate.process(images, response, times);
+    var diff = alvision.Mat.from(alvision.MatExpr.abs(alvision.MatExpr.op_Substraction(response, expected)));
+    diff = diff.mul(1.0 / response);
+    var max: alvision.double;
+    alvision.minMaxLoc(diff, null, &max);
+    alvision.ASSERT_FALSE(max > 0.1);
+});
 
-    vector<Mat> images;
-    vector<float> times;
-    Mat response, expected;
+alvision.cvtest.TEST('Photo_CalibrateRobertson', 'regression', () => {
+    var test_path = alvision.cvtest.TS.ptr().get_data_path() + "hdr/";
+
+    var images = new Array<alvision.Mat>();
+    var times= new Array < alvision.float > ();
+    var response = new alvision.Mat(), expected = new alvision.Mat();
     loadExposureSeq(test_path + "exposures/", images, times);
     loadResponseCSV(test_path + "calibrate/robertson.csv", expected);
 
-    Ptr<CalibrateRobertson> calibrate = createCalibrateRobertson();
-    calibrate->process(images, response, times);
-    checkEqual(expected, response, 1e-3f, "CalibrateRobertson");
-}
+    var calibrate = alvision.createCalibrateRobertson();
+    calibrate.process(images, response, times);
+    checkEqual(expected, response, 1e-3, "CalibrateRobertson");
+});

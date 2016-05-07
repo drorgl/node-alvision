@@ -70,14 +70,14 @@ protected:
 };
 
 
-int calcDistance(const vector<Point2f>& set1, const vector<Point2f>& set2, double& mean_dist)
+int calcDistance(const Array<Point2f>& set1, const Array<Point2f>& set2, double& mean_dist)
 {
     if(set1.size() != set2.size())
     {
         return 0;
     }
 
-    std::vector<int> indices;
+    std::Array<int> indices;
     double sum_dist = 0.0;
     for(size_t i = 0; i < set1.size(); i++)
     {
@@ -99,7 +99,7 @@ int calcDistance(const vector<Point2f>& set1, const vector<Point2f>& set2, doubl
         {
             return 0;
         }
-        std::vector<int>::iterator it = std::find(indices.begin(), indices.end(), min_idx);
+        std::Array<int>::iterator it = std::find(indices.begin(), indices.end(), min_idx);
         if(it != indices.end())
         {
             // there are two points in set1 corresponding to the same point in set2
@@ -158,20 +158,20 @@ void CV_ChessboardSubpixelTest::run( int )
         // generates intrinsic camera and distortion matrices
         generateIntrinsicParams();
 
-        vector<Point2f> corners;
+        Array<Point2f> corners;
         Mat chessboard_image = gen_chessboard(bg, intrinsic_matrix_, distortion_coeffs_, corners);
 
-        vector<Point2f> test_corners;
+        Array<Point2f> test_corners;
         bool result = findChessboardCorners(chessboard_image, pattern_size, test_corners, 15);
         if(!result)
         {
 #if 0
-            ts->printf(alvision.cvtest.TS::LOG, "Warning: chessboard was not detected! Writing image to test.png\n");
-            ts->printf(alvision.cvtest.TS::LOG, "Size = %d, %d\n", pattern_size.width, pattern_size.height);
-            ts->printf(alvision.cvtest.TS::LOG, "Intrinsic params: fx = %f, fy = %f, cx = %f, cy = %f\n",
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Warning: chessboard was not detected! Writing image to test.png\n");
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Size = %d, %d\n", pattern_size.width, pattern_size.height);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Intrinsic params: fx = %f, fy = %f, cx = %f, cy = %f\n",
                        intrinsic_matrix_.at<double>(0, 0), intrinsic_matrix_.at<double>(1, 1),
                        intrinsic_matrix_.at<double>(0, 2), intrinsic_matrix_.at<double>(1, 2));
-            ts->printf(alvision.cvtest.TS::LOG, "Distortion matrix: %f, %f, %f, %f, %f\n",
+            ts->printf(alvision.cvtest.TSConstants.LOG, "Distortion matrix: %f, %f, %f, %f, %f\n",
                        distortion_coeffs_.at<double>(0, 0), distortion_coeffs_.at<double>(0, 1),
                        distortion_coeffs_.at<double>(0, 2), distortion_coeffs_.at<double>(0, 3),
                        distortion_coeffs_.at<double>(0, 4));
@@ -185,8 +185,8 @@ void CV_ChessboardSubpixelTest::run( int )
         int ret = calcDistance(corners, test_corners, dist1);
         if(ret == 0)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "findChessboardCorners returns invalid corner coordinates!\n");
-            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "findChessboardCorners returns invalid corner coordinates!\n");
+            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
             break;
         }
 
@@ -199,12 +199,12 @@ void CV_ChessboardSubpixelTest::run( int )
         ret = calcDistance(corners, test_corners, dist2);
         if(ret == 0)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "findCornerSubpix returns invalid corner coordinates!\n");
-            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "findCornerSubpix returns invalid corner coordinates!\n");
+            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
             break;
         }
 
-        ts->printf(alvision.cvtest.TS::LOG, "Error after findChessboardCorners: %f, after findCornerSubPix: %f\n",
+        ts->printf(alvision.cvtest.TSConstants.LOG, "Error after findChessboardCorners: %f, after findCornerSubPix: %f\n",
                    dist1, dist2);
         sum_dist += dist2;
         count++;
@@ -212,8 +212,8 @@ void CV_ChessboardSubpixelTest::run( int )
         const double max_reduce_factor = 0.8;
         if(dist1 < dist2*max_reduce_factor)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "findCornerSubPix increases average error!\n");
-            code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "findCornerSubPix increases average error!\n");
+            code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
             break;
         }
 
@@ -221,7 +221,7 @@ void CV_ChessboardSubpixelTest::run( int )
     }
     ASSERT_NE(0, count);
     sum_dist /= count;
-    ts->printf(alvision.cvtest.TS::LOG, "Average error after findCornerSubpix: %f\n", sum_dist);
+    ts->printf(alvision.cvtest.TSConstants.LOG, "Average error after findCornerSubpix: %f\n", sum_dist);
 
     if( code < 0 )
         this.ts.set_failed_test_info( code );

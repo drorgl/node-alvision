@@ -50,7 +50,7 @@ import fs = require('fs');
 //
 //#define OUTPUT_SAVING 0
 //#if OUTPUT_SAVING
-//#define SAVE(x) std::vector<int> params;\
+//#define SAVE(x) std::Array<int> params;\
 //                params.push_back(16);\
 //                params.push_back(0);\
 //                imwrite(folder + "output.png", x ,params);
@@ -69,21 +69,21 @@ static const double numerical_precision = 1000.;
 
 TEST(Photo_SeamlessClone_normal, regression)
 {
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Normal_Cloning/";
+    string folder = alvision.cvtest.TS.ptr().get_data_path() + "cloning/Normal_Cloning/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "destination1.png";
     string original_path3 = folder + "mask.png";
     string reference_path = folder + "reference.png";
 
-    Mat source = imread(original_path1, IMREAD_COLOR);
-    Mat destination = imread(original_path2, IMREAD_COLOR);
-    Mat mask = imread(original_path3, IMREAD_COLOR);
+    var source = alvision.imread(original_path1,alvision.ImreadModes. IMREAD_COLOR);
+    Mat destination = imread(original_path2,alvision.ImreadModes. IMREAD_COLOR);
+    Mat mask = imread(original_path3,alvision.ImreadModes. IMREAD_COLOR);
 
     ASSERT_FALSE(source.empty()) << "Could not load source image " << original_path1;
     ASSERT_FALSE(destination.empty()) << "Could not load destination image " << original_path2;
     ASSERT_FALSE(mask.empty()) << "Could not load mask image " << original_path3;
 
-    Mat result;
+    var result = new alvision.Mat();
     Point p;
     p.x = destination.size().width/2;
     p.y = destination.size().height/2;
@@ -100,21 +100,21 @@ TEST(Photo_SeamlessClone_normal, regression)
 
 TEST(Photo_SeamlessClone_mixed, regression)
 {
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Mixed_Cloning/";
+    string folder = alvision.cvtest.TS.ptr().get_data_path() + "cloning/Mixed_Cloning/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "destination1.png";
     string original_path3 = folder + "mask.png";
     string reference_path = folder + "reference.png";
 
-    Mat source = imread(original_path1, IMREAD_COLOR);
-    Mat destination = imread(original_path2, IMREAD_COLOR);
-    Mat mask = imread(original_path3, IMREAD_COLOR);
+    var source = alvision.imread(original_path1,alvision.ImreadModes. IMREAD_COLOR);
+    Mat destination = imread(original_path2,alvision.ImreadModes. IMREAD_COLOR);
+    Mat mask = imread(original_path3,alvision.ImreadModes. IMREAD_COLOR);
 
     ASSERT_FALSE(source.empty()) << "Could not load source image " << original_path1;
     ASSERT_FALSE(destination.empty()) << "Could not load destination image " << original_path2;
     ASSERT_FALSE(mask.empty()) << "Could not load mask image " << original_path3;
 
-    Mat result;
+    var result = new alvision.Mat();
     Point p;
     p.x = destination.size().width/2;
     p.y = destination.size().height/2;
@@ -132,21 +132,21 @@ TEST(Photo_SeamlessClone_mixed, regression)
 
 TEST(Photo_SeamlessClone_featureExchange, regression)
 {
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Monochrome_Transfer/";
+    string folder = alvision.cvtest.TS.ptr().get_data_path() + "cloning/Monochrome_Transfer/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "destination1.png";
     string original_path3 = folder + "mask.png";
     string reference_path = folder + "reference.png";
 
-    Mat source = imread(original_path1, IMREAD_COLOR);
-    Mat destination = imread(original_path2, IMREAD_COLOR);
-    Mat mask = imread(original_path3, IMREAD_COLOR);
+    var source = alvision.imread(original_path1,alvision.ImreadModes. IMREAD_COLOR);
+    Mat destination = imread(original_path2,alvision.ImreadModes. IMREAD_COLOR);
+    Mat mask = imread(original_path3,alvision.ImreadModes. IMREAD_COLOR);
 
     ASSERT_FALSE(source.empty()) << "Could not load source image " << original_path1;
     ASSERT_FALSE(destination.empty()) << "Could not load destination image " << original_path2;
     ASSERT_FALSE(mask.empty()) << "Could not load mask image " << original_path3;
 
-    Mat result;
+    var result = new alvision.Mat();
     Point p;
     p.x = destination.size().width/2;
     p.y = destination.size().height/2;
@@ -164,18 +164,18 @@ TEST(Photo_SeamlessClone_featureExchange, regression)
 
 TEST(Photo_SeamlessClone_colorChange, regression)
 {
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/color_change/";
+    string folder = alvision.cvtest.TS.ptr().get_data_path() + "cloning/color_change/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "mask.png";
     string reference_path = folder + "reference.png";
 
-    Mat source = imread(original_path1, IMREAD_COLOR);
-    Mat mask = imread(original_path2, IMREAD_COLOR);
+    var source = alvision.imread(original_path1,alvision.ImreadModes. IMREAD_COLOR);
+    Mat mask = imread(original_path2,alvision.ImreadModes. IMREAD_COLOR);
 
     ASSERT_FALSE(source.empty()) << "Could not load source image " << original_path1;
     ASSERT_FALSE(mask.empty()) << "Could not load mask image " << original_path2;
 
-    Mat result;
+    var result = new alvision.Mat();
     colorChange(source, mask, result, 1.5, .5, .5);
 
     SAVE(result);
@@ -190,18 +190,18 @@ TEST(Photo_SeamlessClone_colorChange, regression)
 
 TEST(Photo_SeamlessClone_illuminationChange, regression)
 {
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Illumination_Change/";
+    string folder = alvision.cvtest.TS.ptr().get_data_path() + "cloning/Illumination_Change/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "mask.png";
     string reference_path = folder + "reference.png";
 
-    Mat source = imread(original_path1, IMREAD_COLOR);
-    Mat mask = imread(original_path2, IMREAD_COLOR);
+    var source = alvision.imread(original_path1,alvision.ImreadModes. IMREAD_COLOR);
+    Mat mask = imread(original_path2,alvision.ImreadModes. IMREAD_COLOR);
 
     ASSERT_FALSE(source.empty()) << "Could not load source image " << original_path1;
     ASSERT_FALSE(mask.empty()) << "Could not load mask image " << original_path2;
 
-    Mat result;
+    var result = new alvision.Mat();
     illuminationChange(source, mask, result, 0.2f, 0.4f);
 
     SAVE(result);
@@ -214,18 +214,18 @@ TEST(Photo_SeamlessClone_illuminationChange, regression)
 
 TEST(Photo_SeamlessClone_textureFlattening, regression)
 {
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "cloning/Texture_Flattening/";
+    string folder = alvision.cvtest.TS.ptr().get_data_path() + "cloning/Texture_Flattening/";
     string original_path1 = folder + "source1.png";
     string original_path2 = folder + "mask.png";
     string reference_path = folder + "reference.png";
 
-    Mat source = imread(original_path1, IMREAD_COLOR);
-    Mat mask = imread(original_path2, IMREAD_COLOR);
+    var source = alvision.imread(original_path1,alvision.ImreadModes. IMREAD_COLOR);
+    Mat mask = imread(original_path2,alvision.ImreadModes. IMREAD_COLOR);
 
     ASSERT_FALSE(source.empty()) << "Could not load source image " << original_path1;
     ASSERT_FALSE(mask.empty()) << "Could not load mask image " << original_path2;
 
-    Mat result;
+    var result = new alvision.Mat();
     textureFlattening(source, mask, result, 30, 45, 3);
 
     SAVE(result);

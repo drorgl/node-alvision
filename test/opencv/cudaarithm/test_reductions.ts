@@ -57,10 +57,10 @@ using namespace cvtest;
 ////////////////////////////////////////////////////////////////////////////////
 // Norm
 
-PARAM_TEST_CASE(Norm, cv::cuda::DeviceInfo, cv::Size, MatDepth, NormCode, UseRoi)
+PARAM_TEST_CASE(Norm, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, NormCode, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int depth;
     int normCode;
     bool useRoi;
@@ -73,38 +73,38 @@ PARAM_TEST_CASE(Norm, cv::cuda::DeviceInfo, cv::Size, MatDepth, NormCode, UseRoi
         normCode = GET_PARAM(3);
         useRoi = GET_PARAM(4);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(Norm, Accuracy)
 {
-    cv::Mat src = randomMat(size, depth);
-    cv::Mat mask = randomMat(size, CV_8UC1, 0, 2);
+    alvision.Mat src = randomMat(size, depth);
+    alvision.Mat mask = randomMat(size, CV_8UC1, 0, 2);
 
-    double val = cv::cuda::norm(loadMat(src, useRoi), normCode, loadMat(mask, useRoi));
+    double val = alvision.cuda::norm(loadMat(src, useRoi), normCode, loadMat(mask, useRoi));
 
-    double val_gold = cv::norm(src, normCode, mask);
+    double val_gold = alvision.norm(src, normCode, mask);
 
     EXPECT_NEAR(val_gold, val, depth < CV_32F ? 0.0 : 1.0);
 }
 
 CUDA_TEST_P(Norm, Async)
 {
-    cv::Mat src = randomMat(size, depth);
-    cv::Mat mask = randomMat(size, CV_8UC1, 0, 2);
+    alvision.Mat src = randomMat(size, depth);
+    alvision.Mat mask = randomMat(size, CV_8UC1, 0, 2);
 
-    cv::cuda::Stream stream;
+    alvision.cuda::Stream stream;
 
-    cv::cuda::HostMem dst;
-    cv::cuda::calcNorm(loadMat(src, useRoi), dst, normCode, loadMat(mask, useRoi), stream);
+    alvision.cuda::HostMem dst;
+    alvision.cuda::calcNorm(loadMat(src, useRoi), dst, normCode, loadMat(mask, useRoi), stream);
 
     stream.waitForCompletion();
 
     double val;
-    dst.createMatHeader().convertTo(cv::Mat(1, 1, CV_64FC1, &val), CV_64F);
+    dst.createMatHeader().convertTo(alvision.Mat(1, 1, CV_64FC1, &val), CV_64F);
 
-    double val_gold = cv::norm(src, normCode, mask);
+    double val_gold = alvision.norm(src, normCode, mask);
 
     EXPECT_NEAR(val_gold, val, depth < CV_32F ? 0.0 : 1.0);
 }
@@ -118,16 +118,16 @@ INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Norm, testing::Combine(
                     MatDepth(CV_16S),
                     MatDepth(CV_32S),
                     MatDepth(CV_32F)),
-    testing::Values(NormCode(cv::NORM_L1), NormCode(cv::NORM_L2), NormCode(cv::NORM_INF)),
+    testing::Values(NormCode(alvision.NORM_L1), NormCode(alvision.NORM_L2), NormCode(alvision.NORM_INF)),
     WHOLE_SUBMAT));
 
 ////////////////////////////////////////////////////////////////////////////////
 // normDiff
 
-PARAM_TEST_CASE(NormDiff, cv::cuda::DeviceInfo, cv::Size, NormCode, UseRoi)
+PARAM_TEST_CASE(NormDiff, alvision.cuda::DeviceInfo, alvision.Size, NormCode, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int normCode;
     bool useRoi;
 
@@ -138,39 +138,39 @@ PARAM_TEST_CASE(NormDiff, cv::cuda::DeviceInfo, cv::Size, NormCode, UseRoi)
         normCode = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(NormDiff, Accuracy)
 {
-    cv::Mat src1 = randomMat(size, CV_8UC1);
-    cv::Mat src2 = randomMat(size, CV_8UC1);
+    alvision.Mat src1 = randomMat(size, CV_8UC1);
+    alvision.Mat src2 = randomMat(size, CV_8UC1);
 
-    double val = cv::cuda::norm(loadMat(src1, useRoi), loadMat(src2, useRoi), normCode);
+    double val = alvision.cuda::norm(loadMat(src1, useRoi), loadMat(src2, useRoi), normCode);
 
-    double val_gold = cv::norm(src1, src2, normCode);
+    double val_gold = alvision.norm(src1, src2, normCode);
 
     EXPECT_NEAR(val_gold, val, 0.0);
 }
 
 CUDA_TEST_P(NormDiff, Async)
 {
-    cv::Mat src1 = randomMat(size, CV_8UC1);
-    cv::Mat src2 = randomMat(size, CV_8UC1);
+    alvision.Mat src1 = randomMat(size, CV_8UC1);
+    alvision.Mat src2 = randomMat(size, CV_8UC1);
 
-    cv::cuda::Stream stream;
+    alvision.cuda::Stream stream;
 
-    cv::cuda::HostMem dst;
-    cv::cuda::calcNormDiff(loadMat(src1, useRoi), loadMat(src2, useRoi), dst, normCode, stream);
+    alvision.cuda::HostMem dst;
+    alvision.cuda::calcNormDiff(loadMat(src1, useRoi), loadMat(src2, useRoi), dst, normCode, stream);
 
     stream.waitForCompletion();
 
     double val;
-    const cv::Mat val_mat(1, 1, CV_64FC1, &val);
+    const alvision.Mat val_mat(1, 1, CV_64FC1, &val);
     dst.createMatHeader().convertTo(val_mat, CV_64F);
 
-    double val_gold = cv::norm(src1, src2, normCode);
+    double val_gold = alvision.norm(src1, src2, normCode);
 
     EXPECT_NEAR(val_gold, val, 0.0);
 }
@@ -178,7 +178,7 @@ CUDA_TEST_P(NormDiff, Async)
 INSTANTIATE_TEST_CASE_P(CUDA_Arithm, NormDiff, testing::Combine(
     ALL_DEVICES,
     DIFFERENT_SIZES,
-    testing::Values(NormCode(cv::NORM_L1), NormCode(cv::NORM_L2), NormCode(cv::NORM_INF)),
+    testing::Values(NormCode(alvision.NORM_L1), NormCode(alvision.NORM_L2), NormCode(alvision.NORM_INF)),
     WHOLE_SUBMAT));
 
 //////////////////////////////////////////////////////////////////////////////
@@ -187,11 +187,11 @@ INSTANTIATE_TEST_CASE_P(CUDA_Arithm, NormDiff, testing::Combine(
 namespace
 {
     template <typename T>
-    cv::Scalar absSumImpl(const cv::Mat& src)
+    alvision.Scalar absSumImpl(const alvision.Mat& src)
     {
         const int cn = src.channels();
 
-        cv::Scalar sum = cv::Scalar::all(0);
+        alvision.Scalar sum = alvision.Scalar::all(0);
 
         for (int y = 0; y < src.rows; ++y)
         {
@@ -205,9 +205,9 @@ namespace
         return sum;
     }
 
-    cv::Scalar absSumGold(const cv::Mat& src)
+    alvision.Scalar absSumGold(const alvision.Mat& src)
     {
-        typedef cv::Scalar (*func_t)(const cv::Mat& src);
+        typedef alvision.Scalar (*func_t)(const alvision.Mat& src);
 
         static const func_t funcs[] =
         {
@@ -224,11 +224,11 @@ namespace
     }
 
     template <typename T>
-    cv::Scalar sqrSumImpl(const cv::Mat& src)
+    alvision.Scalar sqrSumImpl(const alvision.Mat& src)
     {
         const int cn = src.channels();
 
-        cv::Scalar sum = cv::Scalar::all(0);
+        alvision.Scalar sum = alvision.Scalar::all(0);
 
         for (int y = 0; y < src.rows; ++y)
         {
@@ -245,9 +245,9 @@ namespace
         return sum;
     }
 
-    cv::Scalar sqrSumGold(const cv::Mat& src)
+    alvision.Scalar sqrSumGold(const alvision.Mat& src)
     {
-        typedef cv::Scalar (*func_t)(const cv::Mat& src);
+        typedef alvision.Scalar (*func_t)(const alvision.Mat& src);
 
         static const func_t funcs[] =
         {
@@ -264,14 +264,14 @@ namespace
     }
 }
 
-PARAM_TEST_CASE(Sum, cv::cuda::DeviceInfo, cv::Size, MatType, UseRoi)
+PARAM_TEST_CASE(Sum, alvision.cuda::DeviceInfo, alvision.Size, MatType, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int type;
     bool useRoi;
 
-    cv::Mat src;
+    alvision.Mat src;
 
     virtual void SetUp()
     {
@@ -280,7 +280,7 @@ PARAM_TEST_CASE(Sum, cv::cuda::DeviceInfo, cv::Size, MatType, UseRoi)
         type = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
 
         src = randomMat(size, type, -128.0, 128.0);
     }
@@ -288,81 +288,81 @@ PARAM_TEST_CASE(Sum, cv::cuda::DeviceInfo, cv::Size, MatType, UseRoi)
 
 CUDA_TEST_P(Sum, Simple)
 {
-    cv::Scalar val = cv::cuda::sum(loadMat(src, useRoi));
+    alvision.Scalar val = alvision.cuda::sum(loadMat(src, useRoi));
 
-    cv::Scalar val_gold = cv::sum(src);
+    alvision.Scalar val_gold = alvision.sum(src);
 
     EXPECT_SCALAR_NEAR(val_gold, val, CV_MAT_DEPTH(type) < CV_32F ? 0.0 : 0.5);
 }
 
 CUDA_TEST_P(Sum, Simple_Async)
 {
-    cv::cuda::Stream stream;
+    alvision.cuda::Stream stream;
 
-    cv::cuda::HostMem dst;
-    cv::cuda::calcSum(loadMat(src, useRoi), dst, cv::noArray(), stream);
+    alvision.cuda::HostMem dst;
+    alvision.cuda::calcSum(loadMat(src, useRoi), dst, alvision.noArray(), stream);
 
     stream.waitForCompletion();
 
-    cv::Scalar val;
-    cv::Mat val_mat(dst.size(), CV_64FC(dst.channels()), val.val);
+    alvision.Scalar val;
+    alvision.Mat val_mat(dst.size(), CV_64FC(dst.channels()), val.val);
     dst.createMatHeader().convertTo(val_mat, CV_64F);
 
-    cv::Scalar val_gold = cv::sum(src);
+    alvision.Scalar val_gold = alvision.sum(src);
 
     EXPECT_SCALAR_NEAR(val_gold, val, CV_MAT_DEPTH(type) < CV_32F ? 0.0 : 0.5);
 }
 
 CUDA_TEST_P(Sum, Abs)
 {
-    cv::Scalar val = cv::cuda::absSum(loadMat(src, useRoi));
+    alvision.Scalar val = alvision.cuda::absSum(loadMat(src, useRoi));
 
-    cv::Scalar val_gold = absSumGold(src);
+    alvision.Scalar val_gold = absSumGold(src);
 
     EXPECT_SCALAR_NEAR(val_gold, val, CV_MAT_DEPTH(type) < CV_32F ? 0.0 : 0.5);
 }
 
 CUDA_TEST_P(Sum, Abs_Async)
 {
-    cv::cuda::Stream stream;
+    alvision.cuda::Stream stream;
 
-    cv::cuda::HostMem dst;
-    cv::cuda::calcAbsSum(loadMat(src, useRoi), dst, cv::noArray(), stream);
+    alvision.cuda::HostMem dst;
+    alvision.cuda::calcAbsSum(loadMat(src, useRoi), dst, alvision.noArray(), stream);
 
     stream.waitForCompletion();
 
-    cv::Scalar val;
-    cv::Mat val_mat(dst.size(), CV_64FC(dst.channels()), val.val);
+    alvision.Scalar val;
+    alvision.Mat val_mat(dst.size(), CV_64FC(dst.channels()), val.val);
     dst.createMatHeader().convertTo(val_mat, CV_64F);
 
-    cv::Scalar val_gold = absSumGold(src);
+    alvision.Scalar val_gold = absSumGold(src);
 
     EXPECT_SCALAR_NEAR(val_gold, val, CV_MAT_DEPTH(type) < CV_32F ? 0.0 : 0.5);
 }
 
 CUDA_TEST_P(Sum, Sqr)
 {
-    cv::Scalar val = cv::cuda::sqrSum(loadMat(src, useRoi));
+    alvision.Scalar val = alvision.cuda::sqrSum(loadMat(src, useRoi));
 
-    cv::Scalar val_gold = sqrSumGold(src);
+    alvision.Scalar val_gold = sqrSumGold(src);
 
     EXPECT_SCALAR_NEAR(val_gold, val, CV_MAT_DEPTH(type) < CV_32F ? 0.0 : 0.5);
 }
 
 CUDA_TEST_P(Sum, Sqr_Async)
 {
-    cv::cuda::Stream stream;
+    alvision.cuda::Stream stream;
 
-    cv::cuda::HostMem dst;
-    cv::cuda::calcSqrSum(loadMat(src, useRoi), dst, cv::noArray(), stream);
+    alvision.cuda::HostMem dst;
+    alvision.cuda::calcSqrSum(loadMat(src, useRoi), dst, alvision.noArray(), stream);
 
     stream.waitForCompletion();
 
-    cv::Scalar val;
-    cv::Mat val_mat(dst.size(), CV_64FC(dst.channels()), val.val);
+    alvision.Scalar val;
+    alvision.Mat val_mat(dst.size(), CV_64FC(dst.channels()), val.val);
     dst.createMatHeader().convertTo(val_mat, CV_64F);
 
-    cv::Scalar val_gold = sqrSumGold(src);
+    alvision.Scalar val_gold = sqrSumGold(src);
 
     EXPECT_SCALAR_NEAR(val_gold, val, CV_MAT_DEPTH(type) < CV_32F ? 0.0 : 0.5);
 }
@@ -376,10 +376,10 @@ INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Sum, testing::Combine(
 ////////////////////////////////////////////////////////////////////////////////
 // MinMax
 
-PARAM_TEST_CASE(MinMax, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
+PARAM_TEST_CASE(MinMax, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int depth;
     bool useRoi;
 
@@ -390,30 +390,30 @@ PARAM_TEST_CASE(MinMax, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
         depth = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(MinMax, WithoutMask)
 {
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    if (depth == CV_64F && !supportFeature(devInfo, cv::cuda::NATIVE_DOUBLE))
+    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
     {
         try
         {
             double minVal, maxVal;
-            cv::cuda::minMax(loadMat(src), &minVal, &maxVal);
+            alvision.cuda::minMax(loadMat(src), &minVal, &maxVal);
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsUnsupportedFormat, e.code);
+            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
     }
     else
     {
         double minVal, maxVal;
-        cv::cuda::minMax(loadMat(src, useRoi), &minVal, &maxVal);
+        alvision.cuda::minMax(loadMat(src, useRoi), &minVal, &maxVal);
 
         double minVal_gold, maxVal_gold;
         minMaxLocGold(src, &minVal_gold, &maxVal_gold);
@@ -425,17 +425,17 @@ CUDA_TEST_P(MinMax, WithoutMask)
 
 CUDA_TEST_P(MinMax, Async)
 {
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::Stream stream;
+    alvision.cuda::Stream stream;
 
-    cv::cuda::HostMem dst;
-    cv::cuda::findMinMax(loadMat(src, useRoi), dst, cv::noArray(), stream);
+    alvision.cuda::HostMem dst;
+    alvision.cuda::findMinMax(loadMat(src, useRoi), dst, alvision.noArray(), stream);
 
     stream.waitForCompletion();
 
     double vals[2];
-    const cv::Mat vals_mat(1, 2, CV_64FC1, &vals[0]);
+    const alvision.Mat vals_mat(1, 2, CV_64FC1, &vals[0]);
     dst.createMatHeader().convertTo(vals_mat, CV_64F);
 
     double minVal_gold, maxVal_gold;
@@ -447,25 +447,25 @@ CUDA_TEST_P(MinMax, Async)
 
 CUDA_TEST_P(MinMax, WithMask)
 {
-    cv::Mat src = randomMat(size, depth);
-    cv::Mat mask = randomMat(size, CV_8UC1, 0.0, 2.0);
+    alvision.Mat src = randomMat(size, depth);
+    alvision.Mat mask = randomMat(size, CV_8UC1, 0.0, 2.0);
 
-    if (depth == CV_64F && !supportFeature(devInfo, cv::cuda::NATIVE_DOUBLE))
+    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
     {
         try
         {
             double minVal, maxVal;
-            cv::cuda::minMax(loadMat(src), &minVal, &maxVal, loadMat(mask));
+            alvision.cuda::minMax(loadMat(src), &minVal, &maxVal, loadMat(mask));
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsUnsupportedFormat, e.code);
+            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
     }
     else
     {
         double minVal, maxVal;
-        cv::cuda::minMax(loadMat(src, useRoi), &minVal, &maxVal, loadMat(mask, useRoi));
+        alvision.cuda::minMax(loadMat(src, useRoi), &minVal, &maxVal, loadMat(mask, useRoi));
 
         double minVal_gold, maxVal_gold;
         minMaxLocGold(src, &minVal_gold, &maxVal_gold, 0, 0, mask);
@@ -477,26 +477,26 @@ CUDA_TEST_P(MinMax, WithMask)
 
 CUDA_TEST_P(MinMax, NullPtr)
 {
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    if (depth == CV_64F && !supportFeature(devInfo, cv::cuda::NATIVE_DOUBLE))
+    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
     {
         try
         {
             double minVal, maxVal;
-            cv::cuda::minMax(loadMat(src), &minVal, 0);
-            cv::cuda::minMax(loadMat(src), 0, &maxVal);
+            alvision.cuda::minMax(loadMat(src), &minVal, 0);
+            alvision.cuda::minMax(loadMat(src), 0, &maxVal);
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsUnsupportedFormat, e.code);
+            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
     }
     else
     {
         double minVal, maxVal;
-        cv::cuda::minMax(loadMat(src, useRoi), &minVal, 0);
-        cv::cuda::minMax(loadMat(src, useRoi), 0, &maxVal);
+        alvision.cuda::minMax(loadMat(src, useRoi), &minVal, 0);
+        alvision.cuda::minMax(loadMat(src, useRoi), 0, &maxVal);
 
         double minVal_gold, maxVal_gold;
         minMaxLocGold(src, &minVal_gold, &maxVal_gold, 0, 0);
@@ -518,14 +518,14 @@ INSTANTIATE_TEST_CASE_P(CUDA_Arithm, MinMax, testing::Combine(
 namespace
 {
     template <typename T>
-    void expectEqualImpl(const cv::Mat& src, cv::Point loc_gold, cv::Point loc)
+    void expectEqualImpl(const alvision.Mat& src, alvision.Point loc_gold, alvision.Point loc)
     {
         EXPECT_EQ(src.at<T>(loc_gold.y, loc_gold.x), src.at<T>(loc.y, loc.x));
     }
 
-    void expectEqual(const cv::Mat& src, cv::Point loc_gold, cv::Point loc)
+    void expectEqual(const alvision.Mat& src, alvision.Point loc_gold, alvision.Point loc)
     {
-        typedef void (*func_t)(const cv::Mat& src, cv::Point loc_gold, cv::Point loc);
+        typedef void (*func_t)(const alvision.Mat& src, alvision.Point loc_gold, alvision.Point loc);
 
         static const func_t funcs[] =
         {
@@ -542,10 +542,10 @@ namespace
     }
 }
 
-PARAM_TEST_CASE(MinMaxLoc, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
+PARAM_TEST_CASE(MinMaxLoc, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int depth;
     bool useRoi;
 
@@ -556,35 +556,35 @@ PARAM_TEST_CASE(MinMaxLoc, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
         depth = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(MinMaxLoc, WithoutMask)
 {
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    if (depth == CV_64F && !supportFeature(devInfo, cv::cuda::NATIVE_DOUBLE))
+    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
     {
         try
         {
             double minVal, maxVal;
-            cv::Point minLoc, maxLoc;
-            cv::cuda::minMaxLoc(loadMat(src), &minVal, &maxVal, &minLoc, &maxLoc);
+            alvision.Point minLoc, maxLoc;
+            alvision.cuda::minMaxLoc(loadMat(src), &minVal, &maxVal, &minLoc, &maxLoc);
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsUnsupportedFormat, e.code);
+            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
     }
     else
     {
         double minVal, maxVal;
-        cv::Point minLoc, maxLoc;
-        cv::cuda::minMaxLoc(loadMat(src, useRoi), &minVal, &maxVal, &minLoc, &maxLoc);
+        alvision.Point minLoc, maxLoc;
+        alvision.cuda::minMaxLoc(loadMat(src, useRoi), &minVal, &maxVal, &minLoc, &maxLoc);
 
         double minVal_gold, maxVal_gold;
-        cv::Point minLoc_gold, maxLoc_gold;
+        alvision.Point minLoc_gold, maxLoc_gold;
         minMaxLocGold(src, &minVal_gold, &maxVal_gold, &minLoc_gold, &maxLoc_gold);
 
         EXPECT_DOUBLE_EQ(minVal_gold, minVal);
@@ -597,14 +597,14 @@ CUDA_TEST_P(MinMaxLoc, WithoutMask)
 
 CUDA_TEST_P(MinMaxLoc, OneRowMat)
 {
-    cv::Mat src = randomMat(cv::Size(size.width, 1), depth);
+    alvision.Mat src = randomMat(alvision.Size(size.width, 1), depth);
 
     double minVal, maxVal;
-    cv::Point minLoc, maxLoc;
-    cv::cuda::minMaxLoc(loadMat(src, useRoi), &minVal, &maxVal, &minLoc, &maxLoc);
+    alvision.Point minLoc, maxLoc;
+    alvision.cuda::minMaxLoc(loadMat(src, useRoi), &minVal, &maxVal, &minLoc, &maxLoc);
 
     double minVal_gold, maxVal_gold;
-    cv::Point minLoc_gold, maxLoc_gold;
+    alvision.Point minLoc_gold, maxLoc_gold;
     minMaxLocGold(src, &minVal_gold, &maxVal_gold, &minLoc_gold, &maxLoc_gold);
 
     EXPECT_DOUBLE_EQ(minVal_gold, minVal);
@@ -616,14 +616,14 @@ CUDA_TEST_P(MinMaxLoc, OneRowMat)
 
 CUDA_TEST_P(MinMaxLoc, OneColumnMat)
 {
-    cv::Mat src = randomMat(cv::Size(1, size.height), depth);
+    alvision.Mat src = randomMat(alvision.Size(1, size.height), depth);
 
     double minVal, maxVal;
-    cv::Point minLoc, maxLoc;
-    cv::cuda::minMaxLoc(loadMat(src, useRoi), &minVal, &maxVal, &minLoc, &maxLoc);
+    alvision.Point minLoc, maxLoc;
+    alvision.cuda::minMaxLoc(loadMat(src, useRoi), &minVal, &maxVal, &minLoc, &maxLoc);
 
     double minVal_gold, maxVal_gold;
-    cv::Point minLoc_gold, maxLoc_gold;
+    alvision.Point minLoc_gold, maxLoc_gold;
     minMaxLocGold(src, &minVal_gold, &maxVal_gold, &minLoc_gold, &maxLoc_gold);
 
     EXPECT_DOUBLE_EQ(minVal_gold, minVal);
@@ -635,30 +635,30 @@ CUDA_TEST_P(MinMaxLoc, OneColumnMat)
 
 CUDA_TEST_P(MinMaxLoc, Async)
 {
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    cv::cuda::Stream stream;
+    alvision.cuda::Stream stream;
 
-    cv::cuda::HostMem minMaxVals, locVals;
-    cv::cuda::findMinMaxLoc(loadMat(src, useRoi), minMaxVals, locVals, cv::noArray(), stream);
+    alvision.cuda::HostMem minMaxVals, locVals;
+    alvision.cuda::findMinMaxLoc(loadMat(src, useRoi), minMaxVals, locVals, alvision.noArray(), stream);
 
     stream.waitForCompletion();
 
     double vals[2];
-    const cv::Mat vals_mat(2, 1, CV_64FC1, &vals[0]);
+    const alvision.Mat vals_mat(2, 1, CV_64FC1, &vals[0]);
     minMaxVals.createMatHeader().convertTo(vals_mat, CV_64F);
 
     int locs[2];
-    const cv::Mat locs_mat(2, 1, CV_32SC1, &locs[0]);
+    const alvision.Mat locs_mat(2, 1, CV_32SC1, &locs[0]);
     locVals.createMatHeader().copyTo(locs_mat);
 
-    cv::Point locs2D[] = {
-        cv::Point(locs[0] % src.cols, locs[0] / src.cols),
-        cv::Point(locs[1] % src.cols, locs[1] / src.cols),
+    alvision.Point locs2D[] = {
+        alvision.Point(locs[0] % src.cols, locs[0] / src.cols),
+        alvision.Point(locs[1] % src.cols, locs[1] / src.cols),
     };
 
     double minVal_gold, maxVal_gold;
-    cv::Point minLoc_gold, maxLoc_gold;
+    alvision.Point minLoc_gold, maxLoc_gold;
     minMaxLocGold(src, &minVal_gold, &maxVal_gold, &minLoc_gold, &maxLoc_gold);
 
     EXPECT_DOUBLE_EQ(minVal_gold, vals[0]);
@@ -670,30 +670,30 @@ CUDA_TEST_P(MinMaxLoc, Async)
 
 CUDA_TEST_P(MinMaxLoc, WithMask)
 {
-    cv::Mat src = randomMat(size, depth);
-    cv::Mat mask = randomMat(size, CV_8UC1, 0.0, 2.0);
+    alvision.Mat src = randomMat(size, depth);
+    alvision.Mat mask = randomMat(size, CV_8UC1, 0.0, 2.0);
 
-    if (depth == CV_64F && !supportFeature(devInfo, cv::cuda::NATIVE_DOUBLE))
+    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
     {
         try
         {
             double minVal, maxVal;
-            cv::Point minLoc, maxLoc;
-            cv::cuda::minMaxLoc(loadMat(src), &minVal, &maxVal, &minLoc, &maxLoc, loadMat(mask));
+            alvision.Point minLoc, maxLoc;
+            alvision.cuda::minMaxLoc(loadMat(src), &minVal, &maxVal, &minLoc, &maxLoc, loadMat(mask));
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsUnsupportedFormat, e.code);
+            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
     }
     else
     {
         double minVal, maxVal;
-        cv::Point minLoc, maxLoc;
-        cv::cuda::minMaxLoc(loadMat(src, useRoi), &minVal, &maxVal, &minLoc, &maxLoc, loadMat(mask, useRoi));
+        alvision.Point minLoc, maxLoc;
+        alvision.cuda::minMaxLoc(loadMat(src, useRoi), &minVal, &maxVal, &minLoc, &maxLoc, loadMat(mask, useRoi));
 
         double minVal_gold, maxVal_gold;
-        cv::Point minLoc_gold, maxLoc_gold;
+        alvision.Point minLoc_gold, maxLoc_gold;
         minMaxLocGold(src, &minVal_gold, &maxVal_gold, &minLoc_gold, &maxLoc_gold, mask);
 
         EXPECT_DOUBLE_EQ(minVal_gold, minVal);
@@ -706,35 +706,35 @@ CUDA_TEST_P(MinMaxLoc, WithMask)
 
 CUDA_TEST_P(MinMaxLoc, NullPtr)
 {
-    cv::Mat src = randomMat(size, depth);
+    alvision.Mat src = randomMat(size, depth);
 
-    if (depth == CV_64F && !supportFeature(devInfo, cv::cuda::NATIVE_DOUBLE))
+    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
     {
         try
         {
             double minVal, maxVal;
-            cv::Point minLoc, maxLoc;
-            cv::cuda::minMaxLoc(loadMat(src, useRoi), &minVal, 0, 0, 0);
-            cv::cuda::minMaxLoc(loadMat(src, useRoi), 0, &maxVal, 0, 0);
-            cv::cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, &minLoc, 0);
-            cv::cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, 0, &maxLoc);
+            alvision.Point minLoc, maxLoc;
+            alvision.cuda::minMaxLoc(loadMat(src, useRoi), &minVal, 0, 0, 0);
+            alvision.cuda::minMaxLoc(loadMat(src, useRoi), 0, &maxVal, 0, 0);
+            alvision.cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, &minLoc, 0);
+            alvision.cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, 0, &maxLoc);
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsUnsupportedFormat, e.code);
+            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
     }
     else
     {
         double minVal, maxVal;
-        cv::Point minLoc, maxLoc;
-        cv::cuda::minMaxLoc(loadMat(src, useRoi), &minVal, 0, 0, 0);
-        cv::cuda::minMaxLoc(loadMat(src, useRoi), 0, &maxVal, 0, 0);
-        cv::cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, &minLoc, 0);
-        cv::cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, 0, &maxLoc);
+        alvision.Point minLoc, maxLoc;
+        alvision.cuda::minMaxLoc(loadMat(src, useRoi), &minVal, 0, 0, 0);
+        alvision.cuda::minMaxLoc(loadMat(src, useRoi), 0, &maxVal, 0, 0);
+        alvision.cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, &minLoc, 0);
+        alvision.cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, 0, &maxLoc);
 
         double minVal_gold, maxVal_gold;
-        cv::Point minLoc_gold, maxLoc_gold;
+        alvision.Point minLoc_gold, maxLoc_gold;
         minMaxLocGold(src, &minVal_gold, &maxVal_gold, &minLoc_gold, &maxLoc_gold);
 
         EXPECT_DOUBLE_EQ(minVal_gold, minVal);
@@ -754,14 +754,14 @@ INSTANTIATE_TEST_CASE_P(CUDA_Arithm, MinMaxLoc, testing::Combine(
 ////////////////////////////////////////////////////////////////////////////
 // CountNonZero
 
-PARAM_TEST_CASE(CountNonZero, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
+PARAM_TEST_CASE(CountNonZero, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int depth;
     bool useRoi;
 
-    cv::Mat src;
+    alvision.Mat src;
 
     virtual void SetUp()
     {
@@ -770,31 +770,31 @@ PARAM_TEST_CASE(CountNonZero, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
         depth = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
 
-        cv::Mat srcBase = randomMat(size, CV_8U, 0.0, 1.5);
+        alvision.Mat srcBase = randomMat(size, CV_8U, 0.0, 1.5);
         srcBase.convertTo(src, depth);
     }
 };
 
 CUDA_TEST_P(CountNonZero, Accuracy)
 {
-    if (depth == CV_64F && !supportFeature(devInfo, cv::cuda::NATIVE_DOUBLE))
+    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
     {
         try
         {
-            cv::cuda::countNonZero(loadMat(src));
+            alvision.cuda::countNonZero(loadMat(src));
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsUnsupportedFormat, e.code);
+            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
     }
     else
     {
-        int val = cv::cuda::countNonZero(loadMat(src, useRoi));
+        int val = alvision.cuda::countNonZero(loadMat(src, useRoi));
 
-        int val_gold = cv::countNonZero(src);
+        int val_gold = alvision.countNonZero(src);
 
         ASSERT_EQ(val_gold, val);
     }
@@ -802,18 +802,18 @@ CUDA_TEST_P(CountNonZero, Accuracy)
 
 CUDA_TEST_P(CountNonZero, Async)
 {
-    cv::cuda::Stream stream;
+    alvision.cuda::Stream stream;
 
-    cv::cuda::HostMem dst;
-    cv::cuda::countNonZero(loadMat(src, useRoi), dst, stream);
+    alvision.cuda::HostMem dst;
+    alvision.cuda::countNonZero(loadMat(src, useRoi), dst, stream);
 
     stream.waitForCompletion();
 
     int val;
-    const cv::Mat val_mat(1, 1, CV_32SC1, &val);
+    const alvision.Mat val_mat(1, 1, CV_32SC1, &val);
     dst.createMatHeader().copyTo(val_mat);
 
-    int val_gold = cv::countNonZero(src);
+    int val_gold = alvision.countNonZero(src);
 
     ASSERT_EQ(val_gold, val);
 }
@@ -827,13 +827,13 @@ INSTANTIATE_TEST_CASE_P(CUDA_Arithm, CountNonZero, testing::Combine(
 //////////////////////////////////////////////////////////////////////////////
 // Reduce
 
-CV_ENUM(ReduceCode, cv::REDUCE_SUM, cv::REDUCE_AVG, cv::REDUCE_MAX, cv::REDUCE_MIN)
-#define ALL_REDUCE_CODES testing::Values(ReduceCode(cv::REDUCE_SUM), ReduceCode(cv::REDUCE_AVG), ReduceCode(cv::REDUCE_MAX), ReduceCode(cv::REDUCE_MIN))
+CV_ENUM(ReduceCode, alvision.REDUCE_SUM, alvision.REDUCE_AVG, alvision.REDUCE_MAX, alvision.REDUCE_MIN)
+#define ALL_REDUCE_CODES testing::Values(ReduceCode(alvision.REDUCE_SUM), ReduceCode(alvision.REDUCE_AVG), ReduceCode(alvision.REDUCE_MAX), ReduceCode(alvision.REDUCE_MIN))
 
-PARAM_TEST_CASE(Reduce, cv::cuda::DeviceInfo, cv::Size, MatDepth, Channels, ReduceCode, UseRoi)
+PARAM_TEST_CASE(Reduce, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, Channels, ReduceCode, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int depth;
     int channels;
     int reduceOp;
@@ -852,13 +852,13 @@ PARAM_TEST_CASE(Reduce, cv::cuda::DeviceInfo, cv::Size, MatDepth, Channels, Redu
         reduceOp = GET_PARAM(4);
         useRoi = GET_PARAM(5);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
 
         type = CV_MAKE_TYPE(depth, channels);
 
-        if (reduceOp == cv::REDUCE_MAX || reduceOp == cv::REDUCE_MIN)
+        if (reduceOp == alvision.REDUCE_MAX || reduceOp == alvision.REDUCE_MIN)
             dst_depth = depth;
-        else if (reduceOp == cv::REDUCE_SUM)
+        else if (reduceOp == alvision.REDUCE_SUM)
             dst_depth = depth == CV_8U ? CV_32S : depth < CV_64F ? CV_32F : depth;
         else
             dst_depth = depth < CV_32F ? CV_32F : depth;
@@ -870,26 +870,26 @@ PARAM_TEST_CASE(Reduce, cv::cuda::DeviceInfo, cv::Size, MatDepth, Channels, Redu
 
 CUDA_TEST_P(Reduce, Rows)
 {
-    cv::Mat src = randomMat(size, type);
+    alvision.Mat src = randomMat(size, type);
 
-    cv::cuda::GpuMat dst = createMat(cv::Size(src.cols, 1), dst_type, useRoi);
-    cv::cuda::reduce(loadMat(src, useRoi), dst, 0, reduceOp, dst_depth);
+    alvision.cuda::GpuMat dst = createMat(alvision.Size(src.cols, 1), dst_type, useRoi);
+    alvision.cuda::reduce(loadMat(src, useRoi), dst, 0, reduceOp, dst_depth);
 
-    cv::Mat dst_gold;
-    cv::reduce(src, dst_gold, 0, reduceOp, dst_depth);
+    alvision.Mat dst_gold;
+    alvision.reduce(src, dst_gold, 0, reduceOp, dst_depth);
 
     EXPECT_MAT_NEAR(dst_gold, dst, dst_depth < CV_32F ? 0.0 : 0.02);
 }
 
 CUDA_TEST_P(Reduce, Cols)
 {
-    cv::Mat src = randomMat(size, type);
+    alvision.Mat src = randomMat(size, type);
 
-    cv::cuda::GpuMat dst = createMat(cv::Size(src.rows, 1), dst_type, useRoi);
-    cv::cuda::reduce(loadMat(src, useRoi), dst, 1, reduceOp, dst_depth);
+    alvision.cuda::GpuMat dst = createMat(alvision.Size(src.rows, 1), dst_type, useRoi);
+    alvision.cuda::reduce(loadMat(src, useRoi), dst, 1, reduceOp, dst_depth);
 
-    cv::Mat dst_gold;
-    cv::reduce(src, dst_gold, 1, reduceOp, dst_depth);
+    alvision.Mat dst_gold;
+    alvision.reduce(src, dst_gold, 1, reduceOp, dst_depth);
     dst_gold.cols = dst_gold.rows;
     dst_gold.rows = 1;
     dst_gold.step = dst_gold.cols * dst_gold.elemSize();
@@ -912,10 +912,10 @@ INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Reduce, testing::Combine(
 //////////////////////////////////////////////////////////////////////////////
 // Normalize
 
-PARAM_TEST_CASE(Normalize, cv::cuda::DeviceInfo, cv::Size, MatDepth, NormCode, UseRoi)
+PARAM_TEST_CASE(Normalize, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, NormCode, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int type;
     int norm_type;
     bool useRoi;
@@ -931,7 +931,7 @@ PARAM_TEST_CASE(Normalize, cv::cuda::DeviceInfo, cv::Size, MatDepth, NormCode, U
         norm_type = GET_PARAM(3);
         useRoi = GET_PARAM(4);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
 
         alpha = 1;
         beta = 0;
@@ -941,29 +941,29 @@ PARAM_TEST_CASE(Normalize, cv::cuda::DeviceInfo, cv::Size, MatDepth, NormCode, U
 
 CUDA_TEST_P(Normalize, WithOutMask)
 {
-    cv::Mat src = randomMat(size, type);
+    alvision.Mat src = randomMat(size, type);
 
-    cv::cuda::GpuMat dst = createMat(size, type, useRoi);
-    cv::cuda::normalize(loadMat(src, useRoi), dst, alpha, beta, norm_type, type);
+    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
+    alvision.cuda::normalize(loadMat(src, useRoi), dst, alpha, beta, norm_type, type);
 
-    cv::Mat dst_gold;
-    cv::normalize(src, dst_gold, alpha, beta, norm_type, type);
+    alvision.Mat dst_gold;
+    alvision.normalize(src, dst_gold, alpha, beta, norm_type, type);
 
     EXPECT_MAT_NEAR(dst_gold, dst, type < CV_32F ? 1.0 : 1e-4);
 }
 
 CUDA_TEST_P(Normalize, WithMask)
 {
-    cv::Mat src = randomMat(size, type);
-    cv::Mat mask = randomMat(size, CV_8UC1, 0, 2);
+    alvision.Mat src = randomMat(size, type);
+    alvision.Mat mask = randomMat(size, CV_8UC1, 0, 2);
 
-    cv::cuda::GpuMat dst = createMat(size, type, useRoi);
-    dst.setTo(cv::Scalar::all(0));
-    cv::cuda::normalize(loadMat(src, useRoi), dst, alpha, beta, norm_type, type, loadMat(mask, useRoi));
+    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
+    dst.setTo(alvision.Scalar::all(0));
+    alvision.cuda::normalize(loadMat(src, useRoi), dst, alpha, beta, norm_type, type, loadMat(mask, useRoi));
 
-    cv::Mat dst_gold(size, type);
-    dst_gold.setTo(cv::Scalar::all(0));
-    cv::normalize(src, dst_gold, alpha, beta, norm_type, type, mask);
+    alvision.Mat dst_gold(size, type);
+    dst_gold.setTo(alvision.Scalar::all(0));
+    alvision.normalize(src, dst_gold, alpha, beta, norm_type, type, mask);
 
     EXPECT_MAT_NEAR(dst_gold, dst, type < CV_32F ? 1.0 : 1e-4);
 }
@@ -972,16 +972,16 @@ INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Normalize, testing::Combine(
     ALL_DEVICES,
     DIFFERENT_SIZES,
     ALL_DEPTH,
-    testing::Values(NormCode(cv::NORM_L1), NormCode(cv::NORM_L2), NormCode(cv::NORM_INF), NormCode(cv::NORM_MINMAX)),
+    testing::Values(NormCode(alvision.NORM_L1), NormCode(alvision.NORM_L2), NormCode(alvision.NORM_INF), NormCode(alvision.NORM_MINMAX)),
     WHOLE_SUBMAT));
 
 ////////////////////////////////////////////////////////////////////////////////
 // MeanStdDev
 
-PARAM_TEST_CASE(MeanStdDev, cv::cuda::DeviceInfo, cv::Size, UseRoi)
+PARAM_TEST_CASE(MeanStdDev, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     bool useRoi;
 
     virtual void SetUp()
@@ -990,36 +990,36 @@ PARAM_TEST_CASE(MeanStdDev, cv::cuda::DeviceInfo, cv::Size, UseRoi)
         size = GET_PARAM(1);
         useRoi = GET_PARAM(2);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(MeanStdDev, Accuracy)
 {
-    cv::Mat src = randomMat(size, CV_8UC1);
+    alvision.Mat src = randomMat(size, CV_8UC1);
 
-    if (!supportFeature(devInfo, cv::cuda::FEATURE_SET_COMPUTE_13))
+    if (!supportFeature(devInfo, alvision.cuda::FEATURE_SET_COMPUTE_13))
     {
         try
         {
-            cv::Scalar mean;
-            cv::Scalar stddev;
-            cv::cuda::meanStdDev(loadMat(src, useRoi), mean, stddev);
+            alvision.Scalar mean;
+            alvision.Scalar stddev;
+            alvision.cuda::meanStdDev(loadMat(src, useRoi), mean, stddev);
         }
-        catch (const cv::Exception& e)
+        catch (const alvision.Exception& e)
         {
-            ASSERT_EQ(cv::Error::StsNotImplemented, e.code);
+            ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }
     }
     else
     {
-        cv::Scalar mean;
-        cv::Scalar stddev;
-        cv::cuda::meanStdDev(loadMat(src, useRoi), mean, stddev);
+        alvision.Scalar mean;
+        alvision.Scalar stddev;
+        alvision.cuda::meanStdDev(loadMat(src, useRoi), mean, stddev);
 
-        cv::Scalar mean_gold;
-        cv::Scalar stddev_gold;
-        cv::meanStdDev(src, mean_gold, stddev_gold);
+        alvision.Scalar mean_gold;
+        alvision.Scalar stddev_gold;
+        alvision.meanStdDev(src, mean_gold, stddev_gold);
 
         EXPECT_SCALAR_NEAR(mean_gold, mean, 1e-5);
         EXPECT_SCALAR_NEAR(stddev_gold, stddev, 1e-5);
@@ -1028,24 +1028,24 @@ CUDA_TEST_P(MeanStdDev, Accuracy)
 
 CUDA_TEST_P(MeanStdDev, Async)
 {
-    cv::Mat src = randomMat(size, CV_8UC1);
+    alvision.Mat src = randomMat(size, CV_8UC1);
 
-    cv::cuda::Stream stream;
+    alvision.cuda::Stream stream;
 
-    cv::cuda::HostMem dst;
-    cv::cuda::meanStdDev(loadMat(src, useRoi), dst, stream);
+    alvision.cuda::HostMem dst;
+    alvision.cuda::meanStdDev(loadMat(src, useRoi), dst, stream);
 
     stream.waitForCompletion();
 
     double vals[2];
-    dst.createMatHeader().copyTo(cv::Mat(1, 2, CV_64FC1, &vals[0]));
+    dst.createMatHeader().copyTo(alvision.Mat(1, 2, CV_64FC1, &vals[0]));
 
-    cv::Scalar mean_gold;
-    cv::Scalar stddev_gold;
-    cv::meanStdDev(src, mean_gold, stddev_gold);
+    alvision.Scalar mean_gold;
+    alvision.Scalar stddev_gold;
+    alvision.meanStdDev(src, mean_gold, stddev_gold);
 
-    EXPECT_SCALAR_NEAR(mean_gold, cv::Scalar(vals[0]), 1e-5);
-    EXPECT_SCALAR_NEAR(stddev_gold, cv::Scalar(vals[1]), 1e-5);
+    EXPECT_SCALAR_NEAR(mean_gold, alvision.Scalar(vals[0]), 1e-5);
+    EXPECT_SCALAR_NEAR(stddev_gold, alvision.Scalar(vals[1]), 1e-5);
 }
 
 INSTANTIATE_TEST_CASE_P(CUDA_Arithm, MeanStdDev, testing::Combine(
@@ -1056,10 +1056,10 @@ INSTANTIATE_TEST_CASE_P(CUDA_Arithm, MeanStdDev, testing::Combine(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // Integral
 
-PARAM_TEST_CASE(Integral, cv::cuda::DeviceInfo, cv::Size, UseRoi)
+PARAM_TEST_CASE(Integral, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     bool useRoi;
 
     virtual void SetUp()
@@ -1068,35 +1068,35 @@ PARAM_TEST_CASE(Integral, cv::cuda::DeviceInfo, cv::Size, UseRoi)
         size = GET_PARAM(1);
         useRoi = GET_PARAM(2);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(Integral, Accuracy)
 {
-    cv::Mat src = randomMat(size, CV_8UC1);
+    alvision.Mat src = randomMat(size, CV_8UC1);
 
-    cv::cuda::GpuMat dst = createMat(cv::Size(src.cols + 1, src.rows + 1), CV_32SC1, useRoi);
-    cv::cuda::integral(loadMat(src, useRoi), dst);
+    alvision.cuda::GpuMat dst = createMat(alvision.Size(src.cols + 1, src.rows + 1), CV_32SC1, useRoi);
+    alvision.cuda::integral(loadMat(src, useRoi), dst);
 
-    cv::Mat dst_gold;
-    cv::integral(src, dst_gold, CV_32S);
+    alvision.Mat dst_gold;
+    alvision.integral(src, dst_gold, CV_32S);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }
 
 INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Integral, testing::Combine(
     ALL_DEVICES,
-    testing::Values(cv::Size(128, 128), cv::Size(113, 113), cv::Size(768, 1066)),
+    testing::Values(alvision.Size(128, 128), alvision.Size(113, 113), alvision.Size(768, 1066)),
     WHOLE_SUBMAT));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // IntegralSqr
 
-PARAM_TEST_CASE(IntegralSqr, cv::cuda::DeviceInfo, cv::Size, UseRoi)
+PARAM_TEST_CASE(IntegralSqr, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     bool useRoi;
 
     virtual void SetUp()
@@ -1105,19 +1105,19 @@ PARAM_TEST_CASE(IntegralSqr, cv::cuda::DeviceInfo, cv::Size, UseRoi)
         size = GET_PARAM(1);
         useRoi = GET_PARAM(2);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(IntegralSqr, Accuracy)
 {
-    cv::Mat src = randomMat(size, CV_8UC1);
+    alvision.Mat src = randomMat(size, CV_8UC1);
 
-    cv::cuda::GpuMat dst = createMat(cv::Size(src.cols + 1, src.rows + 1), CV_64FC1, useRoi);
-    cv::cuda::sqrIntegral(loadMat(src, useRoi), dst);
+    alvision.cuda::GpuMat dst = createMat(alvision.Size(src.cols + 1, src.rows + 1), CV_64FC1, useRoi);
+    alvision.cuda::sqrIntegral(loadMat(src, useRoi), dst);
 
-    cv::Mat dst_gold, temp;
-    cv::integral(src, temp, dst_gold);
+    alvision.Mat dst_gold, temp;
+    alvision.integral(src, temp, dst_gold);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
 }

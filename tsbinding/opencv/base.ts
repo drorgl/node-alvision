@@ -477,8 +477,9 @@ export function CV_DbgAssert(expr: () =>boolean){
     CV_Assert(expr);
 }
 
-export function ASSERT_TRUE(val: boolean) {
+export function ASSERT_TRUE(val: boolean, msg?) {
     CV_Assert(() => val);
+    //TODO: what to do with failed msg??
 }
 
 export function ASSERT_EQ(val: any, expected: any) {
@@ -490,15 +491,15 @@ export function ASSERT_NE(val: any, expected: any) {
 }
 
 
-export function ASSERT_LT(low: number, high: number) {
+export function ASSERT_LT(low: any, high: any) {
     CV_Assert(() => low < high);
 }
 
-export function ASSERT_LE(low: number, high: number) {
+export function ASSERT_LE(low: any, high: any) {
     CV_Assert(() => low <= high);
 }
 
-export function ASSERT_GT(low: number, high: number) {
+export function ASSERT_GT(low: any, high: any) {
     CV_Assert(() => low > high);
 }
 
@@ -512,15 +513,15 @@ export function EXPECT_FALSE(val: boolean) {
 
 
 
-export function EXPECT_LT(low: number, high: number) {
+export function EXPECT_LT(low: any, high: any) {
     CV_Assert(() => low < high);
 }
 
-export function EXPECT_LE(low: number, high: number) {
+export function EXPECT_LE(low: any, high: any) {
     CV_Assert(() => low <= high);
 }
 
-export function EXPECT_GE(high: number, low: number) {
+export function EXPECT_GE(high: any, low: any) {
     CV_Assert(() => low <= high);
 }
 

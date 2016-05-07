@@ -68,38 +68,38 @@ class CV_HighGuiOnlyGuiTest extends alvision. cvtest.BaseTest
 {
    public run(int /*start_from */) : void
 {
-    //ts ->printf(ts ->LOG, "GUI 0\n");
+    //this.ts.printf(ts ->LOG, "GUI 0\n");
     alvision.destroyAllWindows();
 
-    //ts ->printf(ts ->LOG, "GUI 1\n");
+    //this.ts.printf(ts ->LOG, "GUI 1\n");
     alvision.namedWindow("Win");
 
-    //ts ->printf(ts ->LOG, "GUI 2\n");
+    //this.ts.printf(ts ->LOG, "GUI 2\n");
     var m = new alvision.Mat(256, 256, alvision.MatrixType.CV_8U);
     //Mat m(256, 256, CV_8U);
     m = new alvision.Scalar(128);
     //m = Scalar(128);
 
-    //ts ->printf(ts ->LOG, "GUI 3\n");
+    //this.ts.printf(ts ->LOG, "GUI 3\n");
     alvision.imshow("Win", m);
 
-    //ts ->printf(ts ->LOG, "GUI 4\n");
+    //this.ts.printf(ts ->LOG, "GUI 4\n");
     var value: alvision.int = 50;
     //int value = 50;
     
 
-    //ts ->printf(ts ->LOG, "GUI 5\n");
+    //this.ts.printf(ts ->LOG, "GUI 5\n");
     alvision.createTrackbar("trackbar", "Win", 100, (x)=>true, value, value);
 
-    //ts ->printf(ts ->LOG, "GUI 6\n");
+    //this.ts.printf(ts ->LOG, "GUI 6\n");
     alvision.getTrackbarPos("trackbar", "Win");
 
-    //ts ->printf(ts ->LOG, "GUI 7\n");
+    //this.ts.printf(ts ->LOG, "GUI 7\n");
     alvision.waitKey(500);
 
-    //ts ->printf(ts ->LOG, "GUI 8\n");
+    //this.ts.printf(ts ->LOG, "GUI 8\n");
     alvision.destroyAllWindows();
-    //ts ->set_failed_test_info(alvision.cvtest.TS::OK);
+    //this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
 }
 
 };

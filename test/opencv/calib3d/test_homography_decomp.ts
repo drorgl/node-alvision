@@ -69,9 +69,9 @@ public:
 protected:
     void run(int)
     {
-        vector<Mat> rotations;
-        vector<Mat> translations;
-        vector<Mat> normals;
+        Array<Mat> rotations;
+        Array<Mat> translations;
+        Array<Mat> normals;
 
         decomposeHomographyMat(_H, _K, rotations, translations, normals);
 
@@ -111,16 +111,16 @@ private:
          _n = Vec3d(0.244875830334816, 0.480857890778889, 0.841909446789566);
     }
 
-    bool containsValidMotion(std::vector<Mat>& rotations,
-                             std::vector<Mat>& translations,
-                             std::vector<Mat>& normals
+    bool containsValidMotion(std::Array<Mat>& rotations,
+                             std::Array<Mat>& translations,
+                             std::Array<Mat>& normals
                              )
     {
         double max_error = 1.0e-3;
 
-        vector<Mat>::iterator riter = rotations.begin();
-        vector<Mat>::iterator titer = translations.begin();
-        vector<Mat>::iterator niter = normals.begin();
+        Array<Mat>::iterator riter = rotations.begin();
+        Array<Mat>::iterator titer = translations.begin();
+        Array<Mat>::iterator niter = normals.begin();
 
         for (;
              riter != rotations.end() && titer != translations.end() && niter != normals.end();

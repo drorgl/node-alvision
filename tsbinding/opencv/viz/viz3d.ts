@@ -102,7 +102,7 @@ interface Viz3dStatic {
 //            @param id A unique id for the widget. @param widget The widget to be displayed in the window.
 //            @param pose Pose of the widget.
 //             */
-            showWidget(id : string, widget : Widget,  pose? : _affine.Affine3d/* = Affine3d::Identity()*/): void;
+//            showWidget(id : string, widget : Widget,  pose? : _affine.Affine3d/* = Affine3d::Identity()*/): void;
 
 //            /** @brief Removes a widget from the window.
 
@@ -230,7 +230,7 @@ interface Viz3dStatic {
 
 //            /** @brief Sets background color.
 //            */
-            setBackgroundColor(color? : Color /* = Color::black()*/, color2? : Color/* = Color::not_set()*/): void;
+//            setBackgroundColor(color? : Color /* = Color::black()*/, color2? : Color/* = Color::not_set()*/): void;
 //            void setBackgroundTexture(InputArray image = noArray());
 //            void setBackgroundMeshLab();
 

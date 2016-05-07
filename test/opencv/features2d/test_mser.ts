@@ -59,7 +59,7 @@ using namespace cv;
 #define RENDER_MSERS 0
 
 #if defined RENDER_MSERS && RENDER_MSERS
-static void renderMSERs(const Mat& gray, Mat& img, const vector<vector<Point> >& msers)
+static void renderMSERs(const Mat& gray, Mat& img, const Array<Array<Point> >& msers)
 {
     cvtColor(gray, img, COLOR_GRAY2BGR);
     RNG rng((uint64)1749583);
@@ -97,14 +97,14 @@ TEST(Features2d_MSER, cases)
          255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
          255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
     };
-    Mat big_image = imread(alvision.cvtest.TS::ptr()->get_data_path() + "mser/puzzle.png", 0);
+    Mat big_image = imread(alvision.cvtest.TS.ptr().get_data_path() + "mser/puzzle.png", 0);
     Mat small_image(14, 26, CV_8U, buf);
     static const int thresharr[] = { 0, 70, 120, 180, 255 };
 
     const int kDelta = 5;
     Ptr<MSER> mserExtractor = MSER::create( kDelta );
-    vector<vector<Point> > msers;
-    vector<Rect> boxes;
+    Array<Array<Point> > msers;
+    Array<Rect> boxes;
 
     RNG rng((uint64)123456);
 

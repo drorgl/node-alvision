@@ -69,7 +69,7 @@ protected:
     Mat mat5x10;
     Mat mat5x20;
 
-    Mat result;
+    var result = new alvision.Mat();
 
     bool horizontal;
     bool firstEmpty;
@@ -106,11 +106,11 @@ void Core_ConcatenationTest::run_func()
 {
     if (horizontal)
     {
-        cv::hconcat((firstEmpty ? mat5x0 : mat5x10),
+        alvision.hconcat((firstEmpty ? mat5x0 : mat5x10),
                     (secondEmpty ? mat5x0 : mat5x10),
                     result);
     } else {
-        cv::vconcat((firstEmpty ? mat0x5 : mat10x5),
+        alvision.vconcat((firstEmpty ? mat0x5 : mat10x5),
                     (secondEmpty ? mat0x5 : mat10x5),
                     result);
     }
@@ -132,7 +132,7 @@ int Core_ConcatenationTest::validate_test_results( int )
         return alvision.cvtest.TS::OK;
     } else
     {
-        ts->printf( alvision.cvtest.TS::LOG, "Concatenation failed");
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Concatenation failed");
         this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_MISMATCH );
     }
 

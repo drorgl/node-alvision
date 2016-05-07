@@ -82,7 +82,7 @@ public:
         if (outputLevel == OutputLevelCompact)
         {
             printf("Test suite '%s' with %d tests\n",
-                testSuiteName.c_str(),
+                testSuiteName,
                 (int)(this->tests.size()));
         }
 
@@ -97,10 +97,10 @@ public:
             {
                 printf("Test %3i %16s; Consumed mem GPU = %8d, CPU = %8d; %s\n",
                     i,
-                    curTest.getName().c_str(),
+                    curTest.getName(),
                     curReport.statsNums["MemGPU"],
                     curReport.statsNums["MemCPU"],
-                    curReport.statsText["rcode"].c_str());
+                    curReport.statsText["rcode"]);
             }
 
             if (res)
@@ -144,7 +144,7 @@ public:
         if (outputLevel != OutputLevelNone)
         {
             printf("Test suite '%s' complete: %d total, %d passed, %d memory errors, %d failed\n\n",
-                testSuiteName.c_str(),
+                testSuiteName,
                 (int)(this->tests.size()),
                 nPassed,
                 nFailedMem,
@@ -168,7 +168,7 @@ private:
     std::string testSuiteName;
     OutputLevel outputLevel;
     NcvBool bStopOnFirstFail;
-    std::vector<INCVTest *> tests;
+    std::Array<INCVTest *> tests;
 };
 
 #endif // _ncvautotestlister_hpp_

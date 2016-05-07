@@ -263,7 +263,7 @@ bool TestHypothesesFilter::process()
     }
     else
     {
-        std::vector<NcvRect32u> tmpRects(numHypothesesSrc);
+        std::Array<NcvRect32u> tmpRects(numHypothesesSrc);
         memcpy(&tmpRects[0], h_vecSrc.ptr(), numHypothesesSrc * sizeof(NcvRect32u));
         std::sort(tmpRects.begin(), tmpRects.end());
         for (Ncv32u i=0; i<numHypothesesSrc && bLoopVirgin; i++)

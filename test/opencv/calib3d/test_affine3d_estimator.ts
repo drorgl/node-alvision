@@ -77,34 +77,33 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
     if (!testNPoints())
         return;
 
-    ts ->set_failed_test_info(alvision.cvtest.TS::OK);
+    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 }
 
-    function test4Points(): boolean {
-        Mat aff(3, 4, CV_64F);
-        cv::randu(aff, Scalar(1), Scalar(3));
+    test4Points(): boolean {
+        var aff = new alvision.Mat(3, 4, alvision.MatrixType.CV_64F);
+        alvision.randu(aff, new alvision.Scalar(1), new alvision.Scalar(3));
 
         // setting points that are no in the same line
 
-        Mat fpts(1, 4, CV_32FC3);
-        Mat tpts(1, 4, CV_32FC3);
+        var fpts = new alvision.Mat(1, 4, alvision.MatrixType.CV_32FC3);
+        var tpts = new alvision.Mat(1, 4, alvision.MatrixType.CV_32FC3);
 
-        fpts.ptr<Point3f>()[0] = Point3f(rngIn(1, 2), rngIn(1, 2), rngIn(5, 6));
-        fpts.ptr<Point3f>()[1] = Point3f(rngIn(3, 4), rngIn(3, 4), rngIn(5, 6));
-        fpts.ptr<Point3f>()[2] = Point3f(rngIn(1, 2), rngIn(3, 4), rngIn(5, 6));
-        fpts.ptr<Point3f>()[3] = Point3f(rngIn(3, 4), rngIn(1, 2), rngIn(5, 6));
+        fpts.ptr<Point3f>()[0] = new alvision.Point3f(rngIn(1, 2), rngIn(1, 2), rngIn(5, 6));
+        fpts.ptr<Point3f>()[1] = new alvision.Point3f(rngIn(3, 4), rngIn(3, 4), rngIn(5, 6));
+        fpts.ptr<Point3f>()[2] = new alvision.Point3f(rngIn(1, 2), rngIn(3, 4), rngIn(5, 6));
+        fpts.ptr<Point3f>()[3] = new alvision.Point3f(rngIn(3, 4), rngIn(1, 2), rngIn(5, 6));
 
-        transform(fpts.ptr<Point3f>(), fpts.ptr<Point3f>() + 4, tpts.ptr<Point3f>(), WrapAff(aff));
+        alvision.transform(fpts.ptr<Point3f>(), fpts.ptr<Point3f>() + 4, tpts.ptr<Point3f>(), WrapAff(aff));
 
-        Mat aff_est;
+        var aff_est = new alvision.Mat();
         vector < uchar > outliers;
-        estimateAffine3D(fpts, tpts, aff_est, outliers);
+        alvision.estimateAffine3D(fpts, tpts, aff_est, outliers);
 
-        const double thres = 1e-3;
-        if (alvision.cvtest.norm(aff_est, aff, NORM_INF) > thres)
-        {
+        const thres = 1e-3;
+        if (alvision.cvtest.norm(aff_est, aff, alvision.NormTypes.NORM_INF) > thres) {
             //cout << alvision.cvtest.norm(aff_est, aff, NORM_INF) << endl;
-            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return false;
         }
         return true;
@@ -112,7 +111,7 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
     testNPoints() : boolean
     {
         Mat aff(3, 4, CV_64F);
-        cv::randu(aff, Scalar(-2), Scalar(2));
+        alvision.randu(aff, Scalar(-2), Scalar(2));
 
         // setting points that are no in the same line
 
@@ -136,7 +135,7 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
         int res = estimateAffine3D(fpts, tpts, aff_est, outl);
 
         if (!res) {
-            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
             return false;
         }
 
@@ -145,7 +144,7 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
         {
             cout << "aff est: " << aff_est << endl;
             cout << "aff ref: " << aff << endl;
-            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
             return false;
         }
 
@@ -153,7 +152,7 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
             m == accumulate(outl.begin(), outl.begin() + m, 0);
 
         if (!outl_good) {
-            ts ->set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISMATCH);
             return false;
         }
         return true;
@@ -198,4 +197,4 @@ class Noise
 
 
 
-alvision.cvtest.TEST('Calib3d_EstimateAffineTransform', 'accuracy') { var test = new CV_Affine3D_EstTest (); test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_EstimateAffineTransform', 'accuracy', () => { var test = new CV_Affine3D_EstTest(); test.safe_run(); });

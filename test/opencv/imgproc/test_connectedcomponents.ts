@@ -75,7 +75,7 @@ class CV_ConnectedComponentsTest extends alvision.cvtest.BaseTest
                 int l = labelImage.at<int>(r, c);
                 var pass = l >= 0 && l <= nLabels;
                 if (!pass) {
-                    this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+                    this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
             }

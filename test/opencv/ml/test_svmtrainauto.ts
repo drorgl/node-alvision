@@ -52,8 +52,8 @@ import fs = require('fs');
 //
 //using namespace cv;
 //using namespace std;
-//using cv::ml::SVM;
-//using cv::ml::TrainData;
+//using alvision.ml::SVM;
+//using alvision.ml::TrainData;
 
 //--------------------------------------------------------------------------------------------
 class CV_SVMTrainAutoTest extends alvision.cvtest.BaseTest {
@@ -73,7 +73,7 @@ class CV_SVMTrainAutoTest extends alvision.cvtest.BaseTest {
 
         var data = alvision.ml.TrainData.create(samples,alvision.ml.SampleTypes.ROW_SAMPLE, responses);
 
-        //cv::Ptr < TrainData > data = TrainData::create(samples, cv::ml::ROW_SAMPLE, responses);
+        //alvision.Ptr < TrainData > data = TrainData::create(samples, alvision.ml::ROW_SAMPLE, responses);
         var svm = alvision.ml.SVM.create();
         svm.trainAuto(data, 10);  // 2-fold cross validation.
 

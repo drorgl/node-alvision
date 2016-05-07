@@ -102,7 +102,7 @@ public:
     {
         ncvAssertPrintReturn(sizeof(T) == 1, "NCVTestSourceProvider ctor:: PGM constructor complies only with 8bit types", );
 
-        cv::Mat image = cv::imread(pgmFilename);
+        alvision.Mat image = alvision.imread(pgmFilename);
         ncvAssertPrintReturn(!image.empty(), "NCVTestSourceProvider ctor:: PGM file error", );
 
         int devId;
@@ -117,7 +117,7 @@ public:
         this->dataWidth = image.cols;
         this->dataHeight = image.rows;
 
-        cv::Mat hdr(image.size(), CV_8UC1, data.get()->ptr(), data.get()->pitch());
+        alvision.Mat hdr(image.size(), CV_8UC1, data.get()->ptr(), data.get()->pitch());
         image.copyTo(hdr);
 
         this->bInit = true;
@@ -154,7 +154,7 @@ public:
         return true;
     }
 
-    NcvBool fill(NCVVector<T> &dst)
+    NcvBool fill(NCVArray<T> &dst)
     {
         ncvAssertReturn(this->isInit() &&
                         dst.memType() == allocatorCPU.get()->memType(), false);

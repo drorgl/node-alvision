@@ -110,7 +110,7 @@ void CV_TemplMatchTest::get_minmax_bounds( int i, int j, int type, Scalar& low, 
 
 
 void CV_TemplMatchTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                vector<vector<Size> >& sizes, vector<vector<int> >& types )
+                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int depth = alvision.cvtest.randInt(rng) % 2, cn = alvision.cvtest.randInt(rng) & 1 ? 3 : 1;
@@ -147,8 +147,8 @@ void CV_TemplMatchTest::run_func()
         cvMatchTemplate( test_array[INPUT][0], test_array[INPUT][1], test_array[OUTPUT][0], method );
     else
     {
-        cv::Mat _out = cv::cvarrToMat(test_array[OUTPUT][0]);
-        cv::matchTemplate(cv::cvarrToMat(test_array[INPUT][0]), cv::cvarrToMat(test_array[INPUT][1]), _out, method);
+        alvision.Mat _out = alvision.cvarrToMat(test_array[OUTPUT][0]);
+        alvision.matchTemplate(alvision.cvarrToMat(test_array[INPUT][0]), alvision.cvarrToMat(test_array[INPUT][1]), _out, method);
     }
 }
 

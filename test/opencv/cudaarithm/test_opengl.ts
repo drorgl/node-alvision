@@ -61,19 +61,19 @@ using namespace cvtest;
 /////////////////////////////////////////////
 // Buffer
 
-PARAM_TEST_CASE(Buffer, cv::Size, MatType)
+PARAM_TEST_CASE(Buffer, alvision.Size, MatType)
 {
     static void SetUpTestCase()
     {
-        cv::namedWindow("test", cv::WINDOW_OPENGL);
+        alvision.namedWindow("test", alvision.WINDOW_OPENGL);
     }
 
     static void TearDownTestCase()
     {
-        cv::destroyAllWindows();
+        alvision.destroyAllWindows();
     }
 
-    cv::Size size;
+    alvision.Size size;
     int type;
 
     virtual void SetUp()
@@ -85,7 +85,7 @@ PARAM_TEST_CASE(Buffer, cv::Size, MatType)
 
 CUDA_TEST_P(Buffer, Constructor1)
 {
-    cv::ogl::Buffer buf(size.height, size.width, type, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf(size.height, size.width, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
     EXPECT_EQ(size.height, buf.rows());
     EXPECT_EQ(size.width, buf.cols());
@@ -94,7 +94,7 @@ CUDA_TEST_P(Buffer, Constructor1)
 
 CUDA_TEST_P(Buffer, Constructor2)
 {
-    cv::ogl::Buffer buf(size, type, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf(size, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
     EXPECT_EQ(size.height, buf.rows());
     EXPECT_EQ(size.width, buf.cols());
@@ -103,11 +103,11 @@ CUDA_TEST_P(Buffer, Constructor2)
 
 CUDA_TEST_P(Buffer, ConstructorFromMat)
 {
-    cv::Mat gold = randomMat(size, type);
+    alvision.Mat gold = randomMat(size, type);
 
-    cv::ogl::Buffer buf(gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::Mat bufData;
+    alvision.Mat bufData;
     buf.copyTo(bufData);
 
     EXPECT_MAT_NEAR(gold, bufData, 0);
@@ -115,12 +115,12 @@ CUDA_TEST_P(Buffer, ConstructorFromMat)
 
 CUDA_TEST_P(Buffer, ConstructorFromGpuMat)
 {
-    cv::Mat gold = randomMat(size, type);
-    cv::cuda::GpuMat d_gold(gold);
+    alvision.Mat gold = randomMat(size, type);
+    alvision.cuda::GpuMat d_gold(gold);
 
-    cv::ogl::Buffer buf(d_gold, cv::ogl::Buffer::ARRAY_BUFFER);
+    alvision.ogl::Buffer buf(d_gold, alvision.ogl::Buffer::ARRAY_BUFFER);
 
-    cv::Mat bufData;
+    alvision.Mat bufData;
     buf.copyTo(bufData);
 
     EXPECT_MAT_NEAR(gold, bufData, 0);
@@ -128,9 +128,9 @@ CUDA_TEST_P(Buffer, ConstructorFromGpuMat)
 
 CUDA_TEST_P(Buffer, ConstructorFromBuffer)
 {
-    cv::ogl::Buffer buf_gold(size, type, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf_gold(size, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::ogl::Buffer buf(buf_gold);
+    alvision.ogl::Buffer buf(buf_gold);
 
     EXPECT_EQ(buf_gold.bufId(), buf.bufId());
     EXPECT_EQ(buf_gold.rows(), buf.rows());
@@ -140,8 +140,8 @@ CUDA_TEST_P(Buffer, ConstructorFromBuffer)
 
 CUDA_TEST_P(Buffer, Create)
 {
-    cv::ogl::Buffer buf;
-    buf.create(size.height, size.width, type, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf;
+    buf.create(size.height, size.width, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
     EXPECT_EQ(size.height, buf.rows());
     EXPECT_EQ(size.width, buf.cols());
@@ -150,12 +150,12 @@ CUDA_TEST_P(Buffer, Create)
 
 CUDA_TEST_P(Buffer, CopyFromMat)
 {
-    cv::Mat gold = randomMat(size, type);
+    alvision.Mat gold = randomMat(size, type);
 
-    cv::ogl::Buffer buf;
-    buf.copyFrom(gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf;
+    buf.copyFrom(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::Mat bufData;
+    alvision.Mat bufData;
     buf.copyTo(bufData);
 
     EXPECT_MAT_NEAR(gold, bufData, 0);
@@ -163,13 +163,13 @@ CUDA_TEST_P(Buffer, CopyFromMat)
 
 CUDA_TEST_P(Buffer, CopyFromGpuMat)
 {
-    cv::Mat gold = randomMat(size, type);
-    cv::cuda::GpuMat d_gold(gold);
+    alvision.Mat gold = randomMat(size, type);
+    alvision.cuda::GpuMat d_gold(gold);
 
-    cv::ogl::Buffer buf;
-    buf.copyFrom(d_gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf;
+    buf.copyFrom(d_gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::Mat bufData;
+    alvision.Mat bufData;
     buf.copyTo(bufData);
 
     EXPECT_MAT_NEAR(gold, bufData, 0);
@@ -177,15 +177,15 @@ CUDA_TEST_P(Buffer, CopyFromGpuMat)
 
 CUDA_TEST_P(Buffer, CopyFromBuffer)
 {
-    cv::Mat gold = randomMat(size, type);
-    cv::ogl::Buffer buf_gold(gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.Mat gold = randomMat(size, type);
+    alvision.ogl::Buffer buf_gold(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::ogl::Buffer buf;
-    buf.copyFrom(buf_gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf;
+    buf.copyFrom(buf_gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
     EXPECT_NE(buf_gold.bufId(), buf.bufId());
 
-    cv::Mat bufData;
+    alvision.Mat bufData;
     buf.copyTo(bufData);
 
     EXPECT_MAT_NEAR(gold, bufData, 0);
@@ -193,11 +193,11 @@ CUDA_TEST_P(Buffer, CopyFromBuffer)
 
 CUDA_TEST_P(Buffer, CopyToGpuMat)
 {
-    cv::Mat gold = randomMat(size, type);
+    alvision.Mat gold = randomMat(size, type);
 
-    cv::ogl::Buffer buf(gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::cuda::GpuMat dst;
+    alvision.cuda::GpuMat dst;
     buf.copyTo(dst);
 
     EXPECT_MAT_NEAR(gold, dst, 0);
@@ -205,17 +205,17 @@ CUDA_TEST_P(Buffer, CopyToGpuMat)
 
 CUDA_TEST_P(Buffer, CopyToBuffer)
 {
-    cv::Mat gold = randomMat(size, type);
+    alvision.Mat gold = randomMat(size, type);
 
-    cv::ogl::Buffer buf(gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::ogl::Buffer dst;
+    alvision.ogl::Buffer dst;
     buf.copyTo(dst);
     dst.setAutoRelease(true);
 
     EXPECT_NE(buf.bufId(), dst.bufId());
 
-    cv::Mat bufData;
+    alvision.Mat bufData;
     dst.copyTo(bufData);
 
     EXPECT_MAT_NEAR(gold, bufData, 0);
@@ -223,15 +223,15 @@ CUDA_TEST_P(Buffer, CopyToBuffer)
 
 CUDA_TEST_P(Buffer, Clone)
 {
-    cv::Mat gold = randomMat(size, type);
+    alvision.Mat gold = randomMat(size, type);
 
-    cv::ogl::Buffer buf(gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::ogl::Buffer dst = buf.clone(cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer dst = buf.clone(alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
     EXPECT_NE(buf.bufId(), dst.bufId());
 
-    cv::Mat bufData;
+    alvision.Mat bufData;
     dst.copyTo(bufData);
 
     EXPECT_MAT_NEAR(gold, bufData, 0);
@@ -239,11 +239,11 @@ CUDA_TEST_P(Buffer, Clone)
 
 CUDA_TEST_P(Buffer, MapHostRead)
 {
-    cv::Mat gold = randomMat(size, type);
+    alvision.Mat gold = randomMat(size, type);
 
-    cv::ogl::Buffer buf(gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::Mat dst = buf.mapHost(cv::ogl::Buffer::READ_ONLY);
+    alvision.Mat dst = buf.mapHost(alvision.ogl::Buffer::READ_ONLY);
 
     EXPECT_MAT_NEAR(gold, dst, 0);
 
@@ -252,16 +252,16 @@ CUDA_TEST_P(Buffer, MapHostRead)
 
 CUDA_TEST_P(Buffer, MapHostWrite)
 {
-    cv::Mat gold = randomMat(size, type);
+    alvision.Mat gold = randomMat(size, type);
 
-    cv::ogl::Buffer buf(size, type, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf(size, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::Mat dst = buf.mapHost(cv::ogl::Buffer::WRITE_ONLY);
+    alvision.Mat dst = buf.mapHost(alvision.ogl::Buffer::WRITE_ONLY);
     gold.copyTo(dst);
     buf.unmapHost();
     dst.release();
 
-    cv::Mat bufData;
+    alvision.Mat bufData;
     buf.copyTo(bufData);
 
     EXPECT_MAT_NEAR(gold, bufData, 0);
@@ -269,11 +269,11 @@ CUDA_TEST_P(Buffer, MapHostWrite)
 
 CUDA_TEST_P(Buffer, MapDevice)
 {
-    cv::Mat gold = randomMat(size, type);
+    alvision.Mat gold = randomMat(size, type);
 
-    cv::ogl::Buffer buf(gold, cv::ogl::Buffer::ARRAY_BUFFER, true);
+    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
 
-    cv::cuda::GpuMat dst = buf.mapDevice();
+    alvision.cuda::GpuMat dst = buf.mapDevice();
 
     EXPECT_MAT_NEAR(gold, dst, 0);
 
@@ -285,23 +285,23 @@ INSTANTIATE_TEST_CASE_P(OpenGL, Buffer, testing::Combine(DIFFERENT_SIZES, ALL_TY
 /////////////////////////////////////////////
 // Texture2D
 
-PARAM_TEST_CASE(Texture2D, cv::Size, MatType)
+PARAM_TEST_CASE(Texture2D, alvision.Size, MatType)
 {
     static void SetUpTestCase()
     {
-        cv::namedWindow("test", cv::WINDOW_OPENGL);
+        alvision.namedWindow("test", alvision.WINDOW_OPENGL);
     }
 
     static void TearDownTestCase()
     {
-        cv::destroyAllWindows();
+        alvision.destroyAllWindows();
     }
 
-    cv::Size size;
+    alvision.Size size;
     int type;
     int depth;
     int cn;
-    cv::ogl::Texture2D::Format format;
+    alvision.ogl::Texture2D::Format format;
 
     virtual void SetUp()
     {
@@ -310,13 +310,13 @@ PARAM_TEST_CASE(Texture2D, cv::Size, MatType)
 
         depth = CV_MAT_DEPTH(type);
         cn = CV_MAT_CN(type);
-        format = cn == 1 ? cv::ogl::Texture2D::DEPTH_COMPONENT : cn == 3 ? cv::ogl::Texture2D::RGB : cn == 4 ? cv::ogl::Texture2D::RGBA : cv::ogl::Texture2D::NONE;
+        format = cn == 1 ? alvision.ogl::Texture2D::DEPTH_COMPONENT : cn == 3 ? alvision.ogl::Texture2D::RGB : cn == 4 ? alvision.ogl::Texture2D::RGBA : alvision.ogl::Texture2D::NONE;
     }
 };
 
 CUDA_TEST_P(Texture2D, Constructor1)
 {
-    cv::ogl::Texture2D tex(size.height, size.width, format, true);
+    alvision.ogl::Texture2D tex(size.height, size.width, format, true);
 
     EXPECT_EQ(size.height, tex.rows());
     EXPECT_EQ(size.width, tex.cols());
@@ -325,7 +325,7 @@ CUDA_TEST_P(Texture2D, Constructor1)
 
 CUDA_TEST_P(Texture2D, Constructor2)
 {
-    cv::ogl::Texture2D tex(size, format, true);
+    alvision.ogl::Texture2D tex(size, format, true);
 
     EXPECT_EQ(size.height, tex.rows());
     EXPECT_EQ(size.width, tex.cols());
@@ -334,11 +334,11 @@ CUDA_TEST_P(Texture2D, Constructor2)
 
 CUDA_TEST_P(Texture2D, ConstructorFromMat)
 {
-    cv::Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
 
-    cv::ogl::Texture2D tex(gold, true);
+    alvision.ogl::Texture2D tex(gold, true);
 
-    cv::Mat texData;
+    alvision.Mat texData;
     tex.copyTo(texData, depth);
 
     EXPECT_MAT_NEAR(gold, texData, 1e-2);
@@ -346,12 +346,12 @@ CUDA_TEST_P(Texture2D, ConstructorFromMat)
 
 CUDA_TEST_P(Texture2D, ConstructorFromGpuMat)
 {
-    cv::Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
-    cv::cuda::GpuMat d_gold(gold);
+    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    alvision.cuda::GpuMat d_gold(gold);
 
-    cv::ogl::Texture2D tex(d_gold, true);
+    alvision.ogl::Texture2D tex(d_gold, true);
 
-    cv::Mat texData;
+    alvision.Mat texData;
     tex.copyTo(texData, depth);
 
     EXPECT_MAT_NEAR(gold, texData, 1e-2);
@@ -359,12 +359,12 @@ CUDA_TEST_P(Texture2D, ConstructorFromGpuMat)
 
 CUDA_TEST_P(Texture2D, ConstructorFromBuffer)
 {
-    cv::Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
-    cv::ogl::Buffer buf_gold(gold, cv::ogl::Buffer::PIXEL_UNPACK_BUFFER, true);
+    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    alvision.ogl::Buffer buf_gold(gold, alvision.ogl::Buffer::PIXEL_UNPACK_BUFFER, true);
 
-    cv::ogl::Texture2D tex(buf_gold, true);
+    alvision.ogl::Texture2D tex(buf_gold, true);
 
-    cv::Mat texData;
+    alvision.Mat texData;
     tex.copyTo(texData, depth);
 
     EXPECT_MAT_NEAR(gold, texData, 1e-2);
@@ -372,8 +372,8 @@ CUDA_TEST_P(Texture2D, ConstructorFromBuffer)
 
 CUDA_TEST_P(Texture2D, ConstructorFromTexture2D)
 {
-    cv::ogl::Texture2D tex_gold(size, format, true);
-    cv::ogl::Texture2D tex(tex_gold);
+    alvision.ogl::Texture2D tex_gold(size, format, true);
+    alvision.ogl::Texture2D tex(tex_gold);
 
     EXPECT_EQ(tex_gold.texId(), tex.texId());
     EXPECT_EQ(tex_gold.rows(), tex.rows());
@@ -383,7 +383,7 @@ CUDA_TEST_P(Texture2D, ConstructorFromTexture2D)
 
 CUDA_TEST_P(Texture2D, Create)
 {
-    cv::ogl::Texture2D tex;
+    alvision.ogl::Texture2D tex;
     tex.create(size.height, size.width, format, true);
 
     EXPECT_EQ(size.height, tex.rows());
@@ -393,12 +393,12 @@ CUDA_TEST_P(Texture2D, Create)
 
 CUDA_TEST_P(Texture2D, CopyFromMat)
 {
-    cv::Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
 
-    cv::ogl::Texture2D tex;
+    alvision.ogl::Texture2D tex;
     tex.copyFrom(gold, true);
 
-    cv::Mat texData;
+    alvision.Mat texData;
     tex.copyTo(texData, depth);
 
     EXPECT_MAT_NEAR(gold, texData, 1e-2);
@@ -406,13 +406,13 @@ CUDA_TEST_P(Texture2D, CopyFromMat)
 
 CUDA_TEST_P(Texture2D, CopyFromGpuMat)
 {
-    cv::Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
-    cv::cuda::GpuMat d_gold(gold);
+    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    alvision.cuda::GpuMat d_gold(gold);
 
-    cv::ogl::Texture2D tex;
+    alvision.ogl::Texture2D tex;
     tex.copyFrom(d_gold, true);
 
-    cv::Mat texData;
+    alvision.Mat texData;
     tex.copyTo(texData, depth);
 
     EXPECT_MAT_NEAR(gold, texData, 1e-2);
@@ -420,13 +420,13 @@ CUDA_TEST_P(Texture2D, CopyFromGpuMat)
 
 CUDA_TEST_P(Texture2D, CopyFromBuffer)
 {
-    cv::Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
-    cv::ogl::Buffer buf_gold(gold, cv::ogl::Buffer::PIXEL_UNPACK_BUFFER, true);
+    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    alvision.ogl::Buffer buf_gold(gold, alvision.ogl::Buffer::PIXEL_UNPACK_BUFFER, true);
 
-    cv::ogl::Texture2D tex;
+    alvision.ogl::Texture2D tex;
     tex.copyFrom(buf_gold, true);
 
-    cv::Mat texData;
+    alvision.Mat texData;
     tex.copyTo(texData, depth);
 
     EXPECT_MAT_NEAR(gold, texData, 1e-2);
@@ -434,11 +434,11 @@ CUDA_TEST_P(Texture2D, CopyFromBuffer)
 
 CUDA_TEST_P(Texture2D, CopyToGpuMat)
 {
-    cv::Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
 
-    cv::ogl::Texture2D tex(gold, true);
+    alvision.ogl::Texture2D tex(gold, true);
 
-    cv::cuda::GpuMat dst;
+    alvision.cuda::GpuMat dst;
     tex.copyTo(dst, depth);
 
     EXPECT_MAT_NEAR(gold, dst, 1e-2);
@@ -446,14 +446,14 @@ CUDA_TEST_P(Texture2D, CopyToGpuMat)
 
 CUDA_TEST_P(Texture2D, CopyToBuffer)
 {
-    cv::Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
 
-    cv::ogl::Texture2D tex(gold, true);
+    alvision.ogl::Texture2D tex(gold, true);
 
-    cv::ogl::Buffer dst;
+    alvision.ogl::Buffer dst;
     tex.copyTo(dst, depth, true);
 
-    cv::Mat bufData;
+    alvision.Mat bufData;
     dst.copyTo(bufData);
 
     EXPECT_MAT_NEAR(gold, bufData, 1e-2);

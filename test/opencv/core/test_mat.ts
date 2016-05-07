@@ -163,8 +163,8 @@ int Core_ReduceTest::checkOp( const Mat& src, int dstType, int opType, const Mat
         const char* dimStr = dim == 0 ? "ROWS" : "COLS";
 
         sprintf( msg, "bad accuracy with srcType = %s, dstType = %s, opType = %s, dim = %s",
-                srcTypeStr.c_str(), dstTypeStr.c_str(), opTypeStr, dimStr );
-        ts->printf( alvision.cvtest.TS::LOG, msg );
+                srcTypeStr, dstTypeStr, opTypeStr, dimStr );
+        ts->printf( alvision.cvtest.TSConstants.LOG, msg );
         return alvision.cvtest.TS::FAIL_BAD_ACCURACY;
     }
     return alvision.cvtest.TS::OK;
@@ -348,20 +348,20 @@ protected:
             Mat Qv = Q * v;
 
             Mat lv = eval.at<float>(i,0) * v;
-            err = alvision.cvtest.norm( Qv, lv, NORM_L2 );
+            err = alvision.cvtest.norm( Qv, lv,alvision.NormTypes. NORM_L2 );
             if( err > eigenEps )
             {
-                ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of eigen(); err = %f\n", err );
+                ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of eigen(); err = %f\n", err );
                 this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
                 return;
             }
         }
         // check pca eigenvalues
         evalEps = 1e-6, evecEps = 1e-3;
-        err = alvision.cvtest.norm( rPCA.eigenvalues, subEval, NORM_L2 );
+        err = alvision.cvtest.norm( rPCA.eigenvalues, subEval,alvision.NormTypes. NORM_L2 );
         if( err > evalEps )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "pca.eigenvalues is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "pca.eigenvalues is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
@@ -382,8 +382,8 @@ protected:
                     double mval = 0; Point mloc;
                     minMaxLoc(tmp, 0, &mval, 0, &mloc);
 
-                    ts->printf( alvision.cvtest.TS::LOG, "pca.eigenvectors is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-                    ts->printf( alvision.cvtest.TS::LOG, "max diff is %g at (i=%d, j=%d) (%g vs %g)\n",
+                    ts->printf( alvision.cvtest.TSConstants.LOG, "pca.eigenvectors is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+                    ts->printf( alvision.cvtest.TSConstants.LOG, "max diff is %g at (i=%d, j=%d) (%g vs %g)\n",
                                mval, mloc.y, mloc.x, rPCA.eigenvectors.at<float>(mloc.y, mloc.x),
                                subEvec.at<float>(mloc.y, mloc.x));
                     this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
@@ -401,7 +401,7 @@ protected:
             err = alvision.cvtest.norm(rPrjTestPoints.row(i), prj, CV_RELATIVE_L2);
             if( err > prjEps )
             {
-                ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of project() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+                ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
                 this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
                 return;
             }
@@ -410,7 +410,7 @@ protected:
             err = alvision.cvtest.norm( rBackPrjTestPoints.row(i), backPrj, CV_RELATIVE_L2 );
             if( err > backPrjEps )
             {
-                ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+                ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
                 this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
                 return;
             }
@@ -420,17 +420,17 @@ protected:
         cPCA( rPoints.t(), Mat(), CV_PCA_DATA_AS_COL, maxComponents );
         diffPrjEps = 1, diffBackPrjEps = 1;
         Mat ocvPrjTestPoints = cPCA.project(rTestPoints.t());
-        err = alvision.cvtest.norm(cv::abs(ocvPrjTestPoints), cv::abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
+        err = alvision.cvtest.norm(alvision.abs(ocvPrjTestPoints), alvision.abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
         if( err > diffPrjEps )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
         err = alvision.cvtest.norm(cPCA.backProject(ocvPrjTestPoints), rBackPrjTestPoints.t(), CV_RELATIVE_L2 );
         if( err > diffBackPrjEps )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
@@ -441,20 +441,20 @@ protected:
         Mat rvPrjTestPoints = cPCA.project(rTestPoints.t());
 
         if( cPCA.eigenvectors.rows > maxComponents)
-            err = alvision.cvtest.norm(cv::abs(rvPrjTestPoints.rowRange(0,maxComponents)), cv::abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
+            err = alvision.cvtest.norm(alvision.abs(rvPrjTestPoints.rowRange(0,maxComponents)), alvision.abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
         else
-            err = alvision.cvtest.norm(cv::abs(rvPrjTestPoints), cv::abs(rPrjTestPoints.colRange(0,cPCA.eigenvectors.rows).t()), CV_RELATIVE_L2 );
+            err = alvision.cvtest.norm(alvision.abs(rvPrjTestPoints), alvision.abs(rPrjTestPoints.colRange(0,cPCA.eigenvectors.rows).t()), CV_RELATIVE_L2 );
 
         if( err > diffPrjEps )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
         err = alvision.cvtest.norm(cPCA.backProject(rvPrjTestPoints), rBackPrjTestPoints.t(), CV_RELATIVE_L2 );
         if( err > diffBackPrjEps )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
@@ -478,14 +478,14 @@ protected:
         err = alvision.cvtest.norm(prjTestPoints, rPrjTestPoints, CV_RELATIVE_L2);
         if( err > diffPrjEps )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
         err = alvision.cvtest.norm(backPrjTestPoints, rBackPrjTestPoints, CV_RELATIVE_L2);
         if( err > diffBackPrjEps )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
@@ -503,17 +503,17 @@ protected:
         cvProjectPCA( &_testPoints, &_avg, &_evec, &_prjTestPoints );
         cvBackProjectPCA( &_prjTestPoints, &_avg, &_evec, &_backPrjTestPoints );
 
-        err = alvision.cvtest.norm(cv::abs(prjTestPoints), cv::abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
+        err = alvision.cvtest.norm(alvision.abs(prjTestPoints), alvision.abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
         if( err > diffPrjEps )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
         err = alvision.cvtest.norm(backPrjTestPoints, rBackPrjTestPoints.t(), CV_RELATIVE_L2);
         if( err > diffBackPrjEps )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
             return;
         }
@@ -529,19 +529,19 @@ protected:
         err = alvision.cvtest.norm( rPCA.eigenvectors, lPCA.eigenvectors, CV_RELATIVE_L2 );
         if( err > 0 )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
         }
         err = alvision.cvtest.norm( rPCA.eigenvalues, lPCA.eigenvalues, CV_RELATIVE_L2 );
         if( err > 0 )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
         }
         err = alvision.cvtest.norm( rPCA.mean, lPCA.mean, CV_RELATIVE_L2 );
         if( err > 0 )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ACCURACY );
         }
     }
@@ -577,7 +577,7 @@ static string idx2string(const int* idx, int dims)
 
 static const int* string2idx(const string& s, int* idx, int dims)
 {
-    const char* ptr = s.c_str();
+    const char* ptr = s;
     for( int k = 0; k < dims; k++ )
     {
         int n = 0;
@@ -659,7 +659,7 @@ static void setValue(SparseMat& M, const int* idx, double value, RNG& rng)
 
 template<typename Pixel>
 struct InitializerFunctor{
-    /// Initializer for cv::Mat::forEach test
+    /// Initializer for alvision.Mat::forEach test
     void operator()(Pixel & pixel, const int * idx) const {
         pixel.x = idx[0];
         pixel.y = idx[1];
@@ -699,17 +699,17 @@ void Core_ArrayOpTest::run( int /* start_from */)
            Scalar(cvGet3D(matC, idx0[0], idx0[1], idx0[2])) != val1 ||
            Scalar(cvGetND(matC, idx1)) != -val1 )
         {
-            ts->printf(alvision.cvtest.TS::LOG, "one of cvSetReal3D, cvSetRealND, cvSet3D, cvSetND "
+            ts->printf(alvision.cvtest.TSConstants.LOG, "one of cvSetReal3D, cvSetRealND, cvSet3D, cvSetND "
                        "or the corresponding *Get* functions is not correct\n");
             errcount++;
         }
     }
-    // test cv::Mat::forEach
+    // test alvision.Mat::forEach
     {
         const int dims[3] = { 101, 107, 7 };
-        typedef cv::Point3i Pixel;
+        typedef alvision.Point3i Pixel;
 
-        cv::Mat a = cv::Mat::zeros(3, dims, CV_32SC3);
+        alvision.Mat a = alvision.Mat::zeros(3, dims, CV_32SC3);
         InitializerFunctor<Pixel> initializer;
 
         a.forEach<Pixel>(initializer);
@@ -722,7 +722,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
                     Pixel& pixel = a.at<Pixel>(i0, i1, i2);
                     if (pixel.x != i0 || pixel.y != i1 || pixel.z != i2) {
                         if (!error_reported) {
-                            ts->printf(alvision.cvtest.TS::LOG, "forEach is not correct.\n"
+                            ts->printf(alvision.cvtest.TSConstants.LOG, "forEach is not correct.\n"
                                 "First error detected at (%d, %d, %d).\n", pixel.x, pixel.y, pixel.z);
                             error_reported = true;
                         }
@@ -739,7 +739,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
             total2 += ((dims[i] - 1) * dims[i] / 2) * dims[0] * dims[1] * dims[2] / dims[i];
         }
         if (total != total2) {
-            ts->printf(alvision.cvtest.TS::LOG, "forEach is not correct because total is invalid.\n");
+            ts->printf(alvision.cvtest.TSConstants.LOG, "forEach is not correct because total is invalid.\n");
             errcount++;
         }
     }
@@ -752,9 +752,9 @@ void Core_ArrayOpTest::run( int /* start_from */)
         int depth = (unsigned)rng % 2 == 0 ? CV_32F : CV_64F;
         int dims = ((unsigned)rng % MAX_DIM) + 1;
         int i, k, size[MAX_DIM]={0}, idx[MAX_DIM]={0};
-        vector<string> all_idxs;
-        vector<double> all_vals;
-        vector<double> all_vals2;
+        Array<string> all_idxs;
+        Array<double> all_vals;
+        Array<double> all_vals2;
         string sidx, min_sidx, max_sidx;
         double min_val=0, max_val=0;
 
@@ -812,8 +812,8 @@ void Core_ArrayOpTest::run( int /* start_from */)
             double v = getValue(M, idx, rng);
             if( v != all_vals[i] )
             {
-                ts->printf(alvision.cvtest.TS::LOG, "%d. immediately after SparseMat[%s]=%.20g the current value is %.20g\n",
-                           i, sidx.c_str(), all_vals[i], v);
+                ts->printf(alvision.cvtest.TSConstants.LOG, "%d. immediately after SparseMat[%s]=%.20g the current value is %.20g\n",
+                           i, sidx, all_vals[i], v);
                 errcount++;
                 break;
             }
@@ -833,7 +833,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
         if( nz1 != nz0 || nz2 != nz0)
         {
             errcount++;
-            ts->printf(alvision.cvtest.TS::LOG, "%d: The number of non-zero elements before/after converting to/from dense matrix is not correct: %d/%d (while it should be %d)\n",
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%d: The number of non-zero elements before/after converting to/from dense matrix is not correct: %d/%d (while it should be %d)\n",
                        si, nz1, nz2, nz0 );
             break;
         }
@@ -843,7 +843,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
            fabs(norm2 - _norm2) > fabs(_norm2)*eps )
         {
             errcount++;
-            ts->printf(alvision.cvtest.TS::LOG, "%d: The norms are different: %.20g/%.20g/%.20g vs %.20g/%.20g/%.20g\n",
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%d: The norms are different: %.20g/%.20g/%.20g vs %.20g/%.20g/%.20g\n",
                        si, norm0, norm1, norm2, _norm0, _norm1, _norm2 );
             break;
         }
@@ -874,7 +874,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
             if( val1 != val0 || val2 != val0 || fabs(val3 - val0*2) > fabs(val0*2)*FLT_EPSILON )
             {
                 errcount++;
-                ts->printf(alvision.cvtest.TS::LOG, "SparseMat M[%s] = %g/%g/%g (while it should be %g)\n", sidx.c_str(), val1, val2, val3, val0 );
+                ts->printf(alvision.cvtest.TSConstants.LOG, "SparseMat M[%s] = %g/%g/%g (while it should be %g)\n", sidx, val1, val2, val3, val0 );
                 break;
             }
         }
@@ -900,7 +900,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
             if( val1 != 0 || val2 != 0 )
             {
                 errcount++;
-                ts->printf(alvision.cvtest.TS::LOG, "SparseMat: after deleting M[%s], it is =%g/%g (while it should be 0)\n", sidx.c_str(), val1, val2 );
+                ts->printf(alvision.cvtest.TSConstants.LOG, "SparseMat: after deleting M[%s], it is =%g/%g (while it should be 0)\n", sidx, val1, val2 );
                 break;
             }
         }
@@ -909,7 +909,7 @@ void Core_ArrayOpTest::run( int /* start_from */)
         if( nz != 0 )
         {
             errcount++;
-            ts->printf(alvision.cvtest.TS::LOG, "The number of non-zero elements after removing all the elements = %d (while it should be 0)\n", nz );
+            ts->printf(alvision.cvtest.TSConstants.LOG, "The number of non-zero elements after removing all the elements = %d (while it should be 0)\n", nz );
             break;
         }
 
@@ -921,9 +921,9 @@ void Core_ArrayOpTest::run( int /* start_from */)
         if( val1 != min_val || val2 != max_val || s1 != min_sidx || s2 != max_sidx )
         {
             errcount++;
-            ts->printf(alvision.cvtest.TS::LOG, "%d. Sparse: The value and positions of minimum/maximum elements are different from the reference values and positions:\n\t"
-                       "(%g, %g, %s, %s) vs (%g, %g, %s, %s)\n", si, val1, val2, s1.c_str(), s2.c_str(),
-                       min_val, max_val, min_sidx.c_str(), max_sidx.c_str());
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%d. Sparse: The value and positions of minimum/maximum elements are different from the reference values and positions:\n\t"
+                       "(%g, %g, %s, %s) vs (%g, %g, %s, %s)\n", si, val1, val2, s1, s2,
+                       min_val, max_val, min_sidx, max_sidx);
             break;
         }
 
@@ -933,19 +933,19 @@ void Core_ArrayOpTest::run( int /* start_from */)
            (max_val > 0 && (val2 != max_val || s2 != max_sidx)) )
         {
             errcount++;
-            ts->printf(alvision.cvtest.TS::LOG, "%d. Dense: The value and positions of minimum/maximum elements are different from the reference values and positions:\n\t"
-                       "(%g, %g, %s, %s) vs (%g, %g, %s, %s)\n", si, val1, val2, s1.c_str(), s2.c_str(),
-                       min_val, max_val, min_sidx.c_str(), max_sidx.c_str());
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%d. Dense: The value and positions of minimum/maximum elements are different from the reference values and positions:\n\t"
+                       "(%g, %g, %s, %s) vs (%g, %g, %s, %s)\n", si, val1, val2, s1, s2,
+                       min_val, max_val, min_sidx, max_sidx);
             break;
         }
     }
 
-    this.ts.set_failed_test_info(errcount == 0 ? alvision.cvtest.TS::OK : alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+    this.ts.set_failed_test_info(errcount == 0 ? alvision.cvtest.TS::OK : alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
 }
 
 
 template <class ElemType>
-int calcDiffElemCountImpl(const vector<Mat>& mv, const Mat& m)
+int calcDiffElemCountImpl(const Array<Mat>& mv, const Mat& m)
 {
     int diffElemCount = 0;
     const int mChannels = m.channels();
@@ -971,7 +971,7 @@ int calcDiffElemCountImpl(const vector<Mat>& mv, const Mat& m)
 }
 
 static
-int calcDiffElemCount(const vector<Mat>& mv, const Mat& m)
+int calcDiffElemCount(const Array<Mat>& mv, const Mat& m)
 {
     int depth = m.depth();
     switch (depth)
@@ -1003,7 +1003,7 @@ protected:
     virtual void run(int)
     {
         // m is Mat
-        // mv is vector<Mat>
+        // mv is Array<Mat>
         const int minMSize = 1;
         const int maxMSize = 100;
         const size_t maxMvSize = 10;
@@ -1049,7 +1049,7 @@ protected:
     {
         const int maxMatChannels = 10;
 
-        vector<Mat> src(matCount);
+        Array<Mat> src(matCount);
         int channels = 0;
         for(size_t i = 0; i < src.size(); i++)
         {
@@ -1067,29 +1067,29 @@ protected:
         commonLog << "Depth " << depth << " :";
         if(dst.depth() != depth)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "%s incorrect depth of dst (%d instead of %d)\n",
-                       commonLog.str().c_str(), dst.depth(), depth);
-            return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%s incorrect depth of dst (%d instead of %d)\n",
+                       commonLog, dst.depth(), depth);
+            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
         }
         if(dst.size() != size)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "%s incorrect size of dst (%d x %d instead of %d x %d)\n",
-                       commonLog.str().c_str(), dst.rows, dst.cols, size.height, size.width);
-            return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%s incorrect size of dst (%d x %d instead of %d x %d)\n",
+                       commonLog, dst.rows, dst.cols, size.height, size.width);
+            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
         }
         if(dst.channels() != channels)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "%s: incorrect channels count of dst (%d instead of %d)\n",
-                       commonLog.str().c_str(), dst.channels(), channels);
-            return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect channels count of dst (%d instead of %d)\n",
+                       commonLog, dst.channels(), channels);
+            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
         }
 
         int diffElemCount = calcDiffElemCount(src, dst);
         if(diffElemCount > 0)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
-                       commonLog.str().c_str(), static_cast<float>(diffElemCount)/(channels*size.area()));
-            return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
+                       commonLog, static_cast<float>(diffElemCount)/(channels*size.area()));
+            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
         }
 
         return alvision.cvtest.TS::OK;
@@ -1108,7 +1108,7 @@ protected:
         Mat src(size, CV_MAKETYPE(depth, (int)channels));
         rng.fill(src, RNG::UNIFORM, 0, 100, true);
 
-        vector<Mat> dst;
+        Array<Mat> dst;
         split(src, dst);
 
         // check result
@@ -1116,38 +1116,38 @@ protected:
         commonLog << "Depth " << depth << " :";
         if(dst.size() != channels)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "%s incorrect count of matrices in dst (%d instead of %d)\n",
-                       commonLog.str().c_str(), dst.size(), channels);
-            return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%s incorrect count of matrices in dst (%d instead of %d)\n",
+                       commonLog, dst.size(), channels);
+            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
         }
         for(size_t i = 0; i < dst.size(); i++)
         {
             if(dst[i].size() != size)
             {
-                ts->printf(alvision.cvtest.TS::LOG, "%s incorrect size of dst[%d] (%d x %d instead of %d x %d)\n",
-                           commonLog.str().c_str(), i, dst[i].rows, dst[i].cols, size.height, size.width);
-                return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                ts->printf(alvision.cvtest.TSConstants.LOG, "%s incorrect size of dst[%d] (%d x %d instead of %d x %d)\n",
+                           commonLog, i, dst[i].rows, dst[i].cols, size.height, size.width);
+                return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
             }
             if(dst[i].depth() != depth)
             {
-                ts->printf(alvision.cvtest.TS::LOG, "%s: incorrect depth of dst[%d] (%d instead of %d)\n",
-                           commonLog.str().c_str(), i, dst[i].depth(), depth);
-                return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                ts->printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect depth of dst[%d] (%d instead of %d)\n",
+                           commonLog, i, dst[i].depth(), depth);
+                return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
             }
             if(dst[i].channels() != 1)
             {
-                ts->printf(alvision.cvtest.TS::LOG, "%s: incorrect channels count of dst[%d] (%d instead of %d)\n",
-                           commonLog.str().c_str(), i, dst[i].channels(), 1);
-                return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                ts->printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect channels count of dst[%d] (%d instead of %d)\n",
+                           commonLog, i, dst[i].channels(), 1);
+                return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
             }
         }
 
         int diffElemCount = calcDiffElemCount(dst, src);
         if(diffElemCount > 0)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
-                       commonLog.str().c_str(), static_cast<float>(diffElemCount)/(channels*size.area()));
-            return alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+            ts->printf(alvision.cvtest.TSConstants.LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
+                       commonLog, static_cast<float>(diffElemCount)/(channels*size.area()));
+            return alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
         }
 
         return alvision.cvtest.TS::OK;
@@ -1167,7 +1167,7 @@ TEST(Core_IOArray, submat_assignment)
     Mat1f A = Mat1f::zeros(2,2);
     Mat1f B = Mat1f::ones(1,3);
 
-    EXPECT_THROW( B.colRange(0,3).copyTo(A.row(0)), cv::Exception );
+    EXPECT_THROW( B.colRange(0,3).copyTo(A.row(0)), alvision.Exception );
 
     EXPECT_NO_THROW( B.colRange(0,2).copyTo(A.row(0)) );
 
@@ -1182,16 +1182,16 @@ TEST(Core_IOArray, submat_create)
 {
     Mat1f A = Mat1f::zeros(2,2);
 
-    EXPECT_THROW( OutputArray_create1(A.row(0)), cv::Exception );
-    EXPECT_THROW( OutputArray_create2(A.row(0)), cv::Exception );
+    EXPECT_THROW( OutputArray_create1(A.row(0)), alvision.Exception );
+    EXPECT_THROW( OutputArray_create2(A.row(0)), alvision.Exception );
 }
 
 TEST(Core_Mat, reshape_1942)
 {
-    cv::Mat A = (cv::Mat_<float>(2,3) << 3.4884074, 1.4159607, 0.78737736,  2.3456569, -0.88010466, 0.3009364);
+    alvision.Mat A = (alvision.Mat_<float>(2,3) << 3.4884074, 1.4159607, 0.78737736,  2.3456569, -0.88010466, 0.3009364);
     int cn = 0;
     ASSERT_NO_THROW(
-        cv::Mat_<float> M = A.reshape(3);
+        alvision.Mat_<float> M = A.reshape(3);
         cn = M.channels();
     );
     ASSERT_EQ(1, cn);
@@ -1199,23 +1199,23 @@ TEST(Core_Mat, reshape_1942)
 
 TEST(Core_Mat, copyNx1ToVector)
 {
-    cv::Mat_<uchar> src(5, 1);
-    cv::Mat_<uchar> ref_dst8;
-    cv::Mat_<ushort> ref_dst16;
-    std::vector<uchar> dst8;
-    std::vector<ushort> dst16;
+    alvision.Mat_<uchar> src(5, 1);
+    alvision.Mat_<uchar> ref_dst8;
+    alvision.Mat_<ushort> ref_dst16;
+    std::Array<uchar> dst8;
+    std::Array<ushort> dst16;
 
     src << 1, 2, 3, 4, 5;
 
     src.copyTo(ref_dst8);
     src.copyTo(dst8);
 
-    ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(0, 0), ref_dst8, cv::Mat_<uchar>(dst8));
+    ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(0, 0), ref_dst8, alvision.Mat_<uchar>(dst8));
 
     src.convertTo(ref_dst16, CV_16U);
     src.convertTo(dst16, CV_16U);
 
-    ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(0, 0), ref_dst16, cv::Mat_<ushort>(dst16));
+    ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(0, 0), ref_dst16, alvision.Mat_<ushort>(dst16));
 }
 
 TEST(Core_Matx, fromMat_)
@@ -1227,7 +1227,7 @@ TEST(Core_Matx, fromMat_)
 
 TEST(Core_InputArray, empty)
 {
-    vector<vector<Point> > data;
+    Array<Array<Point> > data;
     ASSERT_TRUE( _InputArray(data).empty() );
 }
 

@@ -150,15 +150,15 @@ public:
 
 void BaseHoughLineTest::run_test(int type)
 {
-    string filename = alvision.cvtest.TS::ptr()->get_data_path() + picture_name;
+    string filename = alvision.cvtest.TS.ptr().get_data_path() + picture_name;
     Mat src = imread(filename, IMREAD_GRAYSCALE);
     EXPECT_FALSE(src.empty()) << "Invalid test image: " << filename;
 
     string xml;
     if (type == STANDART)
-        xml = string(alvision.cvtest.TS::ptr()->get_data_path()) + "imgproc/HoughLines.xml";
+        xml = alvision.cvtest.TS.ptr().get_data_path() + "imgproc/HoughLines.xml";
     else if (type == PROBABILISTIC)
-        xml = string(alvision.cvtest.TS::ptr()->get_data_path()) + "imgproc/HoughLinesP.xml";
+        xml = alvision.cvtest.TS.ptr().get_data_path() + "imgproc/HoughLinesP.xml";
 
     Mat dst;
     Canny(src, dst, 100, 150, 3);
@@ -170,7 +170,7 @@ void BaseHoughLineTest::run_test(int type)
     else if (type == PROBABILISTIC)
         HoughLinesP(dst, lines, rhoStep, thetaStep, threshold, minLineLength, maxGap);
 
-    String test_case_name = format("lines_%s_%.0f_%.2f_%d_%d_%d", picture_name.c_str(), rhoStep, thetaStep,
+    String test_case_name = format("lines_%s_%.0f_%.2f_%d_%d_%d", picture_name, rhoStep, thetaStep,
                                     threshold, minLineLength, maxGap);
     test_case_name = getTestCaseName(test_case_name);
 

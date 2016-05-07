@@ -56,10 +56,10 @@ using namespace cvtest;
 ////////////////////////////////////////////////////////
 // pyrDown
 
-PARAM_TEST_CASE(PyrDown, cv::cuda::DeviceInfo, cv::Size, MatType, UseRoi)
+PARAM_TEST_CASE(PyrDown, alvision.cuda::DeviceInfo, alvision.Size, MatType, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int type;
     bool useRoi;
 
@@ -70,19 +70,19 @@ PARAM_TEST_CASE(PyrDown, cv::cuda::DeviceInfo, cv::Size, MatType, UseRoi)
         type = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(PyrDown, Accuracy)
 {
-    cv::Mat src = randomMat(size, type);
+    alvision.Mat src = randomMat(size, type);
 
-    cv::cuda::GpuMat dst = createMat(cv::Size((size.width + 1) / 2, (size.height + 1) / 2), type, useRoi);
-    cv::cuda::pyrDown(loadMat(src, useRoi), dst);
+    alvision.cuda::GpuMat dst = createMat(alvision.Size((size.width + 1) / 2, (size.height + 1) / 2), type, useRoi);
+    alvision.cuda::pyrDown(loadMat(src, useRoi), dst);
 
-    cv::Mat dst_gold;
-    cv::pyrDown(src, dst_gold);
+    alvision.Mat dst_gold;
+    alvision.pyrDown(src, dst_gold);
 
     EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-4 : 1.0);
 }
@@ -96,10 +96,10 @@ INSTANTIATE_TEST_CASE_P(CUDA_Warping, PyrDown, testing::Combine(
 ////////////////////////////////////////////////////////
 // pyrUp
 
-PARAM_TEST_CASE(PyrUp, cv::cuda::DeviceInfo, cv::Size, MatType, UseRoi)
+PARAM_TEST_CASE(PyrUp, alvision.cuda::DeviceInfo, alvision.Size, MatType, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int type;
     bool useRoi;
 
@@ -110,19 +110,19 @@ PARAM_TEST_CASE(PyrUp, cv::cuda::DeviceInfo, cv::Size, MatType, UseRoi)
         type = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(PyrUp, Accuracy)
 {
-    cv::Mat src = randomMat(size, type);
+    alvision.Mat src = randomMat(size, type);
 
-    cv::cuda::GpuMat dst = createMat(cv::Size(size.width * 2, size.height * 2), type, useRoi);
-    cv::cuda::pyrUp(loadMat(src, useRoi), dst);
+    alvision.cuda::GpuMat dst = createMat(alvision.Size(size.width * 2, size.height * 2), type, useRoi);
+    alvision.cuda::pyrUp(loadMat(src, useRoi), dst);
 
-    cv::Mat dst_gold;
-    cv::pyrUp(src, dst_gold);
+    alvision.Mat dst_gold;
+    alvision.pyrUp(src, dst_gold);
 
     EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-4 : 1.0);
 }

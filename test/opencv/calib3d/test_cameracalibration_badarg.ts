@@ -103,7 +103,7 @@ void CV_CameraCalibrationBadArgTest::run( int /* start_from */ )
 
     ChessBoardGenerator cbg(Size(8,6));
     corSize = cbg.cornersSize();
-    vector<Point2f> exp_corn;
+    Array<Point2f> exp_corn;
     chessBoard = cbg(Mat(imgSize, CV_8U, Scalar(0)), camMat, distCoeffs0, exp_corn);
     Mat_<Point2f>(corSize.height, corSize.width, (Point2f*)&exp_corn[0]).copyTo(corners);
 
@@ -316,7 +316,7 @@ void CV_CameraCalibrationBadArgTest::run( int /* start_from */ )
     Mat bad_objPts_cpp5 = objPts_cpp.clone(); CvMat bad_objPts_c5 = bad_objPts_cpp5;
     bad_caller.objPts = &bad_objPts_c5;
 
-    cv::RNG& rng = theRNG();
+    alvision.RNG& rng = theRNG();
     for(int i = 0; i < bad_objPts_cpp5.rows; ++i)
         bad_objPts_cpp5.at<Point3f>(0, i).z += ((float)rng - 0.5f);
 

@@ -91,7 +91,7 @@ struct WrapAff2D
 
 bool CV_RigidTransform_Test::testNPoints(int from)
 {
-    cv::RNG rng = ts->get_rng();
+    alvision.RNG rng = ts->get_rng();
 
     int progress = 0;
     int k, ntests = 10000;
@@ -118,8 +118,8 @@ bool CV_RigidTransform_Test::testNPoints(int from)
 
         Mat aff_est = estimateRigidTransform(fpts, tpts, true);
 
-        double thres = 0.1*alvision.cvtest.norm(aff, NORM_L2);
-        double d = alvision.cvtest.norm(aff_est, aff, NORM_L2);
+        double thres = 0.1*alvision.cvtest.norm(aff,alvision.NormTypes. NORM_L2);
+        double d = alvision.cvtest.norm(aff_est, aff,alvision.NormTypes. NORM_L2);
         if (d > thres)
         {
             double dB=0, nB=0;
@@ -128,13 +128,13 @@ bool CV_RigidTransform_Test::testNPoints(int from)
                 Mat A = fpts.reshape(1, 3);
                 Mat B = A - repeat(A.row(0), 3, 1), Bt = B.t();
                 B = Bt*B;
-                dB = cv::determinant(B);
-                nB = alvision.cvtest.norm(B, NORM_L2);
+                dB = alvision.determinant(B);
+                nB = alvision.cvtest.norm(B,alvision.NormTypes. NORM_L2);
                 if( fabs(dB) < 0.01*nB )
                     continue;
             }
             this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
-            ts->printf( alvision.cvtest.TS::LOG, "Threshold = %f, norm of difference = %f", thres, d );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "Threshold = %f, norm of difference = %f", thres, d );
             return false;
         }
     }
@@ -148,12 +148,12 @@ bool CV_RigidTransform_Test::testImage()
     if (testImg.empty())
     {
        ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
-       this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_TEST_DATA);
+       this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
        return false;
     }
     pyrDown(testImg, img);
 
-    Mat aff = cv::getRotationMatrix2D(Point(img.cols/2, img.rows/2), 1, 0.99);
+    Mat aff = alvision.getRotationMatrix2D(Point(img.cols/2, img.rows/2), 1, 0.99);
     aff.ptr<double>()[2]+=3;
     aff.ptr<double>()[5]+=3;
 
@@ -166,7 +166,7 @@ bool CV_RigidTransform_Test::testImage()
     if (alvision.cvtest.norm(aff_est, aff, NORM_INF) > thres)
     {
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_BAD_ACCURACY);
-        ts->printf( alvision.cvtest.TS::LOG, "Threshold = %f, norm of difference = %f", thres,
+        ts->printf( alvision.cvtest.TSConstants.LOG, "Threshold = %f, norm of difference = %f", thres,
             alvision.cvtest.norm(aff_est, aff, NORM_INF) );
         return false;
     }

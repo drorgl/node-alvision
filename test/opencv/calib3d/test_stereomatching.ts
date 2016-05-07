@@ -287,7 +287,7 @@ float dispRMS( const Mat& computedDisp, const Mat& groundTruthDisp, const Mat& m
         checkTypeAndSizeOfMask( mask, sz );
         pointsCount = countNonZero(mask);
     }
-    return 1.f/sqrt((float)pointsCount) * (float)alvision.cvtest.norm(computedDisp, groundTruthDisp, NORM_L2, mask);
+    return 1.f/sqrt((float)pointsCount) * (float)alvision.cvtest.norm(computedDisp, groundTruthDisp,alvision.NormTypes. NORM_L2, mask);
 }
 
 /*
@@ -379,10 +379,10 @@ protected:
 
     int readDatasetsParams( FileStorage& fs );
     virtual int readRunParams( FileStorage& fs );
-    void writeErrors( const string& errName, const vector<float>& errors, FileStorage* fs = 0 );
-    void readErrors( FileNode& fn, const string& errName, vector<float>& errors );
-    int compareErrors( const vector<float>& calcErrors, const vector<float>& validErrors,
-                       const vector<float>& eps, const string& errName );
+    void writeErrors( const string& errName, const Array<float>& errors, FileStorage* fs = 0 );
+    void readErrors( FileNode& fn, const string& errName, Array<float>& errors );
+    int compareErrors( const Array<float>& calcErrors, const Array<float>& validErrors,
+                       const Array<float>& eps, const string& errName );
     int processStereoMatchingResults( FileStorage& fs, int caseIdx, bool isWrite,
                   const Mat& leftImg, const Mat& rightImg,
                   const Mat& trueLeftDisp, const Mat& trueRightDisp,
@@ -390,8 +390,8 @@ protected:
                   const QualityEvalParams& qualityEvalParams  );
     void run( int );
 
-    vector<float> rmsEps;
-    vector<float> fracEps;
+    Array<float> rmsEps;
+    Array<float> fracEps;
 
     struct DatasetParams
     {
@@ -400,8 +400,8 @@ protected:
     };
     map<string, DatasetParams> datasetsParams;
 
-    vector<string> caseNames;
-    vector<string> caseDatasets;
+    Array<string> caseNames;
+    Array<string> caseDatasets;
 };
 
 void CV_StereoMatchingTest::run(int)
@@ -411,7 +411,7 @@ void CV_StereoMatchingTest::run(int)
     assert( !algorithmName.empty() );
     if( dataPath.empty() )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "dataPath is empty" );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "dataPath is empty" );
         this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ARG_CHECK );
         return;
     }
@@ -441,7 +441,7 @@ void CV_StereoMatchingTest::run(int)
         resFS.open( fullResultFilename, FileStorage::WRITE );
         if( !resFS.isOpened() )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "file %s can not be read or written\n", fullResultFilename.c_str() );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "file %s can not be read or written\n", fullResultFilename );
             this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_BAD_ARG_CHECK );
             return;
         }
@@ -463,8 +463,8 @@ void CV_StereoMatchingTest::run(int)
 
         if( leftImg.empty() || rightImg.empty() || trueLeftDisp.empty() )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "images or left ground-truth disparities of dataset %s can not be read", datasetName.c_str() );
-            code = alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
+            ts->printf( alvision.cvtest.TSConstants.LOG, "images or left ground-truth disparities of dataset %s can not be read", datasetName );
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
             continue;
         }
         int dispScaleFactor = datasetsParams[datasetName].dispScaleFactor;
@@ -507,7 +507,7 @@ void calcErrors( const Mat& leftImg, const Mat& /*rightImg*/,
                  const Mat& trueLeftDisp, const Mat& trueRightDisp,
                  const Mat& trueLeftUnknDispMask, const Mat& trueRightUnknDispMask,
                  const Mat& calcLeftDisp, const Mat& /*calcRightDisp*/,
-                 vector<float>& rms, vector<float>& badPxlsFractions,
+                 Array<float>& rms, Array<float>& badPxlsFractions,
                  const QualityEvalParams& qualityEvalParams )
 {
     Mat texturelessMask, texturedMask;
@@ -572,29 +572,29 @@ int CV_StereoMatchingTest::processStereoMatchingResults( FileStorage& fs, int ca
     }
 
     // calculate errors
-    vector<float> rmss, badPxlsFractions;
+    Array<float> rmss, badPxlsFractions;
     calcErrors( leftImg, rightImg, trueLeftDisp, trueRightDisp, leftUnknMask, rightUnknMask,
                 leftDisp, rightDisp, rmss, badPxlsFractions, qualityEvalParams );
 
     if( isWrite )
     {
         fs << caseNames[caseIdx] << "{";
-        //cvWriteComment( fs.fs, RMS_STR.c_str(), 0 );
+        //cvWriteComment( fs.fs, RMS_STR, 0 );
         writeErrors( RMS_STR, rmss, &fs );
-        //cvWriteComment( fs.fs, BAD_PXLS_FRACTION_STR.c_str(), 0 );
+        //cvWriteComment( fs.fs, BAD_PXLS_FRACTION_STR, 0 );
         writeErrors( BAD_PXLS_FRACTION_STR, badPxlsFractions, &fs );
         fs << "}"; // datasetName
     }
     else // compare
     {
-        ts->printf( alvision.cvtest.TS::LOG, "\nquality of case named %s\n", caseNames[caseIdx].c_str() );
-        ts->printf( alvision.cvtest.TS::LOG, "%s\n", RMS_STR.c_str() );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "\nquality of case named %s\n", caseNames[caseIdx] );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "%s\n", RMS_STR );
         writeErrors( RMS_STR, rmss );
-        ts->printf( alvision.cvtest.TS::LOG, "%s\n", BAD_PXLS_FRACTION_STR.c_str() );
+        ts->printf( alvision.cvtest.TSConstants.LOG, "%s\n", BAD_PXLS_FRACTION_STR );
         writeErrors( BAD_PXLS_FRACTION_STR, badPxlsFractions );
 
         FileNode fn = fs.getFirstTopLevelNode()[caseNames[caseIdx]];
-        vector<float> validRmss, validBadPxlsFractions;
+        Array<float> validRmss, validBadPxlsFractions;
 
         readErrors( fn, RMS_STR, validRmss );
         readErrors( fn, BAD_PXLS_FRACTION_STR, validBadPxlsFractions );
@@ -610,8 +610,8 @@ int CV_StereoMatchingTest::readDatasetsParams( FileStorage& fs )
 {
     if( !fs.isOpened() )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "datasetsParams can not be read " );
-        return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TSConstants.LOG, "datasetsParams can not be read " );
+        return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
     }
     datasetsParams.clear();
     FileNode fn = fs.getFirstTopLevelNode();
@@ -620,8 +620,8 @@ int CV_StereoMatchingTest::readDatasetsParams( FileStorage& fs )
     {
         String _name = fn[i];
         DatasetParams params;
-        String sf = fn[i+1]; params.dispScaleFactor = atoi(sf.c_str());
-        String uv = fn[i+2]; params.dispUnknVal = atoi(uv.c_str());
+        String sf = fn[i+1]; params.dispScaleFactor = atoi(sf);
+        String uv = fn[i+2]; params.dispUnknVal = atoi(uv);
         datasetsParams[_name] = params;
     }
     return alvision.cvtest.TS::OK;
@@ -631,48 +631,48 @@ int CV_StereoMatchingTest::readRunParams( FileStorage& fs )
 {
     if( !fs.isOpened() )
     {
-        ts->printf( alvision.cvtest.TS::LOG, "runParams can not be read " );
-        return alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
+        ts->printf( alvision.cvtest.TSConstants.LOG, "runParams can not be read " );
+        return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
     }
     caseNames.clear();;
     caseDatasets.clear();
     return alvision.cvtest.TS::OK;
 }
 
-void CV_StereoMatchingTest::writeErrors( const string& errName, const vector<float>& errors, FileStorage* fs )
+void CV_StereoMatchingTest::writeErrors( const string& errName, const Array<float>& errors, FileStorage* fs )
 {
     assert( (int)errors.size() == ERROR_KINDS_COUNT );
-    vector<float>::const_iterator it = errors.begin();
+    Array<float>::const_iterator it = errors.begin();
     if( fs )
         for( int i = 0; i < ERROR_KINDS_COUNT; i++, ++it )
             *fs << ERROR_PREFIXES[i] + errName << *it;
     else
         for( int i = 0; i < ERROR_KINDS_COUNT; i++, ++it )
-            ts->printf( alvision.cvtest.TS::LOG, "%s = %f\n", string(ERROR_PREFIXES[i]+errName).c_str(), *it );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "%s = %f\n", string(ERROR_PREFIXES[i]+errName), *it );
 }
 
-void CV_StereoMatchingTest::readErrors( FileNode& fn, const string& errName, vector<float>& errors )
+void CV_StereoMatchingTest::readErrors( FileNode& fn, const string& errName, Array<float>& errors )
 {
     errors.resize( ERROR_KINDS_COUNT );
-    vector<float>::iterator it = errors.begin();
+    Array<float>::iterator it = errors.begin();
     for( int i = 0; i < ERROR_KINDS_COUNT; i++, ++it )
         fn[ERROR_PREFIXES[i]+errName] >> *it;
 }
 
-int CV_StereoMatchingTest::compareErrors( const vector<float>& calcErrors, const vector<float>& validErrors,
-                   const vector<float>& eps, const string& errName )
+int CV_StereoMatchingTest::compareErrors( const Array<float>& calcErrors, const Array<float>& validErrors,
+                   const Array<float>& eps, const string& errName )
 {
     assert( (int)calcErrors.size() == ERROR_KINDS_COUNT );
     assert( (int)validErrors.size() == ERROR_KINDS_COUNT );
     assert( (int)eps.size() == ERROR_KINDS_COUNT );
-    vector<float>::const_iterator calcIt = calcErrors.begin(),
+    Array<float>::const_iterator calcIt = calcErrors.begin(),
                                   validIt = validErrors.begin(),
                                   epsIt = eps.begin();
     bool ok = true;
     for( int i = 0; i < ERROR_KINDS_COUNT; i++, ++calcIt, ++validIt, ++epsIt )
         if( *calcIt - *validIt > *epsIt )
         {
-            ts->printf( alvision.cvtest.TS::LOG, "bad accuracy of %s (valid=%f; calc=%f)\n", string(ERROR_PREFIXES[i]+errName).c_str(), *validIt, *calcIt );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of %s (valid=%f; calc=%f)\n", string(ERROR_PREFIXES[i]+errName), *validIt, *calcIt );
             ok = false;
         }
     return ok ? alvision.cvtest.TS::OK : alvision.cvtest.TS::FAIL_BAD_ACCURACY;
@@ -696,7 +696,7 @@ protected:
         int ndisp;
         int winSize;
     };
-    vector<RunParams> caseRunParams;
+    Array<RunParams> caseRunParams;
 
     virtual int readRunParams( FileStorage& fs )
     {
@@ -707,8 +707,8 @@ protected:
         {
             String caseName = fn[i], datasetName = fn[i+1];
             RunParams params;
-            String ndisp = fn[i+2]; params.ndisp = atoi(ndisp.c_str());
-            String winSize = fn[i+3]; params.winSize = atoi(winSize.c_str());
+            String ndisp = fn[i+2]; params.ndisp = atoi(ndisp);
+            String winSize = fn[i+3]; params.winSize = atoi(winSize);
             caseNames.push_back( caseName );
             caseDatasets.push_back( datasetName );
             caseRunParams.push_back( params );
@@ -752,7 +752,7 @@ protected:
         int winSize;
         bool fullDP;
     };
-    vector<RunParams> caseRunParams;
+    Array<RunParams> caseRunParams;
 
     virtual int readRunParams( FileStorage& fs )
     {
@@ -763,9 +763,9 @@ protected:
         {
             String caseName = fn[i], datasetName = fn[i+1];
             RunParams params;
-            String ndisp = fn[i+2]; params.ndisp = atoi(ndisp.c_str());
-            String winSize = fn[i+3]; params.winSize = atoi(winSize.c_str());
-            String fullDP = fn[i+4]; params.fullDP = atoi(fullDP.c_str()) == 0 ? false : true;
+            String ndisp = fn[i+2]; params.ndisp = atoi(ndisp);
+            String winSize = fn[i+3]; params.winSize = atoi(winSize);
+            String fullDP = fn[i+4]; params.fullDP = atoi(fullDP) == 0 ? false : true;
             caseNames.push_back( caseName );
             caseDatasets.push_back( datasetName );
             caseRunParams.push_back( params );

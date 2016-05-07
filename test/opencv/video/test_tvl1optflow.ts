@@ -68,7 +68,7 @@ namespace
     void writeOpticalFlowToFile(const Mat_<Point2f>& flow, const string& fileName)
     {
         const char FLO_TAG_STRING[] = "PIEH";    // use this when WRITING the file
-        ofstream file(fileName.c_str(), ios_base::binary);
+        ofstream file(fileName, ios_base::binary);
 
         file << FLO_TAG_STRING;
 
@@ -92,7 +92,7 @@ namespace
     // http://vision.middlebury.edu/flow/data/
     void readOpticalFlowFromFile(Mat_<Point2f>& flow, const string& fileName)
     {
-        ifstream file(fileName.c_str(), ios_base::binary);
+        ifstream file(fileName, ios_base::binary);
 
         float tag;
         file.read((char*) &tag, sizeof(float));

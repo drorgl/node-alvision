@@ -59,41 +59,41 @@ using namespace cvtest;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // transformPoints
 
-struct TransformPoints : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct TransformPoints : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(TransformPoints, Accuracy)
 {
-    cv::Mat src = randomMat(cv::Size(1000, 1), CV_32FC3, 0, 10);
-    cv::Mat rvec = randomMat(cv::Size(3, 1), CV_32F, 0, 1);
-    cv::Mat tvec = randomMat(cv::Size(3, 1), CV_32F, 0, 1);
+    alvision.Mat src = randomMat(alvision.Size(1000, 1), CV_32FC3, 0, 10);
+    alvision.Mat rvec = randomMat(alvision.Size(3, 1), CV_32F, 0, 1);
+    alvision.Mat tvec = randomMat(alvision.Size(3, 1), CV_32F, 0, 1);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::transformPoints(loadMat(src), rvec, tvec, dst);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::transformPoints(loadMat(src), rvec, tvec, dst);
 
     ASSERT_EQ(src.size(), dst.size());
     ASSERT_EQ(src.type(), dst.type());
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
-    cv::Mat rot;
-    cv::Rodrigues(rvec, rot);
+    alvision.Mat rot;
+    alvision.Rodrigues(rvec, rot);
 
     for (int i = 0; i < h_dst.cols; ++i)
     {
-        cv::Point3f res = h_dst.at<cv::Point3f>(0, i);
+        alvision.Point3f res = h_dst.at<alvision.Point3f>(0, i);
 
-        cv::Point3f p = src.at<cv::Point3f>(0, i);
-        cv::Point3f res_gold(
+        alvision.Point3f p = src.at<alvision.Point3f>(0, i);
+        alvision.Point3f res_gold(
                 rot.at<float>(0, 0) * p.x + rot.at<float>(0, 1) * p.y + rot.at<float>(0, 2) * p.z + tvec.at<float>(0, 0),
                 rot.at<float>(1, 0) * p.x + rot.at<float>(1, 1) * p.y + rot.at<float>(1, 2) * p.z + tvec.at<float>(0, 1),
                 rot.at<float>(2, 0) * p.x + rot.at<float>(2, 1) * p.y + rot.at<float>(2, 2) * p.z + tvec.at<float>(0, 2));
@@ -107,48 +107,48 @@ INSTANTIATE_TEST_CASE_P(CUDA_Calib3D, TransformPoints, ALL_DEVICES);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // ProjectPoints
 
-struct ProjectPoints : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct ProjectPoints : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(ProjectPoints, Accuracy)
 {
-    cv::Mat src = randomMat(cv::Size(1000, 1), CV_32FC3, 0, 10);
-    cv::Mat rvec = randomMat(cv::Size(3, 1), CV_32F, 0, 1);
-    cv::Mat tvec = randomMat(cv::Size(3, 1), CV_32F, 0, 1);
-    cv::Mat camera_mat = randomMat(cv::Size(3, 3), CV_32F, 0.5, 1);
+    alvision.Mat src = randomMat(alvision.Size(1000, 1), CV_32FC3, 0, 10);
+    alvision.Mat rvec = randomMat(alvision.Size(3, 1), CV_32F, 0, 1);
+    alvision.Mat tvec = randomMat(alvision.Size(3, 1), CV_32F, 0, 1);
+    alvision.Mat camera_mat = randomMat(alvision.Size(3, 3), CV_32F, 0.5, 1);
     camera_mat.at<float>(0, 1) = 0.f;
     camera_mat.at<float>(1, 0) = 0.f;
     camera_mat.at<float>(2, 0) = 0.f;
     camera_mat.at<float>(2, 1) = 0.f;
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::projectPoints(loadMat(src), rvec, tvec, camera_mat, cv::Mat(), dst);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::projectPoints(loadMat(src), rvec, tvec, camera_mat, alvision.Mat(), dst);
 
     ASSERT_EQ(1, dst.rows);
     ASSERT_EQ(MatType(CV_32FC2), MatType(dst.type()));
 
-    std::vector<cv::Point2f> dst_gold;
-    cv::projectPoints(src, rvec, tvec, camera_mat, cv::Mat(1, 8, CV_32F, cv::Scalar::all(0)), dst_gold);
+    std::Array<alvision.Point2f> dst_gold;
+    alvision.projectPoints(src, rvec, tvec, camera_mat, alvision.Mat(1, 8, CV_32F, alvision.Scalar::all(0)), dst_gold);
 
     ASSERT_EQ(dst_gold.size(), static_cast<size_t>(dst.cols));
 
-    cv::Mat h_dst(dst);
+    alvision.Mat h_dst(dst);
 
     for (size_t i = 0; i < dst_gold.size(); ++i)
     {
-        cv::Point2f res = h_dst.at<cv::Point2f>(0, (int)i);
-        cv::Point2f res_gold = dst_gold[i];
+        alvision.Point2f res = h_dst.at<alvision.Point2f>(0, (int)i);
+        alvision.Point2f res_gold = dst_gold[i];
 
-        ASSERT_LE(cv::norm(res_gold - res) / cv::norm(res_gold), 1e-3f);
+        ASSERT_LE(alvision.norm(res_gold - res) / alvision.norm(res_gold), 1e-3f);
     }
 }
 
@@ -157,42 +157,42 @@ INSTANTIATE_TEST_CASE_P(CUDA_Calib3D, ProjectPoints, ALL_DEVICES);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // SolvePnPRansac
 
-struct SolvePnPRansac : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct SolvePnPRansac : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(SolvePnPRansac, Accuracy)
 {
-    cv::Mat object = randomMat(cv::Size(5000, 1), CV_32FC3, 0, 100);
-    cv::Mat camera_mat = randomMat(cv::Size(3, 3), CV_32F, 0.5, 1);
+    alvision.Mat object = randomMat(alvision.Size(5000, 1), CV_32FC3, 0, 100);
+    alvision.Mat camera_mat = randomMat(alvision.Size(3, 3), CV_32F, 0.5, 1);
     camera_mat.at<float>(0, 1) = 0.f;
     camera_mat.at<float>(1, 0) = 0.f;
     camera_mat.at<float>(2, 0) = 0.f;
     camera_mat.at<float>(2, 1) = 0.f;
 
-    std::vector<cv::Point2f> image_vec;
-    cv::Mat rvec_gold;
-    cv::Mat tvec_gold;
-    rvec_gold = randomMat(cv::Size(3, 1), CV_32F, 0, 1);
-    tvec_gold = randomMat(cv::Size(3, 1), CV_32F, 0, 1);
-    cv::projectPoints(object, rvec_gold, tvec_gold, camera_mat, cv::Mat(1, 8, CV_32F, cv::Scalar::all(0)), image_vec);
+    std::Array<alvision.Point2f> image_vec;
+    alvision.Mat rvec_gold;
+    alvision.Mat tvec_gold;
+    rvec_gold = randomMat(alvision.Size(3, 1), CV_32F, 0, 1);
+    tvec_gold = randomMat(alvision.Size(3, 1), CV_32F, 0, 1);
+    alvision.projectPoints(object, rvec_gold, tvec_gold, camera_mat, alvision.Mat(1, 8, CV_32F, alvision.Scalar::all(0)), image_vec);
 
-    cv::Mat rvec, tvec;
-    std::vector<int> inliers;
-    cv::cuda::solvePnPRansac(object, cv::Mat(1, (int)image_vec.size(), CV_32FC2, &image_vec[0]),
-                            camera_mat, cv::Mat(1, 8, CV_32F, cv::Scalar::all(0)),
+    alvision.Mat rvec, tvec;
+    std::Array<int> inliers;
+    alvision.cuda::solvePnPRansac(object, alvision.Mat(1, (int)image_vec.size(), CV_32FC2, &image_vec[0]),
+                            camera_mat, alvision.Mat(1, 8, CV_32F, alvision.Scalar::all(0)),
                             rvec, tvec, false, 200, 2.f, 100, &inliers);
 
-    ASSERT_LE(cv::norm(rvec - rvec_gold), 1e-3);
-    ASSERT_LE(cv::norm(tvec - tvec_gold), 1e-3);
+    ASSERT_LE(alvision.norm(rvec - rvec_gold), 1e-3);
+    ASSERT_LE(alvision.norm(tvec - tvec_gold), 1e-3);
 }
 
 INSTANTIATE_TEST_CASE_P(CUDA_Calib3D, SolvePnPRansac, ALL_DEVICES);

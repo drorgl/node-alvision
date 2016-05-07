@@ -52,6 +52,8 @@ import * as _affine from './Affine'
 import * as _features2d from './features2d'
 
 
+
+
 //#ifndef __OPENCV_PHOTO_HPP__
 //#define __OPENCV_PHOTO_HPP__
 //
@@ -79,7 +81,7 @@ camera calibration with multiple exposures and exposure fusion.
     //! @{
 
     //! the inpainting algorithm
-    enum INPAINT
+    export enum INPAINT
 {
         INPAINT_NS = 0, // Navier-Stokes algorithm
         INPAINT_TELEA = 1 // A. Telea algorithm
@@ -122,7 +124,7 @@ camera calibration with multiple exposures and exposure fusion.
      */
     interface Iinpaint {
         (src: _st.InputArray, inpaintMask: _st.InputArray ,
-            dst: _st.OutputArray, inpaintRadius: _st.double , flags : _st.int ): void;
+            dst: _st.OutputArray, inpaintRadius: _st.double , flags : INPAINT ): void;
     }   
 
 export var inpaint: Iinpaint = alvision_module.inpaint;
@@ -406,15 +408,15 @@ export var denoise_TVL1: Idenoise_TVL1 = alvision_module.denoise_TVL1;
     interface Tonemap extends _core.Algorithm
     {
         //public:
-        ///** @brief Tonemaps image
-        //
-        //@param src source image - 32-bit 3-channel Mat
-        //@param dst destination image - 32-bit 3-channel Mat with values in [0, 1] range
-        // */
-        //CV_WRAP virtual void process(InputArray src, OutputArray dst) = 0;
-        //
-        //CV_WRAP virtual float getGamma() const = 0;
-        //CV_WRAP virtual void setGamma(float gamma) = 0;
+        /** @brief Tonemaps image
+        
+        @param src source image - 32-bit 3-channel Mat
+        @param dst destination image - 32-bit 3-channel Mat with values in [0, 1] range
+         */
+        process(src: _st.InputArray, dst: _st.OutputArray ): void;
+        
+        getGamma(): _st.float;
+        setGamma(gamma: _st.float) : void
     };
 
     /** @brief Creates simple linear mapper with gamma correction
@@ -508,7 +510,9 @@ export var createTonemapDrago: IcreateTonemapDrago = alvision_module.createTonem
 
     interface IcreateTonemapDurand{
         (gamma?: _st.float /* = 1.0f*/, contrast?: _st.float /* = 4.0f*/, saturation?: _st.float /* = 1.0f*/, sigma_space?: _st.float /* = 2.0f*/, sigma_color?: _st.float /* = 2.0f*/): TonemapDurand;
-}
+    }
+
+export var createTonemapDurand: IcreateTonemapDurand = alvision_module.createTonemapDurand;
 
 //    CV_EXPORTS_W Ptr< TonemapDurand >
 //        createTonemapDurand(float gamma = 1.0f, float contrast = 4.0f, float saturation = 1.0f, float sigma_space = 2.0f, float sigma_color = 2.0f);
@@ -685,7 +689,7 @@ export var createAlignMTB: IcreateAlignMTB = alvision_module.createAlignMTB;
         @param dst 256x1 matrix with inverse camera response function
         @param times vector of exposure time values for each image
          */
-        //CV_WRAP virtual void process(InputArrayOfArrays src, OutputArray dst, InputArray times) = 0;
+        process(src: _st.InputArrayOfArrays, dst: _st.OutputArray, times: _st.InputArray ): void;
     };
 
     /** @brief Inverse camera response function is extracted for each brightness value by minimizing an objective
@@ -760,16 +764,16 @@ export var createCalibrateRobertson: IcreateCalibrateRobertson = alvision_module
     interface MergeExposures extends _core.Algorithm
     {
         //public:
-        ///** @brief Merges images.
-        //
-        //@param src vector of input images
-        //@param dst result image
-        //@param times vector of exposure time values for each image
-        //@param response 256x1 matrix with inverse camera response function for each pixel value, it should
-        //have the same number of channels as images.
-        // */
-        //CV_WRAP virtual void process(InputArrayOfArrays src, OutputArray dst,
-        //    InputArray times, InputArray response) = 0;
+        /** @brief Merges images.
+        
+        @param src vector of input images
+        @param dst result image
+        @param times vector of exposure time values for each image
+        @param response 256x1 matrix with inverse camera response function for each pixel value, it should
+        have the same number of channels as images.
+         */
+        process(src: _st.InputArrayOfArrays, dst: _st.OutputArray ,
+            times: _st.InputArray, response: _st.InputArray ): void;
     };
 
     /** @brief The resulting HDR image is calculated as weighted average of the exposures considering exposure
@@ -851,9 +855,9 @@ export var createMergeMertens: IcreateMergeMertens = alvision_module.createMerge
     interface MergeRobertson extends MergeExposures
     {
         //public:
-        //CV_WRAP virtual void process(InputArrayOfArrays src, OutputArray dst,
-        //    InputArray times, InputArray response) = 0;
-        //CV_WRAP virtual void process(InputArrayOfArrays src, OutputArray dst, InputArray times) = 0;
+        process(src: _st.InputArrayOfArrays, dst: _st.OutputArray ,
+            times: _st.InputArray, response: _st.InputArray ): void;
+        process(src: _st.InputArrayOfArrays, dst: _st.OutputArray, times: _st.InputArray ): void;
     };
 
     /** @brief Creates MergeRobertson object

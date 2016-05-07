@@ -69,7 +69,7 @@ protected:
 
 private:
     template <typename T> void generate_src_points(vector <Point_<T> >& src, int n);
-    template <typename T> cv::Rect get_bounding_rect(const vector <Point_<T> > src);
+    template <typename T> alvision.Rect get_bounding_rect(const vector <Point_<T> > src);
     template <typename T> bool checking_function_work(vector <Point_<T> >& src, int type);
 };
 
@@ -80,10 +80,10 @@ template <typename T> void CV_BoundingRectTest::generate_src_points(vector <Poin
 {
     src.clear();
     for (int i = 0; i < n; ++i)
-        src.push_back(Point_<T>(cv::randu<T>(), cv::randu<T>()));
+        src.push_back(Point_<T>(alvision.randu<T>(), alvision.randu<T>()));
 }
 
-template <typename T> cv::Rect CV_BoundingRectTest::get_bounding_rect(const vector <Point_<T> > src)
+template <typename T> alvision.Rect CV_BoundingRectTest::get_bounding_rect(const vector <Point_<T> > src)
 {
     int n = (int)src.size();
     T min_w = std::numeric_limits<T>::max(), max_w = std::numeric_limits<T>::min();
@@ -114,9 +114,9 @@ template <typename T> bool CV_BoundingRectTest::checking_function_work(vector <P
 
         generate_src_points <T> (src, n);
 
-        cv::Rect right = get_bounding_rect <T> (src);
+        alvision.Rect right = get_bounding_rect <T> (src);
 
-        cv::Rect rect[2] = { boundingRect(src), boundingRect(Mat(src)) };
+        alvision.Rect rect[2] = { boundingRect(src), boundingRect(Mat(src)) };
 
         for (int i = 0; i < 2; ++i) if (rect[i] != right)
         {

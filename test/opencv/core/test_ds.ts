@@ -320,7 +320,7 @@ static int  cvTsSimpleGraphVertexDegree( CvTsSimpleGraph* graph, int index )
 if( !(expr) )                                               \
 {                                                           \
 set_error_context( #expr, err_msg, __FILE__, __LINE__ );    \
-this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );\
+this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );\
 throw -1;                                                   \
 }
 
@@ -348,8 +348,8 @@ protected:
     int test_progress;
     int64 start_time;
     double cpu_freq;
-    vector<void*> cxcore_struct;
-    vector<void*> simple_struct;
+    Array<void*> cxcore_struct;
+    Array<void*> simple_struct;
     Ptr<CvMemStorage> storage;
 };
 
@@ -435,11 +435,11 @@ void Core_DynStructBaseTest::update_progressbar()
     if( test_progress < 0 )
     {
         test_progress = 0;
-        cpu_freq = cv::getTickFrequency();
-        start_time = cv::getTickCount();
+        cpu_freq = alvision.getTickFrequency();
+        start_time = alvision.getTickCount();
     }
 
-    t = cv::getTickCount();
+    t = alvision.getTickCount();
     test_progress = update_progress( test_progress, 0, 0, (double)(t - start_time)/cpu_freq );
 }
 
@@ -448,10 +448,10 @@ void Core_DynStructBaseTest::set_error_context( const char* condition,
                                                 const char* err_msg,
                                                 const char* filename, int lineno )
 {
-    ts->printf( alvision.cvtest.TS::LOG, "file %s, line %d: %s\n(\"%s\" failed).\n"
+    ts->printf( alvision.cvtest.TSConstants.LOG, "file %s, line %d: %s\n(\"%s\" failed).\n"
                "generation = %d, struct_idx = %d, iter = %d\n",
                filename, lineno, err_msg, condition, gen, struct_idx, iter );
-    this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_INVALID_OUTPUT );
+    this.ts.set_failed_test_info( alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT );
 }
 
 
@@ -525,9 +525,9 @@ void Core_SeqBaseTest::clear()
 
 int Core_SeqBaseTest::test_multi_create()
 {
-    vector<CvSeqWriter> writer(struct_count);
-    vector<int> pos(struct_count);
-    vector<int> index(struct_count);
+    Array<CvSeqWriter> writer(struct_count);
+    Array<int> pos(struct_count);
+    Array<int> index(struct_count);
     int  cur_count, elem_size;
     RNG& rng = ts->get_rng();
 
@@ -655,7 +655,7 @@ int  Core_SeqBaseTest::test_get_seq_reading( int _struct_idx, int iters )
     int total = seq->total;
     RNG& rng = ts->get_rng();
     CvSeqReader reader;
-    vector<schar> _elem(sseq->elem_size);
+    Array<schar> _elem(sseq->elem_size);
     schar* elem = &_elem[0];
 
     assert( total == sseq->count );
@@ -745,7 +745,7 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
     for( int i = 0; i < struct_count; i++ )
         max_elem_size = MAX( max_elem_size, ((CvSeq*)cxcore_struct[i])->elem_size );
 
-    vector<schar> elem_buf(max_struct_size*max_elem_size);
+    Array<schar> elem_buf(max_struct_size*max_elem_size);
     schar* elem = (schar*)&elem_buf[0];
     Mat elem_mat;
 
@@ -1077,7 +1077,7 @@ void Core_SeqSortInvTest::run( int )
         int i, k;
         double t;
         schar *elem0, *elem, *elem2;
-        vector<uchar> buffer;
+        Array<uchar> buffer;
 
         clear();
         test_progress = -1;
@@ -1249,7 +1249,7 @@ int  Core_SetTest::test_set_ops( int iters )
     for( int i = 0; i < struct_count; i++ )
         max_elem_size = MAX( max_elem_size, ((CvSeq*)cxcore_struct[i])->elem_size );
 
-    vector<schar> elem_buf(max_elem_size);
+    Array<schar> elem_buf(max_elem_size);
     Mat elem_mat;
 
     for( iter = 0; iter < iters; iter++ )
@@ -1465,7 +1465,7 @@ int  Core_GraphTest::test_graph_ops( int iters )
         max_elem_size = MAX( max_elem_size, graph->edges->elem_size );
     }
 
-    vector<schar> elem_buf(max_elem_size);
+    Array<schar> elem_buf(max_elem_size);
     Mat elem_mat;
 
     for( iter = 0; iter < iters; iter++ )
@@ -1918,7 +1918,7 @@ void Core_GraphScanTest::run( int )
     try
     {
         RNG& rng = ts->get_rng();
-        vector<uchar> vtx_mask, edge_mask;
+        Array<uchar> vtx_mask, edge_mask;
         double t;
         int i;
 
@@ -2032,16 +2032,16 @@ void Core_GraphScanTest::run( int )
                             CV_TS_SEQ_CHECK_CONDITION( 0, "Invalid code appeared during graph scan" );
                     }
 
-                    ts->printf( alvision.cvtest.TS::LOG, "%s", event );
+                    ts->printf( alvision.cvtest.TSConstants.LOG, "%s", event );
                     if( a >= 0 )
                     {
                         if( b >= 0 )
-                            ts->printf( alvision.cvtest.TS::LOG, ": (%d,%d)", a, b );
+                            ts->printf( alvision.cvtest.TSConstants.LOG, ": (%d,%d)", a, b );
                         else
-                            ts->printf( alvision.cvtest.TS::LOG, ": %d", a );
+                            ts->printf( alvision.cvtest.TSConstants.LOG, ": %d", a );
                     }
 
-                    ts->printf( alvision.cvtest.TS::LOG, "\n" );
+                    ts->printf( alvision.cvtest.TSConstants.LOG, "\n" );
 
                     if( code < 0 )
                         break;

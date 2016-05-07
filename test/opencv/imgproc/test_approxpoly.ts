@@ -183,14 +183,14 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
 
     get_contour( int /*type*/, CvSeq** Seq, int* d,
         CvMemStorage * storage): boolean{
-        RNG & rng = ts ->get_rng();
+        RNG & rng = this.ts.get_rng();
         int max_x = INT_MIN, max_y = INT_MIN, min_x = INT_MAX, min_y = INT_MAX;
         int i;
         CvSeq * seq;
         int total = alvision.cvtest.randInt(rng) % 1000 + 1;
         CvPoint center;
         int radius, angle;
-        double deg_to_rad = CV_PI / 180.;
+        double deg_to_rad = Math.PI / 180.;
         CvPoint pt;
 
         center.x = alvision.cvtest.randInt(rng) % 1000;
@@ -264,15 +264,15 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
                 CV_POLY_APPROX_DP, Eps);
 
             if (DstSeq == NULL) {
-                ts ->printf(alvision.cvtest.TS::LOG,
+                this.ts.printf(alvision.cvtest.TSConstants.LOG,
                     "cvApproxPoly returned NULL for contour #%d, espilon = %g\n", i, Eps);
-                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
                 goto _exit_;
             } // if( DstSeq == NULL )
 
             code = check(SrcSeq, DstSeq, Eps);
             if (code != 0) {
-                ts ->printf(alvision.cvtest.TS::LOG,
+                this.ts.printf(alvision.cvtest.TSConstants.LOG,
                     "Incorrect result for the contour #%d approximated with epsilon=%g\n", i, Eps);
                 code = alvision.cvtest.TS::FAIL_BAD_ACCURACY;
                 goto _exit_;

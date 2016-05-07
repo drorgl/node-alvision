@@ -57,30 +57,30 @@ using namespace cvtest;
 //////////////////////////////////////////////////////////////////////////
 // StereoBM
 
-struct StereoBM : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct StereoBM : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(StereoBM, Regression)
 {
-    cv::Mat left_image  = readImage("stereobm/aloe-L.png", cv::IMREAD_GRAYSCALE);
-    cv::Mat right_image = readImage("stereobm/aloe-R.png", cv::IMREAD_GRAYSCALE);
-    cv::Mat disp_gold   = readImage("stereobm/aloe-disp.png", cv::IMREAD_GRAYSCALE);
+    alvision.Mat left_image  = readImage("stereobm/aloe-L.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+    alvision.Mat right_image = readImage("stereobm/aloe-R.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+    alvision.Mat disp_gold   = readImage("stereobm/aloe-disp.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
 
     ASSERT_FALSE(left_image.empty());
     ASSERT_FALSE(right_image.empty());
     ASSERT_FALSE(disp_gold.empty());
 
-    cv::Ptr<cv::StereoBM> bm = cv::cuda::createStereoBM(128, 19);
-    cv::cuda::GpuMat disp;
+    alvision.Ptr<alvision.StereoBM> bm = alvision.cuda::createStereoBM(128, 19);
+    alvision.cuda::GpuMat disp;
 
     bm->compute(loadMat(left_image), loadMat(right_image), disp);
 
@@ -92,39 +92,39 @@ INSTANTIATE_TEST_CASE_P(CUDA_Stereo, StereoBM, ALL_DEVICES);
 //////////////////////////////////////////////////////////////////////////
 // StereoBeliefPropagation
 
-struct StereoBeliefPropagation : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct StereoBeliefPropagation : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(StereoBeliefPropagation, Regression)
 {
-    cv::Mat left_image  = readImage("stereobp/aloe-L.png");
-    cv::Mat right_image = readImage("stereobp/aloe-R.png");
-    cv::Mat disp_gold   = readImage("stereobp/aloe-disp.png", cv::IMREAD_GRAYSCALE);
+    alvision.Mat left_image  = readImage("stereobp/aloe-L.png");
+    alvision.Mat right_image = readImage("stereobp/aloe-R.png");
+    alvision.Mat disp_gold   = readImage("stereobp/aloe-disp.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
 
     ASSERT_FALSE(left_image.empty());
     ASSERT_FALSE(right_image.empty());
     ASSERT_FALSE(disp_gold.empty());
 
-    cv::Ptr<cv::cuda::StereoBeliefPropagation> bp = cv::cuda::createStereoBeliefPropagation(64, 8, 2, CV_16S);
+    alvision.Ptr<alvision.cuda::StereoBeliefPropagation> bp = alvision.cuda::createStereoBeliefPropagation(64, 8, 2, CV_16S);
     bp->setMaxDataTerm(25.0);
     bp->setDataWeight(0.1);
     bp->setMaxDiscTerm(15.0);
     bp->setDiscSingleJump(1.0);
 
-    cv::cuda::GpuMat disp;
+    alvision.cuda::GpuMat disp;
 
     bp->compute(loadMat(left_image), loadMat(right_image), disp);
 
-    cv::Mat h_disp(disp);
+    alvision.Mat h_disp(disp);
     h_disp.convertTo(h_disp, disp_gold.depth());
 
     EXPECT_MAT_NEAR(disp_gold, h_disp, 0.0);
@@ -135,40 +135,40 @@ INSTANTIATE_TEST_CASE_P(CUDA_Stereo, StereoBeliefPropagation, ALL_DEVICES);
 //////////////////////////////////////////////////////////////////////////
 // StereoConstantSpaceBP
 
-struct StereoConstantSpaceBP : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct StereoConstantSpaceBP : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(StereoConstantSpaceBP, Regression)
 {
-    cv::Mat left_image  = readImage("csstereobp/aloe-L.png");
-    cv::Mat right_image = readImage("csstereobp/aloe-R.png");
+    alvision.Mat left_image  = readImage("csstereobp/aloe-L.png");
+    alvision.Mat right_image = readImage("csstereobp/aloe-R.png");
 
-    cv::Mat disp_gold;
+    alvision.Mat disp_gold;
 
-    if (supportFeature(devInfo, cv::cuda::FEATURE_SET_COMPUTE_20))
-        disp_gold = readImage("csstereobp/aloe-disp.png", cv::IMREAD_GRAYSCALE);
+    if (supportFeature(devInfo, alvision.cuda::FEATURE_SET_COMPUTE_20))
+        disp_gold = readImage("csstereobp/aloe-disp.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
     else
-        disp_gold = readImage("csstereobp/aloe-disp_CC1X.png", cv::IMREAD_GRAYSCALE);
+        disp_gold = readImage("csstereobp/aloe-disp_CC1X.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
 
     ASSERT_FALSE(left_image.empty());
     ASSERT_FALSE(right_image.empty());
     ASSERT_FALSE(disp_gold.empty());
 
-    cv::Ptr<cv::cuda::StereoConstantSpaceBP> csbp = cv::cuda::createStereoConstantSpaceBP(128, 16, 4, 4);
-    cv::cuda::GpuMat disp;
+    alvision.Ptr<alvision.cuda::StereoConstantSpaceBP> csbp = alvision.cuda::createStereoConstantSpaceBP(128, 16, 4, 4);
+    alvision.cuda::GpuMat disp;
 
     csbp->compute(loadMat(left_image), loadMat(right_image), disp);
 
-    cv::Mat h_disp(disp);
+    alvision.Mat h_disp(disp);
     h_disp.convertTo(h_disp, disp_gold.depth());
 
     EXPECT_MAT_NEAR(disp_gold, h_disp, 1.0);
@@ -179,10 +179,10 @@ INSTANTIATE_TEST_CASE_P(CUDA_Stereo, StereoConstantSpaceBP, ALL_DEVICES);
 ////////////////////////////////////////////////////////////////////////////////
 // reprojectImageTo3D
 
-PARAM_TEST_CASE(ReprojectImageTo3D, cv::cuda::DeviceInfo, cv::Size, MatDepth, UseRoi)
+PARAM_TEST_CASE(ReprojectImageTo3D, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     int depth;
     bool useRoi;
 
@@ -193,20 +193,20 @@ PARAM_TEST_CASE(ReprojectImageTo3D, cv::cuda::DeviceInfo, cv::Size, MatDepth, Us
         depth = GET_PARAM(2);
         useRoi = GET_PARAM(3);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(ReprojectImageTo3D, Accuracy)
 {
-    cv::Mat disp = randomMat(size, depth, 5.0, 30.0);
-    cv::Mat Q = randomMat(cv::Size(4, 4), CV_32FC1, 0.1, 1.0);
+    alvision.Mat disp = randomMat(size, depth, 5.0, 30.0);
+    alvision.Mat Q = randomMat(alvision.Size(4, 4), CV_32FC1, 0.1, 1.0);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::reprojectImageTo3D(loadMat(disp, useRoi), dst, Q, 3);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::reprojectImageTo3D(loadMat(disp, useRoi), dst, Q, 3);
 
-    cv::Mat dst_gold;
-    cv::reprojectImageTo3D(disp, dst_gold, Q, false);
+    alvision.Mat dst_gold;
+    alvision.reprojectImageTo3D(disp, dst_gold, Q, false);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
 }

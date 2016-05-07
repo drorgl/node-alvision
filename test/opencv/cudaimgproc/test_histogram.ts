@@ -57,36 +57,36 @@ using namespace cvtest;
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // HistEven
 
-PARAM_TEST_CASE(HistEven, cv::cuda::DeviceInfo, cv::Size)
+PARAM_TEST_CASE(HistEven, alvision.cuda::DeviceInfo, alvision.Size)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
 
     virtual void SetUp()
     {
         devInfo = GET_PARAM(0);
         size = GET_PARAM(1);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(HistEven, Accuracy)
 {
-    cv::Mat src = randomMat(size, CV_8UC1);
+    alvision.Mat src = randomMat(size, CV_8UC1);
 
     int hbins = 30;
     float hranges[] = {50.0f, 200.0f};
 
-    cv::cuda::GpuMat hist;
-    cv::cuda::histEven(loadMat(src), hist, hbins, (int) hranges[0], (int) hranges[1]);
+    alvision.cuda::GpuMat hist;
+    alvision.cuda::histEven(loadMat(src), hist, hbins, (int) hranges[0], (int) hranges[1]);
 
-    cv::Mat hist_gold;
+    alvision.Mat hist_gold;
 
     int histSize[] = {hbins};
     const float* ranges[] = {hranges};
     int channels[] = {0};
-    cv::calcHist(&src, 1, channels, cv::Mat(), hist_gold, 1, histSize, ranges);
+    alvision.calcHist(&src, 1, channels, alvision.Mat(), hist_gold, 1, histSize, ranges);
 
     hist_gold = hist_gold.t();
     hist_gold.convertTo(hist_gold, CV_32S);
@@ -101,29 +101,29 @@ INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, HistEven, testing::Combine(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // CalcHist
 
-PARAM_TEST_CASE(CalcHist, cv::cuda::DeviceInfo, cv::Size)
+PARAM_TEST_CASE(CalcHist, alvision.cuda::DeviceInfo, alvision.Size)
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
-    cv::Size size;
+    alvision.Size size;
 
     virtual void SetUp()
     {
         devInfo = GET_PARAM(0);
         size = GET_PARAM(1);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(CalcHist, Accuracy)
 {
-    cv::Mat src = randomMat(size, CV_8UC1);
+    alvision.Mat src = randomMat(size, CV_8UC1);
 
-    cv::cuda::GpuMat hist;
-    cv::cuda::calcHist(loadMat(src), hist);
+    alvision.cuda::GpuMat hist;
+    alvision.cuda::calcHist(loadMat(src), hist);
 
-    cv::Mat hist_gold;
+    alvision.Mat hist_gold;
 
     const int hbins = 256;
     const float hranges[] = {0.0f, 256.0f};
@@ -131,7 +131,7 @@ CUDA_TEST_P(CalcHist, Accuracy)
     const float* ranges[] = {hranges};
     const int channels[] = {0};
 
-    cv::calcHist(&src, 1, channels, cv::Mat(), hist_gold, 1, histSize, ranges);
+    alvision.calcHist(&src, 1, channels, alvision.Mat(), hist_gold, 1, histSize, ranges);
     hist_gold = hist_gold.reshape(1, 1);
     hist_gold.convertTo(hist_gold, CV_32S);
 
@@ -145,29 +145,29 @@ INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, CalcHist, testing::Combine(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // EqualizeHist
 
-PARAM_TEST_CASE(EqualizeHist, cv::cuda::DeviceInfo, cv::Size)
+PARAM_TEST_CASE(EqualizeHist, alvision.cuda::DeviceInfo, alvision.Size)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
 
     virtual void SetUp()
     {
         devInfo = GET_PARAM(0);
         size = GET_PARAM(1);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(EqualizeHist, Accuracy)
 {
-    cv::Mat src = randomMat(size, CV_8UC1);
+    alvision.Mat src = randomMat(size, CV_8UC1);
 
-    cv::cuda::GpuMat dst;
-    cv::cuda::equalizeHist(loadMat(src), dst);
+    alvision.cuda::GpuMat dst;
+    alvision.cuda::equalizeHist(loadMat(src), dst);
 
-    cv::Mat dst_gold;
-    cv::equalizeHist(src, dst_gold);
+    alvision.Mat dst_gold;
+    alvision.equalizeHist(src, dst_gold);
 
     EXPECT_MAT_NEAR(dst_gold, dst, 3.0);
 }
@@ -184,10 +184,10 @@ namespace
     IMPLEMENT_PARAM_CLASS(ClipLimit, double)
 }
 
-PARAM_TEST_CASE(CLAHE, cv::cuda::DeviceInfo, cv::Size, ClipLimit)
+PARAM_TEST_CASE(CLAHE, alvision.cuda::DeviceInfo, alvision.Size, ClipLimit)
 {
-    cv::cuda::DeviceInfo devInfo;
-    cv::Size size;
+    alvision.cuda::DeviceInfo devInfo;
+    alvision.Size size;
     double clipLimit;
 
     virtual void SetUp()
@@ -196,20 +196,20 @@ PARAM_TEST_CASE(CLAHE, cv::cuda::DeviceInfo, cv::Size, ClipLimit)
         size = GET_PARAM(1);
         clipLimit = GET_PARAM(2);
 
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 };
 
 CUDA_TEST_P(CLAHE, Accuracy)
 {
-    cv::Mat src = randomMat(size, CV_8UC1);
+    alvision.Mat src = randomMat(size, CV_8UC1);
 
-    cv::Ptr<cv::cuda::CLAHE> clahe = cv::cuda::createCLAHE(clipLimit);
-    cv::cuda::GpuMat dst;
+    alvision.Ptr<alvision.cuda::CLAHE> clahe = alvision.cuda::createCLAHE(clipLimit);
+    alvision.cuda::GpuMat dst;
     clahe->apply(loadMat(src), dst);
 
-    cv::Ptr<cv::CLAHE> clahe_gold = cv::createCLAHE(clipLimit);
-    cv::Mat dst_gold;
+    alvision.Ptr<alvision.CLAHE> clahe_gold = alvision.createCLAHE(clipLimit);
+    alvision.Mat dst_gold;
     clahe_gold->apply(src, dst_gold);
 
     ASSERT_MAT_NEAR(dst_gold, dst, 1.0);

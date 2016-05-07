@@ -73,18 +73,18 @@
 
 //        /////////////////////////////////////////////////////////////////////////////
 //        /// Widget rendering properties
-//        enum RenderingProperties
-//        {
-//            POINT_SIZE,
-//            OPACITY,
-//            LINE_WIDTH,
-//            FONT_SIZE,
-//            REPRESENTATION,
-//            IMMEDIATE_RENDERING,
-//            SHADING,
-//            AMBIENT,
-//            LIGHTING
-//        };
+        export enum RenderingProperties
+        {
+            POINT_SIZE,
+            OPACITY,
+            LINE_WIDTH,
+            FONT_SIZE,
+            REPRESENTATION,
+            IMMEDIATE_RENDERING,
+            SHADING,
+            AMBIENT,
+            LIGHTING
+        };
 
 //        enum RepresentationValues
 //        {

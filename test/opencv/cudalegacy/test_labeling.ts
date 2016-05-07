@@ -80,10 +80,10 @@ namespace
             }
         };
 
-        GreedyLabeling(cv::Mat img)
-        : image(img), _labels(image.size(), CV_32SC1, cv::Scalar::all(-1)) {}
+        GreedyLabeling(alvision.Mat img)
+        : image(img), _labels(image.size(), CV_32SC1, alvision.Scalar::all(-1)) {}
 
-        void operator() (cv::Mat labels) const
+        void operator() (alvision.Mat labels) const
         {
             InInterval inInt(0, 2);
             dot* stack = new dot[image.cols * image.rows];
@@ -138,9 +138,9 @@ namespace
             delete[] stack;
         }
 
-        void checkCorrectness(cv::Mat gpu)
+        void checkCorrectness(alvision.Mat gpu)
         {
-            cv::Mat diff = gpu - _labels;
+            alvision.Mat diff = gpu - _labels;
 
             int outliers = 0;
             for (int j = 0; j < image.rows; ++j)
@@ -154,50 +154,50 @@ namespace
             ASSERT_TRUE(outliers < gpu.cols + gpu.rows);
         }
 
-        cv::Mat image;
-        cv::Mat _labels;
+        alvision.Mat image;
+        alvision.Mat _labels;
     };
 }
 
-struct Labeling : testing::TestWithParam<cv::cuda::DeviceInfo>
+struct Labeling : testing::TestWithParam<alvision.cuda::DeviceInfo>
 {
-    cv::cuda::DeviceInfo devInfo;
+    alvision.cuda::DeviceInfo devInfo;
 
     virtual void SetUp()
     {
         devInfo = GetParam();
-        cv::cuda::setDevice(devInfo.deviceID());
+        alvision.cuda::setDevice(devInfo.deviceID());
     }
 
-    cv::Mat loat_image()
+    alvision.Mat loat_image()
     {
-        return cv::imread(std::string( alvision.cvtest.TS::ptr()->get_data_path() ) + "labeling/label.png");
+        return alvision.imread(std::string( alvision.cvtest.TS.ptr().get_data_path() ) + "labeling/label.png");
     }
 };
 
 CUDA_TEST_P(Labeling, DISABLED_ConnectedComponents)
 {
-    cv::Mat image;
-    cvtColor(loat_image(), image, cv::COLOR_BGR2GRAY);
+    alvision.Mat image;
+    cvtColor(loat_image(), image, alvision.COLOR_BGR2GRAY);
 
-    cv::threshold(image, image, 150, 255, cv::THRESH_BINARY);
+    alvision.threshold(image, image, 150, 255, alvision.THRESH_BINARY);
 
     ASSERT_TRUE(image.type() == CV_8UC1);
 
     GreedyLabeling host(image);
     host(host._labels);
 
-    cv::cuda::GpuMat mask;
+    alvision.cuda::GpuMat mask;
     mask.create(image.rows, image.cols, CV_8UC1);
 
-    cv::cuda::GpuMat components;
+    alvision.cuda::GpuMat components;
     components.create(image.rows, image.cols, CV_32SC1);
 
-    cv::cuda::connectivityMask(cv::cuda::GpuMat(image), mask, cv::Scalar::all(0), cv::Scalar::all(2));
+    alvision.cuda::connectivityMask(alvision.cuda::GpuMat(image), mask, alvision.Scalar::all(0), alvision.Scalar::all(2));
 
-    cv::cuda::labelComponents(mask, components);
+    alvision.cuda::labelComponents(mask, components);
 
-    host.checkCorrectness(cv::Mat(components));
+    host.checkCorrectness(alvision.Mat(components));
 }
 
 INSTANTIATE_TEST_CASE_P(CUDA_ConnectedComponents, Labeling, ALL_DEVICES);

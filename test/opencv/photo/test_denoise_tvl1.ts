@@ -50,84 +50,84 @@ import fs = require('fs');
 
 //#include "test_precomp.hpp"
 
-void make_noisy(const cv::Mat& img, cv::Mat& noisy, double sigma, double pepper_salt_ratio,cv::RNG& rng)
+function make_noisy(img : alvision.Mat, noisy : alvision.Mat, sigma : alvision.double, pepper_salt_ratio : alvision.double ,  rng : alvision.RNG) : void
 {
     noisy.create(img.size(), img.type());
-    cv::Mat noise(img.size(), img.type()), mask(img.size(), CV_8U);
-    rng.fill(noise,cv::RNG::NORMAL,128.0,sigma);
-    cv::addWeighted(img, 1, noise, 1, -128, noisy);
-    cv::randn(noise, cv::Scalar::all(0), cv::Scalar::all(2));
+    alvision.Mat noise(img.size(), img.type()), mask(img.size(), CV_8U);
+    rng.fill(noise,alvision.RNG::NORMAL,128.0,sigma);
+    alvision.addWeighted(img, 1, noise, 1, -128, noisy);
+    alvision.randn(noise, alvision.Scalar::all(0), alvision.Scalar::all(2));
     noise *= 255;
-    cv::randu(mask, 0, cvRound(1./pepper_salt_ratio));
-    cv::Mat half = mask.colRange(0, img.cols/2);
-    half = cv::Scalar::all(1);
+    alvision.randu(mask, 0, cvRound(1./pepper_salt_ratio));
+    alvision.Mat half = mask.colRange(0, img.cols/2);
+    half = alvision.Scalar::all(1);
     noise.setTo(128, mask);
-    cv::addWeighted(noisy, 1, noise, 1, -128, noisy);
+    alvision.addWeighted(noisy, 1, noise, 1, -128, noisy);
 }
 
-void make_spotty(cv::Mat& img,cv::RNG& rng, int r=3,int n=1000)
+function make_spotty(img: alvision.Mat, rng: alvision.RNG, r: alvision.int = 3, n: alvision.int = 1000): void
 {
-    for(int i=0;i<n;i++)
+    for(var i=0;i<n;i++)
     {
-        int x=rng(img.cols-r),y=rng(img.rows-r);
+        var x=rng(img.cols-r),y=rng(img.rows-r);
         if(rng(2)==0)
-            img(cv::Range(y,y+r),cv::Range(x,x+r))=(uchar)0;
+            img(alvision.Range(y,y+r),alvision.Range(x,x+r))=(uchar)0;
         else
-            img(cv::Range(y,y+r),cv::Range(x,x+r))=(uchar)255;
+            img(alvision.Range(y,y+r),alvision.Range(x,x+r))=(uchar)255;
     }
 }
 
-bool validate_pixel(const cv::Mat& image,int x,int y,uchar val)
+function validate_pixel(image: const alvision.Mat, x: alvision.int, y: alvision.int, val: alvision.uchar ): boolean;
 {
-    bool ok = std::abs(image.at<uchar>(x,y) - val) < 10;
+    var ok = Math.abs(image.atGet<uchar>("uchar",x,y) - val) < 10;
     printf("test: image(%d,%d)=%d vs %d - %s\n",x,y,(int)image.at<uchar>(x,y),val,ok?"ok":"bad");
     return ok;
 }
 
-TEST(Optim_denoise_tvl1, regression_basic)
+alvision.cvtest.TEST('Optim_denoise_tvl1', 'regression_basic',()=>
 {
-    cv::RNG rng(42);
-    cv::Mat img = cv::imread(alvision.cvtest.TS::ptr()->get_data_path() + "shared/lena.png", 0), noisy, res;
+    var rng = new alvision.RNG (42);
+    var img = alvision.imread(alvision.cvtest.TS.ptr().get_data_path() + "shared/lena.png", 0), noisy = new alvision.Mat(), res = new alvision.Mat();
 
-    ASSERT_FALSE(img.empty()) << "Error: can't open 'lena.png'";
+    alvision.ASSERT_FALSE(img.empty(),  "Error: can't open 'lena.png'";
 
-    const int obs_num=5;
-    std::vector<cv::Mat> images(obs_num, cv::Mat());
+    const obs_num=5;
+    std::Array<alvision.Mat> images(obs_num, alvision.Mat());
     for(int i=0;i<(int)images.size();i++)
     {
         make_noisy(img,images[i], 20, 0.02,rng);
         //make_spotty(images[i],rng);
     }
 
-    //cv::imshow("test", images[0]);
-    cv::denoise_TVL1(images, res);
-    //cv::imshow("denoised", res);
-    //cv::waitKey();
+    //alvision.imshow("test", images[0]);
+    alvision.denoise_TVL1(images, res);
+    //alvision.imshow("denoised", res);
+    //alvision.waitKey();
 
-#if 0
-    ASSERT_TRUE(validate_pixel(res,248,334,179));
-    ASSERT_TRUE(validate_pixel(res,489,333,172));
-    ASSERT_TRUE(validate_pixel(res,425,507,104));
-    ASSERT_TRUE(validate_pixel(res,489,486,105));
-    ASSERT_TRUE(validate_pixel(res,223,208,64));
-    ASSERT_TRUE(validate_pixel(res,418,3,78));
-    ASSERT_TRUE(validate_pixel(res,63,76,97));
-    ASSERT_TRUE(validate_pixel(res,29,134,126));
-    ASSERT_TRUE(validate_pixel(res,219,291,174));
-    ASSERT_TRUE(validate_pixel(res,384,124,76));
-#endif
+//#if 0
+    alvision.ASSERT_TRUE(validate_pixel(res,248,334,179));
+    alvision.ASSERT_TRUE(validate_pixel(res,489,333,172));
+    alvision.ASSERT_TRUE(validate_pixel(res,425,507,104));
+    alvision.ASSERT_TRUE(validate_pixel(res,489,486,105));
+    alvision.ASSERT_TRUE(validate_pixel(res,223,208,64));
+    alvision.ASSERT_TRUE(validate_pixel(res,418,3,78));
+    alvision.ASSERT_TRUE(validate_pixel(res,63,76,97));
+    alvision.ASSERT_TRUE(validate_pixel(res,29,134,126));
+    alvision.ASSERT_TRUE(validate_pixel(res,219,291,174));
+    alvision.ASSERT_TRUE(validate_pixel(res,384,124,76));
+//#endif
+//
+//#if 1
+    alvision.ASSERT_TRUE(validate_pixel(res,248,334,194));
+    alvision.ASSERT_TRUE(validate_pixel(res,489,333,171));
+    alvision.ASSERT_TRUE(validate_pixel(res,425,507,103));
+    alvision.ASSERT_TRUE(validate_pixel(res,489,486,109));
+    alvision.ASSERT_TRUE(validate_pixel(res,223,208,72));
+    alvision.ASSERT_TRUE(validate_pixel(res,418,3,58));
+    alvision.ASSERT_TRUE(validate_pixel(res,63,76,93));
+    alvision.ASSERT_TRUE(validate_pixel(res,29,134,127));
+    alvision.ASSERT_TRUE(validate_pixel(res,219,291,180));
+    alvision.ASSERT_TRUE(validate_pixel(res,384,124,80));
+//#endif
 
-#if 1
-    ASSERT_TRUE(validate_pixel(res,248,334,194));
-    ASSERT_TRUE(validate_pixel(res,489,333,171));
-    ASSERT_TRUE(validate_pixel(res,425,507,103));
-    ASSERT_TRUE(validate_pixel(res,489,486,109));
-    ASSERT_TRUE(validate_pixel(res,223,208,72));
-    ASSERT_TRUE(validate_pixel(res,418,3,58));
-    ASSERT_TRUE(validate_pixel(res,63,76,93));
-    ASSERT_TRUE(validate_pixel(res,29,134,127));
-    ASSERT_TRUE(validate_pixel(res,219,291,180));
-    ASSERT_TRUE(validate_pixel(res,384,124,80));
-#endif
-
-}
+});

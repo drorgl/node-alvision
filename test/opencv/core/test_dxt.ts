@@ -5,19 +5,19 @@ import async = require("async");
 import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
-
-#include "test_precomp.hpp"
-
-using namespace cv;
-using namespace std;
+//
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
 namespace cvtest
 {
 
-static Mat initDFTWave( int n, bool inv )
+function initDFTWave(  n : alvision.int,  inv : boolean ) : alvision.Mat
 {
-    int i;
-    double angle = (inv ? 1 : -1)*CV_PI*2/n;
+    var i;
+    var angle = (inv ? 1 : -1)*Math.PI*2/n;
     Complexd wi, w1;
     Mat wave(1, n, CV_64FC2);
     Complexd* w = wave.ptr<Complexd>();
@@ -145,7 +145,7 @@ static void DFT_2D( const Mat& src, Mat& dst, int flags )
 static Mat initDCTWave( int n, bool inv )
 {
     int i, k;
-    double angle = CV_PI*0.5/n;
+    double angle = Math.PI*0.5/n;
     Mat wave(n, n, CV_64F);
 
     double scale = sqrt(1./n);
@@ -157,7 +157,7 @@ static Mat initDCTWave( int n, bool inv )
             wave.at<double>(i, k) = scale*cos( angle*i*(2*k + 1) );
 
     if( inv )
-        cv::transpose( wave, wave );
+        alvision.transpose( wave, wave );
 
     return wave;
 }
@@ -507,7 +507,7 @@ public:
                         bool _spectrum_mode=false );
 protected:
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     double get_success_error_level( int /*test_case_idx*/, int /*i*/, int /*j*/ );
     int flags; // transformation flags
     bool allow_complex; // whether input/output may be complex or not:
@@ -539,8 +539,8 @@ spectrum_mode(_spectrum_mode), inplace(false), temp_dst(false)
 
 
 void CxCore_DXTBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                         vector<vector<Size> >& sizes,
-                                                         vector<vector<int> >& types )
+                                                         Array<Array<Size> >& sizes,
+                                                         Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int bits = alvision.cvtest.randInt(rng);
@@ -695,9 +695,9 @@ void CxCore_DFTTest::run_func()
     const Mat& src = inplace ? dst : test_mat[INPUT][0];
 
     if(!(flags & CV_DXT_INVERSE))
-        cv::dft( src, dst, flags );
+        alvision.dft( src, dst, flags );
     else
-        cv::idft(src, dst, flags & ~CV_DXT_INVERSE);
+        alvision.idft(src, dst, flags & ~CV_DXT_INVERSE);
 }
 
 
@@ -760,9 +760,9 @@ void CxCore_DCTTest::run_func()
     const Mat& src = inplace ? dst : test_mat[INPUT][0];
 
     if(!(flags & CV_DXT_INVERSE))
-        cv::dct( src, dst, flags );
+        alvision.dct( src, dst, flags );
     else
-        cv::idct( src, dst, flags & ~CV_DXT_INVERSE);
+        alvision.idct( src, dst, flags & ~CV_DXT_INVERSE);
 }
 
 
@@ -808,7 +808,7 @@ void CxCore_MulSpectrumsTest::run_func()
             src1 = &dst;
     }
 
-    cv::mulSpectrums( *src1, *src2, dst, flags, (flags & CV_DXT_MUL_CONJ) != 0 );
+    alvision.mulSpectrums( *src1, *src2, dst, flags, (flags & CV_DXT_MUL_CONJ) != 0 );
 }
 
 

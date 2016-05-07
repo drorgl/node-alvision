@@ -648,7 +648,7 @@ TEST_P(Imgproc_ColorYUV, accuracy)
         else if(cvt.yuvWriter_)
             referenceRGB2YUV<RGB2YUV_Converter>  (src, gold, cvt.rgbReader_, cvt.yuvWriter_);
 
-        cv::cvtColor(src, dst, code, -1);
+        alvision.cvtColor(src, dst, code, -1);
 
         EXPECT_EQ(0, countOfDifferencies(gold, dst));
     }
@@ -695,7 +695,7 @@ TEST_P(Imgproc_ColorYUV, roi_accuracy)
         else if(cvt.yuvWriter_)
             referenceRGB2YUV<RGB2YUV_Converter>  (src, gold, cvt.rgbReader_, cvt.yuvWriter_);
 
-        cv::cvtColor(src, dst, code, -1);
+        alvision.cvtColor(src, dst, code, -1);
 
         EXPECT_EQ(0, countOfDifferencies(gold_full, dst_full));
     }

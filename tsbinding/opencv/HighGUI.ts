@@ -49,6 +49,7 @@ import * as _st from './static'
 import * as _types from './types'
 import * as _core from './core'
 import * as _base from './base'
+import * as _opengl from './core/opengl';
 //import * as _vec from './Vec'
 //import * as _point from './Point'
 //import * as _algorithm from './Algorithm'
@@ -690,7 +691,7 @@ export var setTrackbarMin: IsetTrackbarMin = alvision_module.setTrackbarMin;
     @param tex OpenGL 2D texture data.
      */
 interface Iimshow {
-    (winname : string,tex : ogl.Texture2D): void;
+    (winname: string, tex: _opengl.ogl.Texture2D): void;
 }
 export var imshow: Iimshow = alvision_module.imshow;
 //    CV_EXPORTS void imshow(const String& winname, const ogl::Texture2D& tex);

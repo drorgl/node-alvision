@@ -39,12 +39,12 @@ void tutorial2()
     {
         /* Rotation using rodrigues */
         /// Rotate around (1,1,1)
-        rot_vec[0] += CV_PI * 0.01;
-        rot_vec[1] += CV_PI * 0.01;
-        rot_vec[2] += CV_PI * 0.01;
+        rot_vec[0] += Math.PI * 0.01;
+        rot_vec[1] += Math.PI * 0.01;
+        rot_vec[2] += Math.PI * 0.01;
 
         /// Shift on (1,1,1)
-        translation_phase += CV_PI * 0.01;
+        translation_phase += Math.PI * 0.01;
         translation = sin(translation_phase);
 
         /// Construct pose

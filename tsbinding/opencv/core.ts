@@ -771,9 +771,9 @@ export var meanStdDev: ImeanStdDev = alvision_module.meanStdDev;
     */
 
 interface Inorm {
-    (src1: _st.InputArray, normType: _st.int /* = NORM_L2*/, mask: _st.InputArray /* = noArray()*/): _st.double;
-    (src1: _st.InputArray, src2: _st.InputArray, normType: _st.int /* = NORM_L2*/, mask: _st.InputArray /* = noArray()*/): _st.double;
-    (src: _mat.SparseMat, normType: _st.int): _st.double;
+    (src1: _st.InputArray, normType: _base.NormTypes /* = NORM_L2*/, mask: _st.InputArray /* = noArray()*/): _st.double;
+    (src1: _st.InputArray, src2: _st.InputArray, normType: _base.NormTypes /* = NORM_L2*/, mask?: _st.InputArray /* = noArray()*/): _st.double;
+    (src: _mat.SparseMat, normType: _base.NormTypes): _st.double;
 }
 
 export var norm: Inorm = alvision_module.norm;

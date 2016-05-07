@@ -784,7 +784,7 @@ public:
     protected:
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
         types: Array<Array<alvision.int>>): void {
-        RNG & rng = ts ->get_rng();
+        RNG & rng = this.ts.get_rng();
         int bits = alvision.cvtest.randInt(rng);
         int depth, cn, mattype;
         Core_MatrixTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
@@ -845,7 +845,7 @@ function cvTsPerspectiveTransform( const CvArr* _src, CvArr* _dst, const CvMat* 
 
     // transform data
     cols = a->cols * cn;
-    vector<double> buf(cols);
+    Array<double> buf(cols);
 
     for( i = 0; i < a->rows; i++ )
     {
@@ -930,7 +930,7 @@ public:
     protected:
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
         types: Array<Array<alvision.int>>): void {
-        RNG & rng = ts ->get_rng();
+        RNG & rng = this.ts.get_rng();
         Core_MatrixTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
         if (alvision.cvtest.randInt(rng) & 1 )
@@ -994,7 +994,7 @@ class Core_CovarMatrixTest extends Core_MatrixTest
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
         types: Array<Array<alvision.int>>): void {
 
-        RNG & rng = ts ->get_rng();
+        RNG & rng = this.ts.get_rng();
         int bits = alvision.cvtest.randInt(rng);
         int i, single_matrix;
         Core_MatrixTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
@@ -1107,7 +1107,7 @@ class Core_CovarMatrixTest extends Core_MatrixTest
     }
 
     Mat & temp0 = test_mat[TEMP][0];
-    cv::repeat(avg, temp0.rows / avg.rows, temp0.cols / avg.cols, temp0);
+    alvision.repeat(avg, temp0.rows / avg.rows, temp0.cols / avg.cols, temp0);
     alvision.cvtest.add(test_mat[INPUT][0], 1, temp0, -1, Scalar::all(0), temp0, temp0.type());
 
     alvision.cvtest.gemm(temp0, temp0, scale, Mat(), 0., test_mat[REF_OUTPUT][0],
@@ -1116,8 +1116,8 @@ class Core_CovarMatrixTest extends Core_MatrixTest
     }
 
 
-    vector<void*> temp_hdrs;
-    vector<uchar> hdr_data;
+    Array<void*> temp_hdrs;
+    Array<uchar> hdr_data;
     int flags, t_flag, len, count;
     bool are_images;
 };
@@ -1176,7 +1176,7 @@ public:
     int prepare_test_case(int test_case_idx ){
     int code = Core_MatrixTest::prepare_test_case(test_case_idx);
     if (code > 0)
-        cvTsFloodWithZeros(test_mat[INPUT][0], ts ->get_rng());
+        cvTsFloodWithZeros(test_mat[INPUT][0], this.ts.get_rng());
 
     return code;
     }
@@ -1301,7 +1301,7 @@ public:
     Core_InvertTest();
 protected:
 get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
-    RNG & rng = ts ->get_rng();
+    RNG & rng = this.ts.get_rng();
     int bits = alvision.cvtest.randInt(rng);
     Base::get_test_array_types_and_sizes(test_case_idx, sizes, types);
     int min_size = MIN(sizes[INPUT][0].width, sizes[INPUT][0].height);
@@ -1337,7 +1337,7 @@ get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<a
     int prepare_test_case(int test_case_idx ){
     int code = Core_MatrixTest::prepare_test_case(test_case_idx);
     if (code > 0) {
-        cvTsFloodWithZeros(test_mat[INPUT][0], ts ->get_rng());
+        cvTsFloodWithZeros(test_mat[INPUT][0], this.ts.get_rng());
 
         if (method == CV_CHOLESKY) {
             alvision.cvtest.gemm(test_mat[INPUT][0], test_mat[INPUT][0], 1.,
@@ -1376,7 +1376,7 @@ get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<a
     else
         alvision.cvtest.gemm(input, temp0, 1., Mat(), 0., dst, 0);
 
-    cv::setIdentity(dst0, Scalar::all(1));
+    alvision.setIdentity(dst0, Scalar::all(1));
     }
     int method, rank;
     double result;
@@ -1427,7 +1427,7 @@ class Core_SolveTest extends Core_MatrixTest
 
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
 
-        RNG & rng = ts ->get_rng();
+        RNG & rng = this.ts.get_rng();
         int bits = alvision.cvtest.randInt(rng);
         Base::get_test_array_types_and_sizes(test_case_idx, sizes, types);
         CvSize in_sz = sizes[INPUT][0];
@@ -1532,7 +1532,7 @@ protected:
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void run_func();
     void prepare_to_validation( int test_case_idx );
     int flags;
@@ -1553,7 +1553,7 @@ flags(0), have_u(false), have_v(false), symmetric(false), compact(false), vector
 }
 
 
-void Core_SVDTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes, vector<vector<int> >& types )
+void Core_SVDTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int bits = alvision.cvtest.randInt(rng);
@@ -1685,7 +1685,7 @@ void Core_SVDTest::prepare_to_validation( int /*test_case_idx*/ )
         src = &test_mat[TEMP][1];
         dst = &test_mat[OUTPUT][1];
         alvision.cvtest.gemm( *src, *src, 1., Mat(), 0., *dst, src->rows == dst->rows ? CV_GEMM_B_T : CV_GEMM_A_T );
-        cv::setIdentity( test_mat[REF_OUTPUT][1], Scalar::all(1.) );
+        alvision.setIdentity( test_mat[REF_OUTPUT][1], Scalar::all(1.) );
     }
 
     if( have_v )
@@ -1693,7 +1693,7 @@ void Core_SVDTest::prepare_to_validation( int /*test_case_idx*/ )
         src = &test_mat[TEMP][2];
         dst = &test_mat[OUTPUT][2];
         alvision.cvtest.gemm( *src, *src, 1., Mat(), 0., *dst, src->rows == dst->rows ? CV_GEMM_B_T : CV_GEMM_A_T );
-        cv::setIdentity( test_mat[REF_OUTPUT][2], Scalar::all(1.) );
+        alvision.setIdentity( test_mat[REF_OUTPUT][2], Scalar::all(1.) );
     }
 
     w = &test_mat[TEMP][0];
@@ -1762,7 +1762,7 @@ protected:
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
-    int prepare_test_case( int test_case_idx );
+    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     void run_func();
     void prepare_to_validation( int test_case_idx );
     int flags;
@@ -1780,8 +1780,8 @@ flags(0), have_b(false), symmetric(false), compact(false), vector_w(false)
 }
 
 
-void Core_SVBkSbTest::get_test_array_types_and_sizes( int test_case_idx, vector<vector<Size> >& sizes,
-                                                      vector<vector<int> >& types )
+void Core_SVBkSbTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes,
+                                                      Array<Array<int> >& types )
 {
     RNG& rng = ts->get_rng();
     int bits = alvision.cvtest.randInt(rng);
@@ -1895,7 +1895,7 @@ void Core_SVBkSbTest::prepare_to_validation( int )
     CvMat _w = w, _wdb = wdb;
     // use exactly the same threshold as in icvSVD... ,
     // so the changes in the library and here should be synchronized.
-    double threshold = cv::sum(w)[0]*(DBL_EPSILON*2);//(is_float ? FLT_EPSILON*10 : DBL_EPSILON*2);
+    double threshold = alvision.sum(w)[0]*(DBL_EPSILON*2);//(is_float ? FLT_EPSILON*10 : DBL_EPSILON*2);
 
     wdb = Scalar::all(0);
     for( i = 0; i < min_size; i++ )
@@ -1975,8 +1975,8 @@ void Core_SolvePolyTest::run( int )
     {
         progress = update_progress(progress, idx-1, max_idx, 0);
         int n = alvision.cvtest.randInt(rng) % 13 + 1;
-        std::vector<complex_type> r(n), ar(n), c(n + 1, 0);
-        std::vector<double> a(n + 1), u(n * 2), ar1(n), ar2(n);
+        std::Array<complex_type> r(n), ar(n), c(n + 1, 0);
+        std::Array<double> a(n + 1), u(n * 2), ar1(n), ar2(n);
 
         int rr_odds = 3; // odds that we get a real root
         for (int j = 0; j < n;)
@@ -2031,13 +2031,13 @@ void Core_SolvePolyTest::run( int )
             if( n == 3 )
             {
                 ar2.resize(n);
-                cv::Mat _umat2(3, 1, CV_64F, &ar2[0]), umat2 = _umat2;
+                alvision.Mat _umat2(3, 1, CV_64F, &ar2[0]), umat2 = _umat2;
                 cvFlip(&amat, &amat, 0);
                 int nr2;
                 if( cubic_case == 0 )
-                    nr2 = cv::solveCubic(cv::cvarrToMat(&amat),umat2);
+                    nr2 = alvision.solveCubic(alvision.cvarrToMat(&amat),umat2);
                 else
-                    nr2 = cv::solveCubic(cv::Mat_<float>(cv::cvarrToMat(&amat)), umat2);
+                    nr2 = alvision.solveCubic(alvision.Mat_<float>(alvision.cvarrToMat(&amat)), umat2);
                 cvFlip(&amat, &amat, 0);
                 if(nr2 > 0)
                     std::sort(ar2.begin(), ar2.begin()+nr2, pred_double());
@@ -2074,18 +2074,18 @@ void Core_SolvePolyTest::run( int )
 
         if (!pass)
         {
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
-            ts->printf( alvision.cvtest.TS::LOG, "too big diff = %g\n", div );
+            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
+            ts->printf( alvision.cvtest.TSConstants.LOG, "too big diff = %g\n", div );
 
             for (size_t j=0;j<ar2.size();++j)
-                ts->printf( alvision.cvtest.TS::LOG, "ar2[%d]=%g\n", j, ar2[j]);
-            ts->printf(alvision.cvtest.TS::LOG, "\n");
+                ts->printf( alvision.cvtest.TSConstants.LOG, "ar2[%d]=%g\n", j, ar2[j]);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "\n");
 
             for (size_t j=0;j<r.size();++j)
-                ts->printf( alvision.cvtest.TS::LOG, "r[%d]=(%g, %g)\n", j, r[j].real(), r[j].imag());
-            ts->printf( alvision.cvtest.TS::LOG, "\n" );
+                ts->printf( alvision.cvtest.TSConstants.LOG, "r[%d]=(%g, %g)\n", j, r[j].real(), r[j].imag());
+            ts->printf( alvision.cvtest.TSConstants.LOG, "\n" );
             for (size_t j=0;j<ar.size();++j)
-                ts->printf( alvision.cvtest.TS::LOG, "ar[%d]=(%g, %g)\n", j, ar[j].real(), ar[j].imag());
+                ts->printf( alvision.cvtest.TSConstants.LOG, "ar[%d]=(%g, %g)\n", j, ar[j].real(), ar[j].imag());
             break;
         }
     }
@@ -2158,26 +2158,26 @@ protected:
         int outOfRangeCount = countNonZero((resInDeg > 360) | (resInDeg < 0));
         if(outOfRangeCount > 0)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "There are result angles that are out of range [0, 360] (part of them is %f)\n",
+            ts->printf(alvision.cvtest.TSConstants.LOG, "There are result angles that are out of range [0, 360] (part of them is %f)\n",
                        static_cast<float>(outOfRangeCount)/resInDeg.total());
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
         }
 
         Mat diff = abs(anglesInDegrees - resInDeg);
         size_t errDegCount = diff.total() - countNonZero((diff < maxAngleDiff) | ((360 - diff) < maxAngleDiff));
         if(errDegCount > 0)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "There are incorrect result angles (in degrees) (part of them is %f)\n",
+            ts->printf(alvision.cvtest.TSConstants.LOG, "There are incorrect result angles (in degrees) (part of them is %f)\n",
                        static_cast<float>(errDegCount)/resInDeg.total());
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
         }
 
-        Mat convertedRes = resInRad * 180. / CV_PI;
+        Mat convertedRes = resInRad * 180. / Math.PI;
         double normDiff = alvision.cvtest.norm(convertedRes - resInDeg, NORM_INF);
         if(normDiff > FLT_EPSILON * 180.)
         {
-            ts->printf(alvision.cvtest.TS::LOG, "There are incorrect result angles (in radians)\n");
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_INVALID_OUTPUT);
+            ts->printf(alvision.cvtest.TSConstants.LOG, "There are incorrect result angles (in radians)\n");
+            this.ts.set_failed_test_info(alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT);
         }
 
         this.ts.set_failed_test_info(alvision.cvtest.TS::OK);
@@ -2195,8 +2195,8 @@ protected:
 
 void Core_CheckRange_Empty::run( int )
 {
-    cv::Mat m;
-    ASSERT_TRUE( cv::checkRange(m) );
+    alvision.Mat m;
+    ASSERT_TRUE( alvision.checkRange(m) );
 }
 
 alvision.cvtest.TEST(Core_CheckRange_Empty, accuracy) { Core_CheckRange_Empty test; test.safe_run(); }
@@ -2212,9 +2212,9 @@ protected:
 
 void Core_CheckRange_INT_MAX::run( int )
 {
-    cv::Mat m(3, 3, CV_32SC1, cv::Scalar(INT_MAX));
-    ASSERT_FALSE( cv::checkRange(m, true, 0, 0, INT_MAX) );
-    ASSERT_TRUE( cv::checkRange(m) );
+    alvision.Mat m(3, 3, CV_32SC1, alvision.Scalar(INT_MAX));
+    ASSERT_FALSE( alvision.checkRange(m, true, 0, 0, INT_MAX) );
+    ASSERT_TRUE( alvision.checkRange(m) );
 }
 
 TEST(Core_CheckRange_INT_MAX, accuracy) { Core_CheckRange_INT_MAX test; test.safe_run(); }
@@ -2229,9 +2229,9 @@ TYPED_TEST_P(Core_CheckRange, Negative)
     double max_bound = 16.0;
 
     TypeParam data[] = {5, 10, 15, 4, 10, 2, 8, 12, 14};
-    cv::Mat src = cv::Mat(3,3, cv::DataDepth<TypeParam>::value, data);
+    alvision.Mat src = alvision.Mat(3,3, alvision.DataDepth<TypeParam>::value, data);
 
-    cv::Point bad_pt(0, 0);
+    alvision.Point bad_pt(0, 0);
 
     ASSERT_FALSE(checkRange(src, true, &bad_pt, min_bound, max_bound));
     ASSERT_EQ(bad_pt.x, 0);
@@ -2244,9 +2244,9 @@ TYPED_TEST_P(Core_CheckRange, Positive)
     double max_bound = 16.0;
 
     TypeParam data[] = {5, 10, 15, 4, 10, 2, 8, 12, 14};
-    cv::Mat src = cv::Mat(3,3, cv::DataDepth<TypeParam>::value, data);
+    alvision.Mat src = alvision.Mat(3,3, alvision.DataDepth<TypeParam>::value, data);
 
-    cv::Point bad_pt(0, 0);
+    alvision.Point bad_pt(0, 0);
 
     ASSERT_TRUE(checkRange(src, true, &bad_pt, min_bound, max_bound));
     ASSERT_EQ(bad_pt.x, 0);
@@ -2259,9 +2259,9 @@ TYPED_TEST_P(Core_CheckRange, Bounds)
     double max_bound = 1.0;
 
     TypeParam data[] = {5, 10, 15, 4, 10, 2, 8, 12, 14};
-    cv::Mat src = cv::Mat(3,3, cv::DataDepth<TypeParam>::value, data);
+    alvision.Mat src = alvision.Mat(3,3, alvision.DataDepth<TypeParam>::value, data);
 
-    cv::Point bad_pt(0, 0);
+    alvision.Point bad_pt(0, 0);
 
     ASSERT_FALSE(checkRange(src, true, &bad_pt, min_bound, max_bound));
     ASSERT_EQ(bad_pt.x, 0);
@@ -2273,10 +2273,10 @@ TYPED_TEST_P(Core_CheckRange, Zero)
     double min_bound = 0.0;
     double max_bound = 0.1;
 
-    cv::Mat src1 = cv::Mat::zeros(3, 3, cv::DataDepth<TypeParam>::value);
+    alvision.Mat src1 = alvision.Mat::zeros(3, 3, alvision.DataDepth<TypeParam>::value);
 
     int sizes[] = {5, 6, 7};
-    cv::Mat src2 = cv::Mat::zeros(3, sizes, cv::DataDepth<TypeParam>::value);
+    alvision.Mat src2 = alvision.Mat::zeros(3, sizes, alvision.DataDepth<TypeParam>::value);
 
     ASSERT_TRUE( checkRange(src1, true, NULL, min_bound, max_bound) );
     ASSERT_TRUE( checkRange(src2, true, NULL, min_bound, max_bound) );
@@ -2287,10 +2287,10 @@ TYPED_TEST_P(Core_CheckRange, One)
     double min_bound = 1.0;
     double max_bound = 1.1;
 
-    cv::Mat src1 = cv::Mat::ones(3, 3, cv::DataDepth<TypeParam>::value);
+    alvision.Mat src1 = alvision.Mat::ones(3, 3, alvision.DataDepth<TypeParam>::value);
 
     int sizes[] = {5, 6, 7};
-    cv::Mat src2 = cv::Mat::ones(3, sizes, cv::DataDepth<TypeParam>::value);
+    alvision.Mat src2 = alvision.Mat::ones(3, sizes, alvision.DataDepth<TypeParam>::value);
 
     ASSERT_TRUE( checkRange(src1, true, NULL, min_bound, max_bound) );
     ASSERT_TRUE( checkRange(src2, true, NULL, min_bound, max_bound) );
@@ -2303,16 +2303,16 @@ INSTANTIATE_TYPED_TEST_CASE_P(Negative_Test, Core_CheckRange, mat_data_types);
 
 alvision.cvtest.TEST('Core_Invert', 'small',()=>
 {
-    cv::Mat a = (cv::Mat_<float>(3,3) << 2.42104644730331, 1.81444796521479, -3.98072565304758, 0, 7.08389214348967e-3, 5.55326770986007e-3, 0,0, 7.44556154284261e-3);
-    //cv::randu(a, -1, 1);
+    alvision.Mat a = (alvision.Mat_<float>(3,3) << 2.42104644730331, 1.81444796521479, -3.98072565304758, 0, 7.08389214348967e-3, 5.55326770986007e-3, 0,0, 7.44556154284261e-3);
+    //alvision.randu(a, -1, 1);
 
-    cv::Mat b = a.t()*a;
-    cv::Mat c, i = Mat_<float>::eye(3, 3);
-    cv::invert(b, c, cv::DECOMP_LU); //std::cout << b*c << std::endl;
+    alvision.Mat b = a.t()*a;
+    alvision.Mat c, i = Mat_<float>::eye(3, 3);
+    alvision.invert(b, c, alvision.DECOMP_LU); //std::cout << b*c << std::endl;
     ASSERT_LT( alvision.cvtest.norm(b*c, i, CV_C), 0.1 );
-    cv::invert(b, c, cv::DECOMP_SVD); //std::cout << b*c << std::endl;
+    alvision.invert(b, c, alvision.DECOMP_SVD); //std::cout << b*c << std::endl;
     ASSERT_LT( alvision.cvtest.norm(b*c, i, CV_C), 0.1 );
-    cv::invert(b, c, cv::DECOMP_CHOLESKY); //std::cout << b*c << std::endl;
+    alvision.invert(b, c, alvision.DECOMP_CHOLESKY); //std::cout << b*c << std::endl;
     ASSERT_LT( alvision.cvtest.norm(b*c, i, CV_C), 0.1 );
 });
 
@@ -2400,10 +2400,10 @@ class CV_KMeansSingularTest extends alvision. cvtest.BaseTest
                 {
                     dims = 2;
 
-                    std::vector<cv::Point2f> data0(N0);
+                    std::Array<alvision.Point2f> data0(N0);
                     rng.fill(data0, RNG::UNIFORM, -1, 1);
 
-                    std::vector<cv::Point2f> data(N);
+                    std::Array<alvision.Point2f> data(N);
                     for( i = 0; i < N; i++ )
                         data[i] = data0[rng.uniform(0, N0)];
 
@@ -2469,7 +2469,7 @@ class CV_KMeansSingularTest extends alvision. cvtest.BaseTest
         }
         catch(...)
         {
-            ts->printf(alvision.cvtest.TS::LOG,
+            ts->printf(alvision.cvtest.TSConstants.LOG,
                        "context: iteration=%d, N=%d, N0=%d, K=%d\n",
                        iter, N, N0, K);
             std::cout << labels << std::endl;
@@ -2495,66 +2495,66 @@ INSTANTIATE_TEST_CASE_P(AllVariants, Core_KMeans_InputVariants, KMeansInputVaria
 alvision.cvtest.TEST('CovariationMatrixVectorOfMat', 'accuracy',()=>
 {
     unsigned int col_problem_size = 8, row_problem_size = 8, vector_size = 16;
-    cv::Mat src(vector_size, col_problem_size * row_problem_size, CV_32F);
+    alvision.Mat src(vector_size, col_problem_size * row_problem_size, CV_32F);
     int singleMatFlags = CV_COVAR_ROWS;
 
-    cv::Mat gold;
-    cv::Mat goldMean;
-    cv::randu(src,cv::Scalar(-128), cv::Scalar(128));
-    cv::calcCovarMatrix(src,gold,goldMean,singleMatFlags,CV_32F);
-    std::vector<cv::Mat> srcVec;
+    alvision.Mat gold;
+    alvision.Mat goldMean;
+    alvision.randu(src,alvision.Scalar(-128), alvision.Scalar(128));
+    alvision.calcCovarMatrix(src,gold,goldMean,singleMatFlags,CV_32F);
+    std::Array<alvision.Mat> srcVec;
     for(size_t i = 0; i < vector_size; i++)
     {
         srcVec.push_back(src.row(static_cast<int>(i)).reshape(0,col_problem_size));
     }
 
-    cv::Mat actual;
-    cv::Mat actualMean;
-    cv::calcCovarMatrix(srcVec, actual, actualMean,singleMatFlags,CV_32F);
+    alvision.Mat actual;
+    alvision.Mat actualMean;
+    alvision.calcCovarMatrix(srcVec, actual, actualMean,singleMatFlags,CV_32F);
 
-    cv::Mat diff;
-    cv::absdiff(gold, actual, diff);
-    cv::Scalar s = cv::sum(diff);
+    alvision.Mat diff;
+    alvision.absdiff(gold, actual, diff);
+    alvision.Scalar s = alvision.sum(diff);
     ASSERT_EQ(s.dot(s), 0.0);
 
-    cv::Mat meanDiff;
-    cv::absdiff(goldMean, actualMean.reshape(0,1), meanDiff);
-    cv::Scalar sDiff = cv::sum(meanDiff);
+    alvision.Mat meanDiff;
+    alvision.absdiff(goldMean, actualMean.reshape(0,1), meanDiff);
+    alvision.Scalar sDiff = alvision.sum(meanDiff);
     ASSERT_EQ(sDiff.dot(sDiff), 0.0);
 });
 
 alvision.cvtest.TEST('CovariationMatrixVectorOfMatWithMean', 'accuracy',()=>
 {
     var col_problem_size = 8, row_problem_size = 8, vector_size = 16;
-    cv::Mat src(vector_size, col_problem_size * row_problem_size, CV_32F);
+    alvision.Mat src(vector_size, col_problem_size * row_problem_size, CV_32F);
     int singleMatFlags = CV_COVAR_ROWS | CV_COVAR_USE_AVG;
 
-    cv::Mat gold;
-    cv::randu(src,cv::Scalar(-128), cv::Scalar(128));
-    cv::Mat goldMean;
+    alvision.Mat gold;
+    alvision.randu(src,alvision.Scalar(-128), alvision.Scalar(128));
+    alvision.Mat goldMean;
 
-    cv::reduce(src,goldMean,0 ,CV_REDUCE_AVG, CV_32F);
+    alvision.reduce(src,goldMean,0 ,CV_REDUCE_AVG, CV_32F);
 
-    cv::calcCovarMatrix(src,gold,goldMean,singleMatFlags,CV_32F);
+    alvision.calcCovarMatrix(src,gold,goldMean,singleMatFlags,CV_32F);
 
-    std::vector<cv::Mat> srcVec;
+    std::Array<alvision.Mat> srcVec;
     for(size_t i = 0; i < vector_size; i++)
     {
         srcVec.push_back(src.row(static_cast<int>(i)).reshape(0,col_problem_size));
     }
 
-    cv::Mat actual;
-    cv::Mat actualMean = goldMean.reshape(0, row_problem_size);
-    cv::calcCovarMatrix(srcVec, actual, actualMean,singleMatFlags,CV_32F);
+    alvision.Mat actual;
+    alvision.Mat actualMean = goldMean.reshape(0, row_problem_size);
+    alvision.calcCovarMatrix(srcVec, actual, actualMean,singleMatFlags,CV_32F);
 
-    cv::Mat diff;
-    cv::absdiff(gold, actual, diff);
-    cv::Scalar s = cv::sum(diff);
+    alvision.Mat diff;
+    alvision.absdiff(gold, actual, diff);
+    alvision.Scalar s = alvision.sum(diff);
     ASSERT_EQ(s.dot(s), 0.0);
 
-    cv::Mat meanDiff;
-    cv::absdiff(goldMean, actualMean.reshape(0,1), meanDiff);
-    cv::Scalar sDiff = cv::sum(meanDiff);
+    alvision.Mat meanDiff;
+    alvision.absdiff(goldMean, actualMean.reshape(0,1), meanDiff);
+    alvision.Scalar sDiff = alvision.sum(meanDiff);
     ASSERT_EQ(sDiff.dot(sDiff), 0.0);
 });
 

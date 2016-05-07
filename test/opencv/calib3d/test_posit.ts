@@ -136,9 +136,9 @@ void CV_POSITTest::run( int start_from )
         cvZero( true_rotationZ );
 
         /* fill random rotation matrix */
-        angleX = (float)(alvision.cvtest.randReal(rng)*2*CV_PI);
-        angleY = (float)(alvision.cvtest.randReal(rng)*2*CV_PI);
-        angleZ = (float)(alvision.cvtest.randReal(rng)*2*CV_PI);
+        angleX = (float)(alvision.cvtest.randReal(rng)*2*Math.PI);
+        angleY = (float)(alvision.cvtest.randReal(rng)*2*Math.PI);
+        angleZ = (float)(alvision.cvtest.randReal(rng)*2*Math.PI);
 
         true_rotationX->data.fl[0 *3+ 0] = 1;
         true_rotationX->data.fl[1 *3+ 1] = (float)cos(angleX);

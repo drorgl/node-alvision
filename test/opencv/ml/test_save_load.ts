@@ -74,14 +74,14 @@ int CV_SLMLTest::run_test_case( int testCaseIdx )
         {
             get_test_error( testCaseIdx, &test_resps1 );
             fname1 = tempfile(".yml.gz");
-            save( fname1.c_str() );
-            load( fname1.c_str() );
+            save( fname1 );
+            load( fname1 );
             get_test_error( testCaseIdx, &test_resps2 );
             fname2 = tempfile(".yml.gz");
-            save( fname2.c_str() );
+            save( fname2 );
         }
         else
-            ts->printf( alvision.cvtest.TS::LOG, "model can not be trained" );
+            ts->printf( alvision.cvtest.TSConstants.LOG, "model can not be trained" );
     }
     return code;
 }
@@ -91,7 +91,7 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
     int code = alvision.cvtest.TS::OK;
 
     // 1. compare files
-    FILE *fs1 = fopen(fname1.c_str(), "rb"), *fs2 = fopen(fname2.c_str(), "rb");
+    FILE *fs1 = fopen(fname1, "rb"), *fs2 = fopen(fname2, "rb");
     size_t sz1 = 0, sz2 = 0;
     if( !fs1 || !fs2 )
         code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
@@ -104,7 +104,7 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
     }
 
     if( sz1 != sz2 )
-        code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+        code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
 
     if( code >= 0 )
     {
@@ -116,11 +116,11 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
             size_t r2 = fread(buf2, 1, BUFSZ, fs2);
             if( r1 != r2 || memcmp(buf1, buf2, r1) != 0 )
             {
-                ts->printf( alvision.cvtest.TS::LOG,
+                ts->printf( alvision.cvtest.TSConstants.LOG,
                            "in test case %d first (%s) and second (%s) saved files differ in %d-th kb\n",
-                           testCaseIdx, fname1.c_str(), fname2.c_str(),
+                           testCaseIdx, fname1, fname2,
                            (int)pos );
-                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
                 break;
             }
             pos += r1;
@@ -135,21 +135,21 @@ int CV_SLMLTest::validate_test_results( int testCaseIdx )
     // delete temporary files
     if( code >= 0 )
     {
-        remove( fname1.c_str() );
-        remove( fname2.c_str() );
+        remove( fname1 );
+        remove( fname2 );
     }
 
     if( code >= 0 )
     {
         // 2. compare responses
         CV_Assert( test_resps1.size() == test_resps2.size() );
-        vector<float>::const_iterator it1 = test_resps1.begin(), it2 = test_resps2.begin();
+        Array<float>::const_iterator it1 = test_resps1.begin(), it2 = test_resps2.begin();
         for( ; it1 != test_resps1.end(); ++it1, ++it2 )
         {
             if( fabs(*it1 - *it2) > FLT_EPSILON )
             {
-                ts->printf( alvision.cvtest.TS::LOG, "in test case %d responses predicted before saving and after loading is different", testCaseIdx );
-                code = alvision.cvtest.TS::FAIL_INVALID_OUTPUT;
+                ts->printf( alvision.cvtest.TSConstants.LOG, "in test case %d responses predicted before saving and after loading is different", testCaseIdx );
+                code = alvision.cvtest.FalureCode.FAIL_INVALID_OUTPUT;
                 break;
             }
         }
@@ -192,7 +192,7 @@ protected:
     }
     void oneTest(const string & suffix)
     {
-        using namespace cv::ml;
+        using namespace alvision.ml;
 
         int code = alvision.cvtest.TS::OK;
         string filename = ts->get_data_path() + "legacy/" + modelName + suffix;
@@ -212,7 +212,7 @@ protected:
             model = Algorithm::load<RTrees>(filename);
         if (!model)
         {
-            code = alvision.cvtest.TS::FAIL_INVALID_TEST_DATA;
+            code = alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
         }
         else
         {
@@ -232,7 +232,7 @@ protected:
     {
         Mat catMap;
         Mat catCount;
-        std::vector<uchar> varTypes;
+        std::Array<uchar> varTypes;
 
         FileStorage fs(filename, FileStorage::READ);
         FileNode root = fs.getFirstTopLevelNode();
@@ -272,15 +272,15 @@ TEST(ML_RTrees, legacy_load) { CV_LegacyTest test(CV_RTREES, "_waveform.xml"); t
 
 /*TEST(ML_SVM, throw_exception_when_save_untrained_model)
 {
-    Ptr<cv::ml::SVM> svm;
+    Ptr<alvision.ml::SVM> svm;
     string filename = tempfile("svm.xml");
-    ASSERT_THROW(svm.save(filename.c_str()), Exception);
-    remove(filename.c_str());
+    ASSERT_THROW(svm.save(filename), Exception);
+    remove(filename);
 }*/
 
 TEST(DISABLED_ML_SVM, linear_save_load)
 {
-    Ptr<cv::ml::SVM> svm1, svm2, svm3;
+    Ptr<alvision.ml::SVM> svm1, svm2, svm3;
 
     svm1 = Algorithm::load<SVM>("SVM45_X_38-1.xml");
     svm2 = Algorithm::load<SVM>("SVM45_X_38-2.xml");
@@ -303,7 +303,7 @@ TEST(DISABLED_ML_SVM, linear_save_load)
     EXPECT_LE(norm(r1, r2, NORM_INF), eps);
     EXPECT_LE(norm(r1, r3, NORM_INF), eps);
 
-    remove(tname.c_str());
+    remove(tname);
 }
 
 /* End of file. */

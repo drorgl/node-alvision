@@ -58,121 +58,121 @@ import fs = require('fs');
 
 //#define DUMP_RESULTS
 
-#ifdef DUMP_RESULTS
-#  define DUMP(image, path) imwrite(path, image)
-#else
-#  define DUMP(image, path)
-#endif
+//#ifdef DUMP_RESULTS
+//#  define DUMP(image, path) imwrite(path, image)
+//#else
+//#  define DUMP(image, path)
+//#endif
+
+function DUMP(image: alvision.Mat, path: string) {
+    alvision.imwrite(path, image);
+}
 
 
-TEST(Photo_DenoisingGrayscale, regression)
-{
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "denoising/";
-    string original_path = folder + "lena_noised_gaussian_sigma=10.png";
-    string expected_path = folder + "lena_noised_denoised_grayscale_tw=7_sw=21_h=10.png";
+alvision.cvtest.TEST('Photo_DenoisingGrayscale', 'regression', () => {
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "denoising/";
+    var original_path = folder + "lena_noised_gaussian_sigma=10.png";
+    var expected_path = folder + "lena_noised_denoised_grayscale_tw=7_sw=21_h=10.png";
 
-    Mat original = imread(original_path, IMREAD_GRAYSCALE);
-    Mat expected = imread(expected_path, IMREAD_GRAYSCALE);
+    var original = alvision.imread(original_path, alvision.ImreadModes. IMREAD_GRAYSCALE);
+    var expected = alvision.imread(expected_path, alvision.ImreadModes.IMREAD_GRAYSCALE);
 
-    ASSERT_FALSE(original.empty()) << "Could not load input image " << original_path;
-    ASSERT_FALSE(expected.empty()) << "Could not load reference image " << expected_path;
+    alvision.ASSERT_FALSE(original.empty(), "Could not load input image " + original_path);
+    alvision.ASSERT_FALSE(expected.empty(), "Could not load reference image " + expected_path);
 
-    Mat result;
-    fastNlMeansDenoising(original, result, 10);
+    var result = new alvision.Mat();
+    alvision.fastNlMeansDenoising(original, result, 10);
 
     DUMP(result, expected_path + ".res.png");
 
-    ASSERT_EQ(0, alvision.cvtest.norm(result, expected, NORM_L2));
-}
+    alvision.ASSERT_EQ(0, alvision.cvtest.norm(result, expected,alvision.NormTypes. NORM_L2));
+});
 
-TEST(Photo_DenoisingColored, regression)
-{
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "denoising/";
-    string original_path = folder + "lena_noised_gaussian_sigma=10.png";
-    string expected_path = folder + "lena_noised_denoised_lab12_tw=7_sw=21_h=10_h2=10.png";
+alvision.cvtest.TEST('Photo_DenoisingColored', 'regression', () => {
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "denoising/";
+    var original_path = folder + "lena_noised_gaussian_sigma=10.png";
+    var expected_path = folder + "lena_noised_denoised_lab12_tw=7_sw=21_h=10_h2=10.png";
 
-    Mat original = imread(original_path, IMREAD_COLOR);
-    Mat expected = imread(expected_path, IMREAD_COLOR);
+    var original = alvision.imread(original_path, alvision.ImreadModes.IMREAD_COLOR);
+    var expected = alvision.imread(expected_path, alvision.ImreadModes.IMREAD_COLOR);
 
-    ASSERT_FALSE(original.empty()) << "Could not load input image " << original_path;
-    ASSERT_FALSE(expected.empty()) << "Could not load reference image " << expected_path;
+    alvision.ASSERT_FALSE(original.empty(), "Could not load input image " + original_path);
+    alvision.ASSERT_FALSE(expected.empty(), "Could not load reference image " + expected_path);
 
-    Mat result;
-    fastNlMeansDenoisingColored(original, result, 10, 10);
+    var result = new alvision.Mat();
+    alvision.fastNlMeansDenoisingColored(original, result, 10, 10);
 
     DUMP(result, expected_path + ".res.png");
 
-    ASSERT_EQ(0, alvision.cvtest.norm(result, expected, NORM_L2));
-}
+    alvision.ASSERT_EQ(0, alvision.cvtest.norm(result, expected,alvision.NormTypes. NORM_L2));
+});
 
-TEST(Photo_DenoisingGrayscaleMulti, regression)
+alvision.cvtest.TEST('Photo_DenoisingGrayscaleMulti', 'regression',()=>
 {
-    const int imgs_count = 3;
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "denoising/";
+    const imgs_count = 3;
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "denoising/";
 
-    string expected_path = folder + "lena_noised_denoised_multi_tw=7_sw=21_h=15.png";
-    Mat expected = imread(expected_path, IMREAD_GRAYSCALE);
-    ASSERT_FALSE(expected.empty()) << "Could not load reference image " << expected_path;
+    var expected_path = folder + "lena_noised_denoised_multi_tw=7_sw=21_h=15.png";
+    var expected = alvision.imread(expected_path, alvision.ImreadModes.IMREAD_GRAYSCALE);
+    alvision.ASSERT_FALSE(expected.empty(), "Could not load reference image "+ expected_path);
 
-    vector<Mat> original(imgs_count);
-    for (int i = 0; i < imgs_count; i++)
+    var original = new Array<alvision.Mat>(imgs_count);
+    for (var i = 0; i < imgs_count; i++)
     {
-        string original_path = format("%slena_noised_gaussian_sigma=20_multi_%d.png", folder.c_str(), i);
-        original[i] = imread(original_path, IMREAD_GRAYSCALE);
-        ASSERT_FALSE(original[i].empty()) << "Could not load input image " << original_path;
+        var original_path = util.format("%slena_noised_gaussian_sigma=20_multi_%d.png", folder, i);
+        original[i] = alvision.imread(original_path, alvision.ImreadModes.IMREAD_GRAYSCALE);
+        alvision.ASSERT_FALSE(original[i].empty(), "Could not load input image " + original_path);
     }
 
-    Mat result;
-    fastNlMeansDenoisingMulti(original, result, imgs_count / 2, imgs_count, 15);
+    var result = new alvision.Mat();
+    alvision.fastNlMeansDenoisingMulti(original, result, imgs_count / 2, imgs_count, 15);
 
     DUMP(result, expected_path + ".res.png");
 
-    ASSERT_EQ(0, alvision.cvtest.norm(result, expected, NORM_L2));
-}
+    alvision.ASSERT_EQ(0, alvision.cvtest.norm(result, expected,alvision.NormTypes. NORM_L2));
+});
 
-TEST(Photo_DenoisingColoredMulti, regression)
+alvision.cvtest.TEST('Photo_DenoisingColoredMulti', 'regression',()=>
 {
-    const int imgs_count = 3;
-    string folder = string(alvision.cvtest.TS::ptr()->get_data_path()) + "denoising/";
+    const imgs_count = 3;
+    var folder = alvision.cvtest.TS.ptr().get_data_path() + "denoising/";
 
-    string expected_path = folder + "lena_noised_denoised_multi_lab12_tw=7_sw=21_h=10_h2=15.png";
-    Mat expected = imread(expected_path, IMREAD_COLOR);
-    ASSERT_FALSE(expected.empty()) << "Could not load reference image " << expected_path;
+    var expected_path = folder + "lena_noised_denoised_multi_lab12_tw=7_sw=21_h=10_h2=15.png";
+    var expected = alvision.imread(expected_path, alvision.ImreadModes. IMREAD_COLOR);
+    alvision.ASSERT_FALSE(expected.empty(), "Could not load reference image " + expected_path);
 
-    vector<Mat> original(imgs_count);
-    for (int i = 0; i < imgs_count; i++)
+    var original = new Array<alvision.Mat>(imgs_count);
+    for (var i = 0; i < imgs_count; i++)
     {
-        string original_path = format("%slena_noised_gaussian_sigma=20_multi_%d.png", folder.c_str(), i);
-        original[i] = imread(original_path, IMREAD_COLOR);
-        ASSERT_FALSE(original[i].empty()) << "Could not load input image " << original_path;
+        var original_path = util.format("%slena_noised_gaussian_sigma=20_multi_%d.png", folder, i);
+        original[i] = alvision.imread(original_path,alvision.ImreadModes. IMREAD_COLOR);
+        alvision.ASSERT_FALSE(original[i].empty(), "Could not load input image " + original_path);
     }
 
-    Mat result;
-    fastNlMeansDenoisingColoredMulti(original, result, imgs_count / 2, imgs_count, 10, 15);
+    var result = new alvision.Mat();
+    alvision.fastNlMeansDenoisingColoredMulti(original, result, imgs_count / 2, imgs_count, 10, 15);
 
     DUMP(result, expected_path + ".res.png");
 
-    ASSERT_EQ(0, alvision.cvtest.norm(result, expected, NORM_L2));
-}
+    alvision.ASSERT_EQ(0, alvision.cvtest.norm(result, expected,alvision.NormTypes. NORM_L2));
+});
 
-TEST(Photo_White, issue_2646)
-{
-    cv::Mat img(50, 50, CV_8UC1, cv::Scalar::all(255));
-    cv::Mat filtered;
-    cv::fastNlMeansDenoising(img, filtered);
+alvision.cvtest.TEST('Photo_White', 'issue_2646', () => {
+    var img = new alvision.Mat(50, 50, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(255));
+    var filtered = new alvision.Mat();
+   alvision.fastNlMeansDenoising(img, filtered);
 
-    int nonWhitePixelsCount = (int)img.total() - cv::countNonZero(filtered == img);
+    var nonWhitePixelsCount = (int)img.total() - alvision.countNonZero(filtered == img);
 
-    ASSERT_EQ(0, nonWhitePixelsCount);
-}
+    alvision.ASSERT_EQ(0, nonWhitePixelsCount);
+});
 
-TEST(Photo_Denoising, speed)
-{
-    string imgname = string(alvision.cvtest.TS::ptr()->get_data_path()) + "shared/5MP.png";
-    Mat src = imread(imgname, 0), dst;
+alvision.cvtest.TEST('Photo_Denoising', 'speed', () => {
+    var imgname = alvision.cvtest.TS.ptr().get_data_path() + "shared/5MP.png";
+    var src = alvision.imread(imgname, 0), dst = new alvision.Mat();;
 
     double t = (double)getTickCount();
-    fastNlMeansDenoising(src, dst, 5, 7, 21);
+    alvision.fastNlMeansDenoising(src, dst, 5, 7, 21);
     t = (double)getTickCount() - t;
-    printf("execution time: %gms\n", t*1000./getTickFrequency());
-}
+    printf("execution time: %gms\n", t * 1000. / getTickFrequency());
+});
