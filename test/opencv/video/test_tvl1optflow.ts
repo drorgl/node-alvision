@@ -152,9 +152,9 @@ alvision.cvtest.TEST(Video_calcOpticalFlowDual_TVL1, Regression)
 {
     const double MAX_RMSE = 0.03;
 
-    const string frame1_path = TS::ptr()->get_data_path() + "optflow/RubberWhale1.png";
-    const string frame2_path = TS::ptr()->get_data_path() + "optflow/RubberWhale2.png";
-    const string gold_flow_path = TS::ptr()->get_data_path() + "optflow/tvl1_flow.flo";
+    const string frame1_path = TS::ptr().get_data_path() + "optflow/RubberWhale1.png";
+    const string frame2_path = TS::ptr().get_data_path() + "optflow/RubberWhale2.png";
+    const string gold_flow_path = TS::ptr().get_data_path() + "optflow/tvl1_flow.flo";
 
     Mat frame1 = imread(frame1_path, IMREAD_GRAYSCALE);
     Mat frame2 = imread(frame2_path, IMREAD_GRAYSCALE);
@@ -164,7 +164,7 @@ alvision.cvtest.TEST(Video_calcOpticalFlowDual_TVL1, Regression)
     Mat_<Point2f> flow;
     Ptr<DenseOpticalFlow> tvl1 = createOptFlow_DualTVL1();
 
-    tvl1->calc(frame1, frame2, flow);
+    tvl1.calc(frame1, frame2, flow);
 
 #ifdef DUMP
     writeOpticalFlowToFile(flow, gold_flow_path);

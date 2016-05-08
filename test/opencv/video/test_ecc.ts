@@ -61,7 +61,7 @@ class CV_ECC_BaseTest  extends alvision.cvtest.BaseTest
         this.MAX_RMS_ECC = 0.1;
         this.ntests = 3;
         this.ECC_iterations = 50;
-        this.ECC_epsilon = -1; //-> negative value means that ECC_Iterations will be executed
+        this.ECC_epsilon = -1; //. negative value means that ECC_Iterations will be executed
     }
 
     computeRMS(mat1: alvision.Mat, mat2: alvision.Mat): alvision.double {

@@ -47,109 +47,92 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
 class Core_ConcatenationTest  extends alvision.cvtest.BaseTest
 {
-public:
-    Core_ConcatenationTest(bool horizontal, bool firstEmpty, bool secondEmpty);
-protected:
-    int prepare_test_case( int );
-    void run_func();
-    int validate_test_results( int );
+    constructor(horizontal_: boolean, firstEmpty_: boolean, secondEmpty_: boolean) {
+        super();
+        this.horizontal = (horizontal_);
+        this.firstEmpty = (firstEmpty_);
+        this.secondEmpty = (secondEmpty_);
 
-    Mat mat0x5;
-    Mat mat10x5;
-    Mat mat20x5;
+        this.test_case_count = 1;
+        
+            this.mat0x5 =  alvision.Mat.from(alvision.Mat.ones(0, 5,  alvision.MatrixType.CV_8U));
+            this.mat10x5 = alvision.Mat.from(alvision.Mat.ones(10, 5, alvision.MatrixType.CV_8U));
+            this.mat20x5 = alvision.Mat.from(alvision.Mat.ones(20, 5, alvision.MatrixType.CV_8U));
 
-    Mat mat5x0;
-    Mat mat5x10;
-    Mat mat5x20;
+            this.mat5x0 =  alvision.Mat.from(alvision.Mat.ones(5, 0, alvision.MatrixType.CV_8U) );
+            this.mat5x10 = alvision.Mat.from(alvision.Mat.ones(5, 10, alvision.MatrixType.CV_8U));
+            this.mat5x20 = alvision.Mat.from(alvision.Mat.ones(5, 20, alvision.MatrixType.CV_8U));
+    }
 
-    var result = new alvision.Mat();
+    prepare_test_case(test_case_idx: alvision.int): alvision.int {
+        super.prepare_test_case(test_case_idx);
+        return 1;
+    }
+    run_func(): void {
+        if (this.horizontal) {
+            alvision.hconcat((this.firstEmpty ? this.mat5x0 : this.mat5x10),
+                (this.secondEmpty ? this.mat5x0 : this.mat5x10),
+                this.result);
+        } else {
+            alvision.vconcat((this.firstEmpty ? this.mat0x5 : this.mat10x5),
+                (this.secondEmpty ? this.mat0x5 : this.mat10x5),
+                this.result);
+        }
+    }
+    validate_test_results(test_case_idx: alvision.int): alvision.int {
+        var expected = new alvision.Mat();
 
-    bool horizontal;
-    bool firstEmpty;
-    bool secondEmpty;
+        if (this.firstEmpty && this.secondEmpty)
+            expected = (this.horizontal ? this.mat5x0 : this.mat0x5);
+        else if ((this.firstEmpty && !this.secondEmpty) || (!this.firstEmpty && this.secondEmpty))
+            expected = (this.horizontal ? this.mat5x10 : this.mat10x5);
+        else
+            expected = (this.horizontal ? this.mat5x20 : this.mat20x5);
 
-private:
-    static bool areEqual(const Mat& m1, const Mat& m2);
+        if (this.areEqual(expected, this.result)) {
+            return alvision.cvtest.FailureCode.OK;
+        } else {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Concatenation failed");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
+        }
+
+        return alvision.cvtest.FailureCode.OK;
+    }
+
+    protected  mat0x5  : alvision.Mat;
+    protected  mat10x5 : alvision.Mat;
+    protected  mat20x5 : alvision.Mat;
+
+    protected  mat5x0  : alvision.Mat;
+    protected  mat5x10 : alvision.Mat;
+    protected  mat5x20 : alvision.Mat;
+
+    protected result = new alvision.Mat();
+
+    protected  horizontal  : boolean;
+    protected  firstEmpty  : boolean;
+    protected  secondEmpty : boolean;
+
+    private areEqual(m1 : alvision.Mat, m2 : alvision.Mat): boolean {
+        return m1.size() == m2.size()
+            && m1.type() == m2.type()
+            && alvision.countNonZero(alvision.MatExpr.op_NotEquals( m1 , m2)) == 0;
+    }
 
 };
 
-Core_ConcatenationTest::Core_ConcatenationTest(bool horizontal_, bool firstEmpty_, bool secondEmpty_)
-    : horizontal(horizontal_)
-    , firstEmpty(firstEmpty_)
-    , secondEmpty(secondEmpty_)
-{
-    test_case_count = 1;
 
-    mat0x5 = Mat::ones(0,5, CV_8U);
-    mat10x5 = Mat::ones(10,5, CV_8U);
-    mat20x5 = Mat::ones(20,5, CV_8U);
+alvision.cvtest.TEST('Core_Concatenation', 'hconcat_empty_nonempty', () => { var test = new Core_ConcatenationTest(true, true, false); test.safe_run(); });
+alvision.cvtest.TEST('Core_Concatenation', 'hconcat_nonempty_empty', () => { var test = new Core_ConcatenationTest(true, false, true); test.safe_run(); });
+alvision.cvtest.TEST('Core_Concatenation', 'hconcat_empty_empty', () => { var test = new Core_ConcatenationTest(true, true, true); test.safe_run(); });
 
-    mat5x0 = Mat::ones(5,0, CV_8U);
-    mat5x10 = Mat::ones(5,10, CV_8U);
-    mat5x20 = Mat::ones(5,20, CV_8U);
-}
-
-int Core_ConcatenationTest::prepare_test_case( int test_case_idx )
-{
-    alvision.cvtest.BaseTest::prepare_test_case( test_case_idx );
-    return 1;
-}
-
-void Core_ConcatenationTest::run_func()
-{
-    if (horizontal)
-    {
-        alvision.hconcat((firstEmpty ? mat5x0 : mat5x10),
-                    (secondEmpty ? mat5x0 : mat5x10),
-                    result);
-    } else {
-        alvision.vconcat((firstEmpty ? mat0x5 : mat10x5),
-                    (secondEmpty ? mat0x5 : mat10x5),
-                    result);
-    }
-}
-
-int Core_ConcatenationTest::validate_test_results( int )
-{
-    Mat expected;
-
-    if (firstEmpty && secondEmpty)
-        expected = (horizontal ? mat5x0 : mat0x5);
-    else if ((firstEmpty && !secondEmpty) || (!firstEmpty && secondEmpty))
-        expected = (horizontal ? mat5x10 : mat10x5);
-    else
-        expected = (horizontal ? mat5x20 : mat20x5);
-
-    if (areEqual(expected, result))
-    {
-        return alvision.cvtest.FailureCode.OK;
-    } else
-    {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "Concatenation failed");
-        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_MISMATCH );
-    }
-
-    return alvision.cvtest.FailureCode.OK;
-}
-
-bool Core_ConcatenationTest::areEqual(const Mat &m1, const Mat &m2)
-{
-    return m1.size() == m2.size()
-            && m1.type() == m2.type()
-            && countNonZero(m1 != m2) == 0;
-}
-
-TEST(Core_Concatenation, hconcat_empty_nonempty) { Core_ConcatenationTest test(true, true, false); test.safe_run(); }
-TEST(Core_Concatenation, hconcat_nonempty_empty) { Core_ConcatenationTest test(true, false, true); test.safe_run(); }
-TEST(Core_Concatenation, hconcat_empty_empty) { Core_ConcatenationTest test(true, true, true); test.safe_run(); }
-
-TEST(Core_Concatenation, vconcat_empty_nonempty) { Core_ConcatenationTest test(false, true, false); test.safe_run(); }
-TEST(Core_Concatenation, vconcat_nonempty_empty) { Core_ConcatenationTest test(false, false, true); test.safe_run(); }
-TEST(Core_Concatenation, vconcat_empty_empty) { Core_ConcatenationTest test(false, true, true); test.safe_run(); }
+alvision.cvtest.TEST('Core_Concatenation', 'vconcat_empty_nonempty', () => { var test = new Core_ConcatenationTest(false, true, false); test.safe_run(); });
+alvision.cvtest.TEST('Core_Concatenation', 'vconcat_nonempty_empty', () => { var test = new Core_ConcatenationTest(false, false, true); test.safe_run(); });
+alvision.cvtest.TEST('Core_Concatenation', 'vconcat_empty_empty', () => { var test = new Core_ConcatenationTest(false, true, true); test.safe_run(); });

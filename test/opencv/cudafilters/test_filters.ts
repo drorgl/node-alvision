@@ -109,7 +109,7 @@ CUDA_TEST_P(Blur, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> blurFilter = alvision.cuda::createBoxFilter(src.type(), -1, ksize, anchor, borderType);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    blurFilter->apply(loadMat(src, useRoi), dst);
+    blurFilter.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.blur(src, dst_gold, ksize, anchor, borderType);
@@ -161,7 +161,7 @@ CUDA_TEST_P(Filter2D, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> filter2D = alvision.cuda::createLinearFilter(src.type(), -1, kernel, anchor, borderType);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    filter2D->apply(loadMat(src, useRoi), dst);
+    filter2D.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.filter2D(src, dst_gold, -1, kernel, anchor, 0, borderType);
@@ -208,7 +208,7 @@ CUDA_TEST_P(Laplacian, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> laplacian = alvision.cuda::createLaplacianFilter(src.type(), -1, ksize.width);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    laplacian->apply(loadMat(src, useRoi), dst);
+    laplacian.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.Laplacian(src, dst_gold, -1, ksize.width);
@@ -265,7 +265,7 @@ CUDA_TEST_P(SeparableLinearFilter, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> filter = alvision.cuda::createSeparableLinearFilter(src.type(), -1, rowKernel, columnKernel, anchor, borderType);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    filter->apply(loadMat(src, useRoi), dst);
+    filter.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.sepFilter2D(src, dst_gold, -1, rowKernel, columnKernel, anchor, 0, borderType);
@@ -337,7 +337,7 @@ CUDA_TEST_P(Sobel, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> sobel = alvision.cuda::createSobelFilter(src.type(), -1, dx, dy, ksize.width, 1.0, borderType);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    sobel->apply(loadMat(src, useRoi), dst);
+    sobel.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.Sobel(src, dst_gold, -1, dx, dy, ksize.width, 1.0, 0.0, borderType);
@@ -402,7 +402,7 @@ CUDA_TEST_P(Scharr, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> scharr = alvision.cuda::createScharrFilter(src.type(), -1, dx, dy, 1.0, borderType);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    scharr->apply(loadMat(src, useRoi), dst);
+    scharr.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.Scharr(src, dst_gold, -1, dx, dy, 1.0, 0.0, borderType);
@@ -463,7 +463,7 @@ CUDA_TEST_P(GaussianBlur, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> gauss = alvision.cuda::createGaussianFilter(src.type(), -1, ksize, sigma1, sigma2, borderType);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    gauss->apply(loadMat(src, useRoi), dst);
+    gauss.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.GaussianBlur(src, dst_gold, ksize, sigma1, sigma2, borderType);
@@ -530,7 +530,7 @@ CUDA_TEST_P(Erode, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> erode = alvision.cuda::createMorphologyFilter(alvision.MORPH_ERODE, src.type(), kernel, anchor, iterations);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    erode->apply(loadMat(src, useRoi), dst);
+    erode.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.erode(src, dst_gold, kernel, anchor, iterations);
@@ -581,7 +581,7 @@ CUDA_TEST_P(Dilate, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> dilate = alvision.cuda::createMorphologyFilter(alvision.MORPH_DILATE, src.type(), kernel, anchor, iterations);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    dilate->apply(loadMat(src, useRoi), dst);
+    dilate.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.dilate(src, dst_gold, kernel, anchor, iterations);
@@ -636,7 +636,7 @@ CUDA_TEST_P(MorphEx, Accuracy)
     alvision.Ptr<alvision.cuda::Filter> morph = alvision.cuda::createMorphologyFilter(morphOp, src.type(), kernel, anchor, iterations);
 
     alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    morph->apply(loadMat(src, useRoi), dst);
+    morph.apply(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.morphologyEx(src, dst_gold, morphOp, kernel, anchor, iterations);

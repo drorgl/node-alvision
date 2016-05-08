@@ -128,8 +128,8 @@ TEST(Features2d_MSER, cases)
         int kMinArea = use_big_image ? 256 : 10;
         int kMaxArea = (int)src.total()/4;
 
-        mserExtractor->setMinArea(kMinArea);
-        mserExtractor->setMaxArea(kMaxArea);
+        mserExtractor.setMinArea(kMinArea);
+        mserExtractor.setMaxArea(kMaxArea);
 
         if( invert )
             bitwise_not(src, src);
@@ -143,7 +143,7 @@ TEST(Features2d_MSER, cases)
         if( binarize && (thresh == 0 || thresh == 255) )
             minRegs = maxRegs = 0;
 
-        mserExtractor->detectRegions( src, msers, boxes );
+        mserExtractor.detectRegions( src, msers, boxes );
         int nmsers = (int)msers.size();
         ASSERT_EQ(nmsers, (int)boxes.size());
 

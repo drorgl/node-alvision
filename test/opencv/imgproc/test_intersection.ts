@@ -172,7 +172,7 @@ void CV_RotatedRectangleIntersectionTest::test2()
             double dy = vertices[i].y - possibleVertices[j].y;
             double r = sqrt(dx*dx + dy*dy);
 
-            bestR = std::min(bestR, r);
+            bestR = Math.min(bestR, r);
         }
 
         CV_Assert(bestR < ACCURACY);
@@ -219,7 +219,7 @@ void CV_RotatedRectangleIntersectionTest::test3()
             double dy = vertices[i].y - possibleVertices[j].y;
             double r = sqrt(dx*dx + dy*dy);
 
-            bestR = std::min(bestR, r);
+            bestR = Math.min(bestR, r);
         }
 
         CV_Assert(bestR < ACCURACY);
@@ -268,7 +268,7 @@ void CV_RotatedRectangleIntersectionTest::test4()
             double dy = vertices[i].y - possibleVertices[j].y;
             double r = sqrt(dx*dx + dy*dy);
 
-            bestR = std::min(bestR, r);
+            bestR = Math.min(bestR, r);
         }
 
         CV_Assert(bestR < ACCURACY);
@@ -321,7 +321,7 @@ void CV_RotatedRectangleIntersectionTest::test5()
             double dy = vertices[i].y - possibleVertices[j].y;
             double r = sqrt(dx*dx + dy*dy);
 
-            bestR = std::min(bestR, r);
+            bestR = Math.min(bestR, r);
         }
 
         CV_Assert(bestR < ACCURACY);
@@ -370,7 +370,7 @@ void CV_RotatedRectangleIntersectionTest::test6()
             double dy = vertices[i].y - possibleVertices[j].y;
             double r = sqrt(dx*dx + dy*dy);
 
-            bestR = std::min(bestR, r);
+            bestR = Math.min(bestR, r);
         }
 
         CV_Assert(bestR < ACCURACY);
@@ -419,7 +419,7 @@ void CV_RotatedRectangleIntersectionTest::test7()
             double dy = vertices[i].y - possibleVertices[j].y;
             double r = sqrt(dx*dx + dy*dy);
 
-            bestR = std::min(bestR, r);
+            bestR = Math.min(bestR, r);
         }
 
         CV_Assert(bestR < ACCURACY);
@@ -498,7 +498,7 @@ void CV_RotatedRectangleIntersectionTest::test9()
             double dy = vertices[i].y - possibleVertices[j].y;
             double r = sqrt(dx*dx + dy*dy);
 
-            bestR = std::min(bestR, r);
+            bestR = Math.min(bestR, r);
         }
 
         CV_Assert(bestR < ACCURACY);

@@ -60,10 +60,10 @@ public:
 protected:
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    void prepare_to_validation( int );
+    run_func() : void {}
+    prepare_to_validation(test_case_idx : alvision.int) : void {}
 
-    void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
+    get_minmax_bounds(i : alvision. int , j : alvision.int , type : alvision.int , low : alvision.Scalar, high : alvision.Scalar ) : void{}
     prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
 
     int mask_size;
@@ -75,11 +75,11 @@ protected:
 
 CV_DisTransTest::CV_DisTransTest()
 {
-    test_array[INPUT].push(NULL);
-    test_array[OUTPUT].push(NULL);
-    test_array[OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
+    test_array[INPUT].push(null);
+    test_array[OUTPUT].push(null);
+    test_array[OUTPUT].push(null);
+    test_array[REF_OUTPUT].push(null);
+    test_array[REF_OUTPUT].push(null);
     optional_mask = false;
     element_wise_relative_error = true;
 }
@@ -88,8 +88,8 @@ CV_DisTransTest::CV_DisTransTest()
 void CV_DisTransTest::get_test_array_types_and_sizes( int test_case_idx,
                                                 Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
-    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    var rng = this.ts.get_rng();
+    super.get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
     types[INPUT][0] = CV_8UC1;
     types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_32FC1;
@@ -124,7 +124,7 @@ double CV_DisTransTest::get_success_error_level( int /*test_case_idx*/, int /*i*
 
 void CV_DisTransTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
 {
-    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
+    super.get_minmax_bounds( i, j, type, low, high );
     if( i == INPUT && CV_MAT_DEPTH(type) == CV_8U )
     {
         low = alvision.Scalar.all(0);
@@ -140,7 +140,7 @@ int CV_DisTransTest::prepare_test_case( int test_case_idx )
         // the function's response to an "all-nonzeros" image is not determined,
         // so put at least one zero point
         Mat& mat = test_mat[INPUT][0];
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
         int i = alvision.cvtest.randInt(rng) % mat.rows;
         int j = alvision.cvtest.randInt(rng) % mat.cols;
         mat.at<uchar>(i,j) = 0;
@@ -162,7 +162,7 @@ cvTsDistTransform( const CvMat* _src, CvMat* _dst, int dist_type,
                    int mask_size, float* _mask, CvMat* /*_labels*/ )
 {
     int i, j, k;
-    int width = _src->cols, height = _src->rows;
+    int width = _src.cols, height = _src.rows;
     const float init_val = 1e6;
     float mask[3];
     CvMat* temp;
@@ -198,7 +198,7 @@ cvTsDistTransform( const CvMat* _src, CvMat* _dst, int dist_type,
     }
 
     temp = cvCreateMat( height + mask_size-1, width + mask_size-1, CV_32F );
-    tstep = temp->step / sizeof(float);
+    tstep = temp.step / sizeof(float);
 
     if( mask_size == 3 )
     {
@@ -223,8 +223,8 @@ cvTsDistTransform( const CvMat* _src, CvMat* _dst, int dist_type,
 
     for( i = 0; i < mask_size/2; i++ )
     {
-        float* t0 = (float*)(temp->data.ptr + i*temp->step);
-        float* t1 = (float*)(temp->data.ptr + (temp->rows - i - 1)*temp->step);
+        float* t0 = (float*)(temp.data.ptr + i*temp.step);
+        float* t1 = (float*)(temp.data.ptr + (temp.rows - i - 1)*temp.step);
 
         for( j = 0; j < width + mask_size - 1; j++ )
             t0[j] = t1[j] = init_val;
@@ -232,8 +232,8 @@ cvTsDistTransform( const CvMat* _src, CvMat* _dst, int dist_type,
 
     for( i = 0; i < height; i++ )
     {
-        uchar* s = _src->data.ptr + i*_src->step;
-        float* tmp = (float*)(temp->data.ptr + temp->step*(i + (mask_size/2))) + (mask_size/2);
+        uchar* s = _src.data.ptr + i*_src.step;
+        float* tmp = (float*)(temp.data.ptr + temp.step*(i + (mask_size/2))) + (mask_size/2);
 
         for( j = 0; j < mask_size/2; j++ )
             tmp[-j-1] = tmp[j + width] = init_val;
@@ -258,8 +258,8 @@ cvTsDistTransform( const CvMat* _src, CvMat* _dst, int dist_type,
 
     for( i = height - 1; i >= 0; i-- )
     {
-        float* d = (float*)(_dst->data.ptr + i*_dst->step);
-        float* tmp = (float*)(temp->data.ptr + temp->step*(i + (mask_size/2))) + (mask_size/2);
+        float* d = (float*)(_dst.data.ptr + i*_dst.step);
+        float* tmp = (float*)(temp.data.ptr + temp.step*(i + (mask_size/2))) + (mask_size/2);
 
         for( j = width - 1; j >= 0; j-- )
         {

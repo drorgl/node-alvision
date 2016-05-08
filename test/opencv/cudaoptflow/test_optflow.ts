@@ -84,7 +84,7 @@ CUDA_TEST_P(BroxOpticalFlow, Regression)
                                               10 /*inner_iterations*/, 77 /*outer_iterations*/, 10 /*solver_iterations*/);
 
     alvision.cuda::GpuMat flow;
-    brox->calc(loadMat(frame0), loadMat(frame1), flow);
+    brox.calc(loadMat(frame0), loadMat(frame1), flow);
 
     alvision.cuda::GpuMat flows[2];
     alvision.cuda::split(flow, flows);
@@ -152,7 +152,7 @@ CUDA_TEST_P(BroxOpticalFlow, OpticalFlowNan)
                                               10 /*inner_iterations*/, 77 /*outer_iterations*/, 10 /*solver_iterations*/);
 
     alvision.cuda::GpuMat flow;
-    brox->calc(loadMat(frame0), loadMat(frame1), flow);
+    brox.calc(loadMat(frame0), loadMat(frame1), flow);
 
     alvision.cuda::GpuMat flows[2];
     alvision.cuda::split(flow, flows);
@@ -206,7 +206,7 @@ CUDA_TEST_P(PyrLKOpticalFlow, Sparse)
     else
         alvision.cvtColor(frame0, gray_frame, alvision.COLOR_BGR2GRAY);
 
-    std::Array<alvision.Point2f> pts;
+    Array<alvision.Point2f> pts;
     alvision.goodFeaturesToTrack(gray_frame, pts, 1000, 0.01, 0.0);
 
     alvision.cuda::GpuMat d_pts;
@@ -218,18 +218,18 @@ CUDA_TEST_P(PyrLKOpticalFlow, Sparse)
 
     alvision.cuda::GpuMat d_nextPts;
     alvision.cuda::GpuMat d_status;
-    pyrLK->calc(loadMat(frame0), loadMat(frame1), d_pts, d_nextPts, d_status);
+    pyrLK.calc(loadMat(frame0), loadMat(frame1), d_pts, d_nextPts, d_status);
 
-    std::Array<alvision.Point2f> nextPts(d_nextPts.cols);
+    Array<alvision.Point2f> nextPts(d_nextPts.cols);
     alvision.Mat nextPts_mat(1, d_nextPts.cols, CV_32FC2, (void*) &nextPts[0]);
     d_nextPts.download(nextPts_mat);
 
-    std::Array<unsigned char> status(d_status.cols);
+    Array<unsigned char> status(d_status.cols);
     alvision.Mat status_mat(1, d_status.cols, CV_8UC1, (void*) &status[0]);
     d_status.download(status_mat);
 
-    std::Array<alvision.Point2f> nextPts_gold;
-    std::Array<unsigned char> status_gold;
+    Array<alvision.Point2f> nextPts_gold;
+    Array<unsigned char> status_gold;
     alvision.calcOpticalFlowPyrLK(frame0, frame1, pts, nextPts_gold, status_gold, alvision.noArray());
 
     ASSERT_EQ(nextPts_gold.size(), nextPts.size());
@@ -308,26 +308,26 @@ CUDA_TEST_P(FarnebackOpticalFlow, Accuracy)
 
     alvision.Ptr<alvision.cuda::FarnebackOpticalFlow> farn =
             alvision.cuda::FarnebackOpticalFlow::create();
-    farn->setPyrScale(pyrScale);
-    farn->setPolyN(polyN);
-    farn->setPolySigma(polySigma);
-    farn->setFlags(flags);
+    farn.setPyrScale(pyrScale);
+    farn.setPolyN(polyN);
+    farn.setPolySigma(polySigma);
+    farn.setFlags(flags);
 
     alvision.cuda::GpuMat d_flow;
-    farn->calc(loadMat(frame0), loadMat(frame1), d_flow);
+    farn.calc(loadMat(frame0), loadMat(frame1), d_flow);
 
     alvision.Mat flow;
     if (useInitFlow)
     {
         d_flow.download(flow);
 
-        farn->setFlags(farn->getFlags() | alvision.OPTFLOW_USE_INITIAL_FLOW);
-        farn->calc(loadMat(frame0), loadMat(frame1), d_flow);
+        farn.setFlags(farn.getFlags() | alvision.OPTFLOW_USE_INITIAL_FLOW);
+        farn.calc(loadMat(frame0), loadMat(frame1), d_flow);
     }
 
     alvision.calcOpticalFlowFarneback(
-        frame0, frame1, flow, farn->getPyrScale(), farn->getNumLevels(), farn->getWinSize(),
-        farn->getNumIters(), farn->getPolyN(), farn->getPolySigma(), farn->getFlags());
+        frame0, frame1, flow, farn.getPyrScale(), farn.getNumLevels(), farn.getWinSize(),
+        farn.getNumIters(), farn.getPolyN(), farn.getPolySigma(), farn.getFlags());
 
     EXPECT_MAT_SIMILAR(flow, d_flow, 0.1);
 }
@@ -371,20 +371,20 @@ CUDA_TEST_P(OpticalFlowDual_TVL1, Accuracy)
 
     alvision.Ptr<alvision.cuda::OpticalFlowDual_TVL1> d_alg =
             alvision.cuda::OpticalFlowDual_TVL1::create();
-    d_alg->setNumIterations(10);
-    d_alg->setGamma(gamma);
+    d_alg.setNumIterations(10);
+    d_alg.setGamma(gamma);
 
     alvision.cuda::GpuMat d_flow;
-    d_alg->calc(loadMat(frame0), loadMat(frame1), d_flow);
+    d_alg.calc(loadMat(frame0), loadMat(frame1), d_flow);
 
     alvision.Ptr<alvision.DualTVL1OpticalFlow> alg = alvision.createOptFlow_DualTVL1();
-    alg->setMedianFiltering(1);
-    alg->setInnerIterations(1);
-    alg->setOuterIterations(d_alg->getNumIterations());
-    alg->setGamma(gamma);
+    alg.setMedianFiltering(1);
+    alg.setInnerIterations(1);
+    alg.setOuterIterations(d_alg.getNumIterations());
+    alg.setGamma(gamma);
 
     alvision.Mat flow;
-    alg->calc(frame0, frame1, flow);
+    alg.calc(frame0, frame1, flow);
 
     EXPECT_MAT_SIMILAR(flow, d_flow, 4e-3);
 }

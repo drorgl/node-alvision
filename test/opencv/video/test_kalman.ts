@@ -70,14 +70,14 @@ class CV_KalmanTest extends alvision. cvtest.BaseTest
         CvMat * Temp = cvCreateMat(Dim, 1, CV_32F);
 
         Kalm = cvCreateKalman(Dim, Dim);
-        CvMat Dyn = cvMat(Dim, Dim, CV_32F, Kalm ->DynamMatr);
-        CvMat Mes = cvMat(Dim, Dim, CV_32F, Kalm ->MeasurementMatr);
-        CvMat PNC = cvMat(Dim, Dim, CV_32F, Kalm ->PNCovariance);
-        CvMat MNC = cvMat(Dim, Dim, CV_32F, Kalm ->MNCovariance);
-        CvMat PriErr = cvMat(Dim, Dim, CV_32F, Kalm ->PriorErrorCovariance);
-        CvMat PostErr = cvMat(Dim, Dim, CV_32F, Kalm ->PosterErrorCovariance);
-        CvMat PriState = cvMat(Dim, 1, CV_32F, Kalm ->PriorState);
-        CvMat PostState = cvMat(Dim, 1, CV_32F, Kalm ->PosterState);
+        CvMat Dyn = cvMat(Dim, Dim, CV_32F, Kalm .DynamMatr);
+        CvMat Mes = cvMat(Dim, Dim, CV_32F, Kalm .MeasurementMatr);
+        CvMat PNC = cvMat(Dim, Dim, CV_32F, Kalm .PNCovariance);
+        CvMat MNC = cvMat(Dim, Dim, CV_32F, Kalm .MNCovariance);
+        CvMat PriErr = cvMat(Dim, Dim, CV_32F, Kalm .PriorErrorCovariance);
+        CvMat PostErr = cvMat(Dim, Dim, CV_32F, Kalm .PosterErrorCovariance);
+        CvMat PriState = cvMat(Dim, 1, CV_32F, Kalm .PriorState);
+        CvMat PostState = cvMat(Dim, 1, CV_32F, Kalm .PosterState);
         cvSetIdentity(&PNC);
         cvSetIdentity(&PriErr);
         cvSetIdentity(&PostErr);
@@ -95,15 +95,15 @@ class CV_KalmanTest extends alvision. cvtest.BaseTest
                 float t = 0;
                 for (var k= 0; k < Dim; k++)
                 {
-                    t += Dyn.data.fl[j * Dim + k] * Sample ->data.fl[k];
+                    t += Dyn.data.fl[j * Dim + k] * Sample .data.fl[k];
                 }
-                Temp ->data.fl[j]= (float)(t + (alvision.cvtest.randReal(rng) * 2 - 1) * max_noise);
+                Temp .data.fl[j]= (float)(t + (alvision.cvtest.randReal(rng) * 2 - 1) * max_noise);
             }
             cvCopy(Temp, Sample);
             cvKalmanCorrect(Kalm, Temp);
         }
 
-        Mat _state_post = cvarrToMat(Kalm ->state_post);
+        Mat _state_post = cvarrToMat(Kalm .state_post);
         code = alvision.cvtest.cmpEps2(ts, _Sample, _state_post, EPSILON, false, "The final estimated state");
 
         cvReleaseMat(&Sample);

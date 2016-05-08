@@ -79,12 +79,12 @@ PARAM_TEST_CASE(Merge, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, Chann
 
 CUDA_TEST_P(Merge, Accuracy)
 {
-    std::Array<alvision.Mat> src;
+    Array<alvision.Mat> src;
     src.reserve(channels);
     for (int i = 0; i < channels; ++i)
         src.push(alvision.Mat(size, depth, alvision.Scalar::all(i)));
 
-    std::Array<alvision.cuda::GpuMat> d_src;
+    Array<alvision.cuda::GpuMat> d_src;
     for (int i = 0; i < channels; ++i)
         d_src.push(loadMat(src[i], useRoi));
 
@@ -154,7 +154,7 @@ CUDA_TEST_P(Split, Accuracy)
     {
         try
         {
-            std::Array<alvision.cuda::GpuMat> dst;
+            Array<alvision.cuda::GpuMat> dst;
             alvision.cuda::split(loadMat(src), dst);
         }
         catch (const alvision.Exception& e)
@@ -164,10 +164,10 @@ CUDA_TEST_P(Split, Accuracy)
     }
     else
     {
-        std::Array<alvision.cuda::GpuMat> dst;
+        Array<alvision.cuda::GpuMat> dst;
         alvision.cuda::split(loadMat(src, useRoi), dst);
 
-        std::Array<alvision.Mat> dst_gold;
+        Array<alvision.Mat> dst_gold;
         alvision.split(src, dst_gold);
 
         ASSERT_EQ(dst_gold.size(), dst.size());
@@ -334,7 +334,7 @@ CUDA_TEST_P(LUT, OneChannel)
     alvision.Ptr<alvision.cuda::LookUpTable> lutAlg = alvision.cuda::createLookUpTable(lut);
 
     alvision.cuda::GpuMat dst = createMat(size, CV_MAKE_TYPE(lut.depth(), src.channels()));
-    lutAlg->transform(loadMat(src, useRoi), dst);
+    lutAlg.transform(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.LUT(src, lut, dst_gold);
@@ -350,7 +350,7 @@ CUDA_TEST_P(LUT, MultiChannel)
     alvision.Ptr<alvision.cuda::LookUpTable> lutAlg = alvision.cuda::createLookUpTable(lut);
 
     alvision.cuda::GpuMat dst = createMat(size, CV_MAKE_TYPE(lut.depth(), src.channels()), useRoi);
-    lutAlg->transform(loadMat(src, useRoi), dst);
+    lutAlg.transform(loadMat(src, useRoi), dst);
 
     alvision.Mat dst_gold;
     alvision.LUT(src, lut, dst_gold);

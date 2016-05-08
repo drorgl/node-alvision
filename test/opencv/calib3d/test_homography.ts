@@ -257,7 +257,7 @@ void CV_HomographyTest::run(int)
 {
     for (int N = 4; N <= MAX_COUNT_OF_POINTS; ++N)
     {
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
 
         float *src_data = new float [2*N];
 

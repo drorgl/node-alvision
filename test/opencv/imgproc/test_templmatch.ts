@@ -47,122 +47,117 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
 class CV_TemplMatchTest extends alvision.cvtest.ArrayTest
 {
-public:
-    CV_TemplMatchTest();
+    constructor() {
+        super();
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.element_wise_relative_error = false;
+        this.max_template_size = 100;
+        this.method = 0;
+        this.test_cpp = false;
+    }
 
-protected:
-    int read_params( CvFileStorage* fs );
-    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
-    void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
-    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    void prepare_to_validation( int );
+    read_params(fs: alvision.FileStorage): alvision.int{
+        var code = super.read_params(fs);
+        if (code < 0)
+            return code;
 
-    int max_template_size;
-    int method;
-    bool test_cpp;
+        this.max_template_size = cvReadInt(find_param(fs, "max_template_size"), this.max_template_size);
+        this.max_template_size = alvision.cvtest.clipInt(this.max_template_size, 1, 100);
+
+        return code;
+    }
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
+        var rng = this.ts.get_rng();
+        var depth = alvision.cvtest.randInt(rng).valueOf() % 2, cn = alvision.cvtest.randInt(rng).valueOf() & 1 ? 3 : 1;
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        depth = depth == 0 ? CV_8U : CV_32F;
+
+        types[this.INPUT][0] = types[this.INPUT][1] = CV_MAKETYPE(depth, cn);
+        types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = CV_32FC1;
+
+        sizes[this.INPUT][1].width = alvision.cvtest.randInt(rng).valueOf() % Math.min(sizes[this.INPUT][1].width, this.max_template_size) + 1;
+        sizes[this.INPUT][1].height = alvision.cvtest.randInt(rng).valueOf() % Math.min(sizes[this.INPUT][1].height, this.max_template_size) + 1;
+        sizes[this.OUTPUT][0].width = sizes[this.INPUT][0].width - sizes[INPUT][1].width + 1;
+        sizes[this.OUTPUT][0].height = sizes[this.INPUT][0].height - sizes[INPUT][1].height + 1;
+        sizes[this.REF_OUTPUT][0] = sizes[this.OUTPUT][0];
+
+        this.method = alvision.cvtest.randInt(rng).valueOf() % 6;
+        this.test_cpp = (alvision.cvtest.randInt(rng).valueOf() & 256) == 0;
+    }
+    get_minmax_bounds(i: alvision.int, j: alvision.int, type: alvision.int, low: alvision.Scalar, high: alvision.Scalar): void {
+        super.get_minmax_bounds(i, j, type, low, high);
+        var depth = CV_MAT_DEPTH(type);
+        if (depth == CV_32F) {
+            low = Scalar::all(-10.);
+            high = Scalar::all(10.);
+        }
+    }
+    get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
+        if (this.test_mat[this.INPUT][1].depth() == CV_8U ||
+            (this.method >= CV_TM_CCOEFF && this.test_mat[this.INPUT][1].cols * this.test_mat[this.INPUT][1].rows <= 2))
+            return 1e-2;
+        else
+            return 1e-3;
+    }
+    run_func(): void {
+        if (!this.test_cpp)
+            cvMatchTemplate(test_array[INPUT][0], test_array[INPUT][1], test_array[OUTPUT][0], method);
+        else {
+            alvision.Mat _out = alvision.cvarrToMat(test_array[OUTPUT][0]);
+            alvision.matchTemplate(alvision.cvarrToMat(test_array[INPUT][0]), alvision.cvarrToMat(test_array[INPUT][1]), _out, method);
+        }
+    }
+    prepare_to_validation(test_case_idx: alvision.int): void {
+        CvMat _input = this.test_mat[this.INPUT][0], _templ = this.test_mat[this.INPUT][1];
+        CvMat _output = this.test_mat[this.REF_OUTPUT][0];
+        cvTsMatchTemplate( &_input, &_templ, &_output, method);
+
+        //if( ts.get_current_test_info().test_case_idx == 0 )
+        /*{
+            CvFileStorage* fs = cvOpenFileStorage( "_match_template.yml", 0, CV_STORAGE_WRITE );
+            cvWrite( fs, "image", &test_mat[INPUT][0] );
+            cvWrite( fs, "template", &test_mat[INPUT][1] );
+            cvWrite( fs, "ref", &test_mat[REF_OUTPUT][0] );
+            cvWrite( fs, "opencv", &test_mat[OUTPUT][0] );
+            cvWriteInt( fs, "method", method );
+            cvReleaseFileStorage( &fs );
+        }*/
+
+        if (method >= CV_TM_CCOEFF) {
+            // avoid numerical stability problems in singular cases (when the results are near to 0)
+            const delta = 10.;
+            this.test_mat[this.REF_OUTPUT][0] += alvision.Scalar.all(delta);
+            this.test_mat[this.OUTPUT][0] += alvision.Scalar.all(delta);
+        }
+    }
+
+    protected max_template_size: alvision.int;
+    protected method: alvision.int;
+    protected test_cpp: boolean;
 };
 
 
-CV_TemplMatchTest::CV_TemplMatchTest()
-{
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-    element_wise_relative_error = false;
-    max_template_size = 100;
-    method = 0;
-    test_cpp = false;
-}
 
-
-int CV_TemplMatchTest::read_params( CvFileStorage* fs )
-{
-    int code = alvision.cvtest.ArrayTest::read_params( fs );
-    if( code < 0 )
-        return code;
-
-    max_template_size = cvReadInt( find_param( fs, "max_template_size" ), max_template_size );
-    max_template_size = alvision.cvtest.clipInt( max_template_size, 1, 100 );
-
-    return code;
-}
-
-
-void CV_TemplMatchTest::get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high )
-{
-    alvision.cvtest.ArrayTest::get_minmax_bounds( i, j, type, low, high );
-    int depth = CV_MAT_DEPTH(type);
-    if( depth == CV_32F )
-    {
-        low = Scalar::all(-10.);
-        high = Scalar::all(10.);
-    }
-}
-
-
-void CV_TemplMatchTest::get_test_array_types_and_sizes( int test_case_idx,
-                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
-{
-    RNG& rng = ts->get_rng();
-    int depth = alvision.cvtest.randInt(rng) % 2, cn = alvision.cvtest.randInt(rng) & 1 ? 3 : 1;
-    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    depth = depth == 0 ? CV_8U : CV_32F;
-
-    types[INPUT][0] = types[INPUT][1] = CV_MAKETYPE(depth,cn);
-    types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_32FC1;
-
-    sizes[INPUT][1].width = alvision.cvtest.randInt(rng)%MIN(sizes[INPUT][1].width,max_template_size) + 1;
-    sizes[INPUT][1].height = alvision.cvtest.randInt(rng)%MIN(sizes[INPUT][1].height,max_template_size) + 1;
-    sizes[OUTPUT][0].width = sizes[INPUT][0].width - sizes[INPUT][1].width + 1;
-    sizes[OUTPUT][0].height = sizes[INPUT][0].height - sizes[INPUT][1].height + 1;
-    sizes[REF_OUTPUT][0] = sizes[OUTPUT][0];
-
-    method = alvision.cvtest.randInt(rng)%6;
-    test_cpp = (alvision.cvtest.randInt(rng) & 256) == 0;
-}
-
-
-double CV_TemplMatchTest::get_success_error_level( int /*test_case_idx*/, int /*i*/, int /*j*/ )
-{
-    if( test_mat[INPUT][1].depth() == CV_8U ||
-        (method >= CV_TM_CCOEFF && test_mat[INPUT][1].cols*test_mat[INPUT][1].rows <= 2) )
-        return 1e-2;
-    else
-        return 1e-3;
-}
-
-
-void CV_TemplMatchTest::run_func()
-{
-    if(!test_cpp)
-        cvMatchTemplate( test_array[INPUT][0], test_array[INPUT][1], test_array[OUTPUT][0], method );
-    else
-    {
-        alvision.Mat _out = alvision.cvarrToMat(test_array[OUTPUT][0]);
-        alvision.matchTemplate(alvision.cvarrToMat(test_array[INPUT][0]), alvision.cvarrToMat(test_array[INPUT][1]), _out, method);
-    }
-}
-
-
-static void cvTsMatchTemplate( const CvMat* img, const CvMat* templ, CvMat* result, int method )
+function cvTsMatchTemplate( const CvMat* img, const CvMat* templ, CvMat* result, int method ) : void
 {
     int i, j, k, l;
-    int depth = CV_MAT_DEPTH(img->type), cn = CV_MAT_CN(img->type);
-    int width_n = templ->cols*cn, height = templ->rows;
-    int a_step = img->step / CV_ELEM_SIZE(img->type & CV_MAT_DEPTH_MASK);
-    int b_step = templ->step / CV_ELEM_SIZE(templ->type & CV_MAT_DEPTH_MASK);
+    int depth = CV_MAT_DEPTH(img.type), cn = CV_MAT_CN(img.type);
+    int width_n = templ.cols*cn, height = templ.rows;
+    int a_step = img.step / CV_ELEM_SIZE(img.type & CV_MAT_DEPTH_MASK);
+    int b_step = templ.step / CV_ELEM_SIZE(templ.type & CV_MAT_DEPTH_MASK);
     CvScalar b_mean, b_sdv;
     double b_denom = 1., b_sum2 = 0;
-    int area = templ->rows*templ->cols;
+    int area = templ.rows*templ.cols;
 
     cvAvgSdv(templ, &b_mean, &b_sdv);
 
@@ -196,9 +191,9 @@ static void cvTsMatchTemplate( const CvMat* img, const CvMat* templ, CvMat* resu
 
     assert( CV_TM_SQDIFF <= method && method <= CV_TM_CCOEFF_NORMED );
 
-    for( i = 0; i < result->rows; i++ )
+    for( i = 0; i < result.rows; i++ )
     {
-        for( j = 0; j < result->cols; j++ )
+        for( j = 0; j < result.cols; j++ )
         {
             CvScalar a_sum(0), a_sum2(0);
             CvScalar ccorr(0);
@@ -206,8 +201,8 @@ static void cvTsMatchTemplate( const CvMat* img, const CvMat* templ, CvMat* resu
 
             if( depth == CV_8U )
             {
-                const uchar* a = img->data.ptr + i*img->step + j*cn;
-                const uchar* b = templ->data.ptr;
+                const uchar* a = img.data.ptr + i*img.step + j*cn;
+                const uchar* b = templ.data.ptr;
 
                 if( cn == 1 || method < CV_TM_CCOEFF )
                 {
@@ -238,8 +233,8 @@ static void cvTsMatchTemplate( const CvMat* img, const CvMat* templ, CvMat* resu
             }
             else
             {
-                const float* a = (const float*)(img->data.ptr + i*img->step) + j*cn;
-                const float* b = (const float*)templ->data.ptr;
+                const float* a = (const float*)(img.data.ptr + i*img.step) + j*cn;
+                const float* b = (const float*)templ.data.ptr;
 
                 if( cn == 1 || method < CV_TM_CCOEFF )
                 {
@@ -309,36 +304,10 @@ static void cvTsMatchTemplate( const CvMat* img, const CvMat* templ, CvMat* resu
                     value = method != CV_TM_SQDIFF_NORMED ? 0 : 1;
             }
 
-            ((float*)(result->data.ptr + result->step*i))[j] = (float)value;
+            ((float*)(result.data.ptr + result.step*i))[j] = (float)value;
         }
     }
 }
 
 
-void CV_TemplMatchTest::prepare_to_validation( int /*test_case_idx*/ )
-{
-    CvMat _input = test_mat[INPUT][0], _templ = test_mat[INPUT][1];
-    CvMat _output = test_mat[REF_OUTPUT][0];
-    cvTsMatchTemplate( &_input, &_templ, &_output, method );
-
-    //if( ts->get_current_test_info()->test_case_idx == 0 )
-    /*{
-        CvFileStorage* fs = cvOpenFileStorage( "_match_template.yml", 0, CV_STORAGE_WRITE );
-        cvWrite( fs, "image", &test_mat[INPUT][0] );
-        cvWrite( fs, "template", &test_mat[INPUT][1] );
-        cvWrite( fs, "ref", &test_mat[REF_OUTPUT][0] );
-        cvWrite( fs, "opencv", &test_mat[OUTPUT][0] );
-        cvWriteInt( fs, "method", method );
-        cvReleaseFileStorage( &fs );
-    }*/
-
-    if( method >= CV_TM_CCOEFF )
-    {
-        // avoid numerical stability problems in singular cases (when the results are near to 0)
-        const double delta = 10.;
-        test_mat[REF_OUTPUT][0] += Scalar::all(delta);
-        test_mat[OUTPUT][0] += Scalar::all(delta);
-    }
-}
-
-TEST(Imgproc_MatchTemplate, accuracy) { CV_TemplMatchTest test; test.safe_run(); }
+alvision.cvtest.TEST('Imgproc_MatchTemplate', 'accuracy', () => { var test = new CV_TemplMatchTest(); test.safe_run(); });

@@ -270,7 +270,7 @@ TEST(Core_Ptr, accessors)
         Ptr<Size> p(s);
         EXPECT_EQ(s, static_cast<Size*>(p));
         EXPECT_EQ(s, &*p);
-        EXPECT_EQ(&s->width, &p->width);
+        EXPECT_EQ(&s.width, &p.width);
         EXPECT_FALSE(p.empty());
     }
 }
@@ -383,7 +383,7 @@ namespace cv {
 
 template<>
 void DefaultDeleter<SpeciallyDeletable>::operator()(SpeciallyDeletable * obj) const
-{ obj->deleted = true; }
+{ obj.deleted = true; }
 
 }
 

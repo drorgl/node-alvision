@@ -71,23 +71,23 @@ protected:
     virtual void run(int)
     {
         CV_Assert(detector);
-        string imgFilename = string(ts->get_data_path()) + FEATURES2D_DIR + "/" + IMAGE_FILENAME;
+        string imgFilename = this.ts.get_data_path() + FEATURES2D_DIR + "/" + IMAGE_FILENAME;
 
         // Read the test image.
         Mat image = imread(imgFilename);
         if(image.empty())
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imgFilename);
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imgFilename);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
         Array<KeyPoint> keypoints;
-        detector->detect(image, keypoints);
+        detector.detect(image, keypoints);
 
         if(keypoints.empty())
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Detector can't find keypoints in image.\n");
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Detector can't find keypoints in image.\n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             return;
         }
@@ -99,21 +99,21 @@ protected:
 
             if(!r.contains(kp.pt))
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "KeyPoint::pt is out of image (x=%f, y=%f).\n", kp.pt.x, kp.pt.y);
+                ts.printf(alvision.cvtest.TSConstants.LOG, "KeyPoint::pt is out of image (x=%f, y=%f).\n", kp.pt.x, kp.pt.y);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
             if(kp.size <= 0.f)
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "KeyPoint::size is not positive (%f).\n", kp.size);
+                ts.printf(alvision.cvtest.TSConstants.LOG, "KeyPoint::size is not positive (%f).\n", kp.size);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
             if((kp.angle < 0.f && kp.angle != -1.f) || kp.angle >= 360.f)
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "KeyPoint::angle is out of range [0, 360). It's %f.\n", kp.angle);
+                ts.printf(alvision.cvtest.TSConstants.LOG, "KeyPoint::angle is out of range [0, 360). It's %f.\n", kp.angle);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
@@ -155,7 +155,7 @@ TEST(Features2d_Detector_Keypoints_HARRIS, validation)
 TEST(Features2d_Detector_Keypoints_GFTT, validation)
 {
     Ptr<GFTTDetector> gftt = GFTTDetector::create();
-    gftt->setHarrisDetector(true);
+    gftt.setHarrisDetector(true);
     CV_FeatureDetectorKeypointsTest test(gftt);
     test.safe_run();
 }

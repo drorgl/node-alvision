@@ -435,7 +435,7 @@ bool CV_OperationsTest::TestMat()
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
+        ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return false;
     }
@@ -450,8 +450,8 @@ bool CV_OperationsTest::SomeMatFunctions()
         Mat bgr( rgba.rows, rgba.cols, CV_8UC3 );
         Mat alpha( rgba.rows, rgba.cols, CV_8UC1 );
         Mat out[] = { bgr, alpha };
-        // rgba[0] -> bgr[2], rgba[1] -> bgr[1],
-        // rgba[2] -> bgr[0], rgba[3] -> alpha[0]
+        // rgba[0] . bgr[2], rgba[1] . bgr[1],
+        // rgba[2] . bgr[0], rgba[3] . alpha[0]
         int from_to[] = { 0,2, 1,1, 2,0, 3,3 };
         mixChannels( &rgba, 1, out, 2, from_to, 4 );
 
@@ -463,7 +463,7 @@ bool CV_OperationsTest::SomeMatFunctions()
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
+        ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return false;
     }
@@ -489,7 +489,7 @@ bool CV_OperationsTest::TestSubMatAccess()
         //std::cout << "[Nav Grok] S frame =" << std::endl << T_bs << std::endl;
 
         // set up display coords, really just the S frame
-        std::Array<float>coords;
+        Array<float>coords;
 
         for (int i=0; i<16; i++)
         {
@@ -500,7 +500,7 @@ bool CV_OperationsTest::TestSubMatAccess()
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
+        ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return false;
     }
@@ -820,7 +820,7 @@ bool CV_OperationsTest::TestTemplateMat()
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
+        ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return false;
     }
@@ -1175,8 +1175,8 @@ protected:
             int sizes[MAX_DIM], idx[MAX_DIM];
             for( int iter = 0; iter < 100; iter++ )
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, ".");
-                ts->update_context(this, iter, true);
+                ts.printf(alvision.cvtest.TSConstants.LOG, ".");
+                ts.update_context(this, iter, true);
                 int k, dims = rng.uniform(1, MAX_DIM+1), p = 1;
                 for( k = 0; k < dims; k++ )
                 {

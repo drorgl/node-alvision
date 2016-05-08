@@ -52,9 +52,9 @@ import fs = require('fs');
 
 static void mytest(alvision.Ptr<alvision.ConjGradSolver> solver,alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F,alvision.Mat& x,
         alvision.Mat& etalon_x,double etalon_res){
-    solver->setFunction(ptr_F);
+    solver.setFunction(ptr_F);
     //int ndim=MAX(step.cols,step.rows);
-    double res=solver->minimize(x);
+    double res=solver.minimize(x);
     std::cout<<"res:\n\t"<<res<<std::endl;
     std::cout<<"x:\n\t"<<x<<std::endl;
     std::cout<<"etalon_res:\n\t"<<etalon_res<<std::endl;

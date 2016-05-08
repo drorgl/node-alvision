@@ -68,9 +68,9 @@ CV_FastTest::~CV_FastTest() {}
 void CV_FastTest::run( int )
 {
   for(int type=0; type <= 2; ++type) {
-    Mat image1 = imread(string(ts->get_data_path()) + "inpaint/orig.png");
-    Mat image2 = imread(string(ts->get_data_path()) + "cameracalibration/chess9.png");
-    string xml = string(ts->get_data_path()) + format("fast/result%d.xml", type);
+    Mat image1 = imread(this.ts.get_data_path() + "inpaint/orig.png");
+    Mat image2 = imread(this.ts.get_data_path() + "cameracalibration/chess9.png");
+    string xml = this.ts.get_data_path() + format("fast/result%d.xml", type);
 
     if (image1.empty() || image2.empty())
     {

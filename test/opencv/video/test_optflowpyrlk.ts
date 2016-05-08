@@ -94,23 +94,23 @@ class CV_OptFlowPyrLKTest  extends alvision.cvtest.BaseTest
             goto _exit_;
         }
 
-        if (_u ->cols != 2 || CV_MAT_TYPE(_u ->type) != CV_32F ||
-            _v ->cols != 2 || CV_MAT_TYPE(_v ->type) != CV_32F || _v ->rows != _u ->rows) {
+        if (_u .cols != 2 || CV_MAT_TYPE(_u .type) != CV_32F ||
+            _v .cols != 2 || CV_MAT_TYPE(_v .type) != CV_32F || _v .rows != _u .rows) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "the loaded matrices of points are not valid\n");
             code = alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA;
             goto _exit_;
 
         }
 
-        u = (CvPoint2D32f *)_u->data.fl;
-        v = (CvPoint2D32f *)_v->data.fl;
+        u = (CvPoint2D32f *)_u.data.fl;
+        v = (CvPoint2D32f *)_v.data.fl;
 
         /* allocate adidtional buffers */
         _v2 = cvCloneMat(_u);
-        v2 = (CvPoint2D32f *)_v2->data.fl;
+        v2 = (CvPoint2D32f *)_v2.data.fl;
 
         /* read first image */
-        console.log(util.format(filename, "%soptflow/%s", ts ->get_data_path(), "rock_1.bmp"));
+        console.log(util.format(filename, "%soptflow/%s", ts .get_data_path(), "rock_1.bmp"));
         imgI2 = alvision.imread(filename, alvision.ImreadModes.IMREAD_UNCHANGED);
         imgI = imgI2;
 
@@ -121,7 +121,7 @@ class CV_OptFlowPyrLKTest  extends alvision.cvtest.BaseTest
         }
 
         /* read second image */
-        console.log(util.format(filename, "%soptflow/%s", ts ->get_data_path(), "rock_2.bmp"));
+        console.log(util.format(filename, "%soptflow/%s", ts .get_data_path(), "rock_2.bmp"));
         imgJ2 = alvision.imread(filename, alvision.IMREAD_UNCHANGED);
         imgJ = imgJ2;
 
@@ -131,7 +131,7 @@ class CV_OptFlowPyrLKTest  extends alvision.cvtest.BaseTest
             goto _exit_;
         }
 
-        n = _u ->rows;
+        n = _u .rows;
         status = (char *)cvAlloc(n * sizeof(status[0]));
 
         /* calculate flow */
@@ -212,10 +212,11 @@ alvision.cvtest.TEST('Video_OpticalFlowPyrLK', 'submat',()=>
     var img1 = wholeImage(alvision.Rect(0, 0, 640, 360)).clone();
     var img2 = wholeImage(alvision.Rect(40, 60, 640, 360));
 
-    std::Array<uchar> status;
-    std::Array<float> error;
-    std::Array<alvision.Point2f> prev;
-    std::Array<alvision.Point2f> next;
+    
+    var status = new Array<alvision.uchar>();
+    var error = new Array<alvision.float>;
+    var prev = new Array<alvision.Point2f>();
+    var next = new Array<alvision.Point2f>();
 
     var rng = new alvision.RNG (123123);
 

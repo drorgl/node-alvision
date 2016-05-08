@@ -143,76 +143,72 @@ alvision.cvtest.TEST('Viz', 'show_cloud_bluberry', () => {
     viz.spin();
 });
 
-alvision.cvtest.TEST(Viz, show_cloud_random_color)
-{
-    Mat dragon_cloud = readCloud(get_dragon_ply_file_path());
+alvision.cvtest.TEST('Viz', 'show_cloud_random_color', () => {
+    var dragon_cloud = alvision.readCloud(get_dragon_ply_file_path());
 
-    Mat colors(dragon_cloud.size(), CV_8UC3);
-    theRNG().fill(colors, RNG::UNIFORM, 0, 255);
+    var colors = new alvision.Mat (dragon_cloud.size(), CV_8UC3);
+    alvision.theRNG().fill(colors, RNG::UNIFORM, 0, 255);
 
-    Affine3d pose = Affine3d().rotate(Vec3d(0, 0.8, 0));
+    var pose = new Affine3d().rotate(alvision.Vecd(0, 0.8, 0));
 
-    Viz3d viz("show_cloud_random_color");
+    var viz = new alvision.Viz3d ("show_cloud_random_color");
     viz.setBackgroundMeshLab();
     viz.showWidget("coosys", WCoordinateSystem());
     viz.showWidget("dragon", WCloud(dragon_cloud, colors), pose);
     viz.showWidget("text2d", WText("Random color cloud", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_cloud_masked)
+alvision.cvtest.TEST('Viz', 'show_cloud_masked',()=>
 {
-    Mat dragon_cloud = readCloud(get_dragon_ply_file_path());
+    var dragon_cloud = alvision.readCloud(get_dragon_ply_file_path());
 
     Vec3f qnan = Vec3f::all(std::numeric_limits<float>::quiet_NaN());
-    for(int i = 0; i < (int)dragon_cloud.total(); ++i)
+    for(var i = 0; i < (int)dragon_cloud.total(); ++i)
         if (i % 15 != 0)
             dragon_cloud.at<Vec3f>(i) = qnan;
 
     Affine3d pose = Affine3d().rotate(Vec3d(0, 0.8, 0));
 
-    Viz3d viz("show_cloud_masked");
+    var viz = new alvision.Viz3d ("show_cloud_masked");
     viz.showWidget("coosys", WCoordinateSystem());
     viz.showWidget("dragon", WCloud(dragon_cloud), pose);
     viz.showWidget("text2d", WText("Nan masked cloud", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_cloud_collection)
-{
-    Mat cloud = readCloud(get_dragon_ply_file_path());
+alvision.cvtest.TEST('Viz', 'show_cloud_collection', () => {
+    var cloud = alvision.readCloud(get_dragon_ply_file_path());
 
     WCloudCollection ccol;
-    ccol.addCloud(cloud, Color::white(), Affine3d().translate(Vec3d(0, 0, 0)).rotate(Vec3d(Math.PI/2, 0, 0)));
-    ccol.addCloud(cloud, Color::blue(),  Affine3d().translate(Vec3d(1, 0, 0)));
-    ccol.addCloud(cloud, Color::red(),   Affine3d().translate(Vec3d(2, 0, 0)));
+    ccol.addCloud(cloud, Color::white(), Affine3d().translate(Vec3d(0, 0, 0)).rotate(Vec3d(Math.PI / 2, 0, 0)));
+    ccol.addCloud(cloud, Color::blue(), Affine3d().translate(Vec3d(1, 0, 0)));
+    ccol.addCloud(cloud, Color::red(), Affine3d().translate(Vec3d(2, 0, 0)));
     ccol.finalize();
 
-    Viz3d viz("show_cloud_collection");
+    var viz = new alvision.Viz3d ("show_cloud_collection");
     viz.setBackgroundColor(Color::mlab());
     viz.showWidget("coosys", WCoordinateSystem());
     viz.showWidget("ccol", ccol);
     viz.showWidget("text2d", WText("Cloud collection", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_painted_clouds)
-{
+alvision.cvtest.TEST('Viz', 'show_painted_clouds', () => {
     Mat cloud = readCloud(get_dragon_ply_file_path());
 
     Viz3d viz("show_painted_clouds");
     viz.setBackgroundMeshLab();
     viz.showWidget("coosys", WCoordinateSystem());
-    viz.showWidget("cloud1", WPaintedCloud(cloud), Affine3d(Vec3d(0.0, -Math.PI/2, 0.0), Vec3d(-1.5, 0.0, 0.0)));
-    viz.showWidget("cloud2", WPaintedCloud(cloud, Vec3d(0.0, -0.75, -1.0), Vec3d(0.0, 0.75, 0.0)), Affine3d(Vec3d(0.0, Math.PI/2, 0.0), Vec3d(1.5, 0.0, 0.0)));
+    viz.showWidget("cloud1", WPaintedCloud(cloud), Affine3d(Vec3d(0.0, -Math.PI / 2, 0.0), Vec3d(-1.5, 0.0, 0.0)));
+    viz.showWidget("cloud2", WPaintedCloud(cloud, Vec3d(0.0, -0.75, -1.0), Vec3d(0.0, 0.75, 0.0)), Affine3d(Vec3d(0.0, Math.PI / 2, 0.0), Vec3d(1.5, 0.0, 0.0)));
     viz.showWidget("cloud3", WPaintedCloud(cloud, Vec3d(0.0, 0.0, -1.0), Vec3d(0.0, 0.0, 1.0), Color::blue(), Color::red()));
     viz.showWidget("arrow", WArrow(Vec3d(0.0, 1.0, -1.0), Vec3d(0.0, 1.0, 1.0), 0.009, Color::raspberry()));
     viz.showWidget("text2d", WText("Painted clouds", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_mesh)
-{
+alvision.cvtest.TEST('Viz', 'show_mesh', () => {
     Mesh mesh = Mesh::load(get_dragon_ply_file_path());
 
     Affine3d pose = Affine3d().rotate(Vec3d(0, 0.8, 0));
@@ -222,24 +218,23 @@ TEST(Viz, show_mesh)
     viz.showWidget("mesh", WMesh(mesh), pose);
     viz.showWidget("text2d", WText("Just mesh", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_mesh_random_colors)
-{
+alvision.cvtest.TEST('Viz', 'show_mesh_random_colors', () => {
     Mesh mesh = Mesh::load(get_dragon_ply_file_path());
-    theRNG().fill(mesh.colors, RNG::UNIFORM, 0, 255);
+    alvision.theRNG().fill(mesh.colors, RNG::UNIFORM, 0, 255);
 
     Affine3d pose = Affine3d().rotate(Vec3d(0, 0.8, 0));
 
-    Viz3d viz("show_mesh_random_color");
+    var viz = new alvision.Viz3d ("show_mesh_random_color");
     viz.showWidget("coosys", WCoordinateSystem());
     viz.showWidget("mesh", WMesh(mesh), pose);
     viz.setRenderingProperty("mesh", SHADING, SHADING_PHONG);
     viz.showWidget("text2d", WText("Random color mesh", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_widget_merger)
+alvision.cvtest.TEST('Viz', 'show_widget_merger',()=>
 {
     WWidgetMerger merger;
     merger.addWidget(WCube(Vec3d::all(0.0), Vec3d::all(1.0), true, Color::gold()));
@@ -258,15 +253,15 @@ TEST(Viz, show_widget_merger)
     viz.showWidget("merger", merger);
     viz.showWidget("text2d", WText("Widget merger", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_textured_mesh)
+alvision.cvtest.TEST('Viz', 'show_textured_mesh',()=>
 {
     Mat lena = imread(Path::combine(alvision.cvtest.TS.ptr().get_data_path(), "lena.png"));
 
-    std::Array<Vec3d> points;
-    std::Array<Vec2d> tcoords;
-    std::Array<int> polygons;
+    Array<Vec3d> points;
+    Array<Vec2d> tcoords;
+    Array<int> polygons;
     for(size_t i = 0; i < 64; ++i)
     {
         double angle = Math.PI/2 * i/64.0;
@@ -295,9 +290,9 @@ TEST(Viz, show_textured_mesh)
     viz.setRenderingProperty("mesh", SHADING, SHADING_PHONG);
     viz.showWidget("text2d", WText("Textured mesh", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_polyline)
+alvision.cvtest.TEST('Viz', 'show_polyline',()=>
 {
     const Color palette[] = { Color::red(), Color::green(), Color::blue(), Color::gold(), Color::raspberry(), Color::bluberry(), Color::lime() };
     size_t palette_size = sizeof(palette)/sizeof(palette[0]);
@@ -314,10 +309,9 @@ TEST(Viz, show_polyline)
     viz.showWidget("coosys", WCoordinateSystem());
     viz.showWidget("text2d", WText("Polyline", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_sampled_normals)
-{
+alvision.cvtest.TEST('Viz', 'show_sampled_normals', () => {
     Mesh mesh = Mesh::load(get_dragon_ply_file_path());
     computeNormals(mesh, mesh.normals);
 
@@ -329,10 +323,9 @@ TEST(Viz, show_sampled_normals)
     viz.setRenderingProperty("normals", LINE_WIDTH, 2.0);
     viz.showWidget("text2d", WText("Cloud or mesh normals", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_cloud_shaded_by_normals)
-{
+alvision.cvtest.TEST('Viz', 'show_cloud_shaded_by_normals', () => {
     Mesh mesh = Mesh::load(get_dragon_ply_file_path());
     computeNormals(mesh, mesh.normals);
 
@@ -345,19 +338,18 @@ TEST(Viz, show_cloud_shaded_by_normals)
     viz.showWidget("cloud", cloud, pose);
     viz.showWidget("text2d", WText("Cloud shaded by normals", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_trajectories)
-{
-    std::Array<Affine3d> path = generate_test_trajectory<double>(), sub0, sub1, sub2, sub3, sub4, sub5;
-    int size =(int)path.size();
+alvision.cvtest.TEST('Viz', 'show_trajectories', () => {
+    Array < Affine3d > path = generate_test_trajectory<double>(), sub0, sub1, sub2, sub3, sub4, sub5;
+    int size = (int)path.size();
 
-    Mat(path).rowRange(0, size/10+1).copyTo(sub0);
-    Mat(path).rowRange(size/10, size/5+1).copyTo(sub1);
-    Mat(path).rowRange(size/5, 11*size/12).copyTo(sub2);
-    Mat(path).rowRange(11*size/12, size).copyTo(sub3);
-    Mat(path).rowRange(3*size/4, 33*size/40).copyTo(sub4);
-    Mat(path).rowRange(33*size/40, 9*size/10).copyTo(sub5);
+    Mat(path).rowRange(0, size / 10 + 1).copyTo(sub0);
+    Mat(path).rowRange(size / 10, size / 5 + 1).copyTo(sub1);
+    Mat(path).rowRange(size / 5, 11 * size / 12).copyTo(sub2);
+    Mat(path).rowRange(11 * size / 12, size).copyTo(sub3);
+    Mat(path).rowRange(3 * size / 4, 33 * size / 40).copyTo(sub4);
+    Mat(path).rowRange(33 * size / 40, 9 * size / 10).copyTo(sub5);
     Matx33d K(1024.0, 0.0, 320.0, 0.0, 1024.0, 240.0, 0.0, 0.0, 1.0);
 
     Viz3d viz("show_trajectories");
@@ -371,29 +363,27 @@ TEST(Viz, show_trajectories)
     viz.showWidget("text2d", WText("Different kinds of supported trajectories", Point(20, 20), 20, Color::green()));
 
     int i = 0;
-    while(!viz.wasStopped())
-    {
+    while (!viz.wasStopped()) {
         double a = --i % 360;
-        Vec3d pose(sin(a * Math.PI/180), 0.7, cos(a * Math.PI/180));
+        Vec3d pose(sin(a * Math.PI / 180), 0.7, cos(a * Math.PI / 180));
         viz.setViewerPose(makeCameraPose(pose * 7.5, Vec3d(0.0, 0.5, 0.0), Vec3d(0.0, 0.1, 0.0)));
         viz.spinOnce(20, true);
     }
     viz.resetCamera();
     viz.spin();
-}
+});
 
-TEST(Viz, show_trajectory_reposition)
-{
-    std::Array<Affine3f> path = generate_test_trajectory<float>();
+alvision.cvtest.TEST('Viz', 'show_trajectory_reposition', () => {
+    Array < Affine3f > path = generate_test_trajectory<float>();
 
     Viz3d viz("show_trajectory_reposition_to_origin");
     viz.showWidget("coos", WCoordinateSystem());
-    viz.showWidget("sub3", WTrajectory(Mat(path).rowRange(0, (int)path.size()/3), WTrajectory::BOTH, 0.2, Color::brown()), path.front().inv());
+    viz.showWidget("sub3", WTrajectory(Mat(path).rowRange(0, (int)path.size() / 3), WTrajectory::BOTH, 0.2, Color::brown()), path.front().inv());
     viz.showWidget("text2d", WText("Trajectory resposition to origin", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_camera_positions)
+alvision.cvtest.TEST('Viz', 'show_camera_positions',()=>
 {
     Matx33d K(1024.0, 0.0, 320.0, 0.0, 1024.0, 240.0, 0.0, 0.0, 1.0);
     Mat lena = imread(Path::combine(alvision.cvtest.TS.ptr().get_data_path(), "lena.png"));
@@ -415,10 +405,9 @@ TEST(Viz, show_camera_positions)
     viz.showWidget("pos4", WCameraPosition(K, gray, 3, Color::indigo()), poses[1]);
     viz.showWidget("text2d", WText("Camera positions with images", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_overlay_image)
-{
+alvision.cvtest.TEST('Viz', 'show_overlay_image', () => {
     Mat lena = imread(Path::combine(alvision.cvtest.TS.ptr().get_data_path(), "lena.png"));
     Mat gray = make_gray(lena);
 
@@ -431,27 +420,25 @@ TEST(Viz, show_overlay_image)
     viz.showWidget("coos", WCoordinateSystem());
     viz.showWidget("cube", WCube());
     viz.showWidget("img1", WImageOverlay(lena, Rect(Point(10, 10), half_lsize)));
-    viz.showWidget("img2", WImageOverlay(gray, Rect(Point(vsz.width-10-lena.cols/2, 10), half_lsize)));
-    viz.showWidget("img3", WImageOverlay(gray, Rect(Point(10, vsz.height-10-lena.rows/2), half_lsize)));
-    viz.showWidget("img5", WImageOverlay(lena, Rect(Point(vsz.width-10-lena.cols/2, vsz.height-10-lena.rows/2), half_lsize)));
+    viz.showWidget("img2", WImageOverlay(gray, Rect(Point(vsz.width - 10 - lena.cols / 2, 10), half_lsize)));
+    viz.showWidget("img3", WImageOverlay(gray, Rect(Point(10, vsz.height - 10 - lena.rows / 2), half_lsize)));
+    viz.showWidget("img5", WImageOverlay(lena, Rect(Point(vsz.width - 10 - lena.cols / 2, vsz.height - 10 - lena.rows / 2), half_lsize)));
     viz.showWidget("text2d", WText("Overlay images", Point(20, 20), 20, Color::green()));
 
     int i = 0;
-    while(!viz.wasStopped())
-    {
+    while (!viz.wasStopped()) {
         double a = ++i % 360;
-        Vec3d pose(sin(a * Math.PI/180), 0.7, cos(a * Math.PI/180));
+        Vec3d pose(sin(a * Math.PI / 180), 0.7, cos(a * Math.PI / 180));
         viz.setViewerPose(makeCameraPose(pose * 3, Vec3d(0.0, 0.5, 0.0), Vec3d(0.0, 0.1, 0.0)));
-        viz.getWidget("img1").cast<WImageOverlay>().setImage(lena * pow(sin(i*10*Math.PI/180) * 0.5 + 0.5, 1.0));
+        viz.getWidget("img1").cast<WImageOverlay>().setImage(lena * pow(sin(i * 10 * Math.PI / 180) * 0.5 + 0.5, 1.0));
         viz.spinOnce(1, true);
     }
     viz.showWidget("text2d", WText("Overlay images (stopped)", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
 
-TEST(Viz, show_image_method)
-{
+alvision.cvtest.TEST('Viz', 'show_image_method', () => {
     Mat lena = imread(Path::combine(alvision.cvtest.TS.ptr().get_data_path(), "lena.png"));
 
     Viz3d viz("show_image_method");
@@ -461,10 +448,9 @@ TEST(Viz, show_image_method)
     viz.spinOnce(1500, true);
 
     alvision.viz::imshow("show_image_method", make_gray(lena)).spin();
-}
+});
 
-TEST(Viz, show_image_3d)
-{
+alvision.cvtest.TEST('Viz', 'show_image_3d', () => {
     Mat lena = imread(Path::combine(alvision.cvtest.TS.ptr().get_data_path(), "lena.png"));
     Mat gray = make_gray(lena);
 
@@ -473,7 +459,7 @@ TEST(Viz, show_image_3d)
     viz.showWidget("coos", WCoordinateSystem());
     viz.showWidget("cube", WCube());
     viz.showWidget("arr0", WArrow(Vec3d(0.5, 0.0, 0.0), Vec3d(1.5, 0.0, 0.0), 0.009, Color::raspberry()));
-    viz.showWidget("img0", WImage3D(lena, Size2d(1.0, 1.0)), Affine3d(Vec3d(0.0, Math.PI/2, 0.0), Vec3d(.5, 0.0, 0.0)));
+    viz.showWidget("img0", WImage3D(lena, Size2d(1.0, 1.0)), Affine3d(Vec3d(0.0, Math.PI / 2, 0.0), Vec3d(.5, 0.0, 0.0)));
     viz.showWidget("arr1", WArrow(Vec3d(-0.5, -0.5, 0.0), Vec3d(0.2, 0.2, 0.0), 0.009, Color::raspberry()));
     viz.showWidget("img1", WImage3D(gray, Size2d(1.0, 1.0), Vec3d(-0.5, -0.5, 0.0), Vec3d(1.0, 1.0, 0.0), Vec3d(0.0, 1.0, 0.0)));
 
@@ -482,17 +468,15 @@ TEST(Viz, show_image_3d)
     viz.showWidget("text2d", WText("Images in 3D", Point(20, 20), 20, Color::green()));
 
     int i = 0;
-    while(!viz.wasStopped())
-    {
-        viz.getWidget("img0").cast<WImage3D>().setImage(lena * pow(sin(i++*7.5*Math.PI/180) * 0.5 + 0.5, 1.0));
+    while (!viz.wasStopped()) {
+        viz.getWidget("img0").cast<WImage3D>().setImage(lena * pow(sin(i++ * 7.5 * Math.PI / 180) * 0.5 + 0.5, 1.0));
         viz.spinOnce(1, true);
     }
     viz.showWidget("text2d", WText("Images in 3D (stopped)", Point(20, 20), 20, Color::green()));
     viz.spin();
-}
+});
 
-TEST(Viz, show_simple_widgets)
-{
+alvision.cvtest.TEST('Viz', 'show_simple_widgets', () => {
     Viz3d viz("show_simple_widgets");
     viz.setBackgroundMeshLab();
 
@@ -508,29 +492,28 @@ TEST(Viz, show_simple_widgets)
     viz.showWidget("con1", WCone(0.125, Point3d(0.5, -0.5, 0.5), Point3d(0.5, -1.0, 0.5), 6, Color::turquoise()));
 
     viz.showWidget("text2d", WText("Different simple widgets", Point(20, 20), 20, Color::green()));
-    viz.showWidget("text3d", WText3D("Simple 3D text", Point3d( 0.5,  0.5, 0.5), 0.125, false, Color::green()));
+    viz.showWidget("text3d", WText3D("Simple 3D text", Point3d(0.5, 0.5, 0.5), 0.125, false, Color::green()));
 
     viz.showWidget("plane1", WPlane(Size2d(0.25, 0.75)));
     viz.showWidget("plane2", WPlane(Vec3d(0.5, -0.5, -0.5), Vec3d(0.0, 1.0, 1.0), Vec3d(1.0, 1.0, 0.0), Size2d(1.0, 0.5), Color::gold()));
 
-    viz.showWidget("grid1", WGrid(Vec2i(7,7), Vec2d::all(0.75), Color::gray()), Affine3d().translate(Vec3d(0.0, 0.0, -1.0)));
+    viz.showWidget("grid1", WGrid(Vec2i(7, 7), Vec2d::all(0.75), Color::gray()), Affine3d().translate(Vec3d(0.0, 0.0, -1.0)));
 
     viz.spin();
     viz.getWidget("text2d").cast<WText>().setText("Different simple widgets (updated)");
     viz.getWidget("text3d").cast<WText3D>().setText("Updated text 3D");
     viz.spin();
-}
+});
 
-TEST(Viz, show_follower)
-{
+alvision.cvtest.TEST('Viz', 'show_follower', () => {
     Viz3d viz("show_follower");
 
     viz.showWidget("coos", WCoordinateSystem());
     viz.showWidget("cube", WCube());
-    viz.showWidget("t3d_2", WText3D("Simple 3D follower", Point3d(-0.5, -0.5, 0.5), 0.125, true,  Color::green()));
+    viz.showWidget("t3d_2", WText3D("Simple 3D follower", Point3d(-0.5, -0.5, 0.5), 0.125, true, Color::green()));
     viz.showWidget("text2d", WText("Follower: text always facing camera", Point(20, 20), 20, Color::green()));
     viz.setBackgroundMeshLab();
     viz.spin();
     viz.getWidget("t3d_2").cast<WText3D>().setText("Updated follower 3D");
     viz.spin();
-}
+});

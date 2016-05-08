@@ -63,12 +63,12 @@
 //    viz.showWidget("coo", alvision.viz::WCoordinateSystem(1));
 //    viz.showWidget("cloud", alvision.viz::WPaintedCloud(cloud));
 
-//    //---->>>>> <to_test_in_future>
-//    //std::Array<alvision.Affine3d> gt, es;
+//    //---.>>>> <to_test_in_future>
+//    //Array<alvision.Affine3d> gt, es;
 //    //alvision.viz::readTrajectory(gt, "d:/Datasets/trajs/gt%05d.xml");
 //    //alvision.viz::readTrajectory(es, "d:/Datasets/trajs/es%05d.xml");
 //    //alvision.Mat cloud = alvision.viz::readCloud(get_dragon_ply_file_path());
-//    //---->>>>> </to_test_in_future>
+//    //---.>>>> </to_test_in_future>
 
 //    viz.spin();
 //}

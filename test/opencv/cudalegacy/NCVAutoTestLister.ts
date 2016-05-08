@@ -70,7 +70,7 @@ public:
 
     void add(INCVTest *test)
     {
-        this->tests.push(test);
+        this.tests.push(test);
     }
 
     bool invoke()
@@ -83,10 +83,10 @@ public:
         {
             printf("Test suite '%s' with %d tests\n",
                 testSuiteName,
-                (int)(this->tests.size()));
+                (int)(this.tests.size()));
         }
 
-        for (Ncv32u i=0; i<this->tests.size(); i++)
+        for (Ncv32u i=0; i<this.tests.size(); i++)
         {
             INCVTest &curTest = *tests[i];
 
@@ -145,7 +145,7 @@ public:
         {
             printf("Test suite '%s' complete: %d total, %d passed, %d memory errors, %d failed\n\n",
                 testSuiteName,
-                (int)(this->tests.size()),
+                (int)(this.tests.size()),
                 nPassed,
                 nFailedMem,
                 nFailed);
@@ -157,7 +157,7 @@ public:
 
     ~NCVAutoTestLister()
     {
-        for (Ncv32u i=0; i<this->tests.size(); i++)
+        for (Ncv32u i=0; i<this.tests.size(); i++)
         {
             delete tests[i];
         }
@@ -168,7 +168,7 @@ private:
     std::string testSuiteName;
     OutputLevel outputLevel;
     NcvBool bStopOnFirstFail;
-    std::Array<INCVTest *> tests;
+    Array<INCVTest *> tests;
 };
 
 #endif // _ncvautotestlister_hpp_

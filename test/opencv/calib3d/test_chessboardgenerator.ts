@@ -65,31 +65,270 @@ class ChessBoardGenerator {
     public patternSize: alvision.Size;
     public rendererResolutionMultiplier: alvision.int;
 
-    constructor(patternSize: alvision.Size = new alvision.Size(8, 6)) {
+    constructor(_patternSize: alvision.Size = new alvision.Size(8, 6)) {
         this.sensorWidth = (32);
         this.sensorHeight = (24);
         this.squareEdgePointsNum = (200);
-        this.min_cos = (Math.sqrt(2.) * 0.5f);
+        this.min_cos = (Math.sqrt(2.) * 0.5);
         this.cov = (0.5);
-            patternSize(_patternSize), rendererResolutionMultiplier(4), tvec(Mat::zeros(1, 3, CV_32F))
-        {
-            Rodrigues(Mat::eye(3, 3, CV_32F), rvec);
+
+
+        this.patternSize = (_patternSize);
+        this.rendererResolutionMultiplier = (4);
+        this.tvec = alvision.Mat.from (alvision.Mat.zeros(1, 3,alvision.MatrixType. CV_32F))
+        Rodrigues(Mat::eye(3, 3, CV_32F), rvec);
     }
-    run(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, std::Array<Point2f>& corners): alvision.Mat { }
-    run(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, std::Array<Point2f>& corners): alvision.Mat { }
-    run(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, const Size2f& squareSize, const Point3f& pos, std::Array<Point2f>& corners): alvision.Mat { }
-    public cornersSize(): alvision.Size { }
+    run(bg: alvision.Mat, camMat: alvision.Mat, distCoeffs: alvision.Mat, corners: Array<alvision.Point2f>): alvision.Mat {
+        this.cov = Math.min(this.cov.valueOf(), 0.8);
+
+        var fovx: alvision.double;
+        var fovy: alvision.double;
+        var focalLen: alvision.double;
+
+        var principalPoint: alvision.Point2d;
+        var aspect: alvision.double;
+        alvision.calibrationMatrixValues(camMat, bg.size(), this.sensorWidth, this.sensorHeight,
+            fovx, fovy, focalLen, principalPoint, aspect);
+
+        var rng = alvision.theRNG();
+
+        var d1 = (rng.uniform(0.1, 10.0));
+        var ah = (rng.uniform(-fovx / 2 * this.cov.valueOf(), fovx.valueOf() / 2 * this.cov.valueOf()).valueOf() * Math.PI / 180);
+        var av = (rng.uniform(-fovy / 2 * this.cov.valueOf(), fovy.valueOf() / 2 * this.cov.valueOf()).valueOf() * Math.PI / 180);
+
+        var p = new alvision.Point3f();
+        p.z = Math.cos(ah) * d1.valueOf();
+        p.x = Math.sin(ah) * d1.valueOf();
+        p.y = p.z.valueOf() * Math.tan(av);
+
+        var pb1 = new alvision.Point3f()
+        var pb2 = new alvision.Point3f();
+
+        this.generateBasis(pb1, pb2);
+
+        var cbHalfWidth = (norm(p) * Math.sin(Math.min(fovx.valueOf(), fovy).valueOf() * 0.5 * Math.PI / 180));
+        var cbHalfHeight = cbHalfWidth * this.patternSize.height.valueOf() / this.patternSize.width.valueOf();
+
+        var cbHalfWidthEx  = cbHalfWidth * (this.patternSize.width.valueOf() + 1) / this.patternSize.width.valueOf();
+        var cbHalfHeightEx = cbHalfHeight * (this.patternSize.height.valueOf() + 1) / this.patternSize.height.valueOf();
+
+        var pts3d = new Array<alvision.Point3f> (4);
+        var pts2d = new Array<alvision.Point2f> (4);
+
+        for (; ;) {
+            pts3d[0] = p + pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
+            pts3d[1] = p + pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
+            pts3d[2] = p - pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
+            pts3d[3] = p - pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
+
+            /* can remake with better perf */
+            alvision.projectPoints(Mat(pts3d), rvec, tvec, camMat, distCoeffs, pts2d);
+
+            var inrect1 = pts2d[0].x < bg.cols && pts2d[0].y < bg.rows && pts2d[0].x > 0 && pts2d[0].y > 0;
+            var inrect2 = pts2d[1].x < bg.cols && pts2d[1].y < bg.rows && pts2d[1].x > 0 && pts2d[1].y > 0;
+            var inrect3 = pts2d[2].x < bg.cols && pts2d[2].y < bg.rows && pts2d[2].x > 0 && pts2d[2].y > 0;
+            var inrect4 = pts2d[3].x < bg.cols && pts2d[3].y < bg.rows && pts2d[3].x > 0 && pts2d[3].y > 0;
+
+            if (inrect1 && inrect2 && inrect3 && inrect4)
+                break;
+
+            cbHalfWidth *= 0.8f;
+            cbHalfHeight = cbHalfWidth * this.patternSize.height.valueOf() / this.patternSize.width.valueOf();
+
+            cbHalfWidthEx = cbHalfWidth * (this.patternSize.width.valueOf() + 1) / this.patternSize.width.valueOf();
+            cbHalfHeightEx = cbHalfHeight * (this.patternSize.height.valueOf() + 1) / this.patternSize.height.valueOf();
+        }
+
+        var zero: alvision.Point3f  = p - pb1 * cbHalfWidth - cbHalfHeight * pb2;
+        var sqWidth  = 2 * cbHalfWidth / this.patternSize.width.valueOf();
+        var sqHeight = 2 * cbHalfHeight / this.patternSize.height.valueOf();
+
+        return this.generateChessBoard(bg, camMat, distCoeffs, zero, pb1, pb2, sqWidth, sqHeight, pts3d, corners);
+    }
+    run(bg: alvision.Mat, camMat: alvision.Mat, distCoeffs: alvision.Mat, squareSize: alvision.Size2f, corners: Array<alvision.Point2f>): alvision.Mat {
+        this.cov = Math.min(this.cov.valueOf(), 0.8);
+        double fovx, fovy, focalLen;
+        Point2d principalPoint;
+        double aspect;
+        alvision.calibrationMatrixValues(camMat, bg.size(), sensorWidth, sensorHeight,
+            fovx, fovy, focalLen, principalPoint, aspect);
+
+        var rng = alvision.theRNG();
+
+        var d1 = (rng.uniform(0.1, 10.0));
+        var ah = (rng.uniform(-fovx / 2 * cov, fovx / 2 * cov).valueOf() * Math.PI / 180);
+        var av = (rng.uniform(-fovy / 2 * cov, fovy / 2 * cov).valueOf() * Math.PI / 180);
+
+        var p = new alvision.Point3f();
+        p.z = Math.cos(ah) * d1.valueOf();
+        p.x = Math.sin(ah) * d1.valueOf();
+        p.y = p.z.valueOf() * Math.tan(av);
+
+        Point3f pb1, pb2;
+        this.generateBasis(pb1, pb2);
+
+        var cbHalfWidth  = squareSize.width.valueOf() * this.patternSize.width.valueOf() * 0.5;
+        var cbHalfHeight = squareSize.height.valueOf() * this.patternSize.height.valueOf() * 0.5;
+
+        var cbHalfWidthEx  = cbHalfWidth * (thispatternSize.width + 1) / this.patternSize.width;
+        var cbHalfHeightEx = cbHalfHeight * (this.patternSize.height + 1) / this.patternSize.height;
+
+        var pts3d = new Array<alvision.Point3f> (4);
+        var pts2d = new Array<alvision.Point2f> (4);
+        for (; ;) {
+            pts3d[0] = p + pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
+            pts3d[1] = p + pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
+            pts3d[2] = p - pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
+            pts3d[3] = p - pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
+
+            /* can remake with better perf */
+            alvision.projectPoints(new alvision.Mat(pts3d), rvec, tvec, camMat, distCoeffs, pts2d);
+
+            var inrect1 = pts2d[0].x < bg.cols && pts2d[0].y < bg.rows && pts2d[0].x > 0 && pts2d[0].y > 0;
+            var inrect2 = pts2d[1].x < bg.cols && pts2d[1].y < bg.rows && pts2d[1].x > 0 && pts2d[1].y > 0;
+            var inrect3 = pts2d[2].x < bg.cols && pts2d[2].y < bg.rows && pts2d[2].x > 0 && pts2d[2].y > 0;
+            var inrect4 = pts2d[3].x < bg.cols && pts2d[3].y < bg.rows && pts2d[3].x > 0 && pts2d[3].y > 0;
+
+            if (inrect1 && inrect2 && inrect3 && inrect4)
+                break;
+
+            p.z *= 1.1f;
+        }
+
+        Point3f zero = p - pb1 * cbHalfWidth - cbHalfHeight * pb2;
+
+        return this.generateChessBoard(bg, camMat, distCoeffs, zero, pb1, pb2,
+            squareSize.width, squareSize.height, pts3d, corners);
+    }
+    run(bg: alvision.Mat, camMat: alvision.Mat, distCoeffs: alvision.Mat, squareSize: alvision.Size2f, pos: alvision.Point3f, corners: Array<alvision.Point2f>): alvision.Mat {
+        this.cov = Math.min(this.cov.valueOf(), 0.8);
+        Point3f p = pos;
+        Point3f pb1, pb2;
+        this.generateBasis(pb1, pb2);
+
+        var cbHalfWidth  = squareSize.width.valueOf() * this.patternSize.width.valueOf() * 0.5;
+        var cbHalfHeight = squareSize.height.valueOf() * this.patternSize.height.valueOf() * 0.5;
+
+        var cbHalfWidthEx  = cbHalfWidth * (this.patternSize.width.valueOf() + 1) / this.patternSize.width.valueOf();
+        var cbHalfHeightEx = cbHalfHeight * (this.patternSize.height.valueOf() + 1) / this.patternSize.height.valueOf();
+
+        var pts3d = new Array<alvision.Point3f> (4);
+        var pts2d = new Array<alvision.Point2f> (4);
+
+        pts3d[0] = p + pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
+        pts3d[1] = p + pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
+        pts3d[2] = p - pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
+        pts3d[3] = p - pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
+
+        /* can remake with better perf */
+        alvision.projectPoints(Mat(pts3d), rvec, tvec, camMat, distCoeffs, pts2d);
+
+        Point3f zero = p - pb1 * cbHalfWidth - cbHalfHeight * pb2;
+
+        return this.generateChessBoard(bg, camMat, distCoeffs, zero, pb1, pb2,
+            squareSize.width, squareSize.height, pts3d, corners);
+    }
+    public cornersSize(): alvision.Size {
+        return new alvision.Size(this.patternSize.width.valueOf() - 1, this.patternSize.height.valueOf() - 1);
+    }
 
     public corners3d: Array<alvision.Point3f>;
 
-    private generateEdge(const Point3f& p1, const Point3f& p2, std::Array<Point3f>& out): void {
+    generateEdge(p1: alvision.Point3f, p2: alvision.Point3f, out: Array<alvision.Point3f>): void {
+        Point3f step = (p2 - p1) * (1.f/ this.squareEdgePointsNum);
+        for (var n = 0; n < this.squareEdgePointsNum; ++n)
+        out.push(new alvision.Point3f( p1 + step * n));
     }
 
-    generateChessBoard(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
-        const Point3f& zero, const Point3f& pb1, const Point3f& pb2,
-        float sqWidth, float sqHeight, const std::Array<Point3f>& whole, std::Array<Point2f>& corners): alvision.Mat {
+    generateChessBoard(bg: alvision.Mat, camMat: alvision.Mat, distCoeffs: alvision.Mat,
+        zero: alvision.Point3f, pb1: alvision.Point3f, pb2: alvision.Point3f,
+        sqWidth: alvision.float, sqHeight: alvision.float, whole: Array<alvision.Point3f>, corners: Array<alvision.Point2f>): alvision.Mat {
+        var squares_black = new Array<Array<alvision.Point>> ;
+        for (var i = 0; i < this.patternSize.width; ++i)
+            for (var j = 0; j < this.patternSize.height; ++j)
+                if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
+                    var pts_square3d = new Array<alvision.Point3f>();
+                    var pts_square2d = new Array<alvision.Point2f>();
+
+                    Point3f p1 = zero + (i + 0) * sqWidth * pb1 + (j + 0) * sqHeight * pb2;
+                    Point3f p2 = zero + (i + 1) * sqWidth * pb1 + (j + 0) * sqHeight * pb2;
+                    Point3f p3 = zero + (i + 1) * sqWidth * pb1 + (j + 1) * sqHeight * pb2;
+                    Point3f p4 = zero + (i + 0) * sqWidth * pb1 + (j + 1) * sqHeight * pb2;
+                    this.generateEdge(p1, p2, pts_square3d);
+                    this.generateEdge(p2, p3, pts_square3d);
+                    this.generateEdge(p3, p4, pts_square3d);
+                    this.generateEdge(p4, p1, pts_square3d);
+
+                    alvision.projectPoints(Mat(pts_square3d), rvec, tvec, camMat, distCoeffs, pts_square2d);
+                    squares_black.resize(squares_black.size() + 1);
+                    var temp = new Array<alvision.Point2f>();
+                    alvision.approxPolyDP(Mat(pts_square2d), temp, 1.0, true);
+                    alvision.transformOp(temp.begin(), temp.end(), back_inserter(squares_black.back()), Mult(rendererResolutionMultiplier));
+                }
+
+        /* calculate corners */
+        corners3d.clear();
+        for (var j = 0; j < this.patternSize.height - 1; ++j)
+            for (var i = 0; i < this.patternSize.width - 1; ++i)
+                corners3d.push(zero + (i + 1) * sqWidth * pb1 + (j + 1) * sqHeight * pb2);
+        corners.clear();
+        alvision.projectPoints(Mat(corners3d), rvec, tvec, camMat, distCoeffs, corners);
+
+        var whole3d = new Array<alvision.Point3f>();
+        var whole2d = new Array<alvision.Point2f>();
+        this.generateEdge(whole[0], whole[1], whole3d);
+        this.generateEdge(whole[1], whole[2], whole3d);
+        this.generateEdge(whole[2], whole[3], whole3d);
+        this.generateEdge(whole[3], whole[0], whole3d);
+        alvision.projectPoints(Mat(whole3d), rvec, tvec, camMat, distCoeffs, whole2d);
+        vector < Point2f > temp_whole2d;
+        approxPolyDP(Mat(whole2d), temp_whole2d, 1.0, true);
+
+        var whole_contour = new Array<Array<alvision.Point>>(1);
+        alvision.transformOp(temp_whole2d.begin(), temp_whole2d.end(),
+            back_inserter(whole_contour.front()), Mult(rendererResolutionMultiplier));
+
+        var result = new alvision.Mat();
+        if (rendererResolutionMultiplier == 1) {
+            result = bg.clone();
+            alvision.drawContours(result, whole_contour, -1, Scalar::all(255), FILLED, LINE_AA);
+            alvision.drawContours(result, squares_black, -1, alvision.Scalar.all(0), FILLED, LINE_AA);
+        }
+        else {
+            Mat tmp;
+            alvision.resize(bg, tmp, bg.size() * rendererResolutionMultiplier);
+            alvision.drawContours(tmp, whole_contour, -1, Scalar::all(255), FILLED, LINE_AA);
+            alvision.drawContours(tmp, squares_black, -1, alvision.Scalar.all(0), FILLED, LINE_AA);
+            alvision.resize(tmp, result, bg.size(), 0, 0, INTER_AREA);
+        }
+
+        return result;
     }
-    generateBasis(Point3f& pb1, Point3f& pb2): void {
+    generateBasis(pb1: alvision.Point3f, pb2: alvision.Point3f): void {
+        var rng = alvision.theRNG();
+
+        var n = new alvision.Vecf();
+        for (; ;) {
+            n[0] = rng.uniform(-1., 1.).valueOf();
+            n[1] = rng.uniform(-1., 1.).valueOf();
+            n[2] = rng.uniform(-1., 1.).valueOf();
+            var len = norm(n);
+            n[0] /= len;
+            n[1] /= len;
+            n[2] /= len;
+
+            if (n[2] > min_cos)
+                break;
+        }
+
+        Vec3f n_temp = n; n_temp[0] += 100;
+        Vec3f b1 = n.cross(n_temp);
+        Vec3f b2 = n.cross(b1);
+        float len_b1 = (float)norm(b1);
+        float len_b2 = (float)norm(b2);
+
+        pb1 = new alvision.Point3f(b1[0] / len_b1, b1[1] / len_b1, b1[2] / len_b1);
+        pb2 = new alvision.Point3f(b2[0] / len_b1, b2[1] / len_b2, b2[2] / len_b2);
     }
 
     private rvec: alvision.Mat;
@@ -114,272 +353,21 @@ class ChessBoardGenerator {
 //    using namespace cv;
 //using namespace std;
 
-ChessBoardGenerator::ChessBoardGenerator(const Size& _patternSize) 
-}
 
-void alvision.ChessBoardGenerator::generateEdge(const Point3f& p1, const Point3f& p2, Array<Point3f>& out) const
-    {
-        Point3f step = (p2 - p1) * (1.f/squareEdgePointsNum);
-    for(size_t n = 0; n < squareEdgePointsNum; ++n)
-out.push(p1 + step * (float)n);
-}
 
-Size alvision.ChessBoardGenerator::cornersSize() const
-    {
-        return Size(patternSize.width - 1, patternSize.height - 1);
-}
 
-struct Mult
+class Mult implements alvision.ItransformOp<alvision.Point2f>
 {
-    float m;
-    Mult(int mult) : m((float)mult) {}
-    Point2f operator()(const Point2f& p)const { return p * m; }
-};
+    protected m: alvision.float;
+    constructor(mult: alvision.int) {
+        this.m = mult;
+    }
 
-void alvision.ChessBoardGenerator::generateBasis(Point3f & pb1, Point3f & pb2) const
-    {
-        RNG& rng = theRNG();
 
-Vec3f n;
-for (; ;) {
-    n[0] = rng.uniform(-1.f, 1.f);
-    n[1] = rng.uniform(-1.f, 1.f);
-    n[2] = rng.uniform(-1.f, 1.f);
-    float len = (float)norm(n);
-    n[0] /= len;
-    n[1] /= len;
-    n[2] /= len;
-
-    if (n[2] > min_cos)
-        break;
-}
-
-Vec3f n_temp = n; n_temp[0] += 100;
-Vec3f b1 = n.cross(n_temp);
-Vec3f b2 = n.cross(b1);
-float len_b1 = (float)norm(b1);
-float len_b2 = (float)norm(b2);
-
-pb1 = Point3f(b1[0] / len_b1, b1[1] / len_b1, b1[2] / len_b1);
-pb2 = Point3f(b2[0] / len_b1, b2[1] / len_b2, b2[2] / len_b2);
+    run(p: alvision.Point2f): alvision.Point2f {
+        return p * this.m;
+    }
 }
 
 
-Mat alvision.ChessBoardGenerator::generateChessBoard(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
-const Point3f& zero, const Point3f& pb1, const Point3f& pb2,
-    float sqWidth, float sqHeight, const Array<Point3f>& whole,
-        Array<Point2f>& corners) const
-            {
-                Array< Array<Point>>squares_black;
-for (int i = 0; i < patternSize.width; ++i)
-for (int j = 0; j < patternSize.height; ++j)
-if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
-    vector < Point3f > pts_square3d;
-    vector < Point2f > pts_square2d;
 
-    Point3f p1 = zero + (i + 0) * sqWidth * pb1 + (j + 0) * sqHeight * pb2;
-    Point3f p2 = zero + (i + 1) * sqWidth * pb1 + (j + 0) * sqHeight * pb2;
-    Point3f p3 = zero + (i + 1) * sqWidth * pb1 + (j + 1) * sqHeight * pb2;
-    Point3f p4 = zero + (i + 0) * sqWidth * pb1 + (j + 1) * sqHeight * pb2;
-    generateEdge(p1, p2, pts_square3d);
-    generateEdge(p2, p3, pts_square3d);
-    generateEdge(p3, p4, pts_square3d);
-    generateEdge(p4, p1, pts_square3d);
-
-    projectPoints(Mat(pts_square3d), rvec, tvec, camMat, distCoeffs, pts_square2d);
-    squares_black.resize(squares_black.size() + 1);
-    vector < Point2f > temp;
-    approxPolyDP(Mat(pts_square2d), temp, 1.0, true);
-    transform(temp.begin(), temp.end(), back_inserter(squares_black.back()), Mult(rendererResolutionMultiplier));
-}
-
-/* calculate corners */
-corners3d.clear();
-for (int j = 0; j < patternSize.height - 1; ++j)
-for (int i = 0; i < patternSize.width - 1; ++i)
-corners3d.push(zero + (i + 1) * sqWidth * pb1 + (j + 1) * sqHeight * pb2);
-corners.clear();
-projectPoints(Mat(corners3d), rvec, tvec, camMat, distCoeffs, corners);
-
-vector < Point3f > whole3d;
-vector < Point2f > whole2d;
-generateEdge(whole[0], whole[1], whole3d);
-generateEdge(whole[1], whole[2], whole3d);
-generateEdge(whole[2], whole[3], whole3d);
-generateEdge(whole[3], whole[0], whole3d);
-projectPoints(Mat(whole3d), rvec, tvec, camMat, distCoeffs, whole2d);
-vector < Point2f > temp_whole2d;
-approxPolyDP(Mat(whole2d), temp_whole2d, 1.0, true);
-
-vector < vector < Point > > whole_contour(1);
-transform(temp_whole2d.begin(), temp_whole2d.end(),
-    back_inserter(whole_contour.front()), Mult(rendererResolutionMultiplier));
-
-var result = new alvision.Mat();
-if (rendererResolutionMultiplier == 1) {
-    result = bg.clone();
-    drawContours(result, whole_contour, -1, Scalar::all(255), FILLED, LINE_AA);
-    drawContours(result, squares_black, -1, alvision.Scalar.all(0), FILLED, LINE_AA);
-}
-else {
-    Mat tmp;
-    resize(bg, tmp, bg.size() * rendererResolutionMultiplier);
-    drawContours(tmp, whole_contour, -1, Scalar::all(255), FILLED, LINE_AA);
-    drawContours(tmp, squares_black, -1, alvision.Scalar.all(0), FILLED, LINE_AA);
-    resize(tmp, result, bg.size(), 0, 0, INTER_AREA);
-}
-
-return result;
-}
-
-Mat alvision.ChessBoardGenerator::operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, Array<Point2f>& corners) const
-    {
-        cov = std::min(cov, 0.8);
-double fovx, fovy, focalLen;
-Point2d principalPoint;
-double aspect;
-calibrationMatrixValues(camMat, bg.size(), sensorWidth, sensorHeight,
-    fovx, fovy, focalLen, principalPoint, aspect);
-
-RNG & rng = theRNG();
-
-float d1 = static_cast<float>(rng.uniform(0.1, 10.0));
-float ah = static_cast<float>(rng.uniform(-fovx / 2 * cov, fovx / 2 * cov) * Math.PI / 180);
-float av = static_cast<float>(rng.uniform(-fovy / 2 * cov, fovy / 2 * cov) * Math.PI / 180);
-
-Point3f p;
-p.z = cos(ah) * d1;
-p.x = sin(ah) * d1;
-p.y = p.z * tan(av);
-
-Point3f pb1, pb2;
-generateBasis(pb1, pb2);
-
-float cbHalfWidth = static_cast<float>(norm(p) * sin(std::min(fovx, fovy) * 0.5 * Math.PI / 180));
-float cbHalfHeight = cbHalfWidth * patternSize.height / patternSize.width;
-
-float cbHalfWidthEx  = cbHalfWidth * (patternSize.width + 1) / patternSize.width;
-float cbHalfHeightEx = cbHalfHeight * (patternSize.height + 1) / patternSize.height;
-
-vector < Point3f > pts3d(4);
-vector < Point2f > pts2d(4);
-for (; ;) {
-    pts3d[0] = p + pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
-    pts3d[1] = p + pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
-    pts3d[2] = p - pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
-    pts3d[3] = p - pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
-
-    /* can remake with better perf */
-    projectPoints(Mat(pts3d), rvec, tvec, camMat, distCoeffs, pts2d);
-
-    bool inrect1 = pts2d[0].x < bg.cols && pts2d[0].y < bg.rows && pts2d[0].x > 0 && pts2d[0].y > 0;
-    bool inrect2 = pts2d[1].x < bg.cols && pts2d[1].y < bg.rows && pts2d[1].x > 0 && pts2d[1].y > 0;
-    bool inrect3 = pts2d[2].x < bg.cols && pts2d[2].y < bg.rows && pts2d[2].x > 0 && pts2d[2].y > 0;
-    bool inrect4 = pts2d[3].x < bg.cols && pts2d[3].y < bg.rows && pts2d[3].x > 0 && pts2d[3].y > 0;
-
-    if (inrect1 && inrect2 && inrect3 && inrect4)
-        break;
-
-    cbHalfWidth *= 0.8f;
-    cbHalfHeight = cbHalfWidth * patternSize.height / patternSize.width;
-
-    cbHalfWidthEx = cbHalfWidth * (patternSize.width + 1) / patternSize.width;
-    cbHalfHeightEx = cbHalfHeight * (patternSize.height + 1) / patternSize.height;
-}
-
-Point3f zero = p - pb1 * cbHalfWidth - cbHalfHeight * pb2;
-float sqWidth  = 2 * cbHalfWidth / patternSize.width;
-float sqHeight = 2 * cbHalfHeight / patternSize.height;
-
-return generateChessBoard(bg, camMat, distCoeffs, zero, pb1, pb2, sqWidth, sqHeight, pts3d, corners);
-}
-
-
-Mat alvision.ChessBoardGenerator::operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
-const Size2f& squareSize, Array<Point2f>& corners) const
-    {
-        cov = std::min(cov, 0.8);
-double fovx, fovy, focalLen;
-Point2d principalPoint;
-double aspect;
-calibrationMatrixValues(camMat, bg.size(), sensorWidth, sensorHeight,
-    fovx, fovy, focalLen, principalPoint, aspect);
-
-RNG & rng = theRNG();
-
-float d1 = static_cast<float>(rng.uniform(0.1, 10.0));
-float ah = static_cast<float>(rng.uniform(-fovx / 2 * cov, fovx / 2 * cov) * Math.PI / 180);
-float av = static_cast<float>(rng.uniform(-fovy / 2 * cov, fovy / 2 * cov) * Math.PI / 180);
-
-Point3f p;
-p.z = cos(ah) * d1;
-p.x = sin(ah) * d1;
-p.y = p.z * tan(av);
-
-Point3f pb1, pb2;
-generateBasis(pb1, pb2);
-
-float cbHalfWidth  = squareSize.width * patternSize.width * 0.5f;
-float cbHalfHeight = squareSize.height * patternSize.height * 0.5f;
-
-float cbHalfWidthEx  = cbHalfWidth * (patternSize.width + 1) / patternSize.width;
-float cbHalfHeightEx = cbHalfHeight * (patternSize.height + 1) / patternSize.height;
-
-vector < Point3f > pts3d(4);
-vector < Point2f > pts2d(4);
-for (; ;) {
-    pts3d[0] = p + pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
-    pts3d[1] = p + pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
-    pts3d[2] = p - pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
-    pts3d[3] = p - pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
-
-    /* can remake with better perf */
-    projectPoints(Mat(pts3d), rvec, tvec, camMat, distCoeffs, pts2d);
-
-    bool inrect1 = pts2d[0].x < bg.cols && pts2d[0].y < bg.rows && pts2d[0].x > 0 && pts2d[0].y > 0;
-    bool inrect2 = pts2d[1].x < bg.cols && pts2d[1].y < bg.rows && pts2d[1].x > 0 && pts2d[1].y > 0;
-    bool inrect3 = pts2d[2].x < bg.cols && pts2d[2].y < bg.rows && pts2d[2].x > 0 && pts2d[2].y > 0;
-    bool inrect4 = pts2d[3].x < bg.cols && pts2d[3].y < bg.rows && pts2d[3].x > 0 && pts2d[3].y > 0;
-
-    if (inrect1 && inrect2 && inrect3 && inrect4)
-        break;
-
-    p.z *= 1.1f;
-}
-
-Point3f zero = p - pb1 * cbHalfWidth - cbHalfHeight * pb2;
-
-return generateChessBoard(bg, camMat, distCoeffs, zero, pb1, pb2,
-    squareSize.width, squareSize.height, pts3d, corners);
-}
-
-Mat alvision.ChessBoardGenerator::operator()(const Mat& bg, const Mat& camMat, const Mat& distCoeffs,
-const Size2f& squareSize, const Point3f& pos, Array<Point2f>& corners) const
-    {
-        cov = std::min(cov, 0.8);
-Point3f p = pos;
-Point3f pb1, pb2;
-generateBasis(pb1, pb2);
-
-float cbHalfWidth  = squareSize.width * patternSize.width * 0.5f;
-float cbHalfHeight = squareSize.height * patternSize.height * 0.5f;
-
-float cbHalfWidthEx  = cbHalfWidth * (patternSize.width + 1) / patternSize.width;
-float cbHalfHeightEx = cbHalfHeight * (patternSize.height + 1) / patternSize.height;
-
-vector < Point3f > pts3d(4);
-vector < Point2f > pts2d(4);
-
-pts3d[0] = p + pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
-pts3d[1] = p + pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
-pts3d[2] = p - pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
-pts3d[3] = p - pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
-
-/* can remake with better perf */
-projectPoints(Mat(pts3d), rvec, tvec, camMat, distCoeffs, pts2d);
-
-Point3f zero = p - pb1 * cbHalfWidth - cbHalfHeight * pb2;
-
-return generateChessBoard(bg, camMat, distCoeffs, zero, pb1, pb2,
-    squareSize.width, squareSize.height, pts3d, corners);
-}

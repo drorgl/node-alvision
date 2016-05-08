@@ -148,31 +148,31 @@ bool TestHaarCascadeLoader::process()
     Ncv32u numStages, numNodes, numFeatures;
     Ncv32u numStages_2 = 0, numNodes_2 = 0, numFeatures_2 = 0;
 
-    ncvStat = ncvHaarGetClassifierSize(this->cascadeName, numStages, numNodes, numFeatures);
+    ncvStat = ncvHaarGetClassifierSize(this.cascadeName, numStages, numNodes, numFeatures);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
 
-    NCVVectorAlloc<HaarStage64> h_HaarStages(*this->allocatorCPU.get(), numStages);
+    NCVVectorAlloc<HaarStage64> h_HaarStages(*this.allocatorCPU.get(), numStages);
     ncvAssertReturn(h_HaarStages.isMemAllocated(), false);
-    NCVVectorAlloc<HaarClassifierNode128> h_HaarNodes(*this->allocatorCPU.get(), numNodes);
+    NCVVectorAlloc<HaarClassifierNode128> h_HaarNodes(*this.allocatorCPU.get(), numNodes);
     ncvAssertReturn(h_HaarNodes.isMemAllocated(), false);
-    NCVVectorAlloc<HaarFeature64> h_HaarFeatures(*this->allocatorCPU.get(), numFeatures);
+    NCVVectorAlloc<HaarFeature64> h_HaarFeatures(*this.allocatorCPU.get(), numFeatures);
     ncvAssertReturn(h_HaarFeatures.isMemAllocated(), false);
 
-    NCVVectorAlloc<HaarStage64> h_HaarStages_2(*this->allocatorCPU.get(), numStages);
+    NCVVectorAlloc<HaarStage64> h_HaarStages_2(*this.allocatorCPU.get(), numStages);
     ncvAssertReturn(h_HaarStages_2.isMemAllocated(), false);
-    NCVVectorAlloc<HaarClassifierNode128> h_HaarNodes_2(*this->allocatorCPU.get(), numNodes);
+    NCVVectorAlloc<HaarClassifierNode128> h_HaarNodes_2(*this.allocatorCPU.get(), numNodes);
     ncvAssertReturn(h_HaarNodes_2.isMemAllocated(), false);
-    NCVVectorAlloc<HaarFeature64> h_HaarFeatures_2(*this->allocatorCPU.get(), numFeatures);
+    NCVVectorAlloc<HaarFeature64> h_HaarFeatures_2(*this.allocatorCPU.get(), numFeatures);
     ncvAssertReturn(h_HaarFeatures_2.isMemAllocated(), false);
 
     HaarClassifierCascadeDescriptor haar;
     HaarClassifierCascadeDescriptor haar_2;
 
-    NCV_SET_SKIP_COND(this->allocatorGPU.get()->isCounting());
+    NCV_SET_SKIP_COND(this.allocatorGPU.get().isCounting());
     NCV_SKIP_COND_BEGIN
 
     const std::string testNvbinName = alvision.tempfile("test.nvbin");
-    ncvStat = ncvHaarLoadFromFile_host(this->cascadeName, haar, h_HaarStages, h_HaarNodes, h_HaarFeatures);
+    ncvStat = ncvHaarLoadFromFile_host(this.cascadeName, haar, h_HaarStages, h_HaarNodes, h_HaarFeatures);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
 
     ncvStat = ncvHaarStoreNVBIN_host(testNvbinName, haar, h_HaarStages, h_HaarNodes, h_HaarFeatures);

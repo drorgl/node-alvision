@@ -74,7 +74,7 @@ AllignedFrameSource::AllignedFrameSource(const alvision.Ptr<alvision.superres::F
 
 void AllignedFrameSource::nextFrame(alvision.OutputArray frame)
 {
-    base_->nextFrame(origFrame_);
+    base_.nextFrame(origFrame_);
 
     if (origFrame_.rows % scale_ == 0 && origFrame_.cols % scale_ == 0)
         alvision.superres::arrCopy(origFrame_, frame);
@@ -87,7 +87,7 @@ void AllignedFrameSource::nextFrame(alvision.OutputArray frame)
 
 void AllignedFrameSource::reset()
 {
-    base_->reset();
+    base_.reset();
 }
 
 class DegradeFrameSource : public alvision.superres::FrameSource
@@ -117,7 +117,7 @@ static void addGaussNoise(alvision.OutputArray _image, double sigma)
 {
     int type = _image.type(), depth = CV_MAT_DEPTH(type), cn = CV_MAT_CN(type);
     alvision.Mat noise(_image.size(), CV_32FC(cn));
-    alvision.cvtest.TS::ptr()->get_rng().fill(noise, alvision.RNG::NORMAL, 0.0, sigma);
+    alvision.cvtest.TS::ptr().get_rng().fill(noise, alvision.RNG::NORMAL, 0.0, sigma);
 
     alvision.addWeighted(_image, 1.0, noise, 1.0, 0.0, _image, depth);
 }
@@ -128,7 +128,7 @@ static void addSpikeNoise(alvision.OutputArray _image, int frequency)
 
     for (int y = 0; y < mask.rows; ++y)
         for (int x = 0; x < mask.cols; ++x)
-            if (alvision.cvtest.TS::ptr()->get_rng().uniform(0, frequency) < 1)
+            if (alvision.cvtest.TS::ptr().get_rng().uniform(0, frequency) < 1)
                 mask(y, x) = 255;
 
     _image.setTo(alvision.Scalar::all(255), mask);
@@ -136,7 +136,7 @@ static void addSpikeNoise(alvision.OutputArray _image, int frequency)
 
 void DegradeFrameSource::nextFrame(alvision.OutputArray frame)
 {
-    base_->nextFrame(origFrame_);
+    base_.nextFrame(origFrame_);
 
     alvision.GaussianBlur(origFrame_, blurred_, alvision.Size(5, 5), 0);
     alvision.resize(blurred_, deg_, alvision.Size(), iscale_, iscale_, alvision.INTER_NEAREST);
@@ -149,7 +149,7 @@ void DegradeFrameSource::nextFrame(alvision.OutputArray frame)
 
 void DegradeFrameSource::reset()
 {
-    base_->reset();
+    base_.reset();
 }
 
 double MSSIM(alvision.InputArray _i1, alvision.InputArray _i2)
@@ -230,11 +230,11 @@ void SuperResolution::RunTest(alvision.Ptr<alvision.superres::SuperResolution> s
 
     ASSERT_FALSE( superRes.empty() );
 
-    const int btvKernelSize = superRes->getKernelSize();
+    const int btvKernelSize = superRes.getKernelSize();
 
-    superRes->setScale(scale);
-    superRes->setIterations(iterations);
-    superRes->setTemporalAreaRadius(temporalAreaRadius);
+    superRes.setScale(scale);
+    superRes.setIterations(iterations);
+    superRes.setTemporalAreaRadius(temporalAreaRadius);
 
     alvision.Ptr<alvision.superres::FrameSource> goldSource(new AllignedFrameSource(alvision.superres::createFrameSource_Video(inputVideoName), scale));
     alvision.Ptr<alvision.superres::FrameSource> lowResSource(new DegradeFrameSource(
@@ -243,12 +243,12 @@ void SuperResolution::RunTest(alvision.Ptr<alvision.superres::SuperResolution> s
     // skip first frame
     alvision.Mat frame;
 
-    lowResSource->nextFrame(frame);
-    goldSource->nextFrame(frame);
+    lowResSource.nextFrame(frame);
+    goldSource.nextFrame(frame);
 
     alvision.Rect inner(btvKernelSize, btvKernelSize, frame.cols - 2 * btvKernelSize, frame.rows - 2 * btvKernelSize);
 
-    superRes->setInput(lowResSource);
+    superRes.setInput(lowResSource);
 
     double srAvgMSSIM = 0.0;
     const int count = 10;
@@ -257,10 +257,10 @@ void SuperResolution::RunTest(alvision.Ptr<alvision.superres::SuperResolution> s
     T superResFrame;
     for (int i = 0; i < count; ++i)
     {
-        goldSource->nextFrame(goldFrame);
+        goldSource.nextFrame(goldFrame);
         ASSERT_FALSE( goldFrame.empty() );
 
-        superRes->nextFrame(superResFrame);
+        superRes.nextFrame(superResFrame);
         ASSERT_FALSE( superResFrame.empty() );
 
         const double srMSSIM = MSSIM(goldFrame(inner), superResFrame);

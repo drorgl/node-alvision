@@ -295,77 +295,80 @@ class CV_MomentsTest extends alvision.cvtest.ArrayTest
     protected  try_umat: boolean;
 }
 
-
+function sqr(x: number): number {
+    return x * x;
+}
 
 // Hu invariants
-class CV_HuMomentsTest extends alvision.cvtest.ArrayTest
-{
+class CV_HuMomentsTest extends alvision.cvtest.ArrayTest {
     constructor() {
-        test_array[INPUT].push(NULL);
-        test_array[OUTPUT].push(NULL);
-        test_array[REF_OUTPUT].push(NULL);
+        super();
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
     }
 
-    enum { MOMENT_COUNT = 18, HU_MOMENT_COUNT = 7 };
+    const MOMENT_COUNT = 18;
+    const HU_MOMENT_COUNT = 7;
 
-    prepare_test_case(test_case_idx : alvision.int) : alvision.int{
-    int code = super.prepare_test_case(test_case_idx);
-    if (code > 0) {
-        // ...
-    }
-
-    return code;
-}
-    void prepare_to_validation(int /*test_case_idx*/){
-    CvMoments * m = test_mat[INPUT][0].ptr<CvMoments>();
-    CvHuMoments * hu = test_mat[REF_OUTPUT][0].ptr<CvHuMoments>();
-
-    double inv_m00 = m ->inv_sqrt_m00 * m ->inv_sqrt_m00;
-    double s2 = inv_m00 * inv_m00; /* 1./(m00 ^ (2/2 + 1)) */
-    double s3 = s2 * m ->inv_sqrt_m00; /* 1./(m00 ^ (3/2 + 1)) */
-
-    double nu20 = m ->mu20 * s2;
-    double nu11 = m ->mu11 * s2;
-    double nu02 = m ->mu02 * s2;
-
-    double nu30 = m ->mu30 * s3;
-    double nu21 = m ->mu21 * s3;
-    double nu12 = m ->mu12 * s3;
-    double nu03 = m ->mu03 * s3;
-
-    #undef sqr
-    #define sqr(a)((a) * (a))
-
-    hu ->hu1 = nu20 + nu02;
-    hu ->hu2 = sqr(nu20 - nu02) + 4 * sqr(nu11);
-    hu ->hu3 = sqr(nu30 - 3 * nu12) + sqr(3 * nu21 - nu03);
-    hu ->hu4 = sqr(nu30 + nu12) + sqr(nu21 + nu03);
-    hu ->hu5 = (nu30 - 3 * nu12) * (nu30 + nu12) * (sqr(nu30 + nu12) - 3 * sqr(nu21 + nu03)) +
-        (3 * nu21 - nu03) * (nu21 + nu03) * (3 * sqr(nu30 + nu12) - sqr(nu21 + nu03));
-    hu ->hu6 = (nu20 - nu02) * (sqr(nu30 + nu12) - sqr(nu21 + nu03)) +
-        4 * nu11 * (nu30 + nu12) * (nu21 + nu03);
-    hu ->hu7 = (3 * nu21 - nu03) * (nu30 + nu12) * (sqr(nu30 + nu12) - 3 * sqr(nu21 + nu03)) +
-        (3 * nu12 - nu30) * (nu21 + nu03) * (3 * sqr(nu30 + nu12) - sqr(nu21 + nu03));
-    }
-    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array < Array < alvision.Size >>,types: Array<Array<alvision.int>>): void {
-        alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
-    types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC1;
-        sizes[INPUT][0] = cvSize(MOMENT_COUNT, 1);
-        sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(HU_MOMENT_COUNT, 1);
-    }
-    void get_minmax_bounds(int i, int j, int type, Scalar & low, Scalar & high){
-        alvision.cvtest.ArrayTest::get_minmax_bounds(i, j, type, low, high);
-    low = Scalar::all(-10000);
-    high = Scalar::all(10000);
+    prepare_test_case(test_case_idx: alvision.int): alvision.int {
+        var code = super.prepare_test_case(test_case_idx);
+        if (code > 0) {
+            // ...
         }
-    get_success_error_level(test_case_idx : alvision.int, i : alvision.int, j  : alvision.int) : alvision.double {
-    return FLT_EPSILON;
-}
-    void run_func(){
-    cvGetHuMoments(test_mat[INPUT][0].ptr<CvMoments>(),
-        test_mat[OUTPUT][0].ptr<CvHuMoments>());
+
+        return code;
     }
-};
+    prepare_to_validation(test_case_idx: alvision.int): void {
+        CvMoments * m = this.test_mat[this.INPUT][0].ptr<CvMoments>();
+        CvHuMoments * hu = this.test_mat[this.REF_OUTPUT][0].ptr<CvHuMoments>();
+
+        var inv_m00 = m.inv_sqrt_m00 * m.inv_sqrt_m00;
+        var s2 = inv_m00 * inv_m00; /* 1./(m00 ^ (2/2 + 1)) */
+        var s3 = s2 * m .inv_sqrt_m00; /* 1./(m00 ^ (3/2 + 1)) */
+
+        var nu20 = m.mu20 * s2;
+        var nu11 = m.mu11 * s2;
+        var nu02 = m.mu02 * s2;
+
+        var nu30 = m.mu30 * s3;
+        var nu21 = m.mu21 * s3;
+        var nu12 = m.mu12 * s3;
+        var nu03 = m.mu03 * s3;
+
+        //#undef sqr
+        //#define sqr(a)((a) * (a))
+
+        hu.hu1 = nu20 + nu02;
+        hu.hu2 = sqr(nu20 - nu02) + 4 * sqr(nu11);
+        hu.hu3 = sqr(nu30 - 3 * nu12) + sqr(3 * nu21 - nu03);
+        hu.hu4 = sqr(nu30 + nu12) + sqr(nu21 + nu03);
+        hu.hu5 = (nu30 - 3 * nu12) * (nu30 + nu12) * (sqr(nu30 + nu12) - 3 * sqr(nu21 + nu03)) +
+            (3 * nu21 - nu03) * (nu21 + nu03) * (3 * sqr(nu30 + nu12) - sqr(nu21 + nu03));
+        hu.hu6 = (nu20 - nu02) * (sqr(nu30 + nu12) - sqr(nu21 + nu03)) +
+            4 * nu11 * (nu30 + nu12) * (nu21 + nu03);
+        hu.hu7 = (3 * nu21 - nu03) * (nu30 + nu12) * (sqr(nu30 + nu12) - 3 * sqr(nu21 + nu03)) +
+            (3 * nu12 - nu30) * (nu21 + nu03) * (3 * sqr(nu30 + nu12) - sqr(nu21 + nu03));
+    }
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        types[this.INPUT][0] = types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = CV_64FC1;
+        sizes[this.INPUT][0] = cvSize(MOMENT_COUNT, 1);
+        sizes[this.OUTPUT][0] = sizes[this.REF_OUTPUT][0] = cvSize(HU_MOMENT_COUNT, 1);
+    }
+    get_minmax_bounds(i: alvision.int, j: alvision.int, type: alvision.int, low: alvision.Scalar, high: alvision.Scalar): void {
+        super.get_minmax_bounds(i, j, type, low, high);
+        low = alvision.Scalar.all(-10000);//DROR: will not work!
+        high = alvision.Scalar.all(10000);
+    }
+    get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
+        return alvision.FLT_EPSILON;
+    }
+    run_func(): void {
+        cvGetHuMoments(test_mat[INPUT][0].ptr<CvMoments>(),
+            test_mat[OUTPUT][0].ptr<CvHuMoments>());
+    }
+}
 
 
 

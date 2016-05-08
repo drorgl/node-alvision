@@ -66,44 +66,42 @@ class Caller {
     }
 }
 
-class CV_LshTableBadArgTest extends alvision.cvtest.BadArgTest
-{
-//protected:
+class CV_LshTableBadArgTest extends alvision.cvtest.BadArgTest {
+    //protected:
     
     
 
     
 
 
-run( start_from  : alvision.int) : void
-{
-    var rng = this.ts.get_rng();
+    run(start_from: alvision.int): void {
+        var rng = this.ts.get_rng();
 
-    //Caller caller;
-    var caller = new Caller();
+        //Caller caller;
+        var caller = new Caller();
 
-    var featuresSize = alvision.cvtest.randomSize(rng, 10.0);
-    
+        var featuresSize = alvision.cvtest.randomSize(rng, 10.0);
 
-    caller.features = alvision.cvtest.randomMat(rng, featuresSize, alvision.MatrixType.CV_8UC1, 0, 255, false);
-    caller.table_number = 12;
-    caller.multi_probe_level = 2;
 
-    var errors = 0;
-    caller.key_size = 0;
-    errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "key_size is zero", caller.run).valueOf();
+        caller.features = alvision.cvtest.randomMat(rng, featuresSize, alvision.MatrixType.CV_8UC1, 0, 255, false);
+        caller.table_number = 12;
+        caller.multi_probe_level = 2;
 
-    caller.key_size =  static_cast<int>(sizeof(size_t) * CHAR_BIT);
-    errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "key_size is too big", caller.run).valueOf();
+        var errors = 0;
+        caller.key_size = 0;
+        errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "key_size is zero", caller.run).valueOf();
 
-    caller.key_size = caller.key_size.valueOf() + alvision.cvtest.randInt(rng).valueOf() % 100;
-    errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "key_size is too big", caller.run).valueOf();
+        caller.key_size = static_cast<int>(sizeof(size_t) * CHAR_BIT);
+        errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "key_size is too big", caller.run).valueOf();
 
-    if (errors != 0)
-        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
-    else
-        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
-}
+        caller.key_size = caller.key_size.valueOf() + alvision.cvtest.randInt(rng).valueOf() % 100;
+        errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "key_size is too big", caller.run).valueOf();
+
+        if (errors != 0)
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
+        else
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
 
 }
 

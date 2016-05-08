@@ -823,34 +823,34 @@ function cvTsPerspectiveTransform( const CvArr* _src, CvArr* _dst, const CvMat* 
     a = cvGetMat( _src, &astub, 0, 0 );
     b = cvGetMat( _dst, &bstub, 0, 0 );
 
-    cn = CV_MAT_CN(a->type);
-    depth = CV_MAT_DEPTH(a->type);
-    mat_depth = CV_MAT_DEPTH(transmat->type);
-    cols = transmat->cols;
+    cn = CV_MAT_CN(a.type);
+    depth = CV_MAT_DEPTH(a.type);
+    mat_depth = CV_MAT_DEPTH(transmat.type);
+    cols = transmat.cols;
 
     // prepare cn x (cn + 1) transform matrix
     if( mat_depth == CV_32F )
     {
-        for( i = 0; i < transmat->rows; i++ )
+        for( i = 0; i < transmat.rows; i++ )
             for( j = 0; j < cols; j++ )
-                mat[i*cols + j] = ((float*)(transmat->data.ptr + transmat->step*i))[j];
+                mat[i*cols + j] = ((float*)(transmat.data.ptr + transmat.step*i))[j];
     }
     else
     {
         assert( mat_depth == CV_64F );
-        for( i = 0; i < transmat->rows; i++ )
+        for( i = 0; i < transmat.rows; i++ )
             for( j = 0; j < cols; j++ )
-                mat[i*cols + j] = ((double*)(transmat->data.ptr + transmat->step*i))[j];
+                mat[i*cols + j] = ((double*)(transmat.data.ptr + transmat.step*i))[j];
     }
 
     // transform data
-    cols = a->cols * cn;
+    cols = a.cols * cn;
     Array<double> buf(cols);
 
-    for( i = 0; i < a->rows; i++ )
+    for( i = 0; i < a.rows; i++ )
     {
-        uchar* src = a->data.ptr + i*a->step;
-        uchar* dst = b->data.ptr + i*b->step;
+        uchar* src = a.data.ptr + i*a.step;
+        uchar* dst = b.data.ptr + i*b.step;
 
         switch( depth )
         {
@@ -1034,7 +1034,7 @@ class Core_CovarMatrixTest extends Core_MatrixTest
 
         are_images = (bits & 1024) != 0;
         for (i = 0; i < (single_matrix ? 1 : count); i++)
-            temp_hdrs.push(NULL);
+            temp_hdrs.push(null);
     }
     int prepare_test_case(int test_case_idx ){
     int code = Core_MatrixTest::prepare_test_case(test_case_idx);
@@ -1150,7 +1150,7 @@ class Core_DetTest extends Core_MatrixTest
         super(1, 1, false, true, 1);
         this.test_case_count = 100;
         this.max_log_array_size = 7;
-        this.test_array[TEMP].push(NULL);
+        this.test_array[TEMP].push(null);
     }
 public:
     typedef Core_MatrixTest Base;
@@ -1196,13 +1196,13 @@ public:
 // LU method that chooses the optimal in a column pivot element
 function cvTsLU( CvMat* a, CvMat* b=NULL, CvMat* x=NULL, int* rank=0 ) : alvision.double
 {
-    int i, j, k, N = a->rows, N1 = a->cols, Nm = MIN(N, N1), step = a->step/sizeof(double);
-    int M = b ? b->cols : 0, b_step = b ? b->step/sizeof(double) : 0;
-    int x_step = x ? x->step/sizeof(double) : 0;
-    double *a0 = a->data.db, *b0 = b ? b->data.db : 0;
-    double *x0 = x ? x->data.db : 0;
+    int i, j, k, N = a.rows, N1 = a.cols, Nm = MIN(N, N1), step = a.step/sizeof(double);
+    int M = b ? b.cols : 0, b_step = b ? b.step/sizeof(double) : 0;
+    int x_step = x ? x.step/sizeof(double) : 0;
+    double *a0 = a.data.db, *b0 = b ? b.data.db : 0;
+    double *x0 = x ? x.data.db : 0;
     double t, det = 1.;
-    assert( CV_MAT_TYPE(a->type) == CV_64FC1 &&
+    assert( CV_MAT_TYPE(a.type) == CV_64FC1 &&
            (!b || CV_ARE_TYPES_EQ(a,b)) && (!x || CV_ARE_TYPES_EQ(a,x)));
 
     for( i = 0; i < Nm; i++ )
@@ -1293,8 +1293,8 @@ class Core_InvertTest extends Core_MatrixTest
         this.result = (0.);
             this.test_case_count = 100;
             this.max_log_array_size = 7;
-            this.test_array[TEMP].push(NULL);
-            this.test_array[TEMP].push(NULL);
+            this.test_array[TEMP].push(null);
+            this.test_array[TEMP].push(null);
     }
 public:
     typedef Core_MatrixTest Base;
@@ -1385,8 +1385,8 @@ get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<a
 
 function cvTsSVDet( CvMat* mat, double* ratio ) : alvision.double
 {
-    int type = CV_MAT_TYPE(mat->type);
-    int i, nm = MIN( mat->rows, mat->cols );
+    int type = CV_MAT_TYPE(mat.type);
+    int i, nm = MIN( mat.rows, mat.cols );
     CvMat* w = cvCreateMat( nm, 1, type );
     double det = 1.;
 
@@ -1395,14 +1395,14 @@ function cvTsSVDet( CvMat* mat, double* ratio ) : alvision.double
     if( type == CV_32FC1 )
     {
         for( i = 0; i < nm; i++ )
-            det *= w->data.fl[i];
-        *ratio = w->data.fl[nm-1] < FLT_EPSILON ? 0 : w->data.fl[nm-1]/w->data.fl[0];
+            det *= w.data.fl[i];
+        *ratio = w.data.fl[nm-1] < FLT_EPSILON ? 0 : w.data.fl[nm-1]/w.data.fl[0];
     }
     else
     {
         for( i = 0; i < nm; i++ )
-            det *= w->data.db[i];
-        *ratio = w->data.db[nm-1] < FLT_EPSILON ? 0 : w->data.db[nm-1]/w->data.db[0];
+            det *= w.data.db[i];
+        *ratio = w.data.db[nm-1] < FLT_EPSILON ? 0 : w.data.db[nm-1]/w.data.db[0];
     }
 
     cvReleaseMat( &w );
@@ -1421,8 +1421,8 @@ class Core_SolveTest extends Core_MatrixTest
         this.result = (0.);
             this.test_case_count = 100;
             this.max_log_array_size = 7;
-            this.test_array[TEMP].push(NULL);
-            this.test_array[TEMP].push(NULL);
+            this.test_array[TEMP].push(null);
+            this.test_array[TEMP].push(null);
     }
 
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
@@ -1533,7 +1533,7 @@ protected:
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
     prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
-    void run_func();
+    run_func() : void {}
     void prepare_to_validation( int test_case_idx );
     int flags;
     bool have_u, have_v, symmetric, compact, vector_w;
@@ -1546,16 +1546,16 @@ flags(0), have_u(false), have_v(false), symmetric(false), compact(false), vector
 {
     test_case_count = 100;
     max_log_array_size = 8;
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
 }
 
 
 void Core_SVDTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     int bits = alvision.cvtest.randInt(rng);
     Core_MatrixTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     int min_size, i, m, n;
@@ -1632,7 +1632,7 @@ int Core_SVDTest::prepare_test_case( int test_case_idx )
     if( code > 0 )
     {
         Mat& input = test_mat[INPUT][0];
-        cvTsFloodWithZeros( input, ts->get_rng() );
+        cvTsFloodWithZeros( input, ts.get_rng() );
 
         if( symmetric && (have_u || have_v) )
         {
@@ -1684,7 +1684,7 @@ void Core_SVDTest::prepare_to_validation( int /*test_case_idx*/ )
     {
         src = &test_mat[TEMP][1];
         dst = &test_mat[OUTPUT][1];
-        alvision.cvtest.gemm( *src, *src, 1., Mat(), 0., *dst, src->rows == dst->rows ? CV_GEMM_B_T : CV_GEMM_A_T );
+        alvision.cvtest.gemm( *src, *src, 1., Mat(), 0., *dst, src.rows == dst.rows ? CV_GEMM_B_T : CV_GEMM_A_T );
         alvision.setIdentity( test_mat[REF_OUTPUT][1], Scalar::all(1.) );
     }
 
@@ -1692,7 +1692,7 @@ void Core_SVDTest::prepare_to_validation( int /*test_case_idx*/ )
     {
         src = &test_mat[TEMP][2];
         dst = &test_mat[OUTPUT][2];
-        alvision.cvtest.gemm( *src, *src, 1., Mat(), 0., *dst, src->rows == dst->rows ? CV_GEMM_B_T : CV_GEMM_A_T );
+        alvision.cvtest.gemm( *src, *src, 1., Mat(), 0., *dst, src.rows == dst.rows ? CV_GEMM_B_T : CV_GEMM_A_T );
         alvision.setIdentity( test_mat[REF_OUTPUT][2], Scalar::all(1.) );
     }
 
@@ -1700,14 +1700,14 @@ void Core_SVDTest::prepare_to_validation( int /*test_case_idx*/ )
     for( i = 0; i < min_size; i++ )
     {
         double normval = 0, aii;
-        if( w->rows > 1 && w->cols > 1 )
+        if( w.rows > 1 && w.cols > 1 )
         {
-            normval = alvision.cvtest.norm( w->row(i), NORM_L1 );
-            aii = depth == CV_32F ? w->at<float>(i,i) : w->at<double>(i,i);
+            normval = alvision.cvtest.norm( w.row(i), NORM_L1 );
+            aii = depth == CV_32F ? w.at<float>(i,i) : w.at<double>(i,i);
         }
         else
         {
-            normval = aii = depth == CV_32F ? w->at<float>(i) : w->at<double>(i);
+            normval = aii = depth == CV_32F ? w.at<float>(i) : w.at<double>(i);
         }
 
         normval = fabs(normval - aii);
@@ -1724,7 +1724,7 @@ void Core_SVDTest::prepare_to_validation( int /*test_case_idx*/ )
             test_mat[TEMP][3] = alvision.Scalar.all(0);
             for( i = 0; i < min_size; i++ )
             {
-                double val = depth == CV_32F ? w->at<float>(i) : w->at<double>(i);
+                double val = depth == CV_32F ? w.at<float>(i) : w.at<double>(i);
                 cvSetReal2D( test_array[TEMP][3], i, i, val );
             }
             w = &test_mat[TEMP][3];
@@ -1763,7 +1763,7 @@ protected:
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
     prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
-    void run_func();
+    run_func() : void {}
     void prepare_to_validation( int test_case_idx );
     int flags;
     bool have_b, symmetric, compact, vector_w;
@@ -1774,16 +1774,16 @@ Core_SVBkSbTest::Core_SVBkSbTest() : Core_MatrixTest( 2, 1, false, false, 1 ),
 flags(0), have_b(false), symmetric(false), compact(false), vector_w(false)
 {
     test_case_count = 100;
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
 }
 
 
 void Core_SVBkSbTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes,
                                                       Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     int bits = alvision.cvtest.randInt(rng);
     Base::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     int min_size, i, m, n;
@@ -1847,7 +1847,7 @@ int Core_SVBkSbTest::prepare_test_case( int test_case_idx )
     if( code > 0 )
     {
         Mat& input = test_mat[INPUT][0];
-        cvTsFloodWithZeros( input, ts->get_rng() );
+        cvTsFloodWithZeros( input, ts.get_rng() );
 
         if( symmetric )
         {
@@ -1966,7 +1966,7 @@ Core_SolvePolyTest::~Core_SolvePolyTest() {}
 
 void Core_SolvePolyTest::run( int )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     int fig = 100;
     double range = 50;
     double err_eps = 1e-4;
@@ -1975,8 +1975,8 @@ void Core_SolvePolyTest::run( int )
     {
         progress = update_progress(progress, idx-1, max_idx, 0);
         int n = alvision.cvtest.randInt(rng) % 13 + 1;
-        std::Array<complex_type> r(n), ar(n), c(n + 1, 0);
-        std::Array<double> a(n + 1), u(n * 2), ar1(n), ar2(n);
+        Array<complex_type> r(n), ar(n), c(n + 1, 0);
+        Array<double> a(n + 1), u(n * 2), ar1(n), ar2(n);
 
         int rr_odds = 3; // odds that we get a real root
         for (int j = 0; j < n;)
@@ -2075,17 +2075,17 @@ void Core_SolvePolyTest::run( int )
         if (!pass)
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
-            ts->printf( alvision.cvtest.TSConstants.LOG, "too big diff = %g\n", div );
+            ts.printf( alvision.cvtest.TSConstants.LOG, "too big diff = %g\n", div );
 
             for (size_t j=0;j<ar2.size();++j)
-                ts->printf( alvision.cvtest.TSConstants.LOG, "ar2[%d]=%g\n", j, ar2[j]);
-            ts->printf(alvision.cvtest.TSConstants.LOG, "\n");
+                ts.printf( alvision.cvtest.TSConstants.LOG, "ar2[%d]=%g\n", j, ar2[j]);
+            ts.printf(alvision.cvtest.TSConstants.LOG, "\n");
 
             for (size_t j=0;j<r.size();++j)
-                ts->printf( alvision.cvtest.TSConstants.LOG, "r[%d]=(%g, %g)\n", j, r[j].real(), r[j].imag());
-            ts->printf( alvision.cvtest.TSConstants.LOG, "\n" );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "r[%d]=(%g, %g)\n", j, r[j].real(), r[j].imag());
+            ts.printf( alvision.cvtest.TSConstants.LOG, "\n" );
             for (size_t j=0;j<ar.size();++j)
-                ts->printf( alvision.cvtest.TSConstants.LOG, "ar[%d]=(%g, %g)\n", j, ar[j].real(), ar[j].imag());
+                ts.printf( alvision.cvtest.TSConstants.LOG, "ar[%d]=(%g, %g)\n", j, ar[j].real(), ar[j].imag());
             break;
         }
     }
@@ -2158,7 +2158,7 @@ protected:
         int outOfRangeCount = countNonZero((resInDeg > 360) | (resInDeg < 0));
         if(outOfRangeCount > 0)
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "There are result angles that are out of range [0, 360] (part of them is %f)\n",
+            ts.printf(alvision.cvtest.TSConstants.LOG, "There are result angles that are out of range [0, 360] (part of them is %f)\n",
                        static_cast<float>(outOfRangeCount)/resInDeg.total());
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
         }
@@ -2167,7 +2167,7 @@ protected:
         size_t errDegCount = diff.total() - countNonZero((diff < maxAngleDiff) | ((360 - diff) < maxAngleDiff));
         if(errDegCount > 0)
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "There are incorrect result angles (in degrees) (part of them is %f)\n",
+            ts.printf(alvision.cvtest.TSConstants.LOG, "There are incorrect result angles (in degrees) (part of them is %f)\n",
                        static_cast<float>(errDegCount)/resInDeg.total());
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
         }
@@ -2176,7 +2176,7 @@ protected:
         double normDiff = alvision.cvtest.norm(convertedRes - resInDeg, NORM_INF);
         if(normDiff > FLT_EPSILON * 180.)
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "There are incorrect result angles (in radians)\n");
+            ts.printf(alvision.cvtest.TSConstants.LOG, "There are incorrect result angles (in radians)\n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
         }
 
@@ -2390,7 +2390,7 @@ class CV_KMeansSingularTest extends alvision. cvtest.BaseTest
             int MAX_POINTS = 100, maxIter = 100;
             for( iter = 0; iter < maxIter; iter++ )
             {
-                ts->update_context(this, iter, true);
+                ts.update_context(this, iter, true);
                 dims = rng.uniform(inVariant == MAT_1_N_CDIM ? 2 : 1, MAX_DIM+1);
                 N = rng.uniform(1, MAX_POINTS+1);
                 N0 = rng.uniform(1, MAX(N/10, 2));
@@ -2400,10 +2400,10 @@ class CV_KMeansSingularTest extends alvision. cvtest.BaseTest
                 {
                     dims = 2;
 
-                    std::Array<alvision.Point2f> data0(N0);
+                    Array<alvision.Point2f> data0(N0);
                     rng.fill(data0, RNG::UNIFORM, -1, 1);
 
-                    std::Array<alvision.Point2f> data(N);
+                    Array<alvision.Point2f> data(N);
                     for( i = 0; i < N; i++ )
                         data[i] = data0[rng.uniform(0, N0)];
 
@@ -2469,7 +2469,7 @@ class CV_KMeansSingularTest extends alvision. cvtest.BaseTest
         }
         catch(...)
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG,
+            ts.printf(alvision.cvtest.TSConstants.LOG,
                        "context: iteration=%d, N=%d, N0=%d, K=%d\n",
                        iter, N, N0, K);
             std::cout << labels << std::endl;
@@ -2502,7 +2502,7 @@ alvision.cvtest.TEST('CovariationMatrixVectorOfMat', 'accuracy',()=>
     alvision.Mat goldMean;
     alvision.randu(src,alvision.Scalar(-128), alvision.Scalar(128));
     alvision.calcCovarMatrix(src,gold,goldMean,singleMatFlags,CV_32F);
-    std::Array<alvision.Mat> srcVec;
+    Array<alvision.Mat> srcVec;
     for(size_t i = 0; i < vector_size; i++)
     {
         srcVec.push(src.row(static_cast<int>(i)).reshape(0,col_problem_size));
@@ -2537,7 +2537,7 @@ alvision.cvtest.TEST('CovariationMatrixVectorOfMatWithMean', 'accuracy',()=>
 
     alvision.calcCovarMatrix(src,gold,goldMean,singleMatFlags,CV_32F);
 
-    std::Array<alvision.Mat> srcVec;
+    Array<alvision.Mat> srcVec;
     for(size_t i = 0; i < vector_size; i++)
     {
         srcVec.push(src.row(static_cast<int>(i)).reshape(0,col_problem_size));

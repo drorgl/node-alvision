@@ -68,7 +68,7 @@ struct NVidiaTest : TestWithParam<alvision.cuda::DeviceInfo>
         devInfo = GetParam();
 
         alvision.cuda::setDevice(devInfo.deviceID());
-        _path = TS::ptr()->get_data_path();
+        _path = TS::ptr().get_data_path();
         _path = _path + "haarcascade/";
     }
 };

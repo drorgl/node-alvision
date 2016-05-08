@@ -167,10 +167,30 @@ export namespace cvtest {
 
     //CV_EXPORTS void add(const Mat& a, double alpha, const Mat& b, double beta,
     //                      Scalar gamma, Mat& c, int ctype, bool calcAbs=false);
+
+    interface Imultiply {
+        (a: _mat.Mat, b: _mat.Mat, c: _mat.Mat, alpha?: _st.double  /*= 1*/): void;
+    }
+
+    export var multiply: Imultiply = alvision_module.multiply;
+
     //CV_EXPORTS void multiply(const Mat& a, const Mat& b, Mat& c, double alpha=1);
     //CV_EXPORTS void divide(const Mat& a, const Mat& b, Mat& c, double alpha=1);
     //
+
+    interface Iconvert {
+        (src: _mat.Mat, dst: _st.OutputArray, dtype: _st.int, alpha?: _st.double /*= 1*/, beta?: _st.double /*= 0*/): void;
+    }
+
+    export var convert: Iconvert = alvision_module.convert;
+
     //CV_EXPORTS void convert(const Mat& src, cv::OutputArray dst, int dtype, double alpha=1, double beta=0);
+
+    interface Icopy {
+        (src: _mat.Mat, dst: _mat.Mat, mask?: _mat.Mat /*=Mat()*/, invertMask?: boolean /*= false*/): void;
+    }
+    export var copy: Icopy = alvision_module.copy;
+
     //CV_EXPORTS void copy(const Mat& src, Mat& dst, const Mat& mask=Mat(), bool invertMask=false);
     //CV_EXPORTS void set(Mat& dst, const Scalar& gamma, const Mat& mask=Mat());
     //

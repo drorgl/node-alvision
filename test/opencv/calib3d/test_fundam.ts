@@ -47,34 +47,34 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include "opencv2/calib3d/calib3d_c.h"
+//#include "test_precomp.hpp"
+//#include "opencv2/calib3d/calib3d_c.h"
+//
+//using namespace cv;
+//using namespace std;
 
-using namespace cv;
-using namespace std;
-
-int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
+function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvision.Mat) : alvision.int
 {
-    int depth;
     int i;
     float Jf[27];
     double J[27];
-    CvMat _Jf, matJ = cvMat( 3, 9, CV_64F, J );
+    CvMat _Jf;
+    var matJ = new alvision.Mat(3, 9, alvision.MatrixType.CV_64F, J);
 
-    depth = CV_MAT_DEPTH(src->type);
+    var depth = CV_MAT_DEPTH(src.type);
 
     if( jacobian )
     {
-        assert( (jacobian->rows == 9 && jacobian->cols == 3) ||
-                (jacobian->rows == 3 && jacobian->cols == 9) );
+        alvision.assert( (jacobian.rows == 9 && jacobian.cols == 3) ||
+                (jacobian.rows == 3 && jacobian.cols == 9) );
     }
 
-    if( src->cols == 1 || src->rows == 1 )
+    if( src.cols == 1 || src.rows == 1 )
     {
         double r[3], theta;
-        CvMat _r = cvMat( src->rows, src->cols, CV_MAKETYPE(CV_64F,CV_MAT_CN(src->type)), r);
+        var _r = new alvision.Mat(src.rows, src.cols, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F,CV_MAT_CN(src.type)), r);
 
-        assert( dst->rows == 3 && dst->cols == 3 );
+        assert( dst.rows == 3 && dst.cols == 3 );
 
         cvConvert( src, &_r );
 
@@ -111,9 +111,9 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
                 w3*w1, w3*w2, w3*w3
             };
             double R[9];
-            CvMat _omegav = cvMat(3, 3, CV_64F, omegav);
-            CvMat matA = cvMat(3, 3, CV_64F, A);
-            CvMat matR = cvMat(3, 3, CV_64F, R);
+            CvMat _omegav = cvMat(3, 3, alvision.MatrixType.CV_64F, omegav);
+            CvMat matA = cvMat(3, 3, alvision.MatrixType.CV_64F, A);
+            CvMat matR = cvMat(3, 3, alvision.MatrixType.CV_64F, R);
 
             cvSetIdentity( &matR, cvRealScalar(alpha) );
             cvScaleAdd( &_omegav, cvRealScalar(beta), &matR, &matR );
@@ -141,13 +141,13 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
                 double t0[9*4];
                 double dm1dm2[21*4];
                 double dRdm1[9*21];
-                CvMat _dm3din = cvMat( 4, 3, CV_64FC1, dm3din );
-                CvMat _dm2dm3 = cvMat( 4, 4, CV_64FC1, dm2dm3 );
-                CvMat _dm1dm2 = cvMat( 21, 4, CV_64FC1, dm1dm2 );
-                CvMat _dRdm1 = cvMat( 9, 21, CV_64FC1, dRdm1 );
+                CvMat _dm3din = cvMat(4, 3, alvision.MatrixType.CV_64FC1, dm3din );
+                CvMat _dm2dm3 = cvMat(4, 4, alvision.MatrixType.CV_64FC1, dm2dm3 );
+                CvMat _dm1dm2 = cvMat(21, 4, alvision.MatrixType.CV_64FC1, dm1dm2 );
+                CvMat _dRdm1 = cvMat(9, 21, alvision.MatrixType.CV_64FC1, dRdm1 );
                 CvMat _dRdm1_part;
-                CvMat _t0 = cvMat( 9, 4, CV_64FC1, t0 );
-                CvMat _t1 = cvMat( 9, 4, CV_64FC1, dRdm1 );
+                CvMat _t0 = cvMat(9, 4, alvision.MatrixType.CV_64FC1, t0 );
+                CvMat _t1 = cvMat(9, 4, alvision.MatrixType.CV_64FC1, dRdm1 );
 
                 // m1 = [alpha, beta, gamma, omegav; A]
                 memset( dm1dm2, 0, sizeof(dm1dm2) );
@@ -170,7 +170,7 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
                     0, 0, w1, 0, 0, w2, w1, w2, 2*w3
                 };
 
-                CvMat _dm1dw = cvMat( 3, 9, CV_64FC1, dm1dw );
+                CvMat _dm1dw = cvMat(3, 9, alvision.MatrixType.CV_64FC1, dm1dw );
                 CvMat _dm1dm2_part;
 
                 cvGetSubRect( &_dm1dm2, &_dm1dm2_part, cvRect(0,12,3,9) );
@@ -194,18 +194,18 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
                 cvGetSubRect( &_dRdm1, &_dRdm1_part, cvRect(12,0,9,9) );
                 cvSetIdentity( &_dRdm1_part, cvScalarAll(gamma) );
 
-                matJ = cvMat( 9, 3, CV_64FC1, J );
+                matJ = cvMat(9, 3, alvision.MatrixType.CV_64FC1, J );
 
                 cvMatMul( &_dRdm1, &_dm1dm2, &_t0 );
                 cvMatMul( &_t0, &_dm2dm3, &_t1 );
                 cvMatMul( &_t1, &_dm3din, &matJ );
 
-                _t0 = cvMat( 3, 9, CV_64FC1, t0 );
+                _t0 = cvMat(3, 9, alvision.MatrixType.CV_64FC1, t0 );
                 cvTranspose( &matJ, &_t0 );
 
                 for( i = 0; i < 3; i++ )
                 {
-                    _t1 = cvMat( 3, 3, CV_64FC1, t0 + i*9 );
+                    _t1 = cvMat(3, 3, alvision.MatrixType.CV_64FC1, t0 + i*9 );
                     cvTranspose( &_t1, &_t1 );
                 }
 
@@ -213,17 +213,17 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
             }
         }
     }
-    else if( src->cols == 3 && src->rows == 3 )
+    else if( src.cols == 3 && src.rows == 3 )
     {
         double R[9], A[9], I[9], r[3], W[3], U[9], V[9];
         double tr, alpha, beta, theta;
-        CvMat matR = cvMat( 3, 3, CV_64F, R );
-        CvMat matA = cvMat( 3, 3, CV_64F, A );
-        CvMat matI = cvMat( 3, 3, CV_64F, I );
-        CvMat _r = cvMat( dst->rows, dst->cols, CV_MAKETYPE(CV_64F, CV_MAT_CN(dst->type)), r );
-        CvMat matW = cvMat( 1, 3, CV_64F, W );
-        CvMat matU = cvMat( 3, 3, CV_64F, U );
-        CvMat matV = cvMat( 3, 3, CV_64F, V );
+        var matR = new alvision.Mat( 3, 3, alvision.MatrixType.CV_64F, R );
+        var matA = new alvision.Mat( 3, 3, alvision.MatrixType.CV_64F, A );
+        var matI = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, I );
+        CvMat _r = cvMat(dst .rows, dst .cols, CV_MAKETYPE(alvision.MatrixType.CV_64F, CV_MAT_CN(dst.type)), r );
+        var matW = alvision.Mat( 1, 3, alvision.MatrixType.CV_64F, W );
+        var matU = alvision.Mat( 3, 3, alvision.MatrixType.CV_64F, U );
+        var matV = alvision.Mat(3, 3, alvision.MatrixType.CV_64F, V );
 
         cvConvert( src, &matR );
         cvSVD( &matR, &matW, &matU, &matV, CV_SVD_MODIFY_A + CV_SVD_U_T + CV_SVD_V_T );
@@ -287,11 +287,11 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
                     0, 0, theta, om1[2]*vth
                 };
 
-                CvMat _dvardR = cvMat( 5, 9, CV_64FC1, dvardR );
-                CvMat _dvar2dvar = cvMat( 4, 5, CV_64FC1, dvar2dvar );
-                CvMat _domegadvar2 = cvMat( 3, 4, CV_64FC1, domegadvar2 );
+                CvMat _dvardR = cvMat(5, 9, alvision.MatrixType.CV_64FC1, dvardR );
+                CvMat _dvar2dvar = cvMat(4, 5, alvision.MatrixType.CV_64FC1, dvar2dvar );
+                CvMat _domegadvar2 = cvMat(3, 4, alvision.MatrixType.CV_64FC1, domegadvar2 );
                 double t0[3*5];
-                CvMat _t0 = cvMat( 3, 5, CV_64FC1, t0 );
+                CvMat _t0 = cvMat(3, 5, alvision.MatrixType.CV_64FC1, t0 );
 
                 cvMatMul( &_domegadvar2, &_dvar2dvar, &_t0 );
                 cvMatMul( &_t0, &_dvardR, &matJ );
@@ -322,7 +322,7 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
         {
             for( i = 0; i < 3; i++ )
             {
-                CvMat t = cvMat( 3, 3, CV_64F, J + i*9 );
+                CvMat t = cvMat(3, 3, alvision.MatrixType.CV_64F, J + i*9 );
                 cvTranspose( &t, &t );
             }
         }
@@ -337,7 +337,7 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
     {
         if( depth == CV_32F )
         {
-            if( jacobian->rows == matJ.rows )
+            if( jacobian.rows == matJ.rows )
                 cvConvert( &matJ, jacobian );
             else
             {
@@ -346,7 +346,7 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
                 cvTranspose( &_Jf, jacobian );
             }
         }
-        else if( jacobian->rows == matJ.rows )
+        else if( jacobian.rows == matJ.rows )
             cvCopy( &matJ, jacobian );
         else
             cvTranspose( &matJ, jacobian );
@@ -356,26 +356,26 @@ int cvTsRodrigues( const CvMat* src, CvMat* dst, CvMat* jacobian )
 }
 
 
-void alvision.cvtest.Rodrigues(const Mat& src, Mat& dst, Mat* jac)
+function Rodrigues(src : alvision.Mat, dst : alvision.Mat, jac : alvision.Mat) : void
 {
-    CvMat _src = src, _dst = dst, _jac;
-    if( jac )
-        _jac = *jac;
-    cvTsRodrigues(&_src, &_dst, jac ? &_jac : 0);
+    //CvMat _src = src, _dst = dst, _jac;
+    //if( jac )
+    //    _jac = *jac;
+    cvTsRodrigues(src, dst, jac );
 }
 
 
-static void test_convertHomogeneous( const Mat& _src, Mat& _dst )
+function test_convertHomogeneous(_src: alvision.Mat, _dst: alvision.Mat ) : void
 {
-    Mat src = _src, dst = _dst;
+    var src = _src, dst = _dst;
     int i, count, sdims, ddims;
     int sstep1, sstep2, dstep1, dstep2;
 
-    if( src.depth() != CV_64F )
-        _src.convertTo(src, CV_64F);
+    if (src.depth() != alvision.MatrixType.CV_64F )
+        _src.convertTo(src, alvision.MatrixType.CV_64F);
 
-    if( dst.depth() != CV_64F )
-        dst.create(dst.size(), CV_MAKETYPE(CV_64F, _dst.channels()));
+    if (dst.depth() != alvision.MatrixType. CV_64F )
+        dst.create(dst.size(), alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, _dst.channels()));
 
     if( src.rows > src.cols )
     {
@@ -472,44 +472,43 @@ static void test_convertHomogeneous( const Mat& _src, Mat& _dst )
 }
 
 
-void
-test_projectPoints( const Mat& _3d, const Mat& Rt, const Mat& A, Mat& _2d, RNG* rng, double sigma )
+function test_projectPoints( _3d : alvision.Mat,  Rt : alvision.Mat,  A : alvision.Mat, _2d : alvision.Mat, rng : alvision.RNG, sigma : alvision.double ) : void
 {
-    CV_Assert( _3d.isContinuous() );
+    alvision.CV_Assert( _3d.isContinuous() );
 
     double p[12];
-    Mat P( 3, 4, CV_64F, p );
-    gemm(A, Rt, 1, Mat(), 0, P);
+    var P  = new alvision.Mat(3, 4, alvision.MatrixType. CV_64F, p );
+    alvision.gemm(A, Rt, 1,new alvision. Mat(), 0, P);
 
-    int i, count = _3d.cols;
+    var count = _3d.cols;
 
-    Mat noise;
+    var noise = new alvision.Mat();
     if( rng )
     {
         if( sigma == 0 )
             rng = 0;
         else
         {
-            noise.create( 1, _3d.cols, CV_64FC2 );
-            rng->fill(noise, RNG::NORMAL, alvision.Scalar.all(0), Scalar::all(sigma) );
+            noise.create(1, _3d.cols, alvision.MatrixType.CV_64FC2 );
+            rng.fill(noise, RNG::NORMAL, alvision.Scalar.all(0), alvision.Scalar.all(sigma) );
         }
     }
 
-    Mat temp( 1, count, CV_64FC3 );
+    var temp = new alvision.Mat(1, count, alvision.MatrixType.CV_64FC3 );
 
-    for( i = 0; i < count; i++ )
+    for(var i = 0; i < count; i++ )
     {
-        const double* M = _3d.ptr<double>() + i*3;
-        double* m = temp.ptr<double>() + i*3;
-        double X = M[0], Y = M[1], Z = M[2];
-        double u = p[0]*X + p[1]*Y + p[2]*Z + p[3];
-        double v = p[4]*X + p[5]*Y + p[6]*Z + p[7];
-        double s = p[8]*X + p[9]*Y + p[10]*Z + p[11];
+        var M = _3d.ptr<alvision.double>("double").slice( i*3);
+        var m = temp.ptr<alvision.double>("double").slice(i * 3);
+        var X = M[0], Y = M[1], Z = M[2];
+        var u = p[0]*X + p[1]*Y + p[2]*Z + p[3];
+        var v = p[4]*X + p[5]*Y + p[6]*Z + p[7];
+        var s = p[8]*X + p[9]*Y + p[10]*Z + p[11];
 
         if( !noise.empty() )
         {
-            u += noise.at<Point2d>(i).x*s;
-            v += noise.at<Point2d>(i).y*s;
+            u += noise.atGet<alvision.Point2d>("Point2d",i).x.valueOf()*s;
+            v += noise.atGet<alvision.Point2d>("Point2d",i).y.valueOf()*s;
         }
 
         m[0] = u;
@@ -525,259 +524,441 @@ test_projectPoints( const Mat& _3d, const Mat& Rt, const Mat& A, Mat& _2d, RNG* 
 
 class CV_RodriguesTest extends alvision.cvtest.ArrayTest
 {
-public:
-    CV_RodriguesTest();
+    constructor() {
+        super();
+        this.test_array[this.INPUT].push(null);  // rotation vector
+        this.test_array[this.OUTPUT].push(null); // rotation matrix
+        this.test_array[this.OUTPUT].push(null); // jacobian (J)
+        this.test_array[this.OUTPUT].push(null); // rotation vector (backward transform result)
+        this.test_array[this.OUTPUT].push(null); // inverse transform jacobian (J1)
+        this.test_array[this.OUTPUT].push(null); // J*J1 (or J1*J) == I(3x3)
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
 
-protected:
-    int read_params( CvFileStorage* fs );
-    void fill_array( int test_case_idx, int i, int j, Mat& arr );
-    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
-    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
-    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    void prepare_to_validation( int );
+        this.element_wise_relative_error = false;
+        this.calc_jacobians = false;
 
-    bool calc_jacobians;
-    bool test_cpp;
+        this.test_cpp = false;
+    }
+
+    read_params(fs: alvision.FileStorage): alvision.int {
+        var code = super.read_params(fs);
+        return code;
+    }
+    fill_array(test_case_idx: alvision.int, i: alvision.int, j: alvision.int, arr: alvision.Mat): void {
+        if (i == this.INPUT && j == 0) {
+            double r[3], theta0, theta1, f;
+            var _r = new alvision.Mat(arr.rows, arr.cols, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, arr.channels()), r);
+            var rng = this.ts.get_rng();
+
+            r[0] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
+            r[1] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
+            r[2] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
+
+            theta0 = Math.sqrt(r[0] * r[0] + r[1] * r[1] + r[2] * r[2]);
+            theta1 = fmod(theta0, Math.PI * 2);
+
+            if (theta1 > Math.PI)
+                theta1 = -(Math.PI * 2 - theta1);
+
+            f = theta1 / (theta0 ? theta0 : 1);
+            r[0] *= f;
+            r[1] *= f;
+            r[2] *= f;
+
+            alvision.cvtest.convert(_r, arr, arr.type());
+        }
+        else
+            super.fill_array(test_case_idx, i, j, arr);
+    }
+    prepare_test_case(test_case_idx: alvision.int): alvision.int{
+        var code = super.prepare_test_case(test_case_idx);
+        return code;
+    }
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
+        var rng = this.ts.get_rng();
+        var depth = alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        //int i;
+
+        var code = alvision.cvtest.randInt(rng).valueOf() % 3;
+        types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(depth, 1);
+
+        if (code == 0) {
+            sizes[this.INPUT][0] = new alvision.Size(1, 1);
+            types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(depth, 3);
+        }
+        else if (code == 1)
+            sizes[this.INPUT][0] = new alvision.Size(3, 1);
+        else
+            sizes[this.INPUT][0] = new alvision.Size(1, 3);
+
+        sizes[this.OUTPUT][0] = new alvision.Size(3, 3);
+        types[this.OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(depth, 1);
+
+        types[this.OUTPUT][1] = alvision.MatrixType.CV_MAKETYPE(depth, 1);
+
+        if (alvision.cvtest.randInt(rng).valueOf() % 2)
+            sizes[this.OUTPUT][1] = new alvision.Size(3, 9);
+        else
+            sizes[this.OUTPUT][1] = new alvision.Size(9, 3);
+
+        types[this.OUTPUT][2] = types[this.INPUT][0];
+        sizes[this.OUTPUT][2] = sizes[this.INPUT][0];
+
+        types[this.OUTPUT][3] = types[this.OUTPUT][1];
+        sizes[this.OUTPUT][3] = new alvision.Size(sizes[this.OUTPUT][1].height, sizes[this.OUTPUT][1].width);
+
+        types[this.OUTPUT][4] = types[this.OUTPUT][1];
+        sizes[this.OUTPUT][4] = new alvision.Size(3, 3);
+
+        calc_jacobians = alvision.cvtest.randInt(rng).valueOf() % 3 != 0;
+        if (!calc_jacobians)
+            sizes[this.OUTPUT][1] = sizes[this.OUTPUT][3] = sizes[this.OUTPUT][4] = new alvision.Size(0, 0);
+
+        for (var i = 0; i < 5; i++) {
+            types[this.REF_OUTPUT][i] = types[this.OUTPUT][i];
+            sizes[this.REF_OUTPUT][i] = sizes[this.OUTPUT][i];
+        }
+        this.test_cpp = (alvision.cvtest.randInt(rng).valueOf() & 256) == 0;
+    }
+    get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
+        return j == 4 ? 1e-2 : 1e-2;
+    }
+    run_func(): void {
+        CvMat v2m_jac, m2v_jac;
+
+        if (calc_jacobians) {
+            v2m_jac = this.test_mat[this.OUTPUT][1];
+            m2v_jac = this.test_mat[this.OUTPUT][3];
+        }
+
+        if (!test_cpp) {
+            CvMat _input = test_mat[INPUT][0], _output = test_mat[OUTPUT][0], _output2 = this.test_mat[this.OUTPUT][2];
+            cvRodrigues2( &_input, &_output, calc_jacobians ? &v2m_jac : 0);
+            cvRodrigues2( &_output, &_output2, calc_jacobians ? &m2v_jac : 0);
+        }
+        else {
+            alvision.Mat v = this.test_mat[this.INPUT][0], M = this.test_mat[this.OUTPUT][0], v2 = this.test_mat[this.OUTPUT][2];
+            alvision.Mat M0 = M, v2_0 = v2;
+            if (!calc_jacobians) {
+                alvision.Rodrigues(v, M);
+                alvision.Rodrigues(M, v2);
+            }
+            else {
+                alvision.Mat J1 = test_mat[OUTPUT][1], J2 = test_mat[OUTPUT][3];
+                alvision.Mat J1_0 = J1, J2_0 = J2;
+                alvision.Rodrigues(v, M, J1);
+                alvision.Rodrigues(M, v2, J2);
+                if (J1.data != J1_0.data) {
+                    if (J1.size() != J1_0.size())
+                        J1 = J1.t();
+                    J1.convertTo(J1_0, J1_0.type());
+                }
+                if (J2.data != J2_0.data) {
+                    if (J2.size() != J2_0.size())
+                        J2 = J2.t();
+                    J2.convertTo(J2_0, J2_0.type());
+                }
+            }
+            if (M.data != M0.data)
+                M.reshape(M0.channels(), M0.rows).convertTo(M0, M0.type());
+            if (v2.data != v2_0.data)
+                v2.reshape(v2_0.channels(), v2_0.rows).convertTo(v2_0, v2_0.type());
+        }
+    }
+    prepare_to_validation(test_case_idx: alvision.int): void {
+        const Mat& vec = test_mat[INPUT][0];
+        Mat & m = test_mat[REF_OUTPUT][0];
+        Mat & vec2 = test_mat[REF_OUTPUT][2];
+        Mat * v2m_jac = 0, *m2v_jac = 0;
+        double theta0, theta1;
+
+        if (calc_jacobians) {
+            v2m_jac = &test_mat[REF_OUTPUT][1];
+            m2v_jac = &test_mat[REF_OUTPUT][3];
+        }
+
+
+        alvision.cvtest.Rodrigues(vec, m, v2m_jac);
+        alvision.cvtest.Rodrigues(m, vec2, m2v_jac);
+        alvision.cvtest.copy(vec, vec2);
+
+        theta0 = norm(vec2, CV_L2);
+        theta1 = fmod(theta0, Math.PI * 2);
+
+        if (theta1 > Math.PI)
+            theta1 = -(Math.PI * 2 - theta1);
+        vec2 *= theta1 / (theta0 ? theta0 : 1);
+
+        if (calc_jacobians) {
+            //cvInvert( v2m_jac, m2v_jac, CV_SVD );
+            double nrm = alvision.cvtest.norm(test_mat[REF_OUTPUT][3], CV_C);
+            if (FLT_EPSILON < nrm && nrm < 1000) {
+                gemm(test_mat[OUTPUT][1], test_mat[OUTPUT][3],
+                    1, Mat(), 0, test_mat[OUTPUT][4],
+                    v2m_jac .rows == 3 ? 0 : CV_GEMM_A_T + CV_GEMM_B_T);
+            }
+            else {
+                setIdentity(test_mat[OUTPUT][4], Scalar::all(1.));
+                alvision.cvtest.copy(test_mat[REF_OUTPUT][2], test_mat[OUTPUT][2]);
+            }
+            setIdentity(test_mat[REF_OUTPUT][4], Scalar::all(1.));
+        }
+    }
+
+    protected calc_jacobians: boolean;
+    protected test_cpp: boolean;
 };
-
-
-CV_RodriguesTest::CV_RodriguesTest()
-{
-    test_array[INPUT].push(NULL);  // rotation vector
-    test_array[OUTPUT].push(NULL); // rotation matrix
-    test_array[OUTPUT].push(NULL); // jacobian (J)
-    test_array[OUTPUT].push(NULL); // rotation vector (backward transform result)
-    test_array[OUTPUT].push(NULL); // inverse transform jacobian (J1)
-    test_array[OUTPUT].push(NULL); // J*J1 (or J1*J) == I(3x3)
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-
-    element_wise_relative_error = false;
-    calc_jacobians = false;
-
-    test_cpp = false;
-}
-
-
-int CV_RodriguesTest::read_params( CvFileStorage* fs )
-{
-    int code = alvision.cvtest.ArrayTest::read_params( fs );
-    return code;
-}
-
-
-void CV_RodriguesTest::get_test_array_types_and_sizes(
-    int /*test_case_idx*/, Array<Array<Size> >& sizes, Array<Array<int> >& types )
-{
-    RNG& rng = ts->get_rng();
-    int depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
-    int i, code;
-
-    code = alvision.cvtest.randInt(rng) % 3;
-    types[INPUT][0] = CV_MAKETYPE(depth, 1);
-
-    if( code == 0 )
-    {
-        sizes[INPUT][0] = cvSize(1,1);
-        types[INPUT][0] = CV_MAKETYPE(depth, 3);
-    }
-    else if( code == 1 )
-        sizes[INPUT][0] = cvSize(3,1);
-    else
-        sizes[INPUT][0] = cvSize(1,3);
-
-    sizes[OUTPUT][0] = cvSize(3, 3);
-    types[OUTPUT][0] = CV_MAKETYPE(depth, 1);
-
-    types[OUTPUT][1] = CV_MAKETYPE(depth, 1);
-
-    if( alvision.cvtest.randInt(rng) % 2 )
-        sizes[OUTPUT][1] = cvSize(3,9);
-    else
-        sizes[OUTPUT][1] = cvSize(9,3);
-
-    types[OUTPUT][2] = types[INPUT][0];
-    sizes[OUTPUT][2] = sizes[INPUT][0];
-
-    types[OUTPUT][3] = types[OUTPUT][1];
-    sizes[OUTPUT][3] = cvSize(sizes[OUTPUT][1].height, sizes[OUTPUT][1].width);
-
-    types[OUTPUT][4] = types[OUTPUT][1];
-    sizes[OUTPUT][4] = cvSize(3,3);
-
-    calc_jacobians = alvision.cvtest.randInt(rng) % 3 != 0;
-    if( !calc_jacobians )
-        sizes[OUTPUT][1] = sizes[OUTPUT][3] = sizes[OUTPUT][4] = cvSize(0,0);
-
-    for( i = 0; i < 5; i++ )
-    {
-        types[REF_OUTPUT][i] = types[OUTPUT][i];
-        sizes[REF_OUTPUT][i] = sizes[OUTPUT][i];
-    }
-    test_cpp = (alvision.cvtest.randInt(rng) & 256) == 0;
-}
-
-
-double CV_RodriguesTest::get_success_error_level( int /*test_case_idx*/, int /*i*/, int j )
-{
-    return j == 4 ? 1e-2 : 1e-2;
-}
-
-
-void CV_RodriguesTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
-{
-    if( i == INPUT && j == 0 )
-    {
-        double r[3], theta0, theta1, f;
-        Mat _r( arr.rows, arr.cols, CV_MAKETYPE(CV_64F,arr.channels()), r );
-        RNG& rng = ts->get_rng();
-
-        r[0] = alvision.cvtest.randReal(rng)*Math.PI*2;
-        r[1] = alvision.cvtest.randReal(rng)*Math.PI*2;
-        r[2] = alvision.cvtest.randReal(rng)*Math.PI*2;
-
-        theta0 = sqrt(r[0]*r[0] + r[1]*r[1] + r[2]*r[2]);
-        theta1 = fmod(theta0, Math.PI*2);
-
-        if( theta1 > Math.PI )
-            theta1 = -(Math.PI*2 - theta1);
-
-        f = theta1/(theta0 ? theta0 : 1);
-        r[0] *= f;
-        r[1] *= f;
-        r[2] *= f;
-
-        alvision.cvtest.convert( _r, arr, arr.type() );
-    }
-    else
-        alvision.cvtest.ArrayTest::fill_array( test_case_idx, i, j, arr );
-}
-
-
-int CV_RodriguesTest::prepare_test_case( int test_case_idx )
-{
-    int code = super.prepare_test_case( test_case_idx );
-    return code;
-}
-
-
-void CV_RodriguesTest::run_func()
-{
-    CvMat v2m_jac, m2v_jac;
-
-    if( calc_jacobians )
-    {
-        v2m_jac = test_mat[OUTPUT][1];
-        m2v_jac = test_mat[OUTPUT][3];
-    }
-
-    if( !test_cpp )
-    {
-        CvMat _input = test_mat[INPUT][0], _output = test_mat[OUTPUT][0], _output2 = test_mat[OUTPUT][2];
-        cvRodrigues2( &_input, &_output, calc_jacobians ? &v2m_jac : 0 );
-        cvRodrigues2( &_output, &_output2, calc_jacobians ? &m2v_jac : 0 );
-    }
-    else
-    {
-        alvision.Mat v = test_mat[INPUT][0], M = test_mat[OUTPUT][0], v2 = test_mat[OUTPUT][2];
-        alvision.Mat M0 = M, v2_0 = v2;
-        if( !calc_jacobians )
-        {
-            alvision.Rodrigues(v, M);
-            alvision.Rodrigues(M, v2);
-        }
-        else
-        {
-            alvision.Mat J1 = test_mat[OUTPUT][1], J2 = test_mat[OUTPUT][3];
-            alvision.Mat J1_0 = J1, J2_0 = J2;
-            alvision.Rodrigues(v, M, J1);
-            alvision.Rodrigues(M, v2, J2);
-            if( J1.data != J1_0.data )
-            {
-                if( J1.size() != J1_0.size() )
-                    J1 = J1.t();
-                J1.convertTo(J1_0, J1_0.type());
-            }
-            if( J2.data != J2_0.data )
-            {
-                if( J2.size() != J2_0.size() )
-                    J2 = J2.t();
-                J2.convertTo(J2_0, J2_0.type());
-            }
-        }
-        if( M.data != M0.data )
-            M.reshape(M0.channels(), M0.rows).convertTo(M0, M0.type());
-        if( v2.data != v2_0.data )
-            v2.reshape(v2_0.channels(), v2_0.rows).convertTo(v2_0, v2_0.type());
-    }
-}
-
-
-void CV_RodriguesTest::prepare_to_validation( int /*test_case_idx*/ )
-{
-    const Mat& vec = test_mat[INPUT][0];
-    Mat& m = test_mat[REF_OUTPUT][0];
-    Mat& vec2 = test_mat[REF_OUTPUT][2];
-    Mat* v2m_jac = 0, *m2v_jac = 0;
-    double theta0, theta1;
-
-    if( calc_jacobians )
-    {
-        v2m_jac = &test_mat[REF_OUTPUT][1];
-        m2v_jac = &test_mat[REF_OUTPUT][3];
-    }
-
-
-    alvision.cvtest.Rodrigues( vec, m, v2m_jac );
-    alvision.cvtest.Rodrigues( m, vec2, m2v_jac );
-    alvision.cvtest.copy( vec, vec2 );
-
-    theta0 = norm( vec2, CV_L2 );
-    theta1 = fmod( theta0, Math.PI*2 );
-
-    if( theta1 > Math.PI )
-        theta1 = -(Math.PI*2 - theta1);
-    vec2 *= theta1/(theta0 ? theta0 : 1);
-
-    if( calc_jacobians )
-    {
-        //cvInvert( v2m_jac, m2v_jac, CV_SVD );
-        double nrm = alvision.cvtest.norm(test_mat[REF_OUTPUT][3], CV_C);
-        if( FLT_EPSILON < nrm && nrm < 1000 )
-        {
-            gemm( test_mat[OUTPUT][1], test_mat[OUTPUT][3],
-                  1, Mat(), 0, test_mat[OUTPUT][4],
-                  v2m_jac->rows == 3 ? 0 : CV_GEMM_A_T + CV_GEMM_B_T );
-        }
-        else
-        {
-            setIdentity(test_mat[OUTPUT][4], Scalar::all(1.));
-            alvision.cvtest.copy( test_mat[REF_OUTPUT][2], test_mat[OUTPUT][2] );
-        }
-        setIdentity(test_mat[REF_OUTPUT][4], Scalar::all(1.));
-    }
-}
 
 
 /********************************** fundamental matrix *********************************/
 
 class CV_FundamentalMatTest extends alvision.cvtest.ArrayTest
 {
-public:
-    CV_FundamentalMatTest();
+    constructor() {
+        super();
+        // input arrays:
+        //   0, 1 - arrays of 2d points that are passed to %func%.
+        //          Can have different data type, layout, be stored in homogeneous coordinates or not.
+        //   2 - array of 3d points that are projected to both view planes
+        //   3 - [R|t] matrix for the second view plane (for the first one it is [I|0]
+        //   4, 5 - intrinsic matrices
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.TEMP].push(null);
+        this.test_array[this.TEMP].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
 
-protected:
-    int read_params( CvFileStorage* fs );
-    void fill_array( int test_case_idx, int i, int j, Mat& arr );
-    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
-    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
-    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    void prepare_to_validation( int );
+        this.element_wise_relative_error = false;
+
+        this.method = 0;
+        this.img_size = 10;
+        this.cube_size = 10;
+        this.dims = 0;
+        this.min_f = 1;
+        this.max_f = 3;
+        this.sigma = 0;//0.1;
+        this.f_result = 0;
+
+        this.test_cpp = false;
+    }
+    read_params(fs: alvision.FileStorage): alvision.int {
+        var code = super.read_params(fs);
+        return code;
+    }
+    fill_array(test_case_idx: alvision.int, i: alvision.int, j: alvision.int, arr: alvision.Mat): void {
+        double t[12] = { 0};
+        var rng = this.ts.get_rng();
+
+        if (i != this.INPUT) {
+            super.fill_array(test_case_idx, i, j, arr);
+            return;
+        }
+
+        switch (j) {
+            case 0:
+            case 1:
+                return; // fill them later in prepare_test_case
+            case 2:
+                {
+                    var p = arr.ptr<alvision.double>("double");
+                    for (i = 0; i < arr.cols * 3; i += 3) {
+                        p[i] = alvision.cvtest.randReal(rng) * cube_size;
+                        p[i + 1] = alvision.cvtest.randReal(rng) * cube_size;
+                        p[i + 2] = alvision.cvtest.randReal(rng) * cube_size + cube_size;
+                    }
+                }
+                break;
+            case 3:
+                {
+                    double r[3];
+                    var rot_vec = new alvision.Mat(3, 1, alvision.MatrixType.CV_64F, r);
+                    var rot_mat = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, t, 4 * sizeof(t[0]));
+                    r[0] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
+                    r[1] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
+                    r[2] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
+
+                    alvision.cvtest.Rodrigues(rot_vec, rot_mat);
+                    t[3] = alvision.cvtest.randReal(rng).valueOf() * cube_size;
+                    t[7] = alvision.cvtest.randReal(rng).valueOf() * cube_size;
+                    t[11] = alvision.cvtest.randReal(rng).valueOf() * cube_size;
+                    Mat(3, 4, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
+                }
+                break;
+            case 4:
+            case 5:
+                t[0] = t[4] = alvision.cvtest.randReal(rng) * (max_f - min_f) + min_f;
+                t[2] = (img_size * 0.5 + alvision.cvtest.randReal(rng) * 4. - 2.) * t[0];
+                t[5] = (img_size * 0.5 + alvision.cvtest.randReal(rng) * 4. - 2.) * t[4];
+                t[8] = 1.;
+                Mat(3, 3, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
+                break;
+        }
+    }
+    prepare_test_case(test_case_idx: alvision.int): alvision.int{
+        var code = super.prepare_test_case(test_case_idx);
+        if (code > 0) {
+            var _3d = this.test_mat[this.INPUT][2];
+            var rng = this.ts.get_rng();
+            var Idata = [ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 ]
+            var I = new alvision.Mat(3, 4, alvision.MatrixType.CV_64F, Idata);
+
+            for (var k = 0; k < 2; k++) {
+                const Mat& Rt = k == 0 ? I : test_mat[INPUT][3];
+                const Mat& A = test_mat[INPUT][k == 0 ? 4 : 5];
+                Mat & _2d = test_mat[INPUT][k];
+
+                test_projectPoints(_3d, Rt, A, _2d, &rng, sigma);
+            }
+        }
+
+        return code;
+    }
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
+        var rng = this.ts.get_rng();
+        var pt_depth = alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        var pt_count_exp = alvision.cvtest.randReal(rng).valueOf() * 6 + 1;
+        var pt_count = Math.round(Math.exp(pt_count_exp));
+
+        dims = alvision.cvtest.randInt(rng).valueOf() % 2 + 2;
+        method = 1 << (alvision.cvtest.randInt(rng).valueOf() % 4);
+
+        if (method == CV_FM_7POINT)
+            pt_count = 7;
+        else {
+            pt_count = Math.max(pt_count, 8 + (method == CV_FM_8POINT));
+            if (pt_count >= 8 && alvision.cvtest.randInt(rng).valueOf() % 2)
+                method |= CV_FM_8POINT;
+        }
+
+        types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, 1);
+
+        if (alvision.cvtest.randInt(rng).valueOf() % 2)
+            sizes[this.INPUT][0] = new alvision.Size(pt_count, dims);
+        else {
+            sizes[this.INPUT][0] = new alvision.Size(dims, pt_count);
+            if (alvision.cvtest.randInt(rng).valueOf() % 2) {
+                types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, dims);
+                if (alvision.cvtest.randInt(rng).valueOf() % 2)
+                    sizes[this.INPUT][0] = new alvision.Size(pt_count, 1);
+                else
+                    sizes[this.INPUT][0] = new alvision.Size(1, pt_count);
+            }
+        }
+
+        sizes[this.INPUT][1] = sizes[this.INPUT][0];
+        types[this.INPUT][1] = types[this.INPUT][0];
+
+        sizes[this.INPUT][2] = cvSize(pt_count, 1);
+        types[this.INPUT][2] = alvision.MatrixType.CV_64FC3;
+
+        sizes[this.INPUT][3] = cvSize(4, 3);
+        types[this.INPUT][3] = alvision.MatrixType.CV_64FC1;
+
+        sizes[this.INPUT][4] = sizes[INPUT][5] = cvSize(3, 3);
+        types[this.INPUT][4] = types[INPUT][5] = alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 1);
+
+        sizes[this.TEMP][0] = cvSize(3, 3);
+        types[this.TEMP][0] = alvision.MatrixType.CV_64FC1;
+        sizes[this.TEMP][1] = cvSize(pt_count, 1);
+        types[this.TEMP][1] = CV_8UC1;
+
+        sizes[this.OUTPUT][0] = sizes[this.REF_OUTPUT][0] = cvSize(3, 1);
+        types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = alvision.MatrixType.CV_64FC1;
+        sizes[this.OUTPUT][1] = sizes[this.REF_OUTPUT][1] = cvSize(pt_count, 1);
+        types[this.OUTPUT][1] = types[this.REF_OUTPUT][1] = CV_8UC1;
+
+        this.test_cpp = (alvision.cvtest.randInt(rng).valueOf() & 256) == 0;
+    }
+    get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
+        return 1e-2;
+    }
+    run_func(): void {
+        // cvFindFundamentalMat calls alvision.findFundamentalMat
+        var _input0 = this.test_mat[this.INPUT][0], _input1 = this.test_mat[this.INPUT][1];
+        var F = this.test_mat[this.TEMP][0], mask = this.test_mat[this.TEMP][1];
+        f_result = cvFindFundamentalMat( &_input0, &_input1, &F, method, MAX(sigma * 3, 0.01), 0, &mask);
+    }
+    prepare_to_validation(test_case_idx: alvision.int): void {
+        var Rt = this.test_mat[this.INPUT][3];
+        var A1 = this.test_mat[this.INPUT][4];
+        var A2 = this.test_mat[this.INPUT][5];
+        double f0[9], f[9];
+        var F0 = new alvision.Mat (3, 3, alvision.MatrixType.CV_64FC1, f0), F = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, f);
+
+        Mat invA1, invA2, R = Rt.colRange(0, 3), T;
+
+        alvision.invert(A1, invA1, CV_SVD);
+        alvision.invert(A2, invA2, CV_SVD);
+
+        var tx = Rt.atGet<alvision.double>("double",0, 3);
+        var ty = Rt.atGet<alvision.double>("double",1, 3);
+        var tz = Rt.atGet<alvision.double>("double",2, 3);
+
+        double _t_x[] = { 0, -tz, ty, tz, 0, -tx, -ty, tx, 0
+    };
+
+    // F = (A2^-T)*[t]_x*R*(A1^-1)
+    alvision.gemm(invA2, new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, _t_x), 1, new alvision.Mat(), 0, T, CV_GEMM_A_T );
+    alvision.gemm(R, invA1, 1, new alvision.Mat(), 0, invA2 );
+    alvision.gemm(T, invA2, 1, new alvision.Mat(), 0, F0 );
+    F0 *= 1./f0[8];
+
+    uchar* status = test_mat[TEMP][1].ptr();
+    double err_level = get_success_error_level(test_case_idx, OUTPUT, 1);
+    uchar* mtfm1 = test_mat[REF_OUTPUT][1].ptr();
+    uchar* mtfm2 = test_mat[OUTPUT][1].ptr();
+    double* f_prop1 = test_mat[REF_OUTPUT][0].ptr<double>();
+    double* f_prop2 = test_mat[OUTPUT][0].ptr<double>();
+
+    int i, pt_count = test_mat[INPUT][2].cols;
+    Mat p1(1, pt_count, alvision.MatrixType.CV_64FC2);
+    Mat p2(1, pt_count, alvision.MatrixType.CV_64FC2);
+
+    test_convertHomogeneous(test_mat[INPUT][0], p1);
+    test_convertHomogeneous(test_mat[INPUT][1], p2);
+
+    alvision.cvtest.convert(test_mat[TEMP][0], F, F.type());
+
+    if(method <= CV_FM_8POINT)
+    memset(status, 1, pt_count );
+
+    for(i = 0; i < pt_count; i++ )
+    {
+        double x1 = p1.at<Point2d>(i).x;
+        double y1 = p1.at<Point2d>(i).y;
+        double x2 = p2.at<Point2d>(i).x;
+        double y2 = p2.at<Point2d>(i).y;
+        double n1 = 1. / sqrt(x1 * x1 + y1 * y1 + 1);
+        double n2 = 1. / sqrt(x2 * x2 + y2 * y2 + 1);
+        double t0 = fabs(f0[0] * x2 * x1 + f0[1] * x2 * y1 + f0[2] * x2 +
+            f0[3] * y2 * x1 + f0[4] * y2 * y1 + f0[5] * y2 +
+            f0[6] * x1 + f0[7] * y1 + f0[8]) * n1 * n2;
+        double t = fabs(f[0] * x2 * x1 + f[1] * x2 * y1 + f[2] * x2 +
+            f[3] * y2 * x1 + f[4] * y2 * y1 + f[5] * y2 +
+            f[6] * x1 + f[7] * y1 + f[8]) * n1 * n2;
+        mtfm1[i] = 1;
+        mtfm2[i] = !status[i] || t0 > err_level || t < err_level;
+    }
+
+    f_prop1[0] = 1;
+    f_prop1[1] = 1;
+    f_prop1[2] = 0;
+
+    f_prop2[0] = f_result != 0;
+    f_prop2[1] = f[8];
+    f_prop2[2] = alvision.determinant(F);
+    }
 
     int method;
     int img_size;
@@ -790,276 +971,6 @@ protected:
 };
 
 
-CV_FundamentalMatTest::CV_FundamentalMatTest()
-{
-    // input arrays:
-    //   0, 1 - arrays of 2d points that are passed to %func%.
-    //          Can have different data type, layout, be stored in homogeneous coordinates or not.
-    //   2 - array of 3d points that are projected to both view planes
-    //   3 - [R|t] matrix for the second view plane (for the first one it is [I|0]
-    //   4, 5 - intrinsic matrices
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[OUTPUT].push(NULL);
-    test_array[OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-
-    element_wise_relative_error = false;
-
-    method = 0;
-    img_size = 10;
-    cube_size = 10;
-    dims = 0;
-    min_f = 1;
-    max_f = 3;
-    sigma = 0;//0.1;
-    f_result = 0;
-
-    test_cpp = false;
-}
-
-
-int CV_FundamentalMatTest::read_params( CvFileStorage* fs )
-{
-    int code = alvision.cvtest.ArrayTest::read_params( fs );
-    return code;
-}
-
-
-void CV_FundamentalMatTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
-                                                Array<Array<Size> >& sizes, Array<Array<int> >& types )
-{
-    RNG& rng = ts->get_rng();
-    int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
-    double pt_count_exp = alvision.cvtest.randReal(rng)*6 + 1;
-    int pt_count = Math.round(exp(pt_count_exp));
-
-    dims = alvision.cvtest.randInt(rng) % 2 + 2;
-    method = 1 << (alvision.cvtest.randInt(rng) % 4);
-
-    if( method == CV_FM_7POINT )
-        pt_count = 7;
-    else
-    {
-        pt_count = MAX( pt_count, 8 + (method == CV_FM_8POINT) );
-        if( pt_count >= 8 && alvision.cvtest.randInt(rng) % 2 )
-            method |= CV_FM_8POINT;
-    }
-
-    types[INPUT][0] = CV_MAKETYPE(pt_depth, 1);
-
-    if( alvision.cvtest.randInt(rng) % 2 )
-        sizes[INPUT][0] = cvSize(pt_count, dims);
-    else
-    {
-        sizes[INPUT][0] = cvSize(dims, pt_count);
-        if( alvision.cvtest.randInt(rng) % 2 )
-        {
-            types[INPUT][0] = CV_MAKETYPE(pt_depth, dims);
-            if( alvision.cvtest.randInt(rng) % 2 )
-                sizes[INPUT][0] = cvSize(pt_count, 1);
-            else
-                sizes[INPUT][0] = cvSize(1, pt_count);
-        }
-    }
-
-    sizes[INPUT][1] = sizes[INPUT][0];
-    types[INPUT][1] = types[INPUT][0];
-
-    sizes[INPUT][2] = cvSize(pt_count, 1 );
-    types[INPUT][2] = CV_64FC3;
-
-    sizes[INPUT][3] = cvSize(4,3);
-    types[INPUT][3] = CV_64FC1;
-
-    sizes[INPUT][4] = sizes[INPUT][5] = cvSize(3,3);
-    types[INPUT][4] = types[INPUT][5] = CV_MAKETYPE(CV_64F, 1);
-
-    sizes[TEMP][0] = cvSize(3,3);
-    types[TEMP][0] = CV_64FC1;
-    sizes[TEMP][1] = cvSize(pt_count,1);
-    types[TEMP][1] = CV_8UC1;
-
-    sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(3,1);
-    types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC1;
-    sizes[OUTPUT][1] = sizes[REF_OUTPUT][1] = cvSize(pt_count,1);
-    types[OUTPUT][1] = types[REF_OUTPUT][1] = CV_8UC1;
-
-    test_cpp = (alvision.cvtest.randInt(rng) & 256) == 0;
-}
-
-
-double CV_FundamentalMatTest::get_success_error_level( int /*test_case_idx*/, int /*i*/, int /*j*/ )
-{
-    return 1e-2;
-}
-
-
-void CV_FundamentalMatTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
-{
-    double t[12]={0};
-    RNG& rng = ts->get_rng();
-
-    if( i != INPUT )
-    {
-        alvision.cvtest.ArrayTest::fill_array( test_case_idx, i, j, arr );
-        return;
-    }
-
-    switch( j )
-    {
-    case 0:
-    case 1:
-        return; // fill them later in prepare_test_case
-    case 2:
-        {
-        double* p = arr.ptr<double>();
-        for( i = 0; i < arr.cols*3; i += 3 )
-        {
-            p[i] = alvision.cvtest.randReal(rng)*cube_size;
-            p[i+1] = alvision.cvtest.randReal(rng)*cube_size;
-            p[i+2] = alvision.cvtest.randReal(rng)*cube_size + cube_size;
-        }
-        }
-        break;
-    case 3:
-        {
-        double r[3];
-        Mat rot_vec( 3, 1, CV_64F, r );
-        Mat rot_mat( 3, 3, CV_64F, t, 4*sizeof(t[0]) );
-        r[0] = alvision.cvtest.randReal(rng)*Math.PI*2;
-        r[1] = alvision.cvtest.randReal(rng)*Math.PI*2;
-        r[2] = alvision.cvtest.randReal(rng)*Math.PI*2;
-
-        alvision.cvtest.Rodrigues( rot_vec, rot_mat );
-        t[3] = alvision.cvtest.randReal(rng)*cube_size;
-        t[7] = alvision.cvtest.randReal(rng)*cube_size;
-        t[11] = alvision.cvtest.randReal(rng)*cube_size;
-        Mat( 3, 4, CV_64F, t ).convertTo(arr, arr.type());
-        }
-        break;
-    case 4:
-    case 5:
-        t[0] = t[4] = alvision.cvtest.randReal(rng)*(max_f - min_f) + min_f;
-        t[2] = (img_size*0.5 + alvision.cvtest.randReal(rng)*4. - 2.)*t[0];
-        t[5] = (img_size*0.5 + alvision.cvtest.randReal(rng)*4. - 2.)*t[4];
-        t[8] = 1.;
-        Mat( 3, 3, CV_64F, t ).convertTo( arr, arr.type() );
-        break;
-    }
-}
-
-
-int CV_FundamentalMatTest::prepare_test_case( int test_case_idx )
-{
-    int code = super.prepare_test_case( test_case_idx );
-    if( code > 0 )
-    {
-        const Mat& _3d = test_mat[INPUT][2];
-        RNG& rng = ts->get_rng();
-        double Idata[] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 };
-        Mat I( 3, 4, CV_64F, Idata );
-        int k;
-
-        for( k = 0; k < 2; k++ )
-        {
-            const Mat& Rt = k == 0 ? I : test_mat[INPUT][3];
-            const Mat& A = test_mat[INPUT][k == 0 ? 4 : 5];
-            Mat& _2d = test_mat[INPUT][k];
-
-            test_projectPoints( _3d, Rt, A, _2d, &rng, sigma );
-        }
-    }
-
-    return code;
-}
-
-void CV_FundamentalMatTest::run_func()
-{
-    // cvFindFundamentalMat calls alvision.findFundamentalMat
-    CvMat _input0 = test_mat[INPUT][0], _input1 = test_mat[INPUT][1];
-    CvMat F = test_mat[TEMP][0], mask = test_mat[TEMP][1];
-    f_result = cvFindFundamentalMat( &_input0, &_input1, &F, method, MAX(sigma*3, 0.01), 0, &mask );
-}
-
-
-void CV_FundamentalMatTest::prepare_to_validation( int test_case_idx )
-{
-    const Mat& Rt = test_mat[INPUT][3];
-    const Mat& A1 = test_mat[INPUT][4];
-    const Mat& A2 = test_mat[INPUT][5];
-    double f0[9], f[9];
-    Mat F0(3, 3, CV_64FC1, f0), F(3, 3, CV_64F, f);
-
-    Mat invA1, invA2, R=Rt.colRange(0, 3), T;
-
-    alvision.invert(A1, invA1, CV_SVD);
-    alvision.invert(A2, invA2, CV_SVD);
-
-    double tx = Rt.at<double>(0, 3);
-    double ty = Rt.at<double>(1, 3);
-    double tz = Rt.at<double>(2, 3);
-
-    double _t_x[] = { 0, -tz, ty, tz, 0, -tx, -ty, tx, 0 };
-
-    // F = (A2^-T)*[t]_x*R*(A1^-1)
-    alvision.gemm( invA2, Mat( 3, 3, CV_64F, _t_x ), 1, Mat(), 0, T, CV_GEMM_A_T );
-    alvision.gemm( R, invA1, 1, Mat(), 0, invA2 );
-    alvision.gemm( T, invA2, 1, Mat(), 0, F0 );
-    F0 *= 1./f0[8];
-
-    uchar* status = test_mat[TEMP][1].ptr();
-    double err_level = get_success_error_level( test_case_idx, OUTPUT, 1 );
-    uchar* mtfm1 = test_mat[REF_OUTPUT][1].ptr();
-    uchar* mtfm2 = test_mat[OUTPUT][1].ptr();
-    double* f_prop1 = test_mat[REF_OUTPUT][0].ptr<double>();
-    double* f_prop2 = test_mat[OUTPUT][0].ptr<double>();
-
-    int i, pt_count = test_mat[INPUT][2].cols;
-    Mat p1( 1, pt_count, CV_64FC2 );
-    Mat p2( 1, pt_count, CV_64FC2 );
-
-    test_convertHomogeneous( test_mat[INPUT][0], p1 );
-    test_convertHomogeneous( test_mat[INPUT][1], p2 );
-
-    alvision.cvtest.convert(test_mat[TEMP][0], F, F.type());
-
-    if( method <= CV_FM_8POINT )
-        memset( status, 1, pt_count );
-
-    for( i = 0; i < pt_count; i++ )
-    {
-        double x1 = p1.at<Point2d>(i).x;
-        double y1 = p1.at<Point2d>(i).y;
-        double x2 = p2.at<Point2d>(i).x;
-        double y2 = p2.at<Point2d>(i).y;
-        double n1 = 1./sqrt(x1*x1 + y1*y1 + 1);
-        double n2 = 1./sqrt(x2*x2 + y2*y2 + 1);
-        double t0 = fabs(f0[0]*x2*x1 + f0[1]*x2*y1 + f0[2]*x2 +
-                   f0[3]*y2*x1 + f0[4]*y2*y1 + f0[5]*y2 +
-                   f0[6]*x1 + f0[7]*y1 + f0[8])*n1*n2;
-        double t = fabs(f[0]*x2*x1 + f[1]*x2*y1 + f[2]*x2 +
-                   f[3]*y2*x1 + f[4]*y2*y1 + f[5]*y2 +
-                   f[6]*x1 + f[7]*y1 + f[8])*n1*n2;
-        mtfm1[i] = 1;
-        mtfm2[i] = !status[i] || t0 > err_level || t < err_level;
-    }
-
-    f_prop1[0] = 1;
-    f_prop1[1] = 1;
-    f_prop1[2] = 0;
-
-    f_prop2[0] = f_result != 0;
-    f_prop2[1] = f[8];
-    f_prop2[2] = alvision.determinant( F );
-}
 /******************************* find essential matrix ***********************************/
 class CV_EssentialMatTest extends alvision.cvtest.ArrayTest
 {
@@ -1067,13 +978,13 @@ public:
     CV_EssentialMatTest();
 
 protected:
-    int read_params( CvFileStorage* fs );
-    void fill_array( int test_case_idx, int i, int j, Mat& arr );
+    read_params(fs : alvision.FileStorage) : alvision.int{}
+    fill_array(test_case_idx : alvision.int, i : alvision.int, j : alvision.int, arr : alvision.Mat) : void {}
     prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    void prepare_to_validation( int );
+    run_func() : void {}
+    prepare_to_validation(test_case_idx : alvision.int) : void {}
 
     double sampson_error(const double* f, double x1, double y1, double x2, double y2);
 
@@ -1094,24 +1005,24 @@ CV_EssentialMatTest::CV_EssentialMatTest()
     //   2 - array of 3d points that are projected to both view planes
     //   3 - [R|t] matrix for the second view plane (for the first one it is [I|0]
     //   4 - intrinsic matrix for both camera
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[OUTPUT].push(NULL); // Essential Matrix singularity
-    test_array[OUTPUT].push(NULL); // Inliers mask
-    test_array[OUTPUT].push(NULL); // Translation error
-    test_array[OUTPUT].push(NULL); // Positive depth count
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
+    test_array[INPUT].push(null);
+    test_array[INPUT].push(null);
+    test_array[INPUT].push(null);
+    test_array[INPUT].push(null);
+    test_array[INPUT].push(null);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
+    test_array[OUTPUT].push(null); // Essential Matrix singularity
+    test_array[OUTPUT].push(null); // Inliers mask
+    test_array[OUTPUT].push(null); // Translation error
+    test_array[OUTPUT].push(null); // Positive depth count
+    test_array[REF_OUTPUT].push(null);
+    test_array[REF_OUTPUT].push(null);
+    test_array[REF_OUTPUT].push(null);
+    test_array[REF_OUTPUT].push(null);
 
     element_wise_relative_error = false;
 
@@ -1127,7 +1038,7 @@ CV_EssentialMatTest::CV_EssentialMatTest()
 
 int CV_EssentialMatTest::read_params( CvFileStorage* fs )
 {
-    int code = alvision.cvtest.ArrayTest::read_params( fs );
+    int code = super.read_params( fs );
     return code;
 }
 
@@ -1135,8 +1046,8 @@ int CV_EssentialMatTest::read_params( CvFileStorage* fs )
 void CV_EssentialMatTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
                                                 Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
-    int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
+    var rng = this.ts.get_rng();
+    int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
     double pt_count_exp = alvision.cvtest.randReal(rng)*6 + 1;
     int pt_count = MAX(5, Math.round(exp(pt_count_exp)));
 
@@ -1144,7 +1055,7 @@ void CV_EssentialMatTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
     dims = 2;
     method = CV_LMEDS << (alvision.cvtest.randInt(rng) % 2);
 
-    types[INPUT][0] = CV_MAKETYPE(pt_depth, 1);
+    types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, 1);
 
     if( 0 && alvision.cvtest.randInt(rng) % 2 )
         sizes[INPUT][0] = cvSize(pt_count, dims);
@@ -1165,31 +1076,31 @@ void CV_EssentialMatTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
     types[INPUT][1] = types[INPUT][0];
 
     sizes[INPUT][2] = cvSize(pt_count, 1 );
-    types[INPUT][2] = CV_64FC3;
+    types[INPUT][2] = alvision.MatrixType.CV_64FC3;
 
     sizes[INPUT][3] = cvSize(4,3);
-    types[INPUT][3] = CV_64FC1;
+    types[INPUT][3] = alvision.MatrixType.CV_64FC1;
 
     sizes[INPUT][4] = cvSize(3,3);
-    types[INPUT][4] = CV_MAKETYPE(CV_64F, 1);
+    types[INPUT][4] = alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 1);
 
     sizes[TEMP][0] = cvSize(3,3);
-    types[TEMP][0] = CV_64FC1;
+    types[TEMP][0] = alvision.MatrixType. CV_64FC1;
     sizes[TEMP][1] = cvSize(pt_count,1);
     types[TEMP][1] = CV_8UC1;
     sizes[TEMP][2] = cvSize(3,3);
-    types[TEMP][2] = CV_64FC1;
+    types[TEMP][2] = alvision.MatrixType.CV_64FC1;
     sizes[TEMP][3] = cvSize(3, 1);
-    types[TEMP][3] = CV_64FC1;
+    types[TEMP][3] = alvision.MatrixType.CV_64FC1;
     sizes[TEMP][4] = cvSize(pt_count,1);
     types[TEMP][4] = CV_8UC1;
 
     sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(3,1);
-    types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_64FC1;
+    types[OUTPUT][0] = types[REF_OUTPUT][0] = alvision.MatrixType.CV_64FC1;
     sizes[OUTPUT][1] = sizes[REF_OUTPUT][1] = cvSize(pt_count,1);
     types[OUTPUT][1] = types[REF_OUTPUT][1] = CV_8UC1;
     sizes[OUTPUT][2] = sizes[REF_OUTPUT][2] = cvSize(1,1);
-    types[OUTPUT][2] = types[REF_OUTPUT][2] = CV_64FC1;
+    types[OUTPUT][2] = types[REF_OUTPUT][2] = alvision.MatrixType.CV_64FC1;
     sizes[OUTPUT][3] = sizes[REF_OUTPUT][3] = cvSize(1,1);
     types[OUTPUT][3] = types[REF_OUTPUT][3] = CV_8UC1;
 
@@ -1205,11 +1116,11 @@ double CV_EssentialMatTest::get_success_error_level( int /*test_case_idx*/, int 
 void CV_EssentialMatTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
 {
     double t[12]={0};
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
     if( i != INPUT )
     {
-        alvision.cvtest.ArrayTest::fill_array( test_case_idx, i, j, arr );
+        super.fill_array( test_case_idx, i, j, arr );
         return;
     }
 
@@ -1232,8 +1143,8 @@ void CV_EssentialMatTest::fill_array( int test_case_idx, int i, int j, Mat& arr 
     case 3:
         {
         double r[3];
-        Mat rot_vec( 3, 1, CV_64F, r );
-        Mat rot_mat( 3, 3, CV_64F, t, 4*sizeof(t[0]) );
+        Mat rot_vec( 3, 1,alvision.MatrixType.CV_64F, r );
+        Mat rot_mat(3, 3, alvision.MatrixType.CV_64F, t, 4*sizeof(t[0]) );
         r[0] = alvision.cvtest.randReal(rng)*Math.PI*2;
         r[1] = alvision.cvtest.randReal(rng)*Math.PI*2;
         r[2] = alvision.cvtest.randReal(rng)*Math.PI*2;
@@ -1242,7 +1153,7 @@ void CV_EssentialMatTest::fill_array( int test_case_idx, int i, int j, Mat& arr 
         t[3] = alvision.cvtest.randReal(rng)*cube_size;
         t[7] = alvision.cvtest.randReal(rng)*cube_size;
         t[11] = alvision.cvtest.randReal(rng)*cube_size;
-        Mat( 3, 4, CV_64F, t ).convertTo(arr, arr.type());
+        Mat(3, 4, alvision.MatrixType. CV_64F, t ).convertTo(arr, arr.type());
         }
         break;
     case 4:
@@ -1250,7 +1161,7 @@ void CV_EssentialMatTest::fill_array( int test_case_idx, int i, int j, Mat& arr 
         t[2] = (img_size*0.5 + alvision.cvtest.randReal(rng)*4. - 2.)*t[0];
         t[5] = (img_size*0.5 + alvision.cvtest.randReal(rng)*4. - 2.)*t[4];
         t[8] = 1.;
-        Mat( 3, 3, CV_64F, t ).convertTo( arr, arr.type() );
+        Mat(3, 3, alvision.MatrixType.CV_64F, t ).convertTo( arr, arr.type() );
         break;
     }
 }
@@ -1262,9 +1173,9 @@ int CV_EssentialMatTest::prepare_test_case( int test_case_idx )
     if( code > 0 )
     {
         const Mat& _3d = test_mat[INPUT][2];
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
         double Idata[] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 };
-        Mat I( 3, 4, CV_64F, Idata );
+        Mat I(3, 4, alvision.MatrixType. CV_64F, Idata );
         int k;
 
         for( k = 0; k < 2; k++ )
@@ -1288,7 +1199,7 @@ void CV_EssentialMatTest::run_func()
     double focal(K.at<double>(0, 0));
     alvision.Point2d pp(K.at<double>(0, 2), K.at<double>(1, 2));
 
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     Mat E, mask1(test_mat[TEMP][1]);
     E = alvision.findEssentialMat( _input0, _input1, focal, pp, method, 0.99, MAX(sigma*3, 0.0001), mask1 );
     if (E.rows > 3)
@@ -1332,8 +1243,8 @@ void CV_EssentialMatTest::prepare_to_validation( int test_case_idx )
     const Mat& Rt0 = test_mat[INPUT][3];
     const Mat& A = test_mat[INPUT][4];
     double f0[9], f[9], e[9];
-    Mat F0(3, 3, CV_64FC1, f0), F(3, 3, CV_64F, f);
-    Mat E(3, 3, CV_64F, e);
+    Mat F0(3, 3, alvision.MatrixType.CV_64FC1, f0), F(3, 3, alvision.MatrixType. CV_64F, f);
+    Mat E(3, 3, alvision.MatrixType.CV_64F, e);
 
     Mat invA, R=Rt0.colRange(0, 3), T1, T2;
 
@@ -1346,7 +1257,7 @@ void CV_EssentialMatTest::prepare_to_validation( int test_case_idx )
     double _t_x[] = { 0, -tz, ty, tz, 0, -tx, -ty, tx, 0 };
 
     // F = (A2^-T)*[t]_x*R*(A1^-1)
-    alvision.gemm( invA, Mat( 3, 3, CV_64F, _t_x ), 1, Mat(), 0, T1, CV_GEMM_A_T );
+    alvision.gemm(invA, Mat(3, 3, alvision.MatrixType. CV_64F, _t_x ), 1, Mat(), 0, T1, CV_GEMM_A_T );
     alvision.gemm( R, invA, 1, Mat(), 0, T2 );
     alvision.gemm( T1, T2, 1, Mat(), 0, F0 );
     F0 *= 1./f0[8];
@@ -1357,11 +1268,11 @@ void CV_EssentialMatTest::prepare_to_validation( int test_case_idx )
     uchar* mtfm2 = test_mat[OUTPUT][1].ptr();
     double* e_prop1 = test_mat[REF_OUTPUT][0].ptr<double>();
     double* e_prop2 = test_mat[OUTPUT][0].ptr<double>();
-    Mat E_prop2 = Mat(3, 1, CV_64F, e_prop2);
+    Mat E_prop2 = Mat(3, 1, alvision.MatrixType.CV_64F, e_prop2);
 
     int i, pt_count = test_mat[INPUT][2].cols;
-    Mat p1( 1, pt_count, CV_64FC2 );
-    Mat p2( 1, pt_count, CV_64FC2 );
+    Mat p1( 1, pt_count,alvision.MatrixType. CV_64FC2 );
+    Mat p2(1, pt_count, alvision.MatrixType. CV_64FC2 );
 
     test_convertHomogeneous( test_mat[INPUT][0], p1 );
     test_convertHomogeneous( test_mat[INPUT][1], p2 );
@@ -1430,12 +1341,12 @@ public:
     CV_ConvertHomogeneousTest();
 
 protected:
-    int read_params( CvFileStorage* fs );
+    read_params(fs : alvision.FileStorage) : alvision.int{}
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
-    void fill_array( int test_case_idx, int i, int j, Mat& arr );
+    fill_array(test_case_idx : alvision.int, i : alvision.int, j : alvision.int, arr : alvision.Mat) : void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    void prepare_to_validation( int );
+    run_func() : void {}
+    prepare_to_validation(test_case_idx : alvision.int) : void {}
 
     int dims1, dims2;
     int pt_count;
@@ -1444,9 +1355,9 @@ protected:
 
 CV_ConvertHomogeneousTest::CV_ConvertHomogeneousTest()
 {
-    test_array[INPUT].push(NULL);
-    test_array[OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
+    test_array[INPUT].push(null);
+    test_array[OUTPUT].push(null);
+    test_array[REF_OUTPUT].push(null);
     element_wise_relative_error = false;
 
     pt_count = dims1 = dims2 = 0;
@@ -1455,7 +1366,7 @@ CV_ConvertHomogeneousTest::CV_ConvertHomogeneousTest()
 
 int CV_ConvertHomogeneousTest::read_params( CvFileStorage* fs )
 {
-    int code = alvision.cvtest.ArrayTest::read_params( fs );
+    int code = super.read_params( fs );
     return code;
 }
 
@@ -1463,9 +1374,9 @@ int CV_ConvertHomogeneousTest::read_params( CvFileStorage* fs )
 void CV_ConvertHomogeneousTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
                                                 Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
-    int pt_depth1 = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
-    int pt_depth2 = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
+    var rng = this.ts.get_rng();
+    int pt_depth1 = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+    int pt_depth2 = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
     double pt_count_exp = alvision.cvtest.randReal(rng)*6 + 1;
     int t;
 
@@ -1483,7 +1394,7 @@ void CV_ConvertHomogeneousTest::get_test_array_types_and_sizes( int /*test_case_
     if( alvision.cvtest.randInt(rng) % 2 )
         CV_SWAP( dims1, dims2, t );
 
-    types[INPUT][0] = CV_MAKETYPE(pt_depth1, 1);
+    types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth1, 1);
 
     if( alvision.cvtest.randInt(rng) % 2 )
         sizes[INPUT][0] = cvSize(pt_count, dims1);
@@ -1492,7 +1403,7 @@ void CV_ConvertHomogeneousTest::get_test_array_types_and_sizes( int /*test_case_
         sizes[INPUT][0] = cvSize(dims1, pt_count);
         if( alvision.cvtest.randInt(rng) % 2 )
         {
-            types[INPUT][0] = CV_MAKETYPE(pt_depth1, dims1);
+            types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth1, dims1);
             if( alvision.cvtest.randInt(rng) % 2 )
                 sizes[INPUT][0] = cvSize(pt_count, 1);
             else
@@ -1500,7 +1411,7 @@ void CV_ConvertHomogeneousTest::get_test_array_types_and_sizes( int /*test_case_
         }
     }
 
-    types[OUTPUT][0] = CV_MAKETYPE(pt_depth2, 1);
+    types[OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth2, 1);
 
     if( alvision.cvtest.randInt(rng) % 2 )
         sizes[OUTPUT][0] = cvSize(pt_count, dims2);
@@ -1509,7 +1420,7 @@ void CV_ConvertHomogeneousTest::get_test_array_types_and_sizes( int /*test_case_
         sizes[OUTPUT][0] = cvSize(dims2, pt_count);
         if( alvision.cvtest.randInt(rng) % 2 )
         {
-            types[OUTPUT][0] = CV_MAKETYPE(pt_depth2, dims2);
+            types[OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth2, dims2);
             if( alvision.cvtest.randInt(rng) % 2 )
                 sizes[OUTPUT][0] = cvSize(pt_count, 1);
             else
@@ -1530,8 +1441,8 @@ double CV_ConvertHomogeneousTest::get_success_error_level( int /*test_case_idx*/
 
 void CV_ConvertHomogeneousTest::fill_array( int /*test_case_idx*/, int /*i*/, int /*j*/, Mat& arr )
 {
-    Mat temp( 1, pt_count, CV_MAKETYPE(CV_64FC1,dims1) );
-    RNG& rng = ts->get_rng();
+    Mat temp(1, pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64FC1,dims1) );
+    var rng = this.ts.get_rng();
     CvScalar low = cvScalarAll(0), high = cvScalarAll(10);
 
     if( dims1 > dims2 )
@@ -1563,12 +1474,12 @@ public:
     CV_ComputeEpilinesTest();
 
 protected:
-    int read_params( CvFileStorage* fs );
+    read_params(fs : alvision.FileStorage) : alvision.int{}
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
-    void fill_array( int test_case_idx, int i, int j, Mat& arr );
+    fill_array(test_case_idx : alvision.int, i : alvision.int, j : alvision.int, arr : alvision.Mat) : void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    void prepare_to_validation( int );
+    run_func() : void {}
+    prepare_to_validation(test_case_idx : alvision.int) : void {}
 
     int which_image;
     int dims;
@@ -1578,10 +1489,10 @@ protected:
 
 CV_ComputeEpilinesTest::CV_ComputeEpilinesTest()
 {
-    test_array[INPUT].push(NULL);
-    test_array[INPUT].push(NULL);
-    test_array[OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
+    test_array[INPUT].push(null);
+    test_array[INPUT].push(null);
+    test_array[OUTPUT].push(null);
+    test_array[REF_OUTPUT].push(null);
     element_wise_relative_error = false;
 
     pt_count = dims = which_image = 0;
@@ -1590,7 +1501,7 @@ CV_ComputeEpilinesTest::CV_ComputeEpilinesTest()
 
 int CV_ComputeEpilinesTest::read_params( CvFileStorage* fs )
 {
-    int code = alvision.cvtest.ArrayTest::read_params( fs );
+    int code = super.read_params( fs );
     return code;
 }
 
@@ -1598,10 +1509,10 @@ int CV_ComputeEpilinesTest::read_params( CvFileStorage* fs )
 void CV_ComputeEpilinesTest::get_test_array_types_and_sizes( int /*test_case_idx*/,
                                                 Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
-    int fm_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
-    int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
-    int ln_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? CV_32F : CV_64F;
+    var rng = this.ts.get_rng();
+    int fm_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+    int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+    int ln_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
     double pt_count_exp = alvision.cvtest.randReal(rng)*6;
 
     which_image = 1 + (alvision.cvtest.randInt(rng) % 2);
@@ -1612,7 +1523,7 @@ void CV_ComputeEpilinesTest::get_test_array_types_and_sizes( int /*test_case_idx
 
     dims = 2 + (alvision.cvtest.randInt(rng) % 2);
 
-    types[INPUT][0] = CV_MAKETYPE(pt_depth, 1);
+    types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, 1);
 
     if( alvision.cvtest.randInt(rng) % 2 && !few_points )
         sizes[INPUT][0] = cvSize(pt_count, dims);
@@ -1621,7 +1532,7 @@ void CV_ComputeEpilinesTest::get_test_array_types_and_sizes( int /*test_case_idx
         sizes[INPUT][0] = cvSize(dims, pt_count);
         if( alvision.cvtest.randInt(rng) % 2 || few_points )
         {
-            types[INPUT][0] = CV_MAKETYPE(pt_depth, dims);
+            types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, dims);
             if( alvision.cvtest.randInt(rng) % 2 )
                 sizes[INPUT][0] = cvSize(pt_count, 1);
             else
@@ -1629,10 +1540,10 @@ void CV_ComputeEpilinesTest::get_test_array_types_and_sizes( int /*test_case_idx
         }
     }
 
-    types[INPUT][1] = CV_MAKETYPE(fm_depth, 1);
+    types[INPUT][1] = alvision.MatrixType.CV_MAKETYPE(fm_depth, 1);
     sizes[INPUT][1] = cvSize(3, 3);
 
-    types[OUTPUT][0] = CV_MAKETYPE(ln_depth, 1);
+    types[OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(ln_depth, 1);
 
     if( alvision.cvtest.randInt(rng) % 2 && !few_points )
         sizes[OUTPUT][0] = cvSize(pt_count, 3);
@@ -1641,7 +1552,7 @@ void CV_ComputeEpilinesTest::get_test_array_types_and_sizes( int /*test_case_idx
         sizes[OUTPUT][0] = cvSize(3, pt_count);
         if( alvision.cvtest.randInt(rng) % 2 || few_points )
         {
-            types[OUTPUT][0] = CV_MAKETYPE(ln_depth, 3);
+            types[OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(ln_depth, 3);
             if( alvision.cvtest.randInt(rng) % 2 )
                 sizes[OUTPUT][0] = cvSize(pt_count, 1);
             else
@@ -1662,18 +1573,18 @@ double CV_ComputeEpilinesTest::get_success_error_level( int /*test_case_idx*/, i
 
 void CV_ComputeEpilinesTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
     if( i == INPUT && j == 0 )
     {
-        Mat temp( 1, pt_count, CV_MAKETYPE(CV_64FC1,dims) );
+        Mat temp(1, pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64FC1,dims) );
         alvision.cvtest.randUni( rng, temp, cvScalar(0,0,1), cvScalarAll(10) );
         test_convertHomogeneous( temp, arr );
     }
     else if( i == INPUT && j == 1 )
         alvision.cvtest.randUni( rng, arr, cvScalarAll(0), cvScalarAll(10) );
     else
-        alvision.cvtest.ArrayTest::fill_array( test_case_idx, i, j, arr );
+        super.fill_array( test_case_idx, i, j, arr );
 }
 
 
@@ -1686,13 +1597,13 @@ void CV_ComputeEpilinesTest::run_func()
 
 void CV_ComputeEpilinesTest::prepare_to_validation( int /*test_case_idx*/ )
 {
-    Mat pt( 1, pt_count, CV_MAKETYPE(CV_64F, 3) );
-    Mat lines( 1, pt_count, CV_MAKETYPE(CV_64F, 3) );
+    Mat pt(1, pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 3) );
+    Mat lines(1, pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 3) );
     double f[9];
-    Mat F( 3, 3, CV_64F, f );
+    Mat F(3, 3, alvision.MatrixType.CV_64F, f );
 
     test_convertHomogeneous( test_mat[INPUT][0], pt );
-    test_mat[INPUT][1].convertTo(F, CV_64F);
+    test_mat[INPUT][1].convertTo(F, alvision.MatrixType.CV_64F);
     if( which_image == 2 )
         alvision.transpose( F, F );
 
@@ -1711,10 +1622,10 @@ void CV_ComputeEpilinesTest::prepare_to_validation( int /*test_case_idx*/ )
     test_convertHomogeneous( lines, test_mat[REF_OUTPUT][0] );
 }
 
-TEST(Calib3d_Rodrigues, accuracy) { CV_RodriguesTest test; test.safe_run(); }
-TEST(Calib3d_FindFundamentalMat, accuracy) { CV_FundamentalMatTest test; test.safe_run(); }
-TEST(Calib3d_ConvertHomogeneoous, accuracy) { CV_ConvertHomogeneousTest test; test.safe_run(); }
-TEST(Calib3d_ComputeEpilines, accuracy) { CV_ComputeEpilinesTest test; test.safe_run(); }
-TEST(Calib3d_FindEssentialMat, accuracy) { CV_EssentialMatTest test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_Rodrigues', 'accuracy', () => { var test = new CV_RodriguesTest(); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_FindFundamentalMat', 'accuracy', () => { var test = new CV_FundamentalMatTest(); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_ConvertHomogeneoous', 'accuracy', () => { var test = new CV_ConvertHomogeneousTest(); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_ComputeEpilines', 'accuracy', () => { var test = new CV_ComputeEpilinesTest(); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_FindEssentialMat', 'accuracy', () => { var test = new CV_EssentialMatTest(); test.safe_run(); });
 
 /* End of file. */

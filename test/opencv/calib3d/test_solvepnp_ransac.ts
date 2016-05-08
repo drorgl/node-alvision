@@ -170,7 +170,7 @@ protected:
         generate3DPointCloud(points);
 
         const int methodsCount = 5;
-        RNG rng = ts->get_rng();
+        RNG rng = ts.get_rng();
 
 
         for (int mode = 0; mode < 2; mode++)
@@ -187,11 +187,11 @@ protected:
                 //cout <<  maxError << " " << successfulTestsCount << endl;
                 if (successfulTestsCount < 0.7*totalTestsCount)
                 {
-                    ts->printf( alvision.cvtest.TSConstants.LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
+                    ts.printf( alvision.cvtest.TSConstants.LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
                         method, totalTestsCount - successfulTestsCount, totalTestsCount, maxError, mode);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 }
-                cout << "mode: " << mode << ", method: " << method << " -> "
+                cout << "mode: " << mode << ", method: " << method << " . "
                      << ((double)successfulTestsCount / totalTestsCount) * 100 << "%"
                      << " (err < " << maxError << ")" << endl;
             }
@@ -229,14 +229,14 @@ protected:
             generateDistCoeffs(distCoeffs, rng);
         generatePose(trueRvec, trueTvec, rng);
 
-        std::Array<Point3f> opoints;
+        Array<Point3f> opoints;
         if (method == 2)
         {
-            opoints = std::Array<Point3f>(points.begin(), points.begin()+4);
+            opoints = Array<Point3f>(points.begin(), points.begin()+4);
         }
         else if(method == 3)
         {
-            opoints = std::Array<Point3f>(points.begin(), points.begin()+50);
+            opoints = Array<Point3f>(points.begin(), points.begin()+50);
         }
         else
             opoints = points;

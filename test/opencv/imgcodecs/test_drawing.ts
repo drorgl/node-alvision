@@ -77,7 +77,7 @@ class CV_DrawingTest extends alvision.cvtest.BaseTest {
         valImg = alvision.imread(filename);
         if (valImg.empty()) {
             alvision.imwrite(filename, testImg);
-            //ts->printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
+            //ts.printf( alvision.cvtest.TSConstants.LOG, "test image can not be read");
             //this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
         }
         else {
@@ -243,7 +243,7 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
             Vec3b v = (Vec3b)(*(*it)) - img.at<Vec3b>(300, i);
             float err = (float)alvision.cvtest.norm(v,alvision.NormTypes. NORM_L2);
             if (err != 0) {
-                this.ts.printf(ts ->LOG, "LineIterator works incorrect");
+                this.ts.printf(ts .LOG, "LineIterator works incorrect");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             }
         }
@@ -409,7 +409,7 @@ class CV_DrawingTest_C extends CV_DrawingTest {
             Vec3b v = (Vec3b)(*(it.ptr)) - _img.at<Vec3b>(300, i);
             float err = (float)alvision.cvtest.norm(v,alvision.NormTypes. NORM_L2);
             if (err != 0) {
-                this.ts.printf(ts ->LOG, "CvLineIterator works incorrect");
+                this.ts.printf(ts .LOG, "CvLineIterator works incorrect");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             }
             CV_NEXT_LINE_POINT(it);

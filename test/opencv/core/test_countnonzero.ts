@@ -113,7 +113,7 @@ void CV_CountNonZeroTest::generate_src_data(alvision.Size size, int type, int co
 {
     src = Mat::zeros(size, CV_MAKETYPE(type, 1));
 
-    int n = 0; RNG& rng = ts->get_rng();
+    int n = 0; var rng = this.ts.get_rng();
 
     while (n < count_non_zero)
     {
@@ -142,7 +142,7 @@ void CV_CountNonZeroTest::generate_src_stat_data(alvision.Size size, int type, i
     double mean = 0.0, sigma = 1.0;
     double left = -1.0, right = 1.0;
 
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
     if (distribution == RNG::NORMAL)
         rng.fill(src, RNG::NORMAL, Scalar::all(mean), Scalar::all(sigma));
@@ -197,7 +197,7 @@ void CV_CountNonZeroTest::run(int)
     for (int k = 1; k <= 3; ++k)
         for (size_t i = 0; i < N; ++i)
         {
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
 
         int w = rng.next()%MAX_WIDTH + 1, h = rng.next()%MAX_HEIGHT + 1;
 

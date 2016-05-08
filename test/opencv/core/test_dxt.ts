@@ -73,14 +73,14 @@ static void DFT_1D( const Mat& _src, Mat& _dst, int flags, const Mat& _wave=Mat(
             for( j = 0; j < n; j++ )
             {
                 const Complexf* src = (const Complexf*)(src0 + j*srcstep);
-                sum.re += src->re*w[k].re - src->im*w[k].im;
-                sum.im += src->re*w[k].im + src->im*w[k].re;
+                sum.re += src.re*w[k].re - src.im*w[k].im;
+                sum.im += src.re*w[k].im + src.im*w[k].re;
                 k += delta;
                 k -= (k >= n ? n : 0);
             }
 
-            dst->re = (float)(sum.re*scale);
-            dst->im = (float)(sum.im*scale);
+            dst.re = (float)(sum.re*scale);
+            dst.im = (float)(sum.im*scale);
         }
     }
     else if( _src.type() == CV_64FC2 )
@@ -95,14 +95,14 @@ static void DFT_1D( const Mat& _src, Mat& _dst, int flags, const Mat& _wave=Mat(
             for( j = 0; j < n; j++ )
             {
                 const Complexd* src = (const Complexd*)(src0 + j*srcstep);
-                sum.re += src->re*w[k].re - src->im*w[k].im;
-                sum.im += src->re*w[k].im + src->im*w[k].re;
+                sum.re += src.re*w[k].re - src.im*w[k].im;
+                sum.im += src.re*w[k].im + src.im*w[k].re;
                 k += delta;
                 k -= (k >= n ? n : 0);
             }
 
-            dst->re = sum.re*scale;
-            dst->im = sum.im*scale;
+            dst.re = sum.re*scale;
+            dst.im = sum.im*scale;
         }
     }
     else
@@ -299,8 +299,8 @@ static void convertFromCCS( const Mat& _src0, const Mat& _src1, Mat& _dst, int f
             const float* src1 = _src1.ptr<float>();
             int delta0, delta1;
 
-            dst->re = src0[0];
-            dst->im = 0;
+            dst.re = src0[0];
+            dst.im = 0;
 
             if( (n & 1) == 0 )
             {
@@ -335,8 +335,8 @@ static void convertFromCCS( const Mat& _src0, const Mat& _src1, Mat& _dst, int f
             const double* src1 = _src1.ptr<double>();
             int delta0, delta1;
 
-            dst->re = src0[0];
-            dst->im = 0;
+            dst.re = src0[0];
+            dst.im = 0;
 
             if( (n & 1) == 0 )
             {
@@ -517,7 +517,7 @@ protected:
     bool spectrum_mode; // (2 complex/ccs inputs, 1 complex/ccs output):
                         // true for MulSpectrums, false for DFT and DCT
     bool inplace;       // inplace operation (set for each individual test case)
-    bool temp_dst;      // use temporary destination (for real->ccs DFT and ccs MulSpectrums)
+    bool temp_dst;      // use temporary destination (for real.ccs DFT and ccs MulSpectrums)
 };
 
 
@@ -525,13 +525,13 @@ CxCore_DXTBaseTest::CxCore_DXTBaseTest( bool _allow_complex, bool _allow_odd, bo
 : Base(), flags(0), allow_complex(_allow_complex), allow_odd(_allow_odd),
 spectrum_mode(_spectrum_mode), inplace(false), temp_dst(false)
 {
-    test_array[INPUT].push(NULL);
+    test_array[INPUT].push(null);
     if( spectrum_mode )
-        test_array[INPUT].push(NULL);
-    test_array[OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
-    test_array[TEMP].push(NULL);
-    test_array[TEMP].push(NULL);
+        test_array[INPUT].push(null);
+    test_array[OUTPUT].push(null);
+    test_array[REF_OUTPUT].push(null);
+    test_array[TEMP].push(null);
+    test_array[TEMP].push(null);
 
     max_log_array_size = 9;
     element_wise_relative_error = spectrum_mode;
@@ -542,7 +542,7 @@ void CxCore_DXTBaseTest::get_test_array_types_and_sizes( int test_case_idx,
                                                          Array<Array<Size> >& sizes,
                                                          Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     int bits = alvision.cvtest.randInt(rng);
     int depth = alvision.cvtest.randInt(rng)%2 + CV_32F;
     int cn = !allow_complex || !(bits & 256) ? 1 : 2;
@@ -679,7 +679,7 @@ class CxCore_DFTTest : public CxCore_DXTBaseTest
 public:
     CxCore_DFTTest();
 protected:
-    void run_func();
+    run_func() : void {}
     void prepare_to_validation( int test_case_idx );
 };
 
@@ -744,7 +744,7 @@ class CxCore_DCTTest : public CxCore_DXTBaseTest
 public:
     CxCore_DCTTest();
 protected:
-    void run_func();
+    run_func() : void {}
     void prepare_to_validation( int test_case_idx );
 };
 
@@ -784,7 +784,7 @@ class CxCore_MulSpectrumsTest : public CxCore_DXTBaseTest
 public:
     CxCore_MulSpectrumsTest();
 protected:
-    void run_func();
+    run_func() : void {}
     void prepare_to_validation( int test_case_idx );
 };
 
@@ -802,7 +802,7 @@ void CxCore_MulSpectrumsTest::run_func()
 
     if( inplace )
     {
-        if( ts->get_current_test_info()->test_case_idx & 1 )
+        if( ts.get_current_test_info().test_case_idx & 1 )
             src2 = &dst;
         else
             src1 = &dst;
@@ -818,7 +818,7 @@ void CxCore_MulSpectrumsTest::prepare_to_validation( int /*test_case_idx*/ )
     Mat* src2 = &test_mat[INPUT][1];
     Mat& dst = test_mat[OUTPUT][0];
     Mat& dst0 = test_mat[REF_OUTPUT][0];
-    int cn = src1->channels();
+    int cn = src1.channels();
 
     if( cn == 1 )
     {

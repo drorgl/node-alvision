@@ -108,11 +108,11 @@ CUDA_TEST_P(MOG2, Update)
     ASSERT_FALSE(frame.empty());
 
     alvision.Ptr<alvision.BackgroundSubtractorMOG2> mog2 = alvision.cuda::createBackgroundSubtractorMOG2();
-    mog2->setDetectShadows(detectShadow);
+    mog2.setDetectShadows(detectShadow);
     alvision.cuda::GpuMat foreground = createMat(frame.size(), CV_8UC1, useRoi);
 
     alvision.Ptr<alvision.BackgroundSubtractorMOG2> mog2_gold = alvision.createBackgroundSubtractorMOG2();
-    mog2_gold->setDetectShadows(detectShadow);
+    mog2_gold.setDetectShadows(detectShadow);
     alvision.Mat foreground_gold;
 
     for (int i = 0; i < 10; ++i)
@@ -127,9 +127,9 @@ CUDA_TEST_P(MOG2, Update)
             alvision.swap(temp, frame);
         }
 
-        mog2->apply(loadMat(frame, useRoi), foreground);
+        mog2.apply(loadMat(frame, useRoi), foreground);
 
-        mog2_gold->apply(frame, foreground_gold);
+        mog2_gold.apply(frame, foreground_gold);
 
         if (detectShadow)
         {
@@ -153,11 +153,11 @@ CUDA_TEST_P(MOG2, getBackgroundImage)
     alvision.Mat frame;
 
     alvision.Ptr<alvision.BackgroundSubtractorMOG2> mog2 = alvision.cuda::createBackgroundSubtractorMOG2();
-    mog2->setDetectShadows(detectShadow);
+    mog2.setDetectShadows(detectShadow);
     alvision.cuda::GpuMat foreground;
 
     alvision.Ptr<alvision.BackgroundSubtractorMOG2> mog2_gold = alvision.createBackgroundSubtractorMOG2();
-    mog2_gold->setDetectShadows(detectShadow);
+    mog2_gold.setDetectShadows(detectShadow);
     alvision.Mat foreground_gold;
 
     for (int i = 0; i < 10; ++i)
@@ -165,16 +165,16 @@ CUDA_TEST_P(MOG2, getBackgroundImage)
         cap >> frame;
         ASSERT_FALSE(frame.empty());
 
-        mog2->apply(loadMat(frame, useRoi), foreground);
+        mog2.apply(loadMat(frame, useRoi), foreground);
 
-        mog2_gold->apply(frame, foreground_gold);
+        mog2_gold.apply(frame, foreground_gold);
     }
 
     alvision.cuda::GpuMat background = createMat(frame.size(), frame.type(), useRoi);
-    mog2->getBackgroundImage(background);
+    mog2.getBackgroundImage(background);
 
     alvision.Mat background_gold;
-    mog2_gold->getBackgroundImage(background_gold);
+    mog2_gold.getBackgroundImage(background_gold);
 
     ASSERT_MAT_NEAR(background_gold, background, 1);
 }

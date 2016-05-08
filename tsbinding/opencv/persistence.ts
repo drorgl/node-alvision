@@ -464,24 +464,24 @@ export interface FileStorage
      */
     release(): void;
 
-//    /** @brief Closes the file and releases all the memory buffers.
+    /** @brief Closes the file and releases all the memory buffers.
 
-//    Call this method after all I/O operations with the storage are finished. If the storage was
-//    opened for writing data and FileStorage::WRITE was specified
-//     */
-//    CV_WRAP virtual String releaseAndGetString();
+    Call this method after all I/O operations with the storage are finished. If the storage was
+    opened for writing data and FileStorage::WRITE was specified
+     */
+    releaseAndGetString(): string;
 
-//    /** @brief Returns the first element of the top-level mapping.
-//    @returns The first element of the top-level mapping.
-//     */
-//    CV_WRAP FileNode getFirstTopLevelNode() const;
+    /** @brief Returns the first element of the top-level mapping.
+    @returns The first element of the top-level mapping.
+     */
+    getFirstTopLevelNode(): FileNode;
 
-//    /** @brief Returns the top-level mapping
-//    @param streamidx Zero-based index of the stream. In most cases there is only one stream in the file.
-//    However, YAML supports multiple streams and so there can be several.
-//    @returns The top-level mapping.
-//     */
-//    CV_WRAP FileNode root(int streamidx=0) const;
+    /** @brief Returns the top-level mapping
+    @param streamidx Zero-based index of the stream. In most cases there is only one stream in the file.
+    However, YAML supports multiple streams and so there can be several.
+    @returns The top-level mapping.
+     */
+    root(streamidx?: _st.int/* = 0*/): FileNode;
 
 //    /** @brief Returns the specified element of the top-level mapping.
 //    @param nodename Name of the file node.

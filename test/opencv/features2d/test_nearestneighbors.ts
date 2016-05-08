@@ -100,7 +100,7 @@ int NearestNeighborTest::checkFind( const Mat& data )
     Mat points( pointsCount, dims, CV_32FC1 );
     Mat results( pointsCount, K, CV_32SC1 );
 
-    std::Array<int> fmap( pointsCount );
+    Array<int> fmap( pointsCount );
     for( int pi = 0; pi < pointsCount; pi++ )
     {
         int fi = rng.next() % featuresCount;
@@ -123,7 +123,7 @@ int NearestNeighborTest::checkFind( const Mat& data )
         double correctPerc = correctMatches / (double)pointsCount;
         if (correctPerc < .75)
         {
-            ts->printf( alvision.cvtest.TSConstants.LOG, "correct_perc = %d\n", correctPerc );
+            ts.printf( alvision.cvtest.TSConstants.LOG, "correct_perc = %d\n", correctPerc );
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         }
     }
@@ -141,21 +141,21 @@ void NearestNeighborTest::run( int /*start_from*/ ) {
     tempCode = checkGetPoins( desc );
     if( tempCode != alvision.cvtest.FailureCode.OK )
     {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of GetPoints \n" );
+        ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of GetPoints \n" );
         code = tempCode;
     }
 
     tempCode = checkFindBoxed();
     if( tempCode != alvision.cvtest.FailureCode.OK )
     {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of FindBoxed \n" );
+        ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of FindBoxed \n" );
         code = tempCode;
     }
 
     tempCode = checkFind( desc );
     if( tempCode != alvision.cvtest.FailureCode.OK )
     {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of Find \n" );
+        ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of Find \n" );
         code = tempCode;
     }
 
@@ -188,7 +188,7 @@ int CV_FlannTest::knnSearch( Mat& points, Mat& neighbors )
     int knn = 1, j;
 
     // 1st way
-    index->knnSearch( points, neighbors, dist, knn, SearchParams() );
+    index.knnSearch( points, neighbors, dist, knn, SearchParams() );
 
     // 2nd way
     Mat neighbors1( neighbors.size(), CV_32SC1 );
@@ -198,7 +198,7 @@ int CV_FlannTest::knnSearch( Mat& points, Mat& neighbors )
         Array<float> query( fltPtr, fltPtr + points.cols );
         Array<int> indices( neighbors1.cols, 0 );
         Array<float> dists( dist.cols, 0 );
-        index->knnSearch( query, indices, dists, knn, SearchParams() );
+        index.knnSearch( query, indices, dists, knn, SearchParams() );
         Array<int>::const_iterator it = indices.begin();
         for( j = 0; it != indices.end(); ++it, j++ )
             neighbors1.at<int>(i,j) = *it;
@@ -224,14 +224,14 @@ int CV_FlannTest::radiusSearch( Mat& points, Mat& neighbors )
         // 1st way
         Mat p( 1, points.cols, CV_32FC1, points.ptr<float>(i) ),
             n( 1, neighbors.cols, CV_32SC1, neighbors.ptr<int>(i) );
-        index->radiusSearch( p, n, dist, radius, neighbors.cols, SearchParams() );
+        index.radiusSearch( p, n, dist, radius, neighbors.cols, SearchParams() );
 
         // 2nd way
         float* fltPtr = points.ptr<float>(i);
         Array<float> query( fltPtr, fltPtr + points.cols );
         Array<int> indices( neighbors1.cols, 0 );
         Array<float> dists( dist.cols, 0 );
-        index->radiusSearch( query, indices, dists, radius, neighbors.cols, SearchParams() );
+        index.radiusSearch( query, indices, dists, radius, neighbors.cols, SearchParams() );
         Array<int>::const_iterator it = indices.begin();
         for( j = 0; it != indices.end(); ++it, j++ )
             neighbors1.at<int>(i,j) = *it;
@@ -309,7 +309,7 @@ protected:
 
 void CV_FlannSavedIndexTest::createModel(const alvision.Mat &data)
 {
-    switch ( alvision.cvtest.randInt(ts->get_rng()) % 2 )
+    switch ( alvision.cvtest.randInt(ts.get_rng()) % 2 )
     {
         //case 0: createIndex( data, LinearIndexParams() ); break; // nothing to save for linear search
         case 0: createIndex( data, KMeansIndexParams() ); break;
@@ -319,7 +319,7 @@ void CV_FlannSavedIndexTest::createModel(const alvision.Mat &data)
         default: assert(0);
     }
     string filename = tempfile();
-    index->save( filename );
+    index.save( filename );
 
     createIndex( data, SavedIndexParams(filename));
     remove( filename );

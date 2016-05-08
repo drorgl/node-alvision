@@ -69,13 +69,13 @@ void CV_DecomposeProjectionMatrixTest::run(int start_from)
 
     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 
-    alvision.RNG& rng = ts->get_rng();
+    alvision.var rng = this.ts.get_rng();
     int progress = 0;
 
 
     for (int iter = start_from; iter < test_case_count; ++iter)
     {
-        ts->update_context(this, iter, true);
+        ts.update_context(this, iter, true);
         progress = update_progress(progress, iter, test_case_count, 0);
 
         // Create the original (and random) camera matrix, rotation, and translation

@@ -67,14 +67,14 @@ int CV_AMLTest::run_test_case( int testCaseIdx )
     {
         //#define GET_STAT
 #ifdef GET_STAT
-        const char* data_name = ((CvFileNode*)cvGetSeqElem( dataSetNames, testCaseIdx ))->data.str.ptr;
+        const char* data_name = ((CvFileNode*)cvGetSeqElem( dataSetNames, testCaseIdx )).data.str.ptr;
         printf("%s, %s      ", name, data_name);
         const int icount = 100;
         float res[icount];
         for (int k = 0; k < icount; k++)
         {
 #endif
-            data->shuffleTrainTest();
+            data.shuffleTrainTest();
             code = train( testCaseIdx );
 #ifdef GET_STAT
             float case_result = get_error();
@@ -110,23 +110,23 @@ int CV_AMLTest::validate_test_results( int testCaseIdx )
     {
         resultNode["mean"] >> mean;
         resultNode["sigma"] >> sigma;
-        model->save(format("/Users/vp/tmp/dtree/testcase_%02d.cur.yml", testCaseIdx));
+        model.save(format("/Users/vp/tmp/dtree/testcase_%02d.cur.yml", testCaseIdx));
         float curErr = get_test_error( testCaseIdx );
         const int coeff = 4;
-        ts->printf( alvision.cvtest.TSConstants.LOG, "Test case = %d; test error = %f; mean error = %f (diff=%f), %d*sigma = %f\n",
+        ts.printf( alvision.cvtest.TSConstants.LOG, "Test case = %d; test error = %f; mean error = %f (diff=%f), %d*sigma = %f\n",
                                 testCaseIdx, curErr, mean, abs( curErr - mean), coeff, coeff*sigma );
         if ( abs( curErr - mean) > coeff*sigma )
         {
-            ts->printf( alvision.cvtest.TSConstants.LOG, "abs(%f - %f) > %f - OUT OF RANGE!\n", curErr, mean, coeff*sigma, coeff );
+            ts.printf( alvision.cvtest.TSConstants.LOG, "abs(%f - %f) > %f - OUT OF RANGE!\n", curErr, mean, coeff*sigma, coeff );
             return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
         }
         else
-            ts->printf( alvision.cvtest.TSConstants.LOG, ".\n" );
+            ts.printf( alvision.cvtest.TSConstants.LOG, ".\n" );
 
     }
     else
     {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "validation info is not suitable" );
+        ts.printf( alvision.cvtest.TSConstants.LOG, "validation info is not suitable" );
         return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
     }
     return alvision.cvtest.FailureCode.OK;

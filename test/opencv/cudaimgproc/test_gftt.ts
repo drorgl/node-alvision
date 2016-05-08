@@ -89,15 +89,15 @@ alvision.cvtest.CUDA_TEST_P('GoodFeaturesToTrack', 'Accuracy',()=>
     var detector = alvision.cuda.
 
     alvision.cuda::GpuMat d_pts;
-    detector->detect(loadMat(image), d_pts);
+    detector.detect(loadMat(image), d_pts);
 
     ASSERT_FALSE(d_pts.empty());
 
-    std::Array<alvision.Point2f> pts(d_pts.cols);
+    Array<alvision.Point2f> pts(d_pts.cols);
     alvision.Mat pts_mat(1, d_pts.cols, CV_32FC2, (void*) &pts[0]);
     d_pts.download(pts_mat);
 
-    std::Array<alvision.Point2f> pts_gold;
+    Array<alvision.Point2f> pts_gold;
     alvision.goodFeaturesToTrack(image, pts_gold, maxCorners, qualityLevel, minDistance);
 
     ASSERT_EQ(pts_gold.size(), pts.size());
@@ -128,7 +128,7 @@ alvision.cvtest.CUDA_TEST_P('GoodFeaturesToTrack', 'EmptyCorners', () => {
 
     alvision.Ptr < alvision.cuda::CornersDetector > detector = alvision.cuda::createGoodFeaturesToTrackDetector(src.type(), maxCorners, qualityLevel, minDistance);
 
-    detector ->detect(src, corners);
+    detector .detect(src, corners);
 
     ASSERT_TRUE(corners.empty());
 });

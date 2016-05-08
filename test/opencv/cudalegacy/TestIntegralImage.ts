@@ -159,29 +159,29 @@ bool TestIntegralImage<T_in, T_out>::process()
     NCVStatus ncvStat;
     bool rcode = false;
 
-    Ncv32u widthII = this->width + 1;
-    Ncv32u heightII = this->height + 1;
+    Ncv32u widthII = this.width + 1;
+    Ncv32u heightII = this.height + 1;
 
-    NCVMatrixAlloc<T_in> d_img(*this->allocatorGPU.get(), this->width, this->height);
+    NCVMatrixAlloc<T_in> d_img(*this.allocatorGPU.get(), this.width, this.height);
     ncvAssertReturn(d_img.isMemAllocated(), false);
-    NCVMatrixAlloc<T_in> h_img(*this->allocatorCPU.get(), this->width, this->height);
+    NCVMatrixAlloc<T_in> h_img(*this.allocatorCPU.get(), this.width, this.height);
     ncvAssertReturn(h_img.isMemAllocated(), false);
-    NCVMatrixAlloc<T_out> d_imgII(*this->allocatorGPU.get(), widthII, heightII);
+    NCVMatrixAlloc<T_out> d_imgII(*this.allocatorGPU.get(), widthII, heightII);
     ncvAssertReturn(d_imgII.isMemAllocated(), false);
-    NCVMatrixAlloc<T_out> h_imgII(*this->allocatorCPU.get(), widthII, heightII);
+    NCVMatrixAlloc<T_out> h_imgII(*this.allocatorCPU.get(), widthII, heightII);
     ncvAssertReturn(h_imgII.isMemAllocated(), false);
-    NCVMatrixAlloc<T_out> h_imgII_d(*this->allocatorCPU.get(), widthII, heightII);
+    NCVMatrixAlloc<T_out> h_imgII_d(*this.allocatorCPU.get(), widthII, heightII);
     ncvAssertReturn(h_imgII_d.isMemAllocated(), false);
 
     Ncv32u bufSize;
     if (sizeof(T_in) == sizeof(Ncv8u))
     {
-        ncvStat = nppiStIntegralGetSize_8u32u(NcvSize32u(this->width, this->height), &bufSize, this->devProp);
+        ncvStat = nppiStIntegralGetSize_8u32u(NcvSize32u(this.width, this.height), &bufSize, this.devProp);
         ncvAssertReturn(NPPST_SUCCESS == ncvStat, false);
     }
     else if (sizeof(T_in) == sizeof(Ncv32f))
     {
-        ncvStat = nppiStIntegralGetSize_32f32f(NcvSize32u(this->width, this->height), &bufSize, this->devProp);
+        ncvStat = nppiStIntegralGetSize_32f32f(NcvSize32u(this.width, this.height), &bufSize, this.devProp);
         ncvAssertReturn(NPPST_SUCCESS == ncvStat, false);
     }
     else
@@ -189,13 +189,13 @@ bool TestIntegralImage<T_in, T_out>::process()
         ncvAssertPrintReturn(false, "Incorrect integral image test instance", false);
     }
 
-    NCVVectorAlloc<Ncv8u> d_tmpBuf(*this->allocatorGPU.get(), bufSize);
+    NCVVectorAlloc<Ncv8u> d_tmpBuf(*this.allocatorGPU.get(), bufSize);
     ncvAssertReturn(d_tmpBuf.isMemAllocated(), false);
 
-    NCV_SET_SKIP_COND(this->allocatorGPU.get()->isCounting());
+    NCV_SET_SKIP_COND(this.allocatorGPU.get().isCounting());
     NCV_SKIP_COND_BEGIN
 
-    ncvAssertReturn(this->src.fill(h_img), false);
+    ncvAssertReturn(this.src.fill(h_img), false);
 
     ncvStat = h_img.copySolid(d_img, 0);
     ncvAssertReturn(ncvStat == NPPST_SUCCESS, false);
@@ -204,16 +204,16 @@ bool TestIntegralImage<T_in, T_out>::process()
     {
         ncvStat = nppiStIntegral_8u32u_C1R((Ncv8u *)d_img.ptr(), d_img.pitch(),
                                            (Ncv32u *)d_imgII.ptr(), d_imgII.pitch(),
-                                           NcvSize32u(this->width, this->height),
-                                           d_tmpBuf.ptr(), bufSize, this->devProp);
+                                           NcvSize32u(this.width, this.height),
+                                           d_tmpBuf.ptr(), bufSize, this.devProp);
         ncvAssertReturn(ncvStat == NPPST_SUCCESS, false);
     }
     else if (sizeof(T_in) == sizeof(Ncv32f))
     {
         ncvStat = nppiStIntegral_32f32f_C1R((Ncv32f *)d_img.ptr(), d_img.pitch(),
                                             (Ncv32f *)d_imgII.ptr(), d_imgII.pitch(),
-                                            NcvSize32u(this->width, this->height),
-                                            d_tmpBuf.ptr(), bufSize, this->devProp);
+                                            NcvSize32u(this.width, this.height),
+                                            d_tmpBuf.ptr(), bufSize, this.devProp);
         ncvAssertReturn(ncvStat == NPPST_SUCCESS, false);
     }
     else
@@ -228,14 +228,14 @@ bool TestIntegralImage<T_in, T_out>::process()
     {
         ncvStat = nppiStIntegral_8u32u_C1R_host((Ncv8u *)h_img.ptr(), h_img.pitch(),
                                                 (Ncv32u *)h_imgII.ptr(), h_imgII.pitch(),
-                                                NcvSize32u(this->width, this->height));
+                                                NcvSize32u(this.width, this.height));
         ncvAssertReturn(ncvStat == NPPST_SUCCESS, false);
     }
     else if (sizeof(T_in) == sizeof(Ncv32f))
     {
         ncvStat = nppiStIntegral_32f32f_C1R_host((Ncv32f *)h_img.ptr(), h_img.pitch(),
                                                  (Ncv32f *)h_imgII.ptr(), h_imgII.pitch(),
-                                                 NcvSize32u(this->width, this->height));
+                                                 NcvSize32u(this.width, this.height));
         ncvAssertReturn(ncvStat == NPPST_SUCCESS, false);
     }
     else

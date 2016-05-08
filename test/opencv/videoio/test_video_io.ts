@@ -195,14 +195,14 @@ for (var i = 0; i < ext_num; ++i)
 
     if (psnr < thresDbell) {
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Decoding image from memory: too small PSNR (=%gdb) with fmt=%s\n", psnr, ext);
-        this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+        this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
         continue;
     }
 
 }
 
 this.ts.printf(alvision.cvtest.TSConstants.LOG, "end test function : ImagesTest \n");
-this.ts.set_failed_test_info(ts ->OK);
+this.ts.set_failed_test_info(ts .OK);
 
     }
 void VideoTest(const string& dir, const alvision.cvtest.VideoFormat& fmt){
@@ -214,7 +214,7 @@ this.ts.printf(alvision.cvtest.TSConstants.LOG, "reading video : %s and converti
 CvCapture * cap = cvCaptureFromFile(src_file);
 
 if (!cap) {
-    this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+    this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
     return;
 }
 
@@ -235,7 +235,7 @@ for (; ;) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "can't create writer (with fourcc : %s)\n",
                 alvision.cvtest.fourccToString(fmt.fourcc));
             cvReleaseCapture( &cap);
-            this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+            this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
             return;
         }
     }
@@ -248,7 +248,7 @@ cvReleaseCapture( &cap);
 
 CvCapture * saved = cvCaptureFromFile(tmp_name);
 if (!saved) {
-    this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+    this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
     return;
 }
 
@@ -267,7 +267,7 @@ for (int i = 0;; i++)
     double psnr = alvision.cvtest.PSNR(img1, img);
     if (psnr < thresDbell) {
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Too low frame %d psnr = %gdb\n", i, psnr);
-        this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+        this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
 
         //imwrite("original.png", img);
         //imwrite("after_test.png", img1);
@@ -293,7 +293,7 @@ for (size_t i = 0; i < IMAGE_COUNT; ++i)
     Mat image = imread(file_path);
 
     if (image.empty()) {
-        this.ts.set_failed_test_info(ts ->FAIL_MISSING_TEST_DATA);
+        this.ts.set_failed_test_info(ts .FAIL_MISSING_TEST_DATA);
         return;
     }
 
@@ -309,7 +309,7 @@ for (size_t i = 0; i < IMAGE_COUNT; ++i)
     Mat loaded = imread(full_name);
     if (loaded.empty()) {
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Reading failed at fmt=bmp\n");
-        this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+        this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
         continue;
     }
 
@@ -317,7 +317,7 @@ for (size_t i = 0; i < IMAGE_COUNT; ++i)
     double psnr = alvision.cvtest.PSNR(loaded, image);
     if (psnr < thresDbell) {
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Reading image from file: too big difference (=%g) with fmt=bmp\n", psnr);
-        this.ts.set_failed_test_info(ts ->FAIL_BAD_ACCURACY);
+        this.ts.set_failed_test_info(ts .FAIL_BAD_ACCURACY);
         continue;
     }
 
@@ -336,7 +336,7 @@ for (size_t i = 0; i < IMAGE_COUNT; ++i)
 
     if (buf != from_file) {
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Encoding failed with fmt=bmp\n");
-        this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+        this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
         continue;
     }
 
@@ -344,7 +344,7 @@ for (size_t i = 0; i < IMAGE_COUNT; ++i)
 
     if (buf_loaded.empty()) {
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Decoding failed with fmt=bmp\n");
-        this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+        this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
         continue;
     }
 
@@ -352,13 +352,13 @@ for (size_t i = 0; i < IMAGE_COUNT; ++i)
 
     if (psnr < thresDbell) {
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Decoding image from memory: too small PSNR (=%gdb) with fmt=bmp\n", psnr);
-        this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+        this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
         continue;
     }
 }
 
 this.ts.printf(alvision.cvtest.TSConstants.LOG, "end test function : SpecificImageTest \n");
-this.ts.set_failed_test_info(ts ->OK);
+this.ts.set_failed_test_info(ts .OK);
 }
 void SpecificVideoTest(const string& dir, const alvision.cvtest.VideoFormat& fmt){
     string ext = fmt.ext;
@@ -375,7 +375,7 @@ if (!writer.isOpened()) {
     VideoWriter writer2(video_file, fourcc, 25, frame_size, true);
     this.ts.printf(alvision.cvtest.TSConstants.LOG, "Creating a video in %s...\n", video_file);
     this.ts.printf(alvision.cvtest.TSConstants.LOG, "Cannot create VideoWriter object with codec %s.\n", fourcc_str);
-    this.ts.set_failed_test_info(ts ->FAIL_MISMATCH);
+    this.ts.set_failed_test_info(ts .FAIL_MISMATCH);
     return;
 }
 
@@ -440,7 +440,7 @@ if (FRAME_COUNT < IMAGE_COUNT - allowed_frame_frop || FRAME_COUNT > IMAGE_COUNT 
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Required frame count: %d; Returned frame count: %d\n", IMAGE_COUNT, FRAME_COUNT);
     this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: Incorrect frame count in the video.\n");
     this.ts.printf(alvision.cvtest.TSConstants.LOG, "Continue checking...\n");
-    this.ts.set_failed_test_info(ts ->FAIL_BAD_ACCURACY);
+    this.ts.set_failed_test_info(ts .FAIL_BAD_ACCURACY);
     return;
 }
 
@@ -452,7 +452,7 @@ for (int i = 0; (size_t)i < IMAGE_COUNT - allowed_frame_frop; i++)
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "File name: video_%s.%s\n", fourcc_str, ext);
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Video codec: %s\n", fourcc_str);
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read the next frame with index %d.\n", i + 1);
-        this.ts.set_failed_test_info(ts ->FAIL_MISSING_TEST_DATA);
+        this.ts.set_failed_test_info(ts .FAIL_MISSING_TEST_DATA);
         break;
     }
 

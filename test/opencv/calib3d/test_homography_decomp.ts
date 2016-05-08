@@ -51,84 +51,78 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include "opencv2/calib3d.hpp"
-#include <vector>
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//#include "opencv2/calib3d.hpp"
+//#include <vector>
+//
+//using namespace cv;
+//using namespace std;
 
 class CV_HomographyDecompTest extends alvision.cvtest.BaseTest {
 
-public:
-    CV_HomographyDecompTest()
+    constructor()
     {
-        buildTestDataSet();
+        super();
+        this.buildTestDataSet();
     }
 
-protected:
-    void run(int)
+    run(iii: alvision.int) : void
     {
-        Array<Mat> rotations;
-        Array<Mat> translations;
-        Array<Mat> normals;
+        var rotations = new Array<alvision.Mat>();
+        var translations =new  Array<alvision.Mat> ();
+        var normals =new  Array<alvision.Mat>() ;
 
-        decomposeHomographyMat(_H, _K, rotations, translations, normals);
+        alvision.decomposeHomographyMat(this._H, this._K, rotations, translations, normals);
 
         //there should be at least 1 solution
-        ASSERT_GT(static_cast<int>(rotations.size()), 0);
-        ASSERT_GT(static_cast<int>(translations.size()), 0);
-        ASSERT_GT(static_cast<int>(normals.size()), 0);
+        alvision.ASSERT_GT((rotations.length), 0);
+        alvision.ASSERT_GT((translations.length), 0);
+        alvision.ASSERT_GT((normals.length), 0);
 
-        ASSERT_EQ(rotations.size(), normals.size());
-        ASSERT_EQ(translations.size(), normals.size());
+        alvision.ASSERT_EQ(rotations.length, normals.length);
+        alvision.ASSERT_EQ(translations.length, normals.length);
 
-        ASSERT_TRUE(containsValidMotion(rotations, translations, normals));
+        alvision.ASSERT_TRUE(this.containsValidMotion(rotations, translations, normals));
 
-        decomposeHomographyMat(_H, _K, rotations, noArray(), noArray());
-        ASSERT_GT(static_cast<int>(rotations.size()), 0);
+        alvision.decomposeHomographyMat(this._H, this._K, rotations, null, null);
+        alvision.ASSERT_GT((rotations.length), 0);
     }
 
-private:
-
-    void buildTestDataSet()
+    buildTestDataSet() : void
     {
-        _K = Matx33d(640, 0.0,  320,
+        this._K = new alvision.Matxd(640, 0.0,  320,
                       0,    640, 240,
                       0,    0,   1);
 
-         _H = Matx33d(2.649157564634028,  4.583875997496426,  70.694447785121326,
+         this._H = new alvision.Matxd(2.649157564634028,  4.583875997496426,  70.694447785121326,
                      -1.072756858861583,  3.533262150437228,  1513.656999614321649,
                       0.001303887589576,  0.003042206876298,  1.000000000000000
                       );
 
         //expected solution for the given homography and intrinsic matrices
-         _R = Matx33d(0.43307983549125, 0.545749113549648, -0.717356090899523,
+         this._R = new alvision.Matxd(0.43307983549125, 0.545749113549648, -0.717356090899523,
                      -0.85630229674426, 0.497582023798831, -0.138414255706431,
                       0.281404038139784, 0.67421809131173, 0.682818960388909);
 
-         _t = Vec3d(1.826751712278038,  1.264718492450820,  0.195080809998819);
-         _n = Vec3d(0.244875830334816, 0.480857890778889, 0.841909446789566);
+         this._t = new alvision.Vecd(1.826751712278038,  1.264718492450820,  0.195080809998819);
+         this._n = new alvision.Vecd(0.244875830334816, 0.480857890778889, 0.841909446789566);
     }
 
-    bool containsValidMotion(std::Array<Mat>& rotations,
-                             std::Array<Mat>& translations,
-                             std::Array<Mat>& normals
-                             )
+    containsValidMotion(rotations: Array<alvision.Mat>,
+        translations: Array<alvision.Mat> , 
+        normals: Array<alvision.Mat> 
+    ): boolean
     {
-        double max_error = 1.0e-3;
+        var max_error = 1.0e-3;
 
-        Array<Mat>::iterator riter = rotations.begin();
-        Array<Mat>::iterator titer = translations.begin();
-        Array<Mat>::iterator niter = normals.begin();
+        for (var i = 0; i < Math.max(Math.max(rotations.length, translations.length), normals.length); i++){
+            var riter = rotations[i];
+            var titer = translations[i];
+            var niter = normals[i];
 
-        for (;
-             riter != rotations.end() && titer != translations.end() && niter != normals.end();
-             ++riter, ++titer, ++niter) {
-
-            double rdist = norm(*riter, _R, NORM_INF);
-            double tdist = norm(*titer, _t, NORM_INF);
-            double ndist = norm(*niter, _n, NORM_INF);
+            var rdist = alvision.norm(riter,this. _R, alvision.NormTypes.NORM_INF);
+            var tdist = alvision.norm(titer,this. _t, alvision.NormTypes.NORM_INF);
+            var ndist = alvision.norm(niter,this. _n, alvision.NormTypes.NORM_INF);
 
             if (   rdist < max_error
                 && tdist < max_error
@@ -139,8 +133,11 @@ private:
         return false;
     }
 
-    Matx33d _R, _K, _H;
-    Vec3d _t, _n;
+    protected _R: alvision.Matxd;
+    protected _K: alvision.Matxd;
+    protected _H: alvision.Matxd;
+    protected _t: alvision.Vecd;
+    protected _n: alvision.Vecd;
 };
 
-TEST(Calib3d_DecomposeHomography, regression) { CV_HomographyDecompTest test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_DecomposeHomography', 'regression', () => { var test = new CV_HomographyDecompTest(); test.safe_run(); });

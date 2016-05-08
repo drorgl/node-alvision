@@ -71,7 +71,7 @@ CUDA_TEST_P(Video, Reader)
 
     for (int i = 0; i < 10; ++i)
     {
-        ASSERT_TRUE(reader->nextFrame(frame));
+        ASSERT_TRUE(reader.nextFrame(frame));
         ASSERT_FALSE(frame.empty());
     }
 }
@@ -108,7 +108,7 @@ CUDA_TEST_P(Video, Writer)
         if (d_writer.empty())
             d_writer = alvision.cudacodec::createVideoWriter(outputFile, frame.size(), FPS);
 
-        d_writer->write(d_frame);
+        d_writer.write(d_frame);
     }
 
     reader.release();

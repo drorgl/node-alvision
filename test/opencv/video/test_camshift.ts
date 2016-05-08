@@ -138,7 +138,7 @@ class CV_TrackBaseTest  extends alvision.cvtest.BaseTest
 
     // use the straightforward algorithm: for every pixel check if it is inside the ellipse
     for (y = 0; y < img_size.height; y++) {
-        uchar * ptr = img ->data.ptr + img ->step * y;
+        uchar * ptr = img .data.ptr + img .step * y;
         float * fl = (float *)ptr;
         double x_ = (y - cy) * b, y_ = (y - cy) * a;
 

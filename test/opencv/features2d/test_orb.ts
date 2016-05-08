@@ -88,7 +88,7 @@ alvision.cvtest.TEST('Features2D_ORB', '_1996',()=>
         // if (!roi.at<uchar>(y,x))
         // {
         //     roiViolations++;
-        //     circle(image, kp->pt, 3, Scalar(0,0,255));
+        //     circle(image, kp.pt, 3, Scalar(0,0,255));
         // }
     });
 

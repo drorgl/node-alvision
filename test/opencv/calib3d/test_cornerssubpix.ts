@@ -211,7 +211,7 @@ function calcDistance(set1: Array<alvision.Point2f>, set2: Array<alvision.Point2
         {
             return 0;
         }
-        std::Array<int>::iterator it = std::find(indices.begin(), indices.end(), min_idx);
+        Array<int>::iterator it = std::find(indices.begin(), indices.end(), min_idx);
         if(it != indices.end())
         {
             // there are two points in set1 corresponding to the same point in set2

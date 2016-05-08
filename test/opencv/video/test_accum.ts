@@ -54,200 +54,138 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-class CV_AccumBaseTest extends alvision.cvtest.ArrayTest
-{
-    constructor(){
+class CV_AccumBaseTest extends alvision.cvtest.ArrayTest {
+    constructor() {
         super();
-        test_array[INPUT].push(NULL);
-        test_array[INPUT_OUTPUT].push(NULL);
-        test_array[REF_INPUT_OUTPUT].push(NULL);
-        test_array[MASK].push(NULL);
-        optional_mask = true;
-        element_wise_relative_error = false;
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT_OUTPUT].push(null);
+        this.test_array[this.REF_INPUT_OUTPUT].push(null);
+        this.test_array[this.MASK].push(null);
+        this.optional_mask = true;
+        this.element_wise_relative_error = false;
     }
-get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array < Array < alvision.Size >>,types: Array<Array<alvision.int>>): void {
-        RNG& rng = ts->get_rng();
-        int depth = alvision.cvtest.randInt(rng) % 3, cn = alvision.cvtest.randInt(rng) & 1 ? 3 : 1;
-    int accdepth = std::max((int)(alvision.cvtest.randInt(rng) % 2 + 1), depth);
-    int i, input_count = (int)test_array[INPUT].size();
-    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
-    depth = depth == 0 ? CV_8U : depth == 1 ? CV_32F : CV_64F;
-    accdepth = accdepth == 1 ? CV_32F : CV_64F;
-    accdepth = MAX(accdepth, depth);
+    get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
+        var rng = this.ts.get_rng();
+        var depth = alvision.cvtest.randInt(rng).valueOf() % 3, cn = alvision.cvtest.randInt(rng).valueOf() & 1 ? 3 : 1;
+        var accdepth = Math.max((alvision.cvtest.randInt(rng).valueOf() % 2 + 1), depth);
+        var input_count = this.test_array[this.INPUT].length;
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        depth = depth == 0 ? alvision.MatrixType.CV_8U : depth == 1 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        accdepth = accdepth == 1 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        accdepth = Math.max(accdepth, depth);
 
-    for (i = 0; i < input_count; i++)
-        types[INPUT][i] = CV_MAKETYPE(depth, cn);
+        for (var i = 0; i < input_count; i++)
+            types[this.INPUT][i] = alvision.MatrixType.CV_MAKETYPE(depth, cn);
 
-    types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] = CV_MAKETYPE(accdepth, cn);
+        types[this.INPUT_OUTPUT][0] = types[this.REF_INPUT_OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(accdepth, cn);
 
-    alpha = alvision.cvtest.randReal(rng);
+        this.alpha = alvision.cvtest.randReal(rng);
+    }
+
+    get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
+        return this.test_mat[this.INPUT_OUTPUT][0].depth() < alvision.MatrixType.CV_64F ||
+            this.test_mat[this.INPUT][0].depth() == alvision.MatrixType.CV_32F ? alvision.FLT_EPSILON * 100 : alvision.DBL_EPSILON * 1000;
+    }
+
+    protected alpha: alvision.double;
 }
-        get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    double alpha;
-};
-
-
-void CV_AccumBaseTest::get_test_array_types_and_sizes( int test_case_idx,
-                        Array<Array<Size> >& sizes, Array<Array<int> >& types )
-{
-    
-}
-
-
-double CV_AccumBaseTest::get_success_error_level( int /*test_case_idx*/, int /*i*/, int /*j*/ )
-{
-    return test_mat[INPUT_OUTPUT][0].depth() < CV_64F ||
-           test_mat[INPUT][0].depth() == CV_32F ? FLT_EPSILON*100 : DBL_EPSILON*1000;
-}
-
 
 /// acc
-class CV_AccTest : public CV_AccumBaseTest
-{
-public:
-    CV_AccTest() { }
-protected:
-    void run_func();
-    void prepare_to_validation( int );
-};
+class CV_AccTest extends CV_AccumBaseTest {
+    run_func(): void {
+        alvision.accumulate(this.test_array[this.INPUT][0], this.test_array[this.INPUT_OUTPUT][0], this.test_array[this.MASK][0]);
+    }
+    prepare_to_validation(iii: alvision.int): void {
+        var src = this.test_mat[this.INPUT][0];
+        var dst = this.test_mat[this.REF_INPUT_OUTPUT][0];
+        var mask = this.test_array[this.MASK][0] ? this.test_mat[this.MASK][0] : new alvision.Mat();
+        var temp = new alvision.Mat();
 
+        alvision.cvtest.add(src, 1, dst, 1,alvision.Scalar.all(0.), temp, dst.type());
+        alvision.cvtest.copy(temp, dst, mask);
 
-void CV_AccTest::run_func(void)
-{
-    cvAcc( test_array[INPUT][0], test_array[INPUT_OUTPUT][0], test_array[MASK][0] );
+    }
 }
-
-
-void CV_AccTest::prepare_to_validation( int )
-{
-    const Mat& src = test_mat[INPUT][0];
-    Mat& dst = test_mat[REF_INPUT_OUTPUT][0];
-    const Mat& mask = test_array[MASK][0] ? test_mat[MASK][0] : Mat();
-    Mat temp;
-    alvision.cvtest.add( src, 1, dst, 1, cvScalarAll(0.), temp, dst.type() );
-    alvision.cvtest.copy( temp, dst, mask );
-}
-
 
 /// square acc
-class CV_SquareAccTest : public CV_AccumBaseTest
+class CV_SquareAccTest extends CV_AccumBaseTest
 {
-public:
-    CV_SquareAccTest();
-protected:
-    void run_func();
-    void prepare_to_validation( int );
+    run_func(): void{
+        alvision.accumulateSquare(this.test_array[this.INPUT][0], this.test_array[this.INPUT_OUTPUT][0], this.test_array[this.MASK][0]);
+}
+    prepare_to_validation(iii: alvision.int): void {
+        var src = this.test_mat[this.INPUT][0];
+        var dst = this.test_mat[this.REF_INPUT_OUTPUT][0];
+        var mask = this.test_array[this.MASK][0] ? this.test_mat[this.MASK][0] : new alvision.Mat();
+        var temp = new alvision.Mat();
+
+        alvision.cvtest.convert(src, temp, dst.type());
+        alvision.cvtest.multiply(temp, temp, temp, 1);
+        alvision.cvtest.add(temp, 1, dst, 1, alvision.Scalar.all(0.), temp, dst.depth());
+        alvision.cvtest.copy(temp, dst, mask);
+    }
 };
-
-
-CV_SquareAccTest::CV_SquareAccTest()
-{
-}
-
-
-void CV_SquareAccTest::run_func()
-{
-    cvSquareAcc( test_array[INPUT][0], test_array[INPUT_OUTPUT][0], test_array[MASK][0] );
-}
-
-
-void CV_SquareAccTest::prepare_to_validation( int )
-{
-    const Mat& src = test_mat[INPUT][0];
-    Mat& dst = test_mat[REF_INPUT_OUTPUT][0];
-    const Mat& mask = test_array[MASK][0] ? test_mat[MASK][0] : Mat();
-    Mat temp;
-
-    alvision.cvtest.convert( src, temp, dst.type() );
-    alvision.cvtest.multiply( temp, temp, temp, 1 );
-    alvision.cvtest.add( temp, 1, dst, 1, cvScalarAll(0.), temp, dst.depth() );
-    alvision.cvtest.copy( temp, dst, mask );
-}
-
 
 /// multiply acc
-class CV_MultiplyAccTest : public CV_AccumBaseTest
+class CV_MultiplyAccTest extends CV_AccumBaseTest
 {
-public:
-    CV_MultiplyAccTest();
-protected:
-    void run_func();
-    void prepare_to_validation( int );
+    constructor() {
+        super();
+        this.test_array[this.INPUT].push(null);
+    }
+    run_func(): void {
+        alvision.accumulateProduct(this.test_array[this.INPUT][0], this.test_array[this.INPUT][1],
+            this.test_array[this.INPUT_OUTPUT][0], this.test_array[this.MASK][0]);
+    }
+    prepare_to_validation(int): void {
+        var src1 = this.test_mat[this.INPUT][0];
+        var src2 = this.test_mat[this.INPUT][1];
+        var dst = this.test_mat[this.REF_INPUT_OUTPUT][0];
+        var mask = this.test_array[this.MASK][0] ? this.test_mat[this.MASK][0] : new alvision.Mat();
+        //Mat temp1, temp2;
+        var temp1 = new alvision.Mat();
+        var temp2 = new alvision.Mat();
+
+        alvision.cvtest.convert(src1, temp1, dst.type());
+        alvision.cvtest.convert(src2, temp2, dst.type());
+
+        alvision.cvtest.multiply(temp1, temp2, temp1, 1);
+        alvision.cvtest.add(temp1, 1, dst, 1,alvision.Scalar.all(0.), temp1, dst.depth());
+        alvision.cvtest.copy(temp1, dst, mask);
+
+    }
 };
-
-
-CV_MultiplyAccTest::CV_MultiplyAccTest()
-{
-    test_array[INPUT].push(NULL);
-}
-
-
-void CV_MultiplyAccTest::run_func()
-{
-    cvMultiplyAcc( test_array[INPUT][0], test_array[INPUT][1],
-                   test_array[INPUT_OUTPUT][0], test_array[MASK][0] );
-}
-
-
-void CV_MultiplyAccTest::prepare_to_validation( int )
-{
-    const Mat& src1 = test_mat[INPUT][0];
-    const Mat& src2 = test_mat[INPUT][1];
-    Mat& dst = test_mat[REF_INPUT_OUTPUT][0];
-    const Mat& mask = test_array[MASK][0] ? test_mat[MASK][0] : Mat();
-    Mat temp1, temp2;
-
-    alvision.cvtest.convert( src1, temp1, dst.type() );
-    alvision.cvtest.convert( src2, temp2, dst.type() );
-
-    alvision.cvtest.multiply( temp1, temp2, temp1, 1 );
-    alvision.cvtest.add( temp1, 1, dst, 1, cvScalarAll(0.), temp1, dst.depth() );
-    alvision.cvtest.copy( temp1, dst, mask );
-}
 
 
 /// running average
-class CV_RunningAvgTest : public CV_AccumBaseTest
+class CV_RunningAvgTest extends CV_AccumBaseTest
 {
-public:
-    CV_RunningAvgTest();
-protected:
-    void run_func();
-    void prepare_to_validation( int );
+    run_func(): void {
+        alvision.accumulateWeighted(this.test_array[this.INPUT][0], this.test_array[this.INPUT_OUTPUT][0],
+            this.alpha, this.test_array[this.MASK][0]);
+
+    }
+    prepare_to_validation(iii: alvision.int): void {
+        var src = this.test_mat[this.INPUT][0];
+        var dst = this.test_mat[this.REF_INPUT_OUTPUT][0];
+        var temp = new alvision.Mat();
+        var mask = this.test_array[this.MASK][0] ? this.test_mat[this.MASK][0] : new alvision.Mat();
+        double a[1], b[1];
+
+        var accdepth = this.test_mat[this.INPUT_OUTPUT][0].depth();
+        CvMat A = cvMat(1, 1, accdepth, a), B = cvMat(1, 1, accdepth, b);
+
+        cvSetReal1D( &A, 0, alpha);
+        cvSetReal1D( &B, 0, 1 - cvGetReal1D(&A, 0));
+
+        alvision.cvtest.convert(src, temp, dst.type());
+        alvision.cvtest.add(src, cvGetReal1D(&A, 0), dst, cvGetReal1D(&B, 0), cvScalarAll(0.), temp, temp.depth());
+        alvision.cvtest.copy(temp, dst, mask);
+
+    }
 };
 
-
-CV_RunningAvgTest::CV_RunningAvgTest()
-{
-}
-
-
-void CV_RunningAvgTest::run_func()
-{
-    cvRunningAvg( test_array[INPUT][0], test_array[INPUT_OUTPUT][0],
-                  alpha, test_array[MASK][0] );
-}
-
-
-void CV_RunningAvgTest::prepare_to_validation( int )
-{
-    const Mat& src = test_mat[INPUT][0];
-    Mat& dst = test_mat[REF_INPUT_OUTPUT][0];
-    Mat temp;
-    const Mat& mask = test_array[MASK][0] ? test_mat[MASK][0] : Mat();
-    double a[1], b[1];
-    int accdepth = test_mat[INPUT_OUTPUT][0].depth();
-    CvMat A = cvMat(1,1,accdepth,a), B = cvMat(1,1,accdepth,b);
-    cvSetReal1D( &A, 0, alpha);
-    cvSetReal1D( &B, 0, 1 - cvGetReal1D(&A, 0));
-
-    alvision.cvtest.convert( src, temp, dst.type() );
-    alvision.cvtest.add( src, cvGetReal1D(&A, 0), dst, cvGetReal1D(&B, 0), cvScalarAll(0.), temp, temp.depth() );
-    alvision.cvtest.copy( temp, dst, mask );
-}
-
-
-TEST(Video_Acc, accuracy) { CV_AccTest test; test.safe_run(); }
-TEST(Video_AccSquared, accuracy) { CV_SquareAccTest test; test.safe_run(); }
-TEST(Video_AccProduct, accuracy) { CV_MultiplyAccTest test; test.safe_run(); }
-TEST(Video_RunningAvg, accuracy) { CV_RunningAvgTest test; test.safe_run(); }
+alvision.cvtest.TEST('Video_Acc', 'accuracy', () => { var test = new CV_AccTest(); test.safe_run(); });
+alvision.cvtest.TEST('Video_AccSquared', 'accuracy', () => { var test = new CV_SquareAccTest(); test.safe_run(); });
+alvision.cvtest.TEST('Video_AccProduct', 'accuracy', () => { var test = new CV_MultiplyAccTest(); test.safe_run(); });
+alvision.cvtest.TEST('Video_RunningAvg', 'accuracy', () => { var test = new CV_RunningAvgTest(); test.safe_run(); });

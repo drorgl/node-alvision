@@ -88,7 +88,7 @@ void CV_POSITTest::run( int start_from )
     CvPOSITObject* object;
 
     float angleX, angleY, angleZ;
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     int progress = 0;
 
     CvMat* true_rotationX = cvCreateMat( 3, 3, CV_32F );
@@ -127,7 +127,7 @@ void CV_POSITTest::run( int start_from )
     /* Loop for test some random object positions */
     for( counter = start_from; counter < test_case_count; counter++ )
     {
-        ts->update_context( this, counter, true );
+        ts.update_context( this, counter, true );
         progress = update_progress( progress, counter, test_case_count, 0 );
 
         /* set all rotation matrix to zero */
@@ -140,31 +140,31 @@ void CV_POSITTest::run( int start_from )
         angleY = (float)(alvision.cvtest.randReal(rng)*2*Math.PI);
         angleZ = (float)(alvision.cvtest.randReal(rng)*2*Math.PI);
 
-        true_rotationX->data.fl[0 *3+ 0] = 1;
-        true_rotationX->data.fl[1 *3+ 1] = (float)cos(angleX);
-        true_rotationX->data.fl[2 *3+ 2] = true_rotationX->data.fl[1 *3+ 1];
-        true_rotationX->data.fl[1 *3+ 2] = -(float)sin(angleX);
-        true_rotationX->data.fl[2 *3+ 1] = -true_rotationX->data.fl[1 *3+ 2];
+        true_rotationX.data.fl[0 *3+ 0] = 1;
+        true_rotationX.data.fl[1 *3+ 1] = (float)cos(angleX);
+        true_rotationX.data.fl[2 *3+ 2] = true_rotationX.data.fl[1 *3+ 1];
+        true_rotationX.data.fl[1 *3+ 2] = -(float)sin(angleX);
+        true_rotationX.data.fl[2 *3+ 1] = -true_rotationX.data.fl[1 *3+ 2];
 
-        true_rotationY->data.fl[1 *3+ 1] = 1;
-        true_rotationY->data.fl[0 *3+ 0] = (float)cos(angleY);
-        true_rotationY->data.fl[2 *3+ 2] = true_rotationY->data.fl[0 *3+ 0];
-        true_rotationY->data.fl[0 *3+ 2] = -(float)sin(angleY);
-        true_rotationY->data.fl[2 *3+ 0] = -true_rotationY->data.fl[0 *3+ 2];
+        true_rotationY.data.fl[1 *3+ 1] = 1;
+        true_rotationY.data.fl[0 *3+ 0] = (float)cos(angleY);
+        true_rotationY.data.fl[2 *3+ 2] = true_rotationY.data.fl[0 *3+ 0];
+        true_rotationY.data.fl[0 *3+ 2] = -(float)sin(angleY);
+        true_rotationY.data.fl[2 *3+ 0] = -true_rotationY.data.fl[0 *3+ 2];
 
-        true_rotationZ->data.fl[2 *3+ 2] = 1;
-        true_rotationZ->data.fl[0 *3+ 0] = (float)cos(angleZ);
-        true_rotationZ->data.fl[1 *3+ 1] = true_rotationZ->data.fl[0 *3+ 0];
-        true_rotationZ->data.fl[0 *3+ 1] = -(float)sin(angleZ);
-        true_rotationZ->data.fl[1 *3+ 0] = -true_rotationZ->data.fl[0 *3+ 1];
+        true_rotationZ.data.fl[2 *3+ 2] = 1;
+        true_rotationZ.data.fl[0 *3+ 0] = (float)cos(angleZ);
+        true_rotationZ.data.fl[1 *3+ 1] = true_rotationZ.data.fl[0 *3+ 0];
+        true_rotationZ.data.fl[0 *3+ 1] = -(float)sin(angleZ);
+        true_rotationZ.data.fl[1 *3+ 0] = -true_rotationZ.data.fl[0 *3+ 1];
 
         cvMatMul( true_rotationX, true_rotationY, tmp_matrix);
         cvMatMul( tmp_matrix, true_rotationZ, true_rotation);
 
         /* fill translation vector */
-        true_translation->data.fl[2] = (float)(alvision.cvtest.randReal(rng)*(2*flFocalLength-40) + 60);
-        true_translation->data.fl[0] = (float)((alvision.cvtest.randReal(rng)*2-1)*true_translation->data.fl[2]);
-        true_translation->data.fl[1] = (float)((alvision.cvtest.randReal(rng)*2-1)*true_translation->data.fl[2]);
+        true_translation.data.fl[2] = (float)(alvision.cvtest.randReal(rng)*(2*flFocalLength-40) + 60);
+        true_translation.data.fl[0] = (float)((alvision.cvtest.randReal(rng)*2-1)*true_translation.data.fl[2]);
+        true_translation.data.fl[1] = (float)((alvision.cvtest.randReal(rng)*2-1)*true_translation.data.fl[2]);
 
         /* calculate perspective projection */
         for ( i = 0; i < 8; i++ )
@@ -175,9 +175,9 @@ void CV_POSITTest::run( int start_from )
 
             cvMatMul( true_rotation, &Obj_point, &Vec );
 
-            vec[0] += true_translation->data.fl[0];
-            vec[1] += true_translation->data.fl[1];
-            vec[2] += true_translation->data.fl[2];
+            vec[0] += true_translation.data.fl[0];
+            vec[1] += true_translation.data.fl[1];
+            vec[2] += true_translation.data.fl[2];
 
             img_points[i].x = flFocalLength * vec[0] / vec[2];
             img_points[i].y = flFocalLength * vec[1] / vec[2];
@@ -195,7 +195,7 @@ void CV_POSITTest::run( int start_from )
 
         object = cvCreatePOSITObject( obj_points, 8 );
         cvPOSIT( object, img_points, flFocalLength, criteria,
-                 rotation->data.fl, translation->data.fl );
+                 rotation.data.fl, translation.data.fl );
         cvReleasePOSITObject( &object );
 
         Mat _rotation = cvarrToMat(rotation), _true_rotation = cvarrToMat(true_rotation);

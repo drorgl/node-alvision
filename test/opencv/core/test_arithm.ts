@@ -217,7 +217,7 @@ struct MulOp : public BaseElemWiseOp
         minval = depth < CV_32S ? alvision.cvtest.getMinVal(depth) : depth == CV_32S ? -1000000 : -1000.;
         maxval = depth < CV_32S ? alvision.cvtest.getMaxVal(depth) : depth == CV_32S ? 1000000 : 1000.;
         minval = std::max(minval, -30000.);
-        maxval = std::min(maxval, 30000.);
+        maxval = Math.min(maxval, 30000.);
     }
     op(src: Array < alvision.Mat >, dst: alvision.Mat, mask: alvision.Mat) : void
     {
@@ -688,7 +688,7 @@ struct InRangeSOp : public BaseElemWiseOp
         for( int i = 0; i < 4; i++ )
         {
             gamma1[i] = std::max(gamma[i], temp[i]);
-            gamma[i] = std::min(gamma[i], temp[i]);
+            gamma[i] = Math.min(gamma[i], temp[i]);
         }
     }
     Scalar gamma1;
@@ -1353,14 +1353,14 @@ alvision.cvtest.TEST_P(ElemWiseTest, accuracy)
     for( testIdx = 0; testIdx < alvision.cvtest.ARITHM_NTESTS; testIdx++ )
     {
         Array<int> size;
-        op->getRandomSize(rng, size);
-        int type = op->getRandomType(rng);
+        op.getRandomSize(rng, size);
+        int type = op.getRandomType(rng);
         int depth = CV_MAT_DEPTH(type);
-        bool haveMask = (op->flags & alvision.cvtest.BaseElemWiseOp::SUPPORT_MASK) != 0 && rng.uniform(0, 4) == 0;
+        bool haveMask = (op.flags & alvision.cvtest.BaseElemWiseOp::SUPPORT_MASK) != 0 && rng.uniform(0, 4) == 0;
 
         double minval=0, maxval=0;
-        op->getValueRange(depth, minval, maxval);
-        int i, ninputs = op->ninputs;
+        op.getValueRange(depth, minval, maxval);
+        int i, ninputs = op.ninputs;
         Array<Mat> src(ninputs);
         for( i = 0; i < ninputs; i++ )
             src[i] = alvision.cvtest.randomMat(rng, size, type, minval, maxval, true);
@@ -1368,19 +1368,19 @@ alvision.cvtest.TEST_P(ElemWiseTest, accuracy)
         if( haveMask )
             mask = alvision.cvtest.randomMat(rng, size, CV_8U, 0, 2, true);
 
-        if( (haveMask || ninputs == 0) && !(op->flags & alvision.cvtest.BaseElemWiseOp::SCALAR_OUTPUT))
+        if( (haveMask || ninputs == 0) && !(op.flags & alvision.cvtest.BaseElemWiseOp::SCALAR_OUTPUT))
         {
             dst0 = alvision.cvtest.randomMat(rng, size, type, minval, maxval, false);
             dst = alvision.cvtest.randomMat(rng, size, type, minval, maxval, true);
             alvision.cvtest.copy(dst, dst0);
         }
-        op->generateScalars(depth, rng);
+        op.generateScalars(depth, rng);
 
-        op->refop(src, dst0, mask);
-        op->op(src, dst, mask);
+        op.refop(src, dst0, mask);
+        op.op(src, dst, mask);
 
-        double maxErr = op->getMaxErr(depth);
-        ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(maxErr, op->context), dst0, dst) << "\nsrc[0] ~ " <<
+        double maxErr = op.getMaxErr(depth);
+        ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(maxErr, op.context), dst0, dst) << "\nsrc[0] ~ " <<
             alvision.cvtest.MatInfo(!src.empty() ? src[0] : Mat()) << "\ntestCase #" << testIdx << "\n";
     }
 }
@@ -1457,9 +1457,9 @@ protected:
             int sizes[MAX_DIM];
             for( int iter = 0; iter < 100; iter++ )
             {
-                //ts->printf(alvision.cvtest.TSConstants.LOG, ".");
+                //ts.printf(alvision.cvtest.TSConstants.LOG, ".");
 
-                ts->update_context(this, iter, true);
+                ts.update_context(this, iter, true);
                 int k, dims = rng.uniform(1, MAX_DIM+1), p = 1;
                 int depth = rng.uniform(CV_8U, CV_64F+1);
                 int cn = rng.uniform(1, 6);
@@ -1823,7 +1823,7 @@ alvision.cvtest.TEST(Core_FindNonZero, singular)
 
 alvision.cvtest.TEST(Core_BoolVector, support)
 {
-    std::Array<bool> test;
+    Array<bool> test;
     int i, n = 205;
     int nz = 0;
     test.resize(n);

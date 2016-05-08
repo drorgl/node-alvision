@@ -131,7 +131,7 @@ class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest {
         this.test_cpp = (alvision.cvtest.randInt(rng) & 256) == 0;
     }
     get_minmax_bounds(int i, int j, int type, Scalar & low, Scalar & high): void {
-        alvision.cvtest.ArrayTest::get_minmax_bounds(i, j, type, low, high);
+        super.get_minmax_bounds(i, j, type, low, high);
         if (i == INPUT) {
             int depth = CV_MAT_DEPTH(type);
             low = Scalar::all(0.);
@@ -139,7 +139,7 @@ class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest {
         }
     }
 
-    // input --- fwd_transform -> ref_output[0]
+    // input --- fwd_transform . ref_output[0]
     convert_forward(src: alvision.Mat, dst: alvision.Mat): void {
         const c8u = 0.0039215686274509803; // 1./255
         const c16u = 1.5259021896696422e-005; // 1./65535
@@ -213,7 +213,7 @@ class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest {
             }
         }
     }
-    // ref_output[0] --- inv_transform ---> ref_output[1] (or input -- copy --> ref_output[1])
+    // ref_output[0] --- inv_transform --. ref_output[1] (or input -- copy -. ref_output[1])
     convert_backward(src: alvision.Mat, dst: alvision.Mat, dst2: alvision.Mat): void {
         if (this.custom_inv_transform) {
             var depth = src.depth();
@@ -533,7 +533,7 @@ CV_ColorHSVTest::CV_ColorHSVTest() : CV_ColorCvtBaseTest( true, true, false )
 void CV_ColorHSVTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
     bool full_hrange = (rng.next() & 256) != 0;
     if( full_hrange )
@@ -1214,7 +1214,7 @@ CV_ColorRGBTest::CV_ColorRGBTest() : CV_ColorCvtBaseTest( true, true, true )
 
 void CV_ColorRGBTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
     int cn = CV_MAT_CN(types[INPUT][0]);
 
@@ -1269,7 +1269,7 @@ void CV_ColorRGBTest::convert_forward( const Mat& src, Mat& dst )
 {
     int depth = src.depth(), cn = src.channels();
 /*#if defined _DEBUG || defined DEBUG
-    int dst_cn = CV_MAT_CN(dst->type);
+    int dst_cn = CV_MAT_CN(dst.type);
 #endif*/
     int i, j, cols = src.cols;
     int g_rshift = dst_bits == 16 ? 2 : 3;
@@ -1355,7 +1355,7 @@ void CV_ColorRGBTest::convert_backward( const Mat& /*src*/, const Mat& src, Mat&
 {
     int depth = src.depth(), cn = dst.channels();
 /*#if defined _DEBUG || defined DEBUG
-    int src_cn = CV_MAT_CN(src->type);
+    int src_cn = CV_MAT_CN(src.type);
 #endif*/
     int i, j, cols = src.cols;
     int g_lshift = dst_bits == 16 ? 2 : 3;
@@ -1466,7 +1466,7 @@ public:
 protected:
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
+    run_func() : void {}
     void prepare_to_validation( int test_case_idx );
 };
 
@@ -1485,7 +1485,7 @@ CV_ColorBayerTest::CV_ColorBayerTest() : CV_ColorCvtBaseTest( false, false, true
 
 void CV_ColorBayerTest::get_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     CV_ColorCvtBaseTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
     types[INPUT][0] = CV_MAT_DEPTH(types[INPUT][0]);
@@ -1618,8 +1618,8 @@ TEST(Imgproc_ColorBayer, regression)
 {
     alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
 
-    Mat given = imread(string(ts->get_data_path()) + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
-    Mat gold = imread(string(ts->get_data_path()) + "/cvtcolor/bayer_gold.png", IMREAD_UNCHANGED);
+    Mat given = imread(this.ts.get_data_path() + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
+    Mat gold = imread(this.ts.get_data_path() + "/cvtcolor/bayer_gold.png", IMREAD_UNCHANGED);
     var result = new alvision.Mat();
 
     CV_Assert( !given.empty() && !gold.empty() );
@@ -1640,8 +1640,8 @@ TEST(Imgproc_ColorBayerVNG, regression)
 {
     alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
 
-    Mat given = imread(string(ts->get_data_path()) + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
-    string goldfname = string(ts->get_data_path()) + "/cvtcolor/bayerVNG_gold.png";
+    Mat given = imread(this.ts.get_data_path() + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
+    string goldfname = this.ts.get_data_path() + "/cvtcolor/bayerVNG_gold.png";
     Mat gold = imread(goldfname, IMREAD_UNCHANGED);
     var result = new alvision.Mat();
 
@@ -1731,7 +1731,7 @@ TEST(Imgproc_ColorBayerVNG_Strict, regression)
     alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
     const char pattern[][3] = { "bg", "gb", "rg", "gr" };
     const std::string image_name = "lena.png";
-    const std::string parent_path = string(ts->get_data_path()) + "/cvtcolor_strict/";
+    const std::string parent_path = this.ts.get_data_path() + "/cvtcolor_strict/";
 
     Mat src, dst, bayer, reference;
     std::string full_path = parent_path + image_name;
@@ -1740,8 +1740,8 @@ TEST(Imgproc_ColorBayerVNG_Strict, regression)
     if ( src.empty() )
     {
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISSING_TEST_DATA);
-        ts->printf(alvision.cvtest.TS::SUMMARY, "No input image\n");
-        ts->set_gtest_status();
+        ts.printf(alvision.cvtest.TS::SUMMARY, "No input image\n");
+        ts.set_gtest_status();
         return;
     }
 
@@ -1767,15 +1767,15 @@ TEST(Imgproc_ColorBayerVNG_Strict, regression)
         {
             std::cout << reference(Rect(0, 0, 5, 5)) << std::endl << std::endl << std::endl;
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
-            ts->printf(alvision.cvtest.TS::SUMMARY, "\nReference channels: %d\n"
+            ts.printf(alvision.cvtest.TS::SUMMARY, "\nReference channels: %d\n"
                 "Actual channels: %d\n", reference.channels(), dst.channels());
-            ts->printf(alvision.cvtest.TS::SUMMARY, "\nReference depth: %d\n"
+            ts.printf(alvision.cvtest.TS::SUMMARY, "\nReference depth: %d\n"
                 "Actual depth: %d\n", reference.depth(), dst.depth());
-            ts->printf(alvision.cvtest.TS::SUMMARY, "\nReference rows: %d\n"
+            ts.printf(alvision.cvtest.TS::SUMMARY, "\nReference rows: %d\n"
                 "Actual rows: %d\n", reference.rows, dst.rows);
-            ts->printf(alvision.cvtest.TS::SUMMARY, "\nReference cols: %d\n"
+            ts.printf(alvision.cvtest.TS::SUMMARY, "\nReference cols: %d\n"
                 "Actual cols: %d\n", reference.cols, dst.cols);
-            ts->set_gtest_status();
+            ts.set_gtest_status();
 
             return;
         }
@@ -1787,8 +1787,8 @@ TEST(Imgproc_ColorBayerVNG_Strict, regression)
         if (nonZero != 0)
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-            ts->printf(alvision.cvtest.TS::SUMMARY, "\nCount non zero in absdiff: %d\n", nonZero);
-            ts->set_gtest_status();
+            ts.printf(alvision.cvtest.TS::SUMMARY, "\nCount non zero in absdiff: %d\n", nonZero);
+            ts.set_gtest_status();
             return;
         }
     }
@@ -1836,12 +1836,12 @@ static void validateResult(const Mat& reference, const Mat& actual, const Mat& s
             if (fabs(rD[x] - D[x]) > 0.0001f)
             {
                 next = false;
-                ts->printf(alvision.cvtest.TS::SUMMARY, "Error in: (%d, %d)\n", x / cn,  y);
-                ts->printf(alvision.cvtest.TS::SUMMARY, "Reference value: %f\n", rD[x]);
-                ts->printf(alvision.cvtest.TS::SUMMARY, "Actual value: %f\n", D[x]);
+                ts.printf(alvision.cvtest.TS::SUMMARY, "Error in: (%d, %d)\n", x / cn,  y);
+                ts.printf(alvision.cvtest.TS::SUMMARY, "Reference value: %f\n", rD[x]);
+                ts.printf(alvision.cvtest.TS::SUMMARY, "Actual value: %f\n", D[x]);
                 if (!src.empty())
-                    ts->printf(alvision.cvtest.TS::SUMMARY, "Src value: %f\n", src.ptr<float>(y)[x]);
-                ts->printf(alvision.cvtest.TS::SUMMARY, "Size: (%d, %d)\n", reference.rows, reference.cols);
+                    ts.printf(alvision.cvtest.TS::SUMMARY, "Src value: %f\n", src.ptr<float>(y)[x]);
+                ts.printf(alvision.cvtest.TS::SUMMARY, "Size: (%d, %d)\n", reference.rows, reference.cols);
 
                 if (mode >= 0)
                 {
@@ -1852,7 +1852,7 @@ static void validateResult(const Mat& reference, const Mat& actual, const Mat& s
                 std::cout << "src: " << src(alvision.Rect(y, x / cn, 1, 1)) << std::endl;
 
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-                ts->set_gtest_status();
+                ts.set_gtest_status();
             }
     }
 }
@@ -1864,7 +1864,7 @@ TEST(Imgproc_ColorLab_Full, accuracy)
     Size ssize = src.size();
     CV_Assert(ssize.width == ssize.height);
 
-    RNG& rng = alvision.cvtest.TS::ptr()->get_rng();
+    RNG& rng = alvision.cvtest.TS::ptr().get_rng();
     int blueInd = rng.uniform(0., 1.) > 0.5 ? 0 : 2;
     bool srgb = rng.uniform(0., 1.) > 0.5;
 
@@ -1994,12 +1994,12 @@ static void checkData(const Mat& actual, const Mat& reference, alvision.cvtest.T
             if (std::abs(A[x] - R[x]) > 1)
             {
                 #define SUM alvision.cvtest.TS::SUMMARY
-                ts->printf(SUM, "\nReference value: %d\n", static_cast<int>(R[x]));
-                ts->printf(SUM, "Actual value: %d\n", static_cast<int>(A[x]));
-                ts->printf(SUM, "(y, x): (%d, %d)\n", y, x / reference.channels());
-                ts->printf(SUM, "Channel pos: %d\n", x % reference.channels());
-                ts->printf(SUM, "Pattern: %s\n", type);
-                ts->printf(SUM, "Bayer image type: %s", bayer_type);
+                ts.printf(SUM, "\nReference value: %d\n", static_cast<int>(R[x]));
+                ts.printf(SUM, "Actual value: %d\n", static_cast<int>(A[x]));
+                ts.printf(SUM, "(y, x): (%d, %d)\n", y, x / reference.channels());
+                ts.printf(SUM, "Channel pos: %d\n", x % reference.channels());
+                ts.printf(SUM, "Pattern: %s\n", type);
+                ts.printf(SUM, "Bayer image type: %s", bayer_type);
                 #undef SUM
 
                 Mat diff;
@@ -2007,7 +2007,7 @@ static void checkData(const Mat& actual, const Mat& reference, alvision.cvtest.T
                 EXPECT_EQ(countNonZero(diff.reshape(1) > 1), 0);
 
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-                ts->set_gtest_status();
+                ts.set_gtest_status();
 
                 next = false;
             }
@@ -2018,7 +2018,7 @@ TEST(ImgProc_BayerEdgeAwareDemosaicing, accuracy)
 {
     alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
     const std::string image_name = "lena.png";
-    const std::string parent_path = string(ts->get_data_path()) + "/cvtcolor_strict/";
+    const std::string parent_path = this.ts.get_data_path() + "/cvtcolor_strict/";
 
     Mat src, bayer;
     std::string full_path = parent_path + image_name;
@@ -2027,8 +2027,8 @@ TEST(ImgProc_BayerEdgeAwareDemosaicing, accuracy)
     if (src.empty())
     {
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISSING_TEST_DATA);
-        ts->printf(alvision.cvtest.TS::SUMMARY, "No input image\n");
-        ts->set_gtest_status();
+        ts.printf(alvision.cvtest.TS::SUMMARY, "No input image\n");
+        ts.set_gtest_status();
         return;
     }
 
@@ -2072,7 +2072,7 @@ TEST(ImgProc_BayerEdgeAwareDemosaicing, accuracy)
 TEST(ImgProc_Bayer2RGBA, accuracy)
 {
     alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
-    Mat raw = imread(string(ts->get_data_path()) + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
+    Mat raw = imread(this.ts.get_data_path() + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
     Mat rgb, reference;
 
     CV_Assert(raw.channels() == 1);
@@ -2103,18 +2103,18 @@ TEST(ImgProc_Bayer2RGBA, accuracy)
                 if (abs(rD[x] - D[x]) >= 1)
                 {
                     next = false;
-                    ts->printf(alvision.cvtest.TS::SUMMARY, "Error in: (%d, %d)\n", x / cn,  y);
-                    ts->printf(alvision.cvtest.TS::SUMMARY, "Reference value: %d\n", rD[x]);
-                    ts->printf(alvision.cvtest.TS::SUMMARY, "Actual value: %d\n", D[x]);
-                    ts->printf(alvision.cvtest.TS::SUMMARY, "Src value: %d\n", raw.ptr<uchar>(y)[x]);
-                    ts->printf(alvision.cvtest.TS::SUMMARY, "Size: (%d, %d)\n", reference.rows, reference.cols);
+                    ts.printf(alvision.cvtest.TS::SUMMARY, "Error in: (%d, %d)\n", x / cn,  y);
+                    ts.printf(alvision.cvtest.TS::SUMMARY, "Reference value: %d\n", rD[x]);
+                    ts.printf(alvision.cvtest.TS::SUMMARY, "Actual value: %d\n", D[x]);
+                    ts.printf(alvision.cvtest.TS::SUMMARY, "Src value: %d\n", raw.ptr<uchar>(y)[x]);
+                    ts.printf(alvision.cvtest.TS::SUMMARY, "Size: (%d, %d)\n", reference.rows, reference.cols);
 
                     Mat diff;
                     absdiff(actual, reference, diff);
                     EXPECT_EQ(countNonZero(diff.reshape(1) > 1), 0);
 
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-                    ts->set_gtest_status();
+                    ts.set_gtest_status();
                 }
         }
     }

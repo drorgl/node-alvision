@@ -393,7 +393,7 @@ CUDA_TEST_P(Convolve, Accuracy)
     alvision.Ptr<alvision.cuda::Convolution> conv = alvision.cuda::createConvolution();
 
     alvision.cuda::GpuMat dst;
-    conv->convolve(loadMat(src), loadMat(kernel), dst, ccorr);
+    conv.convolve(loadMat(src), loadMat(kernel), dst, ccorr);
 
     alvision.Mat dst_gold;
     convolveDFT(src, kernel, dst_gold, ccorr);

@@ -76,24 +76,24 @@ public:
         //Ncv32u maxWpitch = alignUp(maxWidth * sizeof(T), devProp.textureAlignment);
 
         allocatorCPU.reset(new NCVMemNativeAllocator(NCVMemoryTypeHostPinned, static_cast<Ncv32u>(devProp.textureAlignment)));
-        data.reset(new NCVMatrixAlloc<T>(*this->allocatorCPU.get(), maxWidth, maxHeight));
-        ncvAssertPrintReturn(data.get()->isMemAllocated(), "NCVTestSourceProvider ctor:: Matrix not allocated", );
+        data.reset(new NCVMatrixAlloc<T>(*this.allocatorCPU.get(), maxWidth, maxHeight));
+        ncvAssertPrintReturn(data.get().isMemAllocated(), "NCVTestSourceProvider ctor:: Matrix not allocated", );
 
-        this->dataWidth = maxWidth;
-        this->dataHeight = maxHeight;
+        this.dataWidth = maxWidth;
+        this.dataHeight = maxHeight;
 
         srand(seed);
 
         for (Ncv32u i=0; i<maxHeight; i++)
         {
-            for (Ncv32u j=0; j<data.get()->stride(); j++)
+            for (Ncv32u j=0; j<data.get().stride(); j++)
             {
-                data.get()->ptr()[i * data.get()->stride() + j] =
+                data.get().ptr()[i * data.get().stride() + j] =
                     (T)(((1.0 * rand()) / RAND_MAX) * (rangeHigh - rangeLow) + rangeLow);
             }
         }
 
-        this->bInit = true;
+        this.bInit = true;
     }
 
     NCVTestSourceProvider(std::string pgmFilename)
@@ -111,22 +111,22 @@ public:
         ncvAssertPrintReturn(cudaSuccess == cudaGetDeviceProperties(&devProp, devId), "Error returned from cudaGetDeviceProperties", );
 
         allocatorCPU.reset(new NCVMemNativeAllocator(NCVMemoryTypeHostPinned, static_cast<Ncv32u>(devProp.textureAlignment)));
-        data.reset(new NCVMatrixAlloc<T>(*this->allocatorCPU.get(), image.cols, image.rows));
-        ncvAssertPrintReturn(data.get()->isMemAllocated(), "NCVTestSourceProvider ctor:: Matrix not allocated", );
+        data.reset(new NCVMatrixAlloc<T>(*this.allocatorCPU.get(), image.cols, image.rows));
+        ncvAssertPrintReturn(data.get().isMemAllocated(), "NCVTestSourceProvider ctor:: Matrix not allocated", );
 
-        this->dataWidth = image.cols;
-        this->dataHeight = image.rows;
+        this.dataWidth = image.cols;
+        this.dataHeight = image.rows;
 
-        alvision.Mat hdr(image.size(), CV_8UC1, data.get()->ptr(), data.get()->pitch());
+        alvision.Mat hdr(image.size(), CV_8UC1, data.get().ptr(), data.get().pitch());
         image.copyTo(hdr);
 
-        this->bInit = true;
+        this.bInit = true;
     }
 
     NcvBool fill(NCVMatrix<T> &dst)
     {
-        ncvAssertReturn(this->isInit() &&
-                        dst.memType() == allocatorCPU.get()->memType(), false);
+        ncvAssertReturn(this.isInit() &&
+                        dst.memType() == allocatorCPU.get().memType(), false);
 
         if (dst.width() == 0 || dst.height() == 0)
         {
@@ -135,19 +135,19 @@ public:
 
         for (Ncv32u i=0; i<dst.height(); i++)
         {
-            Ncv32u srcLine = i % this->dataHeight;
+            Ncv32u srcLine = i % this.dataHeight;
 
-            Ncv32u srcFullChunks = dst.width() / this->dataWidth;
+            Ncv32u srcFullChunks = dst.width() / this.dataWidth;
             for (Ncv32u j=0; j<srcFullChunks; j++)
             {
-                memcpy(dst.ptr() + i * dst.stride() + j * this->dataWidth,
-                    this->data.get()->ptr() + this->data.get()->stride() * srcLine,
-                    this->dataWidth * sizeof(T));
+                memcpy(dst.ptr() + i * dst.stride() + j * this.dataWidth,
+                    this.data.get().ptr() + this.data.get().stride() * srcLine,
+                    this.dataWidth * sizeof(T));
             }
 
-            Ncv32u srcLastChunk = dst.width() % this->dataWidth;
-            memcpy(dst.ptr() + i * dst.stride() + srcFullChunks * this->dataWidth,
-                this->data.get()->ptr() + this->data.get()->stride() * srcLine,
+            Ncv32u srcLastChunk = dst.width() % this.dataWidth;
+            memcpy(dst.ptr() + i * dst.stride() + srcFullChunks * this.dataWidth,
+                this.data.get().ptr() + this.data.get().stride() * srcLine,
                 srcLastChunk * sizeof(T));
         }
 
@@ -156,24 +156,24 @@ public:
 
     NcvBool fill(NCVArray<T> &dst)
     {
-        ncvAssertReturn(this->isInit() &&
-                        dst.memType() == allocatorCPU.get()->memType(), false);
+        ncvAssertReturn(this.isInit() &&
+                        dst.memType() == allocatorCPU.get().memType(), false);
 
         if (dst.length() == 0)
         {
             return true;
         }
 
-        Ncv32u srcLen = this->dataWidth * this->dataHeight;
+        Ncv32u srcLen = this.dataWidth * this.dataHeight;
 
         Ncv32u srcFullChunks = (Ncv32u)dst.length() / srcLen;
         for (Ncv32u j=0; j<srcFullChunks; j++)
         {
-            memcpy(dst.ptr() + j * srcLen, this->data.get()->ptr(), srcLen * sizeof(T));
+            memcpy(dst.ptr() + j * srcLen, this.data.get().ptr(), srcLen * sizeof(T));
         }
 
         Ncv32u srcLastChunk = dst.length() % srcLen;
-        memcpy(dst.ptr() + srcFullChunks * srcLen, this->data.get()->ptr(), srcLastChunk * sizeof(T));
+        memcpy(dst.ptr() + srcFullChunks * srcLen, this.data.get().ptr(), srcLastChunk * sizeof(T));
 
         return true;
     }
@@ -188,7 +188,7 @@ private:
 
     NcvBool isInit(void)
     {
-        return this->bInit;
+        return this.bInit;
     }
 
     NcvBool bInit;

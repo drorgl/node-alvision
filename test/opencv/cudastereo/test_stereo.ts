@@ -82,7 +82,7 @@ CUDA_TEST_P(StereoBM, Regression)
     alvision.Ptr<alvision.StereoBM> bm = alvision.cuda::createStereoBM(128, 19);
     alvision.cuda::GpuMat disp;
 
-    bm->compute(loadMat(left_image), loadMat(right_image), disp);
+    bm.compute(loadMat(left_image), loadMat(right_image), disp);
 
     EXPECT_MAT_NEAR(disp_gold, disp, 0.0);
 }
@@ -115,14 +115,14 @@ CUDA_TEST_P(StereoBeliefPropagation, Regression)
     ASSERT_FALSE(disp_gold.empty());
 
     alvision.Ptr<alvision.cuda::StereoBeliefPropagation> bp = alvision.cuda::createStereoBeliefPropagation(64, 8, 2, CV_16S);
-    bp->setMaxDataTerm(25.0);
-    bp->setDataWeight(0.1);
-    bp->setMaxDiscTerm(15.0);
-    bp->setDiscSingleJump(1.0);
+    bp.setMaxDataTerm(25.0);
+    bp.setDataWeight(0.1);
+    bp.setMaxDiscTerm(15.0);
+    bp.setDiscSingleJump(1.0);
 
     alvision.cuda::GpuMat disp;
 
-    bp->compute(loadMat(left_image), loadMat(right_image), disp);
+    bp.compute(loadMat(left_image), loadMat(right_image), disp);
 
     alvision.Mat h_disp(disp);
     h_disp.convertTo(h_disp, disp_gold.depth());
@@ -166,7 +166,7 @@ CUDA_TEST_P(StereoConstantSpaceBP, Regression)
     alvision.Ptr<alvision.cuda::StereoConstantSpaceBP> csbp = alvision.cuda::createStereoConstantSpaceBP(128, 16, 4, 4);
     alvision.cuda::GpuMat disp;
 
-    csbp->compute(loadMat(left_image), loadMat(right_image), disp);
+    csbp.compute(loadMat(left_image), loadMat(right_image), disp);
 
     alvision.Mat h_disp(disp);
     h_disp.convertTo(h_disp, disp_gold.depth());

@@ -76,7 +76,7 @@ bool CV_GrabcutTest::verify(const Mat& mask, const Mat& exp)
     int nonIntersectArea = countNonZero( mask != exp );
 
     float curRatio = (float)nonIntersectArea / (float)expArea;
-    ts->printf( alvision.cvtest.TSConstants.LOG, "nonIntersectArea/expArea = %f\n", curRatio );
+    ts.printf( alvision.cvtest.TSConstants.LOG, "nonIntersectArea/expArea = %f\n", curRatio );
     return curRatio < maxDiffRatio;
 }
 
@@ -84,10 +84,10 @@ void CV_GrabcutTest::run( int /* start_from */)
 {
     alvision.cvtest.DefaultRngAuto defRng;
 
-    Mat img = imread(string(ts->get_data_path()) + "shared/airplane.png");
-    Mat mask_prob = imread(string(ts->get_data_path()) + "grabcut/mask_prob.png", 0);
-    Mat exp_mask1 = imread(string(ts->get_data_path()) + "grabcut/exp_mask1.png", 0);
-    Mat exp_mask2 = imread(string(ts->get_data_path()) + "grabcut/exp_mask2.png", 0);
+    Mat img = imread(this.ts.get_data_path() + "shared/airplane.png");
+    Mat mask_prob = imread(this.ts.get_data_path() + "grabcut/mask_prob.png", 0);
+    Mat exp_mask1 = imread(this.ts.get_data_path() + "grabcut/exp_mask1.png", 0);
+    Mat exp_mask2 = imread(this.ts.get_data_path() + "grabcut/exp_mask2.png", 0);
 
     if (img.empty() || (!mask_prob.empty() && img.size() != mask_prob.size()) ||
                        (!exp_mask1.empty() && img.size() != exp_mask1.size()) ||
@@ -110,12 +110,12 @@ void CV_GrabcutTest::run( int /* start_from */)
     if( mask_prob.empty() )
     {
         mask.copyTo( mask_prob );
-        imwrite(string(ts->get_data_path()) + "grabcut/mask_prob.png", mask_prob);
+        imwrite(this.ts.get_data_path() + "grabcut/mask_prob.png", mask_prob);
     }
     if( exp_mask1.empty() )
     {
         exp_mask1 = (mask & 1) * 255;
-        imwrite(string(ts->get_data_path()) + "grabcut/exp_mask1.png", exp_mask1);
+        imwrite(this.ts.get_data_path() + "grabcut/exp_mask1.png", exp_mask1);
     }
 
     if (!verify((mask & 1) * 255, exp_mask1))
@@ -134,7 +134,7 @@ void CV_GrabcutTest::run( int /* start_from */)
     if( exp_mask2.empty() )
     {
         exp_mask2 = (mask & 1) * 255;
-        imwrite(string(ts->get_data_path()) + "grabcut/exp_mask2.png", exp_mask2);
+        imwrite(this.ts.get_data_path() + "grabcut/exp_mask2.png", exp_mask2);
     }
 
     if (!verify((mask & 1) * 255, exp_mask2))
@@ -151,8 +151,8 @@ TEST(Imgproc_GrabCut, repeatability)
 {
     alvision.cvtest.TS& ts = *alvision.cvtest.TS::ptr();
 
-    Mat image_1 = imread(string(ts.get_data_path()) + "grabcut/image1652.ppm",alvision.ImreadModes. IMREAD_COLOR);
-    Mat mask_1 = imread(string(ts.get_data_path()) + "grabcut/mask1652.ppm", IMREAD_GRAYSCALE);
+    Mat image_1 = imread(this.ts.get_data_path() + "grabcut/image1652.ppm",alvision.ImreadModes. IMREAD_COLOR);
+    Mat mask_1 = imread(this.ts.get_data_path() + "grabcut/mask1652.ppm", IMREAD_GRAYSCALE);
     Rect roi_1(0, 0, 150, 150);
 
     Mat image_2 = image_1.clone();

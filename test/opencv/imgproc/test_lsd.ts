@@ -120,7 +120,7 @@ TEST_F(Imgproc_LSD_ADV, whiteNoise)
     {
         GenerateWhiteNoise(test_image);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_ADV);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(40u >= lines.size()) ++passedtests;
     }
@@ -133,7 +133,7 @@ TEST_F(Imgproc_LSD_ADV, constColor)
     {
         GenerateConstColor(test_image);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_ADV);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(0u == lines.size()) ++passedtests;
     }
@@ -147,7 +147,7 @@ TEST_F(Imgproc_LSD_ADV, lines)
         const unsigned int numOfLines = 1;
         GenerateLines(test_image, numOfLines);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_ADV);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(numOfLines * 2 == lines.size()) ++passedtests;  // * 2 because of Gibbs effect
     }
@@ -160,7 +160,7 @@ TEST_F(Imgproc_LSD_ADV, rotatedRect)
     {
         GenerateRotatedRect(test_image);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_ADV);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(2u <= lines.size())  ++passedtests;
     }
@@ -173,7 +173,7 @@ TEST_F(Imgproc_LSD_STD, whiteNoise)
     {
         GenerateWhiteNoise(test_image);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(50u >= lines.size()) ++passedtests;
     }
@@ -186,7 +186,7 @@ TEST_F(Imgproc_LSD_STD, constColor)
     {
         GenerateConstColor(test_image);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(0u == lines.size()) ++passedtests;
     }
@@ -200,7 +200,7 @@ TEST_F(Imgproc_LSD_STD, lines)
         const unsigned int numOfLines = 1;
         GenerateLines(test_image, numOfLines);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(numOfLines * 2 == lines.size()) ++passedtests;  // * 2 because of Gibbs effect
     }
@@ -213,7 +213,7 @@ TEST_F(Imgproc_LSD_STD, rotatedRect)
     {
         GenerateRotatedRect(test_image);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(4u <= lines.size()) ++passedtests;
     }
@@ -226,7 +226,7 @@ TEST_F(Imgproc_LSD_NONE, whiteNoise)
     {
         GenerateWhiteNoise(test_image);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(50u >= lines.size()) ++passedtests;
     }
@@ -239,7 +239,7 @@ TEST_F(Imgproc_LSD_NONE, constColor)
     {
         GenerateConstColor(test_image);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_NONE);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(0u == lines.size()) ++passedtests;
     }
@@ -253,7 +253,7 @@ TEST_F(Imgproc_LSD_NONE, lines)
         const unsigned int numOfLines = 1;
         GenerateLines(test_image, numOfLines);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_NONE);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(numOfLines * 2 == lines.size()) ++passedtests;  // * 2 because of Gibbs effect
     }
@@ -266,7 +266,7 @@ TEST_F(Imgproc_LSD_NONE, rotatedRect)
     {
         GenerateRotatedRect(test_image);
         Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_NONE);
-        detector->detect(test_image, lines);
+        detector.detect(test_image, lines);
 
         if(8u <= lines.size()) ++passedtests;
     }

@@ -532,7 +532,7 @@ void referenceYUV2RGB(const Mat& yuv, Mat& rgb, YUVreader* yuvReader, RGBwriter*
 
     for(int row = 0; row < rgb.rows; ++row)
         for(int col = 0; col < rgb.cols; ++col)
-            rgbWriter->write(rgb, row, col, cvt.convert(yuvReader->read(yuv, row, col)));
+            rgbWriter.write(rgb, row, col, cvt.convert(yuvReader.read(yuv, row, col)));
 }
 
 template<class convertor>
@@ -542,7 +542,7 @@ void referenceYUV2GRAY(const Mat& yuv, Mat& rgb, YUVreader* yuvReader, GRAYwrite
 
     for(int row = 0; row < rgb.rows; ++row)
         for(int col = 0; col < rgb.cols; ++col)
-            grayWriter->write(rgb, row, col, cvt.convert(yuvReader->read(yuv, row, col)));
+            grayWriter.write(rgb, row, col, cvt.convert(yuvReader.read(yuv, row, col)));
 }
 
 template<class convertor>
@@ -552,7 +552,7 @@ void referenceRGB2YUV(const Mat& rgb, Mat& yuv, RGBreader* rgbReader, YUVwriter*
 
     for(int row = 0; row < rgb.rows; ++row)
         for(int col = 0; col < rgb.cols; ++col)
-            yuvWriter->write(yuv, row, col, cvt.convert(rgbReader->read(rgb, row, col)));
+            yuvWriter.write(yuv, row, col, cvt.convert(rgbReader.read(rgb, row, col)));
 }
 
 struct ConversionYUV
@@ -568,32 +568,32 @@ struct ConversionYUV
 
     int getDcn()
     {
-        return (rgbWriter_ != 0) ? rgbWriter_->channels() : ((grayWriter_ != 0) ? grayWriter_->channels() : yuvWriter_->channels());
+        return (rgbWriter_ != 0) ? rgbWriter_.channels() : ((grayWriter_ != 0) ? grayWriter_.channels() : yuvWriter_.channels());
     }
 
     int getScn()
     {
-        return (yuvReader_ != 0) ? yuvReader_->channels() : rgbReader_->channels();
+        return (yuvReader_ != 0) ? yuvReader_.channels() : rgbReader_.channels();
     }
 
     Size getSrcSize( const Size& imgSize )
     {
-        return (yuvReader_ != 0) ? yuvReader_->size(imgSize) : imgSize;
+        return (yuvReader_ != 0) ? yuvReader_.size(imgSize) : imgSize;
     }
 
     Size getDstSize( const Size& imgSize )
     {
-        return (yuvWriter_ != 0) ? yuvWriter_->size(imgSize) : imgSize;
+        return (yuvWriter_ != 0) ? yuvWriter_.size(imgSize) : imgSize;
     }
 
     bool requiresEvenHeight()
     {
-        return (yuvReader_ != 0) ? yuvReader_->requiresEvenHeight() : ((yuvWriter_ != 0) ? yuvWriter_->requiresEvenHeight() : false);
+        return (yuvReader_ != 0) ? yuvReader_.requiresEvenHeight() : ((yuvWriter_ != 0) ? yuvWriter_.requiresEvenHeight() : false);
     }
 
     bool requiresEvenWidth()
     {
-        return (yuvReader_ != 0) ? yuvReader_->requiresEvenWidth() : ((yuvWriter_ != 0) ? yuvWriter_->requiresEvenWidth() : false);
+        return (yuvReader_ != 0) ? yuvReader_.requiresEvenWidth() : ((yuvWriter_ != 0) ? yuvWriter_.requiresEvenWidth() : false);
     }
 
     YUVreader*  yuvReader_;

@@ -92,7 +92,7 @@ CUDA_TEST_P(Canny, Accuracy)
     alvision.Ptr<alvision.cuda::CannyEdgeDetector> canny = alvision.cuda::createCannyEdgeDetector(low_thresh, high_thresh, apperture_size, useL2gradient);
 
     alvision.cuda::GpuMat edges;
-    canny->detect(loadMat(img, useRoi), edges);
+    canny.detect(loadMat(img, useRoi), edges);
 
     alvision.Mat edges_gold;
     alvision.Canny(img, edges_gold, low_thresh, high_thresh, apperture_size, useL2gradient);

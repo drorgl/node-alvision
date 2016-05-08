@@ -206,11 +206,11 @@ CUDA_TEST_P(CLAHE, Accuracy)
 
     alvision.Ptr<alvision.cuda::CLAHE> clahe = alvision.cuda::createCLAHE(clipLimit);
     alvision.cuda::GpuMat dst;
-    clahe->apply(loadMat(src), dst);
+    clahe.apply(loadMat(src), dst);
 
     alvision.Ptr<alvision.CLAHE> clahe_gold = alvision.createCLAHE(clipLimit);
     alvision.Mat dst_gold;
-    clahe_gold->apply(src, dst_gold);
+    clahe_gold.apply(src, dst_gold);
 
     ASSERT_MAT_NEAR(dst_gold, dst, 1.0);
 }

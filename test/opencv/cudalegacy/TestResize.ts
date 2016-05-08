@@ -164,30 +164,30 @@ bool TestResize<T>::process()
     NCVStatus ncvStat;
     bool rcode = false;
 
-    Ncv32s smallWidth = this->width / this->scaleFactor;
-    Ncv32s smallHeight = this->height / this->scaleFactor;
+    Ncv32s smallWidth = this.width / this.scaleFactor;
+    Ncv32s smallHeight = this.height / this.scaleFactor;
     if (smallWidth == 0 || smallHeight == 0)
     {
         return true;
     }
 
-    NcvSize32u srcSize(this->width, this->height);
+    NcvSize32u srcSize(this.width, this.height);
 
-    NCVMatrixAlloc<T> d_img(*this->allocatorGPU.get(), this->width, this->height);
+    NCVMatrixAlloc<T> d_img(*this.allocatorGPU.get(), this.width, this.height);
     ncvAssertReturn(d_img.isMemAllocated(), false);
-    NCVMatrixAlloc<T> h_img(*this->allocatorCPU.get(), this->width, this->height);
+    NCVMatrixAlloc<T> h_img(*this.allocatorCPU.get(), this.width, this.height);
     ncvAssertReturn(h_img.isMemAllocated(), false);
 
-    NCVMatrixAlloc<T> d_small(*this->allocatorGPU.get(), smallWidth, smallHeight);
+    NCVMatrixAlloc<T> d_small(*this.allocatorGPU.get(), smallWidth, smallHeight);
     ncvAssertReturn(d_small.isMemAllocated(), false);
-    NCVMatrixAlloc<T> h_small(*this->allocatorCPU.get(), smallWidth, smallHeight);
+    NCVMatrixAlloc<T> h_small(*this.allocatorCPU.get(), smallWidth, smallHeight);
     ncvAssertReturn(h_small.isMemAllocated(), false);
-    NCVMatrixAlloc<T> h_small_d(*this->allocatorCPU.get(), smallWidth, smallHeight);
+    NCVMatrixAlloc<T> h_small_d(*this.allocatorCPU.get(), smallWidth, smallHeight);
     ncvAssertReturn(h_small_d.isMemAllocated(), false);
 
-    NCV_SET_SKIP_COND(this->allocatorGPU.get()->isCounting());
+    NCV_SET_SKIP_COND(this.allocatorGPU.get().isCounting());
     NCV_SKIP_COND_BEGIN
-    ncvAssertReturn(this->src.fill(h_img), false);
+    ncvAssertReturn(this.src.fill(h_img), false);
     NCV_SKIP_COND_END
 
     ncvStat = h_img.copySolid(d_img, 0);
@@ -197,15 +197,15 @@ bool TestResize<T>::process()
     {
         ncvStat = nppiStDecimate_32u_C1R((Ncv32u *)d_img.ptr(), d_img.pitch(),
                                          (Ncv32u *)d_small.ptr(), d_small.pitch(),
-                                         srcSize, this->scaleFactor,
-                                         this->bTextureCache);
+                                         srcSize, this.scaleFactor,
+                                         this.bTextureCache);
     }
     else if (sizeof(T) == sizeof(Ncv64u))
     {
         ncvStat = nppiStDecimate_64u_C1R((Ncv64u *)d_img.ptr(), d_img.pitch(),
                                          (Ncv64u *)d_small.ptr(), d_small.pitch(),
-                                         srcSize, this->scaleFactor,
-                                         this->bTextureCache);
+                                         srcSize, this.scaleFactor,
+                                         this.bTextureCache);
     }
     else
     {
@@ -221,13 +221,13 @@ bool TestResize<T>::process()
     {
         ncvStat = nppiStDecimate_32u_C1R_host((Ncv32u *)h_img.ptr(), h_img.pitch(),
                                               (Ncv32u *)h_small.ptr(), h_small.pitch(),
-                                              srcSize, this->scaleFactor);
+                                              srcSize, this.scaleFactor);
     }
     else if (sizeof(T) == sizeof(Ncv64u))
     {
         ncvStat = nppiStDecimate_64u_C1R_host((Ncv64u *)h_img.ptr(), h_img.pitch(),
                                               (Ncv64u *)h_small.ptr(), h_small.pitch(),
-                                              srcSize, this->scaleFactor);
+                                              srcSize, this.scaleFactor);
     }
     else
     {

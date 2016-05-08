@@ -131,7 +131,7 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
 
             if (N < n_frames || N > n_frames + allowed_extra_frames || N != N0)
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "\nError: returned frame count (N0=%d, N=%d) is different from the reference number %d\n", N0, N, n_frames);
+                ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: returned frame count (N0=%d, N=%d) is different from the reference number %d\n", N0, N, n_frames);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
@@ -142,7 +142,7 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
 
                 if( !cap.set(CAP_PROP_POS_FRAMES, idx) )
                 {
-                    ts->printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot seek to frame %d.\n", idx);
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot seek to frame %d.\n", idx);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
@@ -154,16 +154,16 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
 
                 if( idx != idx1 )
                 {
-                    ts->printf(alvision.cvtest.TSConstants.LOG, "\nError: the current position (%d) after seek is different from specified (%d)\n",
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: the current position (%d) after seek is different from specified (%d)\n",
                                idx1, idx);
-                    ts->printf(alvision.cvtest.TSConstants.LOG, "Saving both frames ...\n");
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "Saving both frames ...\n");
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
 
                 if (img.empty())
                 {
-                    ts->printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot read a frame at position %d.\n", idx);
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot read a frame at position %d.\n", idx);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
@@ -172,8 +172,8 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
 
                 if( err < 20 )
                 {
-                    ts->printf(alvision.cvtest.TSConstants.LOG, "The frame read after positioning to %d is incorrect (PSNR=%g)\n", idx, err);
-                    ts->printf(alvision.cvtest.TSConstants.LOG, "Saving both frames ...\n");
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "The frame read after positioning to %d is incorrect (PSNR=%g)\n", idx, err);
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "Saving both frames ...\n");
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }

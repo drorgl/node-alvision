@@ -426,7 +426,7 @@ TEST_P(UMatTestRoi, adjustRoi)
     roi_ua.adjustROI(adjTop, adjBot, adjLeft, adjRight);
     roi_shift_x = std::max(0, roi.x-adjLeft);
     roi_shift_y = std::max(0, roi.y-adjTop);
-    Rect new_roi( roi_shift_x, roi_shift_y, std::min(roi.width+adjRight+adjLeft, size.width-roi_shift_x), std::min(roi.height+adjBot+adjTop, size.height-roi_shift_y) );
+    Rect new_roi( roi_shift_x, roi_shift_y, Math.min(roi.width+adjRight+adjLeft, size.width-roi_shift_x), Math.min(roi.height+adjBot+adjTop, size.height-roi_shift_y) );
     UMat test_roi = UMat(ua, new_roi);
     EXPECT_MAT_NEAR(roi_ua, test_roi, 0);
 }
@@ -540,19 +540,19 @@ TEST(UMat, BufferPoolGrowing)
     const int ITERATIONS = 200;
 #endif
     const Size sz(1920, 1080);
-    BufferPoolController* c = alvision.ocl::getOpenCLAllocator()->getBufferPoolController();
+    BufferPoolController* c = alvision.ocl::getOpenCLAllocator().getBufferPoolController();
     if (c)
     {
-        size_t oldMaxReservedSize = c->getMaxReservedSize();
-        c->freeAllReservedBuffers();
-        c->setMaxReservedSize(sz.area() * 10);
+        size_t oldMaxReservedSize = c.getMaxReservedSize();
+        c.freeAllReservedBuffers();
+        c.setMaxReservedSize(sz.area() * 10);
         for (int i = 0; i < ITERATIONS; i++)
         {
             UMat um(Size(sz.width + i, sz.height + i), CV_8UC1);
             UMat um2(Size(sz.width + 2 * i, sz.height + 2 * i), CV_8UC1);
         }
-        c->setMaxReservedSize(oldMaxReservedSize);
-        c->freeAllReservedBuffers();
+        c.setMaxReservedSize(oldMaxReservedSize);
+        c.freeAllReservedBuffers();
     }
     else
         std::cout << "Skipped, no OpenCL" << std::endl;
@@ -687,7 +687,7 @@ bool CV_UMatTest::TestUMat()
     }
     catch (const test_excep& e)
     {
-        ts->printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
+        ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return false;
     }

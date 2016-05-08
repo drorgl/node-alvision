@@ -149,7 +149,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
         assert(SrcSeq && DstSeq);
 
         ////////// init ////////////////////
-        Count = SrcSeq ->total;
+        Count = SrcSeq .total;
 
         cvStartReadSeq(DstSeq, &DstReader, 0);
         cvStartReadSeq(SrcSeq, &SrcReader, 0);
@@ -162,7 +162,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
         }
 
         ///////// start ////////////////
-        for (i = 1, j = 0; i <= DstSeq ->total;) {
+        for (i = 1, j = 0; i <= DstSeq .total;) {
             ///////// read slice ////////////
             EndPt.x = StartPt.x;
             EndPt.y = StartPt.y;
@@ -176,7 +176,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
                 return TotalErrors;
             } //if( !flag )
 
-        } // for( int i = 0 ; i < DstSeq->total ; i++ )
+        } // for( int i = 0 ; i < DstSeq.total ; i++ )
 
         return TotalErrors;
     }
@@ -238,7 +238,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
     {
         CvMemStoragePos pos;
 
-        ts ->update_context(this, i, false);
+        ts .update_context(this, i, false);
 
         ///////////////////// init contour /////////
         dDiam = 0;
@@ -252,7 +252,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
         }
         dDiam = (float)sqrt(dDiam);
 
-        storage = SrcSeq ->storage;
+        storage = SrcSeq .storage;
 
         ////////////////// test /////////////
         EpsStep = dDiam / IntervalsCount;
@@ -260,7 +260,7 @@ class CV_ApproxPolyTest extends alvision.cvtest.BaseTest
             cvSaveMemStoragePos(storage, &pos);
 
             ////////// call function ////////////
-            DstSeq = cvApproxPoly(SrcSeq, SrcSeq ->header_size, storage,
+            DstSeq = cvApproxPoly(SrcSeq, SrcSeq .header_size, storage,
                 CV_POLY_APPROX_DP, Eps);
 
             if (DstSeq == NULL) {

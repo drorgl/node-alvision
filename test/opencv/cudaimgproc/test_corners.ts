@@ -93,7 +93,7 @@ CUDA_TEST_P(CornerHarris, Accuracy)
     alvision.Ptr<alvision.cuda::CornernessCriteria> harris = alvision.cuda::createHarrisCorner(src.type(), blockSize, apertureSize, k, borderType);
 
     alvision.cuda::GpuMat dst;
-    harris->compute(loadMat(src), dst);
+    harris.compute(loadMat(src), dst);
 
     alvision.Mat dst_gold;
     alvision.cornerHarris(src, dst_gold, blockSize, apertureSize, k, borderType);
@@ -139,7 +139,7 @@ CUDA_TEST_P(CornerMinEigen, Accuracy)
     alvision.Ptr<alvision.cuda::CornernessCriteria> minEigenVal = alvision.cuda::createMinEigenValCorner(src.type(), blockSize, apertureSize, borderType);
 
     alvision.cuda::GpuMat dst;
-    minEigenVal->compute(loadMat(src), dst);
+    minEigenVal.compute(loadMat(src), dst);
 
     alvision.Mat dst_gold;
     alvision.cornerMinEigenVal(src, dst_gold, blockSize, apertureSize, borderType);

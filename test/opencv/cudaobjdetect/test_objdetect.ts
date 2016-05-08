@@ -83,7 +83,7 @@ struct HOG : testing::TestWithParam<alvision.cuda::DeviceInfo>
     }
 
 #ifdef DUMP
-    void dump(const std::Array<alvision.Point>& locations)
+    void dump(const Array<alvision.Point>& locations)
     {
         int nlocations = locations.size();
         f.write((char*)&nlocations, sizeof(nlocations));
@@ -92,7 +92,7 @@ struct HOG : testing::TestWithParam<alvision.cuda::DeviceInfo>
             f.write((char*)&locations[i], sizeof(locations[i]));
     }
 #else
-    void compare(const std::Array<alvision.Point>& locations)
+    void compare(const Array<alvision.Point>& locations)
     {
         // skip block_hists check
         int rows, cols;
@@ -122,13 +122,13 @@ struct HOG : testing::TestWithParam<alvision.cuda::DeviceInfo>
 
     void testDetect(const alvision.Mat& img)
     {
-        hog->setGammaCorrection(false);
-        hog->setSVMDetector(hog->getDefaultPeopleDetector());
+        hog.setGammaCorrection(false);
+        hog.setSVMDetector(hog.getDefaultPeopleDetector());
 
-        std::Array<alvision.Point> locations;
+        Array<alvision.Point> locations;
 
         // Test detect
-        hog->detect(loadMat(img), locations);
+        hog.detect(loadMat(img), locations);
 
 #ifdef DUMP
         dump(locations);
@@ -139,7 +139,7 @@ struct HOG : testing::TestWithParam<alvision.cuda::DeviceInfo>
         // Test detect on smaller image
         alvision.Mat img2;
         alvision.resize(img, img2, alvision.Size(img.cols / 2, img.rows / 2));
-        hog->detect(loadMat(img2), locations);
+        hog.detect(loadMat(img2), locations);
 
 #ifdef DUMP
         dump(locations);
@@ -149,7 +149,7 @@ struct HOG : testing::TestWithParam<alvision.cuda::DeviceInfo>
 
         // Test detect on greater image
         alvision.resize(img, img2, alvision.Size(img.cols * 2, img.rows * 2));
-        hog->detect(loadMat(img2), locations);
+        hog.detect(loadMat(img2), locations);
 
 #ifdef DUMP
         dump(locations);
@@ -193,13 +193,13 @@ CUDA_TEST_P(HOG, GetDescriptors)
     // Convert train images into feature vectors (train table)
     alvision.cuda::GpuMat descriptors, descriptors_by_cols;
 
-    hog->setWinStride(Size(64, 128));
+    hog.setWinStride(Size(64, 128));
 
-    hog->setDescriptorFormat(alvision.cuda::HOG::DESCR_FORMAT_ROW_BY_ROW);
-    hog->compute(d_img, descriptors);
+    hog.setDescriptorFormat(alvision.cuda::HOG::DESCR_FORMAT_ROW_BY_ROW);
+    hog.compute(d_img, descriptors);
 
-    hog->setDescriptorFormat(alvision.cuda::HOG::DESCR_FORMAT_COL_BY_COL);
-    hog->compute(d_img, descriptors_by_cols);
+    hog.setDescriptorFormat(alvision.cuda::HOG::DESCR_FORMAT_COL_BY_COL);
+    hog.compute(d_img, descriptors_by_cols);
 
     // Check size of the result train table
     wins_per_img_x = 3;
@@ -251,11 +251,11 @@ CUDA_TEST_P(CalTech, HOG)
     alvision.Mat markedImage(img.clone());
 
     alvision.Ptr<alvision.cuda::HOG> d_hog = alvision.cuda::HOG::create();
-    d_hog->setSVMDetector(d_hog->getDefaultPeopleDetector());
-    d_hog->setNumLevels(d_hog->getNumLevels() + 32);
+    d_hog.setSVMDetector(d_hog.getDefaultPeopleDetector());
+    d_hog.setNumLevels(d_hog.getNumLevels() + 32);
 
-    std::Array<alvision.Rect> found_locations;
-    d_hog->detectMultiScale(d_img, found_locations);
+    Array<alvision.Rect> found_locations;
+    d_hog.detectMultiScale(d_img, found_locations);
 
 #if defined (LOG_CASCADE_STATISTIC)
     for (int i = 0; i < (int)found_locations.size(); i++)
@@ -335,11 +335,11 @@ CUDA_TEST_P(LBP_classify, Accuracy)
     cvtColor(image, grey, alvision.COLOR_BGR2GRAY);
     ASSERT_FALSE(image.empty());
 
-    std::Array<alvision.Rect> rects;
+    Array<alvision.Rect> rects;
     cpuClassifier.detectMultiScale(grey, rects);
     alvision.Mat markedImage = image.clone();
 
-    std::Array<alvision.Rect>::iterator it = rects.begin();
+    Array<alvision.Rect>::iterator it = rects.begin();
     for (; it != rects.end(); ++it)
         alvision.rectangle(markedImage, *it, alvision.Scalar(255, 0, 0));
 
@@ -348,10 +348,10 @@ CUDA_TEST_P(LBP_classify, Accuracy)
 
     alvision.cuda::GpuMat tested(grey);
     alvision.cuda::GpuMat gpu_rects_buf;
-    gpuClassifier->detectMultiScale(tested, gpu_rects_buf);
+    gpuClassifier.detectMultiScale(tested, gpu_rects_buf);
 
-    std::Array<alvision.Rect> gpu_rects;
-    gpuClassifier->convert(gpu_rects_buf, gpu_rects);
+    Array<alvision.Rect> gpu_rects;
+    gpuClassifier.convert(gpu_rects_buf, gpu_rects);
 
 #if defined (LOG_CASCADE_STATISTIC)
     for (size_t i = 0; i < gpu_rects.size(); i++)

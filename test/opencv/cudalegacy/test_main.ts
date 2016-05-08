@@ -108,7 +108,7 @@ int main(int argc, char** argv)
         else if (outputLevel == "full")
             nvidiaTestOutputLevel = OutputLevelFull;
 
-        TS::ptr()->init("gpu");
+        TS::ptr().init("gpu");
         InitGoogleTest(&argc, argv);
 
         return RUN_ALL_TESTS();

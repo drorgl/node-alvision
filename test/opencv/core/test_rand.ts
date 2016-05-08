@@ -102,14 +102,14 @@ void Core_RandTest::run( int )
     const int MAX_HIST_SIZE = 1000;
     int progress = 0;
 
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     RNG tested_rng = theRNG();
     test_case_count = 200;
 
     for( int idx = 0; idx < test_case_count; idx++ )
     {
         progress = update_progress( progress, idx, test_case_count, 0 );
-        ts->update_context( this, idx, false );
+        ts.update_context( this, idx, false );
 
         int depth = alvision.cvtest.randInt(rng) % (CV_64F+1);
         int c, cn = (alvision.cvtest.randInt(rng) % 4) + 1;
@@ -184,7 +184,7 @@ void Core_RandTest::run( int )
 
         if( maxk >= 1 && alvision.cvtest.norm(arr[0], arr[1], NORM_INF) > eps)
         {
-            ts->printf( alvision.cvtest.TSConstants.LOG, "RNG output depends on the array lengths (some generated numbers get lost?)" );
+            ts.printf( alvision.cvtest.TSConstants.LOG, "RNG output depends on the array lengths (some generated numbers get lost?)" );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
             return;
         }
@@ -232,14 +232,14 @@ void Core_RandTest::run( int )
 
             if( dist_type == CV_RAND_UNI && W[c] != SZ )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Uniform RNG gave values out of the range [%g,%g) on channel %d/%d\n",
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Uniform RNG gave values out of the range [%g,%g) on channel %d/%d\n",
                            A[c], B[c], c, cn);
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
             if( dist_type == CV_RAND_NORMAL && W[c] < SZ*.90)
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Normal RNG gave too many values out of the range (%g+4*%g,%g+4*%g) on channel %d/%d\n",
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Normal RNG gave too many values out of the range (%g+4*%g,%g+4*%g) on channel %d/%d\n",
                            A[c], B[c], A[c], B[c], c, cn);
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
@@ -248,7 +248,7 @@ void Core_RandTest::run( int )
 
             if( !check_pdf(hist[c], 1./W[c], dist_type, refval, realval) )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "RNG failed Chi-square test "
+                ts.printf( alvision.cvtest.TSConstants.LOG, "RNG failed Chi-square test "
                            "(got %g vs probable maximum %g) on channel %d/%d\n",
                            realval, refval, c, cn);
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -300,9 +300,9 @@ void Core_RandTest::run( int )
 
             if( fabs(V - V0) > 0.3*fabs(V0) )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "RNG failed %d-dim sphere volume test (got %g instead of %g)\n",
+                ts.printf( alvision.cvtest.TSConstants.LOG, "RNG failed %d-dim sphere volume test (got %g instead of %g)\n",
                            SDIM, V, V0);
-                ts->printf( alvision.cvtest.TSConstants.LOG, "depth = %d, N0 = %d\n", depth, N0);
+                ts.printf( alvision.cvtest.TSConstants.LOG, "depth = %d, N0 = %d\n", depth, N0);
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }

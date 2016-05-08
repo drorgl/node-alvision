@@ -74,7 +74,7 @@ class CV_WatershedTest  extends alvision.cvtest.BaseTest
         IplImage iplmrks = markers;
 
         var colors = new Array<alvision.uchar>(1);
-        for (var i = 0; cnts != 0; cnts = cnts ->h_next, ++i )
+        for (var i = 0; cnts != 0; cnts = cnts .h_next, ++i )
         {
             cvDrawContours( &iplmrks, cnts, Scalar::all(i + 1), Scalar::all(i + 1), -1, CV_FILLED);
             Point * p = (Point *)cvGetSeqElem(cnts, 0);
@@ -82,7 +82,7 @@ class CV_WatershedTest  extends alvision.cvtest.BaseTest
             //expected image was added with 1 in order to save to png
             //so now we substract 1 to get real color
             if (!exp.empty())
-                colors.push(exp.ptr(p ->y)[p ->x] - 1);
+                colors.push(exp.ptr(p .y)[p .x] - 1);
         }
         fs.release();
         const int compNum = (int)(colors.size() - 1);

@@ -201,7 +201,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    const static Size FrameSize;
 //    static std::string TmpDirectory;
 //
-//    CreateVideoWriterInvoker(std::Array<VideoWriter*>& _writers, std::Array<std::string>& _files) :
+//    CreateVideoWriterInvoker(Array<VideoWriter*>& _writers, Array<std::string>& _files) :
 //        ParallelLoopBody(), writers(&_writers), files(&_files)
 //    {
 //    }
@@ -214,16 +214,16 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //            stream << i << ".avi";
 //            std::string fileName = tempfile(stream);
 //
-//            files->operator[](i) = fileName;
-//            writers->operator[](i) = new VideoWriter(fileName, VideoWriter::fourcc('X','V','I','D'), 25.0f, FrameSize);
+//            files.operator[](i) = fileName;
+//            writers.operator[](i) = new VideoWriter(fileName, VideoWriter::fourcc('X','V','I','D'), 25.0f, FrameSize);
 //
-//            CV_Assert(writers->operator[](i)->isOpened());
+//            CV_Assert(writers.operator[](i).isOpened());
 //        }
 //    }
 //
 //private:
-//    std::Array<VideoWriter*>* writers;
-//    std::Array<std::string>* files;
+//    Array<VideoWriter*>* writers;
+//    Array<std::string>* files;
 //};
 //
 //std::string CreateVideoWriterInvoker::TmpDirectory;
@@ -237,7 +237,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    static const Scalar ObjectColor;
 //    static const Point Center;
 //
-//    WriteVideo_Invoker(const std::Array<VideoWriter*>& _writers) :
+//    WriteVideo_Invoker(const Array<VideoWriter*>& _writers) :
 //        ParallelLoopBody(), writers(&_writers)
 //    {
 //    }
@@ -255,15 +255,15 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    {
 //        for (int j = range.start; j < range.end; ++j)
 //        {
-//            VideoWriter* writer = writers->operator[](j);
+//            VideoWriter* writer = writers.operator[](j);
 //            CV_Assert(writer != NULL);
-//            CV_Assert(writer->isOpened());
+//            CV_Assert(writer.isOpened());
 //
 //            Mat frame(CreateVideoWriterInvoker::FrameSize, CV_8UC3);
 //            for (unsigned int i = 0; i < FrameCount; ++i)
 //            {
 //                GenerateFrame(frame, i);
-//                writer->operator<< (frame);
+//                writer.operator<< (frame);
 //            }
 //        }
 //    }
@@ -277,7 +277,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    }
 //
 //private:
-//    const std::Array<VideoWriter*>* writers;
+//    const Array<VideoWriter*>* writers;
 //};
 //
 //const Scalar WriteVideo_Invoker::ObjectColor(alvision.Scalar.all(0));
@@ -287,7 +287,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //class CreateVideoCaptureInvoker  extends ParallelLoopBody
 //{
 //public:
-//    CreateVideoCaptureInvoker(std::Array<VideoCapture*>& _readers, const std::Array<std::string>& _files) :
+//    CreateVideoCaptureInvoker(Array<VideoCapture*>& _readers, const Array<std::string>& _files) :
 //        ParallelLoopBody(), readers(&_readers), files(&_files)
 //    {
 //    }
@@ -296,19 +296,19 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    {
 //        for (int i = range.start; i != range.end; ++i)
 //        {
-//            readers->operator[](i) = new VideoCapture(files->operator[](i));
-//            CV_Assert(readers->operator[](i)->isOpened());
+//            readers.operator[](i) = new VideoCapture(files.operator[](i));
+//            CV_Assert(readers.operator[](i).isOpened());
 //        }
 //    }
 //private:
-//    std::Array<VideoCapture*>* readers;
-//    const std::Array<std::string>* files;
+//    Array<VideoCapture*>* readers;
+//    const Array<std::string>* files;
 //};
 //
 //class ReadImageAndTest  extends ParallelLoopBody
 //{
 //public:
-//    ReadImageAndTest(const std::Array<VideoCapture*>& _readers, alvision.cvtest.TS* _ts) :
+//    ReadImageAndTest(const Array<VideoCapture*>& _readers, alvision.cvtest.TS* _ts) :
 //        ParallelLoopBody(), readers(&_readers), ts(_ts)
 //    {
 //    }
@@ -317,12 +317,12 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    {
 //        for (int j = range.start; j < range.end; ++j)
 //        {
-//            VideoCapture* capture = readers->operator[](j);
+//            VideoCapture* capture = readers.operator[](j);
 //            CV_Assert(capture != NULL);
-//            CV_Assert(capture->isOpened());
+//            CV_Assert(capture.isOpened());
 //
 //            const static double eps = 23.0;
-//            unsigned int frameCount = static_cast<unsigned int>(capture->get(CAP_PROP_FRAME_COUNT));
+//            unsigned int frameCount = static_cast<unsigned int>(capture.get(CAP_PROP_FRAME_COUNT));
 //            CV_Assert(frameCount == WriteVideo_Invoker::FrameCount);
 //            Mat reference(CreateVideoWriterInvoker::FrameSize, CV_8UC3);
 //
@@ -342,12 +342,12 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //                if (psnr < eps)
 //                {
 //    #define SUM alvision.cvtest.TS::SUMMARY
-//                    ts->printf(SUM, "\nPSNR: %lf\n", psnr);
-//                    ts->printf(SUM, "Video #: %d\n", range.start);
-//                    ts->printf(SUM, "Frame #: %d\n", i);
+//                    ts.printf(SUM, "\nPSNR: %lf\n", psnr);
+//                    ts.printf(SUM, "Video #: %d\n", range.start);
+//                    ts.printf(SUM, "Frame #: %d\n", i);
 //    #undef SUM
 //                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-//                    ts->set_gtest_status();
+//                    ts.set_gtest_status();
 //
 //                    Mat diff;
 //                    absdiff(actual, reference, diff);
@@ -363,7 +363,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    static bool next;
 //
 //private:
-//    const std::Array<VideoCapture*>* readers;
+//    const Array<VideoCapture*>* readers;
 //    alvision.cvtest.TS* ts;
 //};
 //
@@ -375,9 +375,9 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
 //
 //    // creating VideoWriters
-//    std::Array<VideoWriter*> writers(threadsCount);
+//    Array<VideoWriter*> writers(threadsCount);
 //    Range range(0, threadsCount);
-//    std::Array<std::string> files(threadsCount);
+//    Array<std::string> files(threadsCount);
 //    CreateVideoWriterInvoker invoker1(writers, files);
 //    parallel_for_(range, invoker1);
 //
@@ -385,11 +385,11 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    parallel_for_(range, WriteVideo_Invoker(writers));
 //
 //    // deleting the writers
-//    for (std::Array<VideoWriter*>::iterator i = writers.begin(), end = writers.end(); i != end; ++i)
+//    for (Array<VideoWriter*>::iterator i = writers.begin(), end = writers.end(); i != end; ++i)
 //        delete *i;
 //    writers.clear();
 //
-//    std::Array<VideoCapture*> readers(threadsCount);
+//    Array<VideoCapture*> readers(threadsCount);
 //    CreateVideoCaptureInvoker invoker2(readers, files);
 //    parallel_for_(range, invoker2);
 //
@@ -398,9 +398,9 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //    parallel_for_(range, ReadImageAndTest(readers, ts));
 //
 //    // deleting tmp video files
-//    for (std::Array<std::string>::const_iterator i = files.begin(), end = files.end(); i != end; ++i)
+//    for (Array<std::string>::const_iterator i = files.begin(), end = files.end(); i != end; ++i)
 //    {
-//        int code = remove(i->c_str());
+//        int code = remove(i.c_str());
 //        if (code == 1)
 //            std::cerr << "Couldn't delete " << *i << std::endl;
 //    }

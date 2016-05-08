@@ -110,10 +110,10 @@ run_test(method : METHOD) : void{
             {
                 if (!failed_frames)
                 {
-                    ts->printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\n", i+1, ext[i]);
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\n", i+1, ext[i]);
                 }
                 failed_frames++;
-                ts->printf(alvision.cvtest.TSConstants.LOG, "\nIteration: %d\n\nError: cannot read a frame with index %d.\n", j, idx.at(j));
+                ts.printf(alvision.cvtest.TSConstants.LOG, "\nIteration: %d\n\nError: cannot read a frame with index %d.\n", j, idx.at(j));
                 this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_EXCEPTION);
                 flag = !flag;
             } */

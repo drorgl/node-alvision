@@ -206,7 +206,7 @@ class CV_DetectorTest extends alvision.cvtest.BaseTest {
         }
 
         if (test_case_count <= 0 || imageFilenames.size() <= 0) {
-            ts ->printf(alvision.cvtest.TSConstants.LOG, "validation file is not determined or not correct");
+            ts .printf(alvision.cvtest.TSConstants.LOG, "validation file is not determined or not correct");
             code = alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
         }
         this.ts.set_failed_test_info(code);
@@ -220,7 +220,7 @@ class CV_DetectorTest extends alvision.cvtest.BaseTest {
     writeDetector(fs: alvision.FileStorage, di: alvision.int): void {
     }
     runTestCase(detectorIdx: alvision.int, objects: Array<Array<alvision.Rect>>): alvision.int {
-        string dataPath = ts ->get_data_path(), detectorFilename;
+        string dataPath = ts .get_data_path(), detectorFilename;
         if (!detectorFilenames[detectorIdx].empty())
             detectorFilename = dataPath + detectorFilenames[detectorIdx];
         printf("detector %s\n", detectorFilename);
@@ -232,7 +232,7 @@ class CV_DetectorTest extends alvision.cvtest.BaseTest {
             if (image.empty()) {
                 char msg[30];
                 sprintf(msg, "%s %d %s", "image ", ii, " can not be read");
-                ts ->printf(alvision.cvtest.TSConstants.LOG, msg);
+                ts .printf(alvision.cvtest.TSConstants.LOG, msg);
                 return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
             }
             int code = detectMultiScale(detectorIdx, image, imgObjects);
@@ -248,7 +248,7 @@ class CV_DetectorTest extends alvision.cvtest.BaseTest {
                 validationFS << imageIdxStr << "[:";
                 for (Array<Rect>::const_iterator it = imgObjects.begin();
                     it != imgObjects.end(); ++it) {
-                    validationFS << it ->x << it ->y << it ->width << it ->height;
+                    validationFS << it .x << it .y << it .width << it .height;
                 }
                 validationFS << "]"; // imageIdxStr
             }
@@ -290,15 +290,15 @@ class CV_DetectorTest extends alvision.cvtest.BaseTest {
 
             // compare rectangles
             Array < uchar > map(valRects.size(), 0);
-            for (Array<Rect>::const_iterator cr = it ->begin();
-                cr != it ->end(); ++cr) {
+            for (Array<Rect>::const_iterator cr = it .begin();
+                cr != it .end(); ++cr) {
                 // find nearest rectangle
-                Point2f cp1 = Point2f(cr ->x + (float)cr->width / 2.0f, cr ->y + (float)cr->height / 2.0f );
+                Point2f cp1 = Point2f(cr .x + (float)cr.width / 2.0f, cr .y + (float)cr.height / 2.0f );
                 int minIdx = -1, vi = 0;
                 float minDist = (float)norm(Point(imgSize.width, imgSize.height));
                 for (Array<Rect>::const_iterator vr = valRects.begin();
                     vr != valRects.end(); ++vr, vi++) {
-                    Point2f cp2 = Point2f(vr ->x + (float)vr->width / 2.0f, vr ->y + (float)vr->height / 2.0f );
+                    Point2f cp2 = Point2f(vr .x + (float)vr.width / 2.0f, vr .y + (float)vr.height / 2.0f );
                     float curDist = (float)norm(cp1 - cp2);
                     if (curDist < minDist) {
                         minIdx = vi;
@@ -310,8 +310,8 @@ class CV_DetectorTest extends alvision.cvtest.BaseTest {
                 }
                 else {
                     Rect vr = valRects[minIdx];
-                    if (map[minIdx] != 0 || (minDist > dist) || (abs(cr ->width - vr.width) > wDiff) ||
-                        (abs(cr ->height - vr.height) > hDiff))
+                    if (map[minIdx] != 0 || (minDist > dist) || (abs(cr .width - vr.width) > wDiff) ||
+                        (abs(cr .height - vr.height) > hDiff))
                         noPair++;
                     else
                         map[minIdx] = 1;
@@ -407,7 +407,7 @@ int CV_CascadeDetectorTest::detectMultiScale_C( const string& filename,
 
     if( !c_cascade )
     {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
+        ts.printf( alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
         return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
     }
     Mat grayImg;
@@ -418,7 +418,7 @@ int CV_CascadeDetectorTest::detectMultiScale_C( const string& filename,
     CvSeq* rs = cvHaarDetectObjects(&c_gray, c_cascade, storage, 1.1, 3, flags[di] );
 
     objects.clear();
-    for( int i = 0; i < rs->total; i++ )
+    for( int i = 0; i < rs.total; i++ )
     {
         Rect r = *(Rect*)cvGetSeqElem(rs, i);
         objects.push(r);
@@ -430,7 +430,7 @@ int CV_CascadeDetectorTest::detectMultiScale_C( const string& filename,
 int CV_CascadeDetectorTest::detectMultiScale( int di, const Mat& img,
                                               Array<Rect>& objects)
 {
-    string dataPath = ts->get_data_path(), filename;
+    string dataPath = ts.get_data_path(), filename;
     filename = dataPath + detectorFilenames[di];
     const string pattern = "haarcascade_frontalface_default.xml";
 
@@ -442,7 +442,7 @@ int CV_CascadeDetectorTest::detectMultiScale( int di, const Mat& img,
     CascadeClassifier cascade( filename );
     if( cascade.empty() )
     {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
+        ts.printf( alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
         return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
     }
     Mat grayImg;
@@ -627,14 +627,14 @@ void HOGCacheTester::init(const HOGDescriptorTester* _descriptor,
     cacheStride = _cacheStride;
     useCache = _useCache;
 
-    descriptor->computeGradient(_img, grad, qangle, _paddingTL, _paddingBR);
+    descriptor.computeGradient(_img, grad, qangle, _paddingTL, _paddingBR);
     imgoffset = _paddingTL;
 
-    winSize = descriptor->winSize;
-    Size blockSize = descriptor->blockSize;
-    Size blockStride = descriptor->blockStride;
-    Size cellSize = descriptor->cellSize;
-    int i, j, nbins = descriptor->nbins;
+    winSize = descriptor.winSize;
+    Size blockSize = descriptor.blockSize;
+    Size blockStride = descriptor.blockStride;
+    Size cellSize = descriptor.cellSize;
+    int i, j, nbins = descriptor.nbins;
     int rawBlockSize = blockSize.width*blockSize.height;
 
     nblocks = Size((winSize.width - blockSize.width)/blockStride.width + 1,
@@ -655,7 +655,7 @@ void HOGCacheTester::init(const HOGDescriptorTester* _descriptor,
     }
 
     Mat_<float> weights(blockSize);
-    float sigma = (float)descriptor->getWinSigma();
+    float sigma = (float)descriptor.getWinSigma();
     float scale = 1.f/(sigma*sigma*2);
 
     for(i = 0; i < blockSize.height; i++)
@@ -713,14 +713,14 @@ void HOGCacheTester::init(const HOGDescriptorTester* _descriptor,
                     (unsigned)icellY1 < (unsigned)ncells.height )
                 {
                     data = &pixData[rawBlockSize*2 + (count4++)];
-                    data->histOfs[0] = (icellX0*ncells.height + icellY0)*nbins;
-                    data->histWeights[0] = (1.f - cellX)*(1.f - cellY);
-                    data->histOfs[1] = (icellX1*ncells.height + icellY0)*nbins;
-                    data->histWeights[1] = cellX*(1.f - cellY);
-                    data->histOfs[2] = (icellX0*ncells.height + icellY1)*nbins;
-                    data->histWeights[2] = (1.f - cellX)*cellY;
-                    data->histOfs[3] = (icellX1*ncells.height + icellY1)*nbins;
-                    data->histWeights[3] = cellX*cellY;
+                    data.histOfs[0] = (icellX0*ncells.height + icellY0)*nbins;
+                    data.histWeights[0] = (1.f - cellX)*(1.f - cellY);
+                    data.histOfs[1] = (icellX1*ncells.height + icellY0)*nbins;
+                    data.histWeights[1] = cellX*(1.f - cellY);
+                    data.histOfs[2] = (icellX0*ncells.height + icellY1)*nbins;
+                    data.histWeights[2] = (1.f - cellX)*cellY;
+                    data.histOfs[3] = (icellX1*ncells.height + icellY1)*nbins;
+                    data.histWeights[3] = cellX*cellY;
                 }
                 else
                 {
@@ -730,12 +730,12 @@ void HOGCacheTester::init(const HOGDescriptorTester* _descriptor,
                         icellY1 = icellY0;
                         cellY = 1.f - cellY;
                     }
-                    data->histOfs[0] = (icellX0*ncells.height + icellY1)*nbins;
-                    data->histWeights[0] = (1.f - cellX)*cellY;
-                    data->histOfs[1] = (icellX1*ncells.height + icellY1)*nbins;
-                    data->histWeights[1] = cellX*cellY;
-                    data->histOfs[2] = data->histOfs[3] = 0;
-                    data->histWeights[2] = data->histWeights[3] = 0;
+                    data.histOfs[0] = (icellX0*ncells.height + icellY1)*nbins;
+                    data.histWeights[0] = (1.f - cellX)*cellY;
+                    data.histOfs[1] = (icellX1*ncells.height + icellY1)*nbins;
+                    data.histWeights[1] = cellX*cellY;
+                    data.histOfs[2] = data.histOfs[3] = 0;
+                    data.histWeights[2] = data.histWeights[3] = 0;
                 }
             }
             else
@@ -750,12 +750,12 @@ void HOGCacheTester::init(const HOGDescriptorTester* _descriptor,
                     (unsigned)icellY1 < (unsigned)ncells.height )
                 {
                     data = &pixData[rawBlockSize + (count2++)];
-                    data->histOfs[0] = (icellX1*ncells.height + icellY0)*nbins;
-                    data->histWeights[0] = cellX*(1.f - cellY);
-                    data->histOfs[1] = (icellX1*ncells.height + icellY1)*nbins;
-                    data->histWeights[1] = cellX*cellY;
-                    data->histOfs[2] = data->histOfs[3] = 0;
-                    data->histWeights[2] = data->histWeights[3] = 0;
+                    data.histOfs[0] = (icellX1*ncells.height + icellY0)*nbins;
+                    data.histWeights[0] = cellX*(1.f - cellY);
+                    data.histOfs[1] = (icellX1*ncells.height + icellY1)*nbins;
+                    data.histWeights[1] = cellX*cellY;
+                    data.histOfs[2] = data.histOfs[3] = 0;
+                    data.histWeights[2] = data.histWeights[3] = 0;
                 }
                 else
                 {
@@ -765,15 +765,15 @@ void HOGCacheTester::init(const HOGDescriptorTester* _descriptor,
                         icellY1 = icellY0;
                         cellY = 1.f - cellY;
                     }
-                    data->histOfs[0] = (icellX1*ncells.height + icellY1)*nbins;
-                    data->histWeights[0] = cellX*cellY;
-                    data->histOfs[1] = data->histOfs[2] = data->histOfs[3] = 0;
-                    data->histWeights[1] = data->histWeights[2] = data->histWeights[3] = 0;
+                    data.histOfs[0] = (icellX1*ncells.height + icellY1)*nbins;
+                    data.histWeights[0] = cellX*cellY;
+                    data.histOfs[1] = data.histOfs[2] = data.histOfs[3] = 0;
+                    data.histWeights[1] = data.histWeights[2] = data.histWeights[3] = 0;
                 }
             }
-            data->gradOfs = (grad.cols*i + j)*2;
-            data->qangleOfs = (qangle.cols*i + j)*2;
-            data->gradWeight = weights(i,j);
+            data.gradOfs = (grad.cols*i + j)*2;
+            data.qangleOfs = (qangle.cols*i + j)*2;
+            data.gradWeight = weights(i,j);
         }
 
     assert( count1 + count2 + count4 == rawBlockSize );
@@ -800,7 +800,7 @@ const float* HOGCacheTester::getBlock(Point pt, float* buf)
     float* blockHist = buf;
     assert(descriptor != 0);
 
-    Size blockSize = descriptor->blockSize;
+    Size blockSize = descriptor.blockSize;
     pt += imgoffset;
 
     CV_Assert( (unsigned)pt.x <= (unsigned)(grad.cols - blockSize.width) &&
@@ -926,14 +926,14 @@ void HOGCacheTester::normalizeBlockHistogram(float* _hist) const
     for( ; i < sz; i++ )
         sum += hist[i]*hist[i];
 
-    float scale = 1.f/(Math.sqrt(sum)+sz*0.1f), thresh = (float)descriptor->L2HysThreshold;
+    float scale = 1.f/(Math.sqrt(sum)+sz*0.1f), thresh = (float)descriptor.L2HysThreshold;
     partSum[0] = partSum[1] = partSum[2] = partSum[3] = 0.0f;
     for(i = 0; i <= sz - 4; i += 4)
     {
-        hist[i] = std::min(hist[i]*scale, thresh);
-        hist[i+1] = std::min(hist[i+1]*scale, thresh);
-        hist[i+2] = std::min(hist[i+2]*scale, thresh);
-        hist[i+3] = std::min(hist[i+3]*scale, thresh);
+        hist[i] = Math.min(hist[i]*scale, thresh);
+        hist[i+1] = Math.min(hist[i+1]*scale, thresh);
+        hist[i+2] = Math.min(hist[i+2]*scale, thresh);
+        hist[i+3] = Math.min(hist[i+3]*scale, thresh);
         partSum[0] += hist[i]*hist[i];
         partSum[1] += hist[i+1]*hist[i+1];
         partSum[2] += hist[i+2]*hist[i+2];
@@ -944,7 +944,7 @@ void HOGCacheTester::normalizeBlockHistogram(float* _hist) const
     sum = t0 + t1;
     for( ; i < sz; i++ )
     {
-        hist[i] = std::min(hist[i]*scale, thresh);
+        hist[i] = Math.min(hist[i]*scale, thresh);
         sum += hist[i]*hist[i];
     }
 
@@ -1046,17 +1046,17 @@ void HOGDescriptorTester::detect(const Mat& img,
     }
 
     // validation
-    std::Array<Point> actual_find_locations;
-    std::Array<double> actual_weights;
-    actual_hog->detect(img, actual_find_locations, actual_weights,
+    Array<Point> actual_find_locations;
+    Array<double> actual_weights;
+    actual_hog.detect(img, actual_find_locations, actual_weights,
         hitThreshold, winStride, padding, locations);
 
     if (!std::equal(hits.begin(), hits.end(),
         actual_find_locations.begin()))
     {
-        ts->printf(alvision.cvtest.TS::SUMMARY, "Found locations are not equal (see detect function)\n");
+        ts.printf(alvision.cvtest.TS::SUMMARY, "Found locations are not equal (see detect function)\n");
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-        ts->set_gtest_status();
+        ts.set_gtest_status();
         failed = true;
         return;
     }
@@ -1065,12 +1065,12 @@ void HOGDescriptorTester::detect(const Mat& img,
     double diff_norm = alvision.cvtest.norm(actual_weights, weights,alvision.NormTypes. NORM_L2);
     if (diff_norm > eps)
     {
-        ts->printf(alvision.cvtest.TS::SUMMARY, "Weights for found locations aren't equal.\n"
+        ts.printf(alvision.cvtest.TS::SUMMARY, "Weights for found locations aren't equal.\n"
             "Norm of the difference is %lf\n", diff_norm);
-        ts->printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
+        ts.printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
         failed = true;
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-        ts->set_gtest_status();
+        ts.set_gtest_status();
         return;
     }
 }
@@ -1140,18 +1140,18 @@ void HOGDescriptorTester::compute(InputArray _img, Array<float>& descriptors,
     }
 
     // validation
-    std::Array<float> actual_descriptors;
-    actual_hog->compute(img, actual_descriptors, winStride, padding, locations);
+    Array<float> actual_descriptors;
+    actual_hog.compute(img, actual_descriptors, winStride, padding, locations);
 
     double diff_norm = alvision.cvtest.norm(actual_descriptors, descriptors,alvision.NormTypes. NORM_L2);
     const double eps = 0.0;
     if (diff_norm > eps)
     {
-        ts->printf(alvision.cvtest.TS::SUMMARY, "Norm of the difference: %lf\n", diff_norm);
-        ts->printf(alvision.cvtest.TS::SUMMARY, "Found descriptors are not equal (see compute function)\n");
+        ts.printf(alvision.cvtest.TS::SUMMARY, "Norm of the difference: %lf\n", diff_norm);
+        ts.printf(alvision.cvtest.TS::SUMMARY, "Found descriptors are not equal (see compute function)\n");
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-        ts->printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
-        ts->set_gtest_status();
+        ts.printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
+        ts.set_gtest_status();
         failed = true;
         return;
     }
@@ -1288,7 +1288,7 @@ void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle
     // validation
     Mat actual_mats[2], reference_mats[2] = { grad, qangle };
     const char* args[] = { "Gradient's", "Qangles's" };
-    actual_hog->computeGradient(img, actual_mats[0], actual_mats[1], paddingTL, paddingBR);
+    actual_hog.computeGradient(img, actual_mats[0], actual_mats[1], paddingTL, paddingBR);
 
     const double eps = 0.0;
     for (i = 0; i < 2; ++i)
@@ -1296,11 +1296,11 @@ void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle
        double diff_norm = alvision.cvtest.norm(reference_mats[i], actual_mats[i],alvision.NormTypes. NORM_L2);
        if (diff_norm > eps)
        {
-           ts->printf(alvision.cvtest.TSConstants.LOG, "%s matrices are not equal\n"
+           ts.printf(alvision.cvtest.TSConstants.LOG, "%s matrices are not equal\n"
                "Norm of the difference is %lf\n", args[i], diff_norm);
-           ts->printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
+           ts.printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-           ts->set_gtest_status();
+           ts.set_gtest_status();
            failed = true;
            return;
        }
@@ -1310,7 +1310,7 @@ void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle
 TEST(Objdetect_HOGDetector_Strict, accuracy)
 {
     alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
     HOGDescriptor actual_hog;
     actual_hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
@@ -1327,12 +1327,12 @@ TEST(Objdetect_HOGDetector_Strict, accuracy)
         rng.fill(image, RNG::UNIFORM, 0, 256, true);
 
         // checking detect
-        std::Array<Point> hits;
-        std::Array<double> weights;
+        Array<Point> hits;
+        Array<double> weights;
         reference_hog.detect(image, hits, weights);
 
         // checking compute
-        std::Array<float> descriptors;
+        Array<float> descriptors;
         reference_hog.compute(image, descriptors);
     }
  }

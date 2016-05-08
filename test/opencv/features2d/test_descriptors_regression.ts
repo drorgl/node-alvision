@@ -122,7 +122,7 @@ protected:
     {
         if( validDescriptors.size != calcDescriptors.size || validDescriptors.type() != calcDescriptors.type() )
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Valid and computed descriptors matrices must have the same size and type.\n");
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Valid and computed descriptors matrices must have the same size and type.\n");
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
             return;
         }
@@ -147,7 +147,7 @@ protected:
             ss << ">" << maxDist  << " - bad accuracy!"<< endl;
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         }
-        ts->printf(alvision.cvtest.TSConstants.LOG,  ss );
+        ts.printf(alvision.cvtest.TSConstants.LOG,  ss );
     }
 
     void emptyDataTest()
@@ -161,22 +161,22 @@ protected:
 
         try
         {
-            dextractor->compute( image, keypoints, descriptors );
+            dextractor.compute( image, keypoints, descriptors );
         }
         catch(...)
         {
-            ts->printf( alvision.cvtest.TSConstants.LOG, "compute() on empty image and empty keypoints must not generate exception (1).\n");
+            ts.printf( alvision.cvtest.TSConstants.LOG, "compute() on empty image and empty keypoints must not generate exception (1).\n");
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
         }
 
         image.create( 50, 50, CV_8UC3 );
         try
         {
-            dextractor->compute( image, keypoints, descriptors );
+            dextractor.compute( image, keypoints, descriptors );
         }
         catch(...)
         {
-            ts->printf( alvision.cvtest.TSConstants.LOG, "compute() on nonempty image and empty keypoints must not generate exception (1).\n");
+            ts.printf( alvision.cvtest.TSConstants.LOG, "compute() on nonempty image and empty keypoints must not generate exception (1).\n");
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
         }
 
@@ -186,11 +186,11 @@ protected:
         Array<Mat> descriptorsCollection;
         try
         {
-            dextractor->compute( images, keypointsCollection, descriptorsCollection );
+            dextractor.compute( images, keypointsCollection, descriptorsCollection );
         }
         catch(...)
         {
-            ts->printf( alvision.cvtest.TSConstants.LOG, "compute() on empty images and empty keypoints collection must not generate exception (2).\n");
+            ts.printf( alvision.cvtest.TSConstants.LOG, "compute() on empty images and empty keypoints collection must not generate exception (2).\n");
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
         }
     }
@@ -200,18 +200,18 @@ protected:
         assert( dextractor );
 
         // Read the test image.
-        string imgFilename =  string(ts->get_data_path()) + FEATURES2D_DIR + "/" + IMAGE_FILENAME;
+        string imgFilename =  this.ts.get_data_path() + FEATURES2D_DIR + "/" + IMAGE_FILENAME;
         Mat img = imread( imgFilename );
         if( img.empty() )
         {
-            ts->printf( alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imgFilename );
+            ts.printf( alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imgFilename );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
             return;
         }
         Array<KeyPoint> keypoints;
-        FileStorage fs( string(ts->get_data_path()) + FEATURES2D_DIR + "/keypoints.xml.gz", FileStorage::READ );
+        FileStorage fs( this.ts.get_data_path() + FEATURES2D_DIR + "/keypoints.xml.gz", FileStorage::READ );
         if(!detector.empty()) {
-            detector->detect(img, keypoints);
+            detector.detect(img, keypoints);
         } else {
             read( fs.getFirstTopLevelNode(), keypoints );
         }
@@ -219,26 +219,26 @@ protected:
         {
             Mat calcDescriptors;
             double t = (double)getTickCount();
-            dextractor->compute( img, keypoints, calcDescriptors );
+            dextractor.compute( img, keypoints, calcDescriptors );
             t = getTickCount() - t;
-            ts->printf(alvision.cvtest.TSConstants.LOG, "\nAverage time of computing one descriptor = %g ms.\n", t/((double)getTickFrequency()*1000.)/calcDescriptors.rows);
+            ts.printf(alvision.cvtest.TSConstants.LOG, "\nAverage time of computing one descriptor = %g ms.\n", t/((double)getTickFrequency()*1000.)/calcDescriptors.rows);
 
             if( calcDescriptors.rows != (int)keypoints.size() )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Count of computed descriptors and keypoints count must be equal.\n" );
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Count of keypoints is            %d.\n", (int)keypoints.size() );
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Count of computed descriptors is %d.\n", calcDescriptors.rows );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Count of computed descriptors and keypoints count must be equal.\n" );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Count of keypoints is            %d.\n", (int)keypoints.size() );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Count of computed descriptors is %d.\n", calcDescriptors.rows );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
 
-            if( calcDescriptors.cols != dextractor->descriptorSize() || calcDescriptors.type() != dextractor->descriptorType() )
+            if( calcDescriptors.cols != dextractor.descriptorSize() || calcDescriptors.type() != dextractor.descriptorType() )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Incorrect descriptor size or descriptor type.\n" );
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Expected size is   %d.\n", dextractor->descriptorSize() );
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Calculated size is %d.\n", calcDescriptors.cols );
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Expected type is   %d.\n", dextractor->descriptorType() );
-                ts->printf( alvision.cvtest.TSConstants.LOG, "Calculated type is %d.\n", calcDescriptors.type() );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Incorrect descriptor size or descriptor type.\n" );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Expected size is   %d.\n", dextractor.descriptorSize() );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Calculated size is %d.\n", calcDescriptors.cols );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Expected type is   %d.\n", dextractor.descriptorType() );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "Calculated type is %d.\n", calcDescriptors.type() );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
@@ -251,7 +251,7 @@ protected:
             {
                 if( !writeDescriptors( calcDescriptors ) )
                 {
-                    ts->printf( alvision.cvtest.TSConstants.LOG, "Descriptors can not be written.\n" );
+                    ts.printf( alvision.cvtest.TSConstants.LOG, "Descriptors can not be written.\n" );
                     this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
                     return;
                 }
@@ -259,17 +259,17 @@ protected:
         }
         if(!fs.isOpened())
         {
-            ts->printf( alvision.cvtest.TSConstants.LOG, "Compute and write keypoints.\n" );
-            fs.open( string(ts->get_data_path()) + FEATURES2D_DIR + "/keypoints.xml.gz", FileStorage::WRITE );
+            ts.printf( alvision.cvtest.TSConstants.LOG, "Compute and write keypoints.\n" );
+            fs.open( this.ts.get_data_path() + FEATURES2D_DIR + "/keypoints.xml.gz", FileStorage::WRITE );
             if( fs.isOpened() )
             {
                 Ptr<ORB> fd = ORB::create();
-                fd->detect(img, keypoints);
+                fd.detect(img, keypoints);
                 write( fs, "keypoints", keypoints );
             }
             else
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "File for writting keypoints can not be opened.\n");
+                ts.printf(alvision.cvtest.TSConstants.LOG, "File for writting keypoints can not be opened.\n");
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
                 return;
             }
@@ -281,7 +281,7 @@ protected:
         createDescriptorExtractor();
         if( !dextractor )
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Descriptor extractor is empty.\n");
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Descriptor extractor is empty.\n");
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
             return;
         }
@@ -294,13 +294,13 @@ protected:
 
     virtual Mat readDescriptors()
     {
-        Mat res = readMatFromBin( string(ts->get_data_path()) + DESCRIPTOR_DIR + "/" + string(name) );
+        Mat res = readMatFromBin( this.ts.get_data_path() + DESCRIPTOR_DIR + "/" + string(name) );
         return res;
     }
 
     virtual bool writeDescriptors( Mat& descs )
     {
-        writeMatInBin( descs,  string(ts->get_data_path()) + DESCRIPTOR_DIR + "/" + string(name) );
+        writeMatInBin( descs,  this.ts.get_data_path() + DESCRIPTOR_DIR + "/" + string(name) );
         return true;
     }
 
@@ -371,8 +371,8 @@ TEST( Features2d_DescriptorExtractor, batch )
         imgs.push(img);
     }
 
-    orb->detect(imgs, keypoints);
-    orb->compute(imgs, keypoints, descriptors);
+    orb.detect(imgs, keypoints);
+    orb.compute(imgs, keypoints, descriptors);
 
     ASSERT_EQ((int)keypoints.size(), n);
     ASSERT_EQ((int)descriptors.size(), n);
@@ -398,7 +398,7 @@ TEST( Features2d_Feature2d, no_crash )
     size_t i, n = fnames.size();
     Array<KeyPoint> keypoints;
     Mat descriptors;
-    orb->setMaxFeatures(5000);
+    orb.setMaxFeatures(5000);
 
     for( i = 0; i < n; i++ )
     {
@@ -409,7 +409,7 @@ TEST( Features2d_Feature2d, no_crash )
 
         Mat img = imread(fnames[i], -1);
         printf("\tAKAZE ... "); fflush(stdout);
-        akaze->detectAndCompute(img, noArray(), keypoints, descriptors);
+        akaze.detectAndCompute(img, noArray(), keypoints, descriptors);
         printf("(%d keypoints) ", (int)keypoints.size()); fflush(stdout);
         if( checkCount )
         {
@@ -419,7 +419,7 @@ TEST( Features2d_Feature2d, no_crash )
         printf("ok\n");
 
         printf("\tKAZE ... "); fflush(stdout);
-        kaze->detectAndCompute(img, noArray(), keypoints, descriptors);
+        kaze.detectAndCompute(img, noArray(), keypoints, descriptors);
         printf("(%d keypoints) ", (int)keypoints.size()); fflush(stdout);
         if( checkCount )
         {
@@ -429,7 +429,7 @@ TEST( Features2d_Feature2d, no_crash )
         printf("ok\n");
 
         printf("\tORB ... "); fflush(stdout);
-        orb->detectAndCompute(img, noArray(), keypoints, descriptors);
+        orb.detectAndCompute(img, noArray(), keypoints, descriptors);
         printf("(%d keypoints) ", (int)keypoints.size()); fflush(stdout);
         if( checkCount )
         {
@@ -439,7 +439,7 @@ TEST( Features2d_Feature2d, no_crash )
         printf("ok\n");
 
         printf("\tBRISK ... "); fflush(stdout);
-        brisk->detectAndCompute(img, noArray(), keypoints, descriptors);
+        brisk.detectAndCompute(img, noArray(), keypoints, descriptors);
         printf("(%d keypoints) ", (int)keypoints.size()); fflush(stdout);
         if( checkCount )
         {

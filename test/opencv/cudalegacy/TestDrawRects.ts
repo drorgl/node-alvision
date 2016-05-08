@@ -169,21 +169,21 @@ bool TestDrawRects<T>::process()
     NCVStatus ncvStat;
     bool rcode = false;
 
-    NCVMatrixAlloc<T> d_img(*this->allocatorGPU.get(), this->width, this->height);
+    NCVMatrixAlloc<T> d_img(*this.allocatorGPU.get(), this.width, this.height);
     ncvAssertReturn(d_img.isMemAllocated(), false);
-    NCVMatrixAlloc<T> h_img(*this->allocatorCPU.get(), this->width, this->height);
+    NCVMatrixAlloc<T> h_img(*this.allocatorCPU.get(), this.width, this.height);
     ncvAssertReturn(h_img.isMemAllocated(), false);
-    NCVMatrixAlloc<T> h_img_d(*this->allocatorCPU.get(), this->width, this->height);
+    NCVMatrixAlloc<T> h_img_d(*this.allocatorCPU.get(), this.width, this.height);
     ncvAssertReturn(h_img_d.isMemAllocated(), false);
 
-    NCVVectorAlloc<NcvRect32u> d_rects(*this->allocatorGPU.get(), this->numRects);
+    NCVVectorAlloc<NcvRect32u> d_rects(*this.allocatorGPU.get(), this.numRects);
     ncvAssertReturn(d_rects.isMemAllocated(), false);
-    NCVVectorAlloc<NcvRect32u> h_rects(*this->allocatorCPU.get(), this->numRects);
+    NCVVectorAlloc<NcvRect32u> h_rects(*this.allocatorCPU.get(), this.numRects);
     ncvAssertReturn(h_rects.isMemAllocated(), false);
 
-    NCV_SET_SKIP_COND(this->allocatorGPU.get()->isCounting());
+    NCV_SET_SKIP_COND(this.allocatorGPU.get().isCounting());
     NCV_SKIP_COND_BEGIN
-    ncvAssertReturn(this->src.fill(h_img), false);
+    ncvAssertReturn(this.src.fill(h_img), false);
     ncvStat = h_img.copySolid(d_img, 0);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
     ncvAssertCUDAReturn(cudaStreamSynchronize(0), false);
@@ -191,13 +191,13 @@ bool TestDrawRects<T>::process()
     //fill vector of rectangles with random rects covering the input
     NCVVectorReuse<Ncv32u> h_rects_as32u(h_rects.getSegment());
     ncvAssertReturn(h_rects_as32u.isMemReused(), false);
-    ncvAssertReturn(this->src32u.fill(h_rects_as32u), false);
-    for (Ncv32u i=0; i<this->numRects; i++)
+    ncvAssertReturn(this.src32u.fill(h_rects_as32u), false);
+    for (Ncv32u i=0; i<this.numRects; i++)
     {
-        h_rects.ptr()[i].x = (Ncv32u)(((1.0 * h_rects.ptr()[i].x) / RAND_MAX) * (this->width-2));
-        h_rects.ptr()[i].y = (Ncv32u)(((1.0 * h_rects.ptr()[i].y) / RAND_MAX) * (this->height-2));
-        h_rects.ptr()[i].width = (Ncv32u)(((1.0 * h_rects.ptr()[i].width) / RAND_MAX) * (this->width+10 - h_rects.ptr()[i].x));
-        h_rects.ptr()[i].height = (Ncv32u)(((1.0 * h_rects.ptr()[i].height) / RAND_MAX) * (this->height+10 - h_rects.ptr()[i].y));
+        h_rects.ptr()[i].x = (Ncv32u)(((1.0 * h_rects.ptr()[i].x) / RAND_MAX) * (this.width-2));
+        h_rects.ptr()[i].y = (Ncv32u)(((1.0 * h_rects.ptr()[i].y) / RAND_MAX) * (this.height-2));
+        h_rects.ptr()[i].width = (Ncv32u)(((1.0 * h_rects.ptr()[i].width) / RAND_MAX) * (this.width+10 - h_rects.ptr()[i].x));
+        h_rects.ptr()[i].height = (Ncv32u)(((1.0 * h_rects.ptr()[i].height) / RAND_MAX) * (this.height+10 - h_rects.ptr()[i].y));
     }
     ncvStat = h_rects.copySolid(d_rects, 0);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
@@ -205,13 +205,13 @@ bool TestDrawRects<T>::process()
 
     if (sizeof(T) == sizeof(Ncv32u))
     {
-        ncvStat = ncvDrawRects_32u_device((Ncv32u *)d_img.ptr(), d_img.stride(), this->width, this->height,
-                                          (NcvRect32u *)d_rects.ptr(), this->numRects, this->color, 0);
+        ncvStat = ncvDrawRects_32u_device((Ncv32u *)d_img.ptr(), d_img.stride(), this.width, this.height,
+                                          (NcvRect32u *)d_rects.ptr(), this.numRects, this.color, 0);
     }
     else if (sizeof(T) == sizeof(Ncv8u))
     {
-        ncvStat = ncvDrawRects_8u_device((Ncv8u *)d_img.ptr(), d_img.stride(), this->width, this->height,
-                                         (NcvRect32u *)d_rects.ptr(), this->numRects, (Ncv8u)this->color, 0);
+        ncvStat = ncvDrawRects_8u_device((Ncv8u *)d_img.ptr(), d_img.stride(), this.width, this.height,
+                                         (NcvRect32u *)d_rects.ptr(), this.numRects, (Ncv8u)this.color, 0);
     }
     else
     {
@@ -227,13 +227,13 @@ bool TestDrawRects<T>::process()
     NCV_SKIP_COND_BEGIN
     if (sizeof(T) == sizeof(Ncv32u))
     {
-        ncvStat = ncvDrawRects_32u_host((Ncv32u *)h_img.ptr(), h_img.stride(), this->width, this->height,
-                                        (NcvRect32u *)h_rects.ptr(), this->numRects, this->color);
+        ncvStat = ncvDrawRects_32u_host((Ncv32u *)h_img.ptr(), h_img.stride(), this.width, this.height,
+                                        (NcvRect32u *)h_rects.ptr(), this.numRects, this.color);
     }
     else if (sizeof(T) == sizeof(Ncv8u))
     {
-        ncvStat = ncvDrawRects_8u_host((Ncv8u *)h_img.ptr(), h_img.stride(), this->width, this->height,
-                                       (NcvRect32u *)h_rects.ptr(), this->numRects, (Ncv8u)this->color);
+        ncvStat = ncvDrawRects_8u_host((Ncv8u *)h_img.ptr(), h_img.stride(), this.width, this.height,
+                                       (NcvRect32u *)h_rects.ptr(), this.numRects, (Ncv8u)this.color);
     }
     else
     {

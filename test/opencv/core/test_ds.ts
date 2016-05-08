@@ -23,10 +23,10 @@ typedef  struct  CvTsSimpleSeq
 static CvTsSimpleSeq*  cvTsCreateSimpleSeq( int max_count, int elem_size )
 {
     CvTsSimpleSeq* seq = (CvTsSimpleSeq*)cvAlloc( sizeof(*seq) + max_count * elem_size );
-    seq->elem_size = elem_size;
-    seq->max_count = max_count;
-    seq->count = 0;
-    seq->array = (schar*)(seq + 1);
+    seq.elem_size = elem_size;
+    seq.max_count = max_count;
+    seq.count = 0;
+    seq.array = (schar*)(seq + 1);
     return seq;
 }
 
@@ -39,39 +39,39 @@ static void cvTsReleaseSimpleSeq( CvTsSimpleSeq** seq )
 
 static schar*  cvTsSimpleSeqElem( CvTsSimpleSeq* seq, int index )
 {
-    assert( 0 <= index && index < seq->count );
-    return seq->array + index * seq->elem_size;
+    assert( 0 <= index && index < seq.count );
+    return seq.array + index * seq.elem_size;
 }
 
 
 static void  cvTsClearSimpleSeq( CvTsSimpleSeq* seq )
 {
-    seq->count = 0;
+    seq.count = 0;
 }
 
 
 static void cvTsSimpleSeqShiftAndCopy( CvTsSimpleSeq* seq, int from_idx, int to_idx, void* elem=0 )
 {
-    int elem_size = seq->elem_size;
+    int elem_size = seq.elem_size;
 
     if( from_idx == to_idx )
         return;
     assert( (from_idx > to_idx && !elem) || (from_idx < to_idx && elem) );
 
-    if( from_idx < seq->count )
+    if( from_idx < seq.count )
     {
-        memmove( seq->array + to_idx*elem_size, seq->array + from_idx*elem_size,
-                (seq->count - from_idx)*elem_size );
+        memmove( seq.array + to_idx*elem_size, seq.array + from_idx*elem_size,
+                (seq.count - from_idx)*elem_size );
     }
-    seq->count += to_idx - from_idx;
+    seq.count += to_idx - from_idx;
     if( elem && to_idx > from_idx )
-        memcpy( seq->array + from_idx*elem_size, elem, (to_idx - from_idx)*elem_size );
+        memcpy( seq.array + from_idx*elem_size, elem, (to_idx - from_idx)*elem_size );
 }
 
 static void cvTsSimpleSeqInvert( CvTsSimpleSeq* seq )
 {
-    int i, k, len = seq->count, elem_size = seq->elem_size;
-    schar *data = seq->array, t;
+    int i, k, len = seq.count, elem_size = seq.elem_size;
+    schar *data = seq.array, t;
 
     for( i = 0; i < len/2; i++ )
     {
@@ -99,15 +99,15 @@ typedef  struct  CvTsSimpleSet
 static void  cvTsClearSimpleSet( CvTsSimpleSet* set_header )
 {
     int i;
-    int elem_size = set_header->elem_size;
+    int elem_size = set_header.elem_size;
 
-    for( i = 0; i < set_header->max_count; i++ )
+    for( i = 0; i < set_header.max_count; i++ )
     {
-        set_header->array[i*elem_size] = 0;
-        set_header->free_stack[i] = set_header->max_count - i - 1;
+        set_header.array[i*elem_size] = 0;
+        set_header.free_stack[i] = set_header.max_count - i - 1;
     }
-    set_header->free_count = set_header->max_count;
-    set_header->count = 0;
+    set_header.free_count = set_header.max_count;
+    set_header.count = 0;
 }
 
 
@@ -115,10 +115,10 @@ static CvTsSimpleSet*  cvTsCreateSimpleSet( int max_count, int elem_size )
 {
     CvTsSimpleSet* set_header = (CvTsSimpleSet*)cvAlloc( sizeof(*set_header) + max_count *
                                                         (elem_size + 1 + sizeof(int)));
-    set_header->elem_size = elem_size + 1;
-    set_header->max_count = max_count;
-    set_header->free_stack = (int*)(set_header + 1);
-    set_header->array = (schar*)(set_header->free_stack + max_count);
+    set_header.elem_size = elem_size + 1;
+    set_header.max_count = max_count;
+    set_header.free_stack = (int*)(set_header + 1);
+    set_header.array = (schar*)(set_header.free_stack + max_count);
 
     cvTsClearSimpleSet( set_header );
     return set_header;
@@ -133,24 +133,24 @@ static void cvTsReleaseSimpleSet( CvTsSimpleSet** set_header )
 
 static schar*  cvTsSimpleSetFind( CvTsSimpleSet* set_header, int index )
 {
-    int idx = index * set_header->elem_size;
-    assert( 0 <= index && index < set_header->max_count );
-    return set_header->array[idx] ? set_header->array + idx + 1 : 0;
+    int idx = index * set_header.elem_size;
+    assert( 0 <= index && index < set_header.max_count );
+    return set_header.array[idx] ? set_header.array + idx + 1 : 0;
 }
 
 
 static int  cvTsSimpleSetAdd( CvTsSimpleSet* set_header, void* elem )
 {
     int idx, idx2;
-    assert( set_header->free_count > 0 );
+    assert( set_header.free_count > 0 );
 
-    idx = set_header->free_stack[--set_header->free_count];
-    idx2 = idx * set_header->elem_size;
-    assert( set_header->array[idx2] == 0 );
-    set_header->array[idx2] = 1;
-    if( set_header->elem_size > 1 )
-        memcpy( set_header->array + idx2 + 1, elem, set_header->elem_size - 1 );
-    set_header->count = MAX( set_header->count, idx + 1 );
+    idx = set_header.free_stack[--set_header.free_count];
+    idx2 = idx * set_header.elem_size;
+    assert( set_header.array[idx2] == 0 );
+    set_header.array[idx2] = 1;
+    if( set_header.elem_size > 1 )
+        memcpy( set_header.array + idx2 + 1, elem, set_header.elem_size - 1 );
+    set_header.count = MAX( set_header.count, idx + 1 );
 
     return idx;
 }
@@ -158,12 +158,12 @@ static int  cvTsSimpleSetAdd( CvTsSimpleSet* set_header, void* elem )
 
 static void  cvTsSimpleSetRemove( CvTsSimpleSet* set_header, int index )
 {
-    assert( set_header->free_count < set_header->max_count &&
-           0 <= index && index < set_header->max_count );
-    assert( set_header->array[index * set_header->elem_size] == 1 );
+    assert( set_header.free_count < set_header.max_count &&
+           0 <= index && index < set_header.max_count );
+    assert( set_header.array[index * set_header.elem_size] == 1 );
 
-    set_header->free_stack[set_header->free_count++] = index;
-    set_header->array[index * set_header->elem_size] = 0;
+    set_header.free_stack[set_header.free_count++] = index;
+    set_header.array[index * set_header.elem_size] = 0;
 }
 
 
@@ -182,9 +182,9 @@ typedef  struct  CvTsSimpleGraph
 
 static void  cvTsClearSimpleGraph( CvTsSimpleGraph* graph )
 {
-    int max_vtx_count = graph->vtx->max_count;
-    cvTsClearSimpleSet( graph->vtx );
-    memset( graph->matrix, 0, max_vtx_count * max_vtx_count * graph->edge_size );
+    int max_vtx_count = graph.vtx.max_count;
+    cvTsClearSimpleSet( graph.vtx );
+    memset( graph.matrix, 0, max_vtx_count * max_vtx_count * graph.edge_size );
 }
 
 
@@ -196,10 +196,10 @@ static CvTsSimpleGraph*  cvTsCreateSimpleGraph( int max_vtx_count, int vtx_size,
     assert( max_vtx_count > 1 && vtx_size >= 0 && edge_size >= 0 );
     graph = (CvTsSimpleGraph*)cvAlloc( sizeof(*graph) +
                                       max_vtx_count * max_vtx_count * (edge_size + 1));
-    graph->vtx = cvTsCreateSimpleSet( max_vtx_count, vtx_size );
-    graph->edge_size = edge_size + 1;
-    graph->matrix = (char*)(graph + 1);
-    graph->oriented = oriented;
+    graph.vtx = cvTsCreateSimpleSet( max_vtx_count, vtx_size );
+    graph.edge_size = edge_size + 1;
+    graph.matrix = (char*)(graph + 1);
+    graph.oriented = oriented;
 
     cvTsClearSimpleGraph( graph );
     return graph;
@@ -210,7 +210,7 @@ static void cvTsReleaseSimpleGraph( CvTsSimpleGraph** graph )
 {
     if( *graph )
     {
-        cvTsReleaseSimpleSet( &(graph[0]->vtx) );
+        cvTsReleaseSimpleSet( &(graph[0].vtx) );
         cvFree( graph );
     }
 }
@@ -218,39 +218,39 @@ static void cvTsReleaseSimpleGraph( CvTsSimpleGraph** graph )
 
 static int  cvTsSimpleGraphAddVertex( CvTsSimpleGraph* graph, void* vertex )
 {
-    return cvTsSimpleSetAdd( graph->vtx, vertex );
+    return cvTsSimpleSetAdd( graph.vtx, vertex );
 }
 
 
 static void  cvTsSimpleGraphRemoveVertex( CvTsSimpleGraph* graph, int index )
 {
-    int i, max_vtx_count = graph->vtx->max_count;
-    int edge_size = graph->edge_size;
-    cvTsSimpleSetRemove( graph->vtx, index );
+    int i, max_vtx_count = graph.vtx.max_count;
+    int edge_size = graph.edge_size;
+    cvTsSimpleSetRemove( graph.vtx, index );
 
     /* remove all the corresponding edges */
     for( i = 0; i < max_vtx_count; i++ )
     {
-        graph->matrix[(i*max_vtx_count + index)*edge_size] =
-        graph->matrix[(index*max_vtx_count + i)*edge_size] = 0;
+        graph.matrix[(i*max_vtx_count + index)*edge_size] =
+        graph.matrix[(index*max_vtx_count + i)*edge_size] = 0;
     }
 }
 
 
 static void cvTsSimpleGraphAddEdge( CvTsSimpleGraph* graph, int idx1, int idx2, void* edge )
 {
-    int i, t, n = graph->oriented ? 1 : 2;
+    int i, t, n = graph.oriented ? 1 : 2;
 
-    assert( cvTsSimpleSetFind( graph->vtx, idx1 ) &&
-           cvTsSimpleSetFind( graph->vtx, idx2 ));
+    assert( cvTsSimpleSetFind( graph.vtx, idx1 ) &&
+           cvTsSimpleSetFind( graph.vtx, idx2 ));
 
     for( i = 0; i < n; i++ )
     {
-        int ofs = (idx1*graph->vtx->max_count + idx2)*graph->edge_size;
-        assert( graph->matrix[ofs] == 0 );
-        graph->matrix[ofs] = 1;
-        if( graph->edge_size > 1 )
-            memcpy( graph->matrix + ofs + 1, edge, graph->edge_size - 1 );
+        int ofs = (idx1*graph.vtx.max_count + idx2)*graph.edge_size;
+        assert( graph.matrix[ofs] == 0 );
+        graph.matrix[ofs] = 1;
+        if( graph.edge_size > 1 )
+            memcpy( graph.matrix + ofs + 1, edge, graph.edge_size - 1 );
 
         CV_SWAP( idx1, idx2, t );
     }
@@ -259,16 +259,16 @@ static void cvTsSimpleGraphAddEdge( CvTsSimpleGraph* graph, int idx1, int idx2, 
 
 static void  cvTsSimpleGraphRemoveEdge( CvTsSimpleGraph* graph, int idx1, int idx2 )
 {
-    int i, t, n = graph->oriented ? 1 : 2;
+    int i, t, n = graph.oriented ? 1 : 2;
 
-    assert( cvTsSimpleSetFind( graph->vtx, idx1 ) &&
-           cvTsSimpleSetFind( graph->vtx, idx2 ));
+    assert( cvTsSimpleSetFind( graph.vtx, idx1 ) &&
+           cvTsSimpleSetFind( graph.vtx, idx2 ));
 
     for( i = 0; i < n; i++ )
     {
-        int ofs = (idx1*graph->vtx->max_count + idx2)*graph->edge_size;
-        assert( graph->matrix[ofs] == 1 );
-        graph->matrix[ofs] = 0;
+        int ofs = (idx1*graph.vtx.max_count + idx2)*graph.edge_size;
+        assert( graph.matrix[ofs] == 1 );
+        graph.matrix[ofs] = 0;
         CV_SWAP( idx1, idx2, t );
     }
 }
@@ -276,7 +276,7 @@ static void  cvTsSimpleGraphRemoveEdge( CvTsSimpleGraph* graph, int idx1, int id
 
 static schar*  cvTsSimpleGraphFindVertex( CvTsSimpleGraph* graph, int index )
 {
-    return cvTsSimpleSetFind( graph->vtx, index );
+    return cvTsSimpleSetFind( graph.vtx, index );
 }
 
 
@@ -285,7 +285,7 @@ static char*  cvTsSimpleGraphFindEdge( CvTsSimpleGraph* graph, int idx1, int idx
     if( cvTsSimpleGraphFindVertex( graph, idx1 ) &&
        cvTsSimpleGraphFindVertex( graph, idx2 ))
     {
-        char* edge = graph->matrix + (idx1 * graph->vtx->max_count + idx2)*graph->edge_size;
+        char* edge = graph.matrix + (idx1 * graph.vtx.max_count + idx2)*graph.edge_size;
         if( edge[0] ) return edge + 1;
     }
     return 0;
@@ -295,17 +295,17 @@ static char*  cvTsSimpleGraphFindEdge( CvTsSimpleGraph* graph, int idx1, int idx
 static int  cvTsSimpleGraphVertexDegree( CvTsSimpleGraph* graph, int index )
 {
     int i, count = 0;
-    int edge_size = graph->edge_size;
-    int max_vtx_count = graph->vtx->max_count;
+    int edge_size = graph.edge_size;
+    int max_vtx_count = graph.vtx.max_count;
     assert( cvTsSimpleGraphFindVertex( graph, index ) != 0 );
 
     for( i = 0; i < max_vtx_count; i++ )
     {
-        count += graph->matrix[(i*max_vtx_count + index)*edge_size] +
-        graph->matrix[(index*max_vtx_count + i)*edge_size];
+        count += graph.matrix[(i*max_vtx_count + index)*edge_size] +
+        graph.matrix[(index*max_vtx_count + i)*edge_size];
     }
 
-    if( !graph->oriented )
+    if( !graph.oriented )
     {
         assert( count % 2 == 0 );
         count /= 2;
@@ -330,11 +330,11 @@ public:
     Core_DynStructBaseTest();
     virtual ~Core_DynStructBaseTest();
     bool can_do_fast_forward();
-    void clear();
+    clear() : void {}
 
 protected:
-    int read_params( CvFileStorage* fs );
-    void run_func(void);
+    read_params(fs : alvision.FileStorage) : alvision.int{}
+    run_func() : void {}
     void set_error_context( const char* condition,
                            const char* err_msg,
                            const char* file, int line );
@@ -387,14 +387,14 @@ bool Core_DynStructBaseTest::can_do_fast_forward()
 
 void Core_DynStructBaseTest::clear()
 {
-    alvision.cvtest.BaseTest::clear();
+    super.clear();
 }
 
 
 int Core_DynStructBaseTest::read_params( CvFileStorage* fs )
 {
-    int code = alvision.cvtest.BaseTest::read_params( fs );
-    double sqrt_scale = sqrt(ts->get_test_case_count_scale());
+    int code = super.read_params( fs );
+    double sqrt_scale = sqrt(ts.get_test_case_count_scale());
     if( code < 0 )
         return code;
 
@@ -448,7 +448,7 @@ void Core_DynStructBaseTest::set_error_context( const char* condition,
                                                 const char* err_msg,
                                                 const char* filename, int lineno )
 {
-    ts->printf( alvision.cvtest.TSConstants.LOG, "file %s, line %d: %s\n(\"%s\" failed).\n"
+    ts.printf( alvision.cvtest.TSConstants.LOG, "file %s, line %d: %s\n(\"%s\" failed).\n"
                "generation = %d, struct_idx = %d, iter = %d\n",
                filename, lineno, err_msg, condition, gen, struct_idx, iter );
     this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -462,31 +462,31 @@ int Core_DynStructBaseTest::test_seq_block_consistence( int _struct_idx, CvSeq* 
 
     CV_TS_SEQ_CHECK_CONDITION( seq != 0, "Null sequence pointer" );
 
-    if( seq->first )
+    if( seq.first )
     {
-        CvSeqBlock* block = seq->first;
-        CvSeqBlock* prev_block = block->prev;
+        CvSeqBlock* block = seq.first;
+        CvSeqBlock* prev_block = block.prev;
 
-        int delta_idx = seq->first->start_index;
+        int delta_idx = seq.first.start_index;
 
         for( ;; )
         {
-            CV_TS_SEQ_CHECK_CONDITION( sum == block->start_index - delta_idx &&
-                                      block->count > 0 && block->prev == prev_block &&
-                                      prev_block->next == block,
+            CV_TS_SEQ_CHECK_CONDITION( sum == block.start_index - delta_idx &&
+                                      block.count > 0 && block.prev == prev_block &&
+                                      prev_block.next == block,
                                       "sequence blocks are inconsistent" );
-            sum += block->count;
+            sum += block.count;
             prev_block = block;
-            block = block->next;
-            if( block == seq->first ) break;
+            block = block.next;
+            if( block == seq.first ) break;
         }
 
-        CV_TS_SEQ_CHECK_CONDITION( block->prev->count * seq->elem_size +
-                                  block->prev->data <= seq->block_max,
-                                  "block->data or block_max pointer are incorrect" );
+        CV_TS_SEQ_CHECK_CONDITION( block.prev.count * seq.elem_size +
+                                  block.prev.data <= seq.block_max,
+                                  "block.data or block_max pointer are incorrect" );
     }
 
-    CV_TS_SEQ_CHECK_CONDITION( seq->total == sum && sum == total,
+    CV_TS_SEQ_CHECK_CONDITION( seq.total == sum && sum == total,
                               "total number of elements is incorrect" );
 
     return 0;
@@ -499,7 +499,7 @@ class Core_SeqBaseTest : public Core_DynStructBaseTest
 {
 public:
     Core_SeqBaseTest();
-    void clear();
+    clear() : void {}
     void run( int );
 
 protected:
@@ -529,7 +529,7 @@ int Core_SeqBaseTest::test_multi_create()
     Array<int> pos(struct_count);
     Array<int> index(struct_count);
     int  cur_count, elem_size;
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
     for( int i = 0; i < struct_count; i++ )
     {
@@ -541,14 +541,14 @@ int Core_SeqBaseTest::test_multi_create()
 
         t = alvision.cvtest.randReal(rng)*(max_log_elem_size - min_log_elem_size) + min_log_elem_size;
         elem_size = Math.round( exp(t * Math.LOG2E) );
-        elem_size = MIN( elem_size, (int)(storage->block_size - sizeof(void*) -
+        elem_size = MIN( elem_size, (int)(storage.block_size - sizeof(void*) -
                                           sizeof(CvSeqBlock) - sizeof(CvMemBlock)) );
 
         cvTsReleaseSimpleSeq( (CvTsSimpleSeq**)&simple_struct[i] );
         simple_struct[i] = sseq = cvTsCreateSimpleSeq( max_struct_size, elem_size );
         cxcore_struct[i] = 0;
-        sseq->count = alvision.cvtest.randInt( rng ) % max_struct_size;
-        Mat m( 1, MAX(sseq->count,1)*elem_size, CV_8UC1, sseq->array );
+        sseq.count = alvision.cvtest.randInt( rng ) % max_struct_size;
+        Mat m( 1, MAX(sseq.count,1)*elem_size, CV_8UC1, sseq.array );
         alvision.cvtest.randUni( rng, m, alvision.Scalar.all(0), Scalar::all(256) );
     }
 
@@ -563,8 +563,8 @@ int Core_SeqBaseTest::test_multi_create()
             if( pos[struct_idx] < 0 )
             {
                 int hdr_size = (alvision.cvtest.randInt(rng) % 10)*4 + sizeof(CvSeq);
-                hdr_size = MIN( hdr_size, (int)(storage->block_size - sizeof(CvMemBlock)) );
-                elem_size = sseq->elem_size;
+                hdr_size = MIN( hdr_size, (int)(storage.block_size - sizeof(CvMemBlock)) );
+                elem_size = sseq.elem_size;
 
                 if( alvision.cvtest.randInt(rng) % 2 )
                 {
@@ -582,7 +582,7 @@ int Core_SeqBaseTest::test_multi_create()
             }
 
             update_progressbar();
-            if( pos[struct_idx] == sseq->count )
+            if( pos[struct_idx] == sseq.count )
             {
                 cxcore_struct[struct_idx] = cvEndWriteSeq( &writer[struct_idx] );
                 /* del index */
@@ -605,23 +605,23 @@ int Core_SeqBaseTest::test_multi_create()
 
 int  Core_SeqBaseTest::test_get_seq_elem( int _struct_idx, int iters )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
     CvSeq* seq = (CvSeq*)cxcore_struct[_struct_idx];
     CvTsSimpleSeq* sseq = (CvTsSimpleSeq*)simple_struct[_struct_idx];
     struct_idx = _struct_idx;
 
-    assert( seq->total == sseq->count );
+    assert( seq.total == sseq.count );
 
-    if( sseq->count == 0 )
+    if( sseq.count == 0 )
         return 0;
 
     for( int i = 0; i < iters; i++ )
     {
-        int idx = alvision.cvtest.randInt(rng) % (sseq->count*3) - sseq->count*3/2;
-        int idx0 = (unsigned)idx < (unsigned)(sseq->count) ? idx : idx < 0 ?
-        idx + sseq->count : idx - sseq->count;
-        int bad_range = (unsigned)idx0 >= (unsigned)(sseq->count);
+        int idx = alvision.cvtest.randInt(rng) % (sseq.count*3) - sseq.count*3/2;
+        int idx0 = (unsigned)idx < (unsigned)(sseq.count) ? idx : idx < 0 ?
+        idx + sseq.count : idx - sseq.count;
+        int bad_range = (unsigned)idx0 >= (unsigned)(sseq.count);
         schar* elem;
          elem = cvGetSeqElem( seq, idx );
 
@@ -634,7 +634,7 @@ int  Core_SeqBaseTest::test_get_seq_elem( int _struct_idx, int iters )
         else
         {
             CV_TS_SEQ_CHECK_CONDITION( elem != 0 &&
-                                      !memcmp( elem, cvTsSimpleSeqElem(sseq, idx0), sseq->elem_size ),
+                                      !memcmp( elem, cvTsSimpleSeqElem(sseq, idx0), sseq.elem_size ),
                                       "cvGetSeqElem returns wrong element" );
 
              idx = cvSeqElemIdx(seq, elem );
@@ -652,14 +652,14 @@ int  Core_SeqBaseTest::test_get_seq_reading( int _struct_idx, int iters )
     const int max_val = 3*5 + 2;
     CvSeq* seq = (CvSeq*)cxcore_struct[_struct_idx];
     CvTsSimpleSeq* sseq = (CvTsSimpleSeq*)simple_struct[_struct_idx];
-    int total = seq->total;
-    RNG& rng = ts->get_rng();
+    int total = seq.total;
+    var rng = this.ts.get_rng();
     CvSeqReader reader;
-    Array<schar> _elem(sseq->elem_size);
+    Array<schar> _elem(sseq.elem_size);
     schar* elem = &_elem[0];
 
-    assert( total == sseq->count );
-    this->struct_idx = _struct_idx;
+    assert( total == sseq.count );
+    this.struct_idx = _struct_idx;
 
     int pos = alvision.cvtest.randInt(rng) % 2;
     cvStartReadSeq( seq, &reader, pos );
@@ -670,7 +670,7 @@ int  Core_SeqBaseTest::test_get_seq_reading( int _struct_idx, int iters )
         return 0;
     }
 
-    pos = pos ? seq->total - 1 : 0;
+    pos = pos ? seq.total - 1 : 0;
 
     CV_TS_SEQ_CHECK_CONDITION( pos == cvGetSeqReaderPos(&reader),
                               "initial reader position is wrong" );
@@ -709,19 +709,19 @@ int  Core_SeqBaseTest::test_get_seq_reading( int _struct_idx, int iters )
         else
         {
             int direction = (op % 3) - 1;
-            memcpy( elem, reader.ptr, sseq->elem_size );
+            memcpy( elem, reader.ptr, sseq.elem_size );
 
             if( direction > 0 )
             {
-                CV_NEXT_SEQ_ELEM( sseq->elem_size, reader );
+                CV_NEXT_SEQ_ELEM( sseq.elem_size, reader );
             }
             else if( direction < 0 )
             {
-                CV_PREV_SEQ_ELEM( sseq->elem_size, reader );
+                CV_PREV_SEQ_ELEM( sseq.elem_size, reader );
             }
 
             CV_TS_SEQ_CHECK_CONDITION( memcmp(elem, cvTsSimpleSeqElem(sseq, pos),
-                                              sseq->elem_size) == 0, "reading is incorrect" );
+                                              sseq.elem_size) == 0, "reading is incorrect" );
             pos += direction;
             if( -pos > 0 ) pos += total;
             if( pos >= total ) pos -= total;
@@ -740,10 +740,10 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
     const int max_op = 14;
     int max_elem_size = 0;
     schar* elem2 = 0;
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
     for( int i = 0; i < struct_count; i++ )
-        max_elem_size = MAX( max_elem_size, ((CvSeq*)cxcore_struct[i])->elem_size );
+        max_elem_size = MAX( max_elem_size, ((CvSeq*)cxcore_struct[i]).elem_size );
 
     Array<schar> elem_buf(max_struct_size*max_elem_size);
     schar* elem = (schar*)&elem_buf[0];
@@ -755,7 +755,7 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
         int op = alvision.cvtest.randInt(rng) % max_op;
         CvSeq* seq = (CvSeq*)cxcore_struct[struct_idx];
         CvTsSimpleSeq* sseq = (CvTsSimpleSeq*)simple_struct[struct_idx];
-        int elem_size = sseq->elem_size;
+        int elem_size = sseq.elem_size;
         int whence = 0, pos = 0, count = 0;
 
         switch( op )
@@ -763,7 +763,7 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
             case 0:
             case 1:
             case 2:  // push/pushfront/insert
-                if( sseq->count == sseq->max_count )
+                if( sseq.count == sseq.max_count )
                     break;
 
                 elem_mat = Mat(1, elem_size, CV_8U, elem);
@@ -777,19 +777,19 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
                 }
                 else if( whence > 0 )
                 {
-                    pos = sseq->count;
+                    pos = sseq.count;
                     cvSeqPush( seq, elem );
                 }
                 else
                 {
-                    pos = alvision.cvtest.randInt(rng) % (sseq->count + 1);
+                    pos = alvision.cvtest.randInt(rng) % (sseq.count + 1);
                     cvSeqInsert( seq, pos, elem );
                 }
 
                 cvTsSimpleSeqShiftAndCopy( sseq, pos, pos + 1, elem );
                 elem2 = cvGetSeqElem( seq, pos );
                 CV_TS_SEQ_CHECK_CONDITION( elem2 != 0, "The inserted element could not be retrieved" );
-                CV_TS_SEQ_CHECK_CONDITION( seq->total == sseq->count &&
+                CV_TS_SEQ_CHECK_CONDITION( seq.total == sseq.count &&
                                           memcmp(elem2, cvTsSimpleSeqElem(sseq,pos), elem_size) == 0,
                                           "The inserted sequence element is wrong" );
                 break;
@@ -797,7 +797,7 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
             case 3:
             case 4:
             case 5: // pop/popfront/remove
-                if( sseq->count == 0 )
+                if( sseq.count == 0 )
                     break;
 
                 whence = op - 4;
@@ -808,34 +808,34 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
                 }
                 else if( whence > 0 )
                 {
-                    pos = sseq->count-1;
+                    pos = sseq.count-1;
                      cvSeqPop( seq, elem );
                 }
                 else
                 {
-                    pos = alvision.cvtest.randInt(rng) % sseq->count;
+                    pos = alvision.cvtest.randInt(rng) % sseq.count;
                      cvSeqRemove( seq, pos );
                 }
 
                 if( whence != 0 )
-                    CV_TS_SEQ_CHECK_CONDITION( seq->total == sseq->count - 1 &&
+                    CV_TS_SEQ_CHECK_CONDITION( seq.total == sseq.count - 1 &&
                                               memcmp( elem, cvTsSimpleSeqElem(sseq,pos), elem_size) == 0,
                                               "The popped sequence element isn't correct" );
 
                 cvTsSimpleSeqShiftAndCopy( sseq, pos + 1, pos );
 
-                if( sseq->count > 0 )
+                if( sseq.count > 0 )
                 {
-                     elem2 = cvGetSeqElem( seq, pos < sseq->count ? pos : -1 );
+                     elem2 = cvGetSeqElem( seq, pos < sseq.count ? pos : -1 );
                     CV_TS_SEQ_CHECK_CONDITION( elem2 != 0, "GetSeqElem fails after removing the element" );
 
                     CV_TS_SEQ_CHECK_CONDITION( memcmp( elem2,
-                                                      cvTsSimpleSeqElem(sseq, pos - (pos == sseq->count)), elem_size) == 0,
+                                                      cvTsSimpleSeqElem(sseq, pos - (pos == sseq.count)), elem_size) == 0,
                                               "The first shifted element is not correct after removing another element" );
                 }
                 else
                 {
-                    CV_TS_SEQ_CHECK_CONDITION( seq->first == 0,
+                    CV_TS_SEQ_CHECK_CONDITION( seq.first == 0,
                                               "The sequence doesn't become empty after the final remove" );
                 }
                 break;
@@ -843,15 +843,15 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
             case 6:
             case 7:
             case 8: // push [front] multi/insert slice
-                if( sseq->count == sseq->max_count )
+                if( sseq.count == sseq.max_count )
                     break;
 
-                count = alvision.cvtest.randInt( rng ) % (sseq->max_count - sseq->count + 1);
+                count = alvision.cvtest.randInt( rng ) % (sseq.max_count - sseq.count + 1);
                 elem_mat = Mat(1, MAX(count,1) * elem_size, CV_8U, elem);
                 alvision.cvtest.randUni( rng, elem_mat, cvScalarAll(0), cvScalarAll(255) );
 
                 whence = op - 7;
-                pos = whence < 0 ? 0 : whence > 0 ? sseq->count : (int)(alvision.cvtest.randInt(rng) % (sseq->count+1));
+                pos = whence < 0 ? 0 : whence > 0 ? sseq.count : (int)(alvision.cvtest.randInt(rng) % (sseq.count+1));
                 if( whence != 0 )
                 {
                      cvSeqPushMulti( seq, elem, count, whence < 0 );
@@ -861,7 +861,7 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
                     CvSeq header;
                     CvSeqBlock block;
                     cvMakeSeqHeaderForArray( CV_SEQ_KIND_GENERIC, sizeof(CvSeq),
-                                                     sseq->elem_size,
+                                                     sseq.elem_size,
                                                      elem, count,
                                                      &header, &block );
 
@@ -869,19 +869,19 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
                 }
                 cvTsSimpleSeqShiftAndCopy( sseq, pos, pos + count, elem );
 
-                if( sseq->count > 0 )
+                if( sseq.count > 0 )
                 {
                     // choose the random element among the added
                     pos = count > 0 ? (int)(alvision.cvtest.randInt(rng) % count + pos) : MAX(pos-1,0);
                     elem2 = cvGetSeqElem( seq, pos );
                     CV_TS_SEQ_CHECK_CONDITION( elem2 != 0, "multi push operation doesn't add elements" );
-                    CV_TS_SEQ_CHECK_CONDITION( seq->total == sseq->count &&
+                    CV_TS_SEQ_CHECK_CONDITION( seq.total == sseq.count &&
                                               memcmp( elem2, cvTsSimpleSeqElem(sseq,pos), elem_size) == 0,
                                               "One of the added elements is wrong" );
                 }
                 else
                 {
-                    CV_TS_SEQ_CHECK_CONDITION( seq->total == 0 && seq->first == 0,
+                    CV_TS_SEQ_CHECK_CONDITION( seq.total == 0 && seq.first == 0,
                                               "Adding no elements to empty sequence fails" );
                 }
                 break;
@@ -889,13 +889,13 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
             case 9:
             case 10:
             case 11: // pop [front] multi
-                if( sseq->count == 0 )
+                if( sseq.count == 0 )
                     break;
 
-                count = alvision.cvtest.randInt(rng) % (sseq->count+1);
+                count = alvision.cvtest.randInt(rng) % (sseq.count+1);
                 whence = op - 10;
-                pos = whence < 0 ? 0 : whence > 0 ? sseq->count - count :
-                    (int)(alvision.cvtest.randInt(rng) % (sseq->count - count + 1));
+                pos = whence < 0 ? 0 : whence > 0 ? sseq.count - count :
+                    (int)(alvision.cvtest.randInt(rng) % (sseq.count - count + 1));
 
                 if( whence != 0 )
                 {
@@ -913,13 +913,13 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
                      cvSeqRemoveSlice( seq, cvSlice(pos, pos + count) );
                 }
 
-                CV_TS_SEQ_CHECK_CONDITION( seq->total == sseq->count - count,
+                CV_TS_SEQ_CHECK_CONDITION( seq.total == sseq.count - count,
                                           "The popmulti left a wrong number of elements in the sequence" );
 
                 cvTsSimpleSeqShiftAndCopy( sseq, pos + count, pos, 0 );
-                if( sseq->count > 0 )
+                if( sseq.count > 0 )
                 {
-                    pos = whence < 0 ? 0 : MIN( pos, sseq->count - 1 );
+                    pos = whence < 0 ? 0 : MIN( pos, sseq.count - 1 );
                     elem2 = cvGetSeqElem( seq, pos );
                     CV_TS_SEQ_CHECK_CONDITION( elem2 &&
                                               memcmp( elem2, cvTsSimpleSeqElem(sseq,pos), elem_size) == 0,
@@ -927,7 +927,7 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
                 }
                 else
                 {
-                    CV_TS_SEQ_CHECK_CONDITION( seq->total == 0 && seq->first == 0,
+                    CV_TS_SEQ_CHECK_CONDITION( seq.total == 0 && seq.first == 0,
                                               "The sequence doesn't become empty after final POP" );
                 }
                 break;
@@ -937,11 +937,11 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
                 cvSaveMemStoragePos( storage, &storage_pos );
 
                 int copy_data = alvision.cvtest.randInt(rng) % 2;
-                count = alvision.cvtest.randInt(rng) % (seq->total + 1);
-                pos = alvision.cvtest.randInt(rng) % (seq->total - count + 1);
+                count = alvision.cvtest.randInt(rng) % (seq.total + 1);
+                pos = alvision.cvtest.randInt(rng) % (seq.total - count + 1);
                 CvSeq* seq_slice = cvSeqSlice( seq, cvSlice(pos, pos + count), storage, copy_data );
 
-                CV_TS_SEQ_CHECK_CONDITION( seq_slice && seq_slice->total == count,
+                CV_TS_SEQ_CHECK_CONDITION( seq_slice && seq_slice.total == count,
                                           "cvSeqSlice returned incorrect slice" );
 
                 if( count > 0 )
@@ -962,7 +962,7 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
             case 13: // clear
                 cvTsClearSimpleSeq( sseq );
                 cvClearSeq( seq );
-                CV_TS_SEQ_CHECK_CONDITION( seq->total == 0 && seq->first == 0,
+                CV_TS_SEQ_CHECK_CONDITION( seq.total == 0 && seq.first == 0,
                                           "The sequence doesn't become empty after clear" );
                 break;
             default:
@@ -970,7 +970,7 @@ int  Core_SeqBaseTest::test_seq_ops( int iters )
                 return -1;
         }
 
-        if( test_seq_block_consistence(struct_idx, seq, sseq->count) < 0 )
+        if( test_seq_block_consistence(struct_idx, seq, sseq.count) < 0 )
             return -1;
 
         if( test_get_seq_elem(struct_idx, 7) < 0 )
@@ -987,7 +987,7 @@ void Core_SeqBaseTest::run( int )
 {
     try
     {
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
         int i;
         double t;
 
@@ -1014,7 +1014,7 @@ void Core_SeqBaseTest::run( int )
             for( i = 0; i < struct_count; i++ )
             {
                 if( test_seq_block_consistence(i, (CvSeq*)cxcore_struct[i],
-                                               ((CvTsSimpleSeq*)simple_struct[i])->count) < 0 )
+                                               ((CvTsSimpleSeq*)simple_struct[i]).count) < 0 )
                     return;
 
                 if( test_get_seq_elem( i, MAX(iterations/3,7) ) < 0 )
@@ -1059,7 +1059,7 @@ Core_SeqSortInvTest::Core_SeqSortInvTest()
 
 static int icvCmpSeqElems( const void* a, const void* b, void* userdata )
 {
-    return memcmp( a, b, ((CvSeq*)userdata)->elem_size );
+    return memcmp( a, b, ((CvSeq*)userdata).elem_size );
 }
 
 static int icvCmpSeqElems2_elem_size = 0;
@@ -1073,7 +1073,7 @@ void Core_SeqSortInvTest::run( int )
 {
     try
     {
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
         int i, k;
         double t;
         schar *elem0, *elem, *elem2;
@@ -1104,7 +1104,7 @@ void Core_SeqSortInvTest::run( int )
                 for( i = 0; i < struct_count; i++ )
                 {
                     CvTsSimpleSeq* sseq = (CvTsSimpleSeq*)simple_struct[i];
-                    max_size = MAX( max_size, sseq->count*sseq->elem_size );
+                    max_size = MAX( max_size, sseq.count*sseq.elem_size );
                 }
 
                 buffer.resize(max_size);
@@ -1115,82 +1115,82 @@ void Core_SeqSortInvTest::run( int )
                     CvTsSimpleSeq* sseq = (CvTsSimpleSeq*)simple_struct[i];
                     CvSlice slice = CV_WHOLE_SEQ;
 
-                    //printf("%d. %d. %d-th size = %d\n", gen, iter, i, sseq->count );
+                    //printf("%d. %d. %d-th size = %d\n", gen, iter, i, sseq.count );
 
                     cvSeqInvert( seq );
                     cvTsSimpleSeqInvert( sseq );
 
-                    if( test_seq_block_consistence( i, seq, sseq->count ) < 0 )
+                    if( test_seq_block_consistence( i, seq, sseq.count ) < 0 )
                         return;
 
-                    if( sseq->count > 0 && alvision.cvtest.randInt(rng) % 2 == 0 )
+                    if( sseq.count > 0 && alvision.cvtest.randInt(rng) % 2 == 0 )
                     {
-                        slice.end_index = alvision.cvtest.randInt(rng) % sseq->count + 1;
-                        slice.start_index = alvision.cvtest.randInt(rng) % (sseq->count - slice.end_index + 1);
+                        slice.end_index = alvision.cvtest.randInt(rng) % sseq.count + 1;
+                        slice.start_index = alvision.cvtest.randInt(rng) % (sseq.count - slice.end_index + 1);
                         slice.end_index += slice.start_index;
                     }
 
                     cvCvtSeqToArray( seq, &buffer[0], slice );
 
-                    slice.end_index = MIN( slice.end_index, sseq->count );
-                    CV_TS_SEQ_CHECK_CONDITION( sseq->count == 0 || memcmp( &buffer[0],
-                                                                          sseq->array + slice.start_index*sseq->elem_size,
-                                                                          (slice.end_index - slice.start_index)*sseq->elem_size ) == 0,
+                    slice.end_index = MIN( slice.end_index, sseq.count );
+                    CV_TS_SEQ_CHECK_CONDITION( sseq.count == 0 || memcmp( &buffer[0],
+                                                                          sseq.array + slice.start_index*sseq.elem_size,
+                                                                          (slice.end_index - slice.start_index)*sseq.elem_size ) == 0,
                                               "cvSeqInvert returned wrong result" );
 
-                    for( k = 0; k < (sseq->count > 0 ? 10 : 0); k++ )
+                    for( k = 0; k < (sseq.count > 0 ? 10 : 0); k++ )
                     {
-                        int idx0 = alvision.cvtest.randInt(rng) % sseq->count, idx = 0;
+                        int idx0 = alvision.cvtest.randInt(rng) % sseq.count, idx = 0;
                         elem0 = cvTsSimpleSeqElem( sseq, idx0 );
                         elem = cvGetSeqElem( seq, idx0 );
                         elem2 = cvSeqSearch( seq, elem0, k % 2 ? icvCmpSeqElems : 0, 0, &idx, seq );
 
                         CV_TS_SEQ_CHECK_CONDITION( elem != 0 &&
-                                                  memcmp( elem0, elem, seq->elem_size ) == 0,
+                                                  memcmp( elem0, elem, seq.elem_size ) == 0,
                                                   "cvSeqInvert gives incorrect result" );
                         CV_TS_SEQ_CHECK_CONDITION( elem2 != 0 &&
-                                                  memcmp( elem0, elem2, seq->elem_size ) == 0 &&
+                                                  memcmp( elem0, elem2, seq.elem_size ) == 0 &&
                                                   elem2 == cvGetSeqElem( seq, idx ),
                                                   "cvSeqSearch failed (linear search)" );
                     }
 
                     cvSeqSort( seq, icvCmpSeqElems, seq );
 
-                    if( test_seq_block_consistence( i, seq, sseq->count ) < 0 )
+                    if( test_seq_block_consistence( i, seq, sseq.count ) < 0 )
                         return;
 
-                    if( sseq->count > 0 )
+                    if( sseq.count > 0 )
                     {
                         // !!! This is not thread-safe !!!
-                        icvCmpSeqElems2_elem_size = sseq->elem_size;
-                        qsort( sseq->array, sseq->count, sseq->elem_size, icvCmpSeqElems2 );
+                        icvCmpSeqElems2_elem_size = sseq.elem_size;
+                        qsort( sseq.array, sseq.count, sseq.elem_size, icvCmpSeqElems2 );
 
                         if( alvision.cvtest.randInt(rng) % 2 == 0 )
                         {
-                            slice.end_index = alvision.cvtest.randInt(rng) % sseq->count + 1;
-                            slice.start_index = alvision.cvtest.randInt(rng) % (sseq->count - slice.end_index + 1);
+                            slice.end_index = alvision.cvtest.randInt(rng) % sseq.count + 1;
+                            slice.start_index = alvision.cvtest.randInt(rng) % (sseq.count - slice.end_index + 1);
                             slice.end_index += slice.start_index;
                         }
                     }
 
                     cvCvtSeqToArray( seq, &buffer[0], slice );
-                    CV_TS_SEQ_CHECK_CONDITION( sseq->count == 0 || memcmp( &buffer[0],
-                                                                          sseq->array + slice.start_index*sseq->elem_size,
-                                                                          (slice.end_index - slice.start_index)*sseq->elem_size ) == 0,
+                    CV_TS_SEQ_CHECK_CONDITION( sseq.count == 0 || memcmp( &buffer[0],
+                                                                          sseq.array + slice.start_index*sseq.elem_size,
+                                                                          (slice.end_index - slice.start_index)*sseq.elem_size ) == 0,
                                               "cvSeqSort returned wrong result" );
 
-                    for( k = 0; k < (sseq->count > 0 ? 10 : 0); k++ )
+                    for( k = 0; k < (sseq.count > 0 ? 10 : 0); k++ )
                     {
-                        int idx0 = alvision.cvtest.randInt(rng) % sseq->count, idx = 0;
+                        int idx0 = alvision.cvtest.randInt(rng) % sseq.count, idx = 0;
                         elem0 = cvTsSimpleSeqElem( sseq, idx0 );
                         elem = cvGetSeqElem( seq, idx0 );
                         elem2 = cvSeqSearch( seq, elem0, icvCmpSeqElems, 1, &idx, seq );
 
                         CV_TS_SEQ_CHECK_CONDITION( elem != 0 &&
-                                                  memcmp( elem0, elem, seq->elem_size ) == 0,
+                                                  memcmp( elem0, elem, seq.elem_size ) == 0,
                                                   "cvSeqSort gives incorrect result" );
                         CV_TS_SEQ_CHECK_CONDITION( elem2 != 0 &&
-                                                  memcmp( elem0, elem2, seq->elem_size ) == 0 &&
+                                                  memcmp( elem0, elem2, seq.elem_size ) == 0 &&
                                                   elem2 == cvGetSeqElem( seq, idx ),
                                                   "cvSeqSearch failed (binary search)" );
                     }
@@ -1214,7 +1214,7 @@ class Core_SetTest : public Core_DynStructBaseTest
 {
 public:
     Core_SetTest();
-    void clear();
+    clear() : void {}
     void run( int );
 
 protected:
@@ -1243,11 +1243,11 @@ int  Core_SetTest::test_set_ops( int iters )
     int idx, idx0;
     CvSetElem *elem = 0, *elem2 = 0, *elem3 = 0;
     schar* elem_data = 0;
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     //int max_active_count = 0, mean_active_count = 0;
 
     for( int i = 0; i < struct_count; i++ )
-        max_elem_size = MAX( max_elem_size, ((CvSeq*)cxcore_struct[i])->elem_size );
+        max_elem_size = MAX( max_elem_size, ((CvSeq*)cxcore_struct[i]).elem_size );
 
     Array<schar> elem_buf(max_elem_size);
     Mat elem_mat;
@@ -1258,32 +1258,32 @@ int  Core_SetTest::test_set_ops( int iters )
 
         CvSet* cvset = (CvSet*)cxcore_struct[struct_idx];
         CvTsSimpleSet* sset = (CvTsSimpleSet*)simple_struct[struct_idx];
-        int pure_elem_size = sset->elem_size - 1;
-        int prev_total = cvset->total, prev_count = cvset->active_count;
+        int pure_elem_size = sset.elem_size - 1;
+        int prev_total = cvset.total, prev_count = cvset.active_count;
         int op = alvision.cvtest.randInt(rng) % (iter <= iters/10 ? 2 : max_op);
         int by_ptr = op % 2 == 0;
-        CvSetElem* first_free = cvset->free_elems;
-        CvSetElem* next_free = first_free ? first_free->next_free : 0;
+        CvSetElem* first_free = cvset.free_elems;
+        CvSetElem* next_free = first_free ? first_free.next_free : 0;
         int pass_data = 0;
 
         if( iter > iters/10 && alvision.cvtest.randInt(rng)%200 == 0 ) // clear set
         {
-            prev_count = cvset->total;
+            prev_count = cvset.total;
             cvClearSet( cvset );
             cvTsClearSimpleSet( sset );
 
-            CV_TS_SEQ_CHECK_CONDITION( cvset->active_count == 0 && cvset->total == 0 &&
-                                      cvset->first == 0 && cvset->free_elems == 0 &&
-                                      (cvset->free_blocks != 0 || prev_count == 0),
+            CV_TS_SEQ_CHECK_CONDITION( cvset.active_count == 0 && cvset.total == 0 &&
+                                      cvset.first == 0 && cvset.free_elems == 0 &&
+                                      (cvset.free_blocks != 0 || prev_count == 0),
                                       "cvClearSet doesn't remove all the elements" );
             continue;
         }
         else if( op == 0 || op == 1 ) // add element
         {
-            if( sset->free_count == 0 )
+            if( sset.free_count == 0 )
                 continue;
 
-            elem_mat = Mat(1, cvset->elem_size, CV_8U, &elem_buf[0]);
+            elem_mat = Mat(1, cvset.elem_size, CV_8U, &elem_buf[0]);
             alvision.cvtest.randUni( rng, elem_mat, cvScalarAll(0), cvScalarAll(255) );
             elem = (CvSetElem*)&elem_buf[0];
 
@@ -1296,7 +1296,7 @@ int  Core_SetTest::test_set_ops( int iters )
             {
                 pass_data = alvision.cvtest.randInt(rng) % 2;
                 idx = cvSetAdd( cvset, pass_data ? elem : 0, &elem2 );
-                CV_TS_SEQ_CHECK_CONDITION( elem2 != 0 && elem2->flags == idx,
+                CV_TS_SEQ_CHECK_CONDITION( elem2 != 0 && elem2.flags == idx,
                                           "cvSetAdd returned NULL pointer or a wrong index" );
             }
 
@@ -1305,7 +1305,7 @@ int  Core_SetTest::test_set_ops( int iters )
             if( !pass_data )
                 memcpy( (schar*)elem2 + sizeof(int), elem_data, pure_elem_size );
 
-            idx = elem2->flags;
+            idx = elem2.flags;
             idx0 = cvTsSimpleSetAdd( sset, elem_data );
             elem3 = cvGetSetElem( cvset, idx );
 
@@ -1315,15 +1315,15 @@ int  Core_SetTest::test_set_ops( int iters )
                                       "The added element is not correct" );
 
             CV_TS_SEQ_CHECK_CONDITION( (!first_free || elem3 == first_free) &&
-                                      (!next_free || cvset->free_elems == next_free) &&
-                                      cvset->active_count == prev_count + 1,
+                                      (!next_free || cvset.free_elems == next_free) &&
+                                      cvset.active_count == prev_count + 1,
                                       "The free node list is modified incorrectly" );
         }
         else if( op == 2 || op == 3 ) // remove element
         {
-            idx = alvision.cvtest.randInt(rng) % sset->max_count;
+            idx = alvision.cvtest.randInt(rng) % sset.max_count;
 
-            if( sset->free_count == sset->max_count || idx >= sset->count )
+            if( sset.free_count == sset.max_count || idx >= sset.count )
                 continue;
 
             elem_data = cvTsSimpleSetFind(sset, idx);
@@ -1331,7 +1331,7 @@ int  Core_SetTest::test_set_ops( int iters )
                 continue;
 
             elem = cvGetSetElem( cvset, idx );
-            CV_TS_SEQ_CHECK_CONDITION( CV_IS_SET_ELEM(elem) && elem->flags == idx &&
+            CV_TS_SEQ_CHECK_CONDITION( CV_IS_SET_ELEM(elem) && elem.flags == idx &&
                                       memcmp((char*)elem + sizeof(int), elem_data, pure_elem_size) == 0,
                                       "cvGetSetElem returned wrong element" );
 
@@ -1347,25 +1347,25 @@ int  Core_SetTest::test_set_ops( int iters )
             cvTsSimpleSetRemove( sset, idx );
 
             CV_TS_SEQ_CHECK_CONDITION( !CV_IS_SET_ELEM(elem) && !cvGetSetElem(cvset, idx) &&
-                                      (elem->flags & CV_SET_ELEM_IDX_MASK) == idx,
+                                      (elem.flags & CV_SET_ELEM_IDX_MASK) == idx,
                                       "cvSetRemove[ByPtr] didn't release the element properly" );
 
-            CV_TS_SEQ_CHECK_CONDITION( elem->next_free == first_free &&
-                                      cvset->free_elems == elem &&
-                                      cvset->active_count == prev_count - 1,
+            CV_TS_SEQ_CHECK_CONDITION( elem.next_free == first_free &&
+                                      cvset.free_elems == elem &&
+                                      cvset.active_count == prev_count - 1,
                                       "The free node list has not been updated properly" );
         }
 
-        //max_active_count = MAX( max_active_count, cvset->active_count );
-        //mean_active_count += cvset->active_count;
-        CV_TS_SEQ_CHECK_CONDITION( cvset->active_count == sset->max_count - sset->free_count &&
-                                  cvset->total >= cvset->active_count &&
-                                  (cvset->total == 0 || cvset->total >= prev_total),
+        //max_active_count = MAX( max_active_count, cvset.active_count );
+        //mean_active_count += cvset.active_count;
+        CV_TS_SEQ_CHECK_CONDITION( cvset.active_count == sset.max_count - sset.free_count &&
+                                  cvset.total >= cvset.active_count &&
+                                  (cvset.total == 0 || cvset.total >= prev_total),
                                   "The total number of cvset elements is not correct" );
 
         // CvSet and simple set do not necessary have the same "total" (active & free) number,
-        // so pass "set->total" to skip that check
-        test_seq_block_consistence( struct_idx, (CvSeq*)cvset, cvset->total );
+        // so pass "set.total" to skip that check
+        test_seq_block_consistence( struct_idx, (CvSeq*)cvset, cvset.total );
         update_progressbar();
     }
 
@@ -1377,7 +1377,7 @@ void Core_SetTest::run( int )
 {
     try
     {
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
         double t;
 
         clear();
@@ -1399,7 +1399,7 @@ void Core_SetTest::run( int )
                 int elem_size = pure_elem_size + sizeof(int);
                 elem_size = (elem_size + sizeof(size_t) - 1) & ~(sizeof(size_t)-1);
                 elem_size = MAX( elem_size, (int)sizeof(CvSetElem) );
-                elem_size = MIN( elem_size, (int)(storage->block_size - sizeof(void*) - sizeof(CvMemBlock) - sizeof(CvSeqBlock)) );
+                elem_size = MIN( elem_size, (int)(storage.block_size - sizeof(void*) - sizeof(CvMemBlock) - sizeof(CvSeqBlock)) );
                 pure_elem_size = MIN( pure_elem_size, elem_size-(int)sizeof(CvSetElem) );
 
                 cvTsReleaseSimpleSet( (CvTsSimpleSet**)&simple_struct[i] );
@@ -1425,7 +1425,7 @@ class Core_GraphTest : public Core_DynStructBaseTest
 {
 public:
     Core_GraphTest();
-    void clear();
+    clear() : void {}
     void run( int );
 
 protected:
@@ -1455,14 +1455,14 @@ int  Core_GraphTest::test_graph_ops( int iters )
     int idx, idx0;
     CvGraphVtx *vtx = 0, *vtx2 = 0, *vtx3 = 0;
     CvGraphEdge* edge = 0, *edge2 = 0;
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     //int max_active_count = 0, mean_active_count = 0;
 
     for( i = 0; i < struct_count; i++ )
     {
         CvGraph* graph = (CvGraph*)cxcore_struct[i];
-        max_elem_size = MAX( max_elem_size, graph->elem_size );
-        max_elem_size = MAX( max_elem_size, graph->edges->elem_size );
+        max_elem_size = MAX( max_elem_size, graph.elem_size );
+        max_elem_size = MAX( max_elem_size, graph.edges.elem_size );
     }
 
     Array<schar> elem_buf(max_elem_size);
@@ -1473,47 +1473,47 @@ int  Core_GraphTest::test_graph_ops( int iters )
         struct_idx = alvision.cvtest.randInt(rng) % struct_count;
         CvGraph* graph = (CvGraph*)cxcore_struct[struct_idx];
         CvTsSimpleGraph* sgraph = (CvTsSimpleGraph*)simple_struct[struct_idx];
-        CvSet* edges = graph->edges;
+        CvSet* edges = graph.edges;
         schar *vtx_data;
         char *edge_data;
-        int pure_vtx_size = sgraph->vtx->elem_size - 1,
-        pure_edge_size = sgraph->edge_size - 1;
-        int prev_vtx_total = graph->total,
-        prev_edge_total = graph->edges->total,
-        prev_vtx_count = graph->active_count,
-        prev_edge_count = graph->edges->active_count;
+        int pure_vtx_size = sgraph.vtx.elem_size - 1,
+        pure_edge_size = sgraph.edge_size - 1;
+        int prev_vtx_total = graph.total,
+        prev_edge_total = graph.edges.total,
+        prev_vtx_count = graph.active_count,
+        prev_edge_count = graph.edges.active_count;
         int op = alvision.cvtest.randInt(rng) % max_op;
         int pass_data = 0, vtx_degree0 = 0, vtx_degree = 0;
         CvSetElem *first_free, *next_free;
 
         if( alvision.cvtest.randInt(rng) % 200 == 0 ) // clear graph
         {
-            int prev_vtx_count2 = graph->total, prev_edge_count2 = graph->edges->total;
+            int prev_vtx_count2 = graph.total, prev_edge_count2 = graph.edges.total;
 
             cvClearGraph( graph );
             cvTsClearSimpleGraph( sgraph );
 
-            CV_TS_SEQ_CHECK_CONDITION( graph->active_count == 0 && graph->total == 0 &&
-                                      graph->first == 0 && graph->free_elems == 0 &&
-                                      (graph->free_blocks != 0 || prev_vtx_count2 == 0),
+            CV_TS_SEQ_CHECK_CONDITION( graph.active_count == 0 && graph.total == 0 &&
+                                      graph.first == 0 && graph.free_elems == 0 &&
+                                      (graph.free_blocks != 0 || prev_vtx_count2 == 0),
                                       "The graph is not empty after clearing" );
 
-            CV_TS_SEQ_CHECK_CONDITION( edges->active_count == 0 && edges->total == 0 &&
-                                      edges->first == 0 && edges->free_elems == 0 &&
-                                      (edges->free_blocks != 0 || prev_edge_count2 == 0),
+            CV_TS_SEQ_CHECK_CONDITION( edges.active_count == 0 && edges.total == 0 &&
+                                      edges.first == 0 && edges.free_elems == 0 &&
+                                      (edges.free_blocks != 0 || prev_edge_count2 == 0),
                                       "The graph is not empty after clearing" );
         }
         else if( op == 0 ) // add vertex
         {
-            if( sgraph->vtx->free_count == 0 )
+            if( sgraph.vtx.free_count == 0 )
                 continue;
 
-            first_free = graph->free_elems;
-            next_free = first_free ? first_free->next_free : 0;
+            first_free = graph.free_elems;
+            next_free = first_free ? first_free.next_free : 0;
 
             if( pure_vtx_size )
             {
-                elem_mat = Mat(1, graph->elem_size, CV_8U, &elem_buf[0]);
+                elem_mat = Mat(1, graph.elem_size, CV_8U, &elem_buf[0]);
                 alvision.cvtest.randUni( rng, elem_mat, cvScalarAll(0), cvScalarAll(255) );
             }
 
@@ -1528,21 +1528,21 @@ int  Core_GraphTest::test_graph_ops( int iters )
 
             vtx3 = cvGetGraphVtx( graph, idx );
 
-            CV_TS_SEQ_CHECK_CONDITION( (CV_IS_SET_ELEM(vtx3) && vtx3->flags == idx &&
-                                        vtx3->first == 0) || (idx == idx0 && vtx3 == vtx2 &&
+            CV_TS_SEQ_CHECK_CONDITION( (CV_IS_SET_ELEM(vtx3) && vtx3.flags == idx &&
+                                        vtx3.first == 0) || (idx == idx0 && vtx3 == vtx2 &&
                                                               (!pass_data || pure_vtx_size == 0 ||
                                                                memcmp(vtx3 + 1, vtx + 1, pure_vtx_size) == 0)),
                                       "The added element is not correct" );
 
             CV_TS_SEQ_CHECK_CONDITION( (!first_free || first_free == (CvSetElem*)vtx3) &&
-                                      (!next_free || graph->free_elems == next_free) &&
-                                      graph->active_count == prev_vtx_count + 1,
+                                      (!next_free || graph.free_elems == next_free) &&
+                                      graph.active_count == prev_vtx_count + 1,
                                       "The free node list is modified incorrectly" );
         }
         else if( op == 1 ) // remove vertex
         {
-            idx = alvision.cvtest.randInt(rng) % sgraph->vtx->max_count;
-            if( sgraph->vtx->free_count == sgraph->vtx->max_count || idx >= sgraph->vtx->count )
+            idx = alvision.cvtest.randInt(rng) % sgraph.vtx.max_count;
+            if( sgraph.vtx.free_count == sgraph.vtx.max_count || idx >= sgraph.vtx.count )
                 continue;
 
             vtx_data = cvTsSimpleGraphFindVertex(sgraph, idx);
@@ -1550,10 +1550,10 @@ int  Core_GraphTest::test_graph_ops( int iters )
                 continue;
 
             vtx_degree0 = cvTsSimpleGraphVertexDegree( sgraph, idx );
-            first_free = graph->free_elems;
+            first_free = graph.free_elems;
 
             vtx = cvGetGraphVtx( graph, idx );
-            CV_TS_SEQ_CHECK_CONDITION( CV_IS_SET_ELEM(vtx) && vtx->flags == idx &&
+            CV_TS_SEQ_CHECK_CONDITION( CV_IS_SET_ELEM(vtx) && vtx.flags == idx &&
                                       (pure_vtx_size == 0 || memcmp( vtx + 1, vtx_data, pure_vtx_size) == 0),
                                       "cvGetGraphVtx returned wrong element" );
 
@@ -1574,16 +1574,16 @@ int  Core_GraphTest::test_graph_ops( int iters )
                                       "Number of incident edges is different in two graph representations" );
 
             CV_TS_SEQ_CHECK_CONDITION( !CV_IS_SET_ELEM(vtx) && !cvGetGraphVtx(graph, idx) &&
-                                      (vtx->flags & CV_SET_ELEM_IDX_MASK) == idx,
+                                      (vtx.flags & CV_SET_ELEM_IDX_MASK) == idx,
                                       "cvGraphRemoveVtx[ByPtr] didn't release the vertex properly" );
 
-            CV_TS_SEQ_CHECK_CONDITION( graph->edges->active_count == prev_edge_count - vtx_degree,
+            CV_TS_SEQ_CHECK_CONDITION( graph.edges.active_count == prev_edge_count - vtx_degree,
                                       "cvGraphRemoveVtx[ByPtr] didn't remove all the incident edges "
                                       "(or removed some extra)" );
 
-            CV_TS_SEQ_CHECK_CONDITION( ((CvSetElem*)vtx)->next_free == first_free &&
-                                      graph->free_elems == (CvSetElem*)vtx &&
-                                      graph->active_count == prev_vtx_count - 1,
+            CV_TS_SEQ_CHECK_CONDITION( ((CvSetElem*)vtx).next_free == first_free &&
+                                      graph.free_elems == (CvSetElem*)vtx &&
+                                      graph.active_count == prev_vtx_count - 1,
                                       "The free node list has not been updated properly" );
         }
         else if( op == 2 ) // add edge
@@ -1591,12 +1591,12 @@ int  Core_GraphTest::test_graph_ops( int iters )
             int v_idx[2] = {0,0}, res = 0;
             int v_prev_degree[2] = {0,0}, v_degree[2] = {0,0};
 
-            if( sgraph->vtx->free_count >= sgraph->vtx->max_count-1 )
+            if( sgraph.vtx.free_count >= sgraph.vtx.max_count-1 )
                 continue;
 
             for( i = 0, k = 0; i < 10; i++ )
             {
-                int j = alvision.cvtest.randInt(rng) % sgraph->vtx->count;
+                int j = alvision.cvtest.randInt(rng) % sgraph.vtx.count;
                 vtx_data = cvTsSimpleGraphFindVertex( sgraph, j );
                 if( vtx_data )
                 {
@@ -1615,15 +1615,15 @@ int  Core_GraphTest::test_graph_ops( int iters )
             if( k < 2 )
                 continue;
 
-            first_free = graph->edges->free_elems;
-            next_free = first_free ? first_free->next_free : 0;
+            first_free = graph.edges.free_elems;
+            next_free = first_free ? first_free.next_free : 0;
 
             edge = cvFindGraphEdge( graph, v_idx[0], v_idx[1] );
             CV_TS_SEQ_CHECK_CONDITION( edge == 0, "Extra edge appeared in the graph" );
 
             if( pure_edge_size > 0 )
             {
-                elem_mat = Mat(1, graph->edges->elem_size, CV_8U, &elem_buf[0]);
+                elem_mat = Mat(1, graph.edges.elem_size, CV_8U, &elem_buf[0]);
                 alvision.cvtest.randUni( rng, elem_mat, cvScalarAll(0), cvScalarAll(255) );
             }
             edge = (CvGraphEdge*)&elem_buf[0];
@@ -1631,13 +1631,13 @@ int  Core_GraphTest::test_graph_ops( int iters )
             // assign some default weight that is easy to check for
             // consistensy, 'cause an edge weight is not stored
             // in the simple graph
-            edge->weight = (float)(v_idx[0] + v_idx[1]);
+            edge.weight = (float)(v_idx[0] + v_idx[1]);
             pass_data = alvision.cvtest.randInt(rng) % 2;
 
             vtx = cvGetGraphVtx( graph, v_idx[0] );
             vtx2 = cvGetGraphVtx( graph, v_idx[1] );
-            CV_TS_SEQ_CHECK_CONDITION( vtx != 0 && vtx2 != 0 && vtx->flags == v_idx[0] &&
-                                      vtx2->flags == v_idx[1], "Some of the vertices are missing" );
+            CV_TS_SEQ_CHECK_CONDITION( vtx != 0 && vtx2 != 0 && vtx.flags == v_idx[0] &&
+                                      vtx2.flags == v_idx[1], "Some of the vertices are missing" );
 
             if( alvision.cvtest.randInt(rng) % 2 )
             {
@@ -1656,10 +1656,10 @@ int  Core_GraphTest::test_graph_ops( int iters )
                  v_degree[1] = cvGraphVtxDegree( graph, v_idx[1] );
             }
 
-            //edge3 = (CvGraphEdge*)cvGetSetElem( graph->edges, idx );
+            //edge3 = (CvGraphEdge*)cvGetSetElem( graph.edges, idx );
             CV_TS_SEQ_CHECK_CONDITION( res == 1 && edge2 != 0 && CV_IS_SET_ELEM(edge2) &&
-                                      ((edge2->vtx[0] == vtx && edge2->vtx[1] == vtx2) ||
-                                       (!CV_IS_GRAPH_ORIENTED(graph) && edge2->vtx[0] == vtx2 && edge2->vtx[1] == vtx)) &&
+                                      ((edge2.vtx[0] == vtx && edge2.vtx[1] == vtx2) ||
+                                       (!CV_IS_GRAPH_ORIENTED(graph) && edge2.vtx[0] == vtx2 && edge2.vtx[1] == vtx)) &&
                                       (!pass_data || pure_edge_size == 0 || memcmp( edge2 + 1, edge + 1, pure_edge_size ) == 0),
                                       "The edge has been added incorrectly" );
 
@@ -1667,7 +1667,7 @@ int  Core_GraphTest::test_graph_ops( int iters )
             {
                 if( pure_edge_size > 0 )
                     memcpy( edge2 + 1, edge + 1, pure_edge_size );
-                edge2->weight = edge->weight;
+                edge2.weight = edge.weight;
             }
 
             CV_TS_SEQ_CHECK_CONDITION( v_degree[0] == v_prev_degree[0] + 1 &&
@@ -1677,8 +1677,8 @@ int  Core_GraphTest::test_graph_ops( int iters )
             cvTsSimpleGraphAddEdge( sgraph, v_idx[0], v_idx[1], edge + 1 );
 
             CV_TS_SEQ_CHECK_CONDITION( (!first_free || first_free == (CvSetElem*)edge2) &&
-                                      (!next_free || graph->edges->free_elems == next_free) &&
-                                      graph->edges->active_count == prev_edge_count + 1,
+                                      (!next_free || graph.edges.free_elems == next_free) &&
+                                      graph.edges.active_count == prev_edge_count + 1,
                                       "The free node list is modified incorrectly" );
         }
         else if( op == 3 ) // find & remove edge
@@ -1686,13 +1686,13 @@ int  Core_GraphTest::test_graph_ops( int iters )
             int v_idx[2] = {0,0}, by_ptr;
             int v_prev_degree[2] = {0,0}, v_degree[2] = {0,0};
 
-            if( sgraph->vtx->free_count >= sgraph->vtx->max_count-1 )
+            if( sgraph.vtx.free_count >= sgraph.vtx.max_count-1 )
                 continue;
 
             edge_data = 0;
             for( i = 0, k = 0; i < 10; i++ )
             {
-                int j = alvision.cvtest.randInt(rng) % sgraph->vtx->count;
+                int j = alvision.cvtest.randInt(rng) % sgraph.vtx.count;
                 vtx_data = cvTsSimpleGraphFindVertex( sgraph, j );
                 if( vtx_data )
                 {
@@ -1715,12 +1715,12 @@ int  Core_GraphTest::test_graph_ops( int iters )
                 continue;
 
             by_ptr = alvision.cvtest.randInt(rng) % 2;
-            first_free = graph->edges->free_elems;
+            first_free = graph.edges.free_elems;
 
             vtx = cvGetGraphVtx( graph, v_idx[0] );
             vtx2 = cvGetGraphVtx( graph, v_idx[1] );
-            CV_TS_SEQ_CHECK_CONDITION( vtx != 0 && vtx2 != 0 && vtx->flags == v_idx[0] &&
-                                      vtx2->flags == v_idx[1], "Some of the vertices are missing" );
+            CV_TS_SEQ_CHECK_CONDITION( vtx != 0 && vtx2 != 0 && vtx.flags == v_idx[0] &&
+                                      vtx2.flags == v_idx[1], "Some of the vertices are missing" );
 
             if( by_ptr )
             {
@@ -1735,11 +1735,11 @@ int  Core_GraphTest::test_graph_ops( int iters )
                  v_prev_degree[1] = cvGraphVtxDegree( graph, v_idx[1] );
             }
 
-            idx = edge->flags;
+            idx = edge.flags;
 
-            CV_TS_SEQ_CHECK_CONDITION( edge != 0 && edge->weight == v_idx[0] + v_idx[1] &&
-                                      ((edge->vtx[0] == vtx && edge->vtx[1] == vtx2) ||
-                                       (!CV_IS_GRAPH_ORIENTED(graph) && edge->vtx[1] == vtx && edge->vtx[0] == vtx2)) &&
+            CV_TS_SEQ_CHECK_CONDITION( edge != 0 && edge.weight == v_idx[0] + v_idx[1] &&
+                                      ((edge.vtx[0] == vtx && edge.vtx[1] == vtx2) ||
+                                       (!CV_IS_GRAPH_ORIENTED(graph) && edge.vtx[1] == vtx && edge.vtx[0] == vtx2)) &&
                                       (pure_edge_size == 0 || memcmp(edge + 1, edge_data, pure_edge_size) == 0),
                                       "An edge is missing or incorrect" );
 
@@ -1767,28 +1767,28 @@ int  Core_GraphTest::test_graph_ops( int iters )
 
             cvTsSimpleGraphRemoveEdge( sgraph, v_idx[0], v_idx[1] );
 
-            CV_TS_SEQ_CHECK_CONDITION( graph->edges->free_elems == (CvSetElem*)edge &&
-                                      graph->edges->free_elems->next_free == first_free &&
-                                      graph->edges->active_count == prev_edge_count - 1,
+            CV_TS_SEQ_CHECK_CONDITION( graph.edges.free_elems == (CvSetElem*)edge &&
+                                      graph.edges.free_elems.next_free == first_free &&
+                                      graph.edges.active_count == prev_edge_count - 1,
                                       "The free edge list has not been modified properly" );
         }
 
-        //max_active_count = MAX( max_active_count, graph->active_count );
-        //mean_active_count += graph->active_count;
+        //max_active_count = MAX( max_active_count, graph.active_count );
+        //mean_active_count += graph.active_count;
 
-        CV_TS_SEQ_CHECK_CONDITION( graph->active_count == sgraph->vtx->max_count - sgraph->vtx->free_count &&
-                                  graph->total >= graph->active_count &&
-                                  (graph->total == 0 || graph->total >= prev_vtx_total),
+        CV_TS_SEQ_CHECK_CONDITION( graph.active_count == sgraph.vtx.max_count - sgraph.vtx.free_count &&
+                                  graph.total >= graph.active_count &&
+                                  (graph.total == 0 || graph.total >= prev_vtx_total),
                                   "The total number of graph vertices is not correct" );
 
-        CV_TS_SEQ_CHECK_CONDITION( graph->edges->total >= graph->edges->active_count &&
-                                  (graph->edges->total == 0 || graph->edges->total >= prev_edge_total),
+        CV_TS_SEQ_CHECK_CONDITION( graph.edges.total >= graph.edges.active_count &&
+                                  (graph.edges.total == 0 || graph.edges.total >= prev_edge_total),
                                   "The total number of graph vertices is not correct" );
 
         // CvGraph and simple graph do not necessary have the same "total" (active & free) number,
-        // so pass "graph->total" (or "graph->edges->total") to skip that check
-        test_seq_block_consistence( struct_idx, (CvSeq*)graph, graph->total );
-        test_seq_block_consistence( struct_idx, (CvSeq*)graph->edges, graph->edges->total );
+        // so pass "graph.total" (or "graph.edges.total") to skip that check
+        test_seq_block_consistence( struct_idx, (CvSeq*)graph, graph.total );
+        test_seq_block_consistence( struct_idx, (CvSeq*)graph.edges, graph.edges.total );
         update_progressbar();
     }
 
@@ -1800,7 +1800,7 @@ void Core_GraphTest::run( int )
 {
     try
     {
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
         int i, k;
         double t;
 
@@ -1830,7 +1830,7 @@ void Core_GraphTest::run( int )
                     int delta = k == 0 ? sizeof(CvGraphVtx) : sizeof(CvGraphEdge);
                     int e = pe + delta;
                     e = (e + sizeof(size_t) - 1) & ~(sizeof(size_t)-1);
-                    e = MIN( e, (int)(storage->block_size - sizeof(CvMemBlock) -
+                    e = MIN( e, (int)(storage.block_size - sizeof(CvMemBlock) -
                                       sizeof(CvSeqBlock) - sizeof(void*)) );
                     pe = MIN(pe, e - delta);
                     pure_elem_size[k] = pe;
@@ -1880,7 +1880,7 @@ Core_GraphScanTest::Core_GraphScanTest()
 
 int Core_GraphScanTest::create_random_graph( int _struct_idx )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     int is_oriented = alvision.cvtest.randInt(rng) % 2;
     int i, vtx_count = alvision.cvtest.randInt(rng) % max_struct_size;
     int edge_count = alvision.cvtest.randInt(rng) % MAX(vtx_count*20, 1);
@@ -1895,7 +1895,7 @@ int Core_GraphScanTest::create_random_graph( int _struct_idx )
     for( i = 0; i < vtx_count; i++ )
          cvGraphAddVtx( graph );
 
-    assert( graph->active_count == vtx_count );
+    assert( graph.active_count == vtx_count );
 
     for( i = 0; i < edge_count; i++ )
     {
@@ -1906,7 +1906,7 @@ int Core_GraphScanTest::create_random_graph( int _struct_idx )
              cvGraphAddEdge( graph, j, k );
     }
 
-    assert( graph->active_count == vtx_count && graph->edges->active_count <= edge_count );
+    assert( graph.active_count == vtx_count && graph.edges.active_count <= edge_count );
 
     return 0;
 }
@@ -1917,7 +1917,7 @@ void Core_GraphScanTest::run( int )
     CvGraphScanner* scanner = 0;
     try
     {
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
         Array<uchar> vtx_mask, edge_mask;
         double t;
         int i;
@@ -1967,7 +1967,7 @@ void Core_GraphScanTest::run( int )
                 {
                     CvGraphEdge* edge;
                      cvGraphAddEdge( graph, edges[i][0], edges[i][1], 0, &edge );
-                    edge->weight = (float)edges[i][2];
+                    edge.weight = (float)edges[i][2];
                 }
 
                 edge_count = i;
@@ -1984,43 +1984,43 @@ void Core_GraphScanTest::run( int )
                         case CV_GRAPH_VERTEX:
                             event = "Vertex";
                             vtx_count--;
-                            a = cvGraphVtxIdx( graph, scanner->vtx );
+                            a = cvGraphVtxIdx( graph, scanner.vtx );
                             break;
                         case CV_GRAPH_TREE_EDGE:
                             event = "Tree Edge";
                             edge_count--;
-                            CV_TS_SEQ_CHECK_CONDITION( scanner->edge->weight == (float)'t',
+                            CV_TS_SEQ_CHECK_CONDITION( scanner.edge.weight == (float)'t',
                                                       "Invalid edge type" );
-                            a = cvGraphVtxIdx( graph, scanner->vtx );
-                            b = cvGraphVtxIdx( graph, scanner->dst );
+                            a = cvGraphVtxIdx( graph, scanner.vtx );
+                            b = cvGraphVtxIdx( graph, scanner.dst );
                             break;
                         case CV_GRAPH_BACK_EDGE:
                             event = "Back Edge";
                             edge_count--;
-                            CV_TS_SEQ_CHECK_CONDITION( scanner->edge->weight == (float)'b',
+                            CV_TS_SEQ_CHECK_CONDITION( scanner.edge.weight == (float)'b',
                                                       "Invalid edge type" );
-                            a = cvGraphVtxIdx( graph, scanner->vtx );
-                            b = cvGraphVtxIdx( graph, scanner->dst );
+                            a = cvGraphVtxIdx( graph, scanner.vtx );
+                            b = cvGraphVtxIdx( graph, scanner.dst );
                             break;
                         case CV_GRAPH_CROSS_EDGE:
                             event = "Cross Edge";
                             edge_count--;
-                            CV_TS_SEQ_CHECK_CONDITION( scanner->edge->weight == (float)'c',
+                            CV_TS_SEQ_CHECK_CONDITION( scanner.edge.weight == (float)'c',
                                                       "Invalid edge type" );
-                            a = cvGraphVtxIdx( graph, scanner->vtx );
-                            b = cvGraphVtxIdx( graph, scanner->dst );
+                            a = cvGraphVtxIdx( graph, scanner.vtx );
+                            b = cvGraphVtxIdx( graph, scanner.dst );
                             break;
                         case CV_GRAPH_FORWARD_EDGE:
                             event = "Forward Edge";
                             edge_count--;
-                            CV_TS_SEQ_CHECK_CONDITION( scanner->edge->weight == (float)'f',
+                            CV_TS_SEQ_CHECK_CONDITION( scanner.edge.weight == (float)'f',
                                                       "Invalid edge type" );
-                            a = cvGraphVtxIdx( graph, scanner->vtx );
-                            b = cvGraphVtxIdx( graph, scanner->dst );
+                            a = cvGraphVtxIdx( graph, scanner.vtx );
+                            b = cvGraphVtxIdx( graph, scanner.dst );
                             break;
                         case CV_GRAPH_BACKTRACKING:
                             event = "Backtracking";
-                            a = cvGraphVtxIdx( graph, scanner->vtx );
+                            a = cvGraphVtxIdx( graph, scanner.vtx );
                             break;
                         case CV_GRAPH_NEW_TREE:
                             event = "New search tree";
@@ -2032,16 +2032,16 @@ void Core_GraphScanTest::run( int )
                             CV_TS_SEQ_CHECK_CONDITION( 0, "Invalid code appeared during graph scan" );
                     }
 
-                    ts->printf( alvision.cvtest.TSConstants.LOG, "%s", event );
+                    ts.printf( alvision.cvtest.TSConstants.LOG, "%s", event );
                     if( a >= 0 )
                     {
                         if( b >= 0 )
-                            ts->printf( alvision.cvtest.TSConstants.LOG, ": (%d,%d)", a, b );
+                            ts.printf( alvision.cvtest.TSConstants.LOG, ": (%d,%d)", a, b );
                         else
-                            ts->printf( alvision.cvtest.TSConstants.LOG, ": %d", a );
+                            ts.printf( alvision.cvtest.TSConstants.LOG, ": %d", a );
                     }
 
-                    ts->printf( alvision.cvtest.TSConstants.LOG, "\n" );
+                    ts.printf( alvision.cvtest.TSConstants.LOG, "\n" );
 
                     if( code < 0 )
                         break;
@@ -2062,15 +2062,15 @@ void Core_GraphScanTest::run( int )
                 // iterate twice to check that scanner doesn't damage the graph
                 for( i = 0; i < 2; i++ )
                 {
-                    CvGraphVtx* start_vtx = alvision.cvtest.randInt(rng) % 2 || graph->active_count == 0 ? 0 :
-                    cvGetGraphVtx( graph, alvision.cvtest.randInt(rng) % graph->active_count );
+                    CvGraphVtx* start_vtx = alvision.cvtest.randInt(rng) % 2 || graph.active_count == 0 ? 0 :
+                    cvGetGraphVtx( graph, alvision.cvtest.randInt(rng) % graph.active_count );
 
                     scanner = cvCreateGraphScanner( graph, start_vtx, CV_GRAPH_ALL_ITEMS );
 
                     vtx_mask.resize(0);
-                    vtx_mask.resize(graph->active_count, 0);
+                    vtx_mask.resize(graph.active_count, 0);
                     edge_mask.resize(0);
-                    edge_mask.resize(graph->edges->active_count, 0);
+                    edge_mask.resize(graph.edges.active_count, 0);
 
                     for(;;)
                     {
@@ -2080,18 +2080,18 @@ void Core_GraphScanTest::run( int )
                             break;
                         else if( code & CV_GRAPH_ANY_EDGE )
                         {
-                            int edge_idx = scanner->edge->flags & CV_SET_ELEM_IDX_MASK;
+                            int edge_idx = scanner.edge.flags & CV_SET_ELEM_IDX_MASK;
 
-                            CV_TS_SEQ_CHECK_CONDITION( edge_idx < graph->edges->active_count &&
+                            CV_TS_SEQ_CHECK_CONDITION( edge_idx < graph.edges.active_count &&
                                                       edge_mask[edge_idx] == 0,
                                                       "The edge is not found or visited for the second time" );
                             edge_mask[edge_idx] = 1;
                         }
                         else if( code & CV_GRAPH_VERTEX )
                         {
-                            int vtx_idx = scanner->vtx->flags & CV_SET_ELEM_IDX_MASK;
+                            int vtx_idx = scanner.vtx.flags & CV_SET_ELEM_IDX_MASK;
 
-                            CV_TS_SEQ_CHECK_CONDITION( vtx_idx < graph->active_count &&
+                            CV_TS_SEQ_CHECK_CONDITION( vtx_idx < graph.active_count &&
                                                       vtx_mask[vtx_idx] == 0,
                                                       "The vtx is not found or visited for the second time" );
                             vtx_mask[vtx_idx] = 1;
@@ -2100,8 +2100,8 @@ void Core_GraphScanTest::run( int )
 
                     cvReleaseGraphScanner( &scanner );
 
-                    CV_TS_SEQ_CHECK_CONDITION( alvision.cvtest.norm(Mat(vtx_mask),CV_L1) == graph->active_count &&
-                                              alvision.cvtest.norm(Mat(edge_mask),CV_L1) == graph->edges->active_count,
+                    CV_TS_SEQ_CHECK_CONDITION( alvision.cvtest.norm(Mat(vtx_mask),CV_L1) == graph.active_count &&
+                                              alvision.cvtest.norm(Mat(edge_mask),CV_L1) == graph.edges.active_count,
                                               "Some vertices or edges have not been visited" );
                     update_progressbar();
                 }

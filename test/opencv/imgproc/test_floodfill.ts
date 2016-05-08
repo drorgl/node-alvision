@@ -60,10 +60,10 @@ public:
 protected:
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,types: Array<Array<alvision.int>>): void {}
     get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
-    void run_func();
-    void prepare_to_validation( int );
+    run_func() : void {}
+    prepare_to_validation(test_case_idx : alvision.int) : void {}
 
-    void fill_array( int test_case_idx, int i, int j, Mat& arr );
+    fill_array(test_case_idx : alvision.int, i : alvision.int, j : alvision.int, arr : alvision.Mat) : void {}
 
     /*int write_default_params(CvFileStorage* fs);
     void get_timing_test_array_types_and_sizes( int test_case_idx, Array<Array<Size> >& sizes, Array<Array<int> >& types
@@ -82,12 +82,12 @@ protected:
 
 CV_FloodFillTest::CV_FloodFillTest()
 {
-    test_array[INPUT_OUTPUT].push(NULL);
-    test_array[INPUT_OUTPUT].push(NULL);
-    test_array[REF_INPUT_OUTPUT].push(NULL);
-    test_array[REF_INPUT_OUTPUT].push(NULL);
-    test_array[OUTPUT].push(NULL);
-    test_array[REF_OUTPUT].push(NULL);
+    test_array[INPUT_OUTPUT].push(null);
+    test_array[INPUT_OUTPUT].push(null);
+    test_array[REF_INPUT_OUTPUT].push(null);
+    test_array[REF_INPUT_OUTPUT].push(null);
+    test_array[OUTPUT].push(null);
+    test_array[REF_OUTPUT].push(null);
     optional_mask = false;
     element_wise_relative_error = true;
 
@@ -99,11 +99,11 @@ void CV_FloodFillTest::get_test_array_types_and_sizes( int test_case_idx,
                                                        Array<Array<Size> >& sizes,
                                                        Array<Array<int> >& types )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     int depth, cn;
     int i;
     double buff[8];
-    alvision.cvtest.ArrayTest::get_test_array_types_and_sizes( test_case_idx, sizes, types );
+    super.get_test_array_types_and_sizes( test_case_idx, sizes, types );
 
     depth = alvision.cvtest.randInt(rng) % 3;
     depth = depth == 0 ? CV_8U : depth == 1 ? CV_32S : CV_32F;
@@ -160,11 +160,11 @@ double CV_FloodFillTest::get_success_error_level( int /*test_case_idx*/, int i, 
 
 void CV_FloodFillTest::fill_array( int test_case_idx, int i, int j, Mat& arr )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
 
     if( i != INPUT && i != INPUT_OUTPUT )
     {
-        alvision.cvtest.ArrayTest::fill_array( test_case_idx, i, j, arr );
+        super.fill_array( test_case_idx, i, j, arr );
         return;
     }
 
@@ -258,15 +258,15 @@ cvTsFloodFill( CvMat* _img, CvPoint seed_pt, CvScalar new_val,
     ushort* m;
     float* img;
     int mstep, step;
-    int cn = CV_MAT_CN(_img->type);
+    int cn = CV_MAT_CN(_img.type);
     int mdelta[8], idelta[8], ncount;
-    int cols = _img->cols, rows = _img->rows;
+    int cols = _img.cols, rows = _img.rows;
     int u0 = 0, u1 = 0, u2 = 0;
     double s0 = 0, s1 = 0, s2 = 0;
 
-    if( CV_MAT_DEPTH(_img->type) == CV_8U || CV_MAT_DEPTH(_img->type) == CV_32S )
+    if( CV_MAT_DEPTH(_img.type) == CV_8U || CV_MAT_DEPTH(_img.type) == CV_32S )
     {
-        tmp = cvCreateMat( rows, cols, CV_MAKETYPE(CV_32F,CV_MAT_CN(_img->type)) );
+        tmp = cvCreateMat( rows, cols, CV_MAKETYPE(CV_32F,CV_MAT_CN(_img.type)) );
         alvision.cvtest.convert(cvarrToMat(_img), cvarrToMat(tmp), -1);
     }
 
@@ -278,15 +278,15 @@ cvTsFloodFill( CvMat* _img, CvPoint seed_pt, CvScalar new_val,
     {
         Mat m_mask = cvarrToMat(mask);
         alvision.cvtest.set( m_mask, alvision.Scalar.all(0), Mat() );
-        cvRectangle( mask, cvPoint(0,0), cvPoint(mask->cols-1,mask->rows-1), Scalar::all(1.), 1, 8, 0 );
+        cvRectangle( mask, cvPoint(0,0), cvPoint(mask.cols-1,mask.rows-1), Scalar::all(1.), 1, 8, 0 );
     }
 
     new_mask_val = (new_mask_val != 0 ? new_mask_val : 1) << 8;
 
-    m = (ushort*)(mask->data.ptr + mask->step) + 1;
-    mstep = mask->step / sizeof(m[0]);
-    img = tmp->data.fl;
-    step = tmp->step / sizeof(img[0]);
+    m = (ushort*)(mask.data.ptr + mask.step) + 1;
+    mstep = mask.step / sizeof(m[0]);
+    img = tmp.data.fl;
+    step = tmp.step / sizeof(img[0]);
 
     p0.mofs = seed_pt.y*mstep + seed_pt.x;
     p0.iofs = seed_pt.y*step + seed_pt.x*cn;
@@ -330,7 +330,7 @@ cvTsFloodFill( CvMat* _img, CvPoint seed_pt, CvScalar new_val,
             a0 += (float)s0; b0 += (float)s0;
         }
 
-        while( seq->total )
+        while( seq.total )
         {
             cvSeqPop( seq, &p0 );
             float a = a0, b = b0;
@@ -374,7 +374,7 @@ cvTsFloodFill( CvMat* _img, CvPoint seed_pt, CvScalar new_val,
             a2 += (float)s2; b2 += (float)s2;
         }
 
-        while( seq->total )
+        while( seq.total )
         {
             cvSeqPop( seq, &p0 );
             float _a0 = a0, _a1 = a1, _a2 = a2;
@@ -436,7 +436,7 @@ cvTsFloodFill( CvMat* _img, CvPoint seed_pt, CvScalar new_val,
     {
         float* ptr = img + i*step;
         ushort* mptr = m + i*mstep;
-        uchar* dmptr = _mask ? _mask->data.ptr + (i+1)*_mask->step + 1 : 0;
+        uchar* dmptr = _mask ? _mask.data.ptr + (i+1)*_mask.step + 1 : 0;
         double area0 = area;
 
         for( j = 0; j < cols; j++ )

@@ -192,6 +192,34 @@ interface Itempfile {
 
 export var tempfile: Itempfile = alvision_module.tempfile;
 
+export interface ItransformOp<T> {
+    run(val: T): T;
+}
+
+export function transformOp<T>(arr: Array<T>, op: ItransformOp<T>) {
+    for (var i = 0; i < arr.length; i++) {
+        arr[i] = op.run(arr[i]);
+    }
+}
+
+export function countOp<T>(arr: Array<T>, val: T): number {
+    var c = 0;
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i] == val) {
+            c++;
+        }
+    }
+    return c;
+}
+
+export function accumulateOp<T>(arr: Array<T>, init: T): T {
+    var sum: any = init;
+    for (var i = 0; i < arr.length; i++) {
+        sum = <any>sum + <any>arr[i];
+    }
+    return sum;
+}
+
 ///** Constants for color conversion */
 //export enum ColorConversion
 //{

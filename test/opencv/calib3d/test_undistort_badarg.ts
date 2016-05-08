@@ -60,7 +60,7 @@
 //    }
 
 //    protected run(int): void {
-//        //RNG& rng = ts->get_rng();
+//        //var rng = this.ts.get_rng();
 //        var errcount = 0;
 //        this.useCPlus = false;
 //        //initializing

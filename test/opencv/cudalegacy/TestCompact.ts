@@ -155,38 +155,38 @@ bool TestCompact::process()
     NCVStatus ncvStat;
     bool rcode = false;
 
-    NCVVectorAlloc<Ncv32u> h_vecSrc(*this->allocatorCPU.get(), this->length);
+    NCVVectorAlloc<Ncv32u> h_vecSrc(*this.allocatorCPU.get(), this.length);
     ncvAssertReturn(h_vecSrc.isMemAllocated(), false);
-    NCVVectorAlloc<Ncv32u> d_vecSrc(*this->allocatorGPU.get(), this->length);
+    NCVVectorAlloc<Ncv32u> d_vecSrc(*this.allocatorGPU.get(), this.length);
     ncvAssertReturn(d_vecSrc.isMemAllocated(), false);
 
-    NCVVectorAlloc<Ncv32u> h_vecDst(*this->allocatorCPU.get(), this->length);
+    NCVVectorAlloc<Ncv32u> h_vecDst(*this.allocatorCPU.get(), this.length);
     ncvAssertReturn(h_vecDst.isMemAllocated(), false);
-    NCVVectorAlloc<Ncv32u> d_vecDst(*this->allocatorGPU.get(), this->length);
+    NCVVectorAlloc<Ncv32u> d_vecDst(*this.allocatorGPU.get(), this.length);
     ncvAssertReturn(d_vecDst.isMemAllocated(), false);
-    NCVVectorAlloc<Ncv32u> h_vecDst_d(*this->allocatorCPU.get(), this->length);
+    NCVVectorAlloc<Ncv32u> h_vecDst_d(*this.allocatorCPU.get(), this.length);
     ncvAssertReturn(h_vecDst_d.isMemAllocated(), false);
 
-    NCV_SET_SKIP_COND(this->allocatorGPU.get()->isCounting());
+    NCV_SET_SKIP_COND(this.allocatorGPU.get().isCounting());
     NCV_SKIP_COND_BEGIN
-    ncvAssertReturn(this->src.fill(h_vecSrc), false);
-    for (Ncv32u i=0; i<this->length; i++)
+    ncvAssertReturn(this.src.fill(h_vecSrc), false);
+    for (Ncv32u i=0; i<this.length; i++)
     {
         Ncv32u tmp = (h_vecSrc.ptr()[i]) & 0xFF;
         tmp = tmp * 99 / 255;
-        if (tmp < this->badElemPercentage)
+        if (tmp < this.badElemPercentage)
         {
-            h_vecSrc.ptr()[i] = this->badElem;
+            h_vecSrc.ptr()[i] = this.badElem;
         }
     }
     NCV_SKIP_COND_END
 
-    NCVVectorAlloc<Ncv32u> h_dstLen(*this->allocatorCPU.get(), 1);
+    NCVVectorAlloc<Ncv32u> h_dstLen(*this.allocatorCPU.get(), 1);
     ncvAssertReturn(h_dstLen.isMemAllocated(), false);
     Ncv32u bufSize;
-    ncvStat = nppsStCompactGetSize_32u(this->length, &bufSize, this->devProp);
+    ncvStat = nppsStCompactGetSize_32u(this.length, &bufSize, this.devProp);
     ncvAssertReturn(NPPST_SUCCESS == ncvStat, false);
-    NCVVectorAlloc<Ncv8u> d_tmpBuf(*this->allocatorGPU.get(), bufSize);
+    NCVVectorAlloc<Ncv8u> d_tmpBuf(*this.allocatorGPU.get(), bufSize);
     ncvAssertReturn(d_tmpBuf.isMemAllocated(), false);
 
     Ncv32u h_outElemNum_h = 0;
@@ -194,14 +194,14 @@ bool TestCompact::process()
     NCV_SKIP_COND_BEGIN
     ncvStat = h_vecSrc.copySolid(d_vecSrc, 0);
     ncvAssertReturn(ncvStat == NPPST_SUCCESS, false);
-    ncvStat = nppsStCompact_32u(d_vecSrc.ptr(), this->length,
-                                d_vecDst.ptr(), h_dstLen.ptr(), this->badElem,
-                                d_tmpBuf.ptr(), bufSize, this->devProp);
+    ncvStat = nppsStCompact_32u(d_vecSrc.ptr(), this.length,
+                                d_vecDst.ptr(), h_dstLen.ptr(), this.badElem,
+                                d_tmpBuf.ptr(), bufSize, this.devProp);
     ncvAssertReturn(ncvStat == NPPST_SUCCESS, false);
     ncvStat = d_vecDst.copySolid(h_vecDst_d, 0);
     ncvAssertReturn(ncvStat == NPPST_SUCCESS, false);
 
-    ncvStat = nppsStCompact_32u_host(h_vecSrc.ptr(), this->length, h_vecDst.ptr(), &h_outElemNum_h, this->badElem);
+    ncvStat = nppsStCompact_32u_host(h_vecSrc.ptr(), this.length, h_vecDst.ptr(), &h_outElemNum_h, this.badElem);
     ncvAssertReturn(ncvStat == NPPST_SUCCESS, false);
     NCV_SKIP_COND_END
 

@@ -170,26 +170,26 @@ bool TestHypothesesGrow::process()
     NCVStatus ncvStat;
     bool rcode = false;
 
-    NCVVectorAlloc<Ncv32u> h_vecSrc(*this->allocatorCPU.get(), this->maxLenSrc);
+    NCVVectorAlloc<Ncv32u> h_vecSrc(*this.allocatorCPU.get(), this.maxLenSrc);
     ncvAssertReturn(h_vecSrc.isMemAllocated(), false);
-    NCVVectorAlloc<Ncv32u> d_vecSrc(*this->allocatorGPU.get(), this->maxLenSrc);
+    NCVVectorAlloc<Ncv32u> d_vecSrc(*this.allocatorGPU.get(), this.maxLenSrc);
     ncvAssertReturn(d_vecSrc.isMemAllocated(), false);
 
-    NCVVectorAlloc<NcvRect32u> h_vecDst(*this->allocatorCPU.get(), this->maxLenDst);
+    NCVVectorAlloc<NcvRect32u> h_vecDst(*this.allocatorCPU.get(), this.maxLenDst);
     ncvAssertReturn(h_vecDst.isMemAllocated(), false);
-    NCVVectorAlloc<NcvRect32u> d_vecDst(*this->allocatorGPU.get(), this->maxLenDst);
+    NCVVectorAlloc<NcvRect32u> d_vecDst(*this.allocatorGPU.get(), this.maxLenDst);
     ncvAssertReturn(d_vecDst.isMemAllocated(), false);
-    NCVVectorAlloc<NcvRect32u> h_vecDst_d(*this->allocatorCPU.get(), this->maxLenDst);
+    NCVVectorAlloc<NcvRect32u> h_vecDst_d(*this.allocatorCPU.get(), this.maxLenDst);
     ncvAssertReturn(h_vecDst_d.isMemAllocated(), false);
 
-    NCV_SET_SKIP_COND(this->allocatorGPU.get()->isCounting());
+    NCV_SET_SKIP_COND(this.allocatorGPU.get().isCounting());
 
     NCV_SKIP_COND_BEGIN
-    ncvAssertReturn(this->src.fill(h_vecSrc), false);
+    ncvAssertReturn(this.src.fill(h_vecSrc), false);
     memset(h_vecDst.ptr(), 0, h_vecDst.length() * sizeof(NcvRect32u));
     NCVVectorReuse<Ncv32u> h_vecDst_as32u(h_vecDst.getSegment(), lenDst * sizeof(NcvRect32u) / sizeof(Ncv32u));
     ncvAssertReturn(h_vecDst_as32u.isMemReused(), false);
-    ncvAssertReturn(this->src.fill(h_vecDst_as32u), false);
+    ncvAssertReturn(this.src.fill(h_vecDst_as32u), false);
     memcpy(h_vecDst_d.ptr(), h_vecDst.ptr(), h_vecDst.length() * sizeof(NcvRect32u));
     NCV_SKIP_COND_END
 
@@ -202,19 +202,19 @@ bool TestHypothesesGrow::process()
     Ncv32u h_outElemNum_d = 0;
     Ncv32u h_outElemNum_h = 0;
     NCV_SKIP_COND_BEGIN
-    h_outElemNum_d = this->lenDst;
-    ncvStat = ncvGrowDetectionsVector_device(d_vecSrc, this->lenSrc,
-                                             d_vecDst, h_outElemNum_d, this->maxLenDst,
-                                             this->rectWidth, this->rectHeight, this->rectScale, 0);
+    h_outElemNum_d = this.lenDst;
+    ncvStat = ncvGrowDetectionsVector_device(d_vecSrc, this.lenSrc,
+                                             d_vecDst, h_outElemNum_d, this.maxLenDst,
+                                             this.rectWidth, this.rectHeight, this.rectScale, 0);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
     ncvStat = d_vecDst.copySolid(h_vecDst_d, 0);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
     ncvAssertCUDAReturn(cudaStreamSynchronize(0), false);
 
-    h_outElemNum_h = this->lenDst;
-    ncvStat = ncvGrowDetectionsVector_host(h_vecSrc, this->lenSrc,
-                                           h_vecDst, h_outElemNum_h, this->maxLenDst,
-                                           this->rectWidth, this->rectHeight, this->rectScale);
+    h_outElemNum_h = this.lenDst;
+    ncvStat = ncvGrowDetectionsVector_host(h_vecSrc, this.lenSrc,
+                                           h_vecDst, h_outElemNum_h, this.maxLenDst,
+                                           this.rectWidth, this.rectHeight, this.rectScale);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
     NCV_SKIP_COND_END
 
@@ -228,7 +228,7 @@ bool TestHypothesesGrow::process()
     }
     else
     {
-        if (memcmp(h_vecDst.ptr(), h_vecDst_d.ptr(), this->maxLenDst * sizeof(NcvRect32u)))
+        if (memcmp(h_vecDst.ptr(), h_vecDst_d.ptr(), this.maxLenDst * sizeof(NcvRect32u)))
         {
             bLoopVirgin = false;
         }

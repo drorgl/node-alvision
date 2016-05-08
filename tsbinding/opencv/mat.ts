@@ -1053,7 +1053,7 @@ including std::sort().
 
     }
 
-    interface TrackedPtr<T> {
+    interface TrackedPtr<T> extends Array<T> {
         [i: number]: T;
     }
 

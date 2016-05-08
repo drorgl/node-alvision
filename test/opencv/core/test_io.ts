@@ -48,17 +48,17 @@ function cvTsCheckSparse(const CvSparseMat* m1, const CvSparseMat* m2, double ep
 {
     CvSparseMatIterator it1;
     CvSparseNode* node1;
-    int depth = CV_MAT_DEPTH(m1->type);
+    int depth = CV_MAT_DEPTH(m1.type);
 
-    if( m1->heap->active_count != m2->heap->active_count ||
-       m1->dims != m2->dims || CV_MAT_TYPE(m1->type) != CV_MAT_TYPE(m2->type) )
+    if( m1.heap.active_count != m2.heap.active_count ||
+       m1.dims != m2.dims || CV_MAT_TYPE(m1.type) != CV_MAT_TYPE(m2.type) )
         return false;
 
     for( node1 = cvInitSparseMatIterator( m1, &it1 );
         node1 != 0; node1 = cvGetNextSparseNode( &it1 ))
     {
         uchar* v1 = (uchar*)CV_NODE_VAL(m1,node1);
-        uchar* v2 = cvPtrND( m2, CV_NODE_IDX(m1,node1), 0, 0, &node1->hashval );
+        uchar* v2 = cvPtrND( m2, CV_NODE_IDX(m1,node1), 0, 0, &node1.hashval );
         if( !v2 )
             return false;
         if( depth == CV_8U || depth == CV_8S )
@@ -98,7 +98,7 @@ protected:
     {
         double ranges[][2] = {{0, 256}, {-128, 128}, {0, 65536}, {-32768, 32768},
             {-1000000, 1000000}, {-10, 10}, {-10, 10}};
-        RNG& rng = ts->get_rng();
+        var rng = this.ts.get_rng();
         RNG rng0;
         test_case_count = 4;
         int progress = 0;
@@ -106,7 +106,7 @@ protected:
 
         for( int idx = 0; idx < test_case_count; idx++ )
         {
-            ts->update_context( this, idx, false );
+            ts.update_context( this, idx, false );
             progress = update_progress( progress, idx, test_case_count, 0 );
 
             cvClearMemStorage(storage);
@@ -148,7 +148,7 @@ protected:
             {
                 CvGraphEdge* edge;
                 cvGraphAddEdge(graph, edges[i][0], edges[i][1], 0, &edge);
-                edge->weight = (float)(i+1);
+                edge.weight = (float)(i+1);
             }
 
             depth = alvision.cvtest.randInt(rng) % (CV_64F+1);
@@ -201,7 +201,7 @@ protected:
 
             if(!fs.open(mem ? content : filename, FileStorage::READ + (mem ? FileStorage::MEMORY : 0)))
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "filename %s can not be read\n", !mem ? filename : content);
+                ts.printf( alvision.cvtest.TSConstants.LOG, "filename %s can not be read\n", !mem ? filename : content);
                 this.ts.set_failed_test_info( alvision.cvtest.TS::FAIL_MISSING_TEST_DATA );
                 return;
             }
@@ -214,7 +214,7 @@ protected:
                fabs(real_real - test_real) > DBL_EPSILON*(fabs(test_real)+1) ||
                real_string != test_string )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "the read scalars are not correct\n" );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "the read scalars are not correct\n" );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
@@ -227,10 +227,10 @@ protected:
             cvReshape(&_test_mat, &_test_stub1, 1, 0);
             Array<int> pt;
 
-            if( !m || !CV_IS_MAT(m) || m->rows != test_mat.rows || m->cols != test_mat.cols ||
+            if( !m || !CV_IS_MAT(m) || m.rows != test_mat.rows || m.cols != test_mat.cols ||
                alvision.cvtest.cmpEps( alvision.cvarrToMat(&stub1), alvision.cvarrToMat(&_test_stub1), &max_diff, 0, &pt, true) < 0 )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "the read matrix is not correct: (%.20g vs %.20g) at (%d,%d)\n",
+                ts.printf( alvision.cvtest.TSConstants.LOG, "the read matrix is not correct: (%.20g vs %.20g) at (%d,%d)\n",
                             cvGetReal2D(&stub1, pt[0], pt[1]), cvGetReal2D(&_test_stub1, pt[0], pt[1]),
                             pt[0], pt[1] );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -244,7 +244,7 @@ protected:
 
             if( !m_nd || !CV_IS_MATND(m_nd) )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "the read nd-matrix is not correct\n" );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "the read nd-matrix is not correct\n" );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
@@ -260,7 +260,7 @@ protected:
                //cvNorm(&stub, &_test_stub, CV_L2) != 0 )
                alvision.cvtest.cmpEps( alvision.cvarrToMat(&stub1), alvision.cvarrToMat(&_test_stub1), &max_diff, 0, &pt, true) < 0 )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "readObj method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
+                ts.printf( alvision.cvtest.TSConstants.LOG, "readObj method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
                            cvGetReal2D(&stub1, pt[0], pt[1]), cvGetReal2D(&_test_stub1, pt[0], pt[1]),
                            pt[0], pt[1] );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -278,7 +278,7 @@ protected:
                //cvNorm(&stub, &_test_stub, CV_L2) != 0 )
                alvision.cvtest.cmpEps( alvision.cvarrToMat(&stub1), alvision.cvarrToMat(&_test_stub1), &max_diff, 0, &pt, true) < 0 )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "C++ method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
+                ts.printf( alvision.cvtest.TSConstants.LOG, "C++ method: the read nd matrix is not correct: (%.20g vs %.20g) vs at (%d,%d)\n",
                            cvGetReal2D(&stub1, pt[0], pt[1]), cvGetReal2D(&_test_stub1, pt[1], pt[0]),
                            pt[0], pt[1] );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -298,7 +298,7 @@ protected:
                !cvTsCheckSparse(m_s, _test_sparse, 0) ||
                !cvTsCheckSparse(_m_s2, _test_sparse, 0))
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "the read sparse matrix is not correct\n" );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "the read sparse matrix is not correct\n" );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
@@ -315,7 +315,7 @@ protected:
                (int)tl[5]["day"] != 31 ||
                (int)tl[5]["year"] != 1969 )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "the test list is incorrect\n" );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "the test list is incorrect\n" );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
@@ -359,16 +359,16 @@ protected:
                tm_lbp.size() != 8 ||
                real_lbp_val != 0xb6 )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "the test map is incorrect\n" );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "the test map is incorrect\n" );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
 
             CvGraph* graph3 = (CvGraph*)fs["test_graph"].readObj();
-            if(graph2->active_count != vcount || graph3->active_count != vcount ||
-               graph2->edges->active_count != ecount || graph3->edges->active_count != ecount)
+            if(graph2.active_count != vcount || graph3.active_count != vcount ||
+               graph2.edges.active_count != ecount || graph3.edges.active_count != ecount)
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG, "the cloned or read graph have wrong number of vertices or edges\n" );
+                ts.printf( alvision.cvtest.TSConstants.LOG, "the cloned or read graph have wrong number of vertices or edges\n" );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                 return;
             }
@@ -377,10 +377,10 @@ protected:
             {
                 CvGraphEdge* edge2 = cvFindGraphEdge(graph2, edges[i][0], edges[i][1]);
                 CvGraphEdge* edge3 = cvFindGraphEdge(graph3, edges[i][0], edges[i][1]);
-                if( !edge2 || edge2->weight != (float)(i+1) ||
-                   !edge3 || edge3->weight != (float)(i+1) )
+                if( !edge2 || edge2.weight != (float)(i+1) ||
+                   !edge3 || edge3.weight != (float)(i+1) )
                 {
-                    ts->printf( alvision.cvtest.TSConstants.LOG, "the cloned or read graph do not have the edge (%d, %d)\n", edges[i][0], edges[i][1] );
+                    ts.printf( alvision.cvtest.TSConstants.LOG, "the cloned or read graph do not have the edge (%d, %d)\n", edges[i][0], edges[i][1] );
                     this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
                     return;
                 }
@@ -549,7 +549,7 @@ alvision.cvtest.TEST('Core_globbing', 'accuracy',()=>
     var patternLena    = alvision.cvtest.TS.ptr().get_data_path() + "lena*.*";
     var patternLenaPng = alvision.cvtest.TS.ptr().get_data_path() + "lena.png";
 
-    std::Array<String> lenas, pngLenas;
+    Array<String> lenas, pngLenas;
     alvision.glob(patternLena, lenas, true);
     alvision.glob(patternLenaPng, pngLenas, true);
 

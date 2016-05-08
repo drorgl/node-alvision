@@ -197,21 +197,21 @@ bool TestHaarCascadeApplication::process()
 
     Ncv32u numStages, numNodes, numFeatures;
 
-    ncvStat = ncvHaarGetClassifierSize(this->cascadeName, numStages, numNodes, numFeatures);
+    ncvStat = ncvHaarGetClassifierSize(this.cascadeName, numStages, numNodes, numFeatures);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
 
-    NCVVectorAlloc<HaarStage64> h_HaarStages(*this->allocatorCPU.get(), numStages);
+    NCVVectorAlloc<HaarStage64> h_HaarStages(*this.allocatorCPU.get(), numStages);
     ncvAssertReturn(h_HaarStages.isMemAllocated(), false);
-    NCVVectorAlloc<HaarClassifierNode128> h_HaarNodes(*this->allocatorCPU.get(), numNodes);
+    NCVVectorAlloc<HaarClassifierNode128> h_HaarNodes(*this.allocatorCPU.get(), numNodes);
     ncvAssertReturn(h_HaarNodes.isMemAllocated(), false);
-    NCVVectorAlloc<HaarFeature64> h_HaarFeatures(*this->allocatorCPU.get(), numFeatures);
+    NCVVectorAlloc<HaarFeature64> h_HaarFeatures(*this.allocatorCPU.get(), numFeatures);
     ncvAssertReturn(h_HaarFeatures.isMemAllocated(), false);
 
-    NCVVectorAlloc<HaarStage64> d_HaarStages(*this->allocatorGPU.get(), numStages);
+    NCVVectorAlloc<HaarStage64> d_HaarStages(*this.allocatorGPU.get(), numStages);
     ncvAssertReturn(d_HaarStages.isMemAllocated(), false);
-    NCVVectorAlloc<HaarClassifierNode128> d_HaarNodes(*this->allocatorGPU.get(), numNodes);
+    NCVVectorAlloc<HaarClassifierNode128> d_HaarNodes(*this.allocatorGPU.get(), numNodes);
     ncvAssertReturn(d_HaarNodes.isMemAllocated(), false);
-    NCVVectorAlloc<HaarFeature64> d_HaarFeatures(*this->allocatorGPU.get(), numFeatures);
+    NCVVectorAlloc<HaarFeature64> d_HaarFeatures(*this.allocatorGPU.get(), numFeatures);
     ncvAssertReturn(d_HaarFeatures.isMemAllocated(), false);
 
     HaarClassifierCascadeDescriptor haar;
@@ -222,10 +222,10 @@ bool TestHaarCascadeApplication::process()
     haar.NumFeatures = numFeatures;
     haar.NumStages = numStages;
 
-    NCV_SET_SKIP_COND(this->allocatorGPU.get()->isCounting());
+    NCV_SET_SKIP_COND(this.allocatorGPU.get().isCounting());
     NCV_SKIP_COND_BEGIN
 
-    ncvStat = ncvHaarLoadFromFile_host(this->cascadeName, haar, h_HaarStages, h_HaarNodes, h_HaarFeatures);
+    ncvStat = ncvHaarLoadFromFile_host(this.cascadeName, haar, h_HaarStages, h_HaarNodes, h_HaarFeatures);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
 
     ncvAssertReturn(NCV_SUCCESS == h_HaarStages.copySolid(d_HaarStages, 0), false);
@@ -236,8 +236,8 @@ bool TestHaarCascadeApplication::process()
     NCV_SKIP_COND_END
 
     NcvSize32s srcRoi, srcIIRoi, searchRoi;
-    srcRoi.width = this->width;
-    srcRoi.height = this->height;
+    srcRoi.width = this.width;
+    srcRoi.height = this.height;
     srcIIRoi.width = srcRoi.width + 1;
     srcIIRoi.height = srcRoi.height + 1;
     searchRoi.width = srcIIRoi.width - haar.ClassifierSize.width;
@@ -248,44 +248,44 @@ bool TestHaarCascadeApplication::process()
     }
     NcvSize32u searchRoiU(searchRoi.width, searchRoi.height);
 
-    NCVMatrixAlloc<Ncv8u> d_img(*this->allocatorGPU.get(), this->width, this->height);
+    NCVMatrixAlloc<Ncv8u> d_img(*this.allocatorGPU.get(), this.width, this.height);
     ncvAssertReturn(d_img.isMemAllocated(), false);
-    NCVMatrixAlloc<Ncv8u> h_img(*this->allocatorCPU.get(), this->width, this->height);
+    NCVMatrixAlloc<Ncv8u> h_img(*this.allocatorCPU.get(), this.width, this.height);
     ncvAssertReturn(h_img.isMemAllocated(), false);
 
-    Ncv32u integralWidth = this->width + 1;
-    Ncv32u integralHeight = this->height + 1;
+    Ncv32u integralWidth = this.width + 1;
+    Ncv32u integralHeight = this.height + 1;
 
-    NCVMatrixAlloc<Ncv32u> d_integralImage(*this->allocatorGPU.get(), integralWidth, integralHeight);
+    NCVMatrixAlloc<Ncv32u> d_integralImage(*this.allocatorGPU.get(), integralWidth, integralHeight);
     ncvAssertReturn(d_integralImage.isMemAllocated(), false);
-    NCVMatrixAlloc<Ncv64u> d_sqIntegralImage(*this->allocatorGPU.get(), integralWidth, integralHeight);
+    NCVMatrixAlloc<Ncv64u> d_sqIntegralImage(*this.allocatorGPU.get(), integralWidth, integralHeight);
     ncvAssertReturn(d_sqIntegralImage.isMemAllocated(), false);
-    NCVMatrixAlloc<Ncv32u> h_integralImage(*this->allocatorCPU.get(), integralWidth, integralHeight);
+    NCVMatrixAlloc<Ncv32u> h_integralImage(*this.allocatorCPU.get(), integralWidth, integralHeight);
     ncvAssertReturn(h_integralImage.isMemAllocated(), false);
-    NCVMatrixAlloc<Ncv64u> h_sqIntegralImage(*this->allocatorCPU.get(), integralWidth, integralHeight);
+    NCVMatrixAlloc<Ncv64u> h_sqIntegralImage(*this.allocatorCPU.get(), integralWidth, integralHeight);
     ncvAssertReturn(h_sqIntegralImage.isMemAllocated(), false);
 
-    NCVMatrixAlloc<Ncv32f> d_rectStdDev(*this->allocatorGPU.get(), this->width, this->height);
+    NCVMatrixAlloc<Ncv32f> d_rectStdDev(*this.allocatorGPU.get(), this.width, this.height);
     ncvAssertReturn(d_rectStdDev.isMemAllocated(), false);
-    NCVMatrixAlloc<Ncv32u> d_pixelMask(*this->allocatorGPU.get(), this->width, this->height);
+    NCVMatrixAlloc<Ncv32u> d_pixelMask(*this.allocatorGPU.get(), this.width, this.height);
     ncvAssertReturn(d_pixelMask.isMemAllocated(), false);
-    NCVMatrixAlloc<Ncv32f> h_rectStdDev(*this->allocatorCPU.get(), this->width, this->height);
+    NCVMatrixAlloc<Ncv32f> h_rectStdDev(*this.allocatorCPU.get(), this.width, this.height);
     ncvAssertReturn(h_rectStdDev.isMemAllocated(), false);
-    NCVMatrixAlloc<Ncv32u> h_pixelMask(*this->allocatorCPU.get(), this->width, this->height);
+    NCVMatrixAlloc<Ncv32u> h_pixelMask(*this.allocatorCPU.get(), this.width, this.height);
     ncvAssertReturn(h_pixelMask.isMemAllocated(), false);
 
-    NCVVectorAlloc<NcvRect32u> d_hypotheses(*this->allocatorGPU.get(), this->width * this->height);
+    NCVVectorAlloc<NcvRect32u> d_hypotheses(*this.allocatorGPU.get(), this.width * this.height);
     ncvAssertReturn(d_hypotheses.isMemAllocated(), false);
-    NCVVectorAlloc<NcvRect32u> h_hypotheses(*this->allocatorCPU.get(), this->width * this->height);
+    NCVVectorAlloc<NcvRect32u> h_hypotheses(*this.allocatorCPU.get(), this.width * this.height);
     ncvAssertReturn(h_hypotheses.isMemAllocated(), false);
 
     NCVStatus nppStat;
     Ncv32u szTmpBufIntegral, szTmpBufSqIntegral;
-    nppStat = nppiStIntegralGetSize_8u32u(NcvSize32u(this->width, this->height), &szTmpBufIntegral, this->devProp);
+    nppStat = nppiStIntegralGetSize_8u32u(NcvSize32u(this.width, this.height), &szTmpBufIntegral, this.devProp);
     ncvAssertReturn(nppStat == NPPST_SUCCESS, false);
-    nppStat = nppiStSqrIntegralGetSize_8u64u(NcvSize32u(this->width, this->height), &szTmpBufSqIntegral, this->devProp);
+    nppStat = nppiStSqrIntegralGetSize_8u64u(NcvSize32u(this.width, this.height), &szTmpBufSqIntegral, this.devProp);
     ncvAssertReturn(nppStat == NPPST_SUCCESS, false);
-    NCVVectorAlloc<Ncv8u> d_tmpIIbuf(*this->allocatorGPU.get(), std::max(szTmpBufIntegral, szTmpBufSqIntegral));
+    NCVVectorAlloc<Ncv8u> d_tmpIIbuf(*this.allocatorGPU.get(), std::max(szTmpBufIntegral, szTmpBufSqIntegral));
     ncvAssertReturn(d_tmpIIbuf.isMemAllocated(), false);
 
     Ncv32u detectionsOnThisScale_d = 0;
@@ -293,7 +293,7 @@ bool TestHaarCascadeApplication::process()
 
     NCV_SKIP_COND_BEGIN
 
-    ncvAssertReturn(this->src.fill(h_img), false);
+    ncvAssertReturn(this.src.fill(h_img), false);
     ncvStat = h_img.copySolid(d_img, 0);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
     ncvAssertCUDAReturn(cudaStreamSynchronize(0), false);
@@ -301,13 +301,13 @@ bool TestHaarCascadeApplication::process()
     nppStat = nppiStIntegral_8u32u_C1R(d_img.ptr(), d_img.pitch(),
                                        d_integralImage.ptr(), d_integralImage.pitch(),
                                        NcvSize32u(d_img.width(), d_img.height()),
-                                       d_tmpIIbuf.ptr(), szTmpBufIntegral, this->devProp);
+                                       d_tmpIIbuf.ptr(), szTmpBufIntegral, this.devProp);
     ncvAssertReturn(nppStat == NPPST_SUCCESS, false);
 
     nppStat = nppiStSqrIntegral_8u64u_C1R(d_img.ptr(), d_img.pitch(),
                                           d_sqIntegralImage.ptr(), d_sqIntegralImage.pitch(),
                                           NcvSize32u(d_img.width(), d_img.height()),
-                                          d_tmpIIbuf.ptr(), szTmpBufSqIntegral, this->devProp);
+                                          d_tmpIIbuf.ptr(), szTmpBufSqIntegral, this.devProp);
     ncvAssertReturn(nppStat == NPPST_SUCCESS, false);
 
     const NcvRect32u rect(
@@ -369,11 +369,11 @@ bool TestHaarCascadeApplication::process()
         detectionsOnThisScale_d,
         haar, h_HaarStages, d_HaarStages, d_HaarNodes, d_HaarFeatures, false,
         searchRoiU, 1, 1.0f,
-        *this->allocatorGPU.get(), *this->allocatorCPU.get(),
+        *this.allocatorGPU.get(), *this.allocatorCPU.get(),
         _devProp, 0);
     ncvAssertReturn(ncvStat == NCV_SUCCESS, false);
 
-    NCVMatrixAlloc<Ncv32u> h_pixelMask_d(*this->allocatorCPU.get(), this->width, this->height);
+    NCVMatrixAlloc<Ncv32u> h_pixelMask_d(*this.allocatorCPU.get(), this.width, this.height);
     ncvAssertReturn(h_pixelMask_d.isMemAllocated(), false);
 
     //bit-to-bit check

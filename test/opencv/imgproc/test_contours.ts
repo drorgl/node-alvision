@@ -60,13 +60,13 @@ public:
 
     CV_FindContourTest();
     ~CV_FindContourTest();
-    void clear();
+    clear() : void {}
 
 protected:
-    int read_params( CvFileStorage* fs );
+    read_params(fs : alvision.FileStorage) : alvision.int{}
     prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
-    int validate_test_results( int test_case_idx );
-    void run_func();
+    validate_test_results(test_case_idx : alvision.int) : alvision.int {}
+    run_func() : void {}
 
     int min_blob_size, max_blob_size;
     int blob_count, max_log_blob_count;
@@ -111,7 +111,7 @@ void CV_FindContourTest::clear()
 {
     int i;
 
-    alvision.cvtest.BaseTest::clear();
+    super.clear();
 
     for( i = 0; i < NUM_IMG; i++ )
         cvReleaseImage( &img[i] );
@@ -123,7 +123,7 @@ void CV_FindContourTest::clear()
 int CV_FindContourTest::read_params( CvFileStorage* fs )
 {
     int t;
-    int code = alvision.cvtest.BaseTest::read_params( fs );
+    int code = super.read_params( fs );
 
     if( code < 0 )
         return code;
@@ -160,12 +160,12 @@ cvTsGenerateBlobImage( IplImage* img, int min_blob_size, int max_blob_size,
     int i;
     CvSize size;
 
-    assert( img->depth == IPL_DEPTH_8U && img->nChannels == 1 );
+    assert( img.depth == IPL_DEPTH_8U && img.nChannels == 1 );
 
     cvZero( img );
 
     // keep the border clear
-    cvSetImageROI( img, cvRect(1,1,img->width-2,img->height-2) );
+    cvSetImageROI( img, cvRect(1,1,img.width-2,img.height-2) );
     size = cvGetSize( img );
 
     for( i = 0; i < blob_count; i++ )
@@ -194,14 +194,14 @@ static void
 cvTsMarkContours( IplImage* img, int val )
 {
     int i, j;
-    int step = img->widthStep;
+    int step = img.widthStep;
 
-    assert( img->depth == IPL_DEPTH_8U && img->nChannels == 1 && (val&1) != 0);
+    assert( img.depth == IPL_DEPTH_8U && img.nChannels == 1 && (val&1) != 0);
 
-    for( i = 1; i < img->height - 1; i++ )
-        for( j = 1; j < img->width - 1; j++ )
+    for( i = 1; i < img.height - 1; i++ )
+        for( j = 1; j < img.width - 1; j++ )
         {
-            uchar* t = (uchar*)(img->imageData + img->widthStep*i + j);
+            uchar* t = (uchar*)(img.imageData + img.widthStep*i + j);
             if( *t == 1 && (t[-step] == 0 || t[-1] == 0 || t[1] == 0 || t[step] == 0))
                 *t = (uchar)val;
         }
@@ -212,9 +212,9 @@ cvTsMarkContours( IplImage* img, int val )
 
 int CV_FindContourTest::prepare_test_case( int test_case_idx )
 {
-    RNG& rng = ts->get_rng();
+    var rng = this.ts.get_rng();
     const int  min_brightness = 0, max_brightness = 2;
-    int i, code = alvision.cvtest.BaseTest::prepare_test_case( test_case_idx );
+    int i, code = super.prepare_test_case( test_case_idx );
 
     if( code < 0 )
         return code;
@@ -281,7 +281,7 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
     if( count != count2 )
     {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "The number of contours retrieved with different "
+        ts.printf( alvision.cvtest.TSConstants.LOG, "The number of contours retrieved with different "
             "approximation methods is not the same\n"
             "(%d contour(s) for method %d vs %d contour(s) for method %d)\n",
             count, approx_method, count2, CV_CHAIN_CODE );
@@ -322,7 +322,7 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
             if( count3 != count )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG,
+                ts.printf( alvision.cvtest.TSConstants.LOG,
                     "The returned number of retrieved contours (using the approx_method = %d) does not match\n"
                     "to the actual number of contours in the tree/list (returned %d, actual %d)\n",
                     i == 0 ? approx_method : 0, count, count3 );
@@ -343,7 +343,7 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
             if( !seq1 || !seq2 )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG,
+                ts.printf( alvision.cvtest.TSConstants.LOG,
                     "There are NULL pointers in the original contour tree or the "
                     "tree produced by cvApproxChains\n" );
                 code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
@@ -353,16 +353,16 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
             cvStartReadSeq( seq1, &reader1 );
             cvStartReadSeq( seq2, &reader2 );
 
-            if( seq1->total != seq2->total )
+            if( seq1.total != seq2.total )
             {
-                ts->printf( alvision.cvtest.TSConstants.LOG,
+                ts.printf( alvision.cvtest.TSConstants.LOG,
                     "The original contour #%d has %d points, while the corresponding contour has %d point\n",
-                    count3, seq1->total, seq2->total );
+                    count3, seq1.total, seq2.total );
                 code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
                 goto _exit_;
             }
 
-            for(int i = 0; i < seq1->total; i++ )
+            for(int i = 0; i < seq1.total; i++ )
             {
                 CvPoint pt1;
                 CvPoint pt2;
@@ -372,7 +372,7 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 
                 if( pt1.x != pt2.x || pt1.y != pt2.y )
                 {
-                    ts->printf( alvision.cvtest.TSConstants.LOG,
+                    ts.printf( alvision.cvtest.TSConstants.LOG,
                     "The point #%d in the contour #%d is different from the corresponding point "
                     "in the approximated chain ((%d,%d) vs (%d,%d)", count3, i, pt1.x, pt1.y, pt2.x, pt2.y );
                     code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;

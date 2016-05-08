@@ -76,15 +76,15 @@ protected:
 
 TEST_F(fisheyeTest, projectPoints)
 {
-    double cols = this->imageSize.width,
-           rows = this->imageSize.height;
+    double cols = this.imageSize.width,
+           rows = this.imageSize.height;
 
     const int N = 20;
     alvision.Mat distorted0(1, N*N, CV_64FC2), undist1, undist2, distorted1, distorted2;
     undist2.create(distorted0.size(), CV_MAKETYPE(distorted0.depth(), 3));
     alvision.Vec2d* pts = distorted0.ptr<alvision.Vec2d>();
 
-    alvision.Vec2d c(this->K(0, 2), this->K(1, 2));
+    alvision.Vec2d c(this.K(0, 2), this.K(1, 2));
     for(int y = 0, k = 0; y < N; ++y)
         for(int x = 0; x < N; ++x)
         {
@@ -92,15 +92,15 @@ TEST_F(fisheyeTest, projectPoints)
             pts[k++] = (point - c) * 0.85 + c;
         }
 
-    alvision.fisheye::undistortPoints(distorted0, undist1, this->K, this->D);
+    alvision.fisheye::undistortPoints(distorted0, undist1, this.K, this.D);
 
     alvision.Vec2d* u1 = undist1.ptr<alvision.Vec2d>();
     alvision.Vec3d* u2 = undist2.ptr<alvision.Vec3d>();
     for(int i = 0; i  < (int)distorted0.total(); ++i)
         u2[i] = alvision.Vec3d(u1[i][0], u1[i][1], 1.0);
 
-    alvision.fisheye::distortPoints(undist1, distorted1, this->K, this->D);
-    alvision.fisheye::projectPoints(undist2, distorted2, alvision.Vec3d::all(0), alvision.Vec3d::all(0), this->K, this->D);
+    alvision.fisheye::distortPoints(undist1, distorted1, this.K, this.D);
+    alvision.fisheye::projectPoints(undist2, distorted2, alvision.Vec3d::all(0), alvision.Vec3d::all(0), this.K, this.D);
 
     EXPECT_MAT_NEAR(distorted0, distorted1, 1e-10);
     EXPECT_MAT_NEAR(distorted0, distorted2, 1e-10);
@@ -108,8 +108,8 @@ TEST_F(fisheyeTest, projectPoints)
 
 TEST_F(fisheyeTest, DISABLED_undistortImage)
 {
-    alvision.Matx33d K = this->K;
-    alvision.Mat D = alvision.Mat(this->D);
+    alvision.Matx33d K = this.K;
+    alvision.Mat D = alvision.Mat(this.D);
     std::string file = combine(datasets_repository_path, "/calib-3_stereo_from_JY/left/stereo_pair_014.jpg");
     alvision.Matx33d newK = K;
     alvision.Mat distorted = alvision.imread(file), undistorted;
@@ -245,8 +245,8 @@ TEST_F(fisheyeTest, Calibration)
 {
     const int n_images = 34;
 
-    std::Array<std::Array<alvision.Point2d> > imagePoints(n_images);
-    std::Array<std::Array<alvision.Point3d> > objectPoints(n_images);
+    Array<Array<alvision.Point2d> > imagePoints(n_images);
+    Array<Array<alvision.Point3d> > objectPoints(n_images);
 
     const std::string folder =combine(datasets_repository_path, "calib-3_stereo_from_JY");
     alvision.FileStorage fs_left(combine(folder, "left.xml"), alvision.FileStorage::READ);
@@ -272,16 +272,16 @@ TEST_F(fisheyeTest, Calibration)
     alvision.fisheye::calibrate(objectPoints, imagePoints, imageSize, K, D,
                            alvision.noArray(), alvision.noArray(), flag, alvision.TermCriteria(3, 20, 1e-6));
 
-    EXPECT_MAT_NEAR(K, this->K, 1e-10);
-    EXPECT_MAT_NEAR(D, this->D, 1e-10);
+    EXPECT_MAT_NEAR(K, this.K, 1e-10);
+    EXPECT_MAT_NEAR(D, this.D, 1e-10);
 }
 
 TEST_F(fisheyeTest, Homography)
 {
     const int n_images = 1;
 
-    std::Array<std::Array<alvision.Point2d> > imagePoints(n_images);
-    std::Array<std::Array<alvision.Point3d> > objectPoints(n_images);
+    Array<Array<alvision.Point2d> > imagePoints(n_images);
+    Array<Array<alvision.Point3d> > objectPoints(n_images);
 
     const std::string folder =combine(datasets_repository_path, "calib-3_stereo_from_JY");
     alvision.FileStorage fs_left(combine(folder, "left.xml"), alvision.FileStorage::READ);
@@ -341,8 +341,8 @@ TEST_F(fisheyeTest, EtimateUncertainties)
 {
     const int n_images = 34;
 
-    std::Array<std::Array<alvision.Point2d> > imagePoints(n_images);
-    std::Array<std::Array<alvision.Point3d> > objectPoints(n_images);
+    Array<Array<alvision.Point2d> > imagePoints(n_images);
+    Array<Array<alvision.Point3d> > objectPoints(n_images);
 
     const std::string folder =combine(datasets_repository_path, "calib-3_stereo_from_JY");
     alvision.FileStorage fs_left(combine(folder, "left.xml"), alvision.FileStorage::READ);
@@ -364,8 +364,8 @@ TEST_F(fisheyeTest, EtimateUncertainties)
 
     alvision.Matx33d K;
     alvision.Vec4d D;
-    std::Array<alvision.Vec3d> rvec;
-    std::Array<alvision.Vec3d> tvec;
+    Array<alvision.Vec3d> rvec;
+    Array<alvision.Vec3d> tvec;
 
     alvision.fisheye::calibrate(objectPoints, imagePoints, imageSize, K, D,
                            rvec, tvec, flag, alvision.TermCriteria(3, 20, 1e-6));
@@ -375,7 +375,7 @@ TEST_F(fisheyeTest, EtimateUncertainties)
     double thresh_cond = 1e6;
     int check_cond = 1;
     param.Init(alvision.Vec2d(K(0,0), K(1,1)), alvision.Vec2d(K(0,2), K(1, 2)), D);
-    param.isEstimate = std::Array<int>(9, 1);
+    param.isEstimate = Array<int>(9, 1);
     param.isEstimate[4] = 0;
 
     errors.isEstimate = param.isEstimate;
@@ -397,12 +397,12 @@ TEST_F(fisheyeTest, rectify)
 {
     const std::string folder =combine(datasets_repository_path, "calib-3_stereo_from_JY");
 
-    alvision.Size calibration_size = this->imageSize, requested_size = calibration_size;
-    alvision.Matx33d K1 = this->K, K2 = K1;
-    alvision.Mat D1 = alvision.Mat(this->D), D2 = D1;
+    alvision.Size calibration_size = this.imageSize, requested_size = calibration_size;
+    alvision.Matx33d K1 = this.K, K2 = K1;
+    alvision.Mat D1 = alvision.Mat(this.D), D2 = D1;
 
-    alvision.Vec3d T = this->T;
-    alvision.Matx33d R = this->R;
+    alvision.Vec3d T = this.T;
+    alvision.Matx33d R = this.R;
 
     double balance = 0.0, fov_scale = 1.1;
     alvision.Mat R1, R2, P1, P2, Q;
@@ -448,9 +448,9 @@ TEST_F(fisheyeTest, stereoCalibrate)
 
     const std::string folder =combine(datasets_repository_path, "calib-3_stereo_from_JY");
 
-    std::Array<std::Array<alvision.Point2d> > leftPoints(n_images);
-    std::Array<std::Array<alvision.Point2d> > rightPoints(n_images);
-    std::Array<std::Array<alvision.Point3d> > objectPoints(n_images);
+    Array<Array<alvision.Point2d> > leftPoints(n_images);
+    Array<Array<alvision.Point2d> > rightPoints(n_images);
+    Array<Array<alvision.Point3d> > objectPoints(n_images);
 
     alvision.FileStorage fs_left(combine(folder, "left.xml"), alvision.FileStorage::READ);
     CV_Assert(fs_left.isOpened());
@@ -516,9 +516,9 @@ TEST_F(fisheyeTest, stereoCalibrateFixIntrinsic)
 
     const std::string folder =combine(datasets_repository_path, "calib-3_stereo_from_JY");
 
-    std::Array<std::Array<alvision.Point2d> > leftPoints(n_images);
-    std::Array<std::Array<alvision.Point2d> > rightPoints(n_images);
-    std::Array<std::Array<alvision.Point3d> > objectPoints(n_images);
+    Array<Array<alvision.Point2d> > leftPoints(n_images);
+    Array<Array<alvision.Point2d> > rightPoints(n_images);
+    Array<Array<alvision.Point3d> > objectPoints(n_images);
 
     alvision.FileStorage fs_left(combine(folder, "left.xml"), alvision.FileStorage::READ);
     CV_Assert(fs_left.isOpened());

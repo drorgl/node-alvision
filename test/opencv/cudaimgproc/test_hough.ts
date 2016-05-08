@@ -69,7 +69,7 @@ PARAM_TEST_CASE(HoughLines, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
         alvision.line(img, alvision.Point(img.cols, 0), alvision.Point(0, img.rows), alvision.Scalar::all(255));
     }
 
-    static void drawLines(alvision.Mat& dst, const std::Array<alvision.Vec2f>& lines)
+    static void drawLines(alvision.Mat& dst, const Array<alvision.Vec2f>& lines)
     {
         dst.setTo(alvision.alvision.Scalar.all(0));
 
@@ -105,10 +105,10 @@ CUDA_TEST_P(HoughLines, Accuracy)
     alvision.Ptr<alvision.cuda::HoughLinesDetector> hough = alvision.cuda::createHoughLinesDetector(rho, theta, threshold);
 
     alvision.cuda::GpuMat d_lines;
-    hough->detect(loadMat(src, useRoi), d_lines);
+    hough.detect(loadMat(src, useRoi), d_lines);
 
-    std::Array<alvision.Vec2f> lines;
-    hough->downloadResults(d_lines, lines);
+    Array<alvision.Vec2f> lines;
+    hough.downloadResults(d_lines, lines);
 
     alvision.Mat dst(size, CV_8UC1);
     drawLines(dst, lines);
@@ -126,7 +126,7 @@ INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, HoughLines, testing::Combine(
 
 PARAM_TEST_CASE(HoughCircles, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
 {
-    static void drawCircles(alvision.Mat& dst, const std::Array<alvision.Vec3f>& circles, bool fill)
+    static void drawCircles(alvision.Mat& dst, const Array<alvision.Vec3f>& circles, bool fill)
     {
         dst.setTo(alvision.alvision.Scalar.all(0));
 
@@ -149,7 +149,7 @@ CUDA_TEST_P(HoughCircles, Accuracy)
     const int cannyThreshold = 100;
     const int votesThreshold = 20;
 
-    std::Array<alvision.Vec3f> circles_gold(4);
+    Array<alvision.Vec3f> circles_gold(4);
     circles_gold[0] = alvision.Vec3i(20, 20, minRadius);
     circles_gold[1] = alvision.Vec3i(90, 87, minRadius + 3);
     circles_gold[2] = alvision.Vec3i(30, 70, minRadius + 8);
@@ -161,9 +161,9 @@ CUDA_TEST_P(HoughCircles, Accuracy)
     alvision.Ptr<alvision.cuda::HoughCirclesDetector> houghCircles = alvision.cuda::createHoughCirclesDetector(dp, minDist, cannyThreshold, votesThreshold, minRadius, maxRadius);
 
     alvision.cuda::GpuMat d_circles;
-    houghCircles->detect(loadMat(src, useRoi), d_circles);
+    houghCircles.detect(loadMat(src, useRoi), d_circles);
 
-    std::Array<alvision.Vec3f> circles;
+    Array<alvision.Vec3f> circles;
     d_circles.download(circles);
 
     ASSERT_FALSE(circles.empty());
@@ -227,14 +227,14 @@ CUDA_TEST_P(GeneralizedHough, Ballard)
     }
 
     alvision.Ptr<alvision.GeneralizedHoughBallard> alg = alvision.cuda::createGeneralizedHoughBallard();
-    alg->setVotesThreshold(200);
+    alg.setVotesThreshold(200);
 
-    alg->setTemplate(loadMat(templ, useRoi));
+    alg.setTemplate(loadMat(templ, useRoi));
 
     alvision.cuda::GpuMat d_pos;
-    alg->detect(loadMat(image, useRoi), d_pos);
+    alg.detect(loadMat(image, useRoi), d_pos);
 
-    std::Array<alvision.Vec4f> pos;
+    Array<alvision.Vec4f> pos;
     d_pos.download(pos);
 
     ASSERT_EQ(gold_count, pos.size());

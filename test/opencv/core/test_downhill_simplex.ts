@@ -54,20 +54,20 @@ import fs = require('fs');
 
 static void mytest(alvision.Ptr<alvision.DownhillSolver> solver,alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F,alvision.Mat& x,alvision.Mat& step,
         alvision.Mat& etalon_x,double etalon_res){
-    solver->setFunction(ptr_F);
+    solver.setFunction(ptr_F);
     int ndim=MAX(step.cols,step.rows);
-    solver->setInitStep(step);
+    solver.setInitStep(step);
     alvision.Mat settedStep;
-    solver->getInitStep(settedStep);
+    solver.getInitStep(settedStep);
     ASSERT_TRUE(settedStep.rows==1 && settedStep.cols==ndim);
     ASSERT_TRUE(std::equal(step.begin<double>(),step.end<double>(),settedStep.begin<double>()));
     std::cout<<"step setted:\n\t"<<step<<std::endl;
-    double res=solver->minimize(x);
+    double res=solver.minimize(x);
     std::cout<<"res:\n\t"<<res<<std::endl;
     std::cout<<"x:\n\t"<<x<<std::endl;
     std::cout<<"etalon_res:\n\t"<<etalon_res<<std::endl;
     std::cout<<"etalon_x:\n\t"<<etalon_x<<std::endl;
-    double tol=1e-2;//solver->getTermCriteria().epsilon;
+    double tol=1e-2;//solver.getTermCriteria().epsilon;
     ASSERT_TRUE(std::abs(res-etalon_res)<tol);
     /*for(alvision.Mat_<double>::iterator it1=x.begin<double>(),it2=etalon_x.begin<double>();it1!=x.end<double>();it1++,it2++){
         ASSERT_TRUE(std::abs((*it1)-(*it2))<tol);

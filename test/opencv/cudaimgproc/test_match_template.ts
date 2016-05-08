@@ -93,7 +93,7 @@ CUDA_TEST_P(MatchTemplate8U, Accuracy)
     alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), method);
 
     alvision.cuda::GpuMat dst;
-    alg->match(loadMat(image), loadMat(templ), dst);
+    alg.match(loadMat(image), loadMat(templ), dst);
 
     alvision.Mat dst_gold;
     alvision.matchTemplate(image, templ, dst_gold, method);
@@ -152,7 +152,7 @@ CUDA_TEST_P(MatchTemplate32F, Regression)
     alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), method);
 
     alvision.cuda::GpuMat dst;
-    alg->match(loadMat(image), loadMat(templ), dst);
+    alg.match(loadMat(image), loadMat(templ), dst);
 
     alvision.Mat dst_gold;
     alvision.matchTemplate(image, templ, dst_gold, method);
@@ -206,7 +206,7 @@ CUDA_TEST_P(MatchTemplateBlackSource, Accuracy)
     alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), method);
 
     alvision.cuda::GpuMat d_dst;
-    alg->match(loadMat(image), loadMat(pattern), d_dst);
+    alg.match(loadMat(image), loadMat(pattern), d_dst);
 
     alvision.Mat dst(d_dst);
 
@@ -253,7 +253,7 @@ CUDA_TEST_P(MatchTemplate_CCOEF_NORMED, Accuracy)
     alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), alvision.TM_CCOEFF_NORMED);
 
     alvision.cuda::GpuMat d_dst;
-    alg->match(loadMat(image), loadMat(pattern), d_dst);
+    alg.match(loadMat(image), loadMat(pattern), d_dst);
 
     alvision.Mat dst(d_dst);
 
@@ -304,7 +304,7 @@ CUDA_TEST_P(MatchTemplate_CanFindBigTemplate, SQDIFF_NORMED)
     alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(scene.type(), alvision.TM_SQDIFF_NORMED);
 
     alvision.cuda::GpuMat d_result;
-    alg->match(loadMat(scene), loadMat(templ), d_result);
+    alg.match(loadMat(scene), loadMat(templ), d_result);
 
     alvision.Mat result(d_result);
 
@@ -329,7 +329,7 @@ CUDA_TEST_P(MatchTemplate_CanFindBigTemplate, SQDIFF)
     alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(scene.type(), alvision.TM_SQDIFF);
 
     alvision.cuda::GpuMat d_result;
-    alg->match(loadMat(scene), loadMat(templ), d_result);
+    alg.match(loadMat(scene), loadMat(templ), d_result);
 
     alvision.Mat result(d_result);
 

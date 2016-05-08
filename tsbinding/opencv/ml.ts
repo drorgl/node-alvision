@@ -166,21 +166,21 @@ export namespace ml {
 
     }
 
-    interface TrainData {
+    export interface TrainData {
         //public:
         //    static inline float missingValue() { return FLT_MAX; }
         //    virtual ~TrainData();
         //
-        //    CV_WRAP virtual int getLayout() const = 0;
-        //    CV_WRAP virtual int getNTrainSamples() const = 0;
-        //    CV_WRAP virtual int getNTestSamples() const = 0;
-        //    CV_WRAP virtual int getNSamples() const = 0;
-        //    CV_WRAP virtual int getNVars() const = 0;
-        //    CV_WRAP virtual int getNAllVars() const = 0;
+          getLayout() : _st.int;
+          getNTrainSamples() : _st.int;
+          getNTestSamples() : _st.int;
+          getNSamples() : _st.int;
+          getNVars() : _st.int;
+          getNAllVars() : _st.int;
         //
         //    CV_WRAP virtual void getSample(InputArray varIdx, int sidx, float* buf) const = 0;
-        //    CV_WRAP virtual Mat getSamples() const = 0;
-        //    CV_WRAP virtual Mat getMissing() const = 0;
+          getSamples(): _mat.Mat;
+          getMissing() : _mat.Mat;
         //
         //    /** @brief Returns matrix of train samples
         //
@@ -485,6 +485,58 @@ export namespace ml {
     *                                   Support Vector Machines                              *
     \****************************************************************************************/
 
+        //! %SVM type
+    export enum SVMTypes {
+        /** C-Support Vector Classification. n-class classification (n \f$\geq\f$ 2), allows
+        imperfect separation of classes with penalty multiplier C for outliers. */
+        C_SVC = 100,
+        /** \f$\nu\f$-Support Vector Classification. n-class classification with possible
+        imperfect separation. Parameter \f$\nu\f$ (in the range 0..1, the larger the value, the smoother
+        the decision boundary) is used instead of C. */
+        NU_SVC = 101,
+        /** Distribution Estimation (One-class %SVM). All the training data are from
+        the same class, %SVM builds a boundary that separates the class from the rest of the feature
+        space. */
+        ONE_CLASS = 102,
+        /** \f$\epsilon\f$-Support Vector Regression. The distance between feature vectors
+        from the training set and the fitting hyper-plane must be less than p. For outliers the
+        penalty multiplier C is used. */
+        EPS_SVR = 103,
+        /** \f$\nu\f$-Support Vector Regression. \f$\nu\f$ is used instead of p.
+        See @cite LibSVM for details. */
+        NU_SVR = 104
+    }
+
+    
+            /** @brief %SVM kernel type
+        
+            A comparison of different kernels on the following 2D test case with four classes. Four
+            SVM::C_SVC SVMs have been trained (one against rest) with auto_train. Evaluation on three
+            different kernels (SVM::CHI2, SVM::INTER, SVM::RBF). The color depicts the class with max score.
+            Bright means max-score \> 0, dark means max-score \< 0.
+            ![image](pics/SVM_Comparison.png)
+            */
+    export enum SVMKernelTypes {
+        /** Returned by SVM::getKernelType in case when custom kernel has been set */
+        CUSTOM = -1,
+        /** Linear kernel. No mapping is done, linear discrimination (or regression) is
+        done in the original feature space. It is the fastest option. \f$K(x_i, x_j) = x_i^T x_j\f$. */
+        LINEAR = 0,
+        /** Polynomial kernel:
+        \f$K(x_i, x_j) = (\gamma x_i^T x_j + coef0)^{degree}, \gamma > 0\f$. */
+        POLY = 1,
+        /** Radial basis function (RBF), a good choice in most cases.
+        \f$K(x_i, x_j) = e^{-\gamma ||x_i - x_j||^2}, \gamma > 0\f$. */
+        RBF = 2,
+        /** Sigmoid kernel: \f$K(x_i, x_j) = \tanh(\gamma x_i^T x_j + coef0)\f$. */
+        SIGMOID = 3,
+        /** Exponential Chi2 kernel, similar to the RBF kernel:
+        \f$K(x_i, x_j) = e^{-\gamma \chi^2(x_i,x_j)}, \chi^2(x_i,x_j) = (x_i-x_j)^2/(x_i+x_j), \gamma > 0\f$. */
+        CHI2 = 4,
+        /** Histogram intersection kernel. A fast kernel. \f$K(x_i, x_j) = min(x_i,x_j)\f$. */
+        INTER = 5
+    }
+
     /** @brief Support Vector Machines.
     
     @sa @ref ml_intro_svm
@@ -528,12 +580,12 @@ export namespace ml {
         //        virtual void calc( int vcount, int n, const float* vecs, const float* another, float* results ) = 0;
         //    };
         //
-        //    /** Type of a %SVM formulation.
-        //    See SVM::Types. Default value is SVM::C_SVC. */
-        //    /** @see setType */
-        //    CV_WRAP virtual int getType() const = 0;
-        //    /** @copybrief getType @see getType */
-        //    CV_WRAP virtual void setType(int val) = 0;
+            /** Type of a %SVM formulation.
+            See SVM::Types. Default value is SVM::C_SVC. */
+            /** @see setType */
+        getType(): _st.int;
+            /** @copybrief getType @see getType */
+        setType(val: _st.int): void;
         //
         //    /** Parameter \f$\gamma\f$ of a kernel function.
         //    For SVM::POLY, SVM::RBF, SVM::SIGMOID or SVM::CHI2. Default value is 1. */
@@ -608,56 +660,8 @@ export namespace ml {
         //    See SVM::Kernel class for implementation details */
         //    virtual void setCustomKernel(const Ptr<Kernel> &_kernel) = 0;
         //
-        //    //! %SVM type
-        //    enum Types {
-        //        /** C-Support Vector Classification. n-class classification (n \f$\geq\f$ 2), allows
-        //        imperfect separation of classes with penalty multiplier C for outliers. */
-        //        C_SVC=100,
-        //        /** \f$\nu\f$-Support Vector Classification. n-class classification with possible
-        //        imperfect separation. Parameter \f$\nu\f$ (in the range 0..1, the larger the value, the smoother
-        //        the decision boundary) is used instead of C. */
-        //        NU_SVC=101,
-        //        /** Distribution Estimation (One-class %SVM). All the training data are from
-        //        the same class, %SVM builds a boundary that separates the class from the rest of the feature
-        //        space. */
-        //        ONE_CLASS=102,
-        //        /** \f$\epsilon\f$-Support Vector Regression. The distance between feature vectors
-        //        from the training set and the fitting hyper-plane must be less than p. For outliers the
-        //        penalty multiplier C is used. */
-        //        EPS_SVR=103,
-        //        /** \f$\nu\f$-Support Vector Regression. \f$\nu\f$ is used instead of p.
-        //        See @cite LibSVM for details. */
-        //        NU_SVR=104
-        //    };
-        //
-        //    /** @brief %SVM kernel type
-        //
-        //    A comparison of different kernels on the following 2D test case with four classes. Four
-        //    SVM::C_SVC SVMs have been trained (one against rest) with auto_train. Evaluation on three
-        //    different kernels (SVM::CHI2, SVM::INTER, SVM::RBF). The color depicts the class with max score.
-        //    Bright means max-score \> 0, dark means max-score \< 0.
-        //    ![image](pics/SVM_Comparison.png)
-        //    */
-        //    enum KernelTypes {
-        //        /** Returned by SVM::getKernelType in case when custom kernel has been set */
-        //        CUSTOM=-1,
-        //        /** Linear kernel. No mapping is done, linear discrimination (or regression) is
-        //        done in the original feature space. It is the fastest option. \f$K(x_i, x_j) = x_i^T x_j\f$. */
-        //        LINEAR=0,
-        //        /** Polynomial kernel:
-        //        \f$K(x_i, x_j) = (\gamma x_i^T x_j + coef0)^{degree}, \gamma > 0\f$. */
-        //        POLY=1,
-        //        /** Radial basis function (RBF), a good choice in most cases.
-        //        \f$K(x_i, x_j) = e^{-\gamma ||x_i - x_j||^2}, \gamma > 0\f$. */
-        //        RBF=2,
-        //        /** Sigmoid kernel: \f$K(x_i, x_j) = \tanh(\gamma x_i^T x_j + coef0)\f$. */
-        //        SIGMOID=3,
-        //        /** Exponential Chi2 kernel, similar to the RBF kernel:
-        //        \f$K(x_i, x_j) = e^{-\gamma \chi^2(x_i,x_j)}, \chi^2(x_i,x_j) = (x_i-x_j)^2/(x_i+x_j), \gamma > 0\f$. */
-        //        CHI2=4,
-        //        /** Histogram intersection kernel. A fast kernel. \f$K(x_i, x_j) = min(x_i,x_j)\f$. */
-        //        INTER=5
-        //    };
+        
+        
         //
         //    //! %SVM params type
         //    enum ParamTypes {
@@ -1134,6 +1138,14 @@ export namespace ml {
     
     @sa @ref ml_intro_rtrees
      */
+    interface RTreesStatic {
+           /** Creates the empty model.
+          Use StatModel::train to train the model, StatModel::train to create and train the model,
+          Algorithm::load to load the pre-trained model.
+           */
+        create(): RTrees;
+    }
+
     interface RTrees extends DTrees {
         //public:
         //
@@ -1172,12 +1184,9 @@ export namespace ml {
         //     */
         //    CV_WRAP virtual Mat getVarImportance() const = 0;
         //
-        //    /** Creates the empty model.
-        //    Use StatModel::train to train the model, StatModel::train to create and train the model,
-        //    Algorithm::load to load the pre-trained model.
-        //     */
-        //    CV_WRAP static Ptr<RTrees> create();
+       
     };
+    export var RTrees: RTreesStatic = alvision_module.RTrees;
 
     /****************************************************************************************\
     *                                   Boosted tree classifier                              *
@@ -1187,6 +1196,12 @@ export namespace ml {
     
     @sa @ref ml_intro_boost
      */
+    interface BoostStatic {
+            /** Creates the empty model.
+           Use StatModel::train to train the model, Algorithm::load\<Boost\>(filename) to load the pre-trained model. */
+        create(): Boost;
+    }
+
     interface Boost extends DTrees {
         //public:
         //    /** Type of the boosting algorithm.
@@ -1222,14 +1237,15 @@ export namespace ml {
         //                 //!<reason is often good with regression data.
         //    };
         //
-        //    /** Creates the empty model.
-        //    Use StatModel::train to train the model, Algorithm::load\<Boost\>(filename) to load the pre-trained model. */
-        //    CV_WRAP static Ptr<Boost> create();
+       
     };
+    export var Boost: BoostStatic = alvision_module.Boost;
 
     /****************************************************************************************\
     *                                   Gradient Boosted Trees                               *
     \****************************************************************************************/
+
+    export enum GBTrees{SQUARED_LOSS = 0, ABSOLUTE_LOSS, HUBER_LOSS = 3, DEVIANCE_LOSS };
 
     /*class CV_EXPORTS_W GBTrees : public DTrees
     {
@@ -1246,7 +1262,7 @@ export namespace ml {
                     float subsamplePortion, int maxDepth, bool useSurrogates );
         };
     
-        enum {SQUARED_LOSS=0, ABSOLUTE_LOSS, HUBER_LOSS=3, DEVIANCE_LOSS};
+        
     
         virtual void setK(int k) = 0;
     
@@ -1261,6 +1277,11 @@ export namespace ml {
     \****************************************************************************************/
 
     /////////////////////////////////// Multi-Layer Perceptrons //////////////////////////////
+
+      export  enum TrainingMethods {
+            BACKPROP=0, //!< The back-propagation algorithm.
+            RPROP=1 //!< The RPROP algorithm. See @cite RPROP93 for details.
+        };
 
     /** @brief Artificial Neural Networks - Multi-Layer Perceptrons.
     
@@ -1277,10 +1298,7 @@ export namespace ml {
     interface ANN_MLP extends StatModel {
         //public:
         //    /** Available training methods */
-        //    enum TrainingMethods {
-        //        BACKPROP=0, //!< The back-propagation algorithm.
-        //        RPROP=1 //!< The RPROP algorithm. See @cite RPROP93 for details.
-        //    };
+        
         //
         //    /** Sets training method and common parameters.
         //    @param method Default value is ANN_MLP::RPROP. See ANN_MLP::TrainingMethods.

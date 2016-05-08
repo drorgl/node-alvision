@@ -131,7 +131,7 @@ float calcCirclesIntersectArea(const Point2f& p0, float r0, const Point2f& p1, f
     if(r0 + r1 <= c)
        return 0;
 
-    float minR = std::min(r0, r1);
+    float minR = Math.min(r0, r1);
     float maxR = std::max(r0, r1);
     if(c + minR <= maxR)
         return static_cast<float>(Math.PI * minR * minR);
@@ -212,19 +212,19 @@ protected:
 
     void run(int)
     {
-        const string imageFilename = string(ts->get_data_path()) + IMAGE_TSUKUBA;
+        const string imageFilename = this.ts.get_data_path() + IMAGE_TSUKUBA;
 
         // Read test data
         Mat image0 = imread(imageFilename), image1, mask1;
         if(image0.empty())
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
         Array<KeyPoint> keypoints0;
-        featureDetector->detect(image0, keypoints0);
+        featureDetector.detect(image0, keypoints0);
         if(keypoints0.size() < 15)
             CV_Error(Error::StsAssert, "Detector gives too few points in a test image\n");
 
@@ -234,7 +234,7 @@ protected:
             Mat H = rotateImage(image0, static_cast<float>(angle), image1, mask1);
 
             Array<KeyPoint> keypoints1;
-            featureDetector->detect(image1, keypoints1, mask1);
+            featureDetector.detect(image1, keypoints1, mask1);
 
             Array<DMatch> matches;
             matchKeyPoints(keypoints0, H, keypoints1, matches);
@@ -263,8 +263,8 @@ protected:
                 if(rotAngle0 >= 360.f)
                     rotAngle0 -= 360.f;
 
-                float angleDiff = std::max(rotAngle0, angle1) - std::min(rotAngle0, angle1);
-                angleDiff = std::min(angleDiff, static_cast<float>(360.f - angleDiff));
+                float angleDiff = std::max(rotAngle0, angle1) - Math.min(rotAngle0, angle1);
+                angleDiff = Math.min(angleDiff, static_cast<float>(360.f - angleDiff));
                 CV_Assert(angleDiff >= 0.f);
                 bool isAngleCorrect = angleDiff < maxAngleDiff;
                 if(isAngleCorrect)
@@ -274,7 +274,7 @@ protected:
             float keyPointMatchesRatio = static_cast<float>(keyPointMatchesCount) / keypoints0.size();
             if(keyPointMatchesRatio < minKeyPointMatchesRatio)
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
                            keyPointMatchesRatio, minKeyPointMatchesRatio);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 return;
@@ -285,7 +285,7 @@ protected:
                 float angleInliersRatio = static_cast<float>(angleInliersCount) / keyPointMatchesCount;
                 if(angleInliersRatio < minAngleInliersRatio)
                 {
-                    ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect angleInliersRatio: curr = %f, min = %f.\n",
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect angleInliersRatio: curr = %f, min = %f.\n",
                                angleInliersRatio, minAngleInliersRatio);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                     return;
@@ -324,23 +324,23 @@ protected:
 
     void run(int)
     {
-        const string imageFilename = string(ts->get_data_path()) + IMAGE_TSUKUBA;
+        const string imageFilename = this.ts.get_data_path() + IMAGE_TSUKUBA;
 
         // Read test data
         Mat image0 = imread(imageFilename), image1, mask1;
         if(image0.empty())
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
         Array<KeyPoint> keypoints0;
         Mat descriptors0;
-        featureDetector->detect(image0, keypoints0);
+        featureDetector.detect(image0, keypoints0);
         if(keypoints0.size() < 15)
             CV_Error(Error::StsAssert, "Detector gives too few points in a test image\n");
-        descriptorExtractor->compute(image0, keypoints0, descriptors0);
+        descriptorExtractor.compute(image0, keypoints0, descriptors0);
 
         BFMatcher bfmatcher(normType);
 
@@ -353,7 +353,7 @@ protected:
             Array<KeyPoint> keypoints1;
             rotateKeyPoints(keypoints0, H, static_cast<float>(angle), keypoints1);
             Mat descriptors1;
-            descriptorExtractor->compute(image1, keypoints1, descriptors1);
+            descriptorExtractor.compute(image1, keypoints1, descriptors1);
 
             Array<DMatch> descMatches;
             bfmatcher.match(descriptors0, descriptors1, descMatches);
@@ -373,7 +373,7 @@ protected:
             float descInliersRatio = static_cast<float>(descInliersCount) / keypoints0.size();
             if(descInliersRatio < minDescInliersRatio)
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
                            descInliersRatio, minDescInliersRatio);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 return;
@@ -408,19 +408,19 @@ protected:
 
     void run(int)
     {
-        const string imageFilename = string(ts->get_data_path()) + IMAGE_BIKES;
+        const string imageFilename = this.ts.get_data_path() + IMAGE_BIKES;
 
         // Read test data
         Mat image0 = imread(imageFilename);
         if(image0.empty())
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
         Array<KeyPoint> keypoints0;
-        featureDetector->detect(image0, keypoints0);
+        featureDetector.detect(image0, keypoints0);
         if(keypoints0.size() < 15)
             CV_Error(Error::StsAssert, "Detector gives too few points in a test image\n");
 
@@ -431,13 +431,13 @@ protected:
             resize(image0, image1, Size(), 1./scale, 1./scale);
 
             Array<KeyPoint> keypoints1, osiKeypoints1; // osi - original size image
-            featureDetector->detect(image1, keypoints1);
+            featureDetector.detect(image1, keypoints1);
             if(keypoints1.size() < 15)
                 CV_Error(Error::StsAssert, "Detector gives too few points in a test image\n");
 
             if(keypoints1.size() > keypoints0.size())
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "Strange behavior of the detector. "
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Strange behavior of the detector. "
                     "It gives more points count in an image of the smaller size.\n"
                     "original size (%d, %d), keypoints count = %d\n"
                     "reduced size (%d, %d), keypoints count = %d\n",
@@ -470,14 +470,14 @@ protected:
                 float size0 = keypoints0[matches[m].trainIdx].size;
                 float size1 = osiKeypoints1[matches[m].queryIdx].size;
                 CV_Assert(size0 > 0 && size1 > 0);
-                if(std::min(size0, size1) > maxSizeDiff * std::max(size0, size1))
+                if(Math.min(size0, size1) > maxSizeDiff * std::max(size0, size1))
                     scaleInliersCount++;
             }
 
             float keyPointMatchesRatio = static_cast<float>(keyPointMatchesCount) / keypoints1.size();
             if(keyPointMatchesRatio < minKeyPointMatchesRatio)
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect keyPointMatchesRatio: curr = %f, min = %f.\n",
                            keyPointMatchesRatio, minKeyPointMatchesRatio);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 return;
@@ -488,7 +488,7 @@ protected:
                 float scaleInliersRatio = static_cast<float>(scaleInliersCount) / keyPointMatchesCount;
                 if(scaleInliersRatio < minScaleInliersRatio)
                 {
-                    ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect scaleInliersRatio: curr = %f, min = %f.\n",
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect scaleInliersRatio: curr = %f, min = %f.\n",
                                scaleInliersRatio, minScaleInliersRatio);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                     return;
@@ -527,23 +527,23 @@ protected:
 
     void run(int)
     {
-        const string imageFilename = string(ts->get_data_path()) + IMAGE_BIKES;
+        const string imageFilename = this.ts.get_data_path() + IMAGE_BIKES;
 
         // Read test data
         Mat image0 = imread(imageFilename);
         if(image0.empty())
         {
-            ts->printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imageFilename);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
         Array<KeyPoint> keypoints0;
-        featureDetector->detect(image0, keypoints0);
+        featureDetector.detect(image0, keypoints0);
         if(keypoints0.size() < 15)
             CV_Error(Error::StsAssert, "Detector gives too few points in a test image\n");
         Mat descriptors0;
-        descriptorExtractor->compute(image0, keypoints0, descriptors0);
+        descriptorExtractor.compute(image0, keypoints0, descriptors0);
 
         BFMatcher bfmatcher(normType);
         for(int scaleIdx = 1; scaleIdx <= 3; scaleIdx++)
@@ -556,7 +556,7 @@ protected:
             Array<KeyPoint> keypoints1;
             scaleKeyPoints(keypoints0, keypoints1, 1.0f/scale);
             Mat descriptors1;
-            descriptorExtractor->compute(image1, keypoints1, descriptors1);
+            descriptorExtractor.compute(image1, keypoints1, descriptors1);
 
             Array<DMatch> descMatches;
             bfmatcher.match(descriptors0, descriptors1, descMatches);
@@ -577,7 +577,7 @@ protected:
             float descInliersRatio = static_cast<float>(descInliersCount) / keypoints0.size();
             if(descInliersRatio < minDescInliersRatio)
             {
-                ts->printf(alvision.cvtest.TSConstants.LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect descInliersRatio: curr = %f, min = %f.\n",
                            descInliersRatio, minDescInliersRatio);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 return;
@@ -625,14 +625,14 @@ TEST(Features2d_RotationInvariance_Detector_ORB, regression)
 TEST(Features2d_RotationInvariance_Descriptor_BRISK, regression)
 {
     Ptr<Feature2D> f2d = BRISK::create();
-    DescriptorRotationInvarianceTest test(f2d, f2d, f2d->defaultNorm(), 0.99f);
+    DescriptorRotationInvarianceTest test(f2d, f2d, f2d.defaultNorm(), 0.99f);
     test.safe_run();
 }
 
 TEST(Features2d_RotationInvariance_Descriptor_ORB, regression)
 {
     Ptr<Feature2D> f2d = ORB::create();
-    DescriptorRotationInvarianceTest test(f2d, f2d, f2d->defaultNorm(), 0.99f);
+    DescriptorRotationInvarianceTest test(f2d, f2d, f2d.defaultNorm(), 0.99f);
     test.safe_run();
 }
 
@@ -640,7 +640,7 @@ TEST(Features2d_RotationInvariance_Descriptor_ORB, regression)
 //{
 //    DescriptorRotationInvarianceTest test(Algorithm::create<FeatureDetector>("Feature2D.ORB"),
 //                                          Algorithm::create<DescriptorExtractor>("Feature2D.FREAK"),
-//                                          Algorithm::create<DescriptorExtractor>("Feature2D.FREAK")->defaultNorm(),
+//                                          Algorithm::create<DescriptorExtractor>("Feature2D.FREAK").defaultNorm(),
 //                                          0.f);
 //    test.safe_run();
 //}
@@ -683,7 +683,7 @@ TEST(Features2d_ScaleInvariance_Detector_AKAZE, regression)
 //{
 //    DescriptorScaleInvarianceTest test(Algorithm::create<FeatureDetector>("Feature2D.BRISK"),
 //                                       Algorithm::create<DescriptorExtractor>("Feature2D.BRISK"),
-//                                       Algorithm::create<DescriptorExtractor>("Feature2D.BRISK")->defaultNorm(),
+//                                       Algorithm::create<DescriptorExtractor>("Feature2D.BRISK").defaultNorm(),
 //                                       0.99f);
 //    test.safe_run();
 //}
@@ -692,7 +692,7 @@ TEST(Features2d_ScaleInvariance_Detector_AKAZE, regression)
 //{
 //    DescriptorScaleInvarianceTest test(Algorithm::create<FeatureDetector>("Feature2D.ORB"),
 //                                       Algorithm::create<DescriptorExtractor>("Feature2D.ORB"),
-//                                       Algorithm::create<DescriptorExtractor>("Feature2D.ORB")->defaultNorm(),
+//                                       Algorithm::create<DescriptorExtractor>("Feature2D.ORB").defaultNorm(),
 //                                       0.01f);
 //    test.safe_run();
 //}
@@ -701,7 +701,7 @@ TEST(Features2d_ScaleInvariance_Detector_AKAZE, regression)
 //{
 //    DescriptorScaleInvarianceTest test(Algorithm::create<FeatureDetector>("Feature2D.ORB"),
 //                                       Algorithm::create<DescriptorExtractor>("Feature2D.FREAK"),
-//                                       Algorithm::create<DescriptorExtractor>("Feature2D.FREAK")->defaultNorm(),
+//                                       Algorithm::create<DescriptorExtractor>("Feature2D.FREAK").defaultNorm(),
 //                                       0.01f);
 //    test.safe_run();
 //}

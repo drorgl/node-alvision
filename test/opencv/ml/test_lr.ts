@@ -101,41 +101,41 @@ protected:
 void CV_LRTest::run( int /*start_from*/ )
 {
     // initialize varibles from the popular Iris Dataset
-    string dataFileName = ts->get_data_path() + "iris.data";
+    string dataFileName = ts.get_data_path() + "iris.data";
     Ptr<TrainData> tdata = TrainData::loadFromCSV(dataFileName, 0);
 
     // run LR classifier train classifier
     Ptr<LogisticRegression> p = LogisticRegression::create();
-    p->setLearningRate(1.0);
-    p->setIterations(10001);
-    p->setRegularization(LogisticRegression::REG_L2);
-    p->setTrainMethod(LogisticRegression::BATCH);
-    p->setMiniBatchSize(10);
-    p->train(tdata);
+    p.setLearningRate(1.0);
+    p.setIterations(10001);
+    p.setRegularization(LogisticRegression::REG_L2);
+    p.setTrainMethod(LogisticRegression::BATCH);
+    p.setMiniBatchSize(10);
+    p.train(tdata);
 
     // predict using the same data
     Mat responses;
-    p->predict(tdata->getSamples(), responses);
+    p.predict(tdata.getSamples(), responses);
 
     // calculate error
     int test_code = alvision.cvtest.FailureCode.OK;
     float error = 0.0f;
-    if(!calculateError(responses, tdata->getResponses(), error))
+    if(!calculateError(responses, tdata.getResponses(), error))
     {
-        ts->printf(alvision.cvtest.TSConstants.LOG, "Bad prediction labels\n" );
+        ts.printf(alvision.cvtest.TSConstants.LOG, "Bad prediction labels\n" );
         test_code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
     }
     else if(error > 0.05f)
     {
-        ts->printf(alvision.cvtest.TSConstants.LOG, "Bad accuracy of (%f)\n", error);
+        ts.printf(alvision.cvtest.TSConstants.LOG, "Bad accuracy of (%f)\n", error);
         test_code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 
     {
         FileStorage s("debug.xml", FileStorage::WRITE);
-        s << "original" << tdata->getResponses();
+        s << "original" << tdata.getResponses();
         s << "predicted1" << responses;
-        s << "learnt" << p->get_learnt_thetas();
+        s << "learnt" << p.get_learnt_thetas();
         s << "error" << error;
         s.release();
     }
@@ -157,7 +157,7 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
     int code = alvision.cvtest.FailureCode.OK;
 
     // initialize varibles from the popular Iris Dataset
-    string dataFileName = ts->get_data_path() + "iris.data";
+    string dataFileName = ts.get_data_path() + "iris.data";
     Ptr<TrainData> tdata = TrainData::loadFromCSV(dataFileName, 0);
 
     Mat responses1, responses2;
@@ -169,19 +169,19 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
     {
         // run LR classifier train classifier
         Ptr<LogisticRegression> lr1 = LogisticRegression::create();
-        lr1->setLearningRate(1.0);
-        lr1->setIterations(10001);
-        lr1->setRegularization(LogisticRegression::REG_L2);
-        lr1->setTrainMethod(LogisticRegression::BATCH);
-        lr1->setMiniBatchSize(10);
-        lr1->train(tdata);
-        lr1->predict(tdata->getSamples(), responses1);
-        learnt_mat1 = lr1->get_learnt_thetas();
-        lr1->save(filename);
+        lr1.setLearningRate(1.0);
+        lr1.setIterations(10001);
+        lr1.setRegularization(LogisticRegression::REG_L2);
+        lr1.setTrainMethod(LogisticRegression::BATCH);
+        lr1.setMiniBatchSize(10);
+        lr1.train(tdata);
+        lr1.predict(tdata.getSamples(), responses1);
+        learnt_mat1 = lr1.get_learnt_thetas();
+        lr1.save(filename);
     }
     catch(...)
     {
-        ts->printf(alvision.cvtest.TSConstants.LOG, "Crash in write method.\n" );
+        ts.printf(alvision.cvtest.TSConstants.LOG, "Crash in write method.\n" );
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_EXCEPTION);
     }
 
@@ -189,12 +189,12 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
     try
     {
         Ptr<LogisticRegression> lr2 = Algorithm::load<LogisticRegression>(filename);
-        lr2->predict(tdata->getSamples(), responses2);
-        learnt_mat2 = lr2->get_learnt_thetas();
+        lr2.predict(tdata.getSamples(), responses2);
+        learnt_mat2 = lr2.get_learnt_thetas();
     }
     catch(...)
     {
-        ts->printf(alvision.cvtest.TSConstants.LOG, "Crash in write method.\n" );
+        ts.printf(alvision.cvtest.TSConstants.LOG, "Crash in write method.\n" );
         this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_EXCEPTION);
     }
 
@@ -216,7 +216,7 @@ void CV_LRTest_SaveLoad::run( int /*start_from*/ )
 
     if(errorCount>0)
     {
-        ts->printf( alvision.cvtest.TSConstants.LOG, "Different prediction results before writing and after reading (errorCount=%d).\n", errorCount );
+        ts.printf( alvision.cvtest.TSConstants.LOG, "Different prediction results before writing and after reading (errorCount=%d).\n", errorCount );
         code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
 

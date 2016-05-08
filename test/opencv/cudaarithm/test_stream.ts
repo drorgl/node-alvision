@@ -85,8 +85,8 @@ void checkMemSet(int status, void* userData)
 
     Async* test = reinterpret_cast<Async*>(userData);
 
-    alvision.cuda::HostMem src = test->src;
-    alvision.cuda::HostMem dst = test->dst;
+    alvision.cuda::HostMem src = test.src;
+    alvision.cuda::HostMem dst = test.dst;
 
     alvision.Mat dst_gold = alvision.Mat::zeros(src.size(), src.type());
 
@@ -114,8 +114,8 @@ void checkConvert(int status, void* userData)
 
     Async* test = reinterpret_cast<Async*>(userData);
 
-    alvision.cuda::HostMem src = test->src;
-    alvision.cuda::HostMem dst = test->dst;
+    alvision.cuda::HostMem src = test.src;
+    alvision.cuda::HostMem dst = test.dst;
 
     alvision.Mat dst_gold;
     src.createMatHeader().convertTo(dst_gold, CV_32S);

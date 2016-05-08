@@ -158,23 +158,23 @@ bool TestTranspose<T>::process()
     NCVStatus ncvStat;
     bool rcode = false;
 
-    NcvSize32u srcSize(this->width, this->height);
+    NcvSize32u srcSize(this.width, this.height);
 
-    NCVMatrixAlloc<T> d_img(*this->allocatorGPU.get(), this->width, this->height);
+    NCVMatrixAlloc<T> d_img(*this.allocatorGPU.get(), this.width, this.height);
     ncvAssertReturn(d_img.isMemAllocated(), false);
-    NCVMatrixAlloc<T> h_img(*this->allocatorCPU.get(), this->width, this->height);
+    NCVMatrixAlloc<T> h_img(*this.allocatorCPU.get(), this.width, this.height);
     ncvAssertReturn(h_img.isMemAllocated(), false);
 
-    NCVMatrixAlloc<T> d_dst(*this->allocatorGPU.get(), this->height, this->width);
+    NCVMatrixAlloc<T> d_dst(*this.allocatorGPU.get(), this.height, this.width);
     ncvAssertReturn(d_dst.isMemAllocated(), false);
-    NCVMatrixAlloc<T> h_dst(*this->allocatorCPU.get(), this->height, this->width);
+    NCVMatrixAlloc<T> h_dst(*this.allocatorCPU.get(), this.height, this.width);
     ncvAssertReturn(h_dst.isMemAllocated(), false);
-    NCVMatrixAlloc<T> h_dst_d(*this->allocatorCPU.get(), this->height, this->width);
+    NCVMatrixAlloc<T> h_dst_d(*this.allocatorCPU.get(), this.height, this.width);
     ncvAssertReturn(h_dst_d.isMemAllocated(), false);
 
-    NCV_SET_SKIP_COND(this->allocatorGPU.get()->isCounting());
+    NCV_SET_SKIP_COND(this.allocatorGPU.get().isCounting());
     NCV_SKIP_COND_BEGIN
-    ncvAssertReturn(this->src.fill(h_img), false);
+    ncvAssertReturn(this.src.fill(h_img), false);
     NCV_SKIP_COND_END
 
     ncvStat = h_img.copySolid(d_img, 0);
@@ -184,13 +184,13 @@ bool TestTranspose<T>::process()
     {
         ncvStat = nppiStTranspose_32u_C1R((Ncv32u *)d_img.ptr(), d_img.pitch(),
                                           (Ncv32u *)d_dst.ptr(), d_dst.pitch(),
-                                          NcvSize32u(this->width, this->height));
+                                          NcvSize32u(this.width, this.height));
     }
     else if (sizeof(T) == sizeof(Ncv64u))
     {
         ncvStat = nppiStTranspose_64u_C1R((Ncv64u *)d_img.ptr(), d_img.pitch(),
                                         (Ncv64u *)d_dst.ptr(), d_dst.pitch(),
-                                        NcvSize32u(this->width, this->height));
+                                        NcvSize32u(this.width, this.height));
     }
     else
     {
@@ -206,13 +206,13 @@ bool TestTranspose<T>::process()
     {
         ncvStat = nppiStTranspose_32u_C1R_host((Ncv32u *)h_img.ptr(), h_img.pitch(),
                                                (Ncv32u *)h_dst.ptr(), h_dst.pitch(),
-                                               NcvSize32u(this->width, this->height));
+                                               NcvSize32u(this.width, this.height));
     }
     else if (sizeof(T) == sizeof(Ncv64u))
     {
         ncvStat = nppiStTranspose_64u_C1R_host((Ncv64u *)h_img.ptr(), h_img.pitch(),
                                                (Ncv64u *)h_dst.ptr(), h_dst.pitch(),
-                                               NcvSize32u(this->width, this->height));
+                                               NcvSize32u(this.width, this.height));
     }
     else
     {
@@ -226,9 +226,9 @@ bool TestTranspose<T>::process()
 
     NCV_SKIP_COND_BEGIN
     //const Ncv64f relEPS = 0.005;
-    for (Ncv32u i=0; bLoopVirgin && i < this->width; i++)
+    for (Ncv32u i=0; bLoopVirgin && i < this.width; i++)
     {
-        for (Ncv32u j=0; bLoopVirgin && j < this->height; j++)
+        for (Ncv32u j=0; bLoopVirgin && j < this.height; j++)
         {
             if (h_dst.ptr()[h_dst.stride()*i+j] != h_dst_d.ptr()[h_dst_d.stride()*i+j])
             {
