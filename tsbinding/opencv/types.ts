@@ -166,6 +166,128 @@ export interface Point_Static<T> {
     new (_x : T, _y : T): Point_<T>;
     new (sz: Size_<T>): Point_<T>;
     new (v: _matx.Vec<T>): Point_<T>;
+
+//template< typename _Tp> static inline
+//double norm(const Point_<_Tp>& pt)
+//    {
+//        return std::sqrt((double)pt.x*pt.x + (double)pt.y*pt.y);
+//}
+    norm(pt: Point_<T>): _st.double;
+
+//template < typename _Tp> static inline
+//bool operator == (const Point_<_Tp>& a, const Point_<_Tp>& b)
+//    {
+//        return a.x == b.x && a.y == b.y;
+//}
+    op_Equals(a: Point_<T>, b: Point_<T>): boolean;
+
+//template < typename _Tp> static inline
+//bool operator != (const Point_<_Tp>& a, const Point_<_Tp>& b)
+//    {
+//        return a.x != b.x || a.y != b.y;
+//}
+    op_NotEquals(a: Point_<T>, b: Point_<T>): boolean;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator + (const Point_<_Tp>& a, const Point_<_Tp>& b)
+//    {
+//        return Point_<_Tp>(saturate_cast<_Tp>(a.x + b.x), saturate_cast<_Tp>(a.y + b.y));
+//}
+    op_Addition(a: Point_<T>, b: Point_<T>): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator - (const Point_<_Tp>& a, const Point_<_Tp>& b)
+//    {
+//        return Point_<_Tp>(saturate_cast<_Tp>(a.x - b.x), saturate_cast<_Tp>(a.y - b.y));
+//}
+    op_Substraction(a: Point_<T>, b: Point_<T>): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator - (const Point_<_Tp>& a)
+//    {
+//        return Point_<_Tp>(saturate_cast<_Tp>(-a.x), saturate_cast<_Tp>(-a.y));
+//}
+    op_Substraction(a: Point_<T>): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator * (const Point_<_Tp>& a, int b)
+//    {
+//        return Point_<_Tp>(saturate_cast<_Tp>(a.x * b), saturate_cast<_Tp>(a.y * b));
+//}
+    op_Multiplication(a: Point_<T>, b: _st.int): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator * (int a, const Point_<_Tp>& b)
+//    {
+//        return Point_<_Tp>(saturate_cast<_Tp>(b.x * a), saturate_cast<_Tp>(b.y * a));
+//}
+    op_Multiplication(a: _st.int, b: Point_<T>): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator * (const Point_<_Tp>& a, float b)
+//    {
+//        return Point_<_Tp>(saturate_cast<_Tp>(a.x * b), saturate_cast<_Tp>(a.y * b));
+//}
+    op_Multiplication(a: Point_<T>, b: _st.float): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator * (float a, const Point_<_Tp>& b)
+//    {
+//        return Point_<_Tp>(saturate_cast<_Tp>(b.x * a), saturate_cast<_Tp>(b.y * a));
+//}
+    op_Multiplication(a: _st.float, b: Point_<T>): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator * (const Point_<_Tp>& a, double b)
+//    {
+//        return Point_<_Tp>(saturate_cast<_Tp>(a.x * b), saturate_cast<_Tp>(a.y * b));
+//}
+    op_Multiplication(a: Point_<T>, b: _st.double): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator * (double a, const Point_<_Tp>& b)
+//    {
+//        return Point_<_Tp>(saturate_cast<_Tp>(b.x * a), saturate_cast<_Tp>(b.y * a));
+//}
+    op_Multiplication(a: _st.double, b: Point_<T>): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator * (const Matx<_Tp, 2, 2 >& a, const Point_<_Tp>& b)
+//    {
+//        Matx<_Tp, 2, 1> tmp = a * Vec < _Tp, 2>(b.x, b.y);
+//return Point_<_Tp>(tmp.val[0], tmp.val[1]);
+//}
+    op_Multiplication(a: _matx.Matx<T>, b: Point_<T>): Point_<T>;
+
+
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator / (const Point_<_Tp>& a, int b)
+//    {
+//        Point_<_Tp>tmp(a);
+//tmp /= b;
+//return tmp;
+//}
+    op_Division(a: Point_<T>, b: _st.int): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator / (const Point_<_Tp>& a, float b)
+//    {
+//        Point_<_Tp>tmp(a);
+//tmp /= b;
+//return tmp;
+//}
+    op_Division(a: Point_<T>, b: _st.float): Point_<T>;
+
+//template < typename _Tp> static inline
+//Point_ < _Tp > operator / (const Point_<_Tp>& a, double b)
+//    {
+//        Point_<_Tp>tmp(a);
+//tmp /= b;
+//return tmp;
+//}
+    op_Division(a: Point_<T>, b: _st.double): Point_<T>;
+
 }
 
 export interface Point_<T> {
@@ -413,6 +535,7 @@ export interface Point3_Static<T> {
 //    {
 //        return std::sqrt((double)pt.x*pt.x + (double)pt.y*pt.y + (double)pt.z*pt.z);
 //}
+    norm(pt: Point3_<T>): _st.double;
 
 //template < typename _Tp> static inline
 //bool operator == (const Point3_<_Tp>& a, const Point3_<_Tp>& b)
@@ -491,6 +614,15 @@ export interface Point3_Static<T> {
     op_Multiplication(a: _st.double, b: Point3_<T>): Point3_<T>;
 
 //template < typename _Tp> static inline
+//Point3_ < _Tp > operator * (const Matx<_Tp, 3, 3 >& a, const Point_<_Tp>& b)
+//    {
+//        Matx<_Tp, 3, 1> tmp = a * Vec < _Tp, 3>(b.x, b.y, 1);
+//return Point3_<_Tp>(tmp.val[0], tmp.val[1], tmp.val[2]);
+//}
+    
+    op_Multiplication(a: _matx.Matx<T>, b: Point_<T>): Point3_<T>;
+
+//template < typename _Tp> static inline
 //Point3_ < _Tp > operator * (const Matx<_Tp, 3, 3 >& a, const Point3_<_Tp>& b)
 //    {
 //        Matx<_Tp, 3, 1> tmp = a * Vec < _Tp, 3>(b.x, b.y, b.z);
@@ -531,6 +663,8 @@ export interface Point3_Static<T> {
 //return tmp;
 //}
     op_Division(a: Point3_<T>, b: _st.double): Point3_<T>;
+
+
 }
 
 export interface Point3_<T> {
@@ -1210,6 +1344,17 @@ You can initialize it by default constructor and then override any parameters, o
 be fully initialized using the advanced variant of the constructor.
 */
 
+    //public:
+    /**
+      Criteria type, can be one of: COUNT, EPS or COUNT + EPS
+    */
+    export enum TermCriteriaType {
+        COUNT = 1, //!< the maximum number of iterations or elements to compute
+        MAX_ITER = COUNT, //!< ditto
+        EPS = 2 //!< the desired accuracy or change in parameters at which the iterative algorithm stops
+    };
+
+
 export interface TermCriteriaStatic {
     //! default constructor
     //TermCriteria();
@@ -1218,21 +1363,12 @@ export interface TermCriteriaStatic {
     @param maxCount The maximum number of iterations or elements to compute.
     @param epsilon The desired accuracy or change in parameters at which the iterative algorithm stops.
     */
-    //TermCriteria(int type, int maxCount, double epsilon);
+    new (type: TermCriteriaType, maxCount: _st.int, epsilon: _st.double ): TermCriteria;
 }
 
 //class CV_EXPORTS TermCriteria
 export interface TermCriteria
 {
-    //public:
-    ///**
-    //  Criteria type, can be one of: COUNT, EPS or COUNT + EPS
-    //*/
-    //enum Type {
-    //    COUNT = 1, //!< the maximum number of iterations or elements to compute
-    //    MAX_ITER = COUNT, //!< ditto
-    //    EPS = 2 //!< the desired accuracy or change in parameters at which the iterative algorithm stops
-    //};
 
     
 
@@ -1240,6 +1376,8 @@ export interface TermCriteria
     //int maxCount; // the maximum number of iterations/elements
     //double epsilon; // the desired accuracy
 };
+
+export var TermCriteria: TermCriteriaStatic = alvision_module.TermCriteria;
 
 
 //! @} core_basic
@@ -1643,115 +1781,6 @@ export var Moments: MomentsStatic = alvision_module.Moments;
 //                            return a;
 //                        }
 
-//template< typename _Tp> static inline
-//double norm(const Point_<_Tp>& pt)
-//    {
-//        return std::sqrt((double)pt.x*pt.x + (double)pt.y*pt.y);
-//}
-
-//template < typename _Tp> static inline
-//bool operator == (const Point_<_Tp>& a, const Point_<_Tp>& b)
-//    {
-//        return a.x == b.x && a.y == b.y;
-//}
-
-//template < typename _Tp> static inline
-//bool operator != (const Point_<_Tp>& a, const Point_<_Tp>& b)
-//    {
-//        return a.x != b.x || a.y != b.y;
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator + (const Point_<_Tp>& a, const Point_<_Tp>& b)
-//    {
-//        return Point_<_Tp>(saturate_cast<_Tp>(a.x + b.x), saturate_cast<_Tp>(a.y + b.y));
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator - (const Point_<_Tp>& a, const Point_<_Tp>& b)
-//    {
-//        return Point_<_Tp>(saturate_cast<_Tp>(a.x - b.x), saturate_cast<_Tp>(a.y - b.y));
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator - (const Point_<_Tp>& a)
-//    {
-//        return Point_<_Tp>(saturate_cast<_Tp>(-a.x), saturate_cast<_Tp>(-a.y));
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator * (const Point_<_Tp>& a, int b)
-//    {
-//        return Point_<_Tp>(saturate_cast<_Tp>(a.x * b), saturate_cast<_Tp>(a.y * b));
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator * (int a, const Point_<_Tp>& b)
-//    {
-//        return Point_<_Tp>(saturate_cast<_Tp>(b.x * a), saturate_cast<_Tp>(b.y * a));
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator * (const Point_<_Tp>& a, float b)
-//    {
-//        return Point_<_Tp>(saturate_cast<_Tp>(a.x * b), saturate_cast<_Tp>(a.y * b));
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator * (float a, const Point_<_Tp>& b)
-//    {
-//        return Point_<_Tp>(saturate_cast<_Tp>(b.x * a), saturate_cast<_Tp>(b.y * a));
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator * (const Point_<_Tp>& a, double b)
-//    {
-//        return Point_<_Tp>(saturate_cast<_Tp>(a.x * b), saturate_cast<_Tp>(a.y * b));
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator * (double a, const Point_<_Tp>& b)
-//    {
-//        return Point_<_Tp>(saturate_cast<_Tp>(b.x * a), saturate_cast<_Tp>(b.y * a));
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator * (const Matx<_Tp, 2, 2 >& a, const Point_<_Tp>& b)
-//    {
-//        Matx<_Tp, 2, 1> tmp = a * Vec < _Tp, 2>(b.x, b.y);
-//return Point_<_Tp>(tmp.val[0], tmp.val[1]);
-//}
-
-//template < typename _Tp> static inline
-//Point3_ < _Tp > operator * (const Matx<_Tp, 3, 3 >& a, const Point_<_Tp>& b)
-//    {
-//        Matx<_Tp, 3, 1> tmp = a * Vec < _Tp, 3>(b.x, b.y, 1);
-//return Point3_<_Tp>(tmp.val[0], tmp.val[1], tmp.val[2]);
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator / (const Point_<_Tp>& a, int b)
-//    {
-//        Point_<_Tp>tmp(a);
-//tmp /= b;
-//return tmp;
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator / (const Point_<_Tp>& a, float b)
-//    {
-//        Point_<_Tp>tmp(a);
-//tmp /= b;
-//return tmp;
-//}
-
-//template < typename _Tp> static inline
-//Point_ < _Tp > operator / (const Point_<_Tp>& a, double b)
-//    {
-//        Point_<_Tp>tmp(a);
-//tmp /= b;
-//return tmp;
-//}
 
 
 
@@ -2459,3 +2488,16 @@ export enum ShapeMatchModes {
     CV_CONTOURS_MATCH_I2 = 2, //!< \f[I_2(A,B) =  \sum _{i=1...7}  \left | m^A_i - m^B_i  \right |\f]
     CV_CONTOURS_MATCH_I3 = 3  //!< \f[I_3(A,B) =  \max _{i=1...7}  \frac{ \left| m^A_i - m^B_i \right| }{ \left| m^A_i \right| }\f]
 };
+
+
+export interface CvPoint2D64f {
+    x: _st.double;
+    y: _st.double;
+}
+
+
+export interface CvPoint3D64f {
+    x: _st.double;
+    y: _st.double;
+    z: _st.double;
+}

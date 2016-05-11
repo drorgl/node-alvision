@@ -4912,7 +4912,7 @@ export var applyColorMap: IapplyColorMap = alvision_module.applyColorMap;
 
     interface Iline{
         (img: _st.InputOutputArray, pt1: _types.Point, pt2: _types.Point, color: _types.Scalar,
-            thickness: _st.int /*= 1*/, lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
+            thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
 }
 
 export var line: Iline = alvision_module.line;

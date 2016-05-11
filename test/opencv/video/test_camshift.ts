@@ -284,19 +284,19 @@ class CV_CamShiftTest extends CV_TrackBaseTest
         _exit_:
 
         if (code < 0) {
-            #if 0 //defined _DEBUG && defined WIN32
-        IplImage* dst = cvCreateImage(img_size, 8, 3);
-            cvNamedWindow("test", 1);
-            cvCmpS(img, 0, img, CV_CMP_GT);
-            cvCvtColor(img, dst, CV_GRAY2BGR);
-            cvRectangle(dst, cvPoint(init_rect.x, init_rect.y),
-                cvPoint(init_rect.x + init_rect.width, init_rect.y + init_rect.height),
-                CV_RGB(255, 0, 0), 3, 8, 0);
-            cvEllipseBox(dst, box, CV_RGB(0, 255, 0), 3, 8, 0);
-            cvShowImage("test", dst);
-            cvReleaseImage( &dst);
-            cvWaitKey();
-            #endif
+//            #if 0 //defined _DEBUG && defined WIN32
+//        IplImage* dst = cvCreateImage(img_size, 8, 3);
+//            cvNamedWindow("test", 1);
+//            cvCmpS(img, 0, img, CV_CMP_GT);
+//            cvCvtColor(img, dst, CV_GRAY2BGR);
+//            cvRectangle(dst, cvPoint(init_rect.x, init_rect.y),
+//                cvPoint(init_rect.x + init_rect.width, init_rect.y + init_rect.height),
+//                CV_RGB(255, 0, 0), 3, 8, 0);
+//            cvEllipseBox(dst, box, CV_RGB(0, 255, 0), 3, 8, 0);
+//            cvShowImage("test", dst);
+//            cvReleaseImage( &dst);
+//            cvWaitKey();
+//            #endif
             this.ts.set_failed_test_info(code);
         }
         return code;
@@ -399,21 +399,21 @@ class CV_MeanShiftTest extends CV_TrackBaseTest
         _exit_:
 
         if (code < 0) {
-            #if 0// defined _DEBUG && defined WIN32
-        IplImage* dst = cvCreateImage(img_size, 8, 3);
-            cvNamedWindow("test", 1);
-            cvCmpS(img, 0, img, CV_CMP_GT);
-            cvCvtColor(img, dst, CV_GRAY2BGR);
-            cvRectangle(dst, cvPoint(init_rect.x, init_rect.y),
-                cvPoint(init_rect.x + init_rect.width, init_rect.y + init_rect.height),
-                CV_RGB(255, 0, 0), 3, 8, 0);
-            cvRectangle(dst, cvPoint(comp.rect.x, comp.rect.y),
-                cvPoint(comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height),
-                CV_RGB(0, 255, 0), 3, 8, 0);
-            cvShowImage("test", dst);
-            cvReleaseImage( &dst);
-            cvWaitKey();
-            #endif
+//            #if 0// defined _DEBUG && defined WIN32
+//        IplImage* dst = cvCreateImage(img_size, 8, 3);
+//            cvNamedWindow("test", 1);
+//            cvCmpS(img, 0, img, CV_CMP_GT);
+//            cvCvtColor(img, dst, CV_GRAY2BGR);
+//            cvRectangle(dst, cvPoint(init_rect.x, init_rect.y),
+//                cvPoint(init_rect.x + init_rect.width, init_rect.y + init_rect.height),
+//                CV_RGB(255, 0, 0), 3, 8, 0);
+//            cvRectangle(dst, cvPoint(comp.rect.x, comp.rect.y),
+//                cvPoint(comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height),
+//                CV_RGB(0, 255, 0), 3, 8, 0);
+//            cvShowImage("test", dst);
+//            cvReleaseImage( &dst);
+//            cvWaitKey();
+//            #endif
             this.ts.set_failed_test_info(code);
         }
         return code;

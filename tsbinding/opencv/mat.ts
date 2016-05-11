@@ -215,7 +215,7 @@ import * as _cuda from './cuda';
     //    Size size(int i= -1) const;
     //    int sizend(int * sz, int i= -1) const;
     //    bool sameSize(const _InputArray& arr) const;
-    //    size_t total(int i= -1) const;
+    //total(i? : _st.int /*= -1*/):     _st.size_t;
     //    int type(int i= -1) const;
     //    int depth(int i= -1) const;
     //    int channels(int i= -1) const;
@@ -1264,7 +1264,7 @@ export interface Mat
         Mat C = A1.t()*A1; // compute (A + lambda*I)^t * (A + lamda*I)
     @endcode
      */
-    //MatExpr t() const;
+    t(): MatExpr;
 
     /** @brief Inverses a matrix.
 
@@ -1661,7 +1661,7 @@ export interface Mat
     The method returns the number of array elements (a number of pixels if the array represents an
     image).
      */
-    //size_t total() const;
+    total():_st.size_t 
 
     //! returns N if the matrix is 1-channel (N x ptdim) or ptdim-channel (1 x N) or (N x 1); negative number otherwise
     //int checkVector(int elemChannels, int depth= -1, bool requireContinuous= true) const;
@@ -2020,13 +2020,13 @@ To use Mat_ for multi-channel images/matrices, pass Vec as a Mat_ parameter:
 
 export interface Mat_Static<T> {
     //! default constructor
-    //Mat_();
+    new (): Mat_<T>;
     //! equivalent to Mat(_rows, _cols, DataType<_Tp>::type)
-    //Mat_(int _rows, int _cols);
+    new (_rows: _st.int, _cols: _st.int ): Mat_<T>;
     //! constructor that sets each matrix element to specified value
-    //Mat_(int _rows, int _cols, const _Tp& value);
+    new (_rows: _st.int, _cols: _st.int , value : T): Mat_<T>
     //! equivalent to Mat(_size, DataType<_Tp>::type)
-    //explicit Mat_(Size _size);
+    new (_size: _types.Size ): Mat_<T>;
 ////! constructor that sets each matrix element to specified value
 //Mat_(Size _size, const _Tp& value);
 ////! n-dim array constructor
@@ -2098,7 +2098,7 @@ export interface Mat_<T> extends Mat
 //    template < typename Functor> void forEach(const Functor& operation) const;
 
  //   //! equivalent to Mat::create(_rows, _cols, DataType<_Tp>::type)
- //   void create(int _rows, int _cols);
+    create(int _rows, int _cols): void;
  //   //! equivalent to Mat::create(_size, DataType<_Tp>::type)
  //   void create(Size _size);
  //   //! equivalent to Mat::create(_ndims, _sizes, DatType<_Tp>::type)
@@ -2184,6 +2184,14 @@ export interface Matw extends Mat_<_st.ushort> { }
 export interface Mati extends Mat_<_st.int> { }
 export interface Matf extends Mat_<_st.float> { }
 export interface Matd extends Mat_<_st.double> { }
+
+export var Matb: Mat_Static<_st.uchar> = alvision_module.Matb;
+export var Mats : Mat_Static<_st.short> = alvision_module.Mats;
+export var Matw : Mat_Static<_st.ushort>= alvision_module.Matw;
+export var Mati : Mat_Static<_st.int>   = alvision_module.Mati;
+export var Matf : Mat_Static<_st.float> = alvision_module.Matf;
+export var Matd : Mat_Static<_st.double>= alvision_module.Matd;
+
 
 
 //typedef Mat_< uchar > Mat1b;

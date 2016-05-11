@@ -76,7 +76,7 @@ class ChessBoardGenerator {
         this.patternSize = (_patternSize);
         this.rendererResolutionMultiplier = (4);
         this.tvec = alvision.Mat.from (alvision.Mat.zeros(1, 3,alvision.MatrixType. CV_32F))
-        Rodrigues(Mat::eye(3, 3, CV_32F), rvec);
+        alvision.Rodrigues(alvision.Mat.eye(3, 3, alvision.MatrixType.CV_32F), this.rvec);
     }
     run(bg: alvision.Mat, camMat: alvision.Mat, distCoeffs: alvision.Mat, corners: Array<alvision.Point2f>): alvision.Mat {
         this.cov = Math.min(this.cov.valueOf(), 0.8);

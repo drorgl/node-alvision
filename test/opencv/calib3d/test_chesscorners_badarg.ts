@@ -56,106 +56,99 @@ import fs = require('fs');
 //using namespace std;
 //using namespace cv;
 
-class CV_ChessboardDetectorBadArgTest extends alvision. cvtest.BadArgTest
-{
-public:
-    CV_ChessboardDetectorBadArgTest();
-protected:
-    void run(int);
-    bool checkByGenerator();
+class CV_ChessboardDetectorBadArgTest extends alvision.cvtest.BadArgTest {
+    constructor() {
+        super();
+        this.cpp = false;
+        this.flags = 0;
+        //this.out_corners = null;
+        //this.out_corner_count = null;
+        this.drawCorners = this.was_found = false;
+    }
 
-    bool cpp;
+    run(iii: alvision.int): void {
+        var bg = new alvision.Mat (800, 600,alvision.MatrixType. CV_8U, new alvision.Scalar(0));
+        var camMat = new alvision.Matf(3, 3);
+        camMat << 300.f, 0.f, bg.cols / 2.f, 0, 300.f, bg.rows / 2.f, 0.f, 0.f, 1.f;
+        var distCoeffs = new alvision.Matf (1, 5);
+        distCoeffs << 1.2f, 0.2f, 0.f, 0.f, 0.f;
+
+        var cbg = new ChessBoardGenerator (new alvision.Size(8, 6));
+        var exp_corn = new Array<alvision.Point2f>();
+        var cb = cbg(bg, camMat, distCoeffs, exp_corn);
+
+        /* /*//*/ */
+        var errors = 0;
+        this.flags = CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE;
+        this.cpp = true;
+
+        this.img = cb.clone();
+        this.pattern_size = new alvision.Size(2, 2);
+        errors += this.run_test_case(alvision.cv.Error.Code.StsOutOfRange, "Invlid pattern size").valueOf();
+
+        this.pattern_size = cbg.cornersSize();
+        cb.convertTo(this.img,alvision.MatrixType. CV_32F);
+        errors += this.run_test_case(alvision.cv.Error.Code.StsUnsupportedFormat, "Not 8-bit image").valueOf();
+
+        alvision.merge(new Array<alvision.Mat>(2, cb), this.img);
+        errors += this.run_test_case(alvision.cv.Error.Code.StsUnsupportedFormat, "2 channel image").valueOf();
+
+        this.cpp = false;
+        this.drawCorners = false;
+
+        this.img = cb.clone();
+        this.arr = img;
+        this.out_corner_count = 0;
+        this.out_corners = 0;
+        errors += this.run_test_case(alvision.cv.Error.Code.StsNullPtr, "Null pointer to corners").valueOf();
+
+        this.drawCorners = true;
+        var cvdrawCornImg= new alvision.Mat(this.img.size(),alvision.MatrixType. CV_8UC2);
+        this.drawCorImg = cvdrawCornImg;
+        this.was_found = true;
+        errors += this.run_test_case(alvision.cv.Error.Code.StsUnsupportedFormat, "2 channel image").valueOf();
+
+
+        if (errors)
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
+        else
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
+    protected abstract checkByGenerator(): void;
+
+    protected cpp: boolean;
 
     /* cpp interface */
-    Mat img;
-    Size pattern_size;
-    int flags;
-    Array<Point2f> corners;
+    protected img: alvision.Mat;
+    protected pattern_size: alvision.Size;
+    protected flags: alvision.int;
+    protected corners: Array<alvision.Point2f>;
 
     /* c interface */
-    CvMat arr;
-    CvPoint2D32f* out_corners;
-    int* out_corner_count;
+    //CvMat arr;
+    //CvPoint2D32f* out_corners;
+    //int* out_corner_count;
 
 
     /* c interface draw  corners */
-    bool drawCorners;
-    CvMat drawCorImg;
-    bool was_found;
+    protected drawCorners: boolean;
+    protected drawCorImg: alvision.Mat;
+    protected was_found: boolean;
 
-    void run_func()
-    {
-        if (cpp)
-            findChessboardCorners(img, pattern_size, corners, flags);
-        else
-            if (!drawCorners)
-                cvFindChessboardCorners( &arr, pattern_size, out_corners, out_corner_count, flags );
-            else
-                cvDrawChessboardCorners( &drawCorImg, pattern_size,
-                    (CvPoint2D32f*)(corners.empty() ? 0 : &corners[0]),
-                    (int)corners.size(), was_found);
+    run_func(): void {
+        //if (cpp)
+        alvision.findChessboardCorners(this.img, this.pattern_size, this.corners, this.flags);
+        //else
+        //    if (!drawCorners)
+        //        cvFindChessboardCorners( &arr, pattern_size, out_corners, out_corner_count, flags );
+        //    else
+        //        cvDrawChessboardCorners( &drawCorImg, pattern_size,
+        //            (CvPoint2D32f*)(corners.empty() ? 0 : &corners[0]),
+        //            (int)corners.size(), was_found);
     }
-};
-
-CV_ChessboardDetectorBadArgTest::CV_ChessboardDetectorBadArgTest()
-{
-    cpp = false;
-    flags = 0;
-    out_corners = NULL;
-    out_corner_count = NULL;
-    drawCorners = was_found = false;
 }
 
-/* ///////////////////// chess_corner_test ///////////////////////// */
-void CV_ChessboardDetectorBadArgTest::run( int /*start_from */)
-{
-    Mat bg(800, 600, CV_8U, Scalar(0));
-    Mat_<float> camMat(3, 3);
-    camMat << 300.f, 0.f, bg.cols/2.f, 0, 300.f, bg.rows/2.f, 0.f, 0.f, 1.f;
-    Mat_<float> distCoeffs(1, 5);
-    distCoeffs << 1.2f, 0.2f, 0.f, 0.f, 0.f;
 
-    ChessBoardGenerator cbg(Size(8,6));
-    Array<Point2f> exp_corn;
-    Mat cb = cbg(bg, camMat, distCoeffs, exp_corn);
-
-    /* /*//*/ */
-    int errors = 0;
-    flags = CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE;
-    cpp = true;
-
-    img = cb.clone();
-    pattern_size = Size(2,2);
-    errors += run_test_case( CV_StsOutOfRange, "Invlid pattern size" );
-
-    pattern_size = cbg.cornersSize();
-    cb.convertTo(img, CV_32F);
-    errors += run_test_case( CV_StsUnsupportedFormat, "Not 8-bit image" );
-
-    alvision.merge(Array<Mat>(2, cb), img);
-    errors += run_test_case( CV_StsUnsupportedFormat, "2 channel image" );
-
-    cpp = false;
-    drawCorners = false;
-
-    img = cb.clone();
-    arr = img;
-    out_corner_count = 0;
-    out_corners = 0;
-    errors += run_test_case( CV_StsNullPtr, "Null pointer to corners" );
-
-    drawCorners = true;
-    Mat cvdrawCornImg(img.size(), CV_8UC2);
-    drawCorImg = cvdrawCornImg;
-    was_found = true;
-    errors += run_test_case( CV_StsUnsupportedFormat, "2 channel image" );
-
-
-    if (errors)
-        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
-    else
-        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
-}
 
 alvision.cvtest.TEST('Calib3d_ChessboardDetector', 'badarg', () => { var test = new CV_ChessboardDetectorBadArgTest(); test.safe_run(); });
 

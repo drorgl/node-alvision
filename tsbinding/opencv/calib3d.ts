@@ -252,12 +252,12 @@ enum CALIB_CB {
        CALIB_CB_FAST_CHECK      = 8
      };
 
-enum CALIB_CB_SYM{ CALIB_CB_SYMMETRIC_GRID  = 1,
+export enum CALIB_CB_SYM{ CALIB_CB_SYMMETRIC_GRID  = 1,
        CALIB_CB_ASYMMETRIC_GRID = 2,
        CALIB_CB_CLUSTERING      = 4
      };
 
-enum CALIB { CALIB_USE_INTRINSIC_GUESS = 0x00001,
+export enum CALIB { CALIB_USE_INTRINSIC_GUESS = 0x00001,
        CALIB_FIX_ASPECT_RATIO    = 0x00002,
        CALIB_FIX_PRINCIPAL_POINT = 0x00004,
        CALIB_ZERO_TANGENT_DIST   = 0x00008,
@@ -533,10 +533,10 @@ interface IcomposeRT {
     (rvec1: _st.InputArray, tvec1: _st.InputArray,
         rvec2: _st.InputArray, tvec2: _st.InputArray,
         rvec3: _st.OutputArray, tvec3: _st.OutputArray,
-        dr3dr1: _st.OutputArray  /*= noArray()*/, dr3dt1: _st.OutputArray  /*= noArray()*/,
-        dr3dr2: _st.OutputArray  /*= noArray()*/, dr3dt2: _st.OutputArray /*= noArray()*/,
-        dt3dr1: _st.OutputArray  /*= noArray()*/, dt3dt1: _st.OutputArray /*= noArray()*/,
-        dt3dr2: _st.OutputArray  /*= noArray()*/, dt3dt2: _st.OutputArray /*= noArray()*/): void;
+        dr3dr1?: _st.OutputArray  /*= noArray()*/, dr3dt1?: _st.OutputArray  /*= noArray()*/,
+        dr3dr2?: _st.OutputArray  /*= noArray()*/, dr3dt2?: _st.OutputArray /*= noArray()*/,
+        dt3dr1?: _st.OutputArray  /*= noArray()*/, dt3dt1?: _st.OutputArray /*= noArray()*/,
+        dt3dr2?: _st.OutputArray  /*= noArray()*/, dt3dt2?: _st.OutputArray /*= noArray()*/): void;
 }
 
 export var composeRT: IcomposeRT = alvision_module.composeRT;
@@ -799,7 +799,7 @@ square grouping and ordering algorithm fails.
 
 interface IfindChessboardCorners{
     (image: _st.InputArray, patternSize: _types.Size, corners: _st.OutputArray ,
-        flags : CALIB_CB /*= CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE*/): boolean;
+        flags? : CALIB_CB | _st.int /*= CALIB_CB_ADAPTIVE_THRESH + CALIB_CB_NORMALIZE_IMAGE*/): boolean;
 }
 
 export var findChessboardCorners: IfindChessboardCorners = alvision_module.findChessboardCorners;

@@ -131,163 +131,163 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
         var max_rough_error = 0, max_precise_error = 0;
         //#endif
         var folder = "";
-        switch (pattern) {
-            case CHESSBOARD:
+        switch (this.pattern) {
+            case Pattern.CHESSBOARD:
                 folder = this.ts.get_data_path() + "cv/cameracalibration/";
                 break;
-            case CIRCLES_GRID:
+            case Pattern.CIRCLES_GRID:
                 folder = this.ts.get_data_path() + "cv/cameracalibration/circles/";
                 break;
-            case ASYMMETRIC_CIRCLES_GRID:
+            case Pattern.ASYMMETRIC_CIRCLES_GRID:
                 folder = this.ts.get_data_path() + "cv/cameracalibration/asymmetric_circles/";
                 break;
         }
 
-        FileStorage fs(folder + filename, FileStorage::READ);
-        FileNode board_list = fs["boards"];
+        var fs = new alvision.FileStorage(folder + filename, alvision.FileStorageMode.READ);
+        var board_list = fs["boards"];
 
-        if (!fs.isOpened() || board_list.empty() || !board_list.isSeq() || board_list.size() % 2 != 0) {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%s can not be readed or is not valid\n", (folder + filename));
-            ts.printf(alvision.cvtest.TSConstants.LOG, "fs.isOpened=%d, board_list.empty=%d, board_list.isSeq=%d,board_list.size()%2=%d\n",
-                fs.isOpened(), (int)board_list.empty(), board_list.isSeq(), board_list.size() % 2);
-            this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISSING_TEST_DATA);
+        if (!fs.isOpened() || board_list == null || !board_list.isSeq() || board_list.size().valueOf() % 2 != 0) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s can not be readed or is not valid\n", (folder + filename));
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "fs.isOpened=%d, board_list.empty=%d, board_list.isSeq=%d,board_list.size()%2=%d\n",
+                fs.isOpened(), board_list == null, board_list.isSeq(), board_list.size().valueOf() % 2);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA);
             return;
         }
 
-        int progress = 0;
-        int max_idx = (int)board_list.size() / 2;
-        double sum_error = 0.0;
-        int count = 0;
+        var progress = 0;
+        var max_idx = board_list.size().valueOf() / 2;
+        var sum_error = 0.0;
+        var count = 0;
 
-        for (int idx = 0; idx < max_idx; ++idx )
+        for (var idx = 0; idx < max_idx; ++idx )
         {
-            ts.update_context(this, idx, true);
+            this.ts.update_context(this, idx, true);
 
             /* read the image */
-            String img_file = board_list[idx * 2];
-            Mat gray = imread(folder + img_file, 0);
+            var img_file = board_list[idx * 2];
+            var gray = alvision.imread(folder + img_file, 0);
 
-            if (gray.empty()) {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "one of chessboard images can't be read: %s\n", img_file);
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISSING_TEST_DATA);
+            if (gray == null) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "one of chessboard images can't be read: %s\n", img_file);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA);
                 return;
             }
 
-            String _filename = folder + (String)board_list[idx * 2 + 1];
-            bool doesContatinChessboard;
-            Mat expected;
+            var _filename = folder + board_list[idx * 2 + 1];
+            var doesContatinChessboard: boolean;
+            var expected = new alvision.Mat();
             {
-                FileStorage fs1(_filename, FileStorage::READ);
+                var fs1 = new alvision.FileStorage (_filename,alvision.FileStorageMode.READ);
                 fs1["corners"] >> expected;
                 fs1["isFound"] >> doesContatinChessboard;
                 fs1.release();
             }
-            size_t count_exp = static_cast<size_t>(expected.cols * expected.rows);
-            Size pattern_size = expected.size();
+            var count_exp = (expected.cols * expected.rows);
+            var pattern_size = expected.size();
 
-            Array < Point2f > v;
-            bool result = false;
+            var v = new Array<alvision.Point2f>();
+            var result = false;
             switch (pattern) {
-                case CHESSBOARD:
-                    result = findChessboardCorners(gray, pattern_size, v, CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_NORMALIZE_IMAGE);
+                case Pattern. CHESSBOARD:
+                    result = alvision.findChessboardCorners(gray, pattern_size, v, CALIB_CB_ADAPTIVE_THRESH | CALIB_CB_NORMALIZE_IMAGE);
                     break;
-                case CIRCLES_GRID:
-                    result = findCirclesGrid(gray, pattern_size, v);
+                case Pattern.CIRCLES_GRID:
+                    result = alvision.findCirclesGrid(gray, pattern_size, v);
                     break;
-                case ASYMMETRIC_CIRCLES_GRID:
-                    result = findCirclesGrid(gray, pattern_size, v, CALIB_CB_ASYMMETRIC_GRID | algorithmFlags);
+                case Pattern.ASYMMETRIC_CIRCLES_GRID:
+                    result = alvision.findCirclesGrid(gray, pattern_size, v, CALIB_CB_ASYMMETRIC_GRID | algorithmFlags);
                     break;
             }
             show_points(gray, Mat(), v, pattern_size, result);
 
             if (result ^ doesContatinChessboard || v.size() != count_exp) {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "chessboard is detected incorrectly in %s\n", img_file);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "chessboard is detected incorrectly in %s\n", img_file);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
             if (result) {
 
-                #ifndef WRITE_POINTS
-                double err = calcError(v, expected);
-                #if 0
-            if(err > rough_success_error_level) {
-                        ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of corner guesses\n");
-                        ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-                        continue;
-                    }
-                #endif
-                max_rough_error = MAX(max_rough_error, err);
-                #endif
-                if (pattern == CHESSBOARD)
-                    cornerSubPix(gray, v, Size(5, 5), Size(-1, -1), TermCriteria(TermCriteria::EPS | TermCriteria::MAX_ITER, 30, 0.1));
+                //#ifndef WRITE_POINTS
+                var err = calcError(v, expected);
+//                #if 0
+//            if(err > rough_success_error_level) {
+//                        ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of corner guesses\n");
+//                        ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+//                        continue;
+//                    }
+//                #endif
+                max_rough_error = Math.max(max_rough_error, err);
+                //#endif
+                if (this.pattern == Pattern.CHESSBOARD)
+                    alvision.cornerSubPix(gray, v, new alvision.Size(5, 5), new alvision.Size(-1, -1), new alvision.TermCriteria(alvision.TermCriteriaType.EPS | alvision.TermCriteriaType.MAX_ITER, 30, 0.1));
                 //find4QuadCornerSubpix(gray, v, Size(5, 5));
                 show_points(gray, expected, v, pattern_size, result);
-                #ifndef WRITE_POINTS
+                //#ifndef WRITE_POINTS
                 //        printf("called find4QuadCornerSubpix\n");
                 err = calcError(v, expected);
                 sum_error += err;
                 count++;
-                #if 1
-            if(err > precise_success_error_level) {
-                        ts.printf(alvision.cvtest.TSConstants.LOG, "Image %s: bad accuracy of adjusted corners %f\n", img_file, err);
+                //#if 1
+                if(err > precise_success_error_level) {
+                        this.ts.printf(alvision.cvtest.TSConstants.LOG, "Image %s: bad accuracy of adjusted corners %f\n", img_file, err);
                         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                         return;
                     }
-                #endif
-                ts.printf(alvision.cvtest.TSConstants.LOG, "Error on %s is %f\n", img_file, err);
-                max_precise_error = MAX(max_precise_error, err);
-                #endif
+                //#endif
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error on %s is %f\n", img_file, err);
+                max_precise_error = Math.max(max_precise_error, err);
+                //#endif
             }
 
-            #ifdef WRITE_POINTS
-            Mat mat_v(pattern_size, CV_32FC2, (void*)& v[0]);
-            FileStorage fs(_filename, FileStorage::WRITE);
+            //#ifdef WRITE_POINTS
+            var mat_v = new alvision.Mat (pattern_size,alvision.MatrixType. CV_32FC2, v);
+            var fs = new alvision.FileStorage (_filename,alvision.FileStorageMode.WRITE);
             fs << "isFound" << result;
             fs << "corners" << mat_v;
             fs.release();
-            #endif
-            progress = update_progress(progress, idx, max_idx, 0);
+            //#endif
+            progress = this.update_progress(progress, idx, max_idx, 0);
         }
 
         if (count != 0)
             sum_error /= count;
-        ts.printf(alvision.cvtest.TSConstants.LOG, "Average error is %f (%d patterns have been found)\n", sum_error, count);
+        this.ts.printf(alvision.cvtest.TSConstants.LOG, "Average error is %f (%d patterns have been found)\n", sum_error, count);
     }
     checkByGenerator(): boolean {
-        bool res = true;
+        var res = true;
 
         // for some reason, this test sometimes fails on Ubuntu
-        #if (defined __APPLE__ && defined __x86_64__) || defined _MSC_VER
+        //#if (defined __APPLE__ && defined __x86_64__) || defined _MSC_VER
         //theRNG() = 0x58e6e895b9913160;
         //alvision.DefaultRngAuto dra;
         //theRNG() = *ts.get_rng();
 
-        Mat bg(Size(800, 600), CV_8UC3, Scalar::all(255));
-        randu(bg, alvision.Scalar.all(0), Scalar::all(255));
-        GaussianBlur(bg, bg, Size(7, 7), 3.0);
+        var bg = new alvision.Mat (new alvision.Size(800, 600),alvision.MatrixType. CV_8UC3,alvision. Scalar.all(255));
+        alvision.randu(bg, alvision.Scalar.all(0),alvision. Scalar.all(255));
+        alvision.GaussianBlur(bg, bg,new alvision. Size(7, 7), 3.0);
 
-        Mat_ < float > camMat(3, 3);
+        var camMat = new alvision.Matf(3, 3);
         camMat << 300.f, 0.f, bg.cols / 2.f, 0, 300.f, bg.rows / 2.f, 0.f, 0.f, 1.f;
 
-        Mat_ < float > distCoeffs(1, 5);
+        var distCoeffs = new Matf(1, 5);
         distCoeffs << 1.2f, 0.2f, 0.f, 0.f, 0.f;
 
-        const Size sizes[] = { Size(6, 6), Size(8, 6), Size(11, 12),  Size(5, 4) };
-        const size_t sizes_num = sizeof(sizes) / sizeof(sizes[0]);
-        const int test_num = 16;
-        int progress = 0;
-        for (int i = 0; i < test_num; ++i)
+        const sizes = [new alvision. Size(6, 6),new alvision. Size(8, 6),new alvision. Size(11, 12),new alvision.  Size(5, 4) ];
+        const sizes_num = sizes.length;// sizeof(sizes) / sizeof(sizes[0]);
+        const test_num = 16;
+        var progress = 0;
+        for (var i = 0; i < test_num; ++i)
         {
-            progress = update_progress(progress, i, test_num, 0);
-            ChessBoardGenerator cbg(sizes[i % sizes_num]);
+            progress = this.update_progress(progress, i, test_num, 0).valueOf();
+            var cbg = new ChessBoardGenerator (sizes[i % sizes_num]);
 
-            Array < Point2f > corners_generated;
+            var corners_generated = new Array<alvision.Point2f>();
 
-            Mat cb = cbg(bg, camMat, distCoeffs, corners_generated);
+            var cb = cbg(bg, camMat, distCoeffs, corners_generated);
 
             if (!validateData(cbg, cb.size(), corners_generated)) {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "Chess board skipped - too small");
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Chess board skipped - too small");
                 continue;
             }
 
@@ -296,19 +296,19 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
             //alvision.addWeighted(cb, 0.8, bg, 0.2, 20, cb);
             //alvision.namedWindow("CB"); alvision.imshow("CB", cb); alvision.waitKey();
 
-            Array < Point2f > corners_found;
-            int flags = i % 8; // need to check branches for all flags
-            bool found = findChessboardCorners(cb, cbg.cornersSize(), corners_found, flags);
+            var corners_found = new Array<alvision.Point2f>();
+            var flags = i % 8; // need to check branches for all flags
+            var found = alvision.findChessboardCorners(cb, cbg.cornersSize(), corners_found, flags);
             if (!found) {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "Chess board corners not found\n");
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Chess board corners not found\n");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 res = false;
                 return res;
             }
 
-            double err = calcErrorMinError(cbg.cornersSize(), corners_found, corners_generated);
+            var err = calcErrorMinError(cbg.cornersSize(), corners_found, corners_generated);
             if (err > rough_success_error_level) {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of corner guesses");
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of corner guesses");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 res = false;
                 return res;
@@ -317,44 +317,44 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
 
         /* ***** negative ***** */
         {
-            Array < Point2f > corners_found;
-            bool found = findChessboardCorners(bg, Size(8, 7), corners_found);
+            var corners_found = new Array<alvision.Point2f>();
+            var found = alvision.findChessboardCorners(bg, new alvision.Size(8, 7), corners_found);
             if (found)
                 res = false;
 
-            ChessBoardGenerator cbg(Size(8, 7));
+            var cbg = new ChessBoardGenerator (new alvision.Size(8, 7));
 
-            Array < Point2f > cg;
-            Mat cb = cbg(bg, camMat, distCoeffs, cg);
+            var cg = new Array<alvision.Point2f>();
+            var cb = cbg(bg, camMat, distCoeffs, cg);
 
-            found = findChessboardCorners(cb, Size(3, 4), corners_found);
+            found = alvision.findChessboardCorners(cb, Size(3, 4), corners_found);
             if (found)
                 res = false;
 
             Point2f c = std::accumulate(cg.begin(), cg.end(), Point2f(), plus<Point2f>()) * (1.f/ cg.size());
 
-            Mat_ < double > aff(2, 3);
+            var aff = new alvision.Matd (2, 3);
             aff << 1.0, 0.0, -(double)c.x, 0.0, 1.0, 0.0;
-            Mat sh;
-            warpAffine(cb, sh, aff, cb.size());
+            var sh = new alvision.Mat();
+            alvision.warpAffine(cb, sh, aff, cb.size());
 
-            found = findChessboardCorners(sh, cbg.cornersSize(), corners_found);
+            found = alvision.findChessboardCorners(sh, cbg.cornersSize(), corners_found);
             if (found)
                 res = false;
 
-            Array < Array < Point > > cnts(1);
-            Array<Point>& cnt = cnts[0];
+            var cnts = new Array<Array<alvision.Point>> (1);
+            var cnt = cnts[0];
             cnt.push(cg[0]); cnt.push(cg[0 + 2]);
             cnt.push(cg[7 + 0]); cnt.push(cg[7 + 2]);
-            alvision.drawContours(cb, cnts, -1, Scalar::all(128), FILLED);
+            alvision.drawContours(cb, cnts, -1, alvision.Scalar.all(128),alvision.CV_FILLED);
 
-            found = findChessboardCorners(cb, cbg.cornersSize(), corners_found);
+            found = alvision.findChessboardCorners(cb, cbg.cornersSize(), corners_found);
             if (found)
                 res = false;
 
             alvision.drawChessboardCorners(cb, cbg.cornersSize(), Mat(corners_found), found);
         }
-        #endif
+        //#endif
 
         return res;
     }
@@ -364,37 +364,34 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
 }
 
 
-function calcError(v: Array<alvision.Point2f>, u: alvision.Mat): alvision.double
-{
-    var count_exp = u.cols * u.rows;
-    const Point2f* u_data = u.ptr<Point2f>();
+function calcError(v: Array<alvision.Point2f>, u: alvision.Mat): alvision.double {
+    var count_exp = u.cols.valueOf() * u.rows.valueOf();
+    const u_data = u.ptr<alvision.Point2f>("Point2f");
 
-    double err = numeric_limits<double>::max();
-    for( int k = 0; k < 2; ++k )
-    {
-        double err1 = 0;
-        for( int j = 0; j < count_exp; ++j )
-        {
-            int j1 = k == 0 ? j : count_exp - j - 1;
-            double dx = fabs( v[j].x - u_data[j1].x );
-            double dy = fabs( v[j].y - u_data[j1].y );
+    var err = numeric_limits<double>::max();
+    for (var k = 0; k < 2; ++k) {
+        var err1 = 0;
+        for (var j = 0; j < count_exp; ++j) {
+            var j1 = k == 0 ? j : count_exp - j - 1;
+            var dx = Math.abs(v[j].x.valueOf() - u_data[j1].x.valueOf());
+            var dy = Math.abs(v[j].y.valueOf() - u_data[j1].y.valueOf());
 
-#if defined(_L2_ERR)
-            err1 += dx*dx + dy*dy;
-#else
-            dx = MAX( dx, dy );
-            if( dx > err1 )
+            //#if defined(_L2_ERR)
+            err1 += dx * dx + dy * dy;
+            //#else
+            dx = Math.max(dx, dy);
+            if (dx > err1)
                 err1 = dx;
-#endif //_L2_ERR
+            //#endif //_L2_ERR
             //printf("dx = %f\n", dx);
         }
         //printf("\n");
-        err = min(err, err1);
+        err = Math.min(err, err1);
     }
 
-#if defined(_L2_ERR)
-    err = sqrt(err/count_exp);
-#endif //_L2_ERR
+    //#if defined(_L2_ERR)
+    err = Math.sqrt(err / count_exp);
+    //#endif //_L2_ERR
 
     return err;
 }
@@ -457,9 +454,9 @@ function validateData(cbg: ChessBoardGenerator, imgSz: alvision.Size,
 }
 
 
-alvision.cvtest.TEST('Calib3d_ChessboardDetector', 'accuracy', () => { CV_ChessboardDetectorTest test(CHESSBOARD); test.safe_run(); });
-alvision.cvtest.TEST('Calib3d_CirclesPatternDetector', 'accuracy', () => { CV_ChessboardDetectorTest test(CIRCLES_GRID); test.safe_run(); });
-alvision.cvtest.TEST('Calib3d_AsymmetricCirclesPatternDetector', 'accuracy', () => { CV_ChessboardDetectorTest test(ASYMMETRIC_CIRCLES_GRID); test.safe_run(); });
-alvision.cvtest.TEST('Calib3d_AsymmetricCirclesPatternDetectorWithClustering', 'accuracy', () => { CV_ChessboardDetectorTest test(ASYMMETRIC_CIRCLES_GRID, CALIB_CB_CLUSTERING); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_ChessboardDetector', 'accuracy', () => { var test = new CV_ChessboardDetectorTest(Pattern.CHESSBOARD); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_CirclesPatternDetector', 'accuracy', () => { var test = new CV_ChessboardDetectorTest(Pattern.CIRCLES_GRID); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_AsymmetricCirclesPatternDetector', 'accuracy', () => { var test = new CV_ChessboardDetectorTest(Pattern.ASYMMETRIC_CIRCLES_GRID); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_AsymmetricCirclesPatternDetectorWithClustering', 'accuracy', () => { var test = new CV_ChessboardDetectorTest(Pattern.ASYMMETRIC_CIRCLES_GRID, alvision.CALIB_CB_SYM.CALIB_CB_CLUSTERING); test.safe_run(); });
 
 /* End of file. */

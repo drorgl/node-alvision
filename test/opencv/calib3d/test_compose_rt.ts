@@ -64,7 +64,7 @@ class Differential
         this.rv2 = (rv2_);
         this.tv2 = (tv2_);
         this.eps = (eps_);
-        this.ev = (3, 1)
+        this.ev = new alvision.Matd (3, 1)
     }
 
     dRv1(dr3_dr1: alvision.Mat_<alvision.double>, dt3_dr1: alvision.Mat_<alvision.double>) : void
@@ -73,10 +73,10 @@ class Differential
 
         for(var i = 0; i < 3; ++i)
         {
-            ev.setTo(new alvision.Scalar(0));    ev(i, 0) = eps;
+            this.ev.setTo(new alvision.Scalar(0));    this.ev(i, 0) = eps;
 
-            composeRT( rv1 + ev, tv1, rv2, tv2, rv3_p, tv3_p);
-            composeRT( rv1 - ev, tv1, rv2, tv2, rv3_m, tv3_m);
+            alvision.composeRT( this.rv1 + this.ev, this.tv1, this.rv2, this.tv2, this.rv3_p, this.tv3_p);
+            alvision.composeRT( this.rv1 - this.ev, this.tv1, this.rv2, this.tv2, this.rv3_m, this.tv3_m);
 
             dr3_dr1.col(i) = rv3_p - rv3_m;
             dt3_dr1.col(i) = tv3_p - tv3_m;
@@ -90,10 +90,10 @@ class Differential
 
         for(var i = 0; i < 3; ++i)
         {
-            ev.setTo(Scalar(0));    ev(i, 0) = eps;
+            this.ev.setTo(new alvision.Scalar(0));    this.ev(i, 0) = eps;
 
-            composeRT( rv1, tv1, rv2 + ev, tv2, rv3_p, tv3_p);
-            composeRT( rv1, tv1, rv2 - ev, tv2, rv3_m, tv3_m);
+            alvision.composeRT( this.rv1, this.tv1, this.rv2 + this.ev, this.tv2, this.rv3_p, this.tv3_p);
+            alvision.composeRT( this.rv1, this.tv1, this.rv2 - this.ev, this.tv2, this.rv3_m, this.tv3_m);
 
             dr3_dr2.col(i) = rv3_p - rv3_m;
             dt3_dr2.col(i) = tv3_p - tv3_m;
@@ -107,10 +107,10 @@ class Differential
 
         for(var i = 0; i < 3; ++i)
         {
-            ev.setTo(Scalar(0));    ev(i, 0) = eps;
+            this.ev.setTo(Scalar(0));    this.ev(i, 0) = eps;
 
-            composeRT( rv1, tv1 + ev, rv2, tv2, rv3_p, tv3_p);
-            composeRT( rv1, tv1 - ev, rv2, tv2, rv3_m, tv3_m);
+            alvision.composeRT( this.rv1, this.tv1 + ev, this.rv2, this.tv2, this.rv3_p, this.tv3_p);
+            alvision.composeRT( this.rv1, this.tv1 - ev, this.rv2, this.tv2, this.rv3_m, this.tv3_m);
 
             drt3_dt1.col(i) = rv3_p - rv3_m;
             dt3_dt1.col(i) = tv3_p - tv3_m;
@@ -124,10 +124,10 @@ class Differential
 
         for(var i = 0; i < 3; ++i)
         {
-            ev.setTo(Scalar(0));    ev(i, 0) = eps;
+            this.ev.setTo(new alvision.Scalar(0));    this.ev(i, 0) = eps;
 
-            composeRT( rv1, tv1, rv2, tv2 + ev, rv3_p, tv3_p);
-            composeRT( rv1, tv1, rv2, tv2 - ev, rv3_m, tv3_m);
+            alvision.composeRT( this.rv1, this.tv1, this.rv2, this.tv2 + this.ev, this.rv3_p, this.tv3_p);
+            alvision.composeRT( this.rv1, this.tv1, this.rv2, this.tv2 - this.ev, this.rv3_m, this.tv3_m);
 
             dr3_dt2.col(i) = rv3_p - rv3_m;
             dt3_dt2.col(i) = tv3_p - tv3_m;
@@ -150,13 +150,14 @@ class Differential
     protected tv3_p : alvision.Mat;
 };
 
-class CV_composeRT_Test  extends alvision.cvtest.BaseTest
-{
-    run(iii: alvision.int) : void
-    {
+class CV_composeRT_Test extends alvision.cvtest.BaseTest {
+    run(iii: alvision.int): void {
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 
-        Mat_<double> rvec1(3, 1), tvec1(3, 1), rvec2(3, 1), tvec2(3, 1);
+        var rvec1 = new alvision.Matd(3, 1);
+        var tvec1 = new alvision.Matd(3, 1);
+        var rvec2 = new alvision.Matd(3, 1);
+        var tvec2 = new alvision.Matd(3, 1);
 
         alvision.randu(rvec1, new alvision.Scalar(0), new alvision.Scalar(6.29));
         alvision.randu(rvec2, new alvision.Scalar(0), new alvision.Scalar(6.29));
@@ -164,66 +165,76 @@ class CV_composeRT_Test  extends alvision.cvtest.BaseTest
         alvision.randu(tvec1, new alvision.Scalar(-2), new alvision.Scalar(2));
         alvision.randu(tvec2, new alvision.Scalar(-2), new alvision.Scalar(2));
 
-        Mat rvec3, tvec3;
-        composeRT(rvec1, tvec1, rvec2, tvec2, rvec3, tvec3);
+        var rvec3 = new alvision.Mat();
+        var tvec3 = new alvision.Mat();
+        alvision.composeRT(rvec1, tvec1, rvec2, tvec2, rvec3, tvec3);
 
-        Mat rvec3_exp, tvec3_exp;
+        var rvec3_exp = new alvision.Mat();
+        var tvec3_exp = new alvision.Mat();
 
-        Mat rmat1, rmat2;
-        Rodrigues(rvec1, rmat1);
-        Rodrigues(rvec2, rmat2);
-        Rodrigues(rmat2 * rmat1, rvec3_exp);
+        var rmat1 = new alvision.Mat();
+        var rmat2 = new alvision.Mat();
+        alvision.Rodrigues(rvec1, rmat1);
+        alvision.Rodrigues(rvec2, rmat2);
+        alvision.Rodrigues(rmat2 * rmat1, rvec3_exp);
 
         tvec3_exp = rmat2 * tvec1 + tvec2;
 
-        const double thres = 1e-5;
-        if (alvision.norm(rvec3_exp, rvec3) > thres ||  alvision.norm(tvec3_exp, tvec3) > thres)
+        const thres = 1e-5;
+        if (alvision.norm(rvec3_exp, rvec3) > thres || alvision.norm(tvec3_exp, tvec3) > thres)
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
 
         const eps = 1e-3;
         var diff = new Differential(eps, rvec1, tvec1, rvec2, tvec2);
 
-        Mat dr3dr1, dr3dt1, dr3dr2, dr3dt2, dt3dr1, dt3dt1, dt3dr2, dt3dt2;
+        var dr3dr1 = new alvision.Mat();
+        var dr3dt1 = new alvision.Mat();
+        var dr3dr2 = new alvision.Mat();
+        var dr3dt2 = new alvision.Mat();
+        var dt3dr1 = new alvision.Mat();
+        var dt3dt1 = new alvision.Mat();
+        var dt3dr2 = new alvision.Mat();
+        var dt3dt2 = new alvision.Mat();
 
-        composeRT(rvec1, tvec1, rvec2, tvec2, rvec3, tvec3,
+        alvision.composeRT(rvec1, tvec1, rvec2, tvec2, rvec3, tvec3,
             dr3dr1, dr3dt1, dr3dr2, dr3dt2, dt3dr1, dt3dt1, dt3dr2, dt3dt2);
 
-        Mat_<double> dr3_dr1, dt3_dr1;
-           diff.dRv1(dr3_dr1, dt3_dr1);
+        var dr3_dr1 = new alvision.Matd();
+        var dt3_dr1 = new alvision.Matd();
+        diff.dRv1(dr3_dr1, dt3_dr1);
 
-        if (alvision.norm(dr3_dr1, dr3dr1) > thres || alvision.norm(dt3_dr1, dt3dr1) > thres)
-        {
-            this.ts.printf( alvision.cvtest.TSConstants.LOG, "Invalid derivates by r1\n" );
+        if (alvision.norm(dr3_dr1, dr3dr1) > thres || alvision.norm(dt3_dr1, dt3dr1) > thres) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Invalid derivates by r1\n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
-        Mat_<double> dr3_dr2, dt3_dr2;
-           diff.dRv2(dr3_dr2, dt3_dr2);
+        var dr3_dr2 = new alvision.Matd();
+        var dt3_dr2 = new alvision.Matd();
+        diff.dRv2(dr3_dr2, dt3_dr2);
 
-        if (alvision.norm(dr3_dr2, dr3dr2) > thres || alvision.norm(dt3_dr2, dt3dr2) > thres)
-        {
-            this.ts.printf( alvision.cvtest.TSConstants.LOG, "Invalid derivates by r2\n" );
+        if (alvision.norm(dr3_dr2, dr3dr2) > thres || alvision.norm(dt3_dr2, dt3dr2) > thres) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Invalid derivates by r2\n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
-        Mat_<double> dr3_dt1, dt3_dt1;
-           diff.dTv1(dr3_dt1, dt3_dt1);
+        var dr3_dt1 = new alvision.Matd();
+        var dt3_dt1 = new alvision.Matd();
+        diff.dTv1(dr3_dt1, dt3_dt1);
 
-           if (alvision.norm(dr3_dt1, dr3dt1) > thres || alvision.norm(dt3_dt1, dt3dt1) > thres)
-        {
-            this.ts.printf( alvision.cvtest.TSConstants.LOG, "Invalid derivates by t1\n" );
+        if (alvision.norm(dr3_dt1, dr3dt1) > thres || alvision.norm(dt3_dt1, dt3dt1) > thres) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Invalid derivates by t1\n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
-        Mat_<double> dr3_dt2, dt3_dt2;
-           diff.dTv2(dr3_dt2, dt3_dt2);
+        var dr3_dt2 = new alvision.Matd();
+        var dt3_dt2 = new alvision.Matd();
+        diff.dTv2(dr3_dt2, dt3_dt2);
 
-        if (alvision.norm(dr3_dt2, dr3dt2) > thres || alvision.norm(dt3_dt2, dt3dt2) > thres)
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "Invalid derivates by t2\n" );
+        if (alvision.norm(dr3_dt2, dr3dt2) > thres || alvision.norm(dt3_dt2, dt3dt2) > thres) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Invalid derivates by t2\n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
     }
-};
+}
 
 alvision.cvtest.TEST('Calib3d_ComposeRT', 'accuracy', () => { var test = new CV_composeRT_Test(); test.safe_run(); });

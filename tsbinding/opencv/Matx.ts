@@ -475,6 +475,30 @@ export interface Vec<T> extends Matx<T> {
     //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_AddOp);
     //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_SubOp);
     //template<typename _T2> Vec(const Matx< _Tp, cn, 1>& a, _T2 alpha, Matx_ScaleOp);
+
+    cross(v: Vec<T>): Vec<T>;
+    //template < typename _Tp, int cn> inline
+//Vec < _Tp, cn > Vec<_Tp, cn>::cross(const Vec<_Tp, cn>&) const
+//    {
+//        CV_StaticAssert(cn == 3, "for arbitrary-size vector there is no cross-product defined");
+//return Vec<_Tp, cn>();
+//}
+
+//template <> inline
+//Vec < float, 3 > Vec < float, 3 >::cross(const Vec<float, 3>& v) const
+//    {
+//        return Vec<float,3>(this ->val[1] * v.val[2] - this ->val[2] * v.val[1],
+//            this ->val[2] * v.val[0] - this ->val[0] * v.val[2],
+//            this ->val[0] * v.val[1] - this ->val[1] * v.val[0]);
+//}
+
+//template <> inline
+//Vec < double, 3 > Vec < double, 3 >::cross(const Vec<double, 3>& v) const
+//    {
+//        return Vec<double,3>(this ->val[1] * v.val[2] - this ->val[2] * v.val[1],
+//            this ->val[2] * v.val[0] - this ->val[0] * v.val[2],
+//            this ->val[0] * v.val[1] - this ->val[1] * v.val[0]);
+
 }
 
 /** @name Shorter aliases for the most popular specializations of Vec<T,n>
@@ -1148,27 +1172,6 @@ export var normalize: Inormalize = alvision_module.normalize;
 //        return cv::internal::conjugate(*this);
 //}
 
-//template < typename _Tp, int cn> inline
-//Vec < _Tp, cn > Vec<_Tp, cn>::cross(const Vec<_Tp, cn>&) const
-//    {
-//        CV_StaticAssert(cn == 3, "for arbitrary-size vector there is no cross-product defined");
-//return Vec<_Tp, cn>();
-//}
-
-//template <> inline
-//Vec < float, 3 > Vec < float, 3 >::cross(const Vec<float, 3>& v) const
-//    {
-//        return Vec<float,3>(this ->val[1] * v.val[2] - this ->val[2] * v.val[1],
-//            this ->val[2] * v.val[0] - this ->val[0] * v.val[2],
-//            this ->val[0] * v.val[1] - this ->val[1] * v.val[0]);
-//}
-
-//template <> inline
-//Vec < double, 3 > Vec < double, 3 >::cross(const Vec<double, 3>& v) const
-//    {
-//        return Vec<double,3>(this ->val[1] * v.val[2] - this ->val[2] * v.val[1],
-//            this ->val[2] * v.val[0] - this ->val[0] * v.val[2],
-//            this ->val[0] * v.val[1] - this ->val[1] * v.val[0]);
 //}
 
 //template < typename _Tp, int cn> template < typename T2> inline

@@ -1,5 +1,7 @@
 var alvision_module = require('../../lib/bindings.js');
 
+import * as _st from './static';
+
 //namespace alvision {
 
 
@@ -114,8 +116,8 @@ export enum MatrixType {
 
 export module MatrixType {
     export interface ICV_MAKETYPE {
-        (depth: number, channels: number): number;
-        (depth: MatrixType, channels: number): number;
+        (depth: number | MatrixType, channels: number | _st.int): number;
+        //(depth: MatrixType, channels: number | _st.int): number;
     }
 
     //export declare function CV_MAKETYPE(depth: number, channels: number): number = alvision_module.MatrixType.CV_MAKETYPE;

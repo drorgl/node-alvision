@@ -104,18 +104,18 @@ alvision.cvtest.TEST('Optim_denoise_tvl1', 'regression_basic',()=>
     //alvision.imshow("denoised", res);
     //alvision.waitKey();
 
-//#if 0
-    alvision.ASSERT_TRUE(validate_pixel(res,248,334,179));
-    alvision.ASSERT_TRUE(validate_pixel(res,489,333,172));
-    alvision.ASSERT_TRUE(validate_pixel(res,425,507,104));
-    alvision.ASSERT_TRUE(validate_pixel(res,489,486,105));
-    alvision.ASSERT_TRUE(validate_pixel(res,223,208,64));
-    alvision.ASSERT_TRUE(validate_pixel(res,418,3,78));
-    alvision.ASSERT_TRUE(validate_pixel(res,63,76,97));
-    alvision.ASSERT_TRUE(validate_pixel(res,29,134,126));
-    alvision.ASSERT_TRUE(validate_pixel(res,219,291,174));
-    alvision.ASSERT_TRUE(validate_pixel(res,384,124,76));
-//#endif
+////#if 0
+//    alvision.ASSERT_TRUE(validate_pixel(res,248,334,179));
+//    alvision.ASSERT_TRUE(validate_pixel(res,489,333,172));
+//    alvision.ASSERT_TRUE(validate_pixel(res,425,507,104));
+//    alvision.ASSERT_TRUE(validate_pixel(res,489,486,105));
+//    alvision.ASSERT_TRUE(validate_pixel(res,223,208,64));
+//    alvision.ASSERT_TRUE(validate_pixel(res,418,3,78));
+//    alvision.ASSERT_TRUE(validate_pixel(res,63,76,97));
+//    alvision.ASSERT_TRUE(validate_pixel(res,29,134,126));
+//    alvision.ASSERT_TRUE(validate_pixel(res,219,291,174));
+//    alvision.ASSERT_TRUE(validate_pixel(res,384,124,76));
+////#endif
 //
 //#if 1
     alvision.ASSERT_TRUE(validate_pixel(res,248,334,194));

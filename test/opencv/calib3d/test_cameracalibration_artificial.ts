@@ -71,128 +71,126 @@ import fs = require('fs');
 //}
 //ostream& operator<<(ostream& out, const Mat& mat) { return out << Mat_<double>(mat); }
 
-function calcRvec(const Array<Point3f>& points, const Size& cornerSize) : alvision.Mat
+function calcRvec(points: Array<alvision.Point3f>, cornerSize: alvision.Size ) : alvision.Mat
 {
-    Point3f p00 = points[0];
-    Point3f p10 = points[1];
-    Point3f p01 = points[cornerSize.width];
+    var p00 = points[0];
+    var p10 = points[1];
+    var p01 = points[cornerSize.width.valueOf()];
 
-    Vec3d ex(p10.x - p00.x, p10.y - p00.y, p10.z - p00.z);
-    Vec3d ey(p01.x - p00.x, p01.y - p00.y, p01.z - p00.z);
-    Vec3d ez = ex.cross(ey);
+    var ex = new alvision.Vecd(p10.x.valueOf() - p00.x.valueOf(), p10.y.valueOf() - p00.y.valueOf(), p10.z.valueOf() - p00.z.valueOf());
+    var ey = new alvision.Vecd(p01.x.valueOf() - p00.x.valueOf(), p01.y.valueOf() - p00.y.valueOf(), p01.z.valueOf() - p00.z.valueOf());
+    var ez = ex.cross(ey);
 
-    Mat rot(3, 3, CV_64F);
-    *rot.ptr<Vec3d>(0) = ex;
-    *rot.ptr<Vec3d>(1) = ey;
-    *rot.ptr<Vec3d>(2) = ez * (1.0/norm(ez));
+    var rot = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);
+    rot.ptr<alvision.Vecd>("Vecd")[0] = ex;
+    rot.ptr<alvision.Vecd>("Vecd")[1] = ey;
+    rot.ptr<alvision.Vecd>("Vecd")[2] = ez * (1.0/norm(ez));
 
-    Mat res;
-    Rodrigues(rot.t(), res);
+    var res = new alvision.Mat();
+    alvision.Rodrigues(rot.t(), res);
     return res.reshape(1, 1);
 }
 
+     const  JUST_FIND_CORNERS = 0;
+     const  USE_CORNERS_SUBPIX = 1;
+     const  USE_4QUAD_CORNERS = 2;
+     const  ARTIFICIAL_CORNERS = 4;
+
+
 class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
 {
-public:
-    CV_CalibrateCameraArtificialTest() :
-        r(0)
-    {
+    constructor() {
+        super();
+        this.r = 0;(0)
     }
-    ~CV_CalibrateCameraArtificialTest() {}
-protected:
-    int r;
-
-    const static int JUST_FIND_CORNERS = 0;
-    const static int USE_CORNERS_SUBPIX = 1;
-    const static int USE_4QUAD_CORNERS = 2;
-    const static int ARTIFICIAL_CORNERS = 4;
+    protected r: alvision.int;
 
 
-    bool checkErr(double a, double a0, double eps, double delta)
+
+     checkErr(a: alvision.double, a0: alvision.double, eps: alvision.double, delta: alvision.double): boolean {
+         return Math.abs(a.valueOf() - a0.valueOf()) > eps.valueOf() * (Math.abs(a0.valueOf()) + delta.valueOf());
+     }
+
+    compareCameraMatrs(camMat : alvision.Mat_ < alvision.double >, camMat_est : alvision.Mat) : void
     {
-        return fabs(a - a0) > eps * (fabs(a0) + delta);
-    }
-
-    void compareCameraMatrs(const Mat_<double>& camMat, const Mat& camMat_est)
-    {
-        if ( camMat_est.at<double>(0, 1) != 0 || camMat_est.at<double>(1, 0) != 0 ||
-            camMat_est.at<double>(2, 0) != 0 || camMat_est.at<double>(2, 1) != 0 ||
-            camMat_est.at<double>(2, 2) != 1)
+        if ( camMat_est.atGet<alvision.double>("double",0, 1) != 0 || camMat_est.atGet<alvision.double>("double",1, 0) != 0 ||
+            camMat_est.atGet<alvision.double>("double",2, 0) != 0 ||   camMat_est.atGet<alvision.double>("double",2, 1) != 0 ||
+            camMat_est.atGet<alvision.double>("double",2, 2) != 1)
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "Bad shape of camera matrix returned \n");
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "Bad shape of camera matrix returned \n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         }
 
-        double fx_e = camMat_est.at<double>(0, 0), fy_e = camMat_est.at<double>(1, 1);
-        double cx_e = camMat_est.at<double>(0, 2), cy_e = camMat_est.at<double>(1, 2);
+        var fx_e = camMat_est.atGet<alvision.double>("double",0, 0), fy_e = camMat_est.atGet<alvision.double>("double",1, 1);
+        var cx_e = camMat_est.atGet<alvision.double>("double",0, 2), cy_e = camMat_est.atGet<alvision.double>("double",1, 2);
 
-        double fx = camMat(0, 0), fy = camMat(1, 1), cx = camMat(0, 2), cy = camMat(1, 2);
+        var fx = camMat(0, 0), fy = camMat(1, 1), cx = camMat(0, 2), cy = camMat(1, 2);
 
-        const double eps = 1e-2;
-        const double dlt = 1e-5;
+        const  eps = 1e-2;
+        const  dlt = 1e-5;
 
-        bool fail = checkErr(fx_e, fx, eps, dlt) || checkErr(fy_e, fy, eps, dlt) ||
-            checkErr(cx_e, cx, eps, dlt) || checkErr(cy_e, cy, eps, dlt);
+        var fail = this.checkErr(fx_e, fx, eps, dlt) || this.checkErr(fy_e, fy, eps, dlt) ||
+            this.checkErr(cx_e, cx, eps, dlt) || this.checkErr(cy_e, cy, eps, dlt);
 
         if (fail)
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
-        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Expected  [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx, fy, cx, cy);
-        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Estimated [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx_e, fy_e, cx_e, cy_e);
+        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Expected  [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx, fy, cx, cy);
+        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Estimated [Fx Fy Cx Cy] = [%.3f %.3f %.3f %.3f]\n", r, fx_e, fy_e, cx_e, cy_e);
     }
 
-    void compareDistCoeffs(const Mat_<double>& distCoeffs, const Mat& distCoeffs_est)
+    compareDistCoeffs(distCoeffs: alvision.Mat_<alvision.double>, distCoeffs_est: alvision.Mat) : void
     {
-        const double *dt_e = distCoeffs_est.ptr<double>();
+        var dt_e = distCoeffs_est.ptr<alvision.double>("double");
 
-        double k1_e = dt_e[0], k2_e = dt_e[1], k3_e = dt_e[4];
-        double p1_e = dt_e[2], p2_e = dt_e[3];
+        var k1_e = dt_e[0], k2_e = dt_e[1], k3_e = dt_e[4];
+        var p1_e = dt_e[2], p2_e = dt_e[3];
 
-        double k1 = distCoeffs(0, 0), k2 = distCoeffs(0, 1), k3 = distCoeffs(0, 4);
-        double p1 = distCoeffs(0, 2), p2 = distCoeffs(0, 3);
+        var k1 = distCoeffs(0, 0), k2 = distCoeffs(0, 1), k3 = distCoeffs(0, 4);
+        var p1 = distCoeffs(0, 2), p2 = distCoeffs(0, 3);
 
-        const double eps = 5e-2;
-        const double dlt = 1e-3;
+        const  eps = 5e-2;
+        const  dlt = 1e-3;
 
-        const double eps_k3 = 5;
-        const double dlt_k3 = 1e-3;
+        const  eps_k3 = 5;
+        const  dlt_k3 = 1e-3;
 
-        bool fail = checkErr(k1_e, k1, eps, dlt) || checkErr(k2_e, k2, eps, dlt) || checkErr(k3_e, k3, eps_k3, dlt_k3) ||
-            checkErr(p1_e, p1, eps, dlt) || checkErr(p2_e, p2, eps, dlt);
+        var fail = this.checkErr(k1_e, k1, eps, dlt) || this.checkErr(k2_e, k2, eps, dlt) || this.checkErr(k3_e, k3, eps_k3, dlt_k3) ||
+            this.checkErr(p1_e, p1, eps, dlt) || this.checkErr(p2_e, p2, eps, dlt);
 
         if (fail)
         {
             // commented according to vp123's recomendation. TODO - improve accuaracy
             //this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY); ss
         }
-        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) DistCoeff exp=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1, k2, p1, p2, k3);
-        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) DistCoeff est=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1_e, k2_e, p1_e, p2_e, k3_e);
-        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) AbsError = [%.5f %.5f %.5f %.5f %.5f]\n", r, fabs(k1-k1_e), fabs(k2-k2_e), fabs(p1-p1_e), fabs(p2-p2_e), fabs(k3-k3_e));
+        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) DistCoeff exp=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1, k2, p1, p2, k3);
+        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) DistCoeff est=(%.2f, %.2f, %.4f, %.4f %.2f)\n", r, k1_e, k2_e, p1_e, p2_e, k3_e);
+        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) AbsError = [%.5f %.5f %.5f %.5f %.5f]\n", r, Math.abs(k1-k1_e), Math.abs(k2-k2_e), Math.abs(p1-p1_e), Math.abs(p2-p2_e), Math.abs(k3-k3_e));
     }
 
-    void compareShiftVecs(const Array<Mat>& tvecs, const Array<Mat>& tvecs_est)
+    compareShiftVecs(tvecs: Array<alvision.Mat>, tvecs_est: Array<alvision.Mat>) : void
     {
-        const double eps = 1e-2;
-        const double dlt = 1e-4;
+        const  eps = 1e-2;
+        const  dlt = 1e-4;
 
-        int err_count = 0;
-        const int errMsgNum = 4;
-        for(size_t i = 0; i < tvecs.size(); ++i)
+        var err_count = 0;
+        const errMsgNum = 4;
+        for(var i = 0; i < tvecs.length; ++i)
         {
-            const Point3d& tvec = *tvecs[i].ptr<Point3d>();
-            const Point3d& tvec_est = *tvecs_est[i].ptr<Point3d>();
+            const  tvec = tvecs[i].ptr<alvision.Point3d>("Point3d");
+            const  tvec_est = tvecs_est[i].ptr<alvision.Point3d>("Point3d");
 
             if (norm(tvec_est - tvec) > eps* (norm(tvec) + dlt))
             {
                 if (err_count++ < errMsgNum)
                 {
                     if (err_count == errMsgNum)
-                        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) ...\n", r);
+                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) ...\n", r);
                     else
                     {
-                        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Bad accuracy in returned tvecs. Index = %d\n", r, i);
-                        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) norm(tvec_est - tvec) = %f, norm(tvec_exp) = %f \n", r, norm(tvec_est - tvec), norm(tvec));
+                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Bad accuracy in returned tvecs. Index = %d\n", this.r, i);
+                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) norm(tvec_est - tvec) = %f, norm(tvec_exp) = %f \n", this.r, norm( tvec_est - tvec), norm(tvec));
                     }
                 }
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
@@ -200,29 +198,30 @@ protected:
         }
     }
 
-    void compareRotationVecs(const Array<Mat>& rvecs, const Array<Mat>& rvecs_est)
+    compareRotationVecs(rvecs: Array<alvision.Mat>, rvecs_est: Array<alvision.Mat>) : void
     {
-        const double eps = 2e-2;
-        const double dlt = 1e-4;
+        const  eps = 2e-2;
+        const  dlt = 1e-4;
 
-        Mat rmat, rmat_est;
-        int err_count = 0;
-        const int errMsgNum = 4;
-        for(size_t i = 0; i < rvecs.size(); ++i)
+        var rmat = new alvision.Mat();
+        var rmat_est = new alvision.Mat();
+        var err_count = 0;
+        const errMsgNum = 4;
+        for(var i = 0; i < rvecs.length; ++i)
         {
-            Rodrigues(rvecs[i], rmat);
-            Rodrigues(rvecs_est[i], rmat_est);
+            alvision.Rodrigues(rvecs[i], rmat);
+            alvision.Rodrigues(rvecs_est[i], rmat_est);
 
-            if (alvision.cvtest.norm(rmat_est, rmat,alvision.NormTypes. NORM_L2) > eps* (alvision.cvtest.norm(rmat,alvision.NormTypes. NORM_L2) + dlt))
+            if (alvision.cvtest.norm(rmat_est, rmat,alvision.NormTypes. NORM_L2) > eps* (alvision.cvtest.norm(rmat,alvision.NormTypes. NORM_L2).valueOf() + dlt))
             {
                 if (err_count++ < errMsgNum)
                 {
                     if (err_count == errMsgNum)
-                        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) ...\n", r);
+                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) ...\n", this.r);
                     else
                     {
-                        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Bad accuracy in returned rvecs (rotation matrs). Index = %d\n", r, i);
-                        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) norm(rot_mat_est - rot_mat_exp) = %f, norm(rot_mat_exp) = %f \n", r,
+                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Bad accuracy in returned rvecs (rotation matrs). Index = %d\n", this.r, i);
+                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) norm(rot_mat_est - rot_mat_exp) = %f, norm(rot_mat_exp) = %f \n", this.r,
                                    alvision.cvtest.norm(rmat_est, rmat,alvision.NormTypes. NORM_L2), alvision.cvtest.norm(rmat,alvision.NormTypes. NORM_L2));
 
                     }
@@ -232,207 +231,217 @@ protected:
         }
     }
 
-    double reprojectErrorWithoutIntrinsics(const Array<Point3f>& cb3d, const Array<Mat>& _rvecs_exp, const Array<Mat>& _tvecs_exp,
-        const Array<Mat>& rvecs_est, const Array<Mat>& tvecs_est)
+    reprojectErrorWithoutIntrinsics(cb3d: Array<alvision.Point3f>, _rvecs_exp: Array<alvision.Mat>, _tvecs_exp: Array<alvision.Mat> ,
+        rvecs_est: Array<alvision.Mat>, tvecs_est: Array<alvision.Mat> ) : alvision.double
     {
-        const static Mat eye33 = Mat::eye(3, 3, CV_64F);
-        const static Mat zero15 = Mat::zeros(1, 5, CV_64F);
-        Mat _chessboard3D(cb3d);
-        Array<Point2f> uv_exp, uv_est;
-        double res = 0;
+        const  eye33 =  alvision.Mat.eye(3, 3, alvision.MatrixType.CV_64F);
+        const  zero15 = alvision.Mat.zeros(1, 5,alvision.MatrixType. CV_64F);
+        var _chessboard3D = new alvision.Mat(cb3d);
+        
+            var uv_est = new Array < alvision.Point2f >();
+            var uv_exp = new Array<alvision.Point2f>();
+        var res = 0;
 
-        for(size_t i = 0; i < rvecs_exp.size(); ++i)
+        for(var i = 0; i < this.rvecs_exp.length; ++i)
         {
-            projectPoints(_chessboard3D, _rvecs_exp[i], _tvecs_exp[i], eye33, zero15, uv_exp);
-            projectPoints(_chessboard3D, rvecs_est[i], tvecs_est[i], eye33, zero15, uv_est);
-            for(size_t j = 0; j < cb3d.size(); ++j)
-                res += norm(uv_exp[i] - uv_est[i]);
+            alvision.projectPoints(_chessboard3D, _rvecs_exp[i], _tvecs_exp[i], eye33, zero15, uv_exp);
+            alvision.projectPoints(_chessboard3D, rvecs_est[i], tvecs_est[i], eye33, zero15, uv_est);
+            for(var j = 0; j < cb3d.length; ++j)
+                res += alvision.Point.norm(alvision.Point.op_Substraction( uv_exp[i] , uv_est[i])).valueOf();
         }
         return res;
     }
 
-    Size2f sqSile;
+    protected sqSile : alvision.Size2f;
 
-    Array<Point3f> chessboard3D;
-    Array<Mat> boards, rvecs_exp, tvecs_exp, rvecs_spnp, tvecs_spnp;
-    Array< Array<Point3f> > objectPoints;
-    Array< Array<Point2f> > imagePoints_art;
-    Array< Array<Point2f> > imagePoints_findCb;
+    protected chessboard3D : Array<alvision.Point3f>;
+    protected  boards : Array<alvision.Mat>;  
+    protected  rvecs_exp  : Array<alvision.Mat>;
+    protected  tvecs_exp  : Array<alvision.Mat>;
+    protected  rvecs_spnp : Array<alvision.Mat>;
+    protected  tvecs_spnp : Array<alvision.Mat>;
+    protected objectPoints: Array<Array<alvision.Point3f>>;
+    protected imagePoints_art: Array<Array<alvision.Point2f>>;
+    protected imagePoints_findCb: Array<Array<alvision.Point2f>>;
 
 
-    void prepareForTest(const Mat& bg, const Mat& camMat, const Mat& distCoeffs, size_t brdsNum, const ChessBoardGenerator& cbg)
+    prepareForTest(bg: alvision.Mat, camMat: alvision.Mat, distCoeffs: alvision.Mat, brdsNum: alvision.size_t, cbg: ChessBoardGenerator) : void
     {
-        sqSile = Size2f(1.f, 1.f);
-        Size cornersSize = cbg.cornersSize();
+        this.sqSile = new alvision.Size2f(1., 1.);
+        var cornersSize = cbg.cornersSize();
 
-        chessboard3D.clear();
-        for(int j = 0; j < cornersSize.height; ++j)
-            for(int i = 0; i < cornersSize.width; ++i)
-                chessboard3D.push(Point3f(sqSile.width * i, sqSile.height * j, 0));
+        this.chessboard3D.length = 0;
+        for(var j = 0; j < cornersSize.height; ++j)
+            for(var i = 0; i < cornersSize.width; ++i)
+                this.chessboard3D.push(new alvision.Point3f(this.sqSile.width.valueOf() * i, this.sqSile.height.valueOf() * j, 0));
 
-        boards.resize(brdsNum);
-        rvecs_exp.resize(brdsNum);
-        tvecs_exp.resize(brdsNum);
-        objectPoints.clear();
-        objectPoints.resize(brdsNum, chessboard3D);
-        imagePoints_art.clear();
-        imagePoints_findCb.clear();
+        this.boards.length = (brdsNum).valueOf();
+        this.rvecs_exp.length = (brdsNum).valueOf();
+        this.tvecs_exp.length = (brdsNum).valueOf();
+        this.objectPoints.length = 0;
+        this.objectPoints.resize(brdsNum, chessboard3D);
+        this.imagePoints_art.length = 0;
+        this.imagePoints_findCb.length = 0;;
 
-        Array<Point2f> corners_art, corners_fcb;
-        for(size_t i = 0; i < brdsNum; ++i)
+        
+            var corners_art = new Array < alvision.Point2f >();
+            var corners_fcb = new Array<  alvision.Point2f>();
+        for(var i = 0; i < brdsNum; ++i)
         {
             for(;;)
             {
-                boards[i] = cbg(bg, camMat, distCoeffs, sqSile, corners_art);
-                if(findChessboardCorners(boards[i], cornersSize, corners_fcb))
+                this.boards[i] = cbg(bg, camMat, distCoeffs, this.sqSile, corners_art);
+                if(alvision.findChessboardCorners(this.boards[i], cornersSize, corners_fcb))
                     break;
             }
 
             //alvision.namedWindow("CB"); imshow("CB", boards[i]); alvision.waitKey();
 
-            imagePoints_art.push(corners_art);
-            imagePoints_findCb.push(corners_fcb);
+            this.imagePoints_art.push(corners_art);
+            this.imagePoints_findCb.push(corners_fcb);
 
-            tvecs_exp[i].create(1, 3, CV_64F);
-            *tvecs_exp[i].ptr<Point3d>() = cbg.corners3d[0];
-            rvecs_exp[i] = calcRvec(cbg.corners3d, cbg.cornersSize());
+            this.tvecs_exp[i].create(1, 3,alvision.MatrixType. CV_64F);
+            this.tvecs_exp[i].ptr<alvision.Point3d>("Point3d")[0] = cbg.corners3d[0];
+            this.rvecs_exp[i] = calcRvec(cbg.corners3d, cbg.cornersSize());
         }
 
     }
 
-    void runTest(const Size& imgSize, const Mat_<double>& camMat, const Mat_<double>& distCoeffs, size_t brdsNum, const Size& cornersSize, int flag = 0)
+    runTest(imgSize: alvision.Size, camMat: alvision.Mat_<alvision.double>, distCoeffs: alvision.Mat_<alvision.double>, brdsNum: alvision.size_t, cornersSize: alvision.Size, flag: alvision.int  = 0) : void
     {
-        const TermCriteria tc(TermCriteria::EPS|TermCriteria::MAX_ITER, 30, 0.1);
+        var tc = new alvision.TermCriteria (alvision.TermCriteriaType.EPS|alvision.TermCriteriaType.MAX_ITER, 30, 0.1);
 
-        Array< Array<Point2f> > imagePoints;
+        var imagePoints = new Array<Array<alvision.Point2f>>();
 
         switch(flag)
         {
-        case JUST_FIND_CORNERS: imagePoints = imagePoints_findCb; break;
-        case ARTIFICIAL_CORNERS: imagePoints = imagePoints_art; break;
+        case JUST_FIND_CORNERS: imagePoints =  this.imagePoints_findCb; break;
+        case ARTIFICIAL_CORNERS: imagePoints = this.imagePoints_art; break;
 
         case USE_CORNERS_SUBPIX:
-            for(size_t i = 0; i < brdsNum; ++i)
+            for(var i = 0; i < brdsNum; ++i)
             {
-                Mat gray;
-                cvtColor(boards[i], gray, COLOR_BGR2GRAY);
-                Array<Point2f> tmp = imagePoints_findCb[i];
-                cornerSubPix(gray, tmp, Size(5, 5), Size(-1,-1), tc);
+                var gray = new alvision.Mat();
+                alvision.cvtColor(this.boards[i], gray,alvision.ColorConversionCodes. COLOR_BGR2GRAY);
+                var tmp = this.imagePoints_findCb[i];
+                alvision.cornerSubPix(gray, tmp, new alvision.Size(5, 5),new alvision.Size(-1,-1), tc);
                 imagePoints.push(tmp);
             }
             break;
         case USE_4QUAD_CORNERS:
-            for(size_t i = 0; i < brdsNum; ++i)
+            for(var i = 0; i < brdsNum; ++i)
             {
-                Mat gray;
-                cvtColor(boards[i], gray, COLOR_BGR2GRAY);
-                Array<Point2f> tmp = imagePoints_findCb[i];
-                find4QuadCornerSubpix(gray, tmp, Size(5, 5));
+                var gray = new alvision.Mat();
+                alvision.cvtColor(this.boards[i], gray,alvision.ColorConversionCodes. COLOR_BGR2GRAY);
+                var tmp = this.imagePoints_findCb[i];
+                alvision.find4QuadCornerSubpix(gray, tmp, new alvision.Size(5, 5));
                 imagePoints.push(tmp);
             }
             break;
         default:
-            throw std::exception();
+            throw new Error("flag is not implemented");
         }
 
-        Mat camMat_est = Mat::eye(3, 3, CV_64F), distCoeffs_est = Mat::zeros(1, 5, CV_64F);
-        Array<Mat> rvecs_est, tvecs_est;
+        var camMat_est = alvision.Mat.from(alvision.Mat.eye(3, 3, alvision.MatrixType.CV_64F));
+        var distCoeffs_est = alvision.Mat.from(alvision.Mat.zeros(1, 5, alvision.MatrixType.CV_64F));
+        var rvecs_est = new Array<alvision.Mat>();
+        var tvecs_est = new Array<alvision.Mat>();
 
-        int flags = /*CALIB_FIX_K3|*/CALIB_FIX_K4|CALIB_FIX_K5|CALIB_FIX_K6; //CALIB_FIX_K3; //CALIB_FIX_ASPECT_RATIO |  | CALIB_ZERO_TANGENT_DIST;
-        TermCriteria criteria = TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 100, DBL_EPSILON);
-        double rep_error = calibrateCamera(objectPoints, imagePoints, imgSize, camMat_est, distCoeffs_est, rvecs_est, tvecs_est, flags, criteria);
-        rep_error /= brdsNum * cornersSize.area();
+        var flags = /*CALIB_FIX_K3|*/alvision.CALIB.CALIB_FIX_K4 | alvision.CALIB.CALIB_FIX_K5 | alvision.CALIB.CALIB_FIX_K6; //CALIB_FIX_K3; //CALIB_FIX_ASPECT_RATIO |  | CALIB_ZERO_TANGENT_DIST;
+        var criteria = new alvision.TermCriteria(alvision.TermCriteriaType.COUNT+alvision.TermCriteriaType.EPS, 100, alvision.DBL_EPSILON);
+        var rep_error = alvision.calibrateCamera(this.objectPoints, imagePoints, imgSize, camMat_est, distCoeffs_est, rvecs_est, tvecs_est, flags, criteria);
+        rep_error = rep_error.valueOf() /  brdsNum.valueOf() * cornersSize.area().valueOf();
 
-        const double thres = 1;
+        const thres = 1;
         if (rep_error > thres)
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error = %f\n", r, rep_error);
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error = %f\n", this.r, rep_error);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
-        compareCameraMatrs(camMat, camMat_est);
-        compareDistCoeffs(distCoeffs, distCoeffs_est);
-        compareShiftVecs(tvecs_exp, tvecs_est);
-        compareRotationVecs(rvecs_exp, rvecs_est);
+        this.compareCameraMatrs(camMat, camMat_est);
+        this.compareDistCoeffs(distCoeffs, distCoeffs_est);
+        this.compareShiftVecs(this.tvecs_exp, tvecs_est);
+        this.compareRotationVecs(this.rvecs_exp, rvecs_est);
 
-        double rep_errorWOI = reprojectErrorWithoutIntrinsics(chessboard3D, rvecs_exp, tvecs_exp, rvecs_est, tvecs_est);
-        rep_errorWOI /= brdsNum * cornersSize.area();
+        var rep_errorWOI = this.reprojectErrorWithoutIntrinsics(chessboard3D, this.rvecs_exp, this.tvecs_exp, rvecs_est, tvecs_est);
+        rep_errorWOI = rep_errorWOI.valueOf()  / brdsNum.valueOf() * cornersSize.area().valueOf();
 
-        const double thres2 = 0.01;
+        const thres2 = 0.01;
         if (rep_errorWOI > thres2)
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error without intrinsics = %f\n", r, rep_errorWOI);
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error without intrinsics = %f\n", this.r, rep_errorWOI);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
-        ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Testing solvePnP...\n", r);
-        rvecs_spnp.resize(brdsNum);
-        tvecs_spnp.resize(brdsNum);
-        for(size_t i = 0; i < brdsNum; ++i)
-            solvePnP(Mat(objectPoints[i]), Mat(imagePoints[i]), camMat, distCoeffs, rvecs_spnp[i], tvecs_spnp[i]);
+        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Testing solvePnP...\n", r);
+        this.rvecs_spnp.length = (brdsNum).valueOf();
+        this.tvecs_spnp.length = (brdsNum).valueOf();
+        for(var i = 0; i < brdsNum; ++i)
+            alvision.solvePnP(new alvision.Mat(this.objectPoints[i]), new alvision.Mat(imagePoints[i]), camMat, distCoeffs, this.rvecs_spnp[i], this.tvecs_spnp[i]);
 
-        compareShiftVecs(tvecs_exp, tvecs_spnp);
-        compareRotationVecs(rvecs_exp, rvecs_spnp);
+        this.compareShiftVecs(this.tvecs_exp, this.tvecs_spnp);
+        this.compareRotationVecs(this.rvecs_exp, this.rvecs_spnp);
     }
 
-    void run(int)
+    run(iii: alvision.int) : void
     {
 
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
-        RNG& rng = theRNG();
+        var rng = alvision.theRNG();
 
-        int progress = 0;
-        int repeat_num = 3;
-        for(r = 0; r < repeat_num; ++r)
+        var progress = 0;
+        var repeat_num = 3;
+        for(this.r = 0; this.r < repeat_num; ++this.r)
         {
-            const int brds_num = 20;
+            const brds_num = 20;
 
-            Mat bg(Size(640, 480), CV_8UC3);
-            randu(bg, Scalar::all(32), Scalar::all(255));
-            GaussianBlur(bg, bg, Size(5, 5), 2);
+            var bg = new alvision.Mat(new alvision.Size(640, 480),alvision.MatrixType. CV_8UC3);
+            alvision.randu(bg, alvision.Scalar.all(32),alvision. Scalar.all(255));
+            alvision.GaussianBlur(bg, bg, new alvision.Size(5, 5), 2);
 
-            double fx = 300 + (20 * (double)rng - 10);
-            double fy = 300 + (20 * (double)rng - 10);
+            var fx = 300 + (20 * rng.double().valueOf() - 10);
+            var fy = 300 + (20 * rng.double().valueOf() - 10);
 
-            double cx = bg.cols/2 + (40 * (double)rng - 20);
-            double cy = bg.rows/2 + (40 * (double)rng - 20);
+            var cx = bg.cols.valueOf()/2 + (40 * rng.double().valueOf() - 20);
+            var cy = bg.rows.valueOf()/2 + (40 * rng.double().valueOf() - 20);
 
-            Mat_<double> camMat(3, 3);
+            var camMat = new alvision.Matd (3, 3);
             camMat << fx, 0., cx, 0, fy, cy, 0., 0., 1.;
 
-            double k1 = 0.5 + (double)rng/5;
-            double k2 = (double)rng/5;
-            double k3 = (double)rng/5;
+            var k1 = 0.5 + rng.double().valueOf()/5;
+            var k2 = rng.double().valueOf()/5;
+            var k3 = rng.double().valueOf()/5;
 
-            double p1 = 0.001 + (double)rng/10;
-            double p2 = 0.001 + (double)rng/10;
+            var p1 = 0.001 + rng.double().valueOf()/10;
+            var p2 = 0.001 + rng.double().valueOf()/10;
 
-            Mat_<double> distCoeffs(1, 5, 0.0);
+            var distCoeffs = new alvision.Matd(1, 5, 0.0);
             distCoeffs << k1, k2, p1, p2, k3;
 
-            ChessBoardGenerator cbg(Size(9, 8));
+            var cbg = new ChessBoardGenerator (new alvision.Size(9, 8));
             cbg.min_cos = 0.9;
             cbg.cov = 0.8;
 
-            progress = update_progress(progress, r, repeat_num, 0);
-            ts.printf( alvision.cvtest.TSConstants.LOG, "\n");
-            prepareForTest(bg, camMat, distCoeffs, brds_num, cbg);
+            progress = this.update_progress(progress, this.r, repeat_num, 0).valueOf();
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "\n");
+            this.prepareForTest(bg, camMat, distCoeffs, brds_num, cbg);
 
-            ts.printf( alvision.cvtest.TSConstants.LOG, "artificial corners\n");
-            runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), ARTIFICIAL_CORNERS);
-            progress = update_progress(progress, r, repeat_num, 0);
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "artificial corners\n");
+            this.runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), ARTIFICIAL_CORNERS);
+            progress = this.update_progress(progress, this.r, repeat_num, 0).valueOf();
 
-            ts.printf( alvision.cvtest.TSConstants.LOG, "findChessboard corners\n");
-            runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), JUST_FIND_CORNERS);
-            progress = update_progress(progress, r, repeat_num, 0);
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "findChessboard corners\n");
+            this.runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), JUST_FIND_CORNERS);
+            progress = this.update_progress(progress, this.r, repeat_num, 0).valueOf();
 
-            ts.printf( alvision.cvtest.TSConstants.LOG, "cornersSubPix corners\n");
-            runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), USE_CORNERS_SUBPIX);
-            progress = update_progress(progress, r, repeat_num, 0);
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "cornersSubPix corners\n");
+            this.runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), USE_CORNERS_SUBPIX);
+            progress = this.update_progress(progress, this.r, repeat_num, 0).valueOf();
 
-            ts.printf( alvision.cvtest.TSConstants.LOG, "4quad corners\n");
-            runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), USE_4QUAD_CORNERS);
-            progress = update_progress(progress, r, repeat_num, 0);
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "4quad corners\n");
+            this.runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), USE_4QUAD_CORNERS);
+            progress = this.update_progress(progress, this.r, repeat_num, 0).valueOf();
         }
     }
 };

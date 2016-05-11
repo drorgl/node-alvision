@@ -527,6 +527,8 @@ export interface FileStorage
 //    String elname; //!< the currently written element
 //    std::vector<char> structs; //!< the stack of written structures
 //    int state; //!< the writer state
+
+        [i: string]: FileNode;
     };
 
 export var FileStorage: FileStorageStatic = alvision_module.FileStorage;
@@ -610,7 +612,7 @@ interface FileNode
 //    //! returns true if the node is a "none" object
 //    CV_WRAP bool isNone() const;
 //    //! returns true if the node is a sequence
-//    CV_WRAP bool isSeq() const;
+    isSeq(): boolean;
 //    //! returns true if the node is a mapping
 //    CV_WRAP bool isMap() const;
 //    //! returns true if the node is an integer
@@ -624,7 +626,7 @@ interface FileNode
 //    //! returns the node name or an empty string if the node is nameless
 //    CV_WRAP String name() const;
 //    //! returns the number of elements in the node, if it is a sequence or mapping, or 1 otherwise.
-//    CV_WRAP size_t size() const;
+    size(): _st.size_t;
 //    //! returns the node content as an integer. If the node stores floating-point number, it is rounded.
 //    operator int() const;
 //    //! returns the node content as float

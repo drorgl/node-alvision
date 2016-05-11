@@ -53,143 +53,139 @@ import fs = require('fs');
 
 class CV_ChessboardDetectorTimingTest extends alvision.cvtest.BaseTest
 {
-public:
-    CV_ChessboardDetectorTimingTest();
-protected:
-    void run(int);
+    run(iii: alvision.int) {
+        var code = alvision.cvtest.FailureCode.OK;
+
+        /* test parameters */
+        //std::string   filepath;
+        //std::string   filename;
+
+        //CvMat * _v = 0;
+        //CvPoint2D32f * v;
+
+        //IplImage img;
+        //IplImage * gray = 0;
+        //IplImage * thresh = 0;
+
+        //int  idx, max_idx;
+        //int  progress = 0;
+        //
+        var filepath = util.format("%scv/cameracalibration/", this.ts.get_data_path());
+        var filename = util.format("%schessboard_timing_list.dat", filepath);
+        var fs = new alvision.FileStorage(filename, alvision.FileStorageMode.READ);// CV_STORAGE_READ);
+        var board_list = fs ? fs[ "boards"] : null;
+
+        if (!fs || !board_list || !CV_NODE_IS_SEQ(board_list.tag) ||
+            board_list.data.seq.total % 4 != 0) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "chessboard_timing_list.dat can not be readed or is not valid");
+            code = alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA;
+            return;
+            //goto _exit_;
+        }
+
+        var max_idx = board_list.data.seq.total / 4;
+
+        for (var idx = start_from; idx < max_idx; idx++) {
+            var count0 = -1;
+            var count = 0;
+            var pattern_size = new alvision.Size();
+            //int result, result1 = 0;
+
+            const imgname = cvReadString((CvFileNode *)cvGetSeqElem(board_list.data.seq, idx * 4), "dummy.txt");
+            var is_chessboard = cvReadInt((CvFileNode *)cvGetSeqElem(board_list.data.seq, idx * 4 + 1), 0);
+            pattern_size.width = cvReadInt((CvFileNode *)cvGetSeqElem(board_list.data.seq, idx * 4 + 2), -1);
+            pattern_size.height = cvReadInt((CvFileNode *)cvGetSeqElem(board_list.data.seq, idx * 4 + 3), -1);
+
+            this.ts.update_context(this, idx - 1, true);
+
+            /* read the image */
+            filename = util.format("%s%s", filepath, imgname);
+
+            var img2 = alvision.imread(filename);
+            var img = img2;
+
+            if (img2.empty()) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "one of chessboard images can't be read: %s\n", filename);
+                if (max_idx == 1) {
+                    code = alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA;
+                    return;
+                    //goto _exit_;
+                }
+                continue;
+            }
+
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s: chessboard %d:\n", imgname, is_chessboard);
+
+            gray = new alvision.Mat(new alvision.Size(img.cols, img.rows), alvision.MatrixType.CV_8UC1);
+            thresh = new alvision.Mat(new alvision.Size(img.cols, img.rows), alvision.MatrixType.CV_8UC1);
+            alvision.cvtColor( img, gray, CV_BGR2GRAY);
+
+
+            count0 = pattern_size.width * pattern_size.height;
+
+            /* allocate additional buffers */
+            var _v = new alvision.Mat(1, count0,alvision.MatrixType. CV_32FC2);
+            count = count0;
+
+            v = (CvPoint2D32f *)_v.data.fl;
+
+            int64 _time0 = cvGetTickCount();
+            result = cvCheckChessboard(gray, pattern_size);
+            int64 _time01 = cvGetTickCount();
+
+            OPENCV_CALL(result1 = cvFindChessboardCorners(
+                gray, pattern_size, v, &count, 15));
+            int64 _time1 = cvGetTickCount();
+
+            if (result != is_chessboard) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: chessboard was %sdetected in the image %s\n",
+                    result ? "" : "not ", imgname);
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+                return;
+                //goto _exit_;
+            }
+            if (result != result1) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Warning: results differ cvCheckChessboard %d, cvFindChessboardCorners %d\n",
+                    result, result1);
+            }
+
+            var num_pixels = gray.width * gray.height;
+            var check_chessboard_time = float(_time01 - _time0) / (float)cvGetTickFrequency(); // in us
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "    cvCheckChessboard time s: %f, us per pixel: %f\n",
+                check_chessboard_time * 1e-6, check_chessboard_time / num_pixels);
+
+            var find_chessboard_time = float(_time1 - _time01) / (float)cvGetTickFrequency();
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "    cvFindChessboard time s: %f, us per pixel: %f\n",
+                find_chessboard_time * 1e-6, find_chessboard_time / num_pixels);
+
+            //cvReleaseMat( &_v);
+            //cvReleaseImage( &gray);
+            //cvReleaseImage( &thresh);
+            progress = this.update_progress(progress, idx - 1, max_idx, 0);
+        }
+
+        //_exit_:
+
+        /* release occupied memory */
+        //cvReleaseMat( &_v);
+        //cvReleaseFileStorage( &fs);
+        //cvReleaseImage( &gray);
+        //cvReleaseImage( &thresh);
+
+        fs.release();
+
+        if (code < 0)
+            this.ts.set_failed_test_info(code);
+}
 };
 
 
-CV_ChessboardDetectorTimingTest::CV_ChessboardDetectorTimingTest()
-{
-}
+
 
 /* ///////////////////// chess_corner_test ///////////////////////// */
 void CV_ChessboardDetectorTimingTest::run( int start_from )
 {
-    int code = alvision.cvtest.FailureCode.OK;
-
-    /* test parameters */
-    std::string   filepath;
-    std::string   filename;
-
-    CvMat*  _v = 0;
-    CvPoint2D32f* v;
-
-    IplImage img;
-    IplImage* gray = 0;
-    IplImage* thresh = 0;
-
-    int  idx, max_idx;
-    int  progress = 0;
-
-    filepath = alvision.format("%scv/cameracalibration/", ts.get_data_path() );
-    filename = alvision.format("%schessboard_timing_list.dat", filepath );
-    CvFileStorage* fs = cvOpenFileStorage( filename, 0, CV_STORAGE_READ );
-    CvFileNode* board_list = fs ? cvGetFileNodeByName( fs, 0, "boards" ) : 0;
-
-    if( !fs || !board_list || !CV_NODE_IS_SEQ(board_list.tag) ||
-        board_list.data.seq.total % 4 != 0 )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "chessboard_timing_list.dat can not be readed or is not valid" );
-        code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
-        goto _exit_;
-    }
-
-    max_idx = board_list.data.seq.total/4;
-
-    for( idx = start_from; idx < max_idx; idx++ )
-    {
-        int count0 = -1;
-        int count = 0;
-        CvSize pattern_size;
-        int result, result1 = 0;
-
-        const char* imgname = cvReadString((CvFileNode*)cvGetSeqElem(board_list.data.seq,idx*4), "dummy.txt");
-        int is_chessboard = cvReadInt((CvFileNode*)cvGetSeqElem(board_list.data.seq,idx*4+1), 0);
-        pattern_size.width = cvReadInt((CvFileNode*)cvGetSeqElem(board_list.data.seq,idx*4 + 2), -1);
-        pattern_size.height = cvReadInt((CvFileNode*)cvGetSeqElem(board_list.data.seq,idx*4 + 3), -1);
-
-        ts.update_context( this, idx-1, true );
-
-        /* read the image */
-        filename = alvision.format("%s%s", filepath, imgname );
-
-        alvision.Mat img2 = alvision.imread( filename );
-        img = img2;
-
-        if( img2.empty() )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "one of chessboard images can't be read: %s\n", filename );
-            if( max_idx == 1 )
-            {
-                code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
-                goto _exit_;
-            }
-            continue;
-        }
-
-        ts.printf(alvision.cvtest.TSConstants.LOG, "%s: chessboard %d:\n", imgname, is_chessboard);
-
-        gray = cvCreateImage( cvSize( img.width, img.height ), IPL_DEPTH_8U, 1 );
-        thresh = cvCreateImage( cvSize( img.width, img.height ), IPL_DEPTH_8U, 1 );
-        cvCvtColor( &img, gray, CV_BGR2GRAY );
-
-
-        count0 = pattern_size.width*pattern_size.height;
-
-        /* allocate additional buffers */
-        _v = cvCreateMat(1, count0, CV_32FC2);
-        count = count0;
-
-        v = (CvPoint2D32f*)_v.data.fl;
-
-        int64 _time0 = cvGetTickCount();
-        result = cvCheckChessboard(gray, pattern_size);
-        int64 _time01 = cvGetTickCount();
-
-        OPENCV_CALL( result1 = cvFindChessboardCorners(
-                 gray, pattern_size, v, &count, 15 ));
-        int64 _time1 = cvGetTickCount();
-
-        if( result != is_chessboard )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "Error: chessboard was %sdetected in the image %s\n",
-                       result ? "" : "not ", imgname );
-            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
-            goto _exit_;
-        }
-        if(result != result1)
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "Warning: results differ cvCheckChessboard %d, cvFindChessboardCorners %d\n",
-                       result, result1);
-        }
-
-        int num_pixels = gray.width*gray.height;
-        float check_chessboard_time = float(_time01 - _time0)/(float)cvGetTickFrequency(); // in us
-        ts.printf(alvision.cvtest.TSConstants.LOG, "    cvCheckChessboard time s: %f, us per pixel: %f\n",
-                   check_chessboard_time*1e-6, check_chessboard_time/num_pixels);
-
-        float find_chessboard_time = float(_time1 - _time01)/(float)cvGetTickFrequency();
-        ts.printf(alvision.cvtest.TSConstants.LOG, "    cvFindChessboard time s: %f, us per pixel: %f\n",
-                   find_chessboard_time*1e-6, find_chessboard_time/num_pixels);
-
-        cvReleaseMat( &_v );
-        cvReleaseImage( &gray );
-        cvReleaseImage( &thresh );
-        progress = update_progress( progress, idx-1, max_idx, 0 );
-    }
-
-_exit_:
-
-    /* release occupied memory */
-    cvReleaseMat( &_v );
-    cvReleaseFileStorage( &fs );
-    cvReleaseImage( &gray );
-    cvReleaseImage( &thresh );
-
-    if( code < 0 )
-        this.ts.set_failed_test_info( code );
+    
 }
 
 alvision.cvtest.TEST('Calib3d_ChessboardDetector', 'timing', () => { var test = new CV_ChessboardDetectorTimingTest(); test.safe_run(); });

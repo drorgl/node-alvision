@@ -99,21 +99,21 @@ class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest {
             var chessboard_image = gen_chessboard(bg, intrinsic_matrix_, distortion_coeffs_, corners);
 
             var test_corners = new Array<alvision.Point2f>();
-            var result = findChessboardCorners(chessboard_image, pattern_size, test_corners, 15);
+            var result = alvision.findChessboardCorners(chessboard_image, pattern_size, test_corners, 15);
             if (!result) {
-                //#if 0
-                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Warning: chessboard was not detected! Writing image to test.png\n");
-                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Size = %d, %d\n", pattern_size.width, pattern_size.height);
-                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Intrinsic params: fx = %f, fy = %f, cx = %f, cy = %f\n",
-                    this.intrinsic_matrix_.at<double>(0, 0), this.intrinsic_matrix_.at<double>(1, 1),
-                    this.intrinsic_matrix_.at<double>(0, 2), this.intrinsic_matrix_.at<double>(1, 2));
-                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Distortion matrix: %f, %f, %f, %f, %f\n",
-                    this.distortion_coeffs_.at<double>(0, 0), this.distortion_coeffs_.at<double>(0, 1),
-                    this.distortion_coeffs_.at<double>(0, 2), this.distortion_coeffs_.at<double>(0, 3),
-                    this.distortion_coeffs_.at<double>(0, 4));
-
-                alvision.imwrite("test.png", chessboard_image);
-                //#endif
+//                //#if 0
+//                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Warning: chessboard was not detected! Writing image to test.png\n");
+//                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Size = %d, %d\n", pattern_size.width, pattern_size.height);
+//                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Intrinsic params: fx = %f, fy = %f, cx = %f, cy = %f\n",
+//                    this.intrinsic_matrix_.at<double>(0, 0), this.intrinsic_matrix_.at<double>(1, 1),
+//                    this.intrinsic_matrix_.at<double>(0, 2), this.intrinsic_matrix_.at<double>(1, 2));
+//                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Distortion matrix: %f, %f, %f, %f, %f\n",
+//                    this.distortion_coeffs_.at<double>(0, 0), this.distortion_coeffs_.at<double>(0, 1),
+//                    this.distortion_coeffs_.at<double>(0, 2), this.distortion_coeffs_.at<double>(0, 3),
+//                    this.distortion_coeffs_.at<double>(0, 4));
+//
+//                alvision.imwrite("test.png", chessboard_image);
+//                //#endif
                 continue;
             }
 
@@ -125,10 +125,10 @@ class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest {
                 break;
             }
 
-            IplImage chessboard_image_header = chessboard_image;
-            cvFindCornerSubPix(&chessboard_image_header, (CvPoint2D32f *)& test_corners[0],
-                (int)test_corners.size(), cvSize(3, 3), cvSize(1, 1), cvTermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 300, 0.1));
-            find4QuadCornerSubpix(chessboard_image, test_corners, Size(5, 5));
+            var chessboard_image_header = chessboard_image;
+            alvision.cornerSubPix(chessboard_image_header, (CvPoint2D32f *)& test_corners[0],
+                new alvision.Size(3, 3), new alvision.Size(1, 1), new alvision.TermCriteria(alvision.TermCriteriaType.EPS | alvision.TermCriteriaType.MAX_ITER, 300, 0.1));
+            alvision.find4QuadCornerSubpix(chessboard_image, test_corners,new alvision.Size(5, 5));
 
             var dist2 = 0.0;
             ret = calcDistance(corners, test_corners, dist2);
@@ -150,7 +150,7 @@ class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest {
                 break;
             }
 
-            progress = this.update_progress(progress, i - 1, runs_count, 0);
+            progress = this.update_progress(progress, i - 1, runs_count, 0).valueOf();
         }
         alvision.ASSERT_NE(0, count);
         sum_dist /= count;
@@ -164,19 +164,19 @@ class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest {
         const max_focus_length = 1000.0;
         const max_focus_diff = 5.0;
 
-        var fx = alvision.cvtest.randReal(rng) * max_focus_length;
-        var fy = fx + alvision.cvtest.randReal(rng) * max_focus_diff;
-        var cx = image_size_.width / 2;
-        var cy = image_size_.height / 2;
+        var fx = alvision.cvtest.randReal(rng).valueOf() * max_focus_length;
+        var fy = fx + alvision.cvtest.randReal(rng).valueOf() * max_focus_diff;
+        var cx = this.image_size_.width .valueOf()/ 2;
+        var cy = this.image_size_.height.valueOf() / 2;
 
-        var k1 = 0.5 * alvision.cvtest.randReal(rng);
-        var k2 = 0.05 * alvision.cvtest.randReal(rng);
-        var p1 = 0.05 * alvision.cvtest.randReal(rng);
-        var p2 = 0.05 * alvision.cvtest.randReal(rng);
+        var k1 = 0.5 *  alvision.cvtest.randReal(rng).valueOf();
+        var k2 = 0.05 * alvision.cvtest.randReal(rng).valueOf();
+        var p1 = 0.05 * alvision.cvtest.randReal(rng).valueOf();
+        var p2 = 0.05 * alvision.cvtest.randReal(rng).valueOf();
         var k3 = 0.0;
 
-        this.intrinsic_matrix_ = new alvision.Mat(Mat_<double>(3, 3) << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0);
-        this.distortion_coeffs_ = new alvision.Mat(Mat_<double>(1, 5) << k1, k2, p1, p2, k3);
+        this.intrinsic_matrix_ = new alvision.Mat(new alvision.Matd(3, 3) << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0);
+        this.distortion_coeffs_ = new alvision.Mat(new alvision.Matd(1, 5) << k1, k2, p1, p2, k3);
     }
 }
 
@@ -198,7 +198,7 @@ function calcDistance(set1: Array<alvision.Point2f>, set2: Array<alvision.Point2
 
         for(var j = 0; j < set2.length; j++)
         {
-            var dist = norm(set1[i] - set2[j]);
+            var dist = alvision.Point2f.norm(alvision.Point2f.op_Substraction( set1[i] , set2[j]));
             if(dist < min_dist)
             {
                 min_idx = j;

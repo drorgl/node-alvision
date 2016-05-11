@@ -20,17 +20,22 @@ const  ARITHM_RNG_SEED = -1;
 const  ARITHM_MAX_CHANNELS = 4;
 const  ARITHM_MAX_NDIMS = 4;
 const  ARITHM_MAX_SIZE_LOG = 10;
+    enum BaseElemWiseOpType{ FIX_ALPHA = 1, FIX_BETA = 2, FIX_GAMMA = 4, REAL_GAMMA = 8, SUPPORT_MASK = 16, SCALAR_OUTPUT = 32 };
 
 class BaseElemWiseOp
 {
-    enum { FIX_ALPHA=1, FIX_BETA=2, FIX_GAMMA=4, REAL_GAMMA=8, SUPPORT_MASK=16, SCALAR_OUTPUT=32 };
-    BaseElemWiseOp(int _ninputs, int _flags, double _alpha, double _beta,
-                   Scalar _gamma=alvision.Scalar.all(0), int _context=1)
-    : ninputs(_ninputs), flags(_flags), alpha(_alpha), beta(_beta), gamma(_gamma), context(_context) {}
+    
+    const(int _ninputs, int _flags, double _alpha, double _beta,
+        Scalar _gamma= alvision.Scalar.all(0), int _context= 1)
+        
+    {
+        this.ninputs = (_ninputs);
+        flags(_flags), alpha(_alpha), beta(_beta), gamma(_gamma), context(_context);
+    }
     BaseElemWiseOp() { flags = 0; alpha = beta = 0; gamma = alvision.Scalar.all(0); ninputs = 0; context = 1; }
     virtual ~BaseElemWiseOp() {}
-    virtual void op(const Array<Mat>&, Mat&, const Mat&) {}
-    virtual void refop(const Array<Mat>&, Mat&, const Mat&) {}
+    op(const Array<Mat>&, Mat&, const Mat&) : void {}
+    refop(const Array<Mat>&, Mat&, const Mat&) : void {}
     virtual void getValueRange(int depth, double& minval, double& maxval)
     {
         minval = depth < CV_32S ? alvision.cvtest.getMinVal(depth) : depth == CV_32S ? -1000000 : -1000.;

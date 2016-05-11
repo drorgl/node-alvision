@@ -737,24 +737,24 @@ int CV_MinAreaRectTest::validate_test_results( int test_case_idx )
         }
     }
 
-#if 0
-    {
-    int n = 4;
-    double a = 8, c = 8, b = 100, d = 150;
-    CvPoint bp[4], *bpp = bp;
-    cvNamedWindow( "test", 1 );
-    IplImage* img = cvCreateImage( cvSize(500,500), 8, 3 );
-    cvZero(img);
-    for( i = 0; i < point_count; i++ )
-        cvCircle(img,cvPoint(Math.round(p[i].x*a+b),Math.round(p[i].y*c+d)), 3, CV_RGB(0,255,0), -1 );
-    for( i = 0; i < n; i++ )
-        bp[i] = cvPoint(Math.round(box_pt[i].x*a+b),Math.round(box_pt[i].y*c+d));
-    cvPolyLine( img, &bpp, &n, 1, 1, CV_RGB(255,255,0), 1, CV_AA, 0 );
-    cvShowImage( "test", img );
-    cvWaitKey();
-    cvReleaseImage(&img);
-    }
-#endif
+//#if 0
+//    {
+//    int n = 4;
+//    double a = 8, c = 8, b = 100, d = 150;
+//    CvPoint bp[4], *bpp = bp;
+//    cvNamedWindow( "test", 1 );
+//    IplImage* img = cvCreateImage( cvSize(500,500), 8, 3 );
+//    cvZero(img);
+//    for( i = 0; i < point_count; i++ )
+//        cvCircle(img,cvPoint(Math.round(p[i].x*a+b),Math.round(p[i].y*c+d)), 3, CV_RGB(0,255,0), -1 );
+//    for( i = 0; i < n; i++ )
+//        bp[i] = cvPoint(Math.round(box_pt[i].x*a+b),Math.round(box_pt[i].y*c+d));
+//    cvPolyLine( img, &bpp, &n, 1, 1, CV_RGB(255,255,0), 1, CV_AA, 0 );
+//    cvShowImage( "test", img );
+//    cvWaitKey();
+//    cvReleaseImage(&img);
+//    }
+//#endif
 
     // check that the box includes all the points
     // and there is at least one point at (or very close to) every box side
@@ -847,24 +847,24 @@ int CV_MinTriangleTest::validate_test_results( int test_case_idx )
     double eps = 1e-4;
     int code = CV_BaseShapeDescrTest::validate_test_results( test_case_idx );
 
-#if 0
-    {
-    int n = 3;
-    double a = 8, c = 8, b = 100, d = 150;
-    CvPoint bp[4], *bpp = bp;
-    cvNamedWindow( "test", 1 );
-    IplImage* img = cvCreateImage( cvSize(500,500), 8, 3 );
-    cvZero(img);
-    for( i = 0; i < point_count; i++ )
-        cvCircle(img,cvPoint(Math.round(p[i].x*a+b),Math.round(p[i].y*c+d)), 3, CV_RGB(0,255,0), -1 );
-    for( i = 0; i < n; i++ )
-        bp[i] = cvPoint(Math.round(triangle[i].x*a+b),Math.round(triangle[i].y*c+d));
-    cvPolyLine( img, &bpp, &n, 1, 1, CV_RGB(255,255,0), 1, CV_AA, 0 );
-    cvShowImage( "test", img );
-    cvWaitKey();
-    cvReleaseImage(&img);
-    }
-#endif
+//#if 0
+//    {
+//    int n = 3;
+//    double a = 8, c = 8, b = 100, d = 150;
+//    CvPoint bp[4], *bpp = bp;
+//    cvNamedWindow( "test", 1 );
+//    IplImage* img = cvCreateImage( cvSize(500,500), 8, 3 );
+//    cvZero(img);
+//    for( i = 0; i < point_count; i++ )
+//        cvCircle(img,cvPoint(Math.round(p[i].x*a+b),Math.round(p[i].y*c+d)), 3, CV_RGB(0,255,0), -1 );
+//    for( i = 0; i < n; i++ )
+//        bp[i] = cvPoint(Math.round(triangle[i].x*a+b),Math.round(triangle[i].y*c+d));
+//    cvPolyLine( img, &bpp, &n, 1, 1, CV_RGB(255,255,0), 1, CV_AA, 0 );
+//    cvShowImage( "test", img );
+//    cvWaitKey();
+//    cvReleaseImage(&img);
+//    }
+//#endif
 
     int polygonVertices = (int) convexPolygon.size();
 
@@ -978,21 +978,21 @@ int CV_MinCircleTest::validate_test_results( int test_case_idx )
     CvPoint2D32f *p = (CvPoint2D32f*)(points2.data.ptr);
     CvPoint2D32f v[3];
 
-#if 0
-    {
-    double a = 2, b = 200, d = 400;
-    cvNamedWindow( "test", 1 );
-    IplImage* img = cvCreateImage( cvSize(500,500), 8, 3 );
-    cvZero(img);
-    for( i = 0; i < point_count; i++ )
-        cvCircle(img,cvPoint(Math.round(p[i].x*a+b),Math.round(p[i].y*a+d)), 3, CV_RGB(0,255,0), -1 );
-    cvCircle( img, cvPoint(Math.round(center.x*a+b),Math.round(center.y*a+d)),
-              Math.round(radius*a), CV_RGB(255,255,0), 1 );
-    cvShowImage( "test", img );
-    cvWaitKey();
-    cvReleaseImage(&img);
-    }
-#endif
+//#if 0
+//    {
+//    double a = 2, b = 200, d = 400;
+//    cvNamedWindow( "test", 1 );
+//    IplImage* img = cvCreateImage( cvSize(500,500), 8, 3 );
+//    cvZero(img);
+//    for( i = 0; i < point_count; i++ )
+//        cvCircle(img,cvPoint(Math.round(p[i].x*a+b),Math.round(p[i].y*a+d)), 3, CV_RGB(0,255,0), -1 );
+//    cvCircle( img, cvPoint(Math.round(center.x*a+b),Math.round(center.y*a+d)),
+//              Math.round(radius*a), CV_RGB(255,255,0), 1 );
+//    cvShowImage( "test", img );
+//    cvWaitKey();
+//    cvReleaseImage(&img);
+//    }
+//#endif
 
     // check that the circle contains all the points inside and
     // remember at most 3 points that are close to the boundary
@@ -1297,31 +1297,31 @@ int CV_FitEllipseTest::validate_test_results( int test_case_idx )
 
 _exit_:
 
-#if 0
-    if( code < 0 )
-    {
-    cvNamedWindow( "test", 0 );
-    IplImage* img = cvCreateImage( cvSize(Math.round(low_high_range*4),
-        Math.round(low_high_range*4)), 8, 3 );
-    cvZero( img );
-
-    box.center.x += (float)low_high_range*2;
-    box.center.y += (float)low_high_range*2;
-    cvEllipseBox( img, box, CV_RGB(255,0,0), 3, 8 );
-
-    for( int i = 0; i < points2.rows + points2.cols - 1; i++ )
-    {
-        CvPoint pt;
-        pt.x = Math.round(points2.data.fl[i*2] + low_high_range*2);
-        pt.y = Math.round(points2.data.fl[i*2+1] + low_high_range*2);
-        cvCircle( img, pt, 1, CV_RGB(255,255,255), -1, 8 );
-    }
-
-    cvShowImage( "test", img );
-    cvReleaseImage( &img );
-    cvWaitKey(0);
-    }
-#endif
+//#if 0
+//    if( code < 0 )
+//    {
+//    cvNamedWindow( "test", 0 );
+//    IplImage* img = cvCreateImage( cvSize(Math.round(low_high_range*4),
+//        Math.round(low_high_range*4)), 8, 3 );
+//    cvZero( img );
+//
+//    box.center.x += (float)low_high_range*2;
+//    box.center.y += (float)low_high_range*2;
+//    cvEllipseBox( img, box, CV_RGB(255,0,0), 3, 8 );
+//
+//    for( int i = 0; i < points2.rows + points2.cols - 1; i++ )
+//    {
+//        CvPoint pt;
+//        pt.x = Math.round(points2.data.fl[i*2] + low_high_range*2);
+//        pt.y = Math.round(points2.data.fl[i*2+1] + low_high_range*2);
+//        cvCircle( img, pt, 1, CV_RGB(255,255,255), -1, 8 );
+//    }
+//
+//    cvShowImage( "test", img );
+//    cvReleaseImage( &img );
+//    cvWaitKey(0);
+//    }
+//#endif
 
     if( code < 0 )
     {
@@ -1830,12 +1830,12 @@ int CV_ContourMomentsTest::validate_test_results( int test_case_idx )
 
     if( code < 0 )
     {
-#if 0
-        cvCmpS( img, 0, img, CV_CMP_GT );
-        cvNamedWindow( "test", 1 );
-        cvShowImage( "test", img );
-        cvWaitKey();
-#endif
+//#if 0
+//        cvCmpS( img, 0, img, CV_CMP_GT );
+//        cvNamedWindow( "test", 1 );
+//        cvShowImage( "test", img );
+//        cvWaitKey();
+//#endif
         this.ts.set_failed_test_info( code );
     }
 

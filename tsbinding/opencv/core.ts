@@ -771,8 +771,8 @@ export var meanStdDev: ImeanStdDev = alvision_module.meanStdDev;
     */
 
 interface Inorm {
-    (src1: _st.InputArray, normType: _base.NormTypes /* = NORM_L2*/, mask: _st.InputArray /* = noArray()*/): _st.double;
-    (src1: _st.InputArray, src2: _st.InputArray, normType: _base.NormTypes /* = NORM_L2*/, mask?: _st.InputArray /* = noArray()*/): _st.double;
+    (src1: _st.InputArray, normType?: _base.NormTypes /* = NORM_L2*/, mask?: _st.InputArray /* = noArray()*/): _st.double;
+    (src1: _st.InputArray, src2: _st.InputArray, normType?: _base.NormTypes /* = NORM_L2*/, mask?: _st.InputArray /* = noArray()*/): _st.double;
     (src: _mat.SparseMat, normType: _base.NormTypes): _st.double;
 }
 
@@ -3483,17 +3483,17 @@ export interface RNG
     using transform to get samples from the specified Gaussian distribution.
     */
     fill(mat: _st.InputOutputArray , distType : DistType, a : _st.InputArray, b : _st.InputArray, saturateRange? : boolean /* = false*/) : void;
-//
-//    /** @brief Returns the next random number sampled from the Gaussian distribution
-//    @param sigma standard deviation of the distribution.
-//
-//    The method transforms the state using the MWC algorithm and returns the
-//    next random number from the Gaussian distribution N(0,sigma) . That is,
-//    the mean value of the returned random numbers is zero and the standard
-//    deviation is the specified sigma .
-//    */
-//    double gaussian(double sigma);
-//
+
+    /** @brief Returns the next random number sampled from the Gaussian distribution
+    @param sigma standard deviation of the distribution.
+
+    The method transforms the state using the MWC algorithm and returns the
+    next random number from the Gaussian distribution N(0,sigma) . That is,
+    the mean value of the returned random numbers is zero and the standard
+    deviation is the specified sigma .
+    */
+    gaussian(sigma: _st.double): _st.double;
+
       state: _st.uint64;
 };
 

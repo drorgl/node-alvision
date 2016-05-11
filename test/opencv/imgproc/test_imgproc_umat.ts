@@ -73,15 +73,15 @@ class CV_ImgprocUMatTest extends alvision.cvtest.BaseTest
         alvision.resize(ugray, usmallimg,new alvision. Size(), 0.75, 0.75,alvision.InterpolationFlags. INTER_LINEAR);
         alvision.equalizeHist(usmallimg, uresult);
 
-//#if 0
-        alvision.imshow("orig", uimg);
-        alvision.imshow("small", usmallimg);
-        alvision.imshow("equalized gray", uresult);
-        alvision.waitKey();
-        alvision.destroyWindow("orig");
-        alvision.destroyWindow("small");
-        alvision.destroyWindow("equalized gray");
-        //#endif
+////#if 0
+//        alvision.imshow("orig", uimg);
+//        alvision.imshow("small", usmallimg);
+//        alvision.imshow("equalized gray", uresult);
+//        alvision.waitKey();
+//        alvision.destroyWindow("orig");
+//        alvision.destroyWindow("small");
+//        alvision.destroyWindow("equalized gray");
+//        //#endif
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 
         uresult.getMat(alvision.ACCESS.ACCESS_READ);

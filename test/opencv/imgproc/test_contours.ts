@@ -385,11 +385,11 @@ int CV_FindContourTest::validate_test_results( int /*test_case_idx*/ )
 _exit_:
     if( code < 0 )
     {
-#if 0
-        cvNamedWindow( "test", 0 );
-        cvShowImage( "test", img[0] );
-        cvWaitKey();
-#endif
+//#if 0
+//        cvNamedWindow( "test", 0 );
+//        cvShowImage( "test", img[0] );
+//        cvWaitKey();
+//#endif
         this.ts.set_failed_test_info( code );
     }
 

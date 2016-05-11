@@ -60,6 +60,106 @@ import fs = require('fs');
 //#include "opencv2/core/utility.hpp"
 
 export namespace cvtest {
+   //export function fscanf(fd: number, fmt: string, values: (v1: any, v2: any, v3: any) => void) {
+   //    var buf = new Buffer(1);
+   //    fs.readSync(fd, buf, 0, 1, null);
+   //
+   //    
+   //
+   //
+   //    //var count, noassign, width, base, lflag;
+   //    //const char     *tc;
+   //    //char * t, tmp[MAXLN];
+   //
+   //    //count = noassign = width = lflag = 0;
+   //
+   //
+   //
+   //    while (*s && *buf) {
+   //        while (isspace(*s))
+   //            s++;
+   //        if (*s == '%') {
+   //            s++;
+   //            for (; *s; s++) {
+   //                if (strchr("dibouxcsefg%", *s))
+   //                    break;
+   //                if (*s == '*')
+   //                    noassign = 1;
+   //                else if (*s == 'l' || *s == 'L')
+   //                    lflag = 1;
+   //                else if (*s >= '1' && *s <= '9') {
+   //                    for (tc = s; isdigit(*s); s++);
+   //                    strncpy(tmp, tc, s - tc);
+   //                    tmp[s - tc] = '\0';
+   //                    atob(&width, tmp, 10);
+   //                    s--;
+   //                }
+   //            }
+   //            if (*s == 's') {
+   //                while (isspace(*buf))
+   //                    buf++;
+   //                if (!width)
+   //                    width = strcspn(buf, ISSPACE);
+   //                if (!noassign) {
+   //                    strncpy(t = va_arg(ap, char *), buf, width);
+   //                    t[width] = '\0';
+   //                }
+   //                buf += width;
+   //            } else if (*s == 'c') {
+   //                if (!width)
+   //                    width = 1;
+   //                if (!noassign) {
+   //                    strncpy(t = va_arg(ap, char *), buf, width);
+   //                    t[width] = '\0';
+   //                }
+   //                buf += width;
+   //            } else if (strchr("dobxu", *s)) {
+   //                while (isspace(*buf))
+   //                    buf++;
+   //                if (*s == 'd' || *s == 'u')
+   //                    base = 10;
+   //                else if (*s == 'x')
+   //                    base = 16;
+   //                else if (*s == 'o')
+   //                    base = 8;
+   //                else if (*s == 'b')
+   //                    base = 2;
+   //                if (!width) {
+   //                    if (isspace(*(s + 1)) || *(s + 1) == 0)
+   //                        width = strcspn(buf, ISSPACE);
+   //                    else
+   //                        width = strchr(buf, *(s + 1)) - buf;
+   //                }
+   //                strncpy(tmp, buf, width);
+   //                tmp[width] = '\0';
+   //                buf += width;
+   //                if (!noassign)
+   //                    atob(va_arg(ap, u_int32_t *), tmp, base);
+   //            }
+   //            if (!noassign)
+   //                count++;
+   //            width = noassign = lflag = 0;
+   //            s++;
+   //        } else {
+   //            while (isspace(*buf))
+   //                buf++;
+   //            if (*s != *buf)
+   //                break;
+   //            else
+   //                s++ , buf++;
+   //        }
+   //    }
+   //    return (count);
+   //}
+   //}
+
+
+    export function TEST_F(test_case_name: string, test_name: string, cb: () => void) {
+        cb();
+        //tape(
+        //TODO:!!
+    }
+
     export function TEST(test_case_name: string, test_name: string, cb: () => void) {
         cb();
         //tape(
@@ -117,11 +217,10 @@ export namespace cvtest {
     //
     //CV_EXPORTS string vec2str(const string& sep, const int* v, size_t nelems);
     //
-    export function clipInt(val : _st.int, min_val : _st.int, max_val : _st.int ): _st.int 
-    {
-        if( val < min_val )
+    export function clipInt(val: _st.int, min_val: _st.int, max_val: _st.int): _st.int {
+        if (val < min_val)
             val = min_val;
-        if( val > max_val )
+        if (val > max_val)
             val = max_val;
         return val;
     }
@@ -159,8 +258,8 @@ export namespace cvtest {
     export var randomMat: IrandomMat = alvision_module.randomMat;
 
     interface Iadd {
-        (a: _mat.Mat, alpha: _st.double, b: _mat.Mat, beta: _st.double ,
-            gamma: _types.Scalar, c: _mat.Mat, ctype: _st.int , calcAbs?  : boolean /*=false*/):void;
+        (a: _mat.Mat, alpha: _st.double, b: _mat.Mat, beta: _st.double,
+            gamma: _types.Scalar, c: _mat.Mat, ctype: _st.int, calcAbs?: boolean /*=false*/): void;
     }
 
     export var add: Iadd = alvision_module.add;
@@ -250,9 +349,16 @@ export namespace cvtest {
     //// element for which difference is >success_err_level
     //// (or index of element with the maximum difference)
 
+    enum CMP_EPS_CODE {
+        CMP_EPS_OK = 0,
+        CMP_EPS_BIG_DIFF = - 1,
+        CMP_EPS_INVALID_TEST_DATA = - 2, // there is NaN or Inf value in test data
+        CMP_EPS_INVALID_REF_DATA = - 3 // there is NaN or Inf value in reference data
+    }
+
     interface IcmpEps {
         (data: _mat.Mat, refdata: _mat.Mat, success_err_level: _st.double, element_wise_relative_error: boolean,
-            cb: (idx: Array<_st.int>, max_diff: _st.double) => void): _st.int
+            cb: (idx: Array<_st.int>, max_diff: _st.double) => void): CMP_EPS_CODE
     }
 
     export var cmpEps: IcmpEps = alvision_module.cmpEps;
@@ -263,9 +369,89 @@ export namespace cvtest {
     //                       bool element_wise_relative_error );
     //
     //// a wrapper for the previous function. in case of error prints the message to log file.
+
+    function vec2str(sep : string, v : Array<_st.int>) : string
+    {
+        var buff = "";
+        var result = "";
+        for (var i = 0; i < v.length; i++ )
+        {
+            result += util.format("%d", v[i]);
+            if (i < v.length- 1)
+                result += sep;
+        }
+        return result;
+    }
+
+
+    export function cmpEps2(ts: TS, a: _mat.Mat, b: _mat.Mat, success_err_level: _st.double ,
+        element_wise_relative_error: boolean, desc: string): FailureCode {
+        var msg = "";
+        var diff = 0;
+        var idx = new Array<_st.int>();
+
+        var code = <any> cmpEps(a, b, success_err_level, element_wise_relative_error, (iidx, imax_diff) => { idx = iidx; diff = imax_diff.valueOf(); });
+
+        switch (code) {
+            case CMP_EPS_CODE.CMP_EPS_BIG_DIFF:
+                msg = util.format( "%s: Too big difference (=%g)", desc, diff);
+                code = FailureCode.FAIL_BAD_ACCURACY;
+                break;
+            case CMP_EPS_CODE.CMP_EPS_INVALID_TEST_DATA:
+                msg = util.format("%s: Invalid output", desc);
+                code = FailureCode.FAIL_INVALID_OUTPUT;
+                break;
+            case CMP_EPS_CODE.CMP_EPS_INVALID_REF_DATA:
+                msg = util.format("%s: Invalid reference output", desc);
+                code = FailureCode.FAIL_INVALID_OUTPUT;
+                break;
+            default:
+                ;
+        }
+
+        if (code < 0) {
+            if (a.total() == 1) {
+                this.ts.printf(TSConstants.LOG, "%s\n", msg);
+            }
+            else if (a.dims == 2 && (a.rows == 1 || a.cols == 1)) {
+                this.ts.printf(TSConstants.LOG, "%s at element %d\n", msg, idx[0].valueOf() + idx[1].valueOf());
+            }
+            else {
+                var idxstr = vec2str(", ", idx);
+                this.ts.printf(TSConstants.LOG, "%s at (%s)\n", msg, idxstr);
+            }
+        }
+
+        return code;
+    }
+
+    //interface IcmpEps2 {
+    //    (TS* ts, const Mat& data, const Mat& refdata, double success_err_level,
+    //        bool element_wise_relative_error, const char* desc): _st.int;
+    //}
+
+    //export var cmpEps2 = : IcmpEps2 = alvision_module.cmpEps2;
+
     //CV_EXPORTS int cmpEps2( TS* ts, const Mat& data, const Mat& refdata, double success_err_level,
     //                        bool element_wise_relative_error, const char* desc );
     //
+
+    export function cmpEps2_64f(ts: TS, val: Array<_st.double>, refval : Array<_st.double>,
+        eps : _st.double , param_name : string): _st.int {
+        var _val    = new _mat.Mat(1, val.length, _cvdef.MatrixType.CV_64F,<any>val);
+        var _refval = new _mat.Mat(1, refval.length, _cvdef.MatrixType.CV_64F,<any>refval);
+
+        return cmpEps2(ts, _val, _refval, eps, true, param_name);
+    }
+
+
+    //interface IcmpEps2_64f{
+    //    (TS * ts, const double* val, const double* refval, int len,
+    //        double eps, const char* param_name): _st.int;
+    //}
+
+    //export var cmpEps2_64f: IcmpEps2_64f = alvision_module.cmpEps2_64f;
+
     //CV_EXPORTS int cmpEps2_64f( TS* ts, const double* val, const double* refval, int len,
     //                        double eps, const char* param_name );
     //
@@ -880,7 +1066,7 @@ export abstract class BadArgTest extends BaseTest
     public test_case_idx: _st.int;
 //
 //    template<class F>
-    protected run_test_case(expected_code : _st.int, descr : string, f : ()=>void): _st.int
+    protected run_test_case(expected_code: _base.cv.Error.Code | _st.int, descr : string, f? : ()=>void): _st.int
     {
         var errcount = 0;
         var thrown = false;
