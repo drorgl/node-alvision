@@ -99,7 +99,7 @@ CUDA_TEST_P(GpuMat_SetTo, SameVal)
             alvision.cuda::GpuMat mat = createMat(size, type, useRoi);
             mat.setTo(val);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -124,7 +124,7 @@ CUDA_TEST_P(GpuMat_SetTo, DifferentVal)
             alvision.cuda::GpuMat mat = createMat(size, type, useRoi);
             mat.setTo(val);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -151,7 +151,7 @@ CUDA_TEST_P(GpuMat_SetTo, Masked)
             alvision.cuda::GpuMat mat = createMat(size, type, useRoi);
             mat.setTo(val, loadMat(mask));
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -219,7 +219,7 @@ CUDA_TEST_P(GpuMat_CopyTo, Masked)
             alvision.cuda::GpuMat dst;
             d_src.copyTo(dst, loadMat(mask, useRoi));
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -278,7 +278,7 @@ CUDA_TEST_P(GpuMat_ConvertTo, WithOutScaling)
             alvision.cuda::GpuMat dst;
             d_src.convertTo(dst, depth2);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -310,7 +310,7 @@ CUDA_TEST_P(GpuMat_ConvertTo, WithScaling)
             alvision.cuda::GpuMat dst;
             d_src.convertTo(dst, depth2, a, b);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }

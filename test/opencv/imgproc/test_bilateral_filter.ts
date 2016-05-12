@@ -209,7 +209,7 @@ namespace cvtest {
                                 var val: alvision.double = i / scale_index;
                                 //double val = i / scale_index;
                                 expLUT[i] = Math.exp(val.valueOf() * val.valueOf() * gauss_color_coeff.valueOf());
-                                //expLUT[i] = (float)std::exp(val * val * gauss_color_coeff);
+                                //expLUT[i] = (float)Math.exp(val * val * gauss_color_coeff);
                                 lastExpVal = expLUT[i];
                             }
                         else{

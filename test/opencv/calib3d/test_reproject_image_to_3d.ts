@@ -48,65 +48,62 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include "opencv2/calib3d/calib3d_c.h"
-#include <string>
-#include <limits>
-
-using namespace cv;
-using namespace std;
-
-template<class T> double thres() { return 1.0; }
-template<> double thres<float>() { return 1e-5; }
+//#include "test_precomp.hpp"
+//#include "opencv2/calib3d/calib3d_c.h"
+//#include <string>
+//#include <limits>
+//
+//using namespace cv;
+//using namespace std;
+//
+//template<class T> double thres() { return 1.0; }
+//template<> double thres<float>() { return 1e-5; }
 
 class CV_ReprojectImageTo3DTest  extends alvision.cvtest.BaseTest
 {
-public:
-    CV_ReprojectImageTo3DTest() {}
-    ~CV_ReprojectImageTo3DTest() {}
-protected:
 
-
-    void run(int)
+    run(iii: alvision.int) : void
     {
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
-        int progress = 0;
-        int caseId = 0;
+        var progress = 0;
+        var caseId = 0;
 
-        progress = update_progress( progress, 1, 14, 0 );
-        runCase<float, float>(++caseId, -100.f, 100.f);
-        progress = update_progress( progress, 2, 14, 0 );
+        progress = this.update_progress( progress, 1, 14, 0 );
+        runCase<float, float>(++caseId, -100., 100.);
+        progress = this.update_progress( progress, 2, 14, 0 );
         runCase<int, float>(++caseId, -100, 100);
-        progress = update_progress( progress, 3, 14, 0 );
+        progress = this.update_progress( progress, 3, 14, 0 );
         runCase<short, float>(++caseId, -100, 100);
-        progress = update_progress( progress, 4, 14, 0 );
+        progress = this.update_progress( progress, 4, 14, 0 );
         runCase<unsigned char, float>(++caseId, 10, 100);
-        progress = update_progress( progress, 5, 14, 0 );
+        progress = this.update_progress( progress, 5, 14, 0 );
 
         runCase<float, int>(++caseId, -100.f, 100.f);
-        progress = update_progress( progress, 6, 14, 0 );
+        progress = this.update_progress( progress, 6, 14, 0 );
         runCase<int, int>(++caseId, -100, 100);
-        progress = update_progress( progress, 7, 14, 0 );
+        progress = this.update_progress( progress, 7, 14, 0 );
         runCase<short, int>(++caseId, -100, 100);
-        progress = update_progress( progress, 8, 14, 0 );
+        progress = this.update_progress( progress, 8, 14, 0 );
         runCase<unsigned char, int>(++caseId, 10, 100);
-        progress = update_progress( progress, 10, 14, 0 );
+        progress = this.update_progress( progress, 10, 14, 0 );
 
         runCase<float, short>(++caseId, -100.f, 100.f);
-        progress = update_progress( progress, 11, 14, 0 );
+        progress = this.update_progress( progress, 11, 14, 0 );
         runCase<int, short>(++caseId, -100, 100);
-        progress = update_progress( progress, 12, 14, 0 );
+        progress = this.update_progress( progress, 12, 14, 0 );
         runCase<short, short>(++caseId, -100, 100);
-        progress = update_progress( progress, 13, 14, 0 );
+        progress = this.update_progress( progress, 13, 14, 0 );
         runCase<unsigned char, short>(++caseId, 10, 100);
-        progress = update_progress( progress, 14, 14, 0 );
+        progress = this.update_progress( progress, 14, 14, 0 );
     }
 
-    template<class U, class V> double error(const Vec<U, 3>& v1, const Vec<V, 3>& v2) const
+
+    //template<class U, class V> double error(const Vec<U, 3>& v1, const Vec<V, 3>& v2) const
+    error(v1 : alvision.Vec<U>,v2 : alvision.Vec<V>) : alvision.double
     {
-        double tmp, sum = 0;
-        double nsum = 0;
-        for(int i = 0; i < 3; ++i)
+        var tmp, sum = 0;
+        var nsum = 0;
+        for(var i = 0; i < 3; ++i)
         {
             tmp = v1[i];
             nsum +=  tmp * tmp;
@@ -115,10 +112,11 @@ protected:
             sum += tmp * tmp;
 
         }
-        return sqrt(sum)/(sqrt(nsum)+1.);
+        return Math.sqrt(sum)/(Math.sqrt(nsum)+1.);
     }
 
-    template<class InT, class OutT> void runCase(int caseId, InT min, InT max)
+    //template<class InT, class OutT> void runCase(int caseId, InT min, InT max)
+runCase<InT>(caseId : alvision.int, min : InT, max : InT) : void
     {
         typedef Vec<OutT, 3> out3d_t;
 
@@ -185,4 +183,4 @@ protected:
     }
 };
 
-TEST(Calib3d_ReprojectImageTo3D, accuracy) { CV_ReprojectImageTo3DTest test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_ReprojectImageTo3D', 'accuracy', () => { CV_ReprojectImageTo3DTest test; test.safe_run(); });

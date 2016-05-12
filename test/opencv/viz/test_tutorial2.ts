@@ -12,10 +12,10 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-void tutorial2()
+function tutorial2() : void
 {
     /// Create a window
-    viz::Viz3d myWindow("Coordinate Frame");
+    var myWindow = new alvision.viz.Viz3d ("Coordinate Frame");
 
     /// Add coordinate axes
     myWindow.showWidget("Coordinate Widget", viz::WCoordinateSystem());
@@ -57,7 +57,6 @@ void tutorial2()
 }
 
 
-TEST(Viz, DISABLED_tutorial2_pose_of_widget)
-{
+alvision.cvtest.TEST('Viz', 'DISABLED_tutorial2_pose_of_widget', () => {
     tutorial2();
-}
+});

@@ -997,61 +997,55 @@ int calcDiffElemCount(const Array<Mat>& mv, const Mat& m)
 
 class Core_MergeSplitBaseTest  extends alvision.cvtest.BaseTest
 {
-protected:
-    virtual int run_case(int depth, size_t channels, const Size& size, RNG& rng) = 0;
+    run_case(depth: alvision.int, channels: alvision.size_t, size: alvision.Size, rng: alvision.RNG ): alvision.int { }
 
-    virtual void run(int)
+    run(iii: int) : void
     {
         // m is Mat
         // mv is Array<Mat>
-        const int minMSize = 1;
-        const int maxMSize = 100;
-        const size_t maxMvSize = 10;
+        const  minMSize = 1;
+        const  maxMSize = 100;
+        const maxMvSize = 10;
 
-        RNG& rng = theRNG();
-        Size mSize(rng.uniform(minMSize, maxMSize), rng.uniform(minMSize, maxMSize));
-        size_t mvSize = rng.uniform(1, maxMvSize);
+        var rng = alvision.theRNG();
+        var mSize = new alvision.Size (rng.uniform(minMSize, maxMSize), rng.uniform(minMSize, maxMSize));
+        var mvSize = rng.uniform(1, maxMvSize);
 
-        int res = alvision.cvtest.FailureCode.OK, curRes = res;
-        curRes = run_case(CV_8U, mvSize, mSize, rng);
+        var res = alvision.cvtest.FailureCode.OK, curRes = res;
+        curRes = this.run_case(alvision.MatrixType.CV_8U, mvSize, mSize, rng);
         res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
-        curRes = run_case(CV_8S, mvSize, mSize, rng);
+        curRes = this.run_case(alvision.MatrixType.CV_8S, mvSize, mSize, rng);
         res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
-        curRes = run_case(CV_16U, mvSize, mSize, rng);
+        curRes = this.run_case(alvision.MatrixType.CV_16U, mvSize, mSize, rng);
         res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
-        curRes = run_case(CV_16S, mvSize, mSize, rng);
+        curRes = this.run_case(alvision.MatrixType.CV_16S, mvSize, mSize, rng);
         res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
-        curRes = run_case(CV_32S, mvSize, mSize, rng);
+        curRes = this.run_case(alvision.MatrixType.CV_32S, mvSize, mSize, rng);
         res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
-        curRes = run_case(CV_32F, mvSize, mSize, rng);
+        curRes = this.run_case(alvision.MatrixType.CV_32F, mvSize, mSize, rng);
         res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
-        curRes = run_case(CV_64F, mvSize, mSize, rng);
+        curRes = this.run_case(alvision.MatrixType.CV_64F, mvSize, mSize, rng);
         res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
         this.ts.set_failed_test_info(res);
     }
 };
 
-class Core_MergeTest : public Core_MergeSplitBaseTest
+class Core_MergeTest extends Core_MergeSplitBaseTest
 {
-public:
-    Core_MergeTest() {}
-    ~Core_MergeTest() {}
-
-protected:
-    virtual int run_case(int depth, size_t matCount, const Size& size, RNG& rng)
+    run_case(depth : alvision.int, matCount : alvision.size_t, size : alvision.Size, rng : alvision.RNG) : alvision.int 
     {
-        const int maxMatChannels = 10;
+        const maxMatChannels = 10;
 
         Array<Mat> src(matCount);
-        int channels = 0;
-        for(size_t i = 0; i < src.size(); i++)
+        var channels = 0;
+        for(var i = 0; i < src.size(); i++)
         {
             Mat m(size, CV_MAKETYPE(depth, rng.uniform(1,maxMatChannels)));
             rng.fill(m, RNG::UNIFORM, 0, 100, true);
@@ -1096,14 +1090,9 @@ protected:
     }
 };
 
-class Core_SplitTest : public Core_MergeSplitBaseTest
+class Core_SplitTest extends Core_MergeSplitBaseTest
 {
-public:
-    Core_SplitTest() {}
-    ~Core_SplitTest() {}
-
-protected:
-    virtual int run_case(int depth, size_t channels, const Size& size, RNG& rng)
+    run_case(depth: alvision.int, channels: alvision.size_t, size: alvision.Size, rng: alvision.RNG ) : alvision.int
     {
         Mat src(size, CV_MAKETYPE(depth, (int)channels));
         rng.fill(src, RNG::UNIFORM, 0, 100, true);
@@ -1154,39 +1143,37 @@ protected:
     }
 };
 
-TEST(Core_PCA, accuracy) { Core_PCATest test; test.safe_run(); }
-TEST(Core_Reduce, accuracy) { Core_ReduceTest test; test.safe_run(); }
-TEST(Core_Array, basic_operations) { Core_ArrayOpTest test; test.safe_run(); }
+alvision.cvtest.TEST('Core_PCA', 'accuracy', () => { Core_PCATest test; test.safe_run(); });
+alvision.cvtest.TEST('Core_Reduce', 'accuracy', () => { Core_ReduceTest test; test.safe_run(); });
+alvision.cvtest.TEST('Core_Array', 'basic_operations', () => { Core_ArrayOpTest test; test.safe_run(); });
 
-TEST(Core_Merge, shape_operations) { Core_MergeTest test; test.safe_run(); }
-TEST(Core_Split, shape_operations) { Core_SplitTest test; test.safe_run(); }
+alvision.cvtest.TEST('Core_Merge', 'shape_operations', () => { Core_MergeTest test; test.safe_run(); });
+alvision.cvtest.TEST('Core_Split', 'shape_operations',()=> { Core_SplitTest test; test.safe_run(); });
 
 
-TEST(Core_IOArray, submat_assignment)
-{
-    Mat1f A = Mat1f::zeros(2,2);
-    Mat1f B = Mat1f::ones(1,3);
+alvision.cvtest.TEST('Core_IOArray', 'submat_assignment', () => {
+    Mat1f A = Mat1f::zeros(2, 2);
+    Mat1f B = Mat1f::ones(1, 3);
 
-    EXPECT_THROW( B.colRange(0,3).copyTo(A.row(0)), alvision.Exception );
+    EXPECT_THROW(B.colRange(0, 3).copyTo(A.row(0)), alvision.Exception);
 
-    EXPECT_NO_THROW( B.colRange(0,2).copyTo(A.row(0)) );
+    EXPECT_NO_THROW(B.colRange(0, 2).copyTo(A.row(0)));
 
-    EXPECT_EQ( 1.0f, A(0,0) );
-    EXPECT_EQ( 1.0f, A(0,1) );
-}
+    EXPECT_EQ(1.0f, A(0, 0));
+    EXPECT_EQ(1.0f, A(0, 1));
+});
 
-void OutputArray_create1(OutputArray m) { m.create(1, 2, CV_32S); }
-void OutputArray_create2(OutputArray m) { m.create(1, 3, CV_32F); }
+function OutputArray_create1(m: alvision.OutputArray) : void{ m.create(1, 2,   alvision.MatrixType.CV_32S); }
+function OutputArray_create2( m : alvision.OutputArray) : void{ m.create(1, 3, alvision.MatrixType.CV_32F); }
 
-TEST(Core_IOArray, submat_create)
-{
-    Mat1f A = Mat1f::zeros(2,2);
+alvision.cvtest.TEST('Core_IOArray', 'submat_create', () => {
+    Mat1f A = Mat1f::zeros(2, 2);
 
-    EXPECT_THROW( OutputArray_create1(A.row(0)), alvision.Exception );
-    EXPECT_THROW( OutputArray_create2(A.row(0)), alvision.Exception );
-}
+    EXPECT_THROW(OutputArray_create1(A.row(0)), alvision.Exception);
+    EXPECT_THROW(OutputArray_create2(A.row(0)), alvision.Exception);
+});
 
-TEST(Core_Mat, reshape_1942)
+alvision.cvtest.TEST('Core_Mat', 'reshape_1942',()=>
 {
     alvision.Mat A = (alvision.Mat_<float>(2,3) << 3.4884074, 1.4159607, 0.78737736,  2.3456569, -0.88010466, 0.3009364);
     int cn = 0;
@@ -1195,15 +1182,14 @@ TEST(Core_Mat, reshape_1942)
         cn = M.channels();
     );
     ASSERT_EQ(1, cn);
-}
+});
 
-TEST(Core_Mat, copyNx1ToVector)
-{
-    alvision.Mat_<uchar> src(5, 1);
-    alvision.Mat_<uchar> ref_dst8;
-    alvision.Mat_<ushort> ref_dst16;
-    Array<uchar> dst8;
-    Array<ushort> dst16;
+alvision.cvtest.TEST('Core_Mat', 'copyNx1ToVector', () => {
+    alvision.Mat_ < uchar > src(5, 1);
+    alvision.Mat_ < uchar > ref_dst8;
+    alvision.Mat_ < ushort > ref_dst16;
+    Array < uchar > dst8;
+    Array < ushort > dst16;
 
     src << 1, 2, 3, 4, 5;
 
@@ -1216,34 +1202,31 @@ TEST(Core_Mat, copyNx1ToVector)
     src.convertTo(dst16, CV_16U);
 
     ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(0, 0), ref_dst16, alvision.Mat_<ushort>(dst16));
-}
+});
 
-TEST(Core_Matx, fromMat_)
-{
-    Mat_<double> a = (Mat_<double>(2,2) << 10, 11, 12, 13);
+alvision.cvtest.TEST('Core_Matx', 'fromMat_', () => {
+    Mat_ < double > a = (Mat_<double>(2, 2) << 10, 11, 12, 13);
     Matx22d b(a);
-    ASSERT_EQ( norm(a, b, NORM_INF), 0.);
-}
+    ASSERT_EQ(norm(a, b, NORM_INF), 0.);
+});
 
-TEST(Core_InputArray, empty)
-{
-    Array<Array<Point> > data;
-    ASSERT_TRUE( _InputArray(data).empty() );
-}
+alvision.cvtest.TEST('Core_InputArray', 'empty', () => {
+    Array < Array < Point > > data;
+    ASSERT_TRUE(_InputArray(data).empty());
+});
 
-TEST(Core_CopyMask, bug1918)
-{
-    Mat_<unsigned char> tmpSrc(100,100);
+alvision.cvtest.TEST('Core_CopyMask', 'bug1918', () => {
+    Mat_ < unsigned char> tmpSrc(100, 100);
     tmpSrc = 124;
-    Mat_<unsigned char> tmpMask(100,100);
+    Mat_ < unsigned char> tmpMask(100, 100);
     tmpMask = 255;
-    Mat_<unsigned char> tmpDst(100,100);
+    Mat_ < unsigned char> tmpDst(100, 100);
     tmpDst = 2;
-    tmpSrc.copyTo(tmpDst,tmpMask);
-    ASSERT_EQ(sum(tmpDst)[0], 124*100*100);
-}
+    tmpSrc.copyTo(tmpDst, tmpMask);
+    ASSERT_EQ(sum(tmpDst)[0], 124 * 100 * 100);
+});
 
-TEST(Core_SVD, orthogonality)
+alvision.cvtest.TEST('Core_SVD', 'orthogonality',()=>
 {
     for( int i = 0; i < 2; i++ )
     {
@@ -1255,10 +1238,10 @@ TEST(Core_SVD, orthogonality)
         mat_U *= mat_U.t();
         ASSERT_LT(norm(mat_U, Mat::eye(2, 2, type), NORM_INF), 1e-5);
     }
-}
+});
 
 
-TEST(Core_SparseMat, footprint)
+alvision.cvtest.TEST('Core_SparseMat', 'footprint',()=>
 {
     int n = 1000000;
     int sz[] = { n, n };
@@ -1279,4 +1262,4 @@ TEST(Core_SparseMat, footprint)
 
     ASSERT_LE((int)m.hdr.nodeSize, 32);
     ASSERT_LE(dataSize1, threshold);
-}
+});

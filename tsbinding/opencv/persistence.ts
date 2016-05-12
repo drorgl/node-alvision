@@ -547,7 +547,7 @@ export var FileStorage: FileStorageStatic = alvision_module.FileStorage;
 //Note that file nodes are only used for navigating file storages opened for reading. When a file
 //storage is opened for writing, no data is stored in memory after it is written.
 // */
-interface FileNode
+export interface FileNode
 {
 //public:
 //    //! type of the file storage node

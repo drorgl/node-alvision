@@ -46,6 +46,7 @@ import * as _st from './static';
 import * as _types from './types';
 import * as _matx from './matx';
 import * as _cuda from './cuda';
+import * as _cvdef from './cvdef';
 
 //#ifndef __OPENCV_CORE_MAT_HPP__
 //#define __OPENCV_CORE_MAT_HPP__
@@ -270,22 +271,25 @@ import * as _cuda from './cuda';
         typedef OutputArray InputOutputArrayOfArrays;
     @endcode
      */
+
+        export enum _OutputArrayDepth 
+    {
+            DEPTH_MASK_8U = 1 <<  _cvdef.MatrixType.CV_8U,
+            DEPTH_MASK_8S = 1 <<  _cvdef.MatrixType.CV_8S,
+            DEPTH_MASK_16U = 1 << _cvdef.MatrixType.CV_16U,
+            DEPTH_MASK_16S = 1 << _cvdef.MatrixType.CV_16S,
+            DEPTH_MASK_32S = 1 << _cvdef.MatrixType.CV_32S,
+            DEPTH_MASK_32F = 1 << _cvdef.MatrixType.CV_32F,
+            DEPTH_MASK_64F = 1 << _cvdef.MatrixType.CV_64F,
+            DEPTH_MASK_ALL = (DEPTH_MASK_64F << 1) - 1,
+            DEPTH_MASK_ALL_BUT_8S = DEPTH_MASK_ALL & ~DEPTH_MASK_8S,
+            DEPTH_MASK_FLT = DEPTH_MASK_32F + DEPTH_MASK_64F
+        };
+
+
     //class CV_EXPORTS _OutputArray : public _InputArray
     //{
     //    public:
-    //    enum
-    //{
-    //        DEPTH_MASK_8U = 1 << CV_8U,
-    //        DEPTH_MASK_8S = 1 << CV_8S,
-    //        DEPTH_MASK_16U = 1 << CV_16U,
-    //        DEPTH_MASK_16S = 1 << CV_16S,
-    //        DEPTH_MASK_32S = 1 << CV_32S,
-    //        DEPTH_MASK_32F = 1 << CV_32F,
-    //        DEPTH_MASK_64F = 1 << CV_64F,
-    //        DEPTH_MASK_ALL = (DEPTH_MASK_64F << 1) - 1,
-    //        DEPTH_MASK_ALL_BUT_8S = DEPTH_MASK_ALL & ~DEPTH_MASK_8S,
-    //        DEPTH_MASK_FLT = DEPTH_MASK_32F + DEPTH_MASK_64F
-    //    };
 
     //    _OutputArray();
     //    _OutputArray(int _flags, void* _obj);
@@ -520,6 +524,9 @@ import * as _cuda from './cuda';
 //    UMatData * u;
 //};
 
+    interface MatSize {
+        [i: number]: _st.int;
+    }
 
 //struct CV_EXPORTS MatSize
 //{
@@ -2098,7 +2105,7 @@ export interface Mat_<T> extends Mat
 //    template < typename Functor> void forEach(const Functor& operation) const;
 
  //   //! equivalent to Mat::create(_rows, _cols, DataType<_Tp>::type)
-    create(int _rows, int _cols): void;
+    create(_rows: _st.int, _cols: _st.int ): void;
  //   //! equivalent to Mat::create(_size, DataType<_Tp>::type)
  //   void create(Size _size);
  //   //! equivalent to Mat::create(_ndims, _sizes, DatType<_Tp>::type)
@@ -2229,35 +2236,35 @@ interface UMatStatic {
  //   public:
  //   //! default constructor
     new (usageFlags?: UMatUsageFlags /* = USAGE_DEFAULT*/);
- //   //! constructs 2D matrix of the specified size and type
- //   // (_type is CV_8UC1, CV_64FC3, CV_32SC(12) etc.)
- //   UMat(int rows, int cols, int type, UMatUsageFlags usageFlags = USAGE_DEFAULT);
- //   UMat(Size size, int type, UMatUsageFlags usageFlags = USAGE_DEFAULT);
- //   //! constucts 2D matrix and fills it with the specified value _s.
- //   UMat(int rows, int cols, int type, const Scalar& s, UMatUsageFlags usageFlags = USAGE_DEFAULT);
- //   UMat(Size size, int type, const Scalar& s, UMatUsageFlags usageFlags = USAGE_DEFAULT);
- //
- //   //! constructs n-dimensional matrix
- //   UMat(int ndims, const int* sizes, int type, UMatUsageFlags usageFlags = USAGE_DEFAULT);
- //   UMat(int ndims, const int* sizes, int type, const Scalar& s, UMatUsageFlags usageFlags = USAGE_DEFAULT);
- //
- //   //! copy constructor
- //   UMat(const UMat& m);
- //
- //   //! creates a matrix header for a part of the bigger matrix
- //   UMat(const UMat& m, const Range& rowRange, const Range& colRange=Range::all());
- //   UMat(const UMat& m, const Rect& roi);
- //   UMat(const UMat& m, const Range* ranges);
- //
- //    //! Matlab-style matrix initialization
- //   static UMat zeros(int rows, int cols, int type);
- //   static UMat zeros(Size size, int type);
- //   static UMat zeros(int ndims, const int* sz, int type);
- //   static UMat ones(int rows, int cols, int type);
- //   static UMat ones(Size size, int type);
- //   static UMat ones(int ndims, const int* sz, int type);
- //   static UMat eye(int rows, int cols, int type);
- //   static UMat eye(Size size, int type);
+    //! constructs 2D matrix of the specified size and type
+    // (_type is CV_8UC1, CV_64FC3, CV_32SC(12) etc.)
+    //new (rows: _st.int, cols: _st.int, type: _st.int, usageFlags?: UMatUsageFlags /* = USAGE_DEFAULT*/): UMat;
+    //new (size: _types.Size, type: _st.int, usageFlags?: UMatUsageFlags /*= USAGE_DEFAULT*/): UMat;
+    //! constucts 2D matrix and fills it with the specified value _s.
+    //new (int rows, int cols, int type, const Scalar& s, UMatUsageFlags usageFlags = USAGE_DEFAULT): UMat;
+    //new (Size size, int type, const Scalar& s, UMatUsageFlags usageFlags = USAGE_DEFAULT): UMat;
+ 
+    //! constructs n-dimensional matrix
+    //new (int ndims, const int* sizes, int type, UMatUsageFlags usageFlags = USAGE_DEFAULT): UMat;
+    //new (int ndims, const int* sizes, int type, const Scalar& s, UMatUsageFlags usageFlags = USAGE_DEFAULT): UMat;
+ 
+    //! copy constructor
+    //UMat(const UMat& m);
+ 
+    //! creates a matrix header for a part of the bigger matrix
+    new (m: UMat, rowRange: Range, colRange?: Range/* =Range::all()*/): UMat;
+    new (m: UMat, roi:_types.Rect ): UMat;
+    new (m: UMat, ranges: Array<Range>): UMat;
+ 
+     //! Matlab-style matrix initialization
+    //zeros(int rows, int cols, int type): UMat;
+    //zeros(Size size, int type): UMat;
+    //zeros(int ndims, const int* sz, int type): UMat;
+    //ones(int rows, int cols, int type): UMat;
+    //ones(Size size, int type): UMat;
+    //ones(int ndims, const int* sz, int type): UMat;
+    //eye(int rows, int cols, int type): UMat;
+    //eye(Size size, int type): UMat;
 
 }
 
@@ -2338,9 +2345,9 @@ export interface UMat
 //   
 //    //! allocates new matrix data unless the matrix already has specified size and type.
 //    // previous data is unreferenced if needed.
-//    void create(int rows, int cols, int type, UMatUsageFlags usageFlags = USAGE_DEFAULT);
-//    void create(Size size, int type, UMatUsageFlags usageFlags = USAGE_DEFAULT);
-//    void create(int ndims, const int* sizes, int type, UMatUsageFlags usageFlags = USAGE_DEFAULT);
+    create(rows: _st.int, cols: _st.int, type: _st.int, usageFlags?: UMatUsageFlags /* = USAGE_DEFAULT*/): void;
+    create(size: _types.Size, type: _st.int, usageFlags?: UMatUsageFlags /*= USAGE_DEFAULT*/): void;
+    create(ndims: _st.int, sizes: Array<_st.int>, type: _st.int, usageFlags?: UMatUsageFlags /* = USAGE_DEFAULT*/): void;
 //
 //    //! increases the reference counter; use with care to avoid memleaks
 //    void addref();
@@ -2428,6 +2435,7 @@ export interface UMat
 //    size_t offset;
 //
 //    MatSize size;
+    size: MatSize;
 //    MatStep step;
 
 //
@@ -2518,29 +2526,29 @@ Elements can be accessed using the following methods:
     @endcode
  */
 export interface SparseMatStatic {
-  //  /** @brief Various SparseMat constructors.
-  //  */
-  //  SparseMat();
-  //
-  //  /** @overload
-  //  @param dims Array dimensionality.
-  //  @param _sizes Sparce matrix size on all dementions.
-  //  @param _type Sparse matrix data type.
-  //  */
-  //  SparseMat(int dims, const int* _sizes, int _type);
-  //
-  //  /** @overload
-  //  @param m Source matrix for copy constructor. If m is dense matrix (ocvMat) then it will be converted
-  //  to sparse representation.
-  //  */
-  //  SparseMat(const SparseMat& m);
-  //
-  //  /** @overload
-  //  @param m Source matrix for copy constructor. If m is dense matrix (ocvMat) then it will be converted
-  //  to sparse representation.
-  //  */
-  //  explicit SparseMat(const Mat& m);
-  //
+    /** @brief Various SparseMat constructors.
+    */
+    new (): SparseMat;
+  
+    /** @overload
+    @param dims Array dimensionality.
+    @param _sizes Sparce matrix size on all dementions.
+    @param _type Sparse matrix data type.
+    */
+    new (dims: _st.int, _sizes: Array<_st.int>, _type: _st.int ): SparseMat
+  
+    /** @overload
+    @param m Source matrix for copy constructor. If m is dense matrix (ocvMat) then it will be converted
+    to sparse representation.
+    */
+    //new (const SparseMat& m): SparseMat;
+  
+    /** @overload
+    @param m Source matrix for copy constructor. If m is dense matrix (ocvMat) then it will be converted
+    to sparse representation.
+    */
+    new (m: Mat): SparseMat;
+  
 //! the destructor
 //~SparseMat();
 }
@@ -2784,6 +2792,8 @@ export interface SparseMat
 //    Hdr * hdr;
 };
 
+
+export var SparseMat: SparseMatStatic = alvision_module.SparseMat;
 
 
 ///////////////////////////////// SparseMat_<_Tp> ////////////////////////////////////

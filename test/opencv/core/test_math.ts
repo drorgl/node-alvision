@@ -813,7 +813,7 @@ public:
 };
 
 
-function cvTsPerspectiveTransform( const CvArr* _src, CvArr* _dst, const CvMat* transmat ) : void
+function cvTsPerspectiveTransform(_src: alvision.Mat, _dst: alvision.Mat, transmat: alvision.Mat) : void
 {
     int i, j, cols;
     int cn, depth, mat_depth;
@@ -831,8 +831,8 @@ function cvTsPerspectiveTransform( const CvArr* _src, CvArr* _dst, const CvMat* 
     // prepare cn x (cn + 1) transform matrix
     if( mat_depth == CV_32F )
     {
-        for( i = 0; i < transmat.rows; i++ )
-            for( j = 0; j < cols; j++ )
+        for(var i = 0; i < transmat.rows; i++ )
+            for(var j = 0; j < cols; j++ )
                 mat[i*cols + j] = ((float*)(transmat.data.ptr + transmat.step*i))[j];
     }
     else
@@ -847,7 +847,7 @@ function cvTsPerspectiveTransform( const CvArr* _src, CvArr* _dst, const CvMat* 
     cols = a.cols * cn;
     Array<double> buf(cols);
 
-    for( i = 0; i < a.rows; i++ )
+    for(var i = 0; i < a.rows; i++ )
     {
         uchar* src = a.data.ptr + i*a.step;
         uchar* dst = b.data.ptr + i*b.step;
@@ -915,8 +915,7 @@ function cvTsPerspectiveTransform( const CvArr* _src, CvArr* _dst, const CvMat* 
 
 ///////////////// Mahalanobis /////////////////////
 
-class Core_MahalanobisTest extends Core_MatrixTest
-{
+class Core_MahalanobisTest extends Core_MatrixTest {
     constructor() {
         super(3, 1, false, true, 1);
         this.test_case_count = 100;
@@ -924,53 +923,52 @@ class Core_MahalanobisTest extends Core_MatrixTest
         this.test_array[this.TEMP].push(null);
         this.test_array[this.TEMP].push(null);
     }
-public:
-    typedef Core_MatrixTest Base;
-    Core_MahalanobisTest();
-    protected:
+    //typedef Core_MatrixTest Base;
+    //Core_MahalanobisTest();
+
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
         types: Array<Array<alvision.int>>): void {
-        RNG & rng = this.ts.get_rng();
-        Core_MatrixTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        var rng = this.ts.get_rng();
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
-        if (alvision.cvtest.randInt(rng) & 1 )
-        sizes[INPUT][0].width = sizes[INPUT][1].width = 1;
-    else
-    sizes[INPUT][0].height = sizes[INPUT][1].height = 1;
+        if (alvision.cvtest.randInt(rng).valueOf() & 1)
+            sizes[this.INPUT][0].width = sizes[this.INPUT][1].width = 1;
+        else
+            sizes[this.INPUT][0].height = sizes[this.INPUT][1].height = 1;
 
-    sizes[TEMP][0] = sizes[TEMP][1] = sizes[INPUT][0];
-    sizes[INPUT][2].width = sizes[INPUT][2].height = sizes[INPUT][0].width + sizes[INPUT][0].height - 1;
-    sizes[TEMP][2] = sizes[INPUT][2];
-    types[TEMP][0] = types[TEMP][1] = types[TEMP][2] = types[INPUT][0];
+        sizes[this.TEMP][0] = sizes[this.TEMP][1] = sizes[this.INPUT][0];
+        sizes[this.INPUT][2].width = sizes[this.INPUT][2].height = sizes[INPUT][0].width + sizes[INPUT][0].height - 1;
+        sizes[this.TEMP][2] = sizes[INPUT][2];
+        types[this.TEMP][0] = types[TEMP][1] = types[TEMP][2] = types[INPUT][0];
     }
 
-int prepare_test_case(int test_case_idx ){
-    int code = Base::prepare_test_case(test_case_idx);
-    if (code > 0) {
-        // make sure that the inverted "covariation" matrix is symmetrix and positively defined.
-        alvision.cvtest.gemm(test_mat[INPUT][2], test_mat[INPUT][2], 1., Mat(), 0., test_mat[TEMP][2], GEMM_2_T);
-        alvision.cvtest.copy(test_mat[TEMP][2], test_mat[INPUT][2]);
+    prepare_test_case(test_case_idx: alvision.int): alvision.int {
+        var code = Base::prepare_test_case(test_case_idx);
+        if (code > 0) {
+            // make sure that the inverted "covariation" matrix is symmetrix and positively defined.
+            alvision.cvtest.gemm(test_mat[INPUT][2], test_mat[INPUT][2], 1., Mat(), 0., test_mat[TEMP][2], GEMM_2_T);
+            alvision.cvtest.copy(test_mat[TEMP][2], test_mat[INPUT][2]);
+        }
+
+        return code;
     }
+    run_func(): void {
+        test_mat[OUTPUT][0].at<Scalar>(0, 0) =
+            cvRealScalar(cvMahalanobis(test_array[INPUT][0], test_array[INPUT][1], test_array[INPUT][2]));
+    }
+    prepare_to_validation(test_case_idx: alvision.int): void {
+        alvision.cvtest.add(test_mat[INPUT][0], 1., test_mat[INPUT][1], -1.,
+            alvision.Scalar.all(0), test_mat[TEMP][0], test_mat[TEMP][0].type());
+        if (test_mat[INPUT][0].rows == 1)
+            alvision.cvtest.gemm(test_mat[TEMP][0], test_mat[INPUT][2], 1.,
+                Mat(), 0., test_mat[TEMP][1], 0);
+        else
+            alvision.cvtest.gemm(test_mat[INPUT][2], test_mat[TEMP][0], 1.,
+                Mat(), 0., test_mat[TEMP][1], 0);
 
-    return code;
+        test_mat[REF_OUTPUT][0].at<Scalar>(0, 0) = cvRealScalar(sqrt(alvision.cvtest.crossCorr(test_mat[TEMP][0], test_mat[TEMP][1])));
+    }
 }
-void run_func(){
-    test_mat[OUTPUT][0].at<Scalar>(0, 0) =
-        cvRealScalar(cvMahalanobis(test_array[INPUT][0], test_array[INPUT][1], test_array[INPUT][2]));
-}
-void prepare_to_validation(int test_case_idx ){
-    alvision.cvtest.add(test_mat[INPUT][0], 1., test_mat[INPUT][1], -1.,
-        alvision.Scalar.all(0), test_mat[TEMP][0], test_mat[TEMP][0].type());
-    if (test_mat[INPUT][0].rows == 1)
-        alvision.cvtest.gemm(test_mat[TEMP][0], test_mat[INPUT][2], 1.,
-            Mat(), 0., test_mat[TEMP][1], 0);
-    else
-        alvision.cvtest.gemm(test_mat[INPUT][2], test_mat[TEMP][0], 1.,
-            Mat(), 0., test_mat[TEMP][1], 0);
-
-    test_mat[REF_OUTPUT][0].at<Scalar>(0, 0) = cvRealScalar(sqrt(alvision.cvtest.crossCorr(test_mat[TEMP][0], test_mat[TEMP][1])));
-}
-};
 
 
 ///////////////// covarmatrix /////////////////////
@@ -994,16 +992,16 @@ class Core_CovarMatrixTest extends Core_MatrixTest
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
         types: Array<Array<alvision.int>>): void {
 
-        RNG & rng = this.ts.get_rng();
-        int bits = alvision.cvtest.randInt(rng);
+        var rng = this.ts.get_rng();
+        var bits = alvision.cvtest.randInt(rng);
         int i, single_matrix;
-        Core_MatrixTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
         flags = bits & (CV_COVAR_NORMAL | CV_COVAR_USE_AVG | CV_COVAR_SCALE | CV_COVAR_ROWS);
         single_matrix = flags & CV_COVAR_ROWS;
         t_flag = (bits & 256) != 0;
 
-        const int min_count = 2;
+        const min_count = 2;
 
         if (!t_flag) {
             len = sizes[INPUT][0].width;
@@ -1036,77 +1034,77 @@ class Core_CovarMatrixTest extends Core_MatrixTest
         for (i = 0; i < (single_matrix ? 1 : count); i++)
             temp_hdrs.push(null);
     }
-    int prepare_test_case(int test_case_idx ){
-    int code = Core_MatrixTest::prepare_test_case(test_case_idx);
-    if (code > 0) {
-        int i;
-        int single_matrix = flags & (CV_COVAR_ROWS | CV_COVAR_COLS);
-        int hdr_size = are_images ? sizeof(IplImage) : sizeof(CvMat);
+    prepare_test_case(test_case_idx: alvision.int ) : alvision.int{
+        var code = super.prepare_test_case(test_case_idx);
+        if (code > 0) {
+            int i;
+            int single_matrix = flags & (CV_COVAR_ROWS | CV_COVAR_COLS);
+            int hdr_size = are_images ? sizeof(IplImage) : sizeof(CvMat);
 
-        hdr_data.resize(count * hdr_size);
-        uchar * _hdr_data = &hdr_data[0];
-        if (single_matrix) {
-            if (!are_images)
-                *((CvMat *)_hdr_data) = test_mat[INPUT][0];
-            else
-                *((IplImage *)_hdr_data) = test_mat[INPUT][0];
-            temp_hdrs[0] = _hdr_data;
-        }
-        else
-            for (i = 0; i < count; i++) {
-                Mat part;
-                void* ptr = _hdr_data + i * hdr_size;
-
-                if (!t_flag)
-                    part = test_mat[INPUT][0].row(i);
-                else
-                    part = test_mat[INPUT][0].col(i);
-
+            hdr_data.resize(count * hdr_size);
+            uchar * _hdr_data = &hdr_data[0];
+            if (single_matrix) {
                 if (!are_images)
-                    *((CvMat *)ptr) = part;
+                    *((CvMat *)_hdr_data) = test_mat[INPUT][0];
                 else
-                    *((IplImage *)ptr) = part;
-
-                temp_hdrs[i] = ptr;
+                    *((IplImage *)_hdr_data) = test_mat[INPUT][0];
+                temp_hdrs[0] = _hdr_data;
             }
-    }
-
-    return code;
-}
-    void run_func(){
-    cvCalcCovarMatrix((const void**)&temp_hdrs[0], count,
-        test_array[OUTPUT][0], test_array[INPUT_OUTPUT][0], flags );
-    }
-    void prepare_to_validation(int test_case_idx ){
-    Mat & avg = test_mat[REF_INPUT_OUTPUT][0];
-    double scale = 1.;
-
-    if (!(flags & CV_COVAR_USE_AVG)) {
-        Mat hdrs0 = cvarrToMat(temp_hdrs[0]);
-
-        int i;
-        avg = alvision.Scalar.all(0);
-
-        for (i = 0; i < count; i++) {
-            Mat vec;
-            if (flags & CV_COVAR_ROWS)
-                vec = hdrs0.row(i);
-            else if (flags & CV_COVAR_COLS)
-                vec = hdrs0.col(i);
             else
-                vec = cvarrToMat(temp_hdrs[i]);
+                for (i = 0; i < count; i++) {
+                    Mat part;
+                    void* ptr = _hdr_data + i * hdr_size;
 
-            alvision.cvtest.add(avg, 1, vec, 1, alvision.Scalar.all(0), avg, avg.type());
+                    if (!t_flag)
+                        part = test_mat[INPUT][0].row(i);
+                    else
+                        part = test_mat[INPUT][0].col(i);
+
+                    if (!are_images)
+                        *((CvMat *)ptr) = part;
+                    else
+                        *((IplImage *)ptr) = part;
+
+                    temp_hdrs[i] = ptr;
+                }
         }
 
-        alvision.cvtest.add(avg, 1. / count, avg, 0., alvision.Scalar.all(0), avg, avg.type());
+        return code;
     }
+    run_func() : void{
+        cvCalcCovarMatrix((const void**)&temp_hdrs[0], count,
+            test_array[OUTPUT][0], test_array[INPUT_OUTPUT][0], flags );
+    }
+            prepare_to_validation(test_case_idx  : alvision.int ) : void{
+    var avg = this.test_mat[this.REF_INPUT_OUTPUT][0];
+    var scale = 1.;
+
+    if(!(flags & CV_COVAR_USE_AVG)) {
+                Mat hdrs0 = cvarrToMat(temp_hdrs[0]);
+
+                int i;
+                avg = alvision.Scalar.all(0);
+
+                for (i = 0; i < count; i++) {
+                    Mat vec;
+                    if (flags & CV_COVAR_ROWS)
+                        vec = hdrs0.row(i);
+                    else if (flags & CV_COVAR_COLS)
+                        vec = hdrs0.col(i);
+                    else
+                        vec = cvarrToMat(temp_hdrs[i]);
+
+                    alvision.cvtest.add(avg, 1, vec, 1, alvision.Scalar.all(0), avg, avg.type());
+                }
+
+                alvision.cvtest.add(avg, 1. / count, avg, 0., alvision.Scalar.all(0), avg, avg.type());
+            }
 
     if (flags & CV_COVAR_SCALE) {
         scale = 1. / count;
     }
 
-    Mat & temp0 = test_mat[TEMP][0];
+    var temp0 = this.test_mat[this.TEMP][0];
     alvision.repeat(avg, temp0.rows / avg.rows, temp0.cols / avg.cols, temp0);
     alvision.cvtest.add(test_mat[INPUT][0], 1, temp0, -1, alvision.Scalar.all(0), temp0, temp0.type());
 
@@ -1116,11 +1114,14 @@ class Core_CovarMatrixTest extends Core_MatrixTest
     }
 
 
-    Array<void*> temp_hdrs;
-    Array<uchar> hdr_data;
-    int flags, t_flag, len, count;
-    bool are_images;
-};
+    protected temp_hdrs: Array<any> ;
+    protected hdr_data: Array<alvision.uchar> ;
+   protected flags          : alvision.int;
+       protected t_flag     : alvision.int;
+       protected len        : alvision.int;
+       protected count: alvision.int;
+    protected are_images: boolean;
+}
 
 
 function cvTsFloodWithZeros( Mat& mat, RNG& rng ) : void
@@ -2318,23 +2319,23 @@ alvision.cvtest.TEST('Core_Invert', 'small',()=>
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-alvision.cvtest.TEST('Core_CovarMatrix', 'accuracy', () => { Core_CovarMatrixTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_CrossProduct', 'accuracy', () => { Core_CrossProductTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Determinant', 'accuracy', () => { Core_DetTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_DotProduct', 'accuracy', () => { Core_DotProductTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_GEMM', 'accuracy', () => { Core_GEMMTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Invert', 'accuracy', () => { Core_InvertTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Mahalanobis', 'accuracy', () => { Core_MahalanobisTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_MulTransposed', 'accuracy', () => { Core_MulTransposedTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Transform', 'accuracy', () => { Core_TransformTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_PerspectiveTransform', 'accuracy', () => { Core_PerspectiveTransformTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Pow', 'accuracy', () => { Core_PowTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_SolveLinearSystem', 'accuracy', () => { Core_SolveTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_SVD', 'accuracy', () => { Core_SVDTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_SVBkSb', 'accuracy', () => { Core_SVBkSbTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Trace', 'accuracy', () => { Core_TraceTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_SolvePoly', 'accuracy', () => { Core_SolvePolyTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Phase', 'accuracy', () => { Core_PhaseTest test; test.safe_run(); });
+alvision.cvtest.TEST('Core_CovarMatrix', 'accuracy', () => { var test = new Core_CovarMatrixTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_CrossProduct', 'accuracy', () => { var test = new Core_CrossProductTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Determinant', 'accuracy', () => { var test = new Core_DetTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_DotProduct', 'accuracy', () => { var test = new Core_DotProductTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_GEMM', 'accuracy', () => { var test = new Core_GEMMTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Invert', 'accuracy', () => { var test = new Core_InvertTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Mahalanobis', 'accuracy', () => { var test = new Core_MahalanobisTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_MulTransposed', 'accuracy', () => { var test = new Core_MulTransposedTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Transform', 'accuracy', () => { var test = new Core_TransformTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_PerspectiveTransform', 'accuracy', () => { var test = new Core_PerspectiveTransformTest (); test.safe_run(); });
+alvision.cvtest.TEST('Core_Pow', 'accuracy', () => { var test = new Core_PowTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_SolveLinearSystem', 'accuracy', () => { var test = new Core_SolveTest (); test.safe_run(); });
+alvision.cvtest.TEST('Core_SVD', 'accuracy', () => { var test = new Core_SVDTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_SVBkSb', 'accuracy', () => { var test = new Core_SVBkSbTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Trace', 'accuracy', () => { var test = new Core_TraceTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_SolvePoly', 'accuracy', () => { var test = new Core_SolvePolyTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Phase', 'accuracy', () => { var test = new Core_PhaseTest (); test.safe_run(); });
 
 
 alvision.cvtest.TEST('Core_SVD', 'flt',()=>
@@ -2360,14 +2361,14 @@ alvision.cvtest.TEST('Core_SVD', 'flt',()=>
     var B = new alvision.Mat(6, 1, alvision.MatrixType.CV_32F, b);
     var X = new alvision.Mat(), B1 = new alvision.Mat();
     alvision.solve(A, B, X,alvision.DecompTypes.DECOMP_SVD);
-    B1 = alvision.MatExpr.op_Multiplication( A,X);
+    B1 = alvision.Mat.from(alvision.MatExpr.op_Multiplication(A, X));
     alvision.EXPECT_LE(alvision.cvtest.norm(B1, B, alvision.NormTypes.NORM_L2 + alvision.NormTypes.NORM_RELATIVE).valueOf(), alvision.FLT_EPSILON*10);
 });
 
 
 // TODO: eigenvv, invsqrt, cbrt, fastarctan, (round, floor, ceil(?)),
 
-enum
+enum InVariantType
 {
     MAT_N_DIM_C1,
     MAT_N_1_CDIM,
@@ -2379,18 +2380,18 @@ enum
 
 class CV_KMeansSingularTest extends alvision. cvtest.BaseTest
 {
-    run(int inVariant) : void
+    run( inVariant : alvision.int) : void
     {
-        int i, iter = 0, N = 0, N0 = 0, K = 0, dims = 0;
+        int i,  N = 0, N0 = 0, K = 0, dims = 0;
         Mat labels;
         try
         {
-            RNG& rng = theRNG();
-            const int MAX_DIM=5;
-            int MAX_POINTS = 100, maxIter = 100;
-            for( iter = 0; iter < maxIter; iter++ )
+            var rng = alvision.theRNG();
+            const MAX_DIM=5;
+            var MAX_POINTS = 100, maxIter = 100;
+            for(var iter = 0; iter < maxIter; iter++ )
             {
-                ts.update_context(this, iter, true);
+                this.ts.update_context(this, iter, true);
                 dims = rng.uniform(inVariant == MAT_1_N_CDIM ? 2 : 1, MAX_DIM+1);
                 N = rng.uniform(1, MAX_POINTS+1);
                 N0 = rng.uniform(1, MAX(N/10, 2));
@@ -2467,12 +2468,12 @@ class CV_KMeansSingularTest extends alvision. cvtest.BaseTest
                     CV_Assert( hist.at<int>(i) != 0 );
             }
         }
-        catch(...)
+        catch(e)
         {
-            ts.printf(alvision.cvtest.TSConstants.LOG,
+            this.ts.printf(alvision.cvtest.TSConstants.LOG,
                        "context: iteration=%d, N=%d, N0=%d, K=%d\n",
                        iter, N, N0, K);
-            std::cout << labels << std::endl;
+            console.log(labels);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         }
     }

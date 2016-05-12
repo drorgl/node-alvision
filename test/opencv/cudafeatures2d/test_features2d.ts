@@ -93,7 +93,7 @@ CUDA_TEST_P(FAST, Accuracy)
             Array<alvision.KeyPoint> keypoints;
             fast.detect(loadMat(image), keypoints);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }
@@ -182,7 +182,7 @@ CUDA_TEST_P(ORB, Accuracy)
             alvision.cuda::GpuMat descriptors;
             orb.detectAndComputeAsync(loadMat(image), loadMat(mask), keypoints, descriptors);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }
@@ -594,7 +594,7 @@ CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Single)
             Array< Array<alvision.DMatch> > matches;
             matcher.radiusMatch(loadMat(query), loadMat(train), matches, radius);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }
@@ -660,7 +660,7 @@ CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Collection)
             Array< Array<alvision.DMatch> > matches;
             matcher.radiusMatch(alvision.cuda::GpuMat(query), matches, radius, masks);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }

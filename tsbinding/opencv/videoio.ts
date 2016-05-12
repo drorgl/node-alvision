@@ -563,7 +563,7 @@ class can be used: :
      //virtual ~VideoCapture();
      }
 
-interface VideoCapture
+export interface VideoCapture
 {
 //public:
  
@@ -671,7 +671,7 @@ interface VideoCapture
          by DC1394 v 2.x backend currently)
     @param value Value of the property.
      */
-    set(propId: _st.int, value: _st.double ): boolean;
+    set(propId: CAP_PROP | _st.int, value: _st.double ): boolean;
 
     /** @brief Returns the specified VideoCapture property
 

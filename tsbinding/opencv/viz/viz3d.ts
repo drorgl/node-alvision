@@ -97,12 +97,12 @@ interface Viz3dStatic {
 //            typedef void (*MouseCallback)(const MouseEvent&, void*);
 
 
-//            /** @brief Shows a widget in the window.
+            /** @brief Shows a widget in the window.
 
-//            @param id A unique id for the widget. @param widget The widget to be displayed in the window.
-//            @param pose Pose of the widget.
-//             */
-//            showWidget(id : string, widget : Widget,  pose? : _affine.Affine3d/* = Affine3d::Identity()*/): void;
+            @param id A unique id for the widget. @param widget The widget to be displayed in the window.
+            @param pose Pose of the widget.
+             */
+            //showWidget(id : string, widget : Widget,  pose? : _affine.Affine3d/* = Affine3d::Identity()*/): void;
 
 //            /** @brief Removes a widget from the window.
 

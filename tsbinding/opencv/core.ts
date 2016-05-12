@@ -405,7 +405,7 @@ export var error: Ierror = alvision_module.error;
 
     interface Iadd {
         (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray ,
-            mask: _st.InputArray /* = noArray()*/, dtype: _st.int /* = -1*/): void;
+            mask?: _st.InputArray /* = noArray()*/, dtype?: _st.int /* = -1*/): void;
     }
 
     export var add: Iadd = alvision_module.add;
@@ -450,7 +450,7 @@ export var error: Ierror = alvision_module.error;
       */
     interface Isubtract {
         (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray ,
-            mask: _st.InputArray /* = noArray()*/, dtype: _st.int /* = -1*/): void;
+            mask?: _st.InputArray /* = noArray()*/, dtype?: _st.int /* = -1*/): void;
     }
 
 export var subtract: Isubtract = alvision_module.subtract;
@@ -481,7 +481,7 @@ export var subtract: Isubtract = alvision_module.subtract;
 
 interface Imultiply {
     (src1: _st.InputArray, src2: _st.InputArray,
-        dst: _st.OutputArray, scale: _st.double /* = 1 */, dtype: _st.int /* = -1 */): void;
+        dst: _st.OutputArray, scale?: _st.double /* = 1 */, dtype?: _st.int /* = -1 */): void;
 }
 
 export var multiply: Imultiply = alvision_module.multiply;
@@ -509,9 +509,9 @@ export var multiply: Imultiply = alvision_module.multiply;
 
 interface Idivide {
     (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray,
-        scale: _st.double /* = 1 */, dtype: _st.int /* = -1 */): void;
+        scale?: _st.double /* = 1 */, dtype?: _st.int /* = -1 */): void;
     (scale: _st.double, src2: _st.InputArray,
-        dst: _st.OutputArray, dtype: _st.int /* = -1 */): void;
+        dst: _st.OutputArray, dtype?: _st.int /* = -1 */): void;
 }
 
 export var divide: Idivide = alvision_module.divide;
@@ -1571,7 +1571,7 @@ export var bitwise_xor: Ibitwise_xor = alvision_module.bitwise_xor;
 
 export interface Ibitwise_not {
     (src: _st.InputArray, dst: _st.OutputArray,
-        mask: _st.InputArray /* = noArray()*/): void;
+        mask?: _st.InputArray /* = noArray()*/): void;
 }
 
 export var bitwise_not: Ibitwise_not = alvision_module.bitwise_not;

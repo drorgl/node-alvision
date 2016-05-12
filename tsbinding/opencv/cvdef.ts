@@ -116,7 +116,7 @@ export enum MatrixType {
 
 export module MatrixType {
     export interface ICV_MAKETYPE {
-        (depth: number | MatrixType, channels: number | _st.int): number;
+        (depth: number | _st.int | MatrixType, channels: number | _st.int): number;
         //(depth: MatrixType, channels: number | _st.int): number;
     }
 

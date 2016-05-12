@@ -53,23 +53,23 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <limits>
-#include <cstdio>
-#include <map>
+//#include "test_precomp.hpp"
+//#include <limits>
+//#include <cstdio>
+//#include <map>
+//
+//using namespace std;
+//using namespace cv;
 
-using namespace std;
-using namespace cv;
+const EVAL_BAD_THRESH = 1.;
+const EVAL_TEXTURELESS_WIDTH = 3;
+const  EVAL_TEXTURELESS_THRESH = 4.f;
+const  EVAL_DISP_THRESH = 1.f;
+const  EVAL_DISP_GAP = 2.f;
+const  EVAL_DISCONT_WIDTH = 9;
+const  EVAL_IGNORE_BORDER = 10;
 
-const float EVAL_BAD_THRESH = 1.f;
-const int EVAL_TEXTURELESS_WIDTH = 3;
-const float EVAL_TEXTURELESS_THRESH = 4.f;
-const float EVAL_DISP_THRESH = 1.f;
-const float EVAL_DISP_GAP = 2.f;
-const int EVAL_DISCONT_WIDTH = 9;
-const int EVAL_IGNORE_BORDER = 10;
-
-const int ERROR_KINDS_COUNT = 6;
+const  ERROR_KINDS_COUNT = 6;
 
 //============================== quality measuring functions =================================================
 
@@ -77,8 +77,8 @@ const int ERROR_KINDS_COUNT = 6;
   Calculate textureless regions of image (regions where the squared horizontal intensity gradient averaged over
   a square window of size=evalTexturelessWidth is below a threshold=evalTexturelessThresh) and textured regions.
 */
-void computeTextureBasedMasks( const Mat& _img, Mat* texturelessMask, Mat* texturedMask,
-             int texturelessWidth = EVAL_TEXTURELESS_WIDTH, float texturelessThresh = EVAL_TEXTURELESS_THRESH )
+function computeTextureBasedMasks(_img : alvision.Mat, texturelessMask : alvision.Mat, texturedMask : alvision.Mat,
+    texturelessWidth  : alvision.int = EVAL_TEXTURELESS_WIDTH, texturelessThresh  : alvision.float = EVAL_TEXTURELESS_THRESH ) : void
 {
     if( !texturelessMask && !texturedMask )
         return;
@@ -100,28 +100,28 @@ void computeTextureBasedMasks( const Mat& _img, Mat* texturelessMask, Mat* textu
         *texturedMask = avgDxI2 >= texturelessThresh;
 }
 
-void checkTypeAndSizeOfDisp( const Mat& dispMap, const Size* sz )
+function checkTypeAndSizeOfDisp(dispMap: alvision.Mat, sz: alvision.Size ) : void
 {
     if( dispMap.empty() )
-        CV_Error( Error::StsBadArg, "dispMap is empty" );
+        alvision.CV_Error( Error::StsBadArg, "dispMap is empty" );
     if( dispMap.type() != CV_32FC1 )
-        CV_Error( Error::StsBadArg, "dispMap must have CV_32FC1 type" );
+        alvision.CV_Error( Error::StsBadArg, "dispMap must have CV_32FC1 type" );
     if( sz && (dispMap.rows != sz.height || dispMap.cols != sz.width) )
-        CV_Error( Error::StsBadArg, "dispMap has incorrect size" );
+        alvision.CV_Error( Error::StsBadArg, "dispMap has incorrect size" );
 }
 
-void checkTypeAndSizeOfMask( const Mat& mask, Size sz )
+function checkTypeAndSizeOfMask(mask: alvision.Mat, sz: alvision.Size ) : void
 {
     if( mask.empty() )
-        CV_Error( Error::StsBadArg, "mask is empty" );
+        alvision.CV_Error( Error::StsBadArg, "mask is empty" );
     if( mask.type() != CV_8UC1 )
-        CV_Error( Error::StsBadArg, "mask must have CV_8UC1 type" );
+        alvision.CV_Error( Error::StsBadArg, "mask must have CV_8UC1 type" );
     if( mask.rows != sz.height || mask.cols != sz.width )
-        CV_Error( Error::StsBadArg, "mask has incorrect size" );
+        alvision.CV_Error( Error::StsBadArg, "mask has incorrect size" );
 }
 
-void checkDispMapsAndUnknDispMasks( const Mat& leftDispMap, const Mat& rightDispMap,
-                                    const Mat& leftUnknDispMask, const Mat& rightUnknDispMask )
+function checkDispMapsAndUnknDispMasks(leftDispMap: alvision.Mat, rightDispMap: alvision.Mat,
+    leftUnknDispMask: alvision.Mat, rightUnknDispMask: alvision.Mat ) : void
 {
     // check type and size of disparity maps
     checkTypeAndSizeOfDisp( leftDispMap, 0 );
@@ -158,10 +158,10 @@ void checkDispMapsAndUnknDispMasks( const Mat& leftDispMap, const Mat& rightDisp
   Calculate occluded regions of reference image (left image) (regions that are occluded in the matching image (right image),
   i.e., where the forward-mapped disparity lands at a location with a larger (nearer) disparity) and non occluded regions.
 */
-void computeOcclusionBasedMasks( const Mat& leftDisp, const Mat& _rightDisp,
+functino  computeOcclusionBasedMasks( const Mat& leftDisp, const Mat& _rightDisp,
                              Mat* occludedMask, Mat* nonOccludedMask,
                              const Mat& leftUnknDispMask = Mat(), const Mat& rightUnknDispMask = Mat(),
-                             float dispThresh = EVAL_DISP_THRESH )
+                             float dispThresh = EVAL_DISP_THRESH ) : void
 {
     if( !occludedMask && !nonOccludedMask )
         return;
@@ -234,8 +234,8 @@ void computeOcclusionBasedMasks( const Mat& leftDisp, const Mat& _rightDisp,
   Calculate depth discontinuty regions: pixels whose neiboring disparities differ by more than
   dispGap, dilated by window of width discontWidth.
 */
-void computeDepthDiscontMask( const Mat& disp, Mat& depthDiscontMask, const Mat& unknDispMask = Mat(),
-                                 float dispGap = EVAL_DISP_GAP, int discontWidth = EVAL_DISCONT_WIDTH )
+function computeDepthDiscontMask(disp: alvision.Mat, depthDiscontMask: alvision.Mat, unknDispMask: alvision.Mat = new alvision.Mat(),
+    dispGap: alvision.float = EVAL_DISP_GAP, discontWidth: alvision.int = EVAL_DISCONT_WIDTH ) : void
 {
     if( disp.empty() )
         CV_Error( Error::StsBadArg, "disp is empty" );
@@ -260,7 +260,7 @@ void computeDepthDiscontMask( const Mat& disp, Mat& depthDiscontMask, const Mat&
 /*
    Get evaluation masks excluding a border.
 */
-Mat getBorderedMask( Size maskSize, int border = EVAL_IGNORE_BORDER )
+function getBorderedMask( Size maskSize, int border = EVAL_IGNORE_BORDER ) : void
 {
     CV_Assert( border >= 0 );
     Mat mask(maskSize, CV_8UC1, Scalar(0));
@@ -275,7 +275,7 @@ Mat getBorderedMask( Size maskSize, int border = EVAL_IGNORE_BORDER )
 /*
   Calculate root-mean-squared error between the computed disparity map (computedDisp) and ground truth map (groundTruthDisp).
 */
-float dispRMS( const Mat& computedDisp, const Mat& groundTruthDisp, const Mat& mask )
+function dispRMS(computedDisp: alvision.Mat, groundTruthDisp: alvision.Mat, mask: alvision.Mat ) : alvision.float  
 {
     checkTypeAndSizeOfDisp( groundTruthDisp, 0 );
     Size sz = groundTruthDisp.size();
@@ -287,16 +287,16 @@ float dispRMS( const Mat& computedDisp, const Mat& groundTruthDisp, const Mat& m
         checkTypeAndSizeOfMask( mask, sz );
         pointsCount = countNonZero(mask);
     }
-    return 1.f/sqrt((float)pointsCount) * (float)alvision.cvtest.norm(computedDisp, groundTruthDisp,alvision.NormTypes. NORM_L2, mask);
+    return 1./sqrt((float)pointsCount) * (float)alvision.cvtest.norm(computedDisp, groundTruthDisp,alvision.NormTypes. NORM_L2, mask);
 }
 
 /*
   Calculate fraction of bad matching pixels.
 */
-float badMatchPxlsFraction( const Mat& computedDisp, const Mat& groundTruthDisp, const Mat& mask,
-                            float _badThresh = EVAL_BAD_THRESH )
+function badMatchPxlsFraction(computedDisp: alvision.Mat, groundTruthDisp: alvision.Mat, mask: alvision.Mat ,
+    _badThresh: alvision.float  = EVAL_BAD_THRESH ) : alvision.float
 {
-    int badThresh = Math.round(_badThresh);
+    var badThresh = Math.round(_badThresh);
     checkTypeAndSizeOfDisp( groundTruthDisp, 0 );
     Size sz = groundTruthDisp.size();
     checkTypeAndSizeOfDisp( computedDisp, &sz );
@@ -311,71 +311,74 @@ float badMatchPxlsFraction( const Mat& computedDisp, const Mat& groundTruthDisp,
         badPxlsMap = badPxlsMap & mask;
         pointsCount = countNonZero(mask);
     }
-    return 1.f/pointsCount * countNonZero(badPxlsMap);
+    return 1./pointsCount * countNonZero(badPxlsMap);
 }
 
 //===================== regression test for stereo matching algorithms ==============================
 
-const string ALGORITHMS_DIR = "stereomatching/algorithms/";
-const string DATASETS_DIR = "stereomatching/datasets/";
-const string DATASETS_FILE = "datasets.xml";
+const  ALGORITHMS_DIR = "stereomatching/algorithms/";
+const  DATASETS_DIR = "stereomatching/datasets/";
+const  DATASETS_FILE = "datasets.xml";
 
-const string RUN_PARAMS_FILE = "_params.xml";
-const string RESULT_FILE = "_res.xml";
+const  RUN_PARAMS_FILE = "_params.xml";
+const  RESULT_FILE = "_res.xml";
 
-const string LEFT_IMG_NAME = "im2.png";
-const string RIGHT_IMG_NAME = "im6.png";
-const string TRUE_LEFT_DISP_NAME = "disp2.png";
-const string TRUE_RIGHT_DISP_NAME = "disp6.png";
+const  LEFT_IMG_NAME = "im2.png";
+const  RIGHT_IMG_NAME = "im6.png";
+const  TRUE_LEFT_DISP_NAME = "disp2.png";
+const  TRUE_RIGHT_DISP_NAME = "disp6.png";
 
-string ERROR_PREFIXES[] = { "borderedAll",
+var ERROR_PREFIXES = [ "borderedAll",
                             "borderedNoOccl",
                             "borderedOccl",
                             "borderedTextured",
                             "borderedTextureless",
-                            "borderedDepthDiscont" }; // size of ERROR_KINDS_COUNT
+                            "borderedDepthDiscont" ]; // size of ERROR_KINDS_COUNT
 
 
-const string RMS_STR = "RMS";
-const string BAD_PXLS_FRACTION_STR = "BadPxlsFraction";
+const  RMS_STR = "RMS";
+const  BAD_PXLS_FRACTION_STR = "BadPxlsFraction";
 
 class QualityEvalParams
 {
-public:
-    QualityEvalParams() { setDefaults(); }
-    QualityEvalParams( int _ignoreBorder )
+    //constructor() {
+    //    this.setDefaults();
+    //}
+    constructor(_ignoreBorder: alvision.int)
     {
-        setDefaults();
-        ignoreBorder = _ignoreBorder;
+        this.setDefaults();
+        this.ignoreBorder = _ignoreBorder;
     }
-    void setDefaults()
+     setDefaults() : void
     {
-        badThresh = EVAL_BAD_THRESH;
-        texturelessWidth = EVAL_TEXTURELESS_WIDTH;
-        texturelessThresh = EVAL_TEXTURELESS_THRESH;
-        dispThresh = EVAL_DISP_THRESH;
-        dispGap = EVAL_DISP_GAP;
-        discontWidth = EVAL_DISCONT_WIDTH;
-        ignoreBorder = EVAL_IGNORE_BORDER;
+        this.badThresh = EVAL_BAD_THRESH;
+        this.texturelessWidth = EVAL_TEXTURELESS_WIDTH;
+        this.texturelessThresh = EVAL_TEXTURELESS_THRESH;
+        this.dispThresh = EVAL_DISP_THRESH;
+        this.dispGap = EVAL_DISP_GAP;
+        this.discontWidth = EVAL_DISCONT_WIDTH;
+        this.ignoreBorder = EVAL_IGNORE_BORDER;
     }
-    float badThresh;
-    int texturelessWidth;
-    float texturelessThresh;
-    float dispThresh;
-    float dispGap;
-    int discontWidth;
-    int ignoreBorder;
+    protected float badThresh;
+    protected int texturelessWidth;
+    protected float texturelessThresh;
+    protected float dispThresh;
+    protected float dispGap;
+    protected int discontWidth;
+    protected int ignoreBorder;
 };
 
 class CV_StereoMatchingTest  extends alvision.cvtest.BaseTest
 {
-public:
-    CV_StereoMatchingTest()
-    { rmsEps.resize( ERROR_KINDS_COUNT, 0.01f );  fracEps.resize( ERROR_KINDS_COUNT, 1.e-6f ); }
-protected:
+    constructor()
+    {
+        super();
+        this.rmsEps.resize(ERROR_KINDS_COUNT, 0.01f );
+        this.fracEps.resize(ERROR_KINDS_COUNT, 1.e-6f );
+    }
     // assumed that left image is a reference image
-    virtual int runStereoMatchingAlgorithm( const Mat& leftImg, const Mat& rightImg,
-                   Mat& leftDisp, Mat& rightDisp, int caseIdx ) = 0; // return ignored border width
+    abstract runStereoMatchingAlgorithm(leftImg: alvision.Mat, rightImg: alvision.Mat,
+        leftDisp: alvision.Mat, rightDisp: alvision.Mat, caseIdx: alvision.int): alvision.int; // return ignored border width
 
     int readDatasetsParams( FileStorage& fs );
     virtual int readRunParams( FileStorage& fs );

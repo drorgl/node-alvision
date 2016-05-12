@@ -322,7 +322,7 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 
         //try { caller(); }
-        //catch (...)
+        //catch(e)
         //{
         //    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         //    printf("+!");
@@ -372,7 +372,7 @@ class CV_Rodrigues2BadArgTest extends alvision.cvtest.BadArgTest
         caller.jacobian = jacobian_c;
 
        /* try { caller(); }
-        catch (...)
+        catch(e)
         {
             printf("badasfas");
         }*/

@@ -104,8 +104,8 @@
 
 //        /** @brief Base class of all widgets. Widget is implicitly shared. :
 //        */
-//        class CV_EXPORTS Widget
-//        {
+        interface Widget
+        {
 //        public:
 //            Widget();
 //            Widget(const Widget& other);
@@ -187,14 +187,14 @@
 //            class Impl;
 //            Impl *impl_;
 //            friend struct WidgetAccessor;
-//        };
+};
 
 //        /////////////////////////////////////////////////////////////////////////////
 
 //        /** @brief Base class of all 3D widgets.
 //         */
-//        class CV_EXPORTS Widget3D : public Widget
-//        {
+interface Widget3D extends Widget
+{
 //        public:
 //            Widget3D() {}
 
@@ -224,14 +224,14 @@
 //             */
 //            void setColor(const Color &color);
 
-//        };
+};
 
 //        /////////////////////////////////////////////////////////////////////////////
 
 //        /** @brief Base class of all 2D widgets.
 //        */
-//        class CV_EXPORTS Widget2D : public Widget
-//        {
+interface Widget2D extends Widget
+{
 //        public:
 //            Widget2D() {}
 
@@ -240,15 +240,15 @@
 //            @param color color of type Color
 //             */
 //            void setColor(const Color &color);
-//        };
+};
 
 //        /////////////////////////////////////////////////////////////////////////////
 //        /// Simple widgets
 
 //        /** @brief This 3D Widget defines a finite line.
 //        */
-//        class CV_EXPORTS WLine : public Widget3D
-//        {
+interface WLine  extends  Widget3D
+{
 //        public:
 //            /** @brief Constructs a WLine.
 
@@ -257,12 +257,12 @@
 //            @param color Color of the line.
 //             */
 //            WLine(const Point3d &pt1, const Point3d &pt2, const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget defines a finite plane.
 //        */
-//        class CV_EXPORTS WPlane : public Widget3D
-//        {
+interface WPlane  extends  Widget3D
+{
 //        public:
 //            /** @brief Constructs a default plane with center point at origin and normal oriented along z-axis.
 
@@ -281,12 +281,12 @@
 //             */
 //            WPlane(const Point3d& center, const Vec3d& normal, const Vec3d& new_yaxis,
 //                   const Size2d& size = Size2d(1.0, 1.0), const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget defines a sphere. :
 //        */
-//        class CV_EXPORTS WSphere : public Widget3D
-//        {
+interface WSphere extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WSphere.
 
@@ -296,12 +296,12 @@
 //            @param color Color of the sphere.
 //             */
 //            WSphere(const cv::Point3d &center, double radius, int sphere_resolution = 10, const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget defines an arrow.
 //        */
-//        class CV_EXPORTS WArrow : public Widget3D
-//        {
+interface WArrow  extends  Widget3D
+{
 //        public:
 //            /** @brief Constructs an WArrow.
 
@@ -314,12 +314,12 @@
 //            Arrow head is located at the end point of the arrow.
 //             */
 //            WArrow(const Point3d& pt1, const Point3d& pt2, double thickness = 0.03, const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget defines a circle.
 //        */
-//        class CV_EXPORTS WCircle : public Widget3D
-//        {
+interface WCircle  extends  Widget3D
+{
 //        public:
 //            /** @brief Constructs default planar circle centred at origin with plane normal along z-axis
 
@@ -338,12 +338,12 @@
 //            @param color Color of the circle.
 //             */
 //            WCircle(double radius, const Point3d& center, const Vec3d& normal, double thickness = 0.01, const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget defines a cone. :
 //        */
-//        class CV_EXPORTS WCone : public Widget3D
-//        {
+interface WCone extends Widget3D
+{
 //        public:
 //            /** @brief Constructs default cone oriented along x-axis with center of its base located at origin
 
@@ -364,12 +364,12 @@
 
 //             */
 //            WCone(double radius, const Point3d& center, const Point3d& tip, int resolution = 6.0, const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget defines a cylinder. :
 //        */
-//        class CV_EXPORTS WCylinder : public Widget3D
-//        {
+interface WCylinder extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WCylinder.
 
@@ -380,12 +380,12 @@
 //            @param color Color of the cylinder.
 //             */
 //            WCylinder(const Point3d& axis_point1, const Point3d& axis_point2, double radius, int numsides = 30, const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget defines a cube.
 //         */
-//        class CV_EXPORTS WCube : public Widget3D
-//        {
+interface WCube extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WCube.
 
@@ -398,12 +398,12 @@
 //             */
 //            WCube(const Point3d& min_point = Vec3d::all(-0.5), const Point3d& max_point = Vec3d::all(0.5),
 //                  bool wire_frame = true, const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget defines a poly line. :
 //        */
-//        class CV_EXPORTS WPolyLine : public Widget3D
-//        {
+interface WPolyLine extends Widget3D
+{
 //        public:
 //            WPolyLine(InputArray points, InputArray colors);
 //            /** @brief Constructs a WPolyLine.
@@ -412,15 +412,15 @@
 //            @param color Color of the poly line.
 //             */
 //            WPolyLine(InputArray points, const Color &color = Color::white());
-//        };
+};
 
 //        /////////////////////////////////////////////////////////////////////////////
 //        /// Text and image widgets
 
 //        /** @brief This 2D Widget represents text overlay.
 //        */
-//        class CV_EXPORTS WText : public Widget2D
-//        {
+interface WText extends Widget2D
+{
 //        public:
 //            /** @brief Constructs a WText.
 
@@ -439,12 +439,12 @@
 //            /** @brief Returns the current text content of the widget.
 //            */
 //            String getText() const;
-//        };
+};
 
 //        /** @brief This 3D Widget represents 3D text. The text always faces the camera.
 //        */
-//        class CV_EXPORTS WText3D : public Widget3D
-//        {
+interface WText3D extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WText3D.
 
@@ -465,11 +465,11 @@
 //            /** @brief Returns the current text content of the widget.
 //            */
 //            String getText() const;
-//        };
+};
 
 //        /** @brief This 2D Widget represents an image overlay. :
 //        */
-//        class CV_EXPORTS WImageOverlay : public Widget2D
+interface WImageOverlay extends Widget2D
 //        {
 //        public:
 //            /** @brief Constructs an WImageOverlay.
@@ -483,12 +483,12 @@
 //            @param image BGR or Gray-Scale image.
 //             */
 //            void setImage(InputArray image);
-//        };
+};
 
 //        /** @brief This 3D Widget represents an image in 3D space. :
 //        */
-//        class CV_EXPORTS WImage3D : public Widget3D
-//        {
+interface WImage3D extends Widget3D
+{
 //        public:
 //            /** @brief Constructs an WImage3D.
 
@@ -518,27 +518,27 @@
 //            @param size the new size of the image.
 //             */
 //            void setSize(const Size& size);
-//        };
+};
 
 //        /////////////////////////////////////////////////////////////////////////////
 //        /// Compond widgets
 
 //        /** @brief This 3D Widget represents a coordinate system. :
 //        */
-//        class CV_EXPORTS WCoordinateSystem : public Widget3D
-//        {
+interface WCoordinateSystem extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WCoordinateSystem.
 
 //            @param scale Determines the size of the axes.
 //             */
 //            WCoordinateSystem(double scale = 1.0);
-//        };
+};
 
 //        /** @brief This 3D Widget defines a grid. :
 //         */
-//        class CV_EXPORTS WGrid : public Widget3D
-//        {
+interface WGrid extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WGrid.
 
@@ -551,12 +551,12 @@
 //            //! Creates repositioned grid
 //            WGrid(const Point3d& center, const Vec3d& normal, const Vec3d& new_yaxis,
 //                  const Vec2i &cells = Vec2i::all(10), const Vec2d &cells_spacing = Vec2d::all(1.0), const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget represents camera position in a scene by its axes or viewing frustum. :
 //        */
-//        class CV_EXPORTS WCameraPosition : public Widget3D
-//        {
+interface WCameraPosition extends Widget3D
+{
 //        public:
 //            /** @brief Creates camera coordinate frame at the origin.
 
@@ -609,15 +609,15 @@
 //            ![Camera viewing frustum with image](images/cpw3.png)
 //             */
 //            WCameraPosition(const Vec2d &fov, InputArray image, double scale = 1.0, const Color &color = Color::white());
-//        };
+};
 
 //        /////////////////////////////////////////////////////////////////////////////
 //        /// Trajectories
 
 //        /** @brief This 3D Widget represents a trajectory. :
 //        */
-//        class CV_EXPORTS WTrajectory : public Widget3D
-//        {
+interface WTrajectory extends Widget3D
+{
 //        public:
 //            enum {FRAMES = 1, PATH = 2, BOTH = FRAMES + PATH };
 
@@ -635,12 +635,12 @@
 //            -   PATH & FRAMES : Displays both poly line and coordinate frames.
 //             */
 //            WTrajectory(InputArray path, int display_mode = WTrajectory::PATH, double scale = 1.0, const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget represents a trajectory. :
 //        */
-//        class CV_EXPORTS WTrajectoryFrustums : public Widget3D
-//        {
+interface WTrajectoryFrustums extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WTrajectoryFrustums.
 
@@ -663,15 +663,15 @@
 //            Displays frustums at each pose of the trajectory.
 //             */
 //            WTrajectoryFrustums(InputArray path, const Vec2d &fov, double scale = 1., const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief This 3D Widget represents a trajectory using spheres and lines
 
 //        where spheres represent the positions of the camera, and lines represent the direction from
 //        previous position to the current. :
 //         */
-//        class CV_EXPORTS WTrajectorySpheres: public Widget3D
-//        {
+interface WTrajectorySpheres extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WTrajectorySpheres.
 
@@ -683,7 +683,7 @@
 //             */
 //            WTrajectorySpheres(InputArray path, double line_length = 0.05, double radius = 0.007,
 //                               const Color &from = Color::red(), const Color &to = Color::white());
-//        };
+};
 
 //        /////////////////////////////////////////////////////////////////////////////
 //        /// Clouds
@@ -692,8 +692,8 @@
 
 //        @note In case there are four channels in the cloud, fourth channel is ignored.
 //        */
-//        class CV_EXPORTS WCloud: public Widget3D
-//        {
+interface WCloud extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WCloud.
 
@@ -730,10 +730,10 @@
 //            Points in the cloud belong to mask when they are set to (NaN, NaN, NaN).
 //             */
 //            WCloud(InputArray cloud, const Color &color, InputArray normals);
-//        };
+};
 
-//        class CV_EXPORTS WPaintedCloud: public Widget3D
-//        {
+interface WPaintedCloud extends Widget3D
+{
 //        public:
 //            //! Paint cloud with default gradient between cloud bounds points
 //            WPaintedCloud(InputArray cloud);
@@ -743,13 +743,13 @@
 
 //            //! Paint cloud with gradient specified by given colors between given points
 //            WPaintedCloud(InputArray cloud, const Point3d& p1, const Point3d& p2, const Color& c1, const Color c2);
-//        };
+};
 
 //        /** @brief This 3D Widget defines a collection of clouds. :
 //        @note In case there are four channels in the cloud, fourth channel is ignored.
 //        */
-//        class CV_EXPORTS WCloudCollection : public Widget3D
-//        {
+interface WCloudCollection extends Widget3D
+{
 //        public:
 //            WCloudCollection();
 
@@ -772,12 +772,12 @@
 //            Useful for large cloud collections to reduce memory usage
 //            */
 //            void finalize();
-//        };
+};
 
 //        /** @brief This 3D Widget represents normals of a point cloud. :
 //        */
-//        class CV_EXPORTS WCloudNormals : public Widget3D
-//        {
+interface WCloudNormals extends Widget3D
+{
 //        public:
 //            /** @brief Constructs a WCloudNormals.
 
@@ -790,7 +790,7 @@
 //            @note In case there are four channels in the cloud, fourth channel is ignored.
 //             */
 //            WCloudNormals(InputArray cloud, InputArray normals, int level = 64, double scale = 0.1, const Color &color = Color::white());
-//        };
+};
 
 //        /** @brief Constructs a WMesh.
 
@@ -800,12 +800,12 @@
 //        @param colors Point colors.
 //        @param normals Point normals.
 //         */
-//        class CV_EXPORTS WMesh : public Widget3D
-//        {
+interface WMesh extends Widget3D
+{
 //        public:
 //            WMesh(const Mesh &mesh);
 //            WMesh(InputArray cloud, InputArray polygons, InputArray colors = noArray(), InputArray normals = noArray());
-//        };
+};
 
 //        /** @brief This class allows to merge several widgets to single one.
 
@@ -814,8 +814,8 @@
 //        of merge won't have color at all. The class is suitable for merging large amount of similar
 //        widgets. :
 //         */
-//        class CV_EXPORTS WWidgetMerger : public Widget3D
-//        {
+interface WWidgetMerger extends Widget3D
+{
 //        public:
 //            WWidgetMerger();
 
@@ -824,7 +824,7 @@
 
 //            //! Repacks internal structure to single widget
 //            void finalize();
-//        };
+};
 
 //        /////////////////////////////////////////////////////////////////////////////
 //        /// Utility exports

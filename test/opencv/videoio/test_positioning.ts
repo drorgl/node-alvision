@@ -82,7 +82,8 @@ run_test(method : METHOD) : void{
 
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nReading video file in %s...\n", file_path);
 
-        var cap = alvision.cvCreateFileCapture(file_path);
+        var cap = new alvision.VideoCapture(file_path);
+        //var cap = alvision.cvCreateFileCapture(file_path);
 
         if (!cap) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\nFAILED\n\n", i + 1, ext[i]);
@@ -92,17 +93,17 @@ run_test(method : METHOD) : void{
             failed_videos++; continue;
         }
 
-        alvision.cvSetCaptureProperty(cap, CAP_PROP_POS_FRAMES, 0);
+        cap.set(alvision.CAP_PROP.CAP_PROP_POS_FRAMES, 0);
 
         this.generate_idx_seq(cap, method);
 
-        var N =  (int)idx.size(), failed_frames = 0, failed_positions = 0, failed_iterations = 0;
+        var N =  this.idx.length, failed_frames = 0, failed_positions = 0, failed_iterations = 0;
 
         for (var j = 0; j < N; ++j)
         {
             var flag = false;
 
-            alvision.cvSetCaptureProperty(cap, CAP_PROP_POS_FRAMES, idx.at(j));
+            cap.set(alvision.CAP_PROP.CAP_PROP_POS_FRAMES, this.idx[(j)]);
 
             /* IplImage* frame = cvRetrieveFrame(cap);
 
@@ -118,9 +119,9 @@ run_test(method : METHOD) : void{
                 flag = !flag;
             } */
 
-            var val = (int)cvGetCaptureProperty(cap, CAP_PROP_POS_FRAMES);
+            var val = cap.get(alvision.CAP_PROP.CAP_PROP_POS_FRAMES);
 
-            if (idx.at(j) != val) {
+            if (this.idx[(j)] != val) {
                 if (!(failed_frames || failed_positions)) {
                     this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nFile information (video %d): \n\nName: big_buck_bunny.%s\n", i + 1, ext[i]);
                 }
@@ -128,7 +129,7 @@ run_test(method : METHOD) : void{
                 if (!failed_frames) {
                     this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nIteration: %d\n", j);
                 }
-                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Required pos: %d\nReturned pos: %d\n", idx.at(j), val);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Required pos: %d\nReturned pos: %d\n", this.idx[(j)], val);
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: required and returned positions are not matched.\n");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 flag = true;
@@ -141,35 +142,38 @@ run_test(method : METHOD) : void{
             }
         }
 
-        cvReleaseCapture(&cap);
+        cap.release();
     }
 
     this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nSuccessfull experiments: %d (%d%%)\n", n - failed_videos, 100 * (n - failed_videos) / n);
     this.ts.printf(alvision.cvtest.TSConstants.LOG, "Failed experiments: %d (%d%%)\n", failed_videos, 100 * failed_videos / n);
 }
 
-    generate_idx_seq(CvCapture * cap, int method) : void{
-    idx.clear();
-    int N = (int)cvGetCaptureProperty(cap, CAP_PROP_FRAME_COUNT);
+generate_idx_seq(cap: alvision.VideoCapture, method: alvision.int ) : void{
+    this.idx.length = 0;
+    var N = cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT);
     switch (method) {
-        case PROGRESSIVE:
+        case METHOD.PROGRESSIVE:
             {
-                int pos = 1, step = 20;
+                var pos = 1, step = 20;
                 do {
-                    idx.push(pos);
+                    this.idx.push(pos);
                     pos += step;
                 }
                 while (pos <= N);
                 break;
             }
-        case RANDOM:
+        case METHOD.RANDOM:
             {
-                RNG rng(N);
-                idx.clear();
-                for (int i = 0; i < N - 1; i++ )
-                idx.push(rng.uniform(0, N));
-                idx.push(N - 1);
-                std::swap(idx.at(rng.uniform(0, N - 1)), idx.at(N - 1));
+                var rng = new alvision.RNG(N);
+                this.idx.length = 0;
+                for (var i = 0; i < N.valueOf() - 1; i++ )
+                this.idx.push(rng.uniform(0, N));
+                this.idx.push(N.valueOf() - 1);
+
+                //swap
+                var tmp = this.idx[(rng.uniform(0, N.valueOf() - 1).valueOf())]; this.idx[(rng.uniform(0, N.valueOf() - 1).valueOf())] = this.idx[(N.valueOf() - 1)]; this.idx[(N.valueOf() - 1)] = tmp;
+                
                 break;
             }
         default: break;

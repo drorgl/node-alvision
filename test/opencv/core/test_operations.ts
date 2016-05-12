@@ -48,25 +48,22 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <iterator>
-#include <limits>
-#include <numeric>
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//#include <string>
+//#include <iostream>
+//#include <fstream>
+//#include <iterator>
+//#include <limits>
+//#include <numeric>
+//
+//using namespace cv;
+//using namespace std;
 
 
 class CV_OperationsTest  extends alvision.cvtest.BaseTest
 {
-public:
-    CV_OperationsTest();
-    ~CV_OperationsTest();
-protected:
+
     void run(int);
 
     struct test_excep
@@ -99,11 +96,6 @@ protected:
     }
 };
 
-CV_OperationsTest::CV_OperationsTest()
-{
-}
-
-CV_OperationsTest::~CV_OperationsTest() {}
 
 #define STR(a) STR2(a)
 #define STR2(a) #a
@@ -433,7 +425,7 @@ bool CV_OperationsTest::TestMat()
         CHECK_DIFF_FLT(mt.inv() * (2*mt - mt), d1);
 #endif
     }
-    catch (const test_excep& e)
+    catch (e)
     {
         ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
@@ -461,7 +453,7 @@ bool CV_OperationsTest::SomeMatFunctions()
         CHECK_DIFF(bgr_exp, bgr);
         CHECK_DIFF(alpha_exp, alpha);
     }
-    catch (const test_excep& e)
+    catch(e)
     {
         ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
@@ -498,7 +490,7 @@ bool CV_OperationsTest::TestSubMatAccess()
         }
         CV_Assert( alvision.cvtest.norm(coords, T_bs.reshape(1,1), NORM_INF) == 0 );
     }
-    catch (const test_excep& e)
+    catch(e)
     {
         ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
@@ -818,9 +810,9 @@ bool CV_OperationsTest::TestTemplateMat()
         alvision.Matx32f val4 = 1.f;
         TestType<alvision.Matx32f>(size, val4);
     }
-    catch (const test_excep& e)
+    catch (e)
     {
-        ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
+        this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s\n", e.s);
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         return false;
     }

@@ -66,7 +66,7 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
 
     drawFrame(i : alvision.int): alvision.Mat
     {
-        var mat = alvision.Mat.zeros(this.framesize, alvision.MatrixType.CV_8UC3);
+        var mat = alvision.Mat.from(alvision.Mat.zeros(this.framesize, alvision.MatrixType.CV_8UC3));
 
         mat = new alvision.Scalar(Math.abs(Math.cos(i.valueOf()*0.08)*255), Math.abs(Math.sin(i.valueOf()*0.05)*255), i);
         alvision.putText(mat, util.format("%03d", i),new alvision. Point(10, 350), 0, 10, new alvision.Scalar(128, 255, 255), 15);
@@ -125,24 +125,24 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
             int N = (int)cap.get(CAP_PROP_FRAME_COUNT);
 
             // See the same hack in CV_VideoIOTest::SpecificVideoTest for explanation.
-            int allowed_extra_frames = 0;
-            if (fmt.fourcc == VideoWriter::fourcc('M', 'P', 'E', 'G') && fmt.ext == "mkv")
+            var allowed_extra_frames = 0;
+            if (fmt.fourcc == alvision.VideoWriter.fourcc('M', 'P', 'E', 'G') && fmt.ext == "mkv")
                 allowed_extra_frames = 1;
 
             if (N < n_frames || N > n_frames + allowed_extra_frames || N != N0)
             {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: returned frame count (N0=%d, N=%d) is different from the reference number %d\n", N0, N, n_frames);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: returned frame count (N0=%d, N=%d) is different from the reference number %d\n", N0, N, n_frames);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
-            for (int k = 0; k < n_frames; ++k)
+            for (var k = 0; k < n_frames; ++k)
             {
-                int idx = theRNG().uniform(0, n_frames);
+                var idx = alvision.theRNG().uniform(0, n_frames);
 
                 if( !cap.set(CAP_PROP_POS_FRAMES, idx) )
                 {
-                    ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot seek to frame %d.\n", idx);
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot seek to frame %d.\n", idx);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
@@ -154,26 +154,26 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
 
                 if( idx != idx1 )
                 {
-                    ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: the current position (%d) after seek is different from specified (%d)\n",
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: the current position (%d) after seek is different from specified (%d)\n",
                                idx1, idx);
-                    ts.printf(alvision.cvtest.TSConstants.LOG, "Saving both frames ...\n");
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "Saving both frames ...\n");
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
 
                 if (img.empty())
                 {
-                    ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot read a frame at position %d.\n", idx);
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot read a frame at position %d.\n", idx);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
 
-                double err = alvision.cvtest.PSNR(img, img0);
+                var err = alvision.cvtest.PSNR(img, img0);
 
                 if( err < 20 )
                 {
-                    ts.printf(alvision.cvtest.TSConstants.LOG, "The frame read after positioning to %d is incorrect (PSNR=%g)\n", idx, err);
-                    ts.printf(alvision.cvtest.TSConstants.LOG, "Saving both frames ...\n");
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "The frame read after positioning to %d is incorrect (PSNR=%g)\n", idx, err);
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "Saving both frames ...\n");
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
@@ -181,7 +181,7 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
         }
     }
 
-    Size framesize;
+    protected framesize: alvision.Size;
 };
 
 //#if BUILD_WITH_VIDEO_INPUT_SUPPORT && BUILD_WITH_VIDEO_OUTPUT_SUPPORT && defined HAVE_FFMPEG

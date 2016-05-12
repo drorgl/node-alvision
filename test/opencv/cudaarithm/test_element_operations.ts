@@ -48,11 +48,11 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Add_Array
@@ -95,7 +95,7 @@ CUDA_TEST_P(Add_Array, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::add(loadMat(mat1), loadMat(mat2), dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -157,7 +157,7 @@ CUDA_TEST_P(Add_Array_Mask, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::add(loadMat(mat1), loadMat(mat2), dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -214,7 +214,7 @@ CUDA_TEST_P(Add_Scalar, WithOutMask)
             alvision.cuda::GpuMat dst;
             alvision.cuda::add(loadMat(mat), val, dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -245,7 +245,7 @@ CUDA_TEST_P(Add_Scalar, WithMask)
             alvision.cuda::GpuMat dst;
             alvision.cuda::add(loadMat(mat), val, dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -302,7 +302,7 @@ CUDA_TEST_P(Add_Scalar_First, WithOutMask)
             alvision.cuda::GpuMat dst;
             alvision.cuda::add(val, loadMat(mat), dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -333,7 +333,7 @@ CUDA_TEST_P(Add_Scalar_First, WithMask)
             alvision.cuda::GpuMat dst;
             alvision.cuda::add(val, loadMat(mat), dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -398,7 +398,7 @@ CUDA_TEST_P(Subtract_Array, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::subtract(loadMat(mat1), loadMat(mat2), dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -460,7 +460,7 @@ CUDA_TEST_P(Subtract_Array_Mask, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::subtract(loadMat(mat1), loadMat(mat2), dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -517,7 +517,7 @@ CUDA_TEST_P(Subtract_Scalar, WithOutMask)
             alvision.cuda::GpuMat dst;
             alvision.cuda::subtract(loadMat(mat), val, dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -548,7 +548,7 @@ CUDA_TEST_P(Subtract_Scalar, WithMask)
             alvision.cuda::GpuMat dst;
             alvision.cuda::subtract(loadMat(mat), val, dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -605,7 +605,7 @@ CUDA_TEST_P(Subtract_Scalar_First, WithOutMask)
             alvision.cuda::GpuMat dst;
             alvision.cuda::subtract(val, loadMat(mat), dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -636,7 +636,7 @@ CUDA_TEST_P(Subtract_Scalar_First, WithMask)
             alvision.cuda::GpuMat dst;
             alvision.cuda::subtract(val, loadMat(mat), dst, alvision.cuda::GpuMat(), depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -701,7 +701,7 @@ CUDA_TEST_P(Multiply_Array, WithOutScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::multiply(loadMat(mat1), loadMat(mat2), dst, 1, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -731,7 +731,7 @@ CUDA_TEST_P(Multiply_Array, WithScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::multiply(loadMat(mat1), loadMat(mat2), dst, scale, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -886,7 +886,7 @@ CUDA_TEST_P(Multiply_Scalar, WithOutScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::multiply(loadMat(mat), val, dst, 1, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -917,7 +917,7 @@ CUDA_TEST_P(Multiply_Scalar, WithScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::multiply(loadMat(mat), val, dst, scale, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -973,7 +973,7 @@ CUDA_TEST_P(Multiply_Scalar_First, WithOutScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::multiply(val, loadMat(mat), dst, 1, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1004,7 +1004,7 @@ CUDA_TEST_P(Multiply_Scalar_First, WithScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::multiply(val, loadMat(mat), dst, scale, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1068,7 +1068,7 @@ CUDA_TEST_P(Divide_Array, WithOutScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::divide(loadMat(mat1), loadMat(mat2), dst, 1, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1098,7 +1098,7 @@ CUDA_TEST_P(Divide_Array, WithScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::divide(loadMat(mat1), loadMat(mat2), dst, scale, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1253,7 +1253,7 @@ CUDA_TEST_P(Divide_Scalar, WithOutScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::divide(loadMat(mat), val, dst, 1, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1283,7 +1283,7 @@ CUDA_TEST_P(Divide_Scalar, WithScale)
             alvision.cuda::GpuMat dst;
             alvision.cuda::divide(loadMat(mat), val, dst, scale, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1339,7 +1339,7 @@ CUDA_TEST_P(Divide_Scalar_First, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::divide(scale, loadMat(mat), dst, 1.0, depth.second);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1395,7 +1395,7 @@ CUDA_TEST_P(AbsDiff, Array)
             alvision.cuda::GpuMat dst;
             alvision.cuda::absdiff(loadMat(src1), loadMat(src2), dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1424,7 +1424,7 @@ CUDA_TEST_P(AbsDiff, Scalar)
             alvision.cuda::GpuMat dst;
             alvision.cuda::absdiff(loadMat(src), val, dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1453,7 +1453,7 @@ CUDA_TEST_P(AbsDiff, Scalar_First)
             alvision.cuda::GpuMat dst;
             alvision.cuda::absdiff(val, loadMat(src), dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1640,7 +1640,7 @@ namespace
         for (int y = 0; y < src.rows; ++y)
         {
             for (int x = 0; x < src.cols; ++x)
-                dst.at<T>(y, x) = static_cast<T>(std::log(static_cast<float>(src.at<T>(y, x))));
+                dst.at<T>(y, x) = static_cast<T>(Math.log(static_cast<float>(src.at<T>(y, x))));
         }
     }
 
@@ -1710,7 +1710,7 @@ namespace
         for (int y = 0; y < src.rows; ++y)
         {
             for (int x = 0; x < src.cols; ++x)
-                dst.at<T>(y, x) = alvision.saturate_cast<T>(static_cast<int>(std::exp(static_cast<float>(src.at<T>(y, x)))));
+                dst.at<T>(y, x) = alvision.saturate_cast<T>(static_cast<int>(Math.exp(static_cast<float>(src.at<T>(y, x)))));
         }
     }
     void expImpl_float(const alvision.Mat& src, alvision.Mat& dst)
@@ -1720,7 +1720,7 @@ namespace
         for (int y = 0; y < src.rows; ++y)
         {
             for (int x = 0; x < src.cols; ++x)
-                dst.at<float>(y, x) = std::exp(static_cast<float>(src.at<float>(y, x)));
+                dst.at<float>(y, x) = Math.exp(static_cast<float>(src.at<float>(y, x)));
         }
     }
 
@@ -1814,7 +1814,7 @@ CUDA_TEST_P(Pow, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::pow(loadMat(src), power, dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1875,7 +1875,7 @@ CUDA_TEST_P(Compare_Array, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::compare(loadMat(src1), loadMat(src2), dst, cmp_code);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1985,7 +1985,7 @@ CUDA_TEST_P(Compare_Scalar, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::compare(loadMat(src), sc, dst, cmp_code);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -2336,7 +2336,7 @@ CUDA_TEST_P(Min, Array)
             alvision.cuda::GpuMat dst;
             alvision.cuda::min(loadMat(src1), loadMat(src2), dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -2364,7 +2364,7 @@ CUDA_TEST_P(Min, Scalar)
             alvision.cuda::GpuMat dst;
             alvision.cuda::min(loadMat(src), val, dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -2419,7 +2419,7 @@ CUDA_TEST_P(Max, Array)
             alvision.cuda::GpuMat dst;
             alvision.cuda::max(loadMat(src1), loadMat(src2), dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -2447,7 +2447,7 @@ CUDA_TEST_P(Max, Scalar)
             alvision.cuda::GpuMat dst;
             alvision.cuda::max(loadMat(src), val, dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -2509,7 +2509,7 @@ CUDA_TEST_P(AddWeighted, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::addWeighted(loadMat(src1), alpha, loadMat(src2), beta, gamma, dst, dst_depth);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }

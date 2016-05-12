@@ -55,103 +55,146 @@ import fs = require('fs');
 //
 //#define PARAM_TEST_CASE(name, ...) struct name : testing::TestWithParam< std::tr1::tuple< __VA_ARGS__ > >
 //#define GET_PARAM(k) std::tr1::get< k >(GetParam())
+
 //
 //#include "opencv2/core.hpp"
 //#include "opencv2/core/utility.hpp"
 
 export namespace cvtest {
-   //export function fscanf(fd: number, fmt: string, values: (v1: any, v2: any, v3: any) => void) {
-   //    var buf = new Buffer(1);
-   //    fs.readSync(fd, buf, 0, 1, null);
-   //
-   //    
-   //
-   //
-   //    //var count, noassign, width, base, lflag;
-   //    //const char     *tc;
-   //    //char * t, tmp[MAXLN];
-   //
-   //    //count = noassign = width = lflag = 0;
-   //
-   //
-   //
-   //    while (*s && *buf) {
-   //        while (isspace(*s))
-   //            s++;
-   //        if (*s == '%') {
-   //            s++;
-   //            for (; *s; s++) {
-   //                if (strchr("dibouxcsefg%", *s))
-   //                    break;
-   //                if (*s == '*')
-   //                    noassign = 1;
-   //                else if (*s == 'l' || *s == 'L')
-   //                    lflag = 1;
-   //                else if (*s >= '1' && *s <= '9') {
-   //                    for (tc = s; isdigit(*s); s++);
-   //                    strncpy(tmp, tc, s - tc);
-   //                    tmp[s - tc] = '\0';
-   //                    atob(&width, tmp, 10);
-   //                    s--;
-   //                }
-   //            }
-   //            if (*s == 's') {
-   //                while (isspace(*buf))
-   //                    buf++;
-   //                if (!width)
-   //                    width = strcspn(buf, ISSPACE);
-   //                if (!noassign) {
-   //                    strncpy(t = va_arg(ap, char *), buf, width);
-   //                    t[width] = '\0';
-   //                }
-   //                buf += width;
-   //            } else if (*s == 'c') {
-   //                if (!width)
-   //                    width = 1;
-   //                if (!noassign) {
-   //                    strncpy(t = va_arg(ap, char *), buf, width);
-   //                    t[width] = '\0';
-   //                }
-   //                buf += width;
-   //            } else if (strchr("dobxu", *s)) {
-   //                while (isspace(*buf))
-   //                    buf++;
-   //                if (*s == 'd' || *s == 'u')
-   //                    base = 10;
-   //                else if (*s == 'x')
-   //                    base = 16;
-   //                else if (*s == 'o')
-   //                    base = 8;
-   //                else if (*s == 'b')
-   //                    base = 2;
-   //                if (!width) {
-   //                    if (isspace(*(s + 1)) || *(s + 1) == 0)
-   //                        width = strcspn(buf, ISSPACE);
-   //                    else
-   //                        width = strchr(buf, *(s + 1)) - buf;
-   //                }
-   //                strncpy(tmp, buf, width);
-   //                tmp[width] = '\0';
-   //                buf += width;
-   //                if (!noassign)
-   //                    atob(va_arg(ap, u_int32_t *), tmp, base);
-   //            }
-   //            if (!noassign)
-   //                count++;
-   //            width = noassign = lflag = 0;
-   //            s++;
-   //        } else {
-   //            while (isspace(*buf))
-   //                buf++;
-   //            if (*s != *buf)
-   //                break;
-   //            else
-   //                s++ , buf++;
-   //        }
-   //    }
-   //    return (count);
-   //}
-   //}
+    
+    //class WithParamInterface<T> extends BaseTest {
+    //    // The current parameter value. Is also available in the test fixture's
+    //    // constructor. This member function is non-static, even though it only
+    //    // references static data, to reduce the opportunity for incorrect uses
+    //    // like writing 'WithParamInterface<bool>::GetParam()' for a test that
+    //    // uses a fixture whose parameter type is int.
+    //    public GetParam(): T {
+    //        if (this.parameter_ != null)
+    //            console.log("GetParam() can only be called inside a value-parameterized test -- did you intend to write TEST_P instead of TEST_F?");
+    //        return this.parameter_;
+    //    }
+
+    //    public SetParam(parameter: T): void {
+    //        this.parameter_ = parameter;
+    //    }
+
+    //    // Static value used for accessing parameter during a test lifetime.
+    //    protected parameter_: T;
+
+    //    // TestClass must be a subclass of WithParamInterface<T> and Test.
+    //    //template < class TestClass> friend class internal::ParameterizedTestFactory;
+    //}
+
+    export class TestWithParam extends BaseTest{//extends WithParamInterface<T>  {
+        private _params: any;
+        constructor() {
+            super();
+            this._params = {};
+        }
+
+
+        protected GET_PARAM<T>(id: number): T {
+            return this._params[id];
+        }
+
+        protected randomInt(minVal: _st.int, maxVal: _st.int): _st.int {
+            return this.ts.get_rng().uniform(minVal, maxVal);
+        }   
+    };
+
+
+    //export function fscanf(fd: number, fmt: string, values: (v1: any, v2: any, v3: any) => void) {
+    //    var buf = new Buffer(1);
+    //    fs.readSync(fd, buf, 0, 1, null);
+    //
+    //    
+    //
+    //
+    //    //var count, noassign, width, base, lflag;
+    //    //const char     *tc;
+    //    //char * t, tmp[MAXLN];
+    //
+    //    //count = noassign = width = lflag = 0;
+    //
+    //
+    //
+    //    while (*s && *buf) {
+    //        while (isspace(*s))
+    //            s++;
+    //        if (*s == '%') {
+    //            s++;
+    //            for (; *s; s++) {
+    //                if (strchr("dibouxcsefg%", *s))
+    //                    break;
+    //                if (*s == '*')
+    //                    noassign = 1;
+    //                else if (*s == 'l' || *s == 'L')
+    //                    lflag = 1;
+    //                else if (*s >= '1' && *s <= '9') {
+    //                    for (tc = s; isdigit(*s); s++);
+    //                    strncpy(tmp, tc, s - tc);
+    //                    tmp[s - tc] = '\0';
+    //                    atob(&width, tmp, 10);
+    //                    s--;
+    //                }
+    //            }
+    //            if (*s == 's') {
+    //                while (isspace(*buf))
+    //                    buf++;
+    //                if (!width)
+    //                    width = strcspn(buf, ISSPACE);
+    //                if (!noassign) {
+    //                    strncpy(t = va_arg(ap, char *), buf, width);
+    //                    t[width] = '\0';
+    //                }
+    //                buf += width;
+    //            } else if (*s == 'c') {
+    //                if (!width)
+    //                    width = 1;
+    //                if (!noassign) {
+    //                    strncpy(t = va_arg(ap, char *), buf, width);
+    //                    t[width] = '\0';
+    //                }
+    //                buf += width;
+    //            } else if (strchr("dobxu", *s)) {
+    //                while (isspace(*buf))
+    //                    buf++;
+    //                if (*s == 'd' || *s == 'u')
+    //                    base = 10;
+    //                else if (*s == 'x')
+    //                    base = 16;
+    //                else if (*s == 'o')
+    //                    base = 8;
+    //                else if (*s == 'b')
+    //                    base = 2;
+    //                if (!width) {
+    //                    if (isspace(*(s + 1)) || *(s + 1) == 0)
+    //                        width = strcspn(buf, ISSPACE);
+    //                    else
+    //                        width = strchr(buf, *(s + 1)) - buf;
+    //                }
+    //                strncpy(tmp, buf, width);
+    //                tmp[width] = '\0';
+    //                buf += width;
+    //                if (!noassign)
+    //                    atob(va_arg(ap, u_int32_t *), tmp, base);
+    //            }
+    //            if (!noassign)
+    //                count++;
+    //            width = noassign = lflag = 0;
+    //            s++;
+    //        } else {
+    //            while (isspace(*buf))
+    //                buf++;
+    //            if (*s != *buf)
+    //                break;
+    //            else
+    //                s++ , buf++;
+    //        }
+    //    }
+    //    return (count);
+    //}
+    //}
 
 
     export function TEST_F(test_case_name: string, test_name: string, cb: () => void) {
@@ -245,17 +288,24 @@ export namespace cvtest {
 
     export var randomSize: IrandomSize = alvision_module.randomSize;
 
-    
+
+    interface IrandomType {
+        (rng: _core.RNG, typeMask: _st.int, minChannels: _st.int, maxChannels: _st.int): _st.int;
+    }
+
+    export var randomType: IrandomType = alvision_module.randomType;
     //CV_EXPORTS int randomType(RNG& rng, int typeMask, int minChannels, int maxChannels);
 
 
     
     interface IrandomMat {
-        (rng: _core.RNG, size: _types.Size, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi: boolean): _mat.Mat;
-        (rng: _core.RNG, size: Array<_st.int>, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi: boolean): _mat.Mat;
+        (rng: _core.RNG, size: _types.Size, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi?: boolean): _mat.Mat;
+        (rng: _core.RNG, size: Array<_st.int>, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi?: boolean): _mat.Mat;
     }
 
     export var randomMat: IrandomMat = alvision_module.randomMat;
+
+    
 
     interface Iadd {
         (a: _mat.Mat, alpha: _st.double, b: _mat.Mat, beta: _st.double,
@@ -455,6 +505,14 @@ export namespace cvtest {
     //CV_EXPORTS int cmpEps2_64f( TS* ts, const double* val, const double* refval, int len,
     //                        double eps, const char* param_name );
     //
+
+    interface IlogicOp {
+        (src1: _mat.Mat, src2: _mat.Mat, dst: _mat.Mat, c: _st.char): void;
+        (src: _mat.Mat, s: _types.Scalar, dst: _mat.Mat, c: _st.char): void;
+    }
+
+    export var logicOp: IlogicOp = alvision_module.logicOp;
+
     //CV_EXPORTS void logicOp(const Mat& src1, const Mat& src2, Mat& dst, char c);
     //CV_EXPORTS void logicOp(const Mat& src, const Scalar& s, Mat& dst, char c);
     //CV_EXPORTS void min(const Mat& src1, const Mat& src2, Mat& dst);

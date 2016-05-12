@@ -12,7 +12,7 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-function cvTsGetRandomSparseMat(dims: alvision.int, const int* sz, type: alvision.int ,
+function cvTsGetRandomSparseMat(dims: alvision.int, sz: Array<alvision.int>, type: alvision.int ,
     nzcount: alvision.int, a: alvision.double, b: alvision.double , rng : alvision.RNG) : alvision.SparseMat 
 {
     var m = new alvision.SparseMat (dims, sz, type);
@@ -25,17 +25,17 @@ function cvTsGetRandomSparseMat(dims: alvision.int, const int* sz, type: alvisio
             idx[j] = alvision.cvtest.randInt(rng) % sz[j];
         var val = alvision.cvtest.randReal(rng)*(b - a) + a;
         uchar* ptr = m.ptr(idx, true, 0);
-        if( type == CV_8U )
+        if( type == alvision.MatrixType.CV_8U )
             *(uchar*)ptr = saturate_cast<uchar>(val);
-        else if( type == CV_8S )
+        else if (type == alvision.MatrixType.CV_8S )
             *(schar*)ptr = saturate_cast<schar>(val);
-        else if( type == CV_16U )
+        else if (type == alvision.MatrixType.CV_16U )
             *(ushort*)ptr = saturate_cast<ushort>(val);
-        else if( type == CV_16S )
+        else if (type == alvision.MatrixType.CV_16S )
             *(short*)ptr = saturate_cast<short>(val);
-        else if( type == CV_32S )
+        else if (type == alvision.MatrixType.CV_32S )
             *(int*)ptr = saturate_cast<int>(val);
-        else if( type == CV_32F )
+        else if (type == alvision.MatrixType.CV_32F )
             *(float*)ptr = saturate_cast<float>(val);
         else
             *(double*)ptr = saturate_cast<double>(val);
@@ -44,7 +44,7 @@ function cvTsGetRandomSparseMat(dims: alvision.int, const int* sz, type: alvisio
     return m;
 }
 
-function cvTsCheckSparse(const CvSparseMat* m1, const CvSparseMat* m2, double eps) : boolean
+function cvTsCheckSparse(m1: alvision.SparseMat, m2: alvision.SparseMat, eps : alvision.double): boolean
 {
     CvSparseMatIterator it1;
     CvSparseNode* node1;
@@ -91,20 +91,17 @@ function cvTsCheckSparse(const CvSparseMat* m1, const CvSparseMat* m2, double ep
 
 class Core_IOTest  extends alvision.cvtest.BaseTest
 {
-public:
-    Core_IOTest() { }
-protected:
-    void run(int)
+    run(iii: alvision.int) : void
     {
-        double ranges[][2] = {{0, 256}, {-128, 128}, {0, 65536}, {-32768, 32768},
-            {-1000000, 1000000}, {-10, 10}, {-10, 10}};
+        var ranges = [[0, 256], [-128, 128], [0, 65536], [-32768, 32768],
+            [-1000000, 1000000], [-10, 10], [-10, 10]];
         var rng = this.ts.get_rng();
         RNG rng0;
         test_case_count = 4;
         int progress = 0;
         MemStorage storage(cvCreateMemStorage(0));
 
-        for( int idx = 0; idx < test_case_count; idx++ )
+        for( var idx = 0; idx < test_case_count; idx++ )
         {
             ts.update_context( this, idx, false );
             progress = update_progress( progress, idx, test_case_count, 0 );
@@ -391,7 +388,7 @@ protected:
                 remove(filename);
         }
     }
-};
+}
 
 alvision.cvtest.TEST('Core_InputOutput', 'write_read_consistency', () => { var test = new Core_IOTest(); test.safe_run(); });
 
@@ -408,17 +405,16 @@ class UserDefinedType
     }
 };
 
-function write(FileStorage &fs,
-                         const String&,
-                         const UserDefinedType &value) : void
+function write(fs: alvision.FileStorage,
+                         x: string,
+                         value: UserDefinedType) : void
 {
     fs << "{:" << "a" << value.a << "b" << value.b << "}";
 }
 
-function read(const FileNode& node,
-                        UserDefinedType& value,
-                        const UserDefinedType& default_value
-                          = UserDefinedType()) : void {
+function read(node: alvision.FileNode ,
+    value: UserDefinedType ,
+    default_value: UserDefinedType  = new UserDefinedType()) : void {
     if(node.empty())
     {
         value = default_value;
@@ -490,24 +486,24 @@ class CV_MiscIOTest  extends alvision.cvtest.BaseTest
             fs["v1"] >> ov1;
             fs["sc1"] >> osc1;
             fs["g1"] >> og1;
-            CV_Assert( mi2.empty() );
-            CV_Assert( mv2.empty() );
-            CV_Assert( alvision.cvtest.norm(Mat(mi3), Mat(mi4), CV_C) == 0 );
-            CV_Assert( mv4.size() == 1 );
-            double n = alvision.cvtest.norm(mv3[0], mv4[0], CV_C);
-            CV_Assert( vudt2.empty() );
-            CV_Assert( vudt3 == vudt4 );
-            CV_Assert( n == 0 );
-            CV_Assert( op1 == p1 );
-            CV_Assert( op2 == p2 );
-            CV_Assert( os1 == s1 );
-            CV_Assert( oc1 == c1 );
-            CV_Assert( or1 == r1 );
-            CV_Assert( ov1 == v1 );
-            CV_Assert( osc1 == sc1 );
-            CV_Assert( og1 == g1 );
+            alvision.CV_Assert(()=> mi2.empty() );
+            alvision.CV_Assert(()=> mv2.empty() );
+            alvision.CV_Assert(()=> alvision.cvtest.norm(Mat(mi3), Mat(mi4), CV_C) == 0 );
+            alvision.CV_Assert(()=> mv4.size() == 1 );
+            var n = alvision.cvtest.norm(mv3[0], mv4[0], CV_C);
+            alvision.CV_Assert(()=> vudt2.empty() );
+            alvision.CV_Assert(()=> vudt3 == vudt4 );
+            alvision.CV_Assert(()=> n == 0 );
+            alvision.CV_Assert(()=> op1 == p1 );
+            alvision.CV_Assert(()=> op2 == p2 );
+            alvision.CV_Assert(()=> os1 == s1 );
+            alvision.CV_Assert(()=> oc1 == c1 );
+            alvision.CV_Assert(()=> or1 == r1 );
+            alvision.CV_Assert(()=> ov1 == v1 );
+            alvision.CV_Assert(()=> osc1 == sc1 );
+            alvision.CV_Assert(()=> og1 == g1 );
         }
-        catch(...)
+        catch(e)
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         }
@@ -549,7 +545,8 @@ alvision.cvtest.TEST('Core_globbing', 'accuracy',()=>
     var patternLena    = alvision.cvtest.TS.ptr().get_data_path() + "lena*.*";
     var patternLenaPng = alvision.cvtest.TS.ptr().get_data_path() + "lena.png";
 
-    Array<String> lenas, pngLenas;
+        var lenas    = new Array<string>();
+        var pngLenas = new Array<string>();
     alvision.glob(patternLena, lenas, true);
     alvision.glob(patternLenaPng, pngLenas, true);
 
@@ -557,7 +554,7 @@ alvision.cvtest.TEST('Core_globbing', 'accuracy',()=>
 
     for (var i = 0; i < pngLenas.length; ++i)
     {
-        alvision.ASSERT_NE(std::find(lenas.begin(), lenas.end(), pngLenas[i]), lenas.end());
+        alvision.ASSERT_NE(lenas.indexOf(pngLenas[i], -1);// std::find(lenas.begin(), lenas.end(), pngLenas[i]), lenas.end());
     }
 });
 
@@ -565,7 +562,6 @@ alvision.cvtest.TEST('Core_InputOutput', 'FileStorage', () => {
     var file = alvision.tempfile(".xml");
     var f = new alvision.FileStorage(file, alvision.FileStorageMode.WRITE);
 
-    char arr[66];
-    sprintf(arr, "sprintf is hell %d", 666);
+    var arr = util.format("sprintf is hell %d", 666);
     alvision.EXPECT_NO_THROW(f << arr);
 });

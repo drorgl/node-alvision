@@ -239,7 +239,7 @@ private:
         {
             bSerializeRes = this.toString(stream);
         }
-        catch (...)
+        catch(e)
         {
         }
 

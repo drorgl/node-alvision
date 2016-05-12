@@ -68,481 +68,387 @@ class CV_BaseHistTest  extends alvision.cvtest.BaseTest
         this.test_cpp = false;
     }
 
-    const MAX_HIST = 12;
+    protected MAX_HIST = 12;
 
-    clear() : void {}
+    clear(): void {
+        super.clear();
+        for (var  i = 0; i <this.hist.size(); i++ )
+        cvReleaseHist( &hist[i]);
+    }
 
-protected:
-    read_params(fs : alvision.FileStorage) : alvision.int{}
+    read_params(fs: alvision.FileStorage): alvision.int{
+        var code = super.read_params(fs);
+        if (code < 0)
+            return code;
+
+        this.test_case_count = cvReadInt(find_param(fs, "struct_count"), test_case_count);
+        this.max_log_size = cvReadInt(find_param(fs, "max_log_size"), max_log_size);
+        this.max_log_size = alvision.cvtest.clipInt(max_log_size, 1, 20);
+        this.img_max_log_size = cvReadInt(find_param(fs, "max_log_array_size"), img_max_log_size);
+        this.img_max_log_size = alvision.cvtest.clipInt(img_max_log_size, 1, 9);
+
+        this.max_cdims = cvReadInt(find_param(fs, "max_cdims"), max_cdims);
+        this.max_cdims = alvision.cvtest.clipInt(max_cdims, 1, 6);
+
+        return 0;
+    }
     run_func() : void {}
-    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
-    validate_test_results(test_case_idx : alvision.int) : alvision.int {}
-    virtual void init_hist( int test_case_idx, int i );
+    prepare_test_case(test_case_idx: alvision.int): alvision.int{
+        int i;
+        float ** r;
 
-    virtual void get_hist_params( int test_case_idx );
-    virtual float** get_hist_ranges( int test_case_idx );
+        this.clear();
 
-    int max_log_size;
-    int max_cdims;
-    int cdims;
-    int dims[CV_MAX_DIM];
-    int total_size;
-    int hist_type;
-    int hist_count;
-    int uniform;
-    int gen_random_hist;
-    double gen_hist_max_val, gen_hist_sparse_nz_ratio;
+        super.prepare_test_case(test_case_idx);
+        this.get_hist_params(test_case_idx);
+        r = this.get_hist_ranges(test_case_idx);
+        this.hist.resize(hist_count);
 
-    int init_ranges;
-    int img_type;
-    int img_max_log_size;
-    double low, high, range_delta;
-    CvSize img_size;
+        for (var i = 0; i < hist_count; i++) {
+            hist[i] = cvCreateHist(cdims, dims, hist_type, r, uniform);
+            this.init_hist(test_case_idx, i);
+        }
+        this.test_cpp = (alvision.cvtest.randInt(this.ts.get_rng()) % 2) != 0;
 
-    Array<CvHistogram*> hist;
-    Array<float> _ranges;
-    Array<float*> ranges;
-    bool test_cpp;
+        return 1;
+    }
+    validate_test_results(test_case_idx: alvision.int): alvision.int {
+        return 0;
+    }
+    init_hist(test_case_idx: alvision.int, i: alvision.int): void {
+        if (this.gen_random_hist) {
+            var rng = this.ts.get_rng();
+
+            if (this.hist_type == CV_HIST_ARRAY) {
+                Mat h = cvarrToMat(hist[hist_i].bins);
+                alvision.cvtest.randUni(rng, h, alvision.Scalar.all(0), Scalar::all(gen_hist_max_val));
+            }
+            else {
+                CvArr * arr = hist[hist_i].bins;
+                int i, j, totalSize = 1, nz_count;
+                int idx[CV_MAX_DIM];
+                for (i = 0; i < cdims; i++)
+                    totalSize *= dims[i];
+
+                nz_count = alvision.cvtest.randInt(rng) % MAX(totalSize / 4, 100);
+                nz_count = MIN(nz_count, totalSize);
+
+                // a zero number of non-zero elements should be allowed
+                for (i = 0; i < nz_count; i++) {
+                    for (j = 0; j < cdims; j++)
+                        idx[j] = alvision.cvtest.randInt(rng) % dims[j];
+                    cvSetRealND(arr, idx, alvision.cvtest.randReal(rng) * gen_hist_max_val);
+                }
+            }
+        }
+    }
+
+    get_hist_params(test_case_idx: alvision.int): void {
+        var rng = this.ts.get_rng();
+        int i, max_dim_size, max_ni_dim_size = 31;
+        double hist_size;
+
+        cdims = alvision.cvtest.randInt(rng) % max_cdims + 1;
+        hist_size = exp(alvision.cvtest.randReal(rng) * max_log_size * Math.LOG2E);
+        max_dim_size = Math.round(pow(hist_size, 1. / cdims));
+        total_size = 1;
+        uniform = alvision.cvtest.randInt(rng) % 2;
+        hist_type = alvision.cvtest.randInt(rng) % 2 ? CV_HIST_SPARSE : CV_HIST_ARRAY;
+
+        for (var i = 0; i < cdims; i++) {
+            dims[i] = alvision.cvtest.randInt(rng) % (max_dim_size + 2) + 2;
+            if (!uniform)
+                dims[i] = MIN(dims[i], max_ni_dim_size);
+            total_size *= dims[i];
+        }
+
+        img_type = alvision.cvtest.randInt(rng) % 2 ? CV_32F : CV_8U;
+        img_size.width = Math.round(exp(alvision.cvtest.randReal(rng) * img_max_log_size * Math.LOG2E));
+        img_size.height = Math.round(exp(alvision.cvtest.randReal(rng) * img_max_log_size * Math.LOG2E));
+
+        if (img_type < CV_32F) {
+            low = alvision.cvtest.getMinVal(img_type);
+            high = alvision.cvtest.getMaxVal(img_type);
+        }
+        else {
+            high = 1000;
+            low = -high;
+        }
+
+        range_delta = (alvision.cvtest.randInt(rng) % 2) * (high - low) * 0.05;
+    }
+    get_hist_ranges(test_case_idx: alvision.int): Array<alvision.float> {
+        var _low = low + range_delta, _high = high - range_delta;
+
+        if (!this.init_ranges)
+            return 0;
+
+        this.ranges.resize(cdims);
+
+        if (uniform) {
+            _ranges.resize(cdims * 2);
+            for (int i = 0; i < cdims; i++ )
+            {
+                _ranges[i * 2] = (float)_low;
+                _ranges[i * 2 + 1] = (float)_high;
+                ranges[i] = &_ranges[i * 2];
+            }
+        }
+        else {
+            int i, dims_sum = 0, ofs = 0;
+            for (i = 0; i < cdims; i++)
+                dims_sum += dims[i] + 1;
+            _ranges.resize(dims_sum);
+
+            for (i = 0; i < cdims; i++) {
+                int j, n = dims[i];
+                // generate logarithmic scale
+                double delta, q, val;
+                for (j = 0; j < 10; j++) {
+                    q = 1. + (j + 1) * 0.1;
+                    if ((pow(q, (double)n) - 1) / (q - 1.) >= _high - _low)
+                        break;
+                }
+
+                if (j == 0) {
+                    delta = (_high - _low) / n;
+                    q = 1.;
+                }
+                else {
+                    q = 1 + j * 0.1;
+                    delta = Math.floor((_high - _low) * (q - 1) / (pow(q, (double)n) - 1));
+                    delta = MAX(delta, 1.);
+                }
+                val = _low;
+
+                for (j = 0; j <= n; j++) {
+                    _ranges[j + ofs] = (float)MIN(val, _high);
+                    val += delta;
+                    delta *= q;
+                }
+                ranges[i] = &_ranges[ofs];
+                ofs += n + 1;
+            }
+        }
+
+        return &ranges[0];
+    }
+
+    protected max_log_size: alvision.int;
+    protected max_cdims: alvision.int;
+    protected cdims: alvision.int;
+    protected dims: Array<alvision.int>;//[CV_MAX_DIM];
+    protected total_size: alvision.int;
+    protected hist_type: alvision.int;
+    protected hist_count: alvision.int;
+    protected uniform: alvision.int;
+    protected gen_random_hist: alvision.int;
+    protected gen_hist_max_val: alvision.double;
+    protected gen_hist_sparse_nz_ratio: alvision.double;
+
+    protected init_ranges: alvision.int;
+    protected img_type: alvision.int;
+    protected img_max_log_size: alvision.int;
+    protected double
+    protected low: alvision.double;
+    protected high: alvision.double;
+    protected range_delta: alvision.double;
+    protected img_size: alvision.Size;
+
+    protected hist: Array<CvHistogram*> ;
+    protected  _ranges: Array<alvision.float>;
+    protected ranges: Array<float*> ;
+    protected test_cpp: boolean;
 };
 
 
-CV_BaseHistTest::CV_BaseHistTest()
-{
-    
-}
-
-
-CV_BaseHistTest::~CV_BaseHistTest()
-{
-    clear();
-}
-
-
-void CV_BaseHistTest::clear()
-{
-    super.clear();
-    for( size_t i = 0; i < hist.size(); i++ )
-        cvReleaseHist( &hist[i] );
-}
-
-
-int CV_BaseHistTest::read_params( CvFileStorage* fs )
-{
-    int code = super.read_params( fs );
-    if( code < 0 )
-        return code;
-
-    test_case_count = cvReadInt( find_param( fs, "struct_count" ), test_case_count );
-    max_log_size = cvReadInt( find_param( fs, "max_log_size" ), max_log_size );
-    max_log_size = alvision.cvtest.clipInt( max_log_size, 1, 20 );
-    img_max_log_size = cvReadInt( find_param( fs, "max_log_array_size" ), img_max_log_size );
-    img_max_log_size = alvision.cvtest.clipInt( img_max_log_size, 1, 9 );
-
-    max_cdims = cvReadInt( find_param( fs, "max_cdims" ), max_cdims );
-    max_cdims = alvision.cvtest.clipInt( max_cdims, 1, 6 );
-
-    return 0;
-}
-
-
-void CV_BaseHistTest::get_hist_params( int /*test_case_idx*/ )
-{
-    var rng = this.ts.get_rng();
-    int i, max_dim_size, max_ni_dim_size = 31;
-    double hist_size;
-
-    cdims = alvision.cvtest.randInt(rng) % max_cdims + 1;
-    hist_size = exp(alvision.cvtest.randReal(rng)*max_log_size*Math.LOG2E);
-    max_dim_size = Math.round(pow(hist_size,1./cdims));
-    total_size = 1;
-    uniform = alvision.cvtest.randInt(rng) % 2;
-    hist_type = alvision.cvtest.randInt(rng) % 2 ? CV_HIST_SPARSE : CV_HIST_ARRAY;
-
-    for( i = 0; i < cdims; i++ )
-    {
-        dims[i] = alvision.cvtest.randInt(rng) % (max_dim_size + 2) + 2;
-        if( !uniform )
-            dims[i] = MIN(dims[i], max_ni_dim_size);
-        total_size *= dims[i];
-    }
-
-    img_type = alvision.cvtest.randInt(rng) % 2 ? CV_32F : CV_8U;
-    img_size.width = Math.round( exp(alvision.cvtest.randReal(rng) * img_max_log_size * Math.LOG2E) );
-    img_size.height = Math.round( exp(alvision.cvtest.randReal(rng) * img_max_log_size * Math.LOG2E) );
-
-    if( img_type < CV_32F )
-    {
-        low = alvision.cvtest.getMinVal(img_type);
-        high = alvision.cvtest.getMaxVal(img_type);
-    }
-    else
-    {
-        high = 1000;
-        low = -high;
-    }
-
-    range_delta = (alvision.cvtest.randInt(rng) % 2)*(high-low)*0.05;
-}
-
-
-float** CV_BaseHistTest::get_hist_ranges( int /*test_case_idx*/ )
-{
-    double _low = low + range_delta, _high = high - range_delta;
-
-    if( !init_ranges )
-        return 0;
-
-    ranges.resize(cdims);
-
-    if( uniform )
-    {
-        _ranges.resize(cdims*2);
-        for( int i = 0; i < cdims; i++ )
-        {
-            _ranges[i*2] = (float)_low;
-            _ranges[i*2+1] = (float)_high;
-            ranges[i] = &_ranges[i*2];
-        }
-    }
-    else
-    {
-        int i, dims_sum = 0, ofs = 0;
-        for( i = 0; i < cdims; i++ )
-            dims_sum += dims[i] + 1;
-        _ranges.resize(dims_sum);
-
-        for( i = 0; i < cdims; i++ )
-        {
-            int j, n = dims[i];
-            // generate logarithmic scale
-            double delta, q, val;
-            for( j = 0; j < 10; j++ )
-            {
-                q = 1. + (j+1)*0.1;
-                if( (pow(q,(double)n)-1)/(q-1.) >= _high-_low )
-                    break;
-            }
-
-            if( j == 0 )
-            {
-                delta = (_high-_low)/n;
-                q = 1.;
-            }
-            else
-            {
-                q = 1 + j*0.1;
-                delta = Math.floor((_high-_low)*(q-1)/(pow(q,(double)n) - 1));
-                delta = MAX(delta, 1.);
-            }
-            val = _low;
-
-            for( j = 0; j <= n; j++ )
-            {
-                _ranges[j+ofs] = (float)MIN(val,_high);
-                val += delta;
-                delta *= q;
-            }
-            ranges[i] = &_ranges[ofs];
-            ofs += n + 1;
-        }
-    }
-
-    return &ranges[0];
-}
-
-
-void CV_BaseHistTest::init_hist( int /*test_case_idx*/, int hist_i )
-{
-    if( gen_random_hist )
-    {
-        var rng = this.ts.get_rng();
-
-        if( hist_type == CV_HIST_ARRAY )
-        {
-            Mat h = cvarrToMat(hist[hist_i].bins);
-            alvision.cvtest.randUni(rng, h, alvision.Scalar.all(0), Scalar::all(gen_hist_max_val) );
-        }
-        else
-        {
-            CvArr* arr = hist[hist_i].bins;
-            int i, j, totalSize = 1, nz_count;
-            int idx[CV_MAX_DIM];
-            for( i = 0; i < cdims; i++ )
-                totalSize *= dims[i];
-
-            nz_count = alvision.cvtest.randInt(rng) % MAX( totalSize/4, 100 );
-            nz_count = MIN( nz_count, totalSize );
-
-            // a zero number of non-zero elements should be allowed
-            for( i = 0; i < nz_count; i++ )
-            {
-                for( j = 0; j < cdims; j++ )
-                    idx[j] = alvision.cvtest.randInt(rng) % dims[j];
-                cvSetRealND(arr, idx, alvision.cvtest.randReal(rng)*gen_hist_max_val);
-            }
-        }
-    }
-}
-
-
-int CV_BaseHistTest::prepare_test_case( int test_case_idx )
-{
-    int i;
-    float** r;
-
-    clear();
-
-    super.prepare_test_case( test_case_idx );
-    get_hist_params( test_case_idx );
-    r = get_hist_ranges( test_case_idx );
-    hist.resize(hist_count);
-
-    for( i = 0; i < hist_count; i++ )
-    {
-        hist[i] = cvCreateHist( cdims, dims, hist_type, r, uniform );
-        init_hist( test_case_idx, i );
-    }
-    test_cpp = (alvision.cvtest.randInt(ts.get_rng()) % 2) != 0;
-
-    return 1;
-}
-
-
-void CV_BaseHistTest::run_func(void)
-{
-}
-
-
-int CV_BaseHistTest::validate_test_results( int /*test_case_idx*/ )
-{
-    return 0;
-}
 
 
 ////////////// testing operation for reading/writing individual histogram bins //////////////
 
-class CV_QueryHistTest : public CV_BaseHistTest
+class CV_QueryHistTest extends CV_BaseHistTest
 {
-public:
-    CV_QueryHistTest();
-    ~CV_QueryHistTest();
-    clear() : void {}
+    constructor() {
+        super();
+        this.hist_count = 1;
+        this.indices = 0;
+        this.values = 0;
+        this.values0 = 0;
+    }
 
-protected:
-    run_func() : void {}
-    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
+    clear(): void {
+        cvReleaseMat( &indices);
+        cvReleaseMat( &values);
+        cvReleaseMat( &values0);
+        super.clear();
+
+    }
+
+    run_func(): void {
+        int i, iters = values.cols;
+        CvArr * h = hist[0].bins;
+        const int* idx = indices.data.i;
+        float * val = values.data.fl;
+        float default_value = 0.f;
+
+        // stage 1: write bins
+        if (cdims == 1)
+            for (i = 0; i < iters; i++) {
+                float v0 = values0.data.fl[i];
+                if (fabs(v0 - default_value) < FLT_EPSILON)
+                    continue;
+                if (!(i % 2)) {
+                    if (!(i % 4))
+                        cvSetReal1D(h, idx[i], v0);
+                    else
+                    *(float *)cvPtr1D(h, idx[i]) = v0;
+                }
+                else
+                    cvSetRealND(h, idx + i, v0);
+            }
+        else if (cdims == 2)
+            for (i = 0; i < iters; i++) {
+                float v0 = values0.data.fl[i];
+                if (fabs(v0 - default_value) < FLT_EPSILON)
+                    continue;
+                if (!(i % 2)) {
+                    if (!(i % 4))
+                        cvSetReal2D(h, idx[i * 2], idx[i * 2 + 1], v0);
+                    else
+                    *(float *)cvPtr2D(h, idx[i * 2], idx[i * 2 + 1]) = v0;
+                }
+                else
+                    cvSetRealND(h, idx + i * 2, v0);
+            }
+        else if (cdims == 3)
+            for (i = 0; i < iters; i++) {
+                float v0 = values0.data.fl[i];
+                if (fabs(v0 - default_value) < FLT_EPSILON)
+                    continue;
+                if (!(i % 2)) {
+                    if (!(i % 4))
+                        cvSetReal3D(h, idx[i * 3], idx[i * 3 + 1], idx[i * 3 + 2], v0);
+                    else
+                    *(float *)cvPtr3D(h, idx[i * 3], idx[i * 3 + 1], idx[i * 3 + 2]) = v0;
+                }
+                else
+                    cvSetRealND(h, idx + i * 3, v0);
+            }
+        else
+            for (i = 0; i < iters; i++) {
+                float v0 = values0.data.fl[i];
+                if (fabs(v0 - default_value) < FLT_EPSILON)
+                    continue;
+                if (!(i % 2))
+                    cvSetRealND(h, idx + i * cdims, v0);
+                else
+                *(float *)cvPtrND(h, idx + i * cdims) = v0;
+            }
+
+        // stage 2: read bins
+        if (cdims == 1)
+            for (i = 0; i < iters; i++) {
+                if (!(i % 2))
+                    val[i] = *(float *)cvPtr1D(h, idx[i]);
+            else
+            val[i] = (float)cvGetReal1D(h, idx[i]);
+    }
+    else if(cdims == 2)
+    for(i = 0; i < iters; i++ )
+    {
+        if (!(i % 2))
+            val[i] = *(float *)cvPtr2D(h, idx[i * 2], idx[i * 2 + 1]);
+            else
+    val[i] = (float)cvGetReal2D(h, idx[i * 2], idx[i * 2 + 1]);
+}
+    else if (cdims == 3)
+    for (i = 0; i < iters; i++) {
+        if (!(i % 2))
+            val[i] = *(float *)cvPtr3D(h, idx[i * 3], idx[i * 3 + 1], idx[i * 3 + 2]);
+            else
+        val[i] = (float)cvGetReal3D(h, idx[i * 3], idx[i * 3 + 1], idx[i * 3 + 2]);
+    }
+else
+    for (i = 0; i < iters; i++) {
+        if (!(i % 2))
+            val[i] = *(float *)cvPtrND(h, idx + i * cdims);
+            else
+        val[i] = (float)cvGetRealND(h, idx + i * cdims);
+    }
+    }
+    prepare_test_case(test_case_idx: alvision.int): alvision.int{
+        int code = CV_BaseHistTest::prepare_test_case(test_case_idx);
+
+        if (code > 0) {
+            int i, j, iters;
+            float default_value = 0.f;
+            var rng = this.ts.get_rng();
+            CvMat * bit_mask = 0;
+            int * idx;
+
+            iters = (alvision.cvtest.randInt(rng) % MAX(total_size / 10, 100)) + 1;
+            iters = MIN(iters, total_size * 9 / 10 + 1);
+
+            indices = cvCreateMat(1, iters * cdims, CV_32S);
+            values = cvCreateMat(1, iters, CV_32F);
+            values0 = cvCreateMat(1, iters, CV_32F);
+            idx = indices.data.i;
+
+            //printf( "total_size = %d, cdims = %d, iters = %d\n", total_size, cdims, iters );
+
+            bit_mask = cvCreateMat(1, (total_size + 7) / 8, CV_8U);
+            cvZero(bit_mask);
+
+            #define GET_BIT(n)(bit_mask.data.ptr[(n) / 8] & (1 << ((n) & 7)))
+            #define SET_BIT(n) bit_mask.data.ptr[(n) / 8] |= (1 << ((n) & 7))
+
+            // set random histogram bins' values to the linear indices of the bins
+            for (i = 0; i < iters; i++) {
+                int lin_idx = 0;
+                for (j = 0; j < cdims; j++) {
+                    int t = alvision.cvtest.randInt(rng) % dims[j];
+                    idx[i * cdims + j] = t;
+                    lin_idx = lin_idx * dims[j] + t;
+                }
+
+                if (alvision.cvtest.randInt(rng) % 8 || GET_BIT(lin_idx)) {
+                    values0.data.fl[i] = (float)(lin_idx + 1);
+                    SET_BIT(lin_idx);
+                }
+                else
+                    // some histogram bins will not be initialized intentionally,
+                    // they should be equal to the default value
+                    values0.data.fl[i] = default_value;
+            }
+
+            // do the second pass to make values0 consistent with bit_mask
+            for (i = 0; i < iters; i++) {
+                int lin_idx = 0;
+                for (j = 0; j < cdims; j++)
+                    lin_idx = lin_idx * dims[j] + idx[i * cdims + j];
+
+                if (GET_BIT(lin_idx))
+                    values0.data.fl[i] = (float)(lin_idx + 1);
+            }
+
+            cvReleaseMat( &bit_mask);
+        }
+
+        return code;
+    }
     validate_test_results(test_case_idx : alvision.int) : alvision.int {}
-    void init_hist( int test_case_idx, int i );
+    init_hist(test_case_idx: alvision.int, i: alvision.int): void {
+        if (this.hist_type == CV_HIST_ARRAY)
+            cvZero(hist[i].bins);
 
-    CvMat* indices;
-    CvMat* values;
-    CvMat* values0;
+    }
+
+    protected indices: alvision.Mat;
+    protected values  : alvision.Mat;
+    protected values0 : alvision.Mat;
 };
 
 
-
-CV_QueryHistTest::CV_QueryHistTest()
-{
-    hist_count = 1;
-    indices = 0;
-    values = 0;
-    values0 = 0;
-}
-
-
-CV_QueryHistTest::~CV_QueryHistTest()
-{
-    clear();
-}
-
-
-void CV_QueryHistTest::clear()
-{
-    cvReleaseMat( &indices );
-    cvReleaseMat( &values );
-    cvReleaseMat( &values0 );
-    CV_BaseHistTest::clear();
-}
-
-
-void CV_QueryHistTest::init_hist( int /*test_case_idx*/, int i )
-{
-    if( hist_type == CV_HIST_ARRAY )
-        cvZero( hist[i].bins );
-}
-
-
-int CV_QueryHistTest::prepare_test_case( int test_case_idx )
-{
-    int code = CV_BaseHistTest::prepare_test_case( test_case_idx );
-
-    if( code > 0 )
-    {
-        int i, j, iters;
-        float default_value = 0.f;
-        var rng = this.ts.get_rng();
-        CvMat* bit_mask = 0;
-        int* idx;
-
-        iters = (alvision.cvtest.randInt(rng) % MAX(total_size/10,100)) + 1;
-        iters = MIN( iters, total_size*9/10 + 1 );
-
-        indices = cvCreateMat( 1, iters*cdims, CV_32S );
-        values = cvCreateMat( 1, iters, CV_32F );
-        values0 = cvCreateMat( 1, iters, CV_32F );
-        idx = indices.data.i;
-
-        //printf( "total_size = %d, cdims = %d, iters = %d\n", total_size, cdims, iters );
-
-        bit_mask = cvCreateMat( 1, (total_size + 7)/8, CV_8U );
-        cvZero( bit_mask );
-
-        #define GET_BIT(n) (bit_mask.data.ptr[(n)/8] & (1 << ((n)&7)))
-        #define SET_BIT(n) bit_mask.data.ptr[(n)/8] |= (1 << ((n)&7))
-
-        // set random histogram bins' values to the linear indices of the bins
-        for( i = 0; i < iters; i++ )
-        {
-            int lin_idx = 0;
-            for( j = 0; j < cdims; j++ )
-            {
-                int t = alvision.cvtest.randInt(rng) % dims[j];
-                idx[i*cdims + j] = t;
-                lin_idx = lin_idx*dims[j] + t;
-            }
-
-            if( alvision.cvtest.randInt(rng) % 8 || GET_BIT(lin_idx) )
-            {
-                values0.data.fl[i] = (float)(lin_idx+1);
-                SET_BIT(lin_idx);
-            }
-            else
-                // some histogram bins will not be initialized intentionally,
-                // they should be equal to the default value
-                values0.data.fl[i] = default_value;
-        }
-
-        // do the second pass to make values0 consistent with bit_mask
-        for( i = 0; i < iters; i++ )
-        {
-            int lin_idx = 0;
-            for( j = 0; j < cdims; j++ )
-                lin_idx = lin_idx*dims[j] + idx[i*cdims + j];
-
-            if( GET_BIT(lin_idx) )
-                values0.data.fl[i] = (float)(lin_idx+1);
-        }
-
-        cvReleaseMat( &bit_mask );
-    }
-
-    return code;
-}
-
-
-void CV_QueryHistTest::run_func(void)
-{
-    int i, iters = values.cols;
-    CvArr* h = hist[0].bins;
-    const int* idx = indices.data.i;
-    float* val = values.data.fl;
-    float default_value = 0.f;
-
-    // stage 1: write bins
-    if( cdims == 1 )
-        for( i = 0; i < iters; i++ )
-        {
-            float v0 = values0.data.fl[i];
-            if( fabs(v0 - default_value) < FLT_EPSILON )
-                continue;
-            if( !(i % 2) )
-            {
-                if( !(i % 4) )
-                    cvSetReal1D( h, idx[i], v0 );
-                else
-                    *(float*)cvPtr1D( h, idx[i] ) = v0;
-            }
-            else
-                cvSetRealND( h, idx+i, v0 );
-        }
-    else if( cdims == 2 )
-        for( i = 0; i < iters; i++ )
-        {
-            float v0 = values0.data.fl[i];
-            if( fabs(v0 - default_value) < FLT_EPSILON )
-                continue;
-            if( !(i % 2) )
-            {
-                if( !(i % 4) )
-                    cvSetReal2D( h, idx[i*2], idx[i*2+1], v0 );
-                else
-                    *(float*)cvPtr2D( h, idx[i*2], idx[i*2+1] ) = v0;
-            }
-            else
-                cvSetRealND( h, idx+i*2, v0 );
-        }
-    else if( cdims == 3 )
-        for( i = 0; i < iters; i++ )
-        {
-            float v0 = values0.data.fl[i];
-            if( fabs(v0 - default_value) < FLT_EPSILON )
-                continue;
-            if( !(i % 2) )
-            {
-                if( !(i % 4) )
-                    cvSetReal3D( h, idx[i*3], idx[i*3+1], idx[i*3+2], v0 );
-                else
-                    *(float*)cvPtr3D( h, idx[i*3], idx[i*3+1], idx[i*3+2] ) = v0;
-            }
-            else
-                cvSetRealND( h, idx+i*3, v0 );
-        }
-    else
-        for( i = 0; i < iters; i++ )
-        {
-            float v0 = values0.data.fl[i];
-            if( fabs(v0 - default_value) < FLT_EPSILON )
-                continue;
-            if( !(i % 2) )
-                cvSetRealND( h, idx+i*cdims, v0 );
-            else
-                *(float*)cvPtrND( h, idx+i*cdims ) = v0;
-        }
-
-    // stage 2: read bins
-    if( cdims == 1 )
-        for( i = 0; i < iters; i++ )
-        {
-            if( !(i % 2) )
-                val[i] = *(float*)cvPtr1D( h, idx[i] );
-            else
-                val[i] = (float)cvGetReal1D( h, idx[i] );
-        }
-    else if( cdims == 2 )
-        for( i = 0; i < iters; i++ )
-        {
-            if( !(i % 2) )
-                val[i] = *(float*)cvPtr2D( h, idx[i*2], idx[i*2+1] );
-            else
-                val[i] = (float)cvGetReal2D( h, idx[i*2], idx[i*2+1] );
-        }
-    else if( cdims == 3 )
-        for( i = 0; i < iters; i++ )
-        {
-            if( !(i % 2) )
-                val[i] = *(float*)cvPtr3D( h, idx[i*3], idx[i*3+1], idx[i*3+2] );
-            else
-                val[i] = (float)cvGetReal3D( h, idx[i*3], idx[i*3+1], idx[i*3+2] );
-        }
-    else
-        for( i = 0; i < iters; i++ )
-        {
-            if( !(i % 2) )
-                val[i] = *(float*)cvPtrND( h, idx+i*cdims );
-            else
-                val[i] = (float)cvGetRealND( h, idx+i*cdims );
-        }
-}
 
 
 int CV_QueryHistTest::validate_test_results( int /*test_case_idx*/ )
@@ -583,12 +489,13 @@ int CV_QueryHistTest::validate_test_results( int /*test_case_idx*/ )
 
 ////////////// cvGetMinMaxHistValue //////////////
 
-class CV_MinMaxHistTest : public CV_BaseHistTest
+class CV_MinMaxHistTest extends CV_BaseHistTest
 {
-public:
-    CV_MinMaxHistTest();
-
-protected:
+    constructor() {
+        super();
+        this.hist_count = 1;
+        this.gen_random_hist = 1;
+    }
     run_func() : void {}
     void init_hist(int, int);
     validate_test_results(test_case_idx : alvision.int) : alvision.int {}
@@ -597,14 +504,6 @@ protected:
     int min_idx0[CV_MAX_DIM], max_idx0[CV_MAX_DIM];
     float min_val0, max_val0;
 };
-
-
-
-CV_MinMaxHistTest::CV_MinMaxHistTest()
-{
-    hist_count = 1;
-    gen_random_hist = 1;
-}
 
 
 void CV_MinMaxHistTest::init_hist(int test_case_idx, int hist_i)
@@ -1036,7 +935,7 @@ int CV_CompareHistTest::validate_test_results( int /*test_case_idx*/ )
                 continue;
             if( fabs(v1) <= DBL_EPSILON )
                 v1 = 1e-10;
-            result0[CV_COMP_KL_DIV] += v0 * std::log( v0 / v1 );
+            result0[CV_COMP_KL_DIV] += v0 * Math.log( v0 / v1 );
             }
         }
     }
@@ -1068,7 +967,7 @@ int CV_CompareHistTest::validate_test_results( int /*test_case_idx*/ )
                 continue;
             if (!v1)
                 v1 = 1e-10;
-            result0[CV_COMP_KL_DIV] += v0 * std::log( v0 / v1 );
+            result0[CV_COMP_KL_DIV] += v0 * Math.log( v0 / v1 );
             }
         }
 
@@ -1761,8 +1660,8 @@ protected:
     prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     run_func() : void {}
     validate_test_results(test_case_idx : alvision.int) : alvision.int {}
-    void init_hist( int test_case_idx, int i );
-    void get_hist_params( int test_case_idx );
+    init_hist(test_case_idx : alvision.int, i : alvision.int) : void {}
+    get_hist_params(test_case_idx : alvision.int) : void {}
 };
 
 
@@ -1857,16 +1756,16 @@ int CV_BayesianProbTest::validate_test_results( int /*test_case_idx*/ )
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-TEST(Imgproc_Hist_Calc, accuracy) { CV_CalcHistTest test; test.safe_run(); }
-TEST(Imgproc_Hist_Query, accuracy) { CV_QueryHistTest test; test.safe_run(); }
+alvision.cvtest.TEST('Imgproc_Hist_Calc', 'accuracy', () => { CV_CalcHistTest test; test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_Hist_Query', 'accuracy', () => { CV_QueryHistTest test; test.safe_run(); });
 
-TEST(Imgproc_Hist_Compare, accuracy) { CV_CompareHistTest test; test.safe_run(); }
-TEST(Imgproc_Hist_Threshold, accuracy) { CV_ThreshHistTest test; test.safe_run(); }
-TEST(Imgproc_Hist_Normalize, accuracy) { CV_NormHistTest test; test.safe_run(); }
-TEST(Imgproc_Hist_MinMaxVal, accuracy) { CV_MinMaxHistTest test; test.safe_run(); }
+alvision.cvtest.TEST('Imgproc_Hist_Compare', 'accuracy', () => { CV_CompareHistTest test; test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_Hist_Threshold', 'accuracy', () => { CV_ThreshHistTest test; test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_Hist_Normalize', 'accuracy', () => { CV_NormHistTest test; test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_Hist_MinMaxVal', 'accuracy', () => { CV_MinMaxHistTest test; test.safe_run(); });
 
-TEST(Imgproc_Hist_CalcBackProject, accuracy) { CV_CalcBackProjectTest test; test.safe_run(); }
-TEST(Imgproc_Hist_CalcBackProjectPatch, accuracy) { CV_CalcBackProjectPatchTest test; test.safe_run(); }
-TEST(Imgproc_Hist_BayesianProb, accuracy) { CV_BayesianProbTest test; test.safe_run(); }
+alvision.cvtest.TEST('Imgproc_Hist_CalcBackProject', 'accuracy', () => { CV_CalcBackProjectTest test; test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_Hist_CalcBackProjectPatch', 'accuracy', () => { CV_CalcBackProjectPatchTest test; test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_Hist_BayesianProb', 'accuracy', () => { CV_BayesianProbTest test; test.safe_run(); });
 
 /* End Of File */

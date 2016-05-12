@@ -190,7 +190,7 @@ export var createMat: IcreateMat = alvision_module.createMat;
 
 //    #define CUDA_TEST_P(test_case_name, test_name) \
 //      class GTEST_TEST_CLASS_NAME_(test_case_name, test_name) \
-//          : public test_case_name { \
+//           extends  test_case_name { \
 //       public: \
 //        GTEST_TEST_CLASS_NAME_(test_case_name, test_name)() {} \
 //        virtual void TestBody(); \

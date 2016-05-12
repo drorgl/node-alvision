@@ -405,7 +405,7 @@ CUDA_TEST_P(MinMax, WithoutMask)
             double minVal, maxVal;
             alvision.cuda::minMax(loadMat(src), &minVal, &maxVal);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -457,7 +457,7 @@ CUDA_TEST_P(MinMax, WithMask)
             double minVal, maxVal;
             alvision.cuda::minMax(loadMat(src), &minVal, &maxVal, loadMat(mask));
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -487,7 +487,7 @@ CUDA_TEST_P(MinMax, NullPtr)
             alvision.cuda::minMax(loadMat(src), &minVal, 0);
             alvision.cuda::minMax(loadMat(src), 0, &maxVal);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -572,7 +572,7 @@ CUDA_TEST_P(MinMaxLoc, WithoutMask)
             alvision.Point minLoc, maxLoc;
             alvision.cuda::minMaxLoc(loadMat(src), &minVal, &maxVal, &minLoc, &maxLoc);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -681,7 +681,7 @@ CUDA_TEST_P(MinMaxLoc, WithMask)
             alvision.Point minLoc, maxLoc;
             alvision.cuda::minMaxLoc(loadMat(src), &minVal, &maxVal, &minLoc, &maxLoc, loadMat(mask));
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -719,7 +719,7 @@ CUDA_TEST_P(MinMaxLoc, NullPtr)
             alvision.cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, &minLoc, 0);
             alvision.cuda::minMaxLoc(loadMat(src, useRoi), 0, 0, 0, &maxLoc);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -785,7 +785,7 @@ CUDA_TEST_P(CountNonZero, Accuracy)
         {
             alvision.cuda::countNonZero(loadMat(src));
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -1006,7 +1006,7 @@ CUDA_TEST_P(MeanStdDev, Accuracy)
             alvision.Scalar stddev;
             alvision.cuda::meanStdDev(loadMat(src, useRoi), mean, stddev);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }

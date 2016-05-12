@@ -730,7 +730,7 @@ class CV_CameraCalibrationTest_CPP extends CV_CameraCalibrationTest
         double* rotationMatrix, double*  translationVector,
         double* cameraMatrix, double* distortion, imagePoints: Array<alvision.CvPoint2D64f>): void {
 
-        var objectPoints = new alvision.Mat(pointCount, 3, CV_64FC1, _objectPoints);
+        var objectPoints = new alvision.Mat(pointCount, 3,alvision.MatrixType. CV_64FC1, _objectPoints);
         var rmat = new alvision.Mat(3, 3, alvision.MatrixType.CV_64FC1, rotationMatrix);
         var rvec = new alvision.Mat(1, 3, alvision.MatrixType.CV_64FC1);
         var tvec = new alvision.Mat(1, 3, alvision.MatrixType.CV_64FC1, translationVector);
@@ -1194,8 +1194,8 @@ class CV_ProjectPointsTest_CPP extends CV_ProjectPointsTest
         dpdc: alvision.Mat, dpddist: alvision.Mat,
         aspectRatio: alvision.double = 0): void {
 
-        Mat J;
-        projectPoints(objectPoints, rvec, tvec, cameraMatrix, distCoeffs, imagePoints, J, aspectRatio);
+        var J = new alvision.Mat()
+        alvision.projectPoints(objectPoints, rvec, tvec, cameraMatrix, distCoeffs, imagePoints, J, aspectRatio);
         J.colRange(0, 3).copyTo(dpdrot);
         J.colRange(3, 6).copyTo(dpdt);
         J.colRange(6, 8).copyTo(dpdf);
@@ -1220,18 +1220,19 @@ class CV_StereoCalibrationTest extends alvision.cvtest.BaseTest
         M: alvision.Mat, D: alvision.Mat, R: alvision.Mat,
         P: alvision.Mat, imgsize: alvision.Size, roi: alvision.Rect): boolean {
 
-        const double eps = 0.05;
-        const int N = 21;
-        int x, y, k;
-        Array < Point2f > pts, upts;
+        const eps = 0.05;
+        const N = 21;
+        //int x, y, k;
+            var pts = new Array<alvision.Point2f>();
+            var upts = new Array<alvision.Point2f>();
 
         // step 1. check that all the original points belong to the destination image
-        for (y = 0; y < N; y++)
-            for (x = 0; x < N; x++)
-                pts.push(Point2f((float)x* imgsize.width / (N - 1), (float)y* imgsize.height / (N - 1)));
+        for (var y = 0; y < N; y++)
+            for (var x = 0; x < N; x++)
+                pts.push(new alvision.Point2f((float)x* imgsize.width / (N - 1), (float)y* imgsize.height / (N - 1)));
 
-        undistortPoints(Mat(pts), upts, M, D, R, P);
-        for (k = 0; k < N * N; k++)
+        undistortPoints(new alvision.Mat(pts), upts, M, D, R, P);
+        for (var k = 0; k < N * N; k++)
             if (upts[k].x < -imgsize.width * eps || upts[k].x > imgsize.width * (1 + eps) ||
                 upts[k].y < -imgsize.height * eps || upts[k].y > imgsize.height * (1 + eps)) {
                 ts.printf(alvision.cvtest.TSConstants.LOG, "Test #%d. The point (%g, %g) was mapped to (%g, %g) which is out of image\n",
@@ -1261,48 +1262,52 @@ class CV_StereoCalibrationTest extends alvision.cvtest.BaseTest
     }
 
     // covers of tested functions
-    virtual double calibrateStereoCamera( const Array<Array<Point3f> >& objectPoints,
-        const Array<Array<Point2f> >& imagePoints1,
-        const Array<Array<Point2f> >& imagePoints2,
-        Mat& cameraMatrix1, Mat& distCoeffs1,
-        Mat& cameraMatrix2, Mat& distCoeffs2,
-        Size imageSize, Mat& R, Mat& T,
-        Mat& E, Mat& F, TermCriteria criteria, int flags ) = 0;
-    virtual void rectify( const Mat& cameraMatrix1, const Mat& distCoeffs1,
-        const Mat& cameraMatrix2, const Mat& distCoeffs2,
-        Size imageSize, const Mat& R, const Mat& T,
-        Mat& R1, Mat& R2, Mat& P1, Mat& P2, Mat& Q,
-        double alpha, Size newImageSize,
-        Rect* validPixROI1, Rect* validPixROI2, int flags ) = 0;
-    virtual bool rectifyUncalibrated( const Mat& points1,
-        const Mat& points2, const Mat& F, Size imgSize,
-        Mat& H1, Mat& H2, double threshold=5 ) = 0;
-    virtual void triangulate( const Mat& P1, const Mat& P2,
-        const Mat &points1, const Mat &points2,
-        Mat &points4D ) = 0;
-    virtual void correct( const Mat& F,
-        const Mat &points1, const Mat &points2,
-        Mat &newPoints1, Mat &newPoints2 ) = 0;
+    calibrateStereoCamera(objectPoints: Array<Array<alvision.Point3f>>,
+        imagePoints1: Array<Array<alvision.Point2f>>,
+        imagePoints2: Array<Array<alvision.Point2f>>,
+        cameraMatrix1: alvision.Mat, distCoeffs1: alvision.Mat,
+        cameraMatrix2: alvision.Mat, distCoeffs2: alvision.Mat,
+        imageSize: alvision.Size, R: alvision.Mat, T: alvision.Mat,
+        E: alvision.Mat, F: alvision.Mat, criteria: alvision.TermCriteria, flags: alvision.int): alvision.double { }
+
+    rectify(cameraMatrix1: alvision.Mat, distCoeffs1: alvision.Mat ,
+        cameraMatrix2: alvision.Mat, distCoeffs2: alvision.Mat ,
+        imageSize: alvision.Size, R: alvision.Mat, T: alvision.Mat ,
+        R1: alvision.Mat, R2: alvision.Mat, P1: alvision.Mat, P2: alvision.Mat, Q: alvision.Mat,
+        alpha: alvision.double, newImageSize: alvision.Size,
+        validPixROI1: alvision.Rect, validPixROI2: alvision.Rect, flags: alvision.int): void { }
+
+    rectifyUncalibrated(points1: alvision.Mat,
+        points2: alvision.Mat, F: alvision.Mat, imgSize: alvision.Size,
+        H1: alvision.Mat, H2: alvision.Mat, threshold: alvision.double = 5): boolean { }
+
+    triangulate(P1: alvision.Mat, P2: alvision.Mat,
+        points1: alvision.Mat, points2: alvision.Mat,
+        points4D: alvision.Mat): void { }
+
+    correct(F: alvision.Mat,
+        points1: alvision.Mat, points2: alvision.Mat,
+        newPoints1: alvision.Mat, newPoints2: alvision.Mat) { }
 
         run(iii: alvision.int): void {
-            const int ntests = 1;
-            const double maxReprojErr = 2;
-            const double maxScanlineDistErr_c = 3;
-            const double maxScanlineDistErr_uc = 4;
+            const ntests = 1;
+            const  maxReprojErr = 2;
+            const  maxScanlineDistErr_c = 3;
+            const  maxScanlineDistErr_uc = 4;
             FILE * f = 0;
 
-            for (int testcase = 1; testcase <= ntests; testcase++)
+            for (var testcase = 1; testcase <= ntests; testcase++)
             {
-                alvision.String filepath;
+                //alvision.String filepath;
                 char buf[1000];
-                filepath = alvision.format("%scv/stereo/case%d/stereo_calib.txt", ts.get_data_path(), testcase);
+                var filepath = alvision.format("%scv/stereo/case%d/stereo_calib.txt", this.ts.get_data_path(), testcase);
                 f = fopen(filepath, "rt");
                 Size patternSize;
                 Array < string > imglist;
 
                 if (!f || !fgets(buf, sizeof(buf) - 3, f) || sscanf(buf, "%d%d", &patternSize.width, &patternSize.height) != 2) {
-                    ts.printf(alvision.cvtest.TSConstants.LOG, "The file %s can not be opened or has invalid content\n", filepath);
-                    this.ts.set_failed_test_info(f ? alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA : alvision.cvtest.TS::FAIL_MISSING_TEST_DATA);
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "The file %s can not be opened or has invalid content\n", filepath);
+                    this.ts.set_failed_test_info(f ? alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA : alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA);
                     fclose(f);
                     return;
                 }
@@ -1326,46 +1331,56 @@ class CV_StereoCalibrationTest extends alvision.cvtest.BaseTest
                     return;
                 }
 
-                int nframes = (int)(imglist.size() / 2);
-                int npoints = patternSize.width * patternSize.height;
-                Array < Array < Point3f > > objpt(nframes);
-                Array < Array < Point2f > > imgpt1(nframes);
-                Array < Array < Point2f > > imgpt2(nframes);
-                Size imgsize;
-                int total = 0;
+                var nframes = (int)(imglist.size() / 2);
+                var npoints = patternSize.width * patternSize.height;
+                var objpt = new Array<Array<alvision.Point3f>> (nframes);
+                var imgpt1 = new Array<Array<alvision.Point2f>> (nframes);
+                var imgpt2 = new Array<Array<alvision.Point2f>> (nframes);
+                var imgsize = new alvision.Size();
+                var total = 0;
 
-                for (int i = 0; i < nframes; i++ )
+                for (var i = 0; i < nframes; i++ )
                 {
-                    Mat left = imread(imglist[i * 2]);
-                    Mat right = imread(imglist[i * 2 + 1]);
+                    var left =  alvision.imread(imglist[i * 2]);
+                    var right = alvision.imread(imglist[i * 2 + 1]);
                     if (left.empty() || right.empty()) {
-                        ts.printf(alvision.cvtest.TSConstants.LOG, "Can not load images %s and %s, testcase %d\n",
+                        this.ts.printf(alvision.cvtest.TSConstants.LOG, "Can not load images %s and %s, testcase %d\n",
                             imglist[i * 2], imglist[i * 2 + 1], testcase);
-                        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISSING_TEST_DATA);
+                        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA);
                         return;
                     }
                     imgsize = left.size();
-                    bool found1 = findChessboardCorners(left, patternSize, imgpt1[i]);
-                    bool found2 = findChessboardCorners(right, patternSize, imgpt2[i]);
+                    var found1 = findChessboardCorners(left, patternSize, imgpt1[i]);
+                    var found2 = findChessboardCorners(right, patternSize, imgpt2[i]);
                     if (!found1 || !found2) {
-                        ts.printf(alvision.cvtest.TSConstants.LOG, "The function could not detect boards on the images %s and %s, testcase %d\n",
+                        this.ts.printf(alvision.cvtest.TSConstants.LOG, "The function could not detect boards on the images %s and %s, testcase %d\n",
                             imglist[i * 2], imglist[i * 2 + 1], testcase);
                         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                         return;
                     }
                     total += (int)imgpt1[i].size();
-                    for (int j = 0; j < npoints; j++ )
-                    objpt[i].push(Point3f((float)(j % patternSize.width), (float)(j / patternSize.width), 0.f));
+                    for (var j = 0; j < npoints; j++ )
+                    objpt[i].push(new alvision.Point3f((float)(j % patternSize.width), (float)(j / patternSize.width), 0.f));
                 }
 
                 // rectify (calibrated)
-                Mat M1 = Mat::eye(3, 3, CV_64F), M2 = Mat::eye(3, 3, CV_64F), D1(5, 1, CV_64F), D2(5, 1, CV_64F), R, T, E, F;
+                var M1 = alvision.Mat.from(alvision.Mat.eye(3, 3,  alvision.MatrixType.CV_64F));
+                var M2 = alvision.Mat.from(alvision.Mat.eye(3, 3, alvision.MatrixType.CV_64F));
+                var D1 = new alvision.Mat(5, 1, alvision.MatrixType.CV_64F);
+                var D2 = new alvision.Mat(5, 1, alvision.MatrixType.CV_64F);
+                var R = new alvision.Mat();
+                    var T = new alvision.Mat();
+                    var E = new alvision.Mat();
+                    var F = new alvision.Mat();
+
+
+
                 M1.at<double>(0, 2) = M2.at<double>(0, 2) = (imgsize.width - 1) * 0.5;
                 M1.at<double>(1, 2) = M2.at<double>(1, 2) = (imgsize.height - 1) * 0.5;
                 D1 = alvision.Scalar.all(0);
                 D2 = alvision.Scalar.all(0);
-                double err = calibrateStereoCamera(objpt, imgpt1, imgpt2, M1, D1, M2, D2, imgsize, R, T, E, F,
-                    TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 30, 1e-6),
+                var err = calibrateStereoCamera(objpt, imgpt1, imgpt2, M1, D1, M2, D2, imgsize, R, T, E, F,
+                    new alvision.TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 30, 1e-6),
                     CV_CALIB_SAME_FOCAL_LENGTH
                     //+ CV_CALIB_FIX_ASPECT_RATIO
                     + CV_CALIB_FIX_PRINCIPAL_POINT
@@ -1406,28 +1421,28 @@ class CV_StereoCalibrationTest extends alvision.cvtest.BaseTest
                 }
 
                 //check that Tx after rectification is equal to distance between cameras
-                double tx = fabs(P2.at<double>(0, 3) / P2.at<double>(0, 0));
-                if (fabs(tx - alvision.cvtest.norm(T, alvision.NormTypes.NORM_L2)) > 1e-5) {
+                var tx = Math.abs(P2.at<double>(0, 3) / P2.at<double>(0, 0));
+                if (Math.abs(tx - alvision.cvtest.norm(T, alvision.NormTypes.NORM_L2)) > 1e-5) {
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                     return;
                 }
 
                 //check that Q reprojects points before the camera
-                double testPoint[4] = { 0.0, 0.0, 100.0, 1.0};
+                var testPoint = [ 0.0, 0.0, 100.0, 1.0];
                 Mat reprojectedTestPoint = Q * Mat_<double>(4, 1, testPoint);
-                CV_Assert(reprojectedTestPoint.type() == CV_64FC1);
+                alvision.CV_Assert(()=>reprojectedTestPoint.type() ==alvision.MatrixType. CV_64FC1);
                 if (reprojectedTestPoint.at<double>(2) / reprojectedTestPoint.at<double>(3) < 0) {
-                    ts.printf(alvision.cvtest.TSConstants.LOG, "A point after rectification is reprojected behind the camera, testcase %d\n", testcase);
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "A point after rectification is reprojected behind the camera, testcase %d\n", testcase);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 }
 
                 //check that Q reprojects the same points as reconstructed by triangulation
-                const float minCoord = -300.0f;
-                const float maxCoord = 300.0f;
-                const float minDisparity = 0.1f;
-                const float maxDisparity = 600.0f;
-                const int pointsCount = 500;
-                const float requiredAccuracy = 1e-3f;
+                const  minCoord = -300.0;
+                const  maxCoord = 300.0;
+                const  minDisparity = 0.1;
+                const  maxDisparity = 600.0;
+                const  pointsCount = 500;
+                const  requiredAccuracy = 1e-3;
                 var rng = this.ts.get_rng();
 
                 Mat projectedPoints_1(2, pointsCount, CV_32FC1);
@@ -1487,7 +1502,7 @@ class CV_StereoCalibrationTest extends alvision.cvtest.BaseTest
                 }
 
                 // rectifyUncalibrated
-                CV_Assert(imgpt1.size() == imgpt2.size());
+                alvision.CV_Assert(()=>imgpt1.size() == imgpt2.size());
                 Mat _imgpt1(total, 1, CV_32FC2), _imgpt2(total, 1, CV_32FC2);
                 Array<Array<Point2f>>::const_iterator iit1 = imgpt1.begin();
                 Array<Array<Point2f>>::const_iterator iit2 = imgpt2.begin();
@@ -1547,8 +1562,7 @@ class CV_StereoCalibrationTest extends alvision.cvtest.BaseTest
                     }
                 }
 
-                ts.printf(alvision.cvtest.TSConstants.LOG, "Testcase %d. Max distance (calibrated) =%g\n"
-            "Max distance (uncalibrated) =%g\n", testcase, maxDiff_c, maxDiff_uc);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Testcase %d. Max distance (calibrated) =%g\n Max distance (uncalibrated) =%g\n", testcase, maxDiff_c, maxDiff_uc);
             }
 
         }
@@ -1715,6 +1729,7 @@ class CV_StereoCalibrationTest_CPP extends CV_StereoCalibrationTest
         R1: alvision.Mat, R2: alvision.Mat, P1: alvision.Mat, P2: alvision.Mat, Q: alvision.Mat ,
         alpha: alvision.double, newImageSize: alvision.Size ,
         validPixROI1: alvision.Rect, validPixROI2: alvision.Rect, flags: alvision.int): void {
+
         alvision.stereoRectify(cameraMatrix1, distCoeffs1, cameraMatrix2, distCoeffs2,
             imageSize, R, T, R1, R2, P1, P2, Q, flags, alpha, newImageSize, validPixROI1, validPixROI2);
     }

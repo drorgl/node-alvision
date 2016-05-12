@@ -97,7 +97,7 @@ CUDA_TEST_P(GEMM, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::gemm(loadMat(src1), loadMat(src2), alpha, loadMat(src3), beta, dst, flags);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -109,7 +109,7 @@ CUDA_TEST_P(GEMM, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::gemm(loadMat(src1), loadMat(src2), alpha, loadMat(src3), beta, dst, flags);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
         }

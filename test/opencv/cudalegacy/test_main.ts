@@ -118,7 +118,7 @@ int main(int argc, char** argv)
         cerr << e.what() << endl;
         return -1;
     }
-    catch (...)
+    catch(e)
     {
         cerr << "Unknown error" << endl;
         return -1;

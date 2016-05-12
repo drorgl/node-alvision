@@ -663,7 +663,7 @@ void HOGCacheTester::init(const HOGDescriptorTester* _descriptor,
         {
             float di = i - blockSize.height*0.5f;
             float dj = j - blockSize.width*0.5f;
-            weights(i,j) = std::exp(-(di*di + dj*dj)*scale);
+            weights(i,j) = Math.exp(-(di*di + dj*dj)*scale);
         }
 
     blockData.resize(nblocks.width*nblocks.height);

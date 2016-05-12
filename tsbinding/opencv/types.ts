@@ -2501,3 +2501,31 @@ export interface CvPoint3D64f {
     y: _st.double;
     z: _st.double;
 }
+
+export interface CvPoint3D32f {
+    x: _st.float;
+    y: _st.float;
+    z: _st.float;
+
+    //#ifdef __cplusplus
+    //CvPoint3D32f(float _x = 0, float _y = 0, float _z = 0): x(_x), y(_y), z(_z) {}
+    //template < typename _Tp>
+    //    CvPoint3D32f(const cv::Point3_<_Tp>& pt): x((float)pt.x), y((float)pt.y), z((float)pt.z) {}
+    //template < typename _Tp>
+    //    operator cv::Point3_<_Tp>() const { return cv::Point3_<_Tp>(cv::saturate_cast<_Tp>(x), cv::saturate_cast<_Tp>(y), cv::saturate_cast<_Tp>(z)); }
+    //#endif
+}
+
+
+export interface CvPoint2D32f {
+    x: _st.float;
+    y: _st.float;
+
+    //    #ifdef __cplusplus
+    //    CvPoint2D32f(float _x = 0, float _y = 0): x(_x), y(_y) {}
+    //    template < typename _Tp>
+    //        CvPoint2D32f(const cv::Point_<_Tp>& pt): x((float)pt.x), y((float)pt.y) {}
+    //    template < typename _Tp>
+    //        operator cv::Point_<_Tp>() const { return cv::Point_<_Tp>(cv::saturate_cast<_Tp>(x), cv::saturate_cast<_Tp>(y)); }
+    //#endif
+}

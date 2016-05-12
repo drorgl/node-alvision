@@ -95,7 +95,7 @@ CUDA_TEST_P(Merge, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::merge(d_src, dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -157,7 +157,7 @@ CUDA_TEST_P(Split, Accuracy)
             Array<alvision.cuda::GpuMat> dst;
             alvision.cuda::split(loadMat(src), dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
@@ -218,7 +218,7 @@ CUDA_TEST_P(Transpose, Accuracy)
             alvision.cuda::GpuMat dst;
             alvision.cuda::transpose(loadMat(src), dst);
         }
-        catch (const alvision.Exception& e)
+        catch(e)
         {
             ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
         }
