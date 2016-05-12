@@ -163,7 +163,7 @@ protected:
         {
             dextractor.compute( image, keypoints, descriptors );
         }
-        catch(...)
+        catch(e)
         {
             ts.printf( alvision.cvtest.TSConstants.LOG, "compute() on empty image and empty keypoints must not generate exception (1).\n");
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
@@ -174,7 +174,7 @@ protected:
         {
             dextractor.compute( image, keypoints, descriptors );
         }
-        catch(...)
+        catch(e)
         {
             ts.printf( alvision.cvtest.TSConstants.LOG, "compute() on nonempty image and empty keypoints must not generate exception (1).\n");
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
@@ -188,7 +188,7 @@ protected:
         {
             dextractor.compute( images, keypointsCollection, descriptorsCollection );
         }
-        catch(...)
+        catch(e)
         {
             ts.printf( alvision.cvtest.TSConstants.LOG, "compute() on empty images and empty keypoints collection must not generate exception (2).\n");
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );

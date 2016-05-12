@@ -361,95 +361,88 @@ function isZero(i: alvision.uchar): boolean { return i == 0; }
 //----------------------------------------------- CascadeDetectorTest -----------------------------------
 class CV_CascadeDetectorTest extends CV_DetectorTest
 {
-public:
-    CV_CascadeDetectorTest();
-protected:
-    virtual void readDetector( const FileNode& fn );
-    virtual void writeDetector( FileStorage& fs, int di );
-    virtual int detectMultiScale( int di, const Mat& img, Array<Rect>& objects );
-    virtual int detectMultiScale_C( const string& filename, int di, const Mat& img, Array<Rect>& objects );
-    Array<int> flags;
+    constructor() {
+        super();
+        this.validationFilename = "cascadeandhog/cascade.xml";
+        this.configFilename = "cascadeandhog/_cascade.xml";
+    }
+
+    readDetector(fn: alvision.FileNode): void {
+        String filename;
+        int flag;
+       
+        fn[FILENAME] >> filename;
+        this.detectorFilenames.push(filename);
+        fn[C_SCALE_CASCADE] >> flag;
+        if (flag)
+            flags.push(0);
+        else
+            flags.push(CASCADE_SCALE_IMAGE);
+    }
+    writeDetector(fs: alvision.FileStorage, di: alvision.int  ): void {
+        var sc = this.flags[di.valueOf()] & CASCADE_SCALE_IMAGE ? 0 : 1;
+        fs.write(FILENAME, this.detectorFilenames[di]);
+        //fs << FILENAME << detectorFilenames[di];
+        fs.write(C_SCALE_CASCADE, sc);
+        //fs << C_SCALE_CASCADE << sc;
+    }
+    detectMultiScale(di: alvision.int, img: alvision.Mat, objects: Array<alvision.Rect> ): alvision.int {
+        var dataPath = this.ts.get_data_path();//, filename;
+        var filename = dataPath + detectorFilenames[di];
+        const pattern = "haarcascade_frontalface_default.xml";
+
+        if (filename.size() >= pattern.size() &&
+            strcmp(filename + (filename.size() - pattern.size()),
+                pattern) == 0)
+            return this.detectMultiScale_C(filename, di, img, objects);
+
+        var cascade = new CascadeClassifier (filename);
+        if (cascade.empty()) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
+            return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
+        }
+        var grayImg = new alvision.Mat();
+        alvision.cvtColor(img, grayImg,alvision.ColorConversionCodes. COLOR_BGR2GRAY);
+        alvision.equalizeHist(grayImg, grayImg);
+        cascade.detectMultiScale(grayImg, objects, 1.1, 3, flags[di]);
+        return alvision.cvtest.FailureCode.OK;
+    }
+    detectMultiScale_C(filename: string, di: alvision.int, img: alvision.Mat, objects: Array<alvision.Rect> ): alvision.int {
+        c_cascade: CvHaarClassifierCascade = (cvLoadHaarClassifierCascade(filename, cvSize(0, 0)));
+        storage: CvMemStorage = (cvCreateMemStorage());
+
+        if (!c_cascade) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
+            return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
+        }
+        var grayImg = new alvision.Mat();
+        alvision.cvtColor(img, grayImg, COLOR_BGR2GRAY);
+        alvision.equalizeHist(grayImg, grayImg);
+
+        var c_gray = grayImg;
+        var rs = cvHaarDetectObjects(&c_gray, c_cascade, storage, 1.1, 3, flags[di]);
+
+        objects.clear();
+        for (var i = 0; i < rs.total; i++ )
+        {
+            var r = *(Rect *)cvGetSeqElem(rs, i);
+            objects.push(r);
+        }
+
+        return alvision.cvtest.FailureCode.OK;
+    }
+    protected flags: Array<alvision.int>;
 };
 
-CV_CascadeDetectorTest::CV_CascadeDetectorTest()
-{
-    validationFilename = "cascadeandhog/cascade.xml";
-    configFilename = "cascadeandhog/_cascade.xml";
-}
-
-void CV_CascadeDetectorTest::readDetector( const FileNode& fn )
-{
-    String filename;
-    int flag;
-    fn[FILENAME] >> filename;
-    detectorFilenames.push(filename);
-    fn[C_SCALE_CASCADE] >> flag;
-    if( flag )
-        flags.push( 0 );
-    else
-        flags.push( CASCADE_SCALE_IMAGE );
-}
-
-void CV_CascadeDetectorTest::writeDetector( FileStorage& fs, int di )
-{
-    int sc = flags[di] & CASCADE_SCALE_IMAGE ? 0 : 1;
-    fs << FILENAME << detectorFilenames[di];
-    fs << C_SCALE_CASCADE << sc;
-}
 
 
-int CV_CascadeDetectorTest::detectMultiScale_C( const string& filename,
-                                                int di, const Mat& img,
-                                                Array<Rect>& objects )
-{
-    Ptr<CvHaarClassifierCascade> c_cascade(cvLoadHaarClassifierCascade(filename, cvSize(0,0)));
-    Ptr<CvMemStorage> storage(cvCreateMemStorage());
 
-    if( !c_cascade )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
-        return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
-    }
-    Mat grayImg;
-    cvtColor( img, grayImg, COLOR_BGR2GRAY );
-    equalizeHist( grayImg, grayImg );
 
-    CvMat c_gray = grayImg;
-    CvSeq* rs = cvHaarDetectObjects(&c_gray, c_cascade, storage, 1.1, 3, flags[di] );
-
-    objects.clear();
-    for( int i = 0; i < rs.total; i++ )
-    {
-        Rect r = *(Rect*)cvGetSeqElem(rs, i);
-        objects.push(r);
-    }
-
-    return alvision.cvtest.FailureCode.OK;
-}
 
 int CV_CascadeDetectorTest::detectMultiScale( int di, const Mat& img,
                                               Array<Rect>& objects)
 {
-    string dataPath = ts.get_data_path(), filename;
-    filename = dataPath + detectorFilenames[di];
-    const string pattern = "haarcascade_frontalface_default.xml";
-
-    if( filename.size() >= pattern.size() &&
-        strcmp(filename + (filename.size() - pattern.size()),
-              pattern) == 0 )
-        return detectMultiScale_C(filename, di, img, objects);
-
-    CascadeClassifier cascade( filename );
-    if( cascade.empty() )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
-        return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
-    }
-    Mat grayImg;
-    cvtColor( img, grayImg, COLOR_BGR2GRAY );
-    equalizeHist( grayImg, grayImg );
-    cascade.detectMultiScale( grayImg, objects, 1.1, 3, flags[di] );
-    return alvision.cvtest.FailureCode.OK;
+  
 }
 
 //----------------------------------------------- HOGDetectorTest -----------------------------------

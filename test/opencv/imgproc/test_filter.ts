@@ -1873,7 +1873,7 @@ protected:
                 morphologyEx(src, dst, MORPH_GRADIENT, elem_rect);
             }
         }
-        catch(...)
+        catch(e)
         {
             ts.printf(alvision.cvtest.TSConstants.LOG, "Combination of depths %d => %d in %s is not supported (yet it should be)",
                        depths[i][0], depths[i][1],

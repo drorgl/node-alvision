@@ -140,7 +140,7 @@ export namespace ml {
     
     @sa @ref ml_intro_data
      */
-    interface TrainDataStatic {
+   export  interface TrainDataStatic {
         /** @brief Creates training data from in-memory arrays.
 
   @param samples matrix of samples. It should have CV_32F type.
@@ -163,6 +163,45 @@ export namespace ml {
         create(samples: _st.InputArray, layout: SampleTypes, responses: _st.InputArray,
             varIdx?: _st.InputArray /*= noArray()*/, sampleIdx?: _st.InputArray  /*= noArray()*/,
             sampleWeights?: _st.InputArray /*= noArray()*/, varType?: _st.InputArray /*= noArray()*/): TrainData
+
+            /** @brief Reads the dataset from a .csv file and returns the ready-to-use training data.
+        
+            @param filename The input file name
+            @param headerLineCount The number of lines in the beginning to skip; besides the header, the
+                function also skips empty lines and lines staring with `#`
+            @param responseStartIdx Index of the first output variable. If -1, the function considers the
+                last variable as the response
+            @param responseEndIdx Index of the last output variable + 1. If -1, then there is single
+                response variable at responseStartIdx.
+            @param varTypeSpec The optional text string that specifies the variables' types. It has the
+                format `ord[n1-n2,n3,n4-n5,...]cat[n6,n7-n8,...]`. That is, variables from `n1 to n2`
+                (inclusive range), `n3`, `n4 to n5` ... are considered ordered and `n6`, `n7 to n8` ... are
+                considered as categorical. The range `[n1..n2] + [n3] + [n4..n5] + ... + [n6] + [n7..n8]`
+                should cover all the variables. If varTypeSpec is not specified, then algorithm uses the
+                following rules:
+                - all input variables are considered ordered by default. If some column contains has non-
+                  numerical values, e.g. 'apple', 'pear', 'apple', 'apple', 'mango', the corresponding
+                  variable is considered categorical.
+                - if there are several output variables, they are all considered as ordered. Error is
+                  reported when non-numerical values are used.
+                - if there is a single output variable, then if its values are non-numerical or are all
+                  integers, then it's considered categorical. Otherwise, it's considered ordered.
+            @param delimiter The character used to separate values in each line.
+            @param missch The character used to specify missing measurements. It should not be a digit.
+                Although it's a non-numerical value, it surely does not affect the decision of whether the
+                variable ordered or categorical.
+            @note If the dataset only contains input variables and no responses, use responseStartIdx = -2
+                and responseEndIdx = 0. The output variables vector will just contain zeros.
+             */
+
+        loadFromCSV(filename : string,
+            headerLineCount : _st.int,
+            responseStartIdx? : _st.int /*= -1*/,
+            responseEndIdx? : _st.int /*= -1*/,
+                                    varTypeSpec? : string /*=String()*/,
+            delimiter? : _st.char /*= ','*/,
+            missch? : _st.char /*= '?'*/): TrainData;
+
 
     }
 
@@ -260,42 +299,6 @@ export namespace ml {
         //
         //    CV_WRAP static Mat getSubVector(const Mat& vec, const Mat& idx);
         //
-        //    /** @brief Reads the dataset from a .csv file and returns the ready-to-use training data.
-        //
-        //    @param filename The input file name
-        //    @param headerLineCount The number of lines in the beginning to skip; besides the header, the
-        //        function also skips empty lines and lines staring with `#`
-        //    @param responseStartIdx Index of the first output variable. If -1, the function considers the
-        //        last variable as the response
-        //    @param responseEndIdx Index of the last output variable + 1. If -1, then there is single
-        //        response variable at responseStartIdx.
-        //    @param varTypeSpec The optional text string that specifies the variables' types. It has the
-        //        format `ord[n1-n2,n3,n4-n5,...]cat[n6,n7-n8,...]`. That is, variables from `n1 to n2`
-        //        (inclusive range), `n3`, `n4 to n5` ... are considered ordered and `n6`, `n7 to n8` ... are
-        //        considered as categorical. The range `[n1..n2] + [n3] + [n4..n5] + ... + [n6] + [n7..n8]`
-        //        should cover all the variables. If varTypeSpec is not specified, then algorithm uses the
-        //        following rules:
-        //        - all input variables are considered ordered by default. If some column contains has non-
-        //          numerical values, e.g. 'apple', 'pear', 'apple', 'apple', 'mango', the corresponding
-        //          variable is considered categorical.
-        //        - if there are several output variables, they are all considered as ordered. Error is
-        //          reported when non-numerical values are used.
-        //        - if there is a single output variable, then if its values are non-numerical or are all
-        //          integers, then it's considered categorical. Otherwise, it's considered ordered.
-        //    @param delimiter The character used to separate values in each line.
-        //    @param missch The character used to specify missing measurements. It should not be a digit.
-        //        Although it's a non-numerical value, it surely does not affect the decision of whether the
-        //        variable ordered or categorical.
-        //    @note If the dataset only contains input variables and no responses, use responseStartIdx = -2
-        //        and responseEndIdx = 0. The output variables vector will just contain zeros.
-        //     */
-        //    static Ptr<TrainData> loadFromCSV(const String& filename,
-        //                                      int headerLineCount,
-        //                                      int responseStartIdx=-1,
-        //                                      int responseEndIdx=-1,
-        //                                      const String& varTypeSpec=String(),
-        //                                      char delimiter=',',
-        //                                      char missch='?');
 
     };
 

@@ -758,104 +758,98 @@ class CV_CameraCalibrationTest_CPP extends CV_CameraCalibrationTest
 
 class CV_CalibrationMatrixValuesTest extends alvision.cvtest.BaseTest
 {
-public:
-    CV_CalibrationMatrixValuesTest() {}
-protected:
-    void run(int);
-    virtual void calibMatrixValues( const Mat& cameraMatrix, Size imageSize,
+    run(iii: alvision.int): void {
+        var code = alvision.cvtest.FailureCode.OK;
+        const  fcMinVal = 1e-5;
+        const  fcMaxVal = 1000;
+        const  apertureMaxVal = 0.01;
+
+        var rng = this.ts.get_rng();
+
+        double fx, fy, cx, cy, nx, ny;
+        Mat cameraMatrix(3, 3, CV_64FC1);
+        cameraMatrix.setTo(Scalar(0));
+        fx = cameraMatrix.at<double>(0, 0) = rng.uniform(fcMinVal, fcMaxVal);
+        fy = cameraMatrix.at<double>(1, 1) = rng.uniform(fcMinVal, fcMaxVal);
+        cx = cameraMatrix.at<double>(0, 2) = rng.uniform(fcMinVal, fcMaxVal);
+        cy = cameraMatrix.at<double>(1, 2) = rng.uniform(fcMinVal, fcMaxVal);
+        cameraMatrix.at<double>(2, 2) = 1;
+
+        Size imageSize(600, 400);
+
+        double apertureWidth = (double)rng * apertureMaxVal,
+            apertureHeight = (double)rng * apertureMaxVal;
+
+        double fovx, fovy, focalLength, aspectRatio,
+            goodFovx, goodFovy, goodFocalLength, goodAspectRatio;
+        Point2d principalPoint, goodPrincipalPoint;
+
+
+        calibMatrixValues(cameraMatrix, imageSize, apertureWidth, apertureHeight,
+            fovx, fovy, focalLength, principalPoint, aspectRatio);
+
+        // calculate calibration matrix values
+        goodAspectRatio = fy / fx;
+
+        if (apertureWidth != 0.0 && apertureHeight != 0.0) {
+            nx = imageSize.width / apertureWidth;
+            ny = imageSize.height / apertureHeight;
+        }
+        else {
+            nx = 1.0;
+            ny = goodAspectRatio;
+        }
+
+        goodFovx = 2 * atan(imageSize.width / (2 * fx)) * 180.0 / Math.PI;
+        goodFovy = 2 * atan(imageSize.height / (2 * fy)) * 180.0 / Math.PI;
+
+        goodFocalLength = fx / nx;
+
+        goodPrincipalPoint.x = cx / nx;
+        goodPrincipalPoint.y = cy / ny;
+
+        // check results
+        if (Math.abs(fovx - goodFovx) > FLT_EPSILON) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad fovx (real=%f, good = %f\n", fovx, goodFovx);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
+        if (Math.abs(fovy - goodFovy) > FLT_EPSILON) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad fovy (real=%f, good = %f\n", fovy, goodFovy);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
+        if (Math.abs(focalLength - goodFocalLength) > FLT_EPSILON) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad focalLength (real=%f, good = %f\n", focalLength, goodFocalLength);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
+        if (fabs(aspectRatio - goodAspectRatio) > FLT_EPSILON) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "bad aspectRatio (real=%f, good = %f\n", aspectRatio, goodAspectRatio);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
+        if (norm(principalPoint - goodPrincipalPoint) > FLT_EPSILON) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "bad principalPoint\n");
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            goto _exit_;
+        }
+
+        _exit_:
+        RNG & _rng = ts.get_rng();
+        _rng = rng;
+        this.ts.set_failed_test_info(code);
+
+    }
+    calibMatrixValues( const Mat& cameraMatrix, Size imageSize,
         double apertureWidth, double apertureHeight, double& fovx, double& fovy, double& focalLength,
-        Point2d& principalPoint, double& aspectRatio ) = 0;
+        Point2d& principalPoint, double& aspectRatio): void {
+    }
 };
 
 void CV_CalibrationMatrixValuesTest::run(int)
 {
-    int code = alvision.cvtest.FailureCode.OK;
-    const double fcMinVal = 1e-5;
-    const double fcMaxVal = 1000;
-    const double apertureMaxVal = 0.01;
-
-    RNG rng = ts.get_rng();
-
-    double fx, fy, cx, cy, nx, ny;
-    Mat cameraMatrix( 3, 3, CV_64FC1 );
-    cameraMatrix.setTo( Scalar(0) );
-    fx = cameraMatrix.at<double>(0,0) = rng.uniform( fcMinVal, fcMaxVal );
-    fy = cameraMatrix.at<double>(1,1) = rng.uniform( fcMinVal, fcMaxVal );
-    cx = cameraMatrix.at<double>(0,2) = rng.uniform( fcMinVal, fcMaxVal );
-    cy = cameraMatrix.at<double>(1,2) = rng.uniform( fcMinVal, fcMaxVal );
-    cameraMatrix.at<double>(2,2) = 1;
-
-    Size imageSize( 600, 400 );
-
-    double apertureWidth = (double)rng * apertureMaxVal,
-           apertureHeight = (double)rng * apertureMaxVal;
-
-    double fovx, fovy, focalLength, aspectRatio,
-           goodFovx, goodFovy, goodFocalLength, goodAspectRatio;
-    Point2d principalPoint, goodPrincipalPoint;
-
-
-    calibMatrixValues( cameraMatrix, imageSize, apertureWidth, apertureHeight,
-        fovx, fovy, focalLength, principalPoint, aspectRatio );
-
-    // calculate calibration matrix values
-    goodAspectRatio = fy / fx;
-
-    if( apertureWidth != 0.0 && apertureHeight != 0.0 )
-    {
-        nx = imageSize.width / apertureWidth;
-        ny = imageSize.height / apertureHeight;
-    }
-    else
-    {
-        nx = 1.0;
-        ny = goodAspectRatio;
-    }
-
-    goodFovx = 2 * atan( imageSize.width / (2 * fx)) * 180.0 / Math.PI;
-    goodFovy = 2 * atan( imageSize.height / (2 * fy)) * 180.0 / Math.PI;
-
-    goodFocalLength = fx / nx;
-
-    goodPrincipalPoint.x = cx / nx;
-    goodPrincipalPoint.y = cy / ny;
-
-    // check results
-    if( fabs(fovx - goodFovx) > FLT_EPSILON )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad fovx (real=%f, good = %f\n", fovx, goodFovx );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
-    if( fabs(fovy - goodFovy) > FLT_EPSILON )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad fovy (real=%f, good = %f\n", fovy, goodFovy );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
-    if( fabs(focalLength - goodFocalLength) > FLT_EPSILON )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad focalLength (real=%f, good = %f\n", focalLength, goodFocalLength );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
-    if( fabs(aspectRatio - goodAspectRatio) > FLT_EPSILON )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad aspectRatio (real=%f, good = %f\n", aspectRatio, goodAspectRatio );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
-    if( norm( principalPoint - goodPrincipalPoint ) > FLT_EPSILON )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad principalPoint\n" );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-        goto _exit_;
-    }
-
-_exit_:
-    RNG& _rng = ts.get_rng();
-    _rng = rng;
-    this.ts.set_failed_test_info( code );
+    
 }
 
 //----------------------------------------- CV_CalibrationMatrixValuesTest_C --------------------------------
@@ -969,7 +963,7 @@ void CV_ProjectPointsTest::run(int)
     Mat_<float> objPoints( pointCount, 3), rvec( 1, 3), rmat, tvec( 1, 3 ), cameraMatrix( 3, 3 ), distCoeffs( 1, 4 ),
       leftRvec, rightRvec, leftTvec, rightTvec, leftCameraMatrix, rightCameraMatrix, leftDistCoeffs, rightDistCoeffs;
 
-    RNG rng = ts.get_rng();
+    var rng = this.ts.get_rng();
 
     // generate data
     cameraMatrix << 300.f,  0.f,    imgSize.width/2.f,

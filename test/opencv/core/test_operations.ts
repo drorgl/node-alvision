@@ -1232,7 +1232,7 @@ protected:
                 CV_Assert( k == 0 );
             }
         }
-        catch(...)
+        catch(e)
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         }

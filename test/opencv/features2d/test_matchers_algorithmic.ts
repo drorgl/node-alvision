@@ -98,7 +98,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     {
         dmatcher.match( queryDescriptors, trainDescriptors, matches, mask );
     }
-    catch(...)
+    catch(e)
     {
         ts.printf( alvision.cvtest.TSConstants.LOG, "match() on empty descriptors must not generate exception (1).\n" );
         this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -108,7 +108,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     {
         dmatcher.knnMatch( queryDescriptors, trainDescriptors, vmatches, 2, mask );
     }
-    catch(...)
+    catch(e)
     {
         ts.printf( alvision.cvtest.TSConstants.LOG, "knnMatch() on empty descriptors must not generate exception (1).\n" );
         this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -118,7 +118,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     {
         dmatcher.radiusMatch( queryDescriptors, trainDescriptors, vmatches, 10.f, mask );
     }
-    catch(...)
+    catch(e)
     {
         ts.printf( alvision.cvtest.TSConstants.LOG, "radiusMatch() on empty descriptors must not generate exception (1).\n" );
         this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -128,7 +128,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     {
         dmatcher.add( trainDescriptorCollection );
     }
-    catch(...)
+    catch(e)
     {
         ts.printf( alvision.cvtest.TSConstants.LOG, "add() on empty descriptors must not generate exception.\n" );
         this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -138,7 +138,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     {
         dmatcher.match( queryDescriptors, matches, masks );
     }
-    catch(...)
+    catch(e)
     {
         ts.printf( alvision.cvtest.TSConstants.LOG, "match() on empty descriptors must not generate exception (2).\n" );
         this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -148,7 +148,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     {
         dmatcher.knnMatch( queryDescriptors, vmatches, 2, masks );
     }
-    catch(...)
+    catch(e)
     {
         ts.printf( alvision.cvtest.TSConstants.LOG, "knnMatch() on empty descriptors must not generate exception (2).\n" );
         this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -158,7 +158,7 @@ void CV_DescriptorMatcherTest::emptyDataTest()
     {
         dmatcher.radiusMatch( queryDescriptors, vmatches, 10.f, masks );
     }
-    catch(...)
+    catch(e)
     {
         ts.printf( alvision.cvtest.TSConstants.LOG, "radiusMatch() on empty descriptors must not generate exception (2).\n" );
         this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );

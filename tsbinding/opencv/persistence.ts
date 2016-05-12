@@ -528,7 +528,23 @@ export interface FileStorage
 //    std::vector<char> structs; //!< the stack of written structures
 //    int state; //!< the writer state
 
-        [i: string]: FileNode;
+    [i: string]: FileNode;
+
+
+    write(name: string, value: _st.int  ): void;
+    write(name: string, value: _st.float  ): void;
+    write(name: string, value: _st.double  ): void;
+    write(name : string, value : string): void;
+    write(name : string, value : _mat.Mat): void;
+    write(name : string, value : _mat.SparseMat): void;
+    write(name: string, value: Array<_types.KeyPoint> ): void;
+    write(name: string, value: Array<_types.DMatch> ): void;
+
+    writeScalar(value: _st.int ): void;
+    writeScalar(value: _st.float ): void;
+    writeScalar(value: _st.double ): void;
+    writeScalar( value : string): void;
+
     };
 
 export var FileStorage: FileStorageStatic = alvision_module.FileStorage;
@@ -749,19 +765,6 @@ export interface FileNode
 ////! @relates cv::FileStorage
 ////! @{
 
-//CV_EXPORTS void write( FileStorage& fs, const String& name, int value );
-//CV_EXPORTS void write( FileStorage& fs, const String& name, float value );
-//CV_EXPORTS void write( FileStorage& fs, const String& name, double value );
-//CV_EXPORTS void write( FileStorage& fs, const String& name, const String& value );
-//CV_EXPORTS void write( FileStorage& fs, const String& name, const Mat& value );
-//CV_EXPORTS void write( FileStorage& fs, const String& name, const SparseMat& value );
-//CV_EXPORTS void write( FileStorage& fs, const String& name, const std::vector<KeyPoint>& value);
-//CV_EXPORTS void write( FileStorage& fs, const String& name, const std::vector<DMatch>& value);
-
-//CV_EXPORTS void writeScalar( FileStorage& fs, int value );
-//CV_EXPORTS void writeScalar( FileStorage& fs, float value );
-//CV_EXPORTS void writeScalar( FileStorage& fs, double value );
-//CV_EXPORTS void writeScalar( FileStorage& fs, const String& value );
 
 ////! @}
 

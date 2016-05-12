@@ -48,31 +48,29 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_TBB
-#include "tbb/task_scheduler_init.h"
-#endif
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_TBB
+//#include "tbb/task_scheduler_init.h"
+//#endif
+//
+//using namespace cv;
+//using namespace std;
 
 class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
 {
-public:
-    CV_solvePnPRansac_Test()
+    constructor()
     {
-        eps[SOLVEPNP_ITERATIVE] = 1.0e-2;
-        eps[SOLVEPNP_EPNP] = 1.0e-2;
-        eps[SOLVEPNP_P3P] = 1.0e-2;
-        eps[SOLVEPNP_DLS] = 1.0e-2;
-        eps[SOLVEPNP_UPNP] = 1.0e-2;
-        totalTestsCount = 10;
+        super();
+        this.eps[SOLVEPNP_ITERATIVE] = 1.0e-2;
+        this.eps[SOLVEPNP_EPNP] = 1.0e-2;
+        this.eps[SOLVEPNP_P3P] = 1.0e-2;
+        this.eps[SOLVEPNP_DLS] = 1.0e-2;
+        this.eps[SOLVEPNP_UPNP] = 1.0e-2;
+        this.totalTestsCount = 10;
     }
-    ~CV_solvePnPRansac_Test() {}
-protected:
-    void generate3DPointCloud(Array<Point3f>& points, Point3f pmin = Point3f(-1,
-        -1, 5), Point3f pmax = Point3f(1, 1, 10))
+    generate3DPointCloud(Array<Point3f>& points, Point3f pmin = Point3f(-1,
+        -1, 5), Point3f pmax = Point3f(1, 1, 10)) : void
     {
         const Point3f delta = pmax - pmin;
         for (size_t i = 0; i < points.size(); i++)
@@ -87,7 +85,7 @@ protected:
         }
     }
 
-    void generateCameraMatrix(Mat& cameraMatrix, RNG& rng)
+    generateCameraMatrix(Mat& cameraMatrix, RNG& rng) : void
     {
         const double fcMinVal = 1e-3;
         const double fcMaxVal = 100;
@@ -170,7 +168,7 @@ protected:
         generate3DPointCloud(points);
 
         const int methodsCount = 5;
-        RNG rng = ts.get_rng();
+        var rng = this.ts.get_rng();
 
 
         for (int mode = 0; mode < 2; mode++)
@@ -201,7 +199,7 @@ protected:
     int totalTestsCount;
 };
 
-class CV_solvePnP_Test : public CV_solvePnPRansac_Test
+class CV_solvePnP_Test extends CV_solvePnPRansac_Test
 {
 public:
     CV_solvePnP_Test()

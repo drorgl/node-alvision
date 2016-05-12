@@ -530,7 +530,7 @@ protected:
             fs << "mat" << mat;
             fs.release();
         }
-        catch(...)
+        catch(e)
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
         }

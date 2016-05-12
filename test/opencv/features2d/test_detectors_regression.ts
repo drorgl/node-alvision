@@ -89,7 +89,7 @@ void CV_FeatureDetectorTest::emptyDataTest()
     {
         fdetector.detect( image, keypoints );
     }
-    catch(...)
+    catch(e)
     {
         ts.printf( alvision.cvtest.TSConstants.LOG, "detect() on empty image must not generate exception (1).\n" );
         this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
@@ -109,7 +109,7 @@ void CV_FeatureDetectorTest::emptyDataTest()
     {
         fdetector.detect( images, keypointCollection );
     }
-    catch(...)
+    catch(e)
     {
         ts.printf( alvision.cvtest.TSConstants.LOG, "detect() on empty image vector must not generate exception (2).\n" );
         this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );

@@ -60,7 +60,7 @@ class CV_WatershedTest  extends alvision.cvtest.BaseTest
         var exp_path = this.ts.get_data_path() + "watershed/wshed_exp.png";
         var exp = alvision.imread(exp_path, 0);
         var orig = alvision.imread(this.ts.get_data_path() + "inpaint/orig.png");
-        var fs = new alvision.FileStorage (this.ts.get_data_path() + "watershed/comp.xml", FileStorage::READ);
+        var fs = new alvision.FileStorage (this.ts.get_data_path() + "watershed/comp.xml",alvision.FileStorageMode.READ);
 
         if (orig.empty() || !fs.isOpened()) {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
