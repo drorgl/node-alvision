@@ -228,7 +228,7 @@ to easily switch between different algorithms solving the same problem. This sec
 computing descriptors represented as vectors in a multidimensional space. All objects that implement
 the vector descriptor extractors inherit the DescriptorExtractor interface.
  */
-interface DescriptorExtractor extends Feature2D { }
+export interface DescriptorExtractor extends Feature2D { }
 //typedef Feature2D DescriptorExtractor;
 
 //! @addtogroup features2d_main

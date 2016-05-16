@@ -82,8 +82,8 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         var camMat = new alvision.Matf(3, 3);
         var distCoeffs0 = new alvision.Matf(1, 5);
 
-        camMat << 300.f, 0.f, this.imgSize.width / 2.f, 0, 300.f, this.imgSize.height / 2.f, 0.f, 0.f, 1.f;
-        distCoeffs0 << 1.2f, 0.2f, 0.f, 0.f, 0.f;
+        camMat << 300., 0., this.imgSize.width / 2.f, 0, 300., this.imgSize.height / 2., 0., 0., 1.;
+        distCoeffs0 << 1.2, 0.2, 0., 0., 0.;
 
         var cbg = new ChessBoardGenerator (new alvision.Size(8, 6));
         this.corSize = cbg.cornersSize();
@@ -494,8 +494,8 @@ class CV_ProjectPoints2BadArgTest extends alvision.cvtest.BadArgTest
         this.camMat =new alvision.Matf (3, 3);
         this.distCoeffs = new alvision.Matf (1, 5);
         var imsSize = new alvision.Size (800, 600);
-        camMat << 300.f, 0.f, imsSize.width/2.f, 0, 300.f, imsSize.height/2.f, 0.f, 0.f, 1.f;
-        distCoeffs << 1.2f, 0.2f, 0.f, 0.f, 0.f;
+        camMat << 300., 0., imsSize.width/2., 0, 300., imsSize.height/2., 0., 0., 1.;
+        distCoeffs << 1.2, 0.2, 0., 0., 0.;
     }
 
     protected camMat: alvision.Mat_<alvision.float>;

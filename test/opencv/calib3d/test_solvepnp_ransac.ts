@@ -62,21 +62,21 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
     constructor()
     {
         super();
-        this.eps[SOLVEPNP_ITERATIVE] = 1.0e-2;
-        this.eps[SOLVEPNP_EPNP] = 1.0e-2;
-        this.eps[SOLVEPNP_P3P] = 1.0e-2;
-        this.eps[SOLVEPNP_DLS] = 1.0e-2;
-        this.eps[SOLVEPNP_UPNP] = 1.0e-2;
+        this.eps[this.SOLVEPNP_ITERATIVE] = 1.0e-2;
+        this.eps[this.SOLVEPNP_EPNP] = 1.0e-2;
+        this.eps[this.SOLVEPNP_P3P] = 1.0e-2;
+        this.eps[this.SOLVEPNP_DLS] = 1.0e-2;
+        this.eps[this.SOLVEPNP_UPNP] = 1.0e-2;
         this.totalTestsCount = 10;
     }
-    generate3DPointCloud(Array<Point3f>& points, Point3f pmin = Point3f(-1,
-        -1, 5), Point3f pmax = Point3f(1, 1, 10)) : void
+    generate3DPointCloud(points: Array<alvision.Point3f>, pmin: alvision.Point3f = new alvision.Point3f(-1,
+        -1, 5), pmax: alvision.Point3f = new alvision.Point3f(1, 1, 10)) : void
     {
-        const Point3f delta = pmax - pmin;
-        for (size_t i = 0; i < points.size(); i++)
+        const delta = pmax.op_Substraction(pmin);
+        for (var i = 0; i < points.size(); i++)
         {
-            Point3f p(float(rand()) / RAND_MAX, float(rand()) / RAND_MAX,
-                float(rand()) / RAND_MAX);
+            var p = new alvision.Point3f ((rand()) / RAND_MAX, float(rand()) / RAND_MAX,
+                (rand()) / RAND_MAX);
             p.x *= delta.x;
             p.y *= delta.y;
             p.z *= delta.z;
@@ -85,12 +85,12 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
         }
     }
 
-    generateCameraMatrix(Mat& cameraMatrix, RNG& rng) : void
+    generateCameraMatrix(cameraMatrix: alvision.Mat, rng: alvision.RNG) : void
     {
-        const double fcMinVal = 1e-3;
-        const double fcMaxVal = 100;
-        cameraMatrix.create(3, 3, CV_64FC1);
-        cameraMatrix.setTo(Scalar(0));
+        const  fcMinVal = 1e-3;
+        const  fcMaxVal = 100;
+        cameraMatrix.create(3, 3, alvision.MatrixType.CV_64FC1);
+        cameraMatrix.setTo(new alvision.Scalar(0));
         cameraMatrix.at<double>(0,0) = rng.uniform(fcMinVal, fcMaxVal);
         cameraMatrix.at<double>(1,1) = rng.uniform(fcMinVal, fcMaxVal);
         cameraMatrix.at<double>(0,2) = rng.uniform(fcMinVal, fcMaxVal);
@@ -98,27 +98,24 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
         cameraMatrix.at<double>(2,2) = 1;
     }
 
-    void generateDistCoeffs(Mat& distCoeffs, RNG& rng)
-    {
-        distCoeffs = Mat::zeros(4, 1, CV_64FC1);
-        for (int i = 0; i < 3; i++)
-            distCoeffs.at<double>(i,0) = rng.uniform(0.0, 1.0e-6);
+    generateDistCoeffs(distCoeffs: alvision.Mat, rng: alvision.RNG): void {
+        distCoeffs = alvision.Mat.zeros(4, 1, alvision.MatrixType.CV_64FC1);
+        for (var i = 0; i < 3; i++)
+            distCoeffs.at<double>(i, 0) = rng.uniform(0.0, 1.0e-6);
     }
 
-    void generatePose(Mat& rvec, Mat& tvec, RNG& rng)
-    {
-        const double minVal = 1.0e-3;
-        const double maxVal = 1.0;
-        rvec.create(3, 1, CV_64FC1);
-        tvec.create(3, 1, CV_64FC1);
-        for (int i = 0; i < 3; i++)
-        {
-            rvec.at<double>(i,0) = rng.uniform(minVal, maxVal);
-            tvec.at<double>(i,0) = rng.uniform(minVal, maxVal/10);
+    generatePose(rvec: alvision.Mat, tvec: alvision.Mat, rng: alvision.RNG): void {
+        const minVal = 1.0e-3;
+        const maxVal = 1.0;
+        rvec.create(3, 1, alvision.MatrixType.CV_64FC1);
+        tvec.create(3, 1, alvision.MatrixType.CV_64FC1);
+        for (var i = 0; i < 3; i++) {
+            rvec.at<double>(i, 0) = rng.uniform(minVal, maxVal);
+            tvec.at<double>(i, 0) = rng.uniform(minVal, maxVal / 10);
         }
     }
 
-    virtual bool runTest(RNG& rng, int mode, int method, const Array<Point3f>& points, const double* epsilon, double& maxError)
+    runTest(rng: alvision.RNG, mode: alvision.int, method: alvision.int, points: Array<alvision.Point3f>  ,epsilon : Array<alvision.double>,  maxError : alvision.double, maxErrorChanged:(maxError)=>void) : boolean
     {
         Mat rvec, tvec;
         Array<int> inliers;
@@ -158,13 +155,13 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
         return isTestSuccess;
     }
 
-    void run(int)
+    run(iii: alvision.int) : void
     {
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 
-        Array<Point3f> points, points_dls;
-        const int pointsCount = 500;
-        points.resize(pointsCount);
+        var points = new Array<alvision.Point3f>(), points_dls = new Array<alvision.Point3f>() ;
+        const pointsCount = 500;
+        points.length   = (pointsCount);
         generate3DPointCloud(points);
 
         const int methodsCount = 5;
@@ -195,28 +192,26 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
             }
         }
     }
-    double eps[5];
-    int totalTestsCount;
+    protected eps : Array<alvision.double>;
+    protected totalTestsCount : alvision.int;
 };
 
 class CV_solvePnP_Test extends CV_solvePnPRansac_Test
 {
-public:
-    CV_solvePnP_Test()
+    constructor()
     {
-        eps[SOLVEPNP_ITERATIVE] = 1.0e-6;
-        eps[SOLVEPNP_EPNP] = 1.0e-6;
-        eps[SOLVEPNP_P3P] = 1.0e-4;
-        eps[SOLVEPNP_DLS] = 1.0e-4;
-        eps[SOLVEPNP_UPNP] = 1.0e-4;
-        totalTestsCount = 1000;
+        super();
+        this.eps[this.SOLVEPNP_ITERATIVE] = 1.0e-6;
+        this.eps[this.SOLVEPNP_EPNP] = 1.0e-6;
+        this.eps[this.SOLVEPNP_P3P] = 1.0e-4;
+        this.eps[this.SOLVEPNP_DLS] = 1.0e-4;
+        this.eps[this.SOLVEPNP_UPNP] = 1.0e-4;
+        this.totalTestsCount = 1000;
     }
 
-    ~CV_solvePnP_Test() {}
-protected:
-    virtual bool runTest(RNG& rng, int mode, int method, const Array<Point3f>& points, const double* epsilon, double& maxError)
+    runTest(rng: alvision.RNG, mode: alvision.int, method: alvision.int, points: Array<alvision.Point3f>, epsilon: Array<alvision.double>, maxError : alvision.double, maxErrorChanged:(maxError)=>void): boolean
     {
-        Mat rvec, tvec;
+        var rvec = new alvision.Mat(), tvec = new alvision.Mat();
         Mat trueRvec, trueTvec;
         Mat intrinsics, distCoeffs;
         generateCameraMatrix(intrinsics, rng);
@@ -257,13 +252,13 @@ protected:
     }
 };
 
-TEST(Calib3d_SolvePnPRansac, accuracy) { CV_solvePnPRansac_Test test; test.safe_run(); }
-TEST(Calib3d_SolvePnP, accuracy) { CV_solvePnP_Test test; test.safe_run(); }
+alvision.cvtest.TEST('Calib3d_SolvePnPRansac', 'accuracy', () => { CV_solvePnPRansac_Test test; test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_SolvePnP', 'accuracy', () => { CV_solvePnP_Test test; test.safe_run(); });
 
 
-#ifdef HAVE_TBB
+//#ifdef HAVE_TBB
 
-TEST(DISABLED_Calib3d_SolvePnPRansac, concurrency)
+alvision.cvtest.TEST('DISABLED_Calib3d_SolvePnPRansac', 'concurrency',()=>
 {
     int count = 7*13;
 
@@ -323,5 +318,5 @@ TEST(DISABLED_Calib3d_SolvePnPRansac, concurrency)
     EXPECT_LT(rnorm, 1e-6);
     EXPECT_LT(tnorm, 1e-6);
 
-}
-#endif
+});
+//#endif

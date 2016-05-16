@@ -842,7 +842,7 @@ including std::sort().
         and the actual step is calculated as cols*elemSize(). See Mat::elemSize.
         */
         //new (int rows, int cols, int type, void* data, size_t step= AUTO_STEP) : Mat;
-        new (rows: _st.int, cols: _st.int, type: _st.int, data: Array<number>, step?: _st.size_t): Mat;
+        new (rows: _st.int, cols: _st.int, type: _st.int, data: Array<any>, step?: _st.size_t): Mat;
 
     /** @overload
     @param size 2D array size: Size(cols, rows) . In the Size() constructor, the number of rows and the
@@ -2045,6 +2045,7 @@ export interface Mat_Static<T> {
 ////! copy constructor
 //Mat_(const Mat_& m);
 ////! constructs a matrix on top of user-allocated data. step is in bytes(!!!), regardless of the type
+    new (_rows: _st.int , _cols: _st.int , _data : Array<T>): Mat_<T>;
 //Mat_(int _rows, int _cols, _Tp * _data, size_t _step= AUTO_STEP);
 ////! constructs n-dim matrix on top of user-allocated data. steps are in bytes(!!!), regardless of the type
 //Mat_(int _ndims, const int* _sizes, _Tp* _data, const size_t* _steps=0);
@@ -2153,14 +2154,18 @@ export interface Mat_<T> extends Mat
 //
 //    //! returns reference to the specified element (1D case)
 //    _Tp & operator()(int idx0);
+    Element(idx0: _st.int): T;
 //    //! returns read-only reference to the specified element (1D case)
 //    const _Tp& operator()(int idx0) const;
+    
 //    //! returns reference to the specified element (2D case)
 //    _Tp & operator()(int idx0, int idx1);
+    Element(idx0: _st.int, idx1 : _st.int): T;
 //    //! returns read-only reference to the specified element (2D case)
 //    const _Tp& operator()(int idx0, int idx1) const;
 //    //! returns reference to the specified element (3D case)
 //    _Tp & operator()(int idx0, int idx1, int idx2);
+    Element(idx0: _st.int, idx1: _st.int, idx2 : _st.int): T;
 //    //! returns read-only reference to the specified element (3D case)
 //    const _Tp& operator()(int idx0, int idx1, int idx2) const;
 //
@@ -2191,13 +2196,16 @@ export interface Matw extends Mat_<_st.ushort> { }
 export interface Mati extends Mat_<_st.int> { }
 export interface Matf extends Mat_<_st.float> { }
 export interface Matd extends Mat_<_st.double> { }
+export interface MatPoint2f extends Mat_<_types.Point2f> { }
+
 
 export var Matb: Mat_Static<_st.uchar> = alvision_module.Matb;
 export var Mats : Mat_Static<_st.short> = alvision_module.Mats;
 export var Matw : Mat_Static<_st.ushort>= alvision_module.Matw;
 export var Mati : Mat_Static<_st.int>   = alvision_module.Mati;
 export var Matf : Mat_Static<_st.float> = alvision_module.Matf;
-export var Matd : Mat_Static<_st.double>= alvision_module.Matd;
+export var Matd: Mat_Static<_st.double> = alvision_module.Matd;
+export var MatPoint2f: Mat_Static<_types.Point2f> = alvision_module.MatPoint2f;
 
 
 

@@ -594,7 +594,7 @@ int CV_MinMaxHistTest::validate_test_results( int /*test_case_idx*/ )
 
 ////////////// cvNormalizeHist //////////////
 
-class CV_NormHistTest : public CV_BaseHistTest
+class CV_NormHistTest extends CV_BaseHistTest
 {
 public:
     CV_NormHistTest();
@@ -695,7 +695,7 @@ int CV_NormHistTest::validate_test_results( int /*test_case_idx*/ )
 
 ////////////// cvThreshHist //////////////
 
-class CV_ThreshHistTest : public CV_BaseHistTest
+class CV_ThreshHistTest extends CV_BaseHistTest
 {
 public:
     CV_ThreshHistTest();
@@ -854,179 +854,154 @@ int CV_ThreshHistTest::validate_test_results( int /*test_case_idx*/ )
 
 ////////////// cvCompareHist //////////////
 
-class CV_CompareHistTest : public CV_BaseHistTest
+class CV_CompareHistTest extends CV_BaseHistTest
 {
-public:
-    enum { MAX_METHOD = 6 };
+    protected MAX_METHOD = 6;
 
-    CV_CompareHistTest();
-protected:
-    prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
-    run_func() : void {}
-    validate_test_results(test_case_idx : alvision.int) : alvision.int {}
+    constructor() {
+        super();
+        this.hist_count = 2;
+        this.gen_random_hist = 1;
+    }
+
+    prepare_test_case(test_case_idx: alvision.int): alvision.int{
+        int code = CV_BaseHistTest::prepare_test_case(test_case_idx);
+
+        return code;
+    }
+    run_func(): void {
+        int k;
+        if (hist_type != CV_HIST_ARRAY && test_cpp) {
+            alvision.SparseMat h0, h1;
+            ((CvSparseMat *)hist[0].bins).copyToSparseMat(h0);
+            ((CvSparseMat *)hist[1].bins).copyToSparseMat(h1);
+            for (k = 0; k < MAX_METHOD; k++)
+                result[k] = alvision.compareHist(h0, h1, k);
+        }
+        else
+            for (k = 0; k < MAX_METHOD; k++)
+                result[k] = cvCompareHist(hist[0], hist[1], k);
+    }
+    validate_test_results(test_case_idx: alvision.int): alvision.int {
+        int code = alvision.cvtest.FailureCode.OK;
+        int i;
+        double result0[MAX_METHOD + 1];
+        double s0 = 0, s1 = 0, sq0 = 0, sq1 = 0, t;
+
+        for (i = 0; i < MAX_METHOD; i++)
+            result0[i] = 0;
+
+        if (hist_type == CV_HIST_ARRAY) {
+            float * ptr0 = (float *)cvPtr1D(hist[0].bins, 0);
+            float * ptr1 = (float *)cvPtr1D(hist[1].bins, 0);
+
+            for (i = 0; i < total_size; i++) {
+                double v0 = ptr0[i], v1 = ptr1[i];
+                result0[CV_COMP_CORREL] += v0 * v1;
+                result0[CV_COMP_INTERSECT] += MIN(v0, v1);
+                if (fabs(v0) > DBL_EPSILON)
+                    result0[CV_COMP_CHISQR] += (v0 - v1) * (v0 - v1) / v0;
+                if (fabs(v0 + v1) > DBL_EPSILON)
+                    result0[CV_COMP_CHISQR_ALT] += (v0 - v1) * (v0 - v1) / (v0 + v1);
+                s0 += v0;
+                s1 += v1;
+                sq0 += v0 * v0;
+                sq1 += v1 * v1;
+                result0[CV_COMP_BHATTACHARYYA] += sqrt(v0 * v1);
+                {
+                    if (fabs(v0) <= DBL_EPSILON)
+                        continue;
+                    if (fabs(v1) <= DBL_EPSILON)
+                        v1 = 1e-10;
+                    result0[CV_COMP_KL_DIV] += v0 * Math.log(v0 / v1);
+                }
+            }
+        }
+        else {
+            CvSparseMat * sparse0 = (CvSparseMat *)hist[0].bins;
+            CvSparseMat * sparse1 = (CvSparseMat *)hist[1].bins;
+            CvSparseMatIterator iterator;
+            CvSparseNode * node;
+
+            for (node = cvInitSparseMatIterator(sparse0, &iterator);
+                node != 0; node = cvGetNextSparseNode( &iterator)) {
+                const int* idx = CV_NODE_IDX(sparse0, node);
+                double v0 = *(float *)CV_NODE_VAL(sparse0, node);
+                double v1 = (float)cvGetRealND(sparse1, idx);
+
+                result0[CV_COMP_CORREL] += v0 * v1;
+                result0[CV_COMP_INTERSECT] += MIN(v0, v1);
+                if (fabs(v0) > DBL_EPSILON)
+                    result0[CV_COMP_CHISQR] += (v0 - v1) * (v0 - v1) / v0;
+                if (fabs(v0 + v1) > DBL_EPSILON)
+                    result0[CV_COMP_CHISQR_ALT] += (v0 - v1) * (v0 - v1) / (v0 + v1);
+                s0 += v0;
+                sq0 += v0 * v0;
+                result0[CV_COMP_BHATTACHARYYA] += sqrt(v0 * v1);
+                {
+                    if (v0 <= DBL_EPSILON)
+                        continue;
+                    if (!v1)
+                        v1 = 1e-10;
+                    result0[CV_COMP_KL_DIV] += v0 * Math.log(v0 / v1);
+                }
+            }
+
+            for (node = cvInitSparseMatIterator(sparse1, &iterator);
+                node != 0; node = cvGetNextSparseNode( &iterator)) {
+                double v1 = *(float *)CV_NODE_VAL(sparse1, node);
+                s1 += v1;
+                sq1 += v1 * v1;
+            }
+        }
+
+        result0[CV_COMP_CHISQR_ALT] *= 2;
+
+        t = (sq0 - s0 * s0 / total_size) * (sq1 - s1 * s1 / total_size);
+        result0[CV_COMP_CORREL] = fabs(t) > DBL_EPSILON ?
+            (result0[CV_COMP_CORREL] - s0 * s1 / total_size) / sqrt(t) : 1;
+
+        s1 *= s0;
+        s0 = result0[CV_COMP_BHATTACHARYYA];
+        s0 = 1. - s0 * (s1 > FLT_EPSILON ? 1. / sqrt(s1) : 1.);
+        result0[CV_COMP_BHATTACHARYYA] = sqrt(MAX(s0, 0.));
+
+        for (i = 0; i < MAX_METHOD; i++) {
+            double v = result[i], v0 = result0[i];
+            const char* method_name =
+                i == CV_COMP_CHISQR ? "Chi-Square" :
+                    i == CV_COMP_CHISQR_ALT ? "Alternative Chi-Square" :
+                        i == CV_COMP_CORREL ? "Correlation" :
+                            i == CV_COMP_INTERSECT ? "Intersection" :
+                                i == CV_COMP_BHATTACHARYYA ? "Bhattacharyya" :
+                                    i == CV_COMP_KL_DIV ? "Kullback-Leibler" : "Unknown";
+
+            if (cvIsNaN(v) || cvIsInf(v)) {
+                ts.printf(alvision.cvtest.TSConstants.LOG, "The comparison result using the method #%d (%s) is invalid (=%g)\n",
+                    i, method_name, v);
+                code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+                break;
+            }
+            else if (fabs(v0 - v) > FLT_EPSILON * 14 * MAX(fabs(v0), 0.1)) {
+                ts.printf(alvision.cvtest.TSConstants.LOG, "The comparison result using the method #%d (%s)\n\tis inaccurate (=%g, should be =%g)\n",
+                    i, method_name, v, v0);
+                code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+                break;
+            }
+        }
+
+        if (code < 0)
+            this.ts.set_failed_test_info(code);
+        return code;
+    }
     double result[MAX_METHOD+1];
 };
 
 
 
-CV_CompareHistTest::CV_CompareHistTest()
-{
-    hist_count = 2;
-    gen_random_hist = 1;
-}
-
-
-int CV_CompareHistTest::prepare_test_case( int test_case_idx )
-{
-    int code = CV_BaseHistTest::prepare_test_case( test_case_idx );
-
-    return code;
-}
-
-
-void CV_CompareHistTest::run_func(void)
-{
-    int k;
-    if( hist_type != CV_HIST_ARRAY && test_cpp )
-    {
-        alvision.SparseMat h0, h1;
-        ((CvSparseMat*)hist[0].bins).copyToSparseMat(h0);
-        ((CvSparseMat*)hist[1].bins).copyToSparseMat(h1);
-        for( k = 0; k < MAX_METHOD; k++ )
-            result[k] = alvision.compareHist(h0, h1, k);
-    }
-    else
-        for( k = 0; k < MAX_METHOD; k++ )
-            result[k] = cvCompareHist( hist[0], hist[1], k );
-}
-
-
-int CV_CompareHistTest::validate_test_results( int /*test_case_idx*/ )
-{
-    int code = alvision.cvtest.FailureCode.OK;
-    int i;
-    double result0[MAX_METHOD+1];
-    double s0 = 0, s1 = 0, sq0 = 0, sq1 = 0, t;
-
-    for( i = 0; i < MAX_METHOD; i++ )
-        result0[i] = 0;
-
-    if( hist_type == CV_HIST_ARRAY )
-    {
-        float* ptr0 = (float*)cvPtr1D( hist[0].bins, 0 );
-        float* ptr1 = (float*)cvPtr1D( hist[1].bins, 0 );
-
-        for( i = 0; i < total_size; i++ )
-        {
-            double v0 = ptr0[i], v1 = ptr1[i];
-            result0[CV_COMP_CORREL] += v0*v1;
-            result0[CV_COMP_INTERSECT] += MIN(v0,v1);
-            if( fabs(v0) > DBL_EPSILON )
-                result0[CV_COMP_CHISQR] += (v0 - v1)*(v0 - v1)/v0;
-            if( fabs(v0 + v1) > DBL_EPSILON )
-                result0[CV_COMP_CHISQR_ALT] += (v0 - v1)*(v0 - v1)/(v0 + v1);
-            s0 += v0;
-            s1 += v1;
-            sq0 += v0*v0;
-            sq1 += v1*v1;
-            result0[CV_COMP_BHATTACHARYYA] += sqrt(v0*v1);
-            {
-            if( fabs(v0) <= DBL_EPSILON  )
-                continue;
-            if( fabs(v1) <= DBL_EPSILON )
-                v1 = 1e-10;
-            result0[CV_COMP_KL_DIV] += v0 * Math.log( v0 / v1 );
-            }
-        }
-    }
-    else
-    {
-        CvSparseMat* sparse0 = (CvSparseMat*)hist[0].bins;
-        CvSparseMat* sparse1 = (CvSparseMat*)hist[1].bins;
-        CvSparseMatIterator iterator;
-        CvSparseNode* node;
-
-        for( node = cvInitSparseMatIterator( sparse0, &iterator );
-             node != 0; node = cvGetNextSparseNode( &iterator ) )
-        {
-            const int* idx = CV_NODE_IDX(sparse0, node);
-            double v0 = *(float*)CV_NODE_VAL(sparse0, node);
-            double v1 = (float)cvGetRealND(sparse1, idx);
-
-            result0[CV_COMP_CORREL] += v0*v1;
-            result0[CV_COMP_INTERSECT] += MIN(v0,v1);
-            if( fabs(v0) > DBL_EPSILON )
-                result0[CV_COMP_CHISQR] += (v0 - v1)*(v0 - v1)/v0;
-            if( fabs(v0 + v1) > DBL_EPSILON )
-                result0[CV_COMP_CHISQR_ALT] += (v0 - v1)*(v0 - v1)/(v0 + v1);
-            s0 += v0;
-            sq0 += v0*v0;
-            result0[CV_COMP_BHATTACHARYYA] += sqrt(v0*v1);
-            {
-            if (v0 <= DBL_EPSILON)
-                continue;
-            if (!v1)
-                v1 = 1e-10;
-            result0[CV_COMP_KL_DIV] += v0 * Math.log( v0 / v1 );
-            }
-        }
-
-        for( node = cvInitSparseMatIterator( sparse1, &iterator );
-             node != 0; node = cvGetNextSparseNode( &iterator ) )
-        {
-            double v1 = *(float*)CV_NODE_VAL(sparse1, node);
-            s1 += v1;
-            sq1 += v1*v1;
-        }
-    }
-
-    result0[CV_COMP_CHISQR_ALT] *= 2;
-
-    t = (sq0 - s0*s0/total_size)*(sq1 - s1*s1/total_size);
-    result0[CV_COMP_CORREL] = fabs(t) > DBL_EPSILON ?
-        (result0[CV_COMP_CORREL] - s0*s1/total_size)/sqrt(t) : 1;
-
-    s1 *= s0;
-    s0 = result0[CV_COMP_BHATTACHARYYA];
-    s0 = 1. - s0*(s1 > FLT_EPSILON ? 1./sqrt(s1) : 1.);
-    result0[CV_COMP_BHATTACHARYYA] = sqrt(MAX(s0,0.));
-
-    for( i = 0; i < MAX_METHOD; i++ )
-    {
-        double v = result[i], v0 = result0[i];
-        const char* method_name =
-            i == CV_COMP_CHISQR ? "Chi-Square" :
-            i == CV_COMP_CHISQR_ALT ? "Alternative Chi-Square" :
-            i == CV_COMP_CORREL ? "Correlation" :
-            i == CV_COMP_INTERSECT ? "Intersection" :
-            i == CV_COMP_BHATTACHARYYA ? "Bhattacharyya" :
-            i == CV_COMP_KL_DIV ? "Kullback-Leibler" : "Unknown";
-
-        if( cvIsNaN(v) || cvIsInf(v) )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "The comparison result using the method #%d (%s) is invalid (=%g)\n",
-                i, method_name, v );
-            code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
-            break;
-        }
-        else if( fabs(v0 - v) > FLT_EPSILON*14*MAX(fabs(v0),0.1) )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "The comparison result using the method #%d (%s)\n\tis inaccurate (=%g, should be =%g)\n",
-                i, method_name, v, v0 );
-            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            break;
-        }
-    }
-
-    if( code < 0 )
-        this.ts.set_failed_test_info( code );
-    return code;
-}
-
-
 ////////////// cvCalcHist //////////////
 
-class CV_CalcHistTest : public CV_BaseHistTest
+class CV_CalcHistTest extends CV_BaseHistTest
 {
 public:
     CV_CalcHistTest();
@@ -1237,7 +1212,7 @@ CV_CalcHistTest hist_calc_test;
 
 ////////////// cvCalcBackProject //////////////
 
-class CV_CalcBackProjectTest : public CV_BaseHistTest
+class CV_CalcBackProjectTest extends CV_BaseHistTest
 {
 public:
     CV_CalcBackProjectTest();
@@ -1456,7 +1431,7 @@ int CV_CalcBackProjectTest::validate_test_results( int /*test_case_idx*/ )
 
 ////////////// cvCalcBackProjectPatch //////////////
 
-class CV_CalcBackProjectPatchTest : public CV_BaseHistTest
+class CV_CalcBackProjectPatchTest extends CV_BaseHistTest
 {
 public:
     CV_CalcBackProjectPatchTest();
@@ -1650,7 +1625,7 @@ int CV_CalcBackProjectPatchTest::validate_test_results( int /*test_case_idx*/ )
 
 ////////////// cvCalcBayesianProb //////////////
 
-class CV_BayesianProbTest : public CV_BaseHistTest
+class CV_BayesianProbTest extends CV_BaseHistTest
 {
 public:
     enum { MAX_METHOD = 4 };

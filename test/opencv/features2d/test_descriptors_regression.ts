@@ -47,19 +47,19 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
+//#include "test_precomp.hpp"
+//
+//using namespace std;
+//using namespace cv;
 
-using namespace std;
-using namespace cv;
-
-const string FEATURES2D_DIR = "features2d";
-const string IMAGE_FILENAME = "tsukuba.png";
-const string DESCRIPTOR_DIR = FEATURES2D_DIR + "/descriptor_extractors";
+const FEATURES2D_DIR = "features2d";
+const IMAGE_FILENAME = "tsukuba.png";
+const DESCRIPTOR_DIR = FEATURES2D_DIR + "/descriptor_extractors";
 
 /****************************************************************************************\
 *                     Regression tests for descriptor extractors.                        *
 \****************************************************************************************/
-static void writeMatInBin( const Mat& mat, const string& filename )
+function writeMatInBin(mat: alvision.Mat, filename :string ) : void
 {
     FILE* f = fopen( filename, "wb");
     if( f )
@@ -75,7 +75,7 @@ static void writeMatInBin( const Mat& mat, const string& filename )
     }
 }
 
-static Mat readMatFromBin( const string& filename )
+function readMatFromBin(filename  : string) : alvision.Mat
 {
     FILE* f = fopen( filename, "rb" );
     if( f )
@@ -98,321 +98,291 @@ static Mat readMatFromBin( const string& filename )
 
         return m;
     }
-    return Mat();
+    return new alvision. Mat();
 }
 
-template<class Distance>
-class CV_DescriptorExtractorTest  extends alvision.cvtest.BaseTest
-{
-public:
-    typedef typename Distance::ValueType ValueType;
-    typedef typename Distance::ResultType DistanceType;
+//template<class Distance>
+class CV_DescriptorExtractorTest<Distance> extends alvision.cvtest.BaseTest {
+    //typedef typename Distance::ValueType ValueType;
+    //typedef typename Distance::ResultType DistanceType;
 
-    CV_DescriptorExtractorTest( const string _name, DistanceType _maxDist, const Ptr<DescriptorExtractor>& _dextractor,
-                                Distance d = Distance(), Ptr<FeatureDetector> _detector = Ptr<FeatureDetector>()):
-        name(_name), maxDist(_maxDist), dextractor(_dextractor), distance(d) , detector(_detector) {}
-
-    ~CV_DescriptorExtractorTest()
-    {
+    constructor(_name: string, _maxDist: Distance, _dextractor: alvision.DescriptorExtractor,
+        d: Distance = new Distance(), _detector: alvision.FeatureDetector /*= Ptr<FeatureDetector>()*/) {
+        super();
+        this.name = (_name);
+        this.maxDist = (_maxDist);
+        this.dextractor = (_dextractor);
+        this.distance = (d);
+        this.detector = (_detector);
     }
-protected:
-    virtual void createDescriptorExtractor() {}
 
-    void compareDescriptors( const Mat& validDescriptors, const Mat& calcDescriptors )
-    {
-        if( validDescriptors.size != calcDescriptors.size || validDescriptors.type() != calcDescriptors.type() )
-        {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "Valid and computed descriptors matrices must have the same size and type.\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
+    createDescriptorExtractor(): void { }
+
+    compareDescriptors(validDescriptors: alvision.Mat, calcDescriptors: alvision.Mat): void {
+        if (validDescriptors.size != calcDescriptors.size || validDescriptors.type() != calcDescriptors.type()) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Valid and computed descriptors matrices must have the same size and type.\n");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
-        CV_Assert( DataType<ValueType>::type == validDescriptors.type() );
+        alvision.CV_Assert(() => DataType<ValueType>::type == validDescriptors.type());
 
-        int dimension = validDescriptors.cols;
+        var dimension = validDescriptors.cols;
         DistanceType curMaxDist = std::numeric_limits<DistanceType>::min();
-        for( int y = 0; y < validDescriptors.rows; y++ )
-        {
-            DistanceType dist = distance( validDescriptors.ptr<ValueType>(y), calcDescriptors.ptr<ValueType>(y), dimension );
-            if( dist > curMaxDist )
+        for (var y = 0; y < validDescriptors.rows; y++) {
+            DistanceType dist = distance(validDescriptors.ptr<ValueType>(y), calcDescriptors.ptr<ValueType>(y), dimension);
+            if (dist > curMaxDist)
                 curMaxDist = dist;
         }
 
         stringstream ss;
         ss << "Max distance between valid and computed descriptors " << curMaxDist;
-        if( curMaxDist <= maxDist )
+        if (curMaxDist <= maxDist)
             ss << "." << endl;
-        else
-        {
-            ss << ">" << maxDist  << " - bad accuracy!"<< endl;
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
+        else {
+            ss << ">" << maxDist << " - bad accuracy!" << endl;
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
-        ts.printf(alvision.cvtest.TSConstants.LOG,  ss );
+        this.ts.printf(alvision.cvtest.TSConstants.LOG, ss);
     }
 
-    void emptyDataTest()
-    {
-        assert( dextractor );
+    emptyDataTest(): void {
+        assert(dextractor);
 
         // One image.
         Mat image;
-        Array<KeyPoint> keypoints;
+        Array < KeyPoint > keypoints;
         Mat descriptors;
 
-        try
-        {
-            dextractor.compute( image, keypoints, descriptors );
+        try {
+            dextractor.compute(image, keypoints, descriptors);
         }
-        catch(e)
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "compute() on empty image and empty keypoints must not generate exception (1).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
+        catch (e) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "compute() on empty image and empty keypoints must not generate exception (1).\n");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
         }
 
-        image.create( 50, 50, CV_8UC3 );
-        try
-        {
-            dextractor.compute( image, keypoints, descriptors );
+        image.create(50, 50, CV_8UC3);
+        try {
+            dextractor.compute(image, keypoints, descriptors);
         }
-        catch(e)
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "compute() on nonempty image and empty keypoints must not generate exception (1).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
+        catch (e) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "compute() on nonempty image and empty keypoints must not generate exception (1).\n");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
         }
 
         // Several images.
-        Array<Mat> images;
-        Array<Array<KeyPoint> > keypointsCollection;
-        Array<Mat> descriptorsCollection;
-        try
-        {
-            dextractor.compute( images, keypointsCollection, descriptorsCollection );
+        Array < Mat > images;
+        Array < Array < KeyPoint > > keypointsCollection;
+        Array < Mat > descriptorsCollection;
+        try {
+            dextractor.compute(images, keypointsCollection, descriptorsCollection);
         }
-        catch(e)
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "compute() on empty images and empty keypoints collection must not generate exception (2).\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
+        catch (e) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "compute() on empty images and empty keypoints collection must not generate exception (2).\n");
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
         }
     }
 
-    void regressionTest()
-    {
-        assert( dextractor );
+    regressionTest(): void {
+        assert(dextractor);
 
         // Read the test image.
-        string imgFilename =  this.ts.get_data_path() + FEATURES2D_DIR + "/" + IMAGE_FILENAME;
-        Mat img = imread( imgFilename );
-        if( img.empty() )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imgFilename );
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
+        string imgFilename = this.ts.get_data_path() + FEATURES2D_DIR + "/" + IMAGE_FILENAME;
+        Mat img = imread(imgFilename);
+        if (img.empty()) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Image %s can not be read.\n", imgFilename);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
-        Array<KeyPoint> keypoints;
-        FileStorage fs( this.ts.get_data_path() + FEATURES2D_DIR + "/keypoints.xml.gz", FileStorage::READ );
-        if(!detector.empty()) {
+        Array < KeyPoint > keypoints;
+        FileStorage fs(this.ts.get_data_path() + FEATURES2D_DIR + "/keypoints.xml.gz", FileStorage::READ);
+        if (!detector.empty()) {
             detector.detect(img, keypoints);
         } else {
-            read( fs.getFirstTopLevelNode(), keypoints );
+            read(fs.getFirstTopLevelNode(), keypoints);
         }
-        if(!keypoints.empty())
-        {
+        if (!keypoints.empty()) {
             Mat calcDescriptors;
             double t = (double)getTickCount();
-            dextractor.compute( img, keypoints, calcDescriptors );
+            dextractor.compute(img, keypoints, calcDescriptors);
             t = getTickCount() - t;
-            ts.printf(alvision.cvtest.TSConstants.LOG, "\nAverage time of computing one descriptor = %g ms.\n", t/((double)getTickFrequency()*1000.)/calcDescriptors.rows);
+            ts.printf(alvision.cvtest.TSConstants.LOG, "\nAverage time of computing one descriptor = %g ms.\n", t / ((double)getTickFrequency() * 1000.) / calcDescriptors.rows);
 
-            if( calcDescriptors.rows != (int)keypoints.size() )
+            if (calcDescriptors.rows != (int)keypoints.size() )
             {
-                ts.printf( alvision.cvtest.TSConstants.LOG, "Count of computed descriptors and keypoints count must be equal.\n" );
-                ts.printf( alvision.cvtest.TSConstants.LOG, "Count of keypoints is            %d.\n", (int)keypoints.size() );
-                ts.printf( alvision.cvtest.TSConstants.LOG, "Count of computed descriptors is %d.\n", calcDescriptors.rows );
-                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Count of computed descriptors and keypoints count must be equal.\n");
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Count of keypoints is            %d.\n", (int)keypoints.size());
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Count of computed descriptors is %d.\n", calcDescriptors.rows);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
-            if( calcDescriptors.cols != dextractor.descriptorSize() || calcDescriptors.type() != dextractor.descriptorType() )
-            {
-                ts.printf( alvision.cvtest.TSConstants.LOG, "Incorrect descriptor size or descriptor type.\n" );
-                ts.printf( alvision.cvtest.TSConstants.LOG, "Expected size is   %d.\n", dextractor.descriptorSize() );
-                ts.printf( alvision.cvtest.TSConstants.LOG, "Calculated size is %d.\n", calcDescriptors.cols );
-                ts.printf( alvision.cvtest.TSConstants.LOG, "Expected type is   %d.\n", dextractor.descriptorType() );
-                ts.printf( alvision.cvtest.TSConstants.LOG, "Calculated type is %d.\n", calcDescriptors.type() );
-                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT );
+            if (calcDescriptors.cols != dextractor.descriptorSize() || calcDescriptors.type() != dextractor.descriptorType()) {
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect descriptor size or descriptor type.\n");
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Expected size is   %d.\n", dextractor.descriptorSize());
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Calculated size is %d.\n", calcDescriptors.cols);
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Expected type is   %d.\n", dextractor.descriptorType());
+                ts.printf(alvision.cvtest.TSConstants.LOG, "Calculated type is %d.\n", calcDescriptors.type());
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
             // TODO read and write descriptor extractor parameters and check them
             Mat validDescriptors = readDescriptors();
-            if( !validDescriptors.empty() )
-                compareDescriptors( validDescriptors, calcDescriptors );
-            else
-            {
-                if( !writeDescriptors( calcDescriptors ) )
-                {
-                    ts.printf( alvision.cvtest.TSConstants.LOG, "Descriptors can not be written.\n" );
-                    this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
+            if (!validDescriptors.empty())
+                compareDescriptors(validDescriptors, calcDescriptors);
+            else {
+                if (!writeDescriptors(calcDescriptors)) {
+                    ts.printf(alvision.cvtest.TSConstants.LOG, "Descriptors can not be written.\n");
+                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
                     return;
                 }
             }
         }
-        if(!fs.isOpened())
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "Compute and write keypoints.\n" );
-            fs.open( this.ts.get_data_path() + FEATURES2D_DIR + "/keypoints.xml.gz", FileStorage::WRITE );
-            if( fs.isOpened() )
-            {
-                Ptr<ORB> fd = ORB::create();
+        if (!fs.isOpened()) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "Compute and write keypoints.\n");
+            fs.open(this.ts.get_data_path() + FEATURES2D_DIR + "/keypoints.xml.gz", FileStorage::WRITE);
+            if (fs.isOpened()) {
+                Ptr < ORB > fd = ORB::create();
                 fd.detect(img, keypoints);
-                write( fs, "keypoints", keypoints );
+                write(fs, "keypoints", keypoints);
             }
-            else
-            {
+            else {
                 ts.printf(alvision.cvtest.TSConstants.LOG, "File for writting keypoints can not be opened.\n");
-                this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
                 return;
             }
         }
     }
 
-    void run(int)
-    {
+    run(iii: alvision.int): void {
         createDescriptorExtractor();
-        if( !dextractor )
-        {
+        if (!dextractor) {
             ts.printf(alvision.cvtest.TSConstants.LOG, "Descriptor extractor is empty.\n");
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return;
         }
 
         emptyDataTest();
         regressionTest();
 
-        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.OK );
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
     }
 
-    virtual Mat readDescriptors()
-    {
-        Mat res = readMatFromBin( this.ts.get_data_path() + DESCRIPTOR_DIR + "/" + string(name) );
+    readDescriptors(): alvision.Mat {
+        var res = readMatFromBin(this.ts.get_data_path() + DESCRIPTOR_DIR + "/" + string(name));
         return res;
     }
 
-    virtual bool writeDescriptors( Mat& descs )
-    {
-        writeMatInBin( descs,  this.ts.get_data_path() + DESCRIPTOR_DIR + "/" + string(name) );
+    writeDescriptors(descs: alvision.Mat): boolean {
+        writeMatInBin(descs, this.ts.get_data_path() + DESCRIPTOR_DIR + "/" + string(name));
         return true;
     }
 
-    string name;
-    const DistanceType maxDist;
-    Ptr<DescriptorExtractor> dextractor;
-    Distance distance;
-    Ptr<FeatureDetector> detector;
+    protected name: string;
+    protected const DistanceType maxDist;
+    protected dextractor: alvision.DescriptorExtractor;
+    protected distance: Distance;
+    protected detector: alvision.FeatureDetector;
 
-private:
-    CV_DescriptorExtractorTest& operator=(const CV_DescriptorExtractorTest&) { return *this; }
-};
+    //CV_DescriptorExtractorTest& operator=(const CV_DescriptorExtractorTest&) { return *this; }
+}
 
 /****************************************************************************************\
 *                                Tests registrations                                     *
 \****************************************************************************************/
 
-TEST( Features2d_DescriptorExtractor_BRISK, regression )
-{
-    CV_DescriptorExtractorTest<Hamming> test( "descriptor-brisk",
-                                             (CV_DescriptorExtractorTest<Hamming>::DistanceType)2.f,
-                                            BRISK::create() );
+alvision.cvtest.TEST('Features2d_DescriptorExtractor_BRISK', 'regression', () => {
+    var test = new CV_DescriptorExtractorTest<Hamming>("descriptor-brisk",
+        (CV_DescriptorExtractorTest<Hamming>::DistanceType)2.,
+        alvision.BRISK.create());
     test.safe_run();
-}
+});
 
-TEST( Features2d_DescriptorExtractor_ORB, regression )
-{
+alvision.cvtest.TEST('Features2d_DescriptorExtractor_ORB', 'regression', () => {
     // TODO adjust the parameters below
-    CV_DescriptorExtractorTest<Hamming> test( "descriptor-orb",
-#if CV_NEON
-                                              (CV_DescriptorExtractorTest<Hamming>::DistanceType)25.f,
-#else
-                                              (CV_DescriptorExtractorTest<Hamming>::DistanceType)12.f,
-#endif
-                                             ORB::create() );
+    var test = new CV_DescriptorExtractorTest<alvision.Hamming>("descriptor-orb",
+        //#if CV_NEON
+        (CV_DescriptorExtractorTest<Hamming>::DistanceType)25.f,
+        //#else
+        //                                              (CV_DescriptorExtractorTest<Hamming>::DistanceType)12.f,
+        //#endif
+        alvision.ORB.create());
     test.safe_run();
-}
 
-TEST( Features2d_DescriptorExtractor_KAZE, regression )
-{
-    CV_DescriptorExtractorTest< L2<float> > test( "descriptor-kaze",  0.03f,
-                                                 KAZE::create(),
-                                                 L2<float>(), KAZE::create() );
+    var test = new CV_DescriptorExtractorTest<alvision.Hamming>("descriptor-orb",
+        (CV_DescriptorExtractorTest<alvision.Hamming>::DistanceType)12.f,
+        alvision.ORB.create());
     test.safe_run();
-}
+});
 
-TEST( Features2d_DescriptorExtractor_AKAZE, regression )
-{
-    CV_DescriptorExtractorTest<Hamming> test( "descriptor-akaze",
-                                              (CV_DescriptorExtractorTest<Hamming>::DistanceType)12.f,
-                                              AKAZE::create(),
-                                              Hamming(), AKAZE::create());
+alvision.cvtest.TEST('Features2d_DescriptorExtractor_KAZE', 'regression', () => {
+    var test = new CV_DescriptorExtractorTest<L2<float>> ("descriptor-kaze", 0.03f,
+        KAZE::create(),
+        L2<float>(), KAZE::create());
     test.safe_run();
-}
+});
 
-TEST( Features2d_DescriptorExtractor, batch )
-{
-    string path = string(alvision.cvtest.TS.ptr().get_data_path() + "detectors_descriptors_evaluation/images_datasets/graf");
-    Array<Mat> imgs, descriptors;
-    Array<Array<KeyPoint> > keypoints;
-    int i, n = 6;
-    Ptr<ORB> orb = ORB::create();
+alvision.cvtest.TEST('Features2d_DescriptorExtractor_AKAZE', 'regression', () => {
+    var test = new CV_DescriptorExtractorTest<Hamming> ("descriptor-akaze",
+        (CV_DescriptorExtractorTest<Hamming>::DistanceType)12.f,
+        AKAZE::create(),
+        Hamming(), AKAZE::create());
+    test.safe_run();
+);
 
-    for( i = 0; i < n; i++ )
-    {
-        string imgname = format("%s/img%d.png", path, i+1);
-        Mat img = imread(imgname, 0);
+alvision.cvtest.TEST('Features2d_DescriptorExtractor', 'batch', () => {
+    var path =  alvision.cvtest.TS.ptr().get_data_path() + "detectors_descriptors_evaluation/images_datasets/graf";
+    Array < Mat > imgs, descriptors;
+    Array < Array < KeyPoint > > keypoints;
+    var n = 6;
+    var orb = alvision.ORB.create();
+
+    for (var i = 0; i < n; i++) {
+        var imgname = util.format("%s/img%d.png", path, i + 1);
+        var img = alvision.imread(imgname, 0);
         imgs.push(img);
     }
 
     orb.detect(imgs, keypoints);
     orb.compute(imgs, keypoints, descriptors);
 
-    ASSERT_EQ((int)keypoints.size(), n);
-    ASSERT_EQ((int)descriptors.size(), n);
+    alvision.ASSERT_EQ((int)keypoints.size(), n);
+    alvision.ASSERT_EQ((int)descriptors.size(), n);
 
-    for( i = 0; i < n; i++ )
-    {
-        EXPECT_GT((int)keypoints[i].size(), 100);
-        EXPECT_GT(descriptors[i].rows, 100);
+    for (var i = 0; i < n; i++) {
+        alvision.EXPECT_GT((int)keypoints[i].size(), 100);
+        alvision.EXPECT_GT(descriptors[i].rows, 100);
     }
-}
+});
 
-TEST( Features2d_Feature2d, no_crash )
-{
-    const String& pattern = string(alvision.cvtest.TS.ptr().get_data_path() + "shared/*.png");
-    Array<String> fnames;
+alvision.cvtest.TEST('Features2d_Feature2d', 'no_crash', () => {
+    const pattern = alvision.cvtest.TS.ptr().get_data_path() + "shared/*.png";
+    var fnames = new Array<string>();
     glob(pattern, fnames, false);
     sort(fnames.begin(), fnames.end());
 
-    Ptr<AKAZE> akaze = AKAZE::create();
-    Ptr<ORB> orb = ORB::create();
-    Ptr<KAZE> kaze = KAZE::create();
-    Ptr<BRISK> brisk = BRISK::create();
-    size_t i, n = fnames.size();
-    Array<KeyPoint> keypoints;
-    Mat descriptors;
+    var akaze = alvision.AKAZE.create();
+    var orb = alvision.ORB.create();
+    var kaze = alvision.KAZE.create();
+    var brisk = alvision.BRISK.create();
+    var n = fnames.length;
+    var keypoints = new Array<alvision.KeyPoint>();
+    var descriptors = new alvision.Mat();
     orb.setMaxFeatures(5000);
 
-    for( i = 0; i < n; i++ )
-    {
+    for (var i = 0; i < n; i++) {
         printf("%d. image: %s:\n", (int)i, fnames[i]);
-        if( strstr(fnames[i], "MP.png") != 0 )
+        if (strstr(fnames[i], "MP.png") != 0)
             continue;
         bool checkCount = strstr(fnames[i], "templ.png") == 0;
 
-        Mat img = imread(fnames[i], -1);
+        var img = alvision.imread(fnames[i], -1);
         printf("\tAKAZE ... "); fflush(stdout);
         akaze.detectAndCompute(img, noArray(), keypoints, descriptors);
         printf("(%d keypoints) ", (int)keypoints.size()); fflush(stdout);
-        if( checkCount )
-        {
+        if (checkCount) {
             EXPECT_GT((int)keypoints.size(), 0);
         }
         ASSERT_EQ(descriptors.rows, (int)keypoints.size());
@@ -421,8 +391,7 @@ TEST( Features2d_Feature2d, no_crash )
         printf("\tKAZE ... "); fflush(stdout);
         kaze.detectAndCompute(img, noArray(), keypoints, descriptors);
         printf("(%d keypoints) ", (int)keypoints.size()); fflush(stdout);
-        if( checkCount )
-        {
+        if (checkCount) {
             EXPECT_GT((int)keypoints.size(), 0);
         }
         ASSERT_EQ(descriptors.rows, (int)keypoints.size());
@@ -431,8 +400,7 @@ TEST( Features2d_Feature2d, no_crash )
         printf("\tORB ... "); fflush(stdout);
         orb.detectAndCompute(img, noArray(), keypoints, descriptors);
         printf("(%d keypoints) ", (int)keypoints.size()); fflush(stdout);
-        if( checkCount )
-        {
+        if (checkCount) {
             EXPECT_GT((int)keypoints.size(), 0);
         }
         ASSERT_EQ(descriptors.rows, (int)keypoints.size());
@@ -441,11 +409,10 @@ TEST( Features2d_Feature2d, no_crash )
         printf("\tBRISK ... "); fflush(stdout);
         brisk.detectAndCompute(img, noArray(), keypoints, descriptors);
         printf("(%d keypoints) ", (int)keypoints.size()); fflush(stdout);
-        if( checkCount )
-        {
+        if (checkCount) {
             EXPECT_GT((int)keypoints.size(), 0);
         }
         ASSERT_EQ(descriptors.rows, (int)keypoints.size());
         printf("ok\n");
     }
-}
+});

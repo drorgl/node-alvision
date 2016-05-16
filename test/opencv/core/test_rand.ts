@@ -92,7 +92,7 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
             var maxk = fast_algo ? 0 : 1;
             for (var k = 0; k <= maxk; k++) {
                 tested_rng = saved_rng;
-                int sz = 0, dsz = 0, slice;
+                var sz = 0, dsz = 0, slice;
                 for (slice = 0; slice < maxSlice; slice++ , sz += dsz) {
                     dsz = slice + 1 < maxSlice ? (alvision.cvtest.randInt(rng).valueOf() % (SZ - sz + 1)) : SZ - sz;
                     var aslice = arr[k].colRange(sz, sz + dsz);
@@ -118,12 +118,12 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
                 hist[c] = alvision.Scalar.all(0);
 
                 for (i = c; i < SZ * cn; i += cn) {
-                    var val = depth == CV_8U ? ((const uchar*)data)[i]:
-                        depth == CV_8S ? ((const schar*)data)[i]:
-                            depth == CV_16U ? ((const ushort*)data)[i]:
-                                depth == CV_16S ? ((const short*)data)[i]:
-                                    depth == CV_32S ? ((const int*)data)[i]:
-                                        depth == CV_32F ? ((const float*)data)[i]:
+                    var val = depth == alvision.MatrixType.CV_8U ? ((const uchar*)data)[i]:
+                        depth == alvision.MatrixType.CV_8S ? ((const schar*)data)[i]:
+                            depth == alvision.MatrixType.CV_16U ? ((const ushort*)data)[i]:
+                                depth == alvision.MatrixType.CV_16S ? ((const short*)data)[i]:
+                                    depth == alvision.MatrixType.CV_32S ? ((const int*)data)[i]:
+                                        depth == alvision.MatrixType.CV_32F ? ((const float*)data)[i]:
                                             ((const double*)data)[i];
                     var ival = Math.floor(val * scale + delta);
                     if ((unsigned)ival < (unsigned)HSZ )

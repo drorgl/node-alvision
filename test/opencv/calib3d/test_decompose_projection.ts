@@ -82,19 +82,19 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
                 0, 0, 1);
 
 
-            alvision.Vec3d rVec;
+            var rVec = new alvision.Vecd();
             rng.fill(rVec, alvision.RNG::UNIFORM, -Math.PI, Math.PI);
 
-            alvision.Matx33d origR;
-            Rodrigues(rVec, origR);
+            var origR = new alvision.Matxd();
+            alvision.Rodrigues(rVec, origR);
 
-            alvision.Vec3d origT;
+            var origT = new alvision.Vecd() //3
             rng.fill(origT, alvision.RNG::NORMAL, 0, 1);
 
 
             // Compose the projection matrix
-            alvision.Matx34d P(3, 4);
-            hconcat(origK * origR, origK * origT, P);
+            var P = new alvision.Matxd(3, 4); //34
+            alvision.hconcat(origK * origR, origK * origT, P);
 
 
             // Decompose

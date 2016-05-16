@@ -133,12 +133,12 @@ class fisheyeTest_projectPoints extends fisheyeTest {
         undist2.create(distorted0.size(),alvision.MatrixType. CV_MAKETYPE(distorted0.depth(), 3));
         var pts = distorted0.ptr<alvision.Vecd>("Vec2d");
 
-        var c = new alvision.Vecd(this.K(0, 2), this.K(1, 2));
+        var c = new alvision.Vecd(this.K.Element(0, 2), this.K.Element(1, 2));
 
         for (var y = 0, k = 0; y < N; ++y)
         for (var x = 0; x < N; ++x)
         {
-            var point = new alvision.Vecd(x * cols / (N - 1.f), y * rows / (N - 1.f));
+            var point = new alvision.Vecd(x * cols / (N - 1.), y * rows / (N - 1.));
             pts[k++] = (point - c) * 0.85 + c;
         }
 
@@ -167,9 +167,9 @@ alvision.cvtest.TEST('fisheyeTest', 'projectPoints',()=>
 
 
 alvision.cvtest.TEST_F('fisheyeTest', 'DISABLED_undistortImage', () => {
-    alvision.Matx33d K = this.K;
-    alvision.Mat D = alvision.Mat(this.D);
-    std::string file = combine(datasets_repository_path, "/calib-3_stereo_from_JY/left/stereo_pair_014.jpg");
+    var K = this.K;
+    var D = new alvision.Mat(this.D);
+    var file = combine(datasets_repository_path, "/calib-3_stereo_from_JY/left/stereo_pair_014.jpg");
     alvision.Matx33d newK = K;
     alvision.Mat distorted = alvision.imread(file), undistorted;
     {
@@ -194,7 +194,7 @@ alvision.cvtest.TEST_F('fisheyeTest', 'DISABLED_undistortImage', () => {
     }
 
     {
-        double balance = 0.0;
+        var balance = 0.0;
         alvision.fisheye::estimateNewCameraMatrixForUndistortRectify(K, D, distorted.size(), alvision.noArray(), newK, balance);
         alvision.fisheye::undistortImage(distorted, undistorted, K, D, newK);
         alvision.Mat correct = alvision.imread(combine(datasets_repository_path, "balance_0.0.png"));
@@ -206,14 +206,14 @@ alvision.cvtest.TEST_F('fisheyeTest', 'DISABLED_undistortImage', () => {
 });
 
 alvision.cvtest.TEST_F('fisheyeTest', 'jacobians', () => {
-    int n = 10;
-    alvision.Mat X(1, n, CV_64FC3);
-    alvision.Mat om(3, 1, CV_64F), T(3, 1, CV_64F);
-    alvision.Mat f(2, 1, CV_64F), c(2, 1, CV_64F);
-    alvision.Mat k(4, 1, CV_64F);
-    double alpha;
+    var n = 10;
+    var X = new alvision.Mat(1, n, CV_64FC3);
+    var om = new alvision.Mat(3, 1, CV_64F), T = new alvision.Mat(3, 1, CV_64F);
+    var f = new alvision.Mat(2, 1, CV_64F), c = new alvision.Mat(2, 1, CV_64F);
+    var k = new alvision.Mat(4, 1, CV_64F);
+    var alpha;
 
-    alvision.RNG r;
+    var r = new alvision.RNG();
 
     r.fill(X, alvision.RNG::NORMAL, 2, 1);
     X = alvision.abs(X) * 10;
@@ -306,20 +306,20 @@ alvision.cvtest.TEST_F('fisheyeTest', 'Calibration',()=>
     Array<Array<alvision.Point2d> > imagePoints(n_images);
     Array<Array<alvision.Point3d> > objectPoints(n_images);
 
-    const std::string folder =combine(datasets_repository_path, "calib-3_stereo_from_JY");
-    alvision.FileStorage fs_left(combine(folder, "left.xml"), alvision.FileStorage::READ);
-    CV_Assert(fs_left.isOpened());
+    const  folder =combine(datasets_repository_path, "calib-3_stereo_from_JY");
+    var fs_left = new alvision.FileStorage(combine(folder, "left.xml"), alvision.FileStorage::READ);
+    alvision.CV_Assert(()=>fs_left.isOpened());
     for(var i = 0; i < n_images; ++i)
     fs_left[util.format("image_%d", i )] >> imagePoints[i];
     fs_left.release();
 
-    alvision.FileStorage fs_object(combine(folder, "object.xml"), alvision.FileStorage::READ);
-    CV_Assert(fs_object.isOpened());
+    var fs_object = new alvision.FileStorage (combine(folder, "object.xml"), alvision.FileStorage::READ);
+    alvision.CV_Assert(()=>fs_object.isOpened());
     for(var i = 0; i < n_images; ++i)
     fs_object[util.format("image_%d", i )] >> objectPoints[i];
     fs_object.release();
 
-    int flag = 0;
+    var flag = 0;
     flag |= alvision.fisheye::CALIB_RECOMPUTE_EXTRINSIC;
     flag |= alvision.fisheye::CALIB_CHECK_COND;
     flag |= alvision.fisheye::CALIB_FIX_SKEW;
@@ -336,7 +336,7 @@ alvision.cvtest.TEST_F('fisheyeTest', 'Calibration',()=>
 
 alvision.cvtest.TEST_F('fisheyeTest', 'Homography',()=>
 {
-    const int n_images = 1;
+    const n_images = 1;
 
     Array<Array<alvision.Point2d> > imagePoints(n_images);
     Array<Array<alvision.Point3d> > objectPoints(n_images);

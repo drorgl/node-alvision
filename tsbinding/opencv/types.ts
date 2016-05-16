@@ -302,6 +302,14 @@ export interface Point_<T> {
     x: T;
     y: T;
     //_Tp x, y; //< the point coordinates
+
+    op_Equals(other: Point_<T>): boolean;
+    op_NotEquals(other: Point_<T>): boolean;
+    op_Addition(other: Point_<T>): Point_<T>;
+    op_Substraction(other: Point_<T>): Point_<T>;
+    op_Multiplication(other: _st.int | _st.float | _st.double | number): Point_<T>;
+    op_Multiplication(other: _matx.Matx<T>): Point_<T>;
+    op_Division(other: _st.int | _st.float | _st.double): Point_<T>;
 }
 
 //    template < typename _Tp> class Point_ {
@@ -679,6 +687,18 @@ export interface Point3_<T> {
     y: T;
     z: T;
 //_Tp x, y, z; //< the point coordinates
+
+    norm(): _st.double;
+
+
+    op_Equals(other: Point3_<T>): boolean;
+    op_NotEquals(other: Point3_<T>): boolean;
+    op_Addition(other: Point3_<T>): Point3_<T>;
+    op_Substraction(other: Point3_<T>): Point3_<T>;
+    op_Multiplication(other: _st.int | _st.float | _st.double | number): Point3_<T>;
+    op_Multiplication(other: _matx.Matx<T>): Point3_<T>;
+    op_Division(other: _st.int | _st.float | _st.double): Point3_<T>;
+
 }
 
 //template < typename _Tp> class Point3_ {
@@ -759,7 +779,126 @@ export interface Size_Static<T> {
     new (): Size_<T>;
     new (_width : T, _height : T): Size_<T>;
     new (sz : Size_<T>): Size_<T>;
-    new (pt : Point_<T>): Size_<T>;
+    new (pt: Point_<T>): Size_<T>;
+
+
+    ////////////////////////////////// Size /////////////////////////////////
+
+//template < typename _Tp> inline
+//Size_<_Tp>::Size_()
+//    : width(0), height(0) {}
+
+//template< typename _Tp> inline
+//Size_<_Tp>::Size_(_Tp _width, _Tp _height)
+//    : width(_width), height(_height) {}
+
+//template< typename _Tp> inline
+//Size_<_Tp>::Size_(const Size_& sz)
+//    : width(sz.width), height(sz.height) {}
+
+//template < typename _Tp> inline
+//Size_<_Tp>::Size_(const Point_<_Tp>& pt)
+//    : width(pt.x), height(pt.y) {}
+
+//template < typename _Tp> template < typename _Tp2> inline
+//Size_<_Tp>::operator Size_<_Tp2>() const
+//    {
+//        return Size_<_Tp2>(saturate_cast<_Tp2>(width), saturate_cast<_Tp2>(height));
+//}
+
+//template < typename _Tp> inline
+//Size_<_Tp>& Size_<_Tp>::operator = (const Size_<_Tp>& sz)
+//    {
+//        width = sz.width; height = sz.height;
+//return *this;
+//}
+
+//template < typename _Tp> inline
+//_Tp Size_<_Tp>::area() const
+//    {
+//        return width * height;
+//}
+
+//template < typename _Tp> static inline
+//Size_<_Tp>& operator *= (Size_<_Tp>& a, _Tp b)
+//{
+//    a.width *= b;
+//    a.height *= b;
+//    return a;
+//}
+
+//template< typename _Tp> static inline
+//Size_< _Tp > operator * (const Size_<_Tp>& a, _Tp b)
+//    {
+//        Size_<_Tp>tmp(a);
+//tmp *= b;
+//return tmp;
+//}
+    op_Multiplication(a: Size_<T>, b: T): Size_<T>;
+
+//template < typename _Tp> static inline
+//Size_<_Tp>& operator /= (Size_<_Tp>& a, _Tp b)
+//{
+//        a.width /= b;
+//        a.height /= b;
+//        return a;
+//    }
+
+//template< typename _Tp> static inline
+//Size_< _Tp > operator / (const Size_<_Tp>& a, _Tp b)
+//    {
+//        Size_<_Tp>tmp(a);
+//tmp /= b;
+//return tmp;
+//}
+    op_Division(a: Size_<T>, b: T): Size_<T>;
+
+//template < typename _Tp> static inline
+//Size_<_Tp>& operator += (Size_<_Tp>& a, const Size_<_Tp>& b)
+//    {
+//        a.width += b.width;
+//a.height += b.height;
+//return a;
+//}
+
+//template < typename _Tp> static inline
+//Size_ < _Tp > operator + (const Size_<_Tp>& a, const Size_<_Tp>& b)
+//    {
+//        Size_<_Tp>tmp(a);
+//tmp += b;
+//return tmp;
+//}
+    op_Addition(a: Size_<T>, b: Size_<T>): Size_<T>;
+
+//template < typename _Tp> static inline
+//Size_<_Tp>& operator -= (Size_<_Tp>& a, const Size_<_Tp>& b)
+//    {
+//        a.width -= b.width;
+//a.height -= b.height;
+//return a;
+//}
+
+//template < typename _Tp> static inline
+//Size_ < _Tp > operator - (const Size_<_Tp>& a, const Size_<_Tp>& b)
+//    {
+//        Size_<_Tp>tmp(a);
+//tmp -= b;
+//return tmp;
+//}
+    op_Substraction(a: Size_<T>, b: Size_<T>): Size_<T>;
+
+//template < typename _Tp> static inline
+//bool operator == (const Size_<_Tp>& a, const Size_<_Tp>& b)
+//    {
+//        return a.width == b.width && a.height == b.height;
+//}
+
+
+//template < typename _Tp> static inline
+//bool operator != (const Size_<_Tp>& a, const Size_<_Tp>& b)
+//    {
+//        return !(a == b);
+//}
 }
 
 export interface Size_<T> {
@@ -1788,118 +1927,7 @@ export var Moments: MomentsStatic = alvision_module.Moments;
 
 
 
-////////////////////////////////// Size /////////////////////////////////
 
-//template < typename _Tp> inline
-//Size_<_Tp>::Size_()
-//    : width(0), height(0) {}
-
-//template< typename _Tp> inline
-//Size_<_Tp>::Size_(_Tp _width, _Tp _height)
-//    : width(_width), height(_height) {}
-
-//template< typename _Tp> inline
-//Size_<_Tp>::Size_(const Size_& sz)
-//    : width(sz.width), height(sz.height) {}
-
-//template < typename _Tp> inline
-//Size_<_Tp>::Size_(const Point_<_Tp>& pt)
-//    : width(pt.x), height(pt.y) {}
-
-//template < typename _Tp> template < typename _Tp2> inline
-//Size_<_Tp>::operator Size_<_Tp2>() const
-//    {
-//        return Size_<_Tp2>(saturate_cast<_Tp2>(width), saturate_cast<_Tp2>(height));
-//}
-
-//template < typename _Tp> inline
-//Size_<_Tp>& Size_<_Tp>::operator = (const Size_<_Tp>& sz)
-//    {
-//        width = sz.width; height = sz.height;
-//return *this;
-//}
-
-//template < typename _Tp> inline
-//_Tp Size_<_Tp>::area() const
-//    {
-//        return width * height;
-//}
-
-//template < typename _Tp> static inline
-//Size_<_Tp>& operator *= (Size_<_Tp>& a, _Tp b)
-//{
-//    a.width *= b;
-//    a.height *= b;
-//    return a;
-//}
-
-//template< typename _Tp> static inline
-//Size_< _Tp > operator * (const Size_<_Tp>& a, _Tp b)
-//    {
-//        Size_<_Tp>tmp(a);
-//tmp *= b;
-//return tmp;
-//}
-
-//template < typename _Tp> static inline
-//Size_<_Tp>& operator /= (Size_<_Tp>& a, _Tp b)
-//{
-//        a.width /= b;
-//        a.height /= b;
-//        return a;
-//    }
-
-//template< typename _Tp> static inline
-//Size_< _Tp > operator / (const Size_<_Tp>& a, _Tp b)
-//    {
-//        Size_<_Tp>tmp(a);
-//tmp /= b;
-//return tmp;
-//}
-
-//template < typename _Tp> static inline
-//Size_<_Tp>& operator += (Size_<_Tp>& a, const Size_<_Tp>& b)
-//    {
-//        a.width += b.width;
-//a.height += b.height;
-//return a;
-//}
-
-//template < typename _Tp> static inline
-//Size_ < _Tp > operator + (const Size_<_Tp>& a, const Size_<_Tp>& b)
-//    {
-//        Size_<_Tp>tmp(a);
-//tmp += b;
-//return tmp;
-//}
-
-//template < typename _Tp> static inline
-//Size_<_Tp>& operator -= (Size_<_Tp>& a, const Size_<_Tp>& b)
-//    {
-//        a.width -= b.width;
-//a.height -= b.height;
-//return a;
-//}
-
-//template < typename _Tp> static inline
-//Size_ < _Tp > operator - (const Size_<_Tp>& a, const Size_<_Tp>& b)
-//    {
-//        Size_<_Tp>tmp(a);
-//tmp -= b;
-//return tmp;
-//}
-
-//template < typename _Tp> static inline
-//bool operator == (const Size_<_Tp>& a, const Size_<_Tp>& b)
-//    {
-//        return a.width == b.width && a.height == b.height;
-//}
-
-//template < typename _Tp> static inline
-//bool operator != (const Size_<_Tp>& a, const Size_<_Tp>& b)
-//    {
-//        return !(a == b);
-//}
 
 
 

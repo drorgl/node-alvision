@@ -147,7 +147,7 @@ class CV_DefaultNewCameraMatrixTest extends alvision.cvtest.ArrayTest {
 
 //---------
 
-class CV_UndistortPointsTest alvision.cvtest.ArrayTest
+class CV_UndistortPointsTest extends alvision.cvtest.ArrayTest
 {
     constructor(){
         super();

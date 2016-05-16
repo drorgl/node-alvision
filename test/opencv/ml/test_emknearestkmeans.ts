@@ -336,10 +336,10 @@ class CV_KNearestTest  extends alvision.cvtest.BaseTest {
 
 class EM_Params
 {
-    constructor(int _nclusters=10, int _covMatType=EM::COV_MAT_DIAGONAL, int _startStep=EM::START_AUTO_STEP,
-           const alvision.TermCriteria& _termCrit=alvision.TermCriteria(alvision.TermCriteria::COUNT+alvision.TermCriteria::EPS, 100, FLT_EPSILON),
-           const alvision.Mat* _probs=0, const alvision.Mat* _weights=0,
-           const alvision.Mat* _means=0, const Array<alvision.Mat>* _covs=0)
+    constructor(_nclusters: alvision.int = 10, _covMatType: alvision.int = EM::COV_MAT_DIAGONAL, _startStep: alvision.int =EM::START_AUTO_STEP,
+        _termCrit: alvision.TermCriteria =alvision.TermCriteria(alvision.TermCriteria::COUNT+alvision.TermCriteria::EPS, 100, FLT_EPSILON),
+            alvision.Mat* _probs=0, const alvision.Mat* _weights=0,
+            alvision.Mat* _means=0, const Array<alvision.Mat>* _covs=0)
         : nclusters(_nclusters), covMatType(_covMatType), startStep(_startStep),
         probs(_probs), weights(_weights), means(_means), covs(_covs), termCrit(_termCrit)
     {}

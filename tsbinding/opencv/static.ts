@@ -196,9 +196,9 @@ export interface ItransformOp<T> {
     run(val: T): T;
 }
 
-export function transformOp<T>(arr: Array<T>, op: ItransformOp<T>) {
-    for (var i = 0; i < arr.length; i++) {
-        arr[i] = op.run(arr[i]);
+export function transformOp<T>(srcarr: Array<T>,dstarr:Array<T>, op: ItransformOp<T>) {
+    for (var i = 0; i < srcarr.length; i++) {
+        dstarr[i] = op.run(srcarr[i]);
     }
 }
 
@@ -474,3 +474,11 @@ export function accumulateOp<T>(arr: Array<T>, init: T): T {
 
 //    CV_COLORCVT_MAX = 139
 //};
+
+export function NewArray<T>(itemCount: number, itemsFactory: () => T): Array<T> {
+    var retval = new Array<T>(itemCount);
+    for (var i = 0; i < itemCount; i++) {
+        retval[i] = itemsFactory();
+    }
+    return retval;
+}

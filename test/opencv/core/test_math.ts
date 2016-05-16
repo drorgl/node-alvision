@@ -701,51 +701,51 @@ class Core_TransformTest extends Core_MatrixTest
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
         types: Array<Array<alvision.int>>): void {
 
-       var  rng = this.ts.get_rng();
+        var rng = this.ts.get_rng();
         var bits = alvision.cvtest.randInt(rng);
         var depth, dst_cn, mat_cols, mattype;
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
         mat_cols = CV_MAT_CN(types[this.INPUT][0]);
         depth = CV_MAT_DEPTH(types[this.INPUT][0]);
-        dst_cn = alvision.cvtest.randInt(rng) % 4 + 1;
-        types[this.OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(depth, dst_cn);
+        dst_cn = alvision.cvtest.randInt(rng).valueOf() % 4 + 1;
+        types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(depth, dst_cn);
 
-        mattype = depth < CV_32S ? CV_32F : depth == CV_64F ? CV_64F : bits & 1 ? CV_32F : CV_64F;
+        mattype = depth < alvision.MatrixType.CV_32S ? alvision.MatrixType.CV_32F : depth == alvision.MatrixType.CV_64F ? alvision.MatrixType.CV_64F : bits & 1 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
         types[this.INPUT][1] = mattype;
         types[this.INPUT][2] = alvision.MatrixType.CV_MAKETYPE(mattype, dst_cn);
 
-        scale = 1. / ((alvision.cvtest.randInt(rng) % 4)*50 + 1);
+        this.scale = 1. / ((alvision.cvtest.randInt(rng).valueOf() % 4) * 50 + 1);
 
         if (bits & 2) {
-            sizes[INPUT][2] = Size(0, 0);
+            sizes[this.INPUT][2] = new alvision.Size(0, 0);
             mat_cols += (bits & 4) != 0;
         }
         else if (bits & 4)
-            sizes[INPUT][2] = Size(1, 1);
+            sizes[this.INPUT][2] = new alvision.Size(1, 1);
         else {
             if (bits & 8)
-                sizes[INPUT][2] = Size(dst_cn, 1);
+                sizes[this.INPUT][2] = new alvision.Size(dst_cn, 1);
             else
-                sizes[INPUT][2] = Size(1, dst_cn);
-            types[INPUT][2] &= ~CV_MAT_CN_MASK;
+                sizes[this.INPUT][2] = new alvision.Size(1, dst_cn);
+            types[this.INPUT][2] &= ~CV_MAT_CN_MASK;
         }
-        diagMtx = (bits & 16) != 0;
+        this.diagMtx = (bits & 16) != 0;
 
-        sizes[INPUT][1] = Size(mat_cols, dst_cn);
+        sizes[this.INPUT][1] = new alvision.Size(mat_cols, dst_cn);
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
-        int depth = test_mat[INPUT][0].depth();
-        return depth <= CV_8S ? 1 : depth <= CV_32S ? 9 : Base::get_success_error_level(test_case_idx, i, j);
+        var depth = this.test_mat[this.INPUT][0].depth();
+        return depth <= alvision.MatrixType.CV_8S ? 1 : depth <= alvision.MatrixType.CV_32S ? 9 : super.get_success_error_level(test_case_idx, i, j);
     }
 
     prepare_test_case(test_case_idx: alvision.int): alvision.int {
 
-        var code = Base::prepare_test_case(test_case_idx);
+        var code = super.prepare_test_case(test_case_idx);
         if (code > 0) {
             var m = this.test_mat[this.INPUT][1];
-            alvision.cvtest.add(m, scale, m, 0, alvision.Scalar.all(0), m, m.type());
-            if (diagMtx) {
+            alvision.cvtest.add(m, this.scale, m, 0, alvision.Scalar.all(0), m, m.type());
+            if (this.diagMtx) {
                 var mask = alvision.Mat.eye(m.rows, m.cols, alvision.MatrixType.CV_8U) * 255;
                 mask = ~mask;
                 m.setTo(alvision.Scalar.all(0), mask);
@@ -756,7 +756,7 @@ class Core_TransformTest extends Core_MatrixTest
     run_func(): void {
 
         var _m = this.test_mat[this.INPUT][1], _shift = this.test_mat[this.INPUT][2];
-        cvTransform(this.test_array[this.INPUT][0], this.test_array[this.OUTPUT][0], _m, _shift.data.ptr ? _shift : 0);
+        alvision.transform(this.test_array[this.INPUT][0], this.test_array[this.OUTPUT][0], _m, _shift.data.ptr ? _shift : 0);
     }
     prepare_to_validation(test_case_idx : alvision.int ): void {
         var transmat = this.test_mat[this.INPUT][1];
@@ -773,44 +773,40 @@ class Core_TransformTest extends Core_MatrixTest
 
 ///////////////// PerspectiveTransform /////////////////////
 
-class Core_PerspectiveTransformTest extends Core_MatrixTest
-{
+class Core_PerspectiveTransformTest extends Core_MatrixTest {
     constructor() {
         super(2, 1, false, false, 2);
 
     }
-public:
-    Core_PerspectiveTransformTest();
-    protected:
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>,
         types: Array<Array<alvision.int>>): void {
-        RNG & rng = this.ts.get_rng();
-        int bits = alvision.cvtest.randInt(rng);
-        int depth, cn, mattype;
-        Core_MatrixTest::get_test_array_types_and_sizes(test_case_idx, sizes, types);
+        var rng = this.ts.get_rng();
+        var bits = alvision.cvtest.randInt(rng);
+        var depth, cn, mattype;
+        super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
-        cn = CV_MAT_CN(types[INPUT][0]) + 1;
-        depth = CV_MAT_DEPTH(types[INPUT][0]);
-        types[INPUT][0] = types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(depth, cn);
+        cn = CV_MAT_CN(types[this.INPUT][0]) + 1;
+        depth = CV_MAT_DEPTH(types[this.INPUT][0]);
+        types[this.INPUT][0] = types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(depth, cn);
 
-        mattype = depth == CV_64F ? CV_64F : bits & 1 ? CV_32F : CV_64F;
-        types[INPUT][1] = mattype;
-        sizes[INPUT][1] = Size(cn + 1, cn + 1);
+        mattype = depth == alvision.MatrixType.CV_64F ? alvision.MatrixType.CV_64F : bits & 1 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        types[alvision.MatrixType.INPUT][1] = mattype;
+        sizes[alvision.MatrixType.INPUT][1] = Size(cn + 1, cn + 1);
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
-        int depth = test_mat[INPUT][0].depth();
-        return depth == CV_32F ? 1e-4 : depth == CV_64F ? 1e-8 :
-            Core_MatrixTest::get_success_error_level(test_case_idx, i, j);
+        var depth = this.test_mat[this.INPUT][0].depth();
+        return depth == alvision.MatrixType.CV_32F ? 1e-4 : depth == alvision.MatrixType.CV_64F ? 1e-8 :
+            super.get_success_error_level(test_case_idx, i, j);
     }
-    void run_func(){
-    CvMat _m = test_mat[INPUT][1];
-    cvPerspectiveTransform(test_array[INPUT][0], test_array[OUTPUT][0], &_m);
+    run_func(): void {
+        var _m = this.test_mat[this.INPUT][1];
+        alvision.perspectiveTransform(this.test_array[this.INPUT][0], this.test_array[this.OUTPUT][0], _m);
+    }
+    prepare_to_validation(test_case_idx: alvision.int): void {
+        var transmat = this.test_mat[this.INPUT][1];
+        cvTsPerspectiveTransform(this.test_array[this.INPUT][0], this.test_array[this.REF_OUTPUT][0], transmat);
+    }
 }
-    void prepare_to_validation(int test_case_idx ){
-    CvMat transmat = test_mat[INPUT][1];
-    cvTsPerspectiveTransform(test_array[INPUT][0], test_array[REF_OUTPUT][0], &transmat);
-    }
-};
 
 
 function cvTsPerspectiveTransform(_src: alvision.Mat, _dst: alvision.Mat, transmat: alvision.Mat) : void
@@ -838,7 +834,7 @@ function cvTsPerspectiveTransform(_src: alvision.Mat, _dst: alvision.Mat, transm
     else
     {
         assert( mat_depth == CV_64F );
-        for( i = 0; i < transmat.rows; i++ )
+        for( var i = 0; i < transmat.rows; i++ )
             for( j = 0; j < cols; j++ )
                 mat[i*cols + j] = ((double*)(transmat.data.ptr + transmat.step*i))[j];
     }
@@ -937,17 +933,17 @@ class Core_MahalanobisTest extends Core_MatrixTest {
             sizes[this.INPUT][0].height = sizes[this.INPUT][1].height = 1;
 
         sizes[this.TEMP][0] = sizes[this.TEMP][1] = sizes[this.INPUT][0];
-        sizes[this.INPUT][2].width = sizes[this.INPUT][2].height = sizes[INPUT][0].width + sizes[INPUT][0].height - 1;
-        sizes[this.TEMP][2] = sizes[INPUT][2];
-        types[this.TEMP][0] = types[TEMP][1] = types[TEMP][2] = types[INPUT][0];
+        sizes[this.INPUT][2].width = sizes[this.INPUT][2].height = sizes[this.INPUT][0].width + sizes[this.INPUT][0].height - 1;
+        sizes[this.TEMP][2] = sizes[this.INPUT][2];
+        types[this.TEMP][0] = types[this.TEMP][1] = types[this.TEMP][2] = types[this.INPUT][0];
     }
 
     prepare_test_case(test_case_idx: alvision.int): alvision.int {
-        var code = Base::prepare_test_case(test_case_idx);
+        var code = super.prepare_test_case(test_case_idx);
         if (code > 0) {
             // make sure that the inverted "covariation" matrix is symmetrix and positively defined.
-            alvision.cvtest.gemm(test_mat[INPUT][2], test_mat[INPUT][2], 1., Mat(), 0., test_mat[TEMP][2], GEMM_2_T);
-            alvision.cvtest.copy(test_mat[TEMP][2], test_mat[INPUT][2]);
+            alvision.cvtest.gemm(this.test_mat[this.INPUT][2], this.test_mat[this.INPUT][2], 1., new alvision.Mat(), 0., this.test_mat[this.TEMP][2], GEMM_2_T);
+            alvision.cvtest.copy(this.test_mat[this.TEMP][2], this.test_mat[this.INPUT][2]);
         }
 
         return code;
@@ -966,7 +962,7 @@ class Core_MahalanobisTest extends Core_MatrixTest {
             alvision.cvtest.gemm(test_mat[INPUT][2], test_mat[TEMP][0], 1.,
                 Mat(), 0., test_mat[TEMP][1], 0);
 
-        test_mat[REF_OUTPUT][0].at<Scalar>(0, 0) = cvRealScalar(sqrt(alvision.cvtest.crossCorr(test_mat[TEMP][0], test_mat[TEMP][1])));
+        test_mat[this.REF_OUTPUT][0].at<Scalar>(0, 0) = cvRealScalar(sqrt(alvision.cvtest.crossCorr(test_mat[TEMP][0], test_mat[TEMP][1])));
     }
 }
 
@@ -994,16 +990,16 @@ class Core_CovarMatrixTest extends Core_MatrixTest
 
         var rng = this.ts.get_rng();
         var bits = alvision.cvtest.randInt(rng);
-        int i, single_matrix;
+        var i, single_matrix;
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
-        flags = bits & (CV_COVAR_NORMAL | CV_COVAR_USE_AVG | CV_COVAR_SCALE | CV_COVAR_ROWS);
+        this.flags = bits & (CV_COVAR_NORMAL | CV_COVAR_USE_AVG | CV_COVAR_SCALE | CV_COVAR_ROWS);
         single_matrix = flags & CV_COVAR_ROWS;
-        t_flag = (bits & 256) != 0;
+        this.t_flag = (bits & 256) != 0;
 
         const min_count = 2;
 
-        if (!t_flag) {
+        if (!this.t_flag) {
             len = sizes[INPUT][0].width;
             count = sizes[INPUT][0].height;
             count = MAX(count, min_count);
@@ -1016,42 +1012,42 @@ class Core_CovarMatrixTest extends Core_MatrixTest
             sizes[INPUT][0] = Size(count, len);
         }
 
-        if (single_matrix && t_flag)
+        if (single_matrix && this.t_flag)
             flags = (flags & ~CV_COVAR_ROWS) | CV_COVAR_COLS;
 
-        if (CV_MAT_DEPTH(types[INPUT][0]) == CV_32S)
-            types[INPUT][0] = (types[INPUT][0] & ~CV_MAT_DEPTH_MASK) | CV_32F;
+        if (CV_MAT_DEPTH(types[this.INPUT][0]) == CV_32S)
+            types[this.INPUT][0] = (types[INPUT][0] & ~CV_MAT_DEPTH_MASK) | CV_32F;
 
-        sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = flags & CV_COVAR_NORMAL ? Size(len, len) : Size(count, count);
-        sizes[INPUT_OUTPUT][0] = sizes[REF_INPUT_OUTPUT][0] = !t_flag ? Size(len, 1) : Size(1, len);
-        sizes[TEMP][0] = sizes[INPUT][0];
+        sizes[this.OUTPUT][0] = sizes[REF_OUTPUT][0] = flags & CV_COVAR_NORMAL ? Size(len, len) : Size(count, count);
+        sizes[this.INPUT_OUTPUT][0] = sizes[REF_INPUT_OUTPUT][0] = !t_flag ? Size(len, 1) : Size(1, len);
+        sizes[this.TEMP][0] = sizes[INPUT][0];
 
-        types[INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] =
+        types[this.INPUT_OUTPUT][0] = types[REF_INPUT_OUTPUT][0] =
             types[OUTPUT][0] = types[REF_OUTPUT][0] = types[TEMP][0] =
             CV_MAT_DEPTH(types[INPUT][0]) == CV_64F || (bits & 512) ? CV_64F : CV_32F;
 
         are_images = (bits & 1024) != 0;
-        for (i = 0; i < (single_matrix ? 1 : count); i++)
-            temp_hdrs.push(null);
+        for (var i = 0; i < (single_matrix ? 1 : count); i++)
+            this.temp_hdrs.push(null);
     }
     prepare_test_case(test_case_idx: alvision.int ) : alvision.int{
         var code = super.prepare_test_case(test_case_idx);
         if (code > 0) {
-            int i;
-            int single_matrix = flags & (CV_COVAR_ROWS | CV_COVAR_COLS);
-            int hdr_size = are_images ? sizeof(IplImage) : sizeof(CvMat);
+            //int i;
+            var single_matrix = flags & (CV_COVAR_ROWS | CV_COVAR_COLS);
+            var hdr_size = are_images ? sizeof(IplImage) : sizeof(CvMat);
 
             hdr_data.resize(count * hdr_size);
             uchar * _hdr_data = &hdr_data[0];
             if (single_matrix) {
                 if (!are_images)
-                    *((CvMat *)_hdr_data) = test_mat[INPUT][0];
+                    *((CvMat *)_hdr_data) = this.test_mat[this.INPUT][0];
                 else
-                    *((IplImage *)_hdr_data) = test_mat[INPUT][0];
+                    *((IplImage *)_hdr_data) = this.test_mat[this.INPUT][0];
                 temp_hdrs[0] = _hdr_data;
             }
             else
-                for (i = 0; i < count; i++) {
+                for (var i = 0; i < count; i++) {
                     Mat part;
                     void* ptr = _hdr_data + i * hdr_size;
 
@@ -1072,8 +1068,8 @@ class Core_CovarMatrixTest extends Core_MatrixTest
         return code;
     }
     run_func() : void{
-        cvCalcCovarMatrix((const void**)&temp_hdrs[0], count,
-            test_array[OUTPUT][0], test_array[INPUT_OUTPUT][0], flags );
+        alvision.calcCovarMatrix((const void**)&temp_hdrs[0], this.count,
+            this.test_array[this.OUTPUT][0], this.test_array[this.INPUT_OUTPUT][0], this.flags );
     }
             prepare_to_validation(test_case_idx  : alvision.int ) : void{
     var avg = this.test_mat[this.REF_INPUT_OUTPUT][0];

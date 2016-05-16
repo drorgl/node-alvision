@@ -528,7 +528,7 @@ export interface FileStorage
 //    std::vector<char> structs; //!< the stack of written structures
 //    int state; //!< the writer state
 
-    [i: string]: FileNode;
+    nodes: { [i: string]: FileNode };
 
 
     write(name: string, value: _st.int  ): void;
@@ -681,6 +681,15 @@ export interface FileNode
 //    // do not use wrapper pointer classes for better efficiency
 //    const CvFileStorage* fs;
 //    const CvFileNode* node;
+
+    readInt(default_value?: _st.int): _st.int;
+    readFloat(default_value?: _st.float): _st.float;
+    readDouble(default_value?: _st.double): _st.double;
+    readString(default_value?: string): string;
+    readMat(default_mat?: _mat.Mat): _mat.Mat;
+    readSparseMat(default_mat?: _mat.SparseMat): _mat.SparseMat;
+    readKeyPoint(keypoints: Array<_types.KeyPoint>);
+    readDMatch(  matches : Array<_types.DMatch>);
 };
 
 

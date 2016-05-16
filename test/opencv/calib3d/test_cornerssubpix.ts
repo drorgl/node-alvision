@@ -193,7 +193,7 @@ function calcDistance(set1: Array<alvision.Point2f>, set2: Array<alvision.Point2
     var sum_dist = 0.0;
     for(var i = 0; i < set1.length; i++)
     {
-        var min_dist = std::numeric_limits<double>::max();
+        var min_dist = alvision.DBL_MAX;// std::numeric_limits<double>::max();
         var min_idx = -1;
 
         for(var j = 0; j < set2.length; j++)
@@ -202,7 +202,7 @@ function calcDistance(set1: Array<alvision.Point2f>, set2: Array<alvision.Point2
             if(dist < min_dist)
             {
                 min_idx = j;
-                min_dist = dist;
+                min_dist = dist.valueOf();
             }
         }
 
@@ -211,8 +211,11 @@ function calcDistance(set1: Array<alvision.Point2f>, set2: Array<alvision.Point2
         {
             return 0;
         }
-        Array<int>::iterator it = std::find(indices.begin(), indices.end(), min_idx);
-        if(it != indices.end())
+
+        
+        //Array<int>::iterator it = std::find(indices.begin(), indices.end(), min_idx);
+        //if(it != indices.end())
+        if (alvision.countOp(indices, min_idx) > 1)
         {
             // there are two points in set1 corresponding to the same point in set2
             return 0;

@@ -1473,9 +1473,9 @@ export var bilateralFilter: IbilateralFilter = alvision_module.bilateralFilter;
 
 interface IboxFilter {
     (src: _st.InputArray, dst: _st.OutputArray, ddepth: _st.int,
-        ksize: _types.Size, anchor: _types.Point /* = Point(-1, -1)*/,
-        normalize : boolean /* = true*/,
-        borderType: _st.int /* = BORDER_DEFAULT*/): void;
+        ksize: _types.Size, anchor?: _types.Point /* = Point(-1, -1)*/,
+        normalize? : boolean /* = true*/,
+        borderType?: _base.BorderTypes| _st.int /* = BORDER_DEFAULT*/): void;
 }
 
 export var boxFilter: IboxFilter = alvision_module.boxFilter;
@@ -2493,9 +2493,9 @@ export var resize: Iresize = alvision_module.resize;
 interface IwarpAffine{
     (src: _st.InputArray, dst: _st.OutputArray,
     M : _st.InputArray, dsize: _types.Size,
-    flags : _st.int /* = INTER_LINEAR*/,
-    borderMode : _st.int /* = BORDER_CONSTANT*/,
-                              borderValue : _types.Scalar /* = Scalar()*/): void;
+    flags?: InterpolationFlags | _st.int /* = INTER_LINEAR*/,
+    borderMode?: _base.BorderTypes | _st.int /* = BORDER_CONSTANT*/,
+                              borderValue? : _types.Scalar /* = Scalar()*/): void;
 }
 
 export var warpAffine: IwarpAffine = alvision_module.warpAffine;

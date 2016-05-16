@@ -717,7 +717,7 @@ class CV_CameraCalibrationTest_CPP extends CV_CameraCalibrationTest
            *tm = translationVectors;
         alvision.assert(rvecsIt.type() == alvision.MatrixType.CV_64FC1);
         alvision.assert(tvecsIt.type() == alvision.MatrixType.CV_64FC1);
-        for (int i = 0; i < imageCount; ++rvecsIt, ++tvecsIt, i++ , rm += 9, tm += 3 )
+        for (var i = 0; i < imageCount; ++rvecsIt, ++tvecsIt, i++ , rm += 9, tm += 3 )
         {
             var r9 = new alvision.Mat(3, 3, alvision.MatrixType.CV_64FC1);
             alvision.Rodrigues( *rvecsIt, r9);
@@ -726,9 +726,9 @@ class CV_CameraCalibrationTest_CPP extends CV_CameraCalibrationTest
         }
     }
 
-    project(int pointCount, CvPoint3D64f* objectPoints,
-        double* rotationMatrix, double*  translationVector,
-        double* cameraMatrix, double* distortion, imagePoints: Array<alvision.CvPoint2D64f>): void {
+    project(pointCount: alvision.int, objectPoints: Array<alvision.CvPoint3D64f>,
+        rotationMatrix: Array<alvision.double>, translationVector: Array<alvision.double>,
+        cameraMatrix: Array<alvision.double>, distortion: Array<alvision.double>, imagePoints: Array<alvision.CvPoint2D64f>): void {
 
         var objectPoints = new alvision.Mat(pointCount, 3,alvision.MatrixType. CV_64FC1, _objectPoints);
         var rmat = new alvision.Mat(3, 3, alvision.MatrixType.CV_64FC1, rotationMatrix);
@@ -767,25 +767,25 @@ class CV_CalibrationMatrixValuesTest extends alvision.cvtest.BaseTest
         var rng = this.ts.get_rng();
 
         double fx, fy, cx, cy, nx, ny;
-        Mat cameraMatrix(3, 3, CV_64FC1);
-        cameraMatrix.setTo(Scalar(0));
+        var cameraMatrix = new alvision.Mat(3, 3, CV_64FC1);
+        cameraMatrix.setTo(new alvision.Scalar(0));
         fx = cameraMatrix.at<double>(0, 0) = rng.uniform(fcMinVal, fcMaxVal);
         fy = cameraMatrix.at<double>(1, 1) = rng.uniform(fcMinVal, fcMaxVal);
         cx = cameraMatrix.at<double>(0, 2) = rng.uniform(fcMinVal, fcMaxVal);
         cy = cameraMatrix.at<double>(1, 2) = rng.uniform(fcMinVal, fcMaxVal);
         cameraMatrix.at<double>(2, 2) = 1;
 
-        Size imageSize(600, 400);
+        var imageSize = new alvision.Size(600, 400);
 
-        double apertureWidth = (double)rng * apertureMaxVal,
-            apertureHeight = (double)rng * apertureMaxVal;
+        var apertureWidth = rng.double().valueOf() * apertureMaxVal,
+            apertureHeight = rng.double().valueOf() * apertureMaxVal;
 
         double fovx, fovy, focalLength, aspectRatio,
             goodFovx, goodFovy, goodFocalLength, goodAspectRatio;
         Point2d principalPoint, goodPrincipalPoint;
 
 
-        calibMatrixValues(cameraMatrix, imageSize, apertureWidth, apertureHeight,
+        this.calibMatrixValues(cameraMatrix, imageSize, apertureWidth, apertureHeight,
             fovx, fovy, focalLength, principalPoint, aspectRatio);
 
         // calculate calibration matrix values
@@ -809,48 +809,43 @@ class CV_CalibrationMatrixValuesTest extends alvision.cvtest.BaseTest
         goodPrincipalPoint.y = cy / ny;
 
         // check results
-        if (Math.abs(fovx - goodFovx) > FLT_EPSILON) {
+        if (Math.abs(fovx - goodFovx) > alvision.FLT_EPSILON) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad fovx (real=%f, good = %f\n", fovx, goodFovx);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             goto _exit_;
         }
-        if (Math.abs(fovy - goodFovy) > FLT_EPSILON) {
+        if (Math.abs(fovy - goodFovy) > alvision.FLT_EPSILON) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad fovy (real=%f, good = %f\n", fovy, goodFovy);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             goto _exit_;
         }
-        if (Math.abs(focalLength - goodFocalLength) > FLT_EPSILON) {
+        if (Math.abs(focalLength - goodFocalLength) > alvision.FLT_EPSILON) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad focalLength (real=%f, good = %f\n", focalLength, goodFocalLength);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             goto _exit_;
         }
-        if (fabs(aspectRatio - goodAspectRatio) > FLT_EPSILON) {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "bad aspectRatio (real=%f, good = %f\n", aspectRatio, goodAspectRatio);
+        if (Math.abs(aspectRatio - goodAspectRatio) > alvision.FLT_EPSILON) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad aspectRatio (real=%f, good = %f\n", aspectRatio, goodAspectRatio);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             goto _exit_;
         }
-        if (norm(principalPoint - goodPrincipalPoint) > FLT_EPSILON) {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "bad principalPoint\n");
+        if (norm(principalPoint - goodPrincipalPoint) > alvision.FLT_EPSILON) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad principalPoint\n");
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             goto _exit_;
         }
 
         _exit_:
-        RNG & _rng = ts.get_rng();
+        var _rng = this.ts.get_rng();
         _rng = rng;
         this.ts.set_failed_test_info(code);
 
     }
-    calibMatrixValues( const Mat& cameraMatrix, Size imageSize,
-        double apertureWidth, double apertureHeight, double& fovx, double& fovy, double& focalLength,
-        Point2d& principalPoint, double& aspectRatio): void {
+    calibMatrixValues(cameraMatrix: alvision.Mat, imageSize: alvision.Size,
+        apertureWidth: alvision.double, apertureHeight: alvision.double, fovx: alvision.double, fovy: alvision.double  , focalLength: alvision.double ,
+        principalPoint: alvision.Point2d, aspectRatio: alvision.double ): void {
     }
 };
-
-void CV_CalibrationMatrixValuesTest::run(int)
-{
-    
-}
 
 //----------------------------------------- CV_CalibrationMatrixValuesTest_C --------------------------------
 
@@ -882,44 +877,35 @@ void CV_CalibrationMatrixValuesTest::run(int)
 
 class CV_CalibrationMatrixValuesTest_CPP extends CV_CalibrationMatrixValuesTest
 {
-public:
-    CV_CalibrationMatrixValuesTest_CPP() {}
-protected:
-    virtual void calibMatrixValues( const Mat& cameraMatrix, Size imageSize,
-        double apertureWidth, double apertureHeight, double& fovx, double& fovy, double& focalLength,
-        Point2d& principalPoint, double& aspectRatio );
+    calibMatrixValues(cameraMatrix: alvision.Mat, imageSize: alvision.Size,
+        apertureWidth: alvision.double, apertureHeight: alvision.double, fovx: alvision.double, fovy: alvision.double, focalLength: alvision.double ,
+        principalPoint: alvision.Point2d, aspectRatio: alvision.double): void {
+        alvision.calibrationMatrixValues(cameraMatrix, imageSize, apertureWidth, apertureHeight,
+            fovx, fovy, focalLength, principalPoint, aspectRatio);
+    }
 };
-
-void CV_CalibrationMatrixValuesTest_CPP::calibMatrixValues( const Mat& cameraMatrix, Size imageSize,
-                                                         double apertureWidth, double apertureHeight,
-                                                         double& fovx, double& fovy, double& focalLength,
-                                                         Point2d& principalPoint, double& aspectRatio )
-{
-    calibrationMatrixValues( cameraMatrix, imageSize, apertureWidth, apertureHeight,
-        fovx, fovy, focalLength, principalPoint, aspectRatio );
-}
 
 
 //----------------------------------------- CV_ProjectPointsTest --------------------------------
 function calcdfdx(leftF: Array<Array<alvision.Point2f>>, rightF: Array<Array<alvision.Point2f>>, eps: alvision.double, dfdx: alvision.Mat ): void
 {
-    const int fdim = 2;
-    alvision.CV_Assert( !leftF.empty() && !rightF.empty() && !leftF[0].empty() && !rightF[0].empty() );
-    alvision.CV_Assert( leftF[0].size() ==  rightF[0].size() );
-    alvision.CV_Assert( fabs(eps) > std::numeric_limits<double>::epsilon() );
-    int fcount = (int)leftF[0].size(), xdim = (int)leftF.size();
+    const fdim = 2;
+    alvision.CV_Assert(()=> !leftF.empty() && !rightF.empty() && !leftF[0].empty() && !rightF[0].empty() );
+    alvision.CV_Assert(()=> leftF[0].size() ==  rightF[0].size() );
+    alvision.CV_Assert(()=> Math.abs(eps) > std::numeric_limits<double>::epsilon() );
+    var fcount = leftF[0].size(), xdim = leftF.size();
 
     dfdx.create( fcount*fdim, xdim, CV_64FC1 );
 
     Array<Array<Point2f> >::const_iterator arrLeftIt = leftF.begin();
     Array<Array<Point2f> >::const_iterator arrRightIt = rightF.begin();
-    for( int xi = 0; xi < xdim; xi++, ++arrLeftIt, ++arrRightIt )
+    for( var xi = 0; xi < xdim; xi++, ++arrLeftIt, ++arrRightIt )
     {
-        CV_Assert( (int)arrLeftIt.size() ==  fcount );
-        CV_Assert( (int)arrRightIt.size() ==  fcount );
-        Array<Point2f>::const_iterator lIt = arrLeftIt.begin();
-        Array<Point2f>::const_iterator rIt = arrRightIt.begin();
-        for( int fi = 0; fi < dfdx.rows; fi+=fdim, ++lIt, ++rIt )
+        alvision.CV_Assert(()=> arrLeftIt.size() ==  fcount );
+        alvision.CV_Assert(()=> arrRightIt.size() ==  fcount );
+        Array<alvision.Point2f>::const_iterator lIt = arrLeftIt.begin();
+        Array<alvision.Point2f>::const_iterator rIt = arrRightIt.begin();
+        for(var fi = 0; fi < dfdx.rows; fi+=fdim, ++lIt, ++rIt )
         {
             dfdx.at<double>(fi, xi )   = 0.5 * ((double)(rIt.x - lIt.x)) / eps;
             dfdx.at<double>(fi+1, xi ) = 0.5 * ((double)(rIt.y - lIt.y)) / eps;
@@ -929,212 +915,202 @@ function calcdfdx(leftF: Array<Array<alvision.Point2f>>, rightF: Array<Array<alv
 
 class CV_ProjectPointsTest extends alvision.cvtest.BaseTest
 {
-public:
-    CV_ProjectPointsTest() {}
-protected:
-    void run(int);
-    virtual void project( const Mat& objectPoints,
-        const Mat& rvec, const Mat& tvec,
-        const Mat& cameraMatrix,
-        const Mat& distCoeffs,
-        Array<Point2f>& imagePoints,
-        Mat& dpdrot, Mat& dpdt, Mat& dpdf,
-        Mat& dpdc, Mat& dpddist,
-        double aspectRatio=0 ) = 0;
+    run(iii: alvision.int): void {
+        //typedef float matType;
+
+        var code = alvision.cvtest.FailureCode.OK;
+        const  pointCount = 100;
+
+        const  zMinVal = 10.0, zMaxVal = 100.0,
+            rMinVal = -0.3, rMaxVal = 0.3,
+            tMinVal = -2.0, tMaxVal = 2.0;
+
+        const imgPointErr = 1e-3,
+            dEps = 1e-3;
+
+        double err;
+
+        var imgSize = new alvision.Size (600, 800);
+        Mat_ < float > objPoints(pointCount, 3), rvec(1, 3), rmat, tvec(1, 3), cameraMatrix(3, 3), distCoeffs(1, 4),
+            leftRvec, rightRvec, leftTvec, rightTvec, leftCameraMatrix, rightCameraMatrix, leftDistCoeffs, rightDistCoeffs;
+
+        var rng = this.ts.get_rng();
+
+        // generate data
+        cameraMatrix << 300., 0., imgSize.width / 2.,
+            0., 300., imgSize.height / 2.,
+                0., 0., 1.;
+        distCoeffs << 0.1, 0.01, 0.001, 0.001;
+
+        rvec(0, 0) = rng.uniform(rMinVal, rMaxVal);
+        rvec(0, 1) = rng.uniform(rMinVal, rMaxVal);
+        rvec(0, 2) = rng.uniform(rMinVal, rMaxVal);
+        Rodrigues(rvec, rmat);
+
+        tvec(0, 0) = rng.uniform(tMinVal, tMaxVal);
+        tvec(0, 1) = rng.uniform(tMinVal, tMaxVal);
+        tvec(0, 2) = rng.uniform(tMinVal, tMaxVal);
+
+        for (var y = 0; y < objPoints.rows; y++ )
+        {
+            var point = new alvision.Mat(1, 3, CV_32FC1, objPoints.ptr(y));
+            var z = rng.uniform(zMinVal, zMaxVal);
+            point.at<float>(0, 2) = z;
+            point.at<float>(0, 0) = (rng.uniform(2., (float)(imgSize.width - 2)) - cameraMatrix(0, 2)) / cameraMatrix(0, 0) * z;
+            point.at<float>(0, 1) = (rng.uniform(2., (float)(imgSize.height - 2)) - cameraMatrix(1, 2)) / cameraMatrix(1, 1) * z;
+            point = (point - tvec) * rmat;
+        }
+
+        Array < Point2f > imgPoints;
+        Array < Array < Point2f > > leftImgPoints;
+        Array < Array < Point2f > > rightImgPoints;
+        Mat dpdrot, dpdt, dpdf, dpdc, dpddist,
+            valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist;
+
+        project(objPoints, rvec, tvec, cameraMatrix, distCoeffs,
+            imgPoints, dpdrot, dpdt, dpdf, dpdc, dpddist, 0);
+
+        // calculate and check image points
+        assert((int)imgPoints.size() == pointCount);
+        Array<Point2f>::const_iterator it = imgPoints.begin();
+        for (int i = 0; i < pointCount; i++ , ++it )
+        {
+            Point3d p(objPoints(i, 0), objPoints(i, 1), objPoints(i, 2));
+            var z = p.x * rmat(2, 0) + p.y * rmat(2, 1) + p.z * rmat(2, 2) + tvec(0, 2),
+                x = (p.x * rmat(0, 0) + p.y * rmat(0, 1) + p.z * rmat(0, 2) + tvec(0, 0)) / z,
+                y = (p.x * rmat(1, 0) + p.y * rmat(1, 1) + p.z * rmat(1, 2) + tvec(0, 1)) / z,
+                r2 = x * x + y * y,
+                r4 = r2 * r2;
+            var validImgPoint = new alvision.Point2f();
+            var a1 = 2 * x * y,
+                a2 = r2 + 2 * x * x,
+                a3 = r2 + 2 * y * y,
+                cdist = 1 + distCoeffs(0, 0) * r2 + distCoeffs(0, 1) * r4;
+            validImgPoint.x = static_cast<float>((double)cameraMatrix(0, 0) * (x * cdist + (double)distCoeffs(0, 2) * a1 + (double)distCoeffs(0, 3) * a2)
+                + (double)cameraMatrix(0, 2));
+            validImgPoint.y = static_cast<float>((double)cameraMatrix(1, 1) * (y * cdist + (double)distCoeffs(0, 2) * a3 + distCoeffs(0, 3) * a1)
+                + (double)cameraMatrix(1, 2));
+
+            if (Math.abs(it.x - validImgPoint.x) > imgPointErr ||
+                Math.abs(it.y - validImgPoint.y) > imgPointErr) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad image point\n");
+                code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+                goto _exit_;
+            }
+        }
+
+        // check derivatives
+        // 1. rotation
+        leftImgPoints.resize(3);
+        rightImgPoints.resize(3);
+        for (var i = 0; i < 3; i++ )
+        {
+            rvec.copyTo(leftRvec); leftRvec(0, i) -= dEps;
+            project(objPoints, leftRvec, tvec, cameraMatrix, distCoeffs,
+                leftImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+            rvec.copyTo(rightRvec); rightRvec(0, i) += dEps;
+            project(objPoints, rightRvec, tvec, cameraMatrix, distCoeffs,
+                rightImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        }
+        calcdfdx(leftImgPoints, rightImgPoints, dEps, valDpdrot);
+        err = alvision.cvtest.norm(dpdrot, valDpdrot, NORM_INF);
+        if (err > 3) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "bad dpdrot: too big difference = %g\n", err);
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+        }
+
+        // 2. translation
+        for (var i = 0; i < 3; i++ )
+        {
+            tvec.copyTo(leftTvec); leftTvec(0, i) -= dEps;
+            project(objPoints, rvec, leftTvec, cameraMatrix, distCoeffs,
+                leftImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+            tvec.copyTo(rightTvec); rightTvec(0, i) += dEps;
+            project(objPoints, rvec, rightTvec, cameraMatrix, distCoeffs,
+                rightImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        }
+        calcdfdx(leftImgPoints, rightImgPoints, dEps, valDpdt);
+        if (alvision.cvtest.norm(dpdt, valDpdt, NORM_INF) > 0.2) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "bad dpdtvec\n");
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+        }
+
+        // 3. camera matrix
+        // 3.1. focus
+        leftImgPoints.resize(2);
+        rightImgPoints.resize(2);
+        cameraMatrix.copyTo(leftCameraMatrix); leftCameraMatrix(0, 0) -= dEps;
+        project(objPoints, rvec, tvec, leftCameraMatrix, distCoeffs,
+            leftImgPoints[0], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        cameraMatrix.copyTo(leftCameraMatrix); leftCameraMatrix(1, 1) -= dEps;
+        project(objPoints, rvec, tvec, leftCameraMatrix, distCoeffs,
+            leftImgPoints[1], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        cameraMatrix.copyTo(rightCameraMatrix); rightCameraMatrix(0, 0) += dEps;
+        project(objPoints, rvec, tvec, rightCameraMatrix, distCoeffs,
+            rightImgPoints[0], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        cameraMatrix.copyTo(rightCameraMatrix); rightCameraMatrix(1, 1) += dEps;
+        project(objPoints, rvec, tvec, rightCameraMatrix, distCoeffs,
+            rightImgPoints[1], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        calcdfdx(leftImgPoints, rightImgPoints, dEps, valDpdf);
+        if (alvision.cvtest.norm(dpdf, valDpdf, alvision.NormTypes.NORM_L2) > 0.2) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "bad dpdf\n");
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+        }
+        // 3.2. principal point
+        leftImgPoints.resize(2);
+        rightImgPoints.resize(2);
+        cameraMatrix.copyTo(leftCameraMatrix); leftCameraMatrix(0, 2) -= dEps;
+        project(objPoints, rvec, tvec, leftCameraMatrix, distCoeffs,
+            leftImgPoints[0], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        cameraMatrix.copyTo(leftCameraMatrix); leftCameraMatrix(1, 2) -= dEps;
+        project(objPoints, rvec, tvec, leftCameraMatrix, distCoeffs,
+            leftImgPoints[1], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        cameraMatrix.copyTo(rightCameraMatrix); rightCameraMatrix(0, 2) += dEps;
+        project(objPoints, rvec, tvec, rightCameraMatrix, distCoeffs,
+            rightImgPoints[0], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        cameraMatrix.copyTo(rightCameraMatrix); rightCameraMatrix(1, 2) += dEps;
+        project(objPoints, rvec, tvec, rightCameraMatrix, distCoeffs,
+            rightImgPoints[1], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        calcdfdx(leftImgPoints, rightImgPoints, dEps, valDpdc);
+        if (alvision.cvtest.norm(dpdc, valDpdc, alvision.NormTypes.NORM_L2) > 0.2) {
+            ts.printf(alvision.cvtest.TSConstants.LOG, "bad dpdc\n");
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+        }
+
+        // 4. distortion
+        leftImgPoints.resize(distCoeffs.cols);
+        rightImgPoints.resize(distCoeffs.cols);
+        for (var i = 0; i < distCoeffs.cols; i++ )
+        {
+            distCoeffs.copyTo(leftDistCoeffs); leftDistCoeffs(0, i) -= dEps;
+            project(objPoints, rvec, tvec, cameraMatrix, leftDistCoeffs,
+                leftImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+            distCoeffs.copyTo(rightDistCoeffs); rightDistCoeffs(0, i) += dEps;
+            project(objPoints, rvec, tvec, cameraMatrix, rightDistCoeffs,
+                rightImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0);
+        }
+        calcdfdx(leftImgPoints, rightImgPoints, dEps, valDpddist);
+        if (alvision.cvtest.norm(dpddist, valDpddist, alvision.NormTypes.NORM_L2) > 0.3) {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad dpddist\n");
+            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+        }
+
+        _exit_:
+        var _rng = this.ts.get_rng();
+        _rng = rng;
+        this.ts.set_failed_test_info(code);
+    }
+    project(objectPoints: alvision.Mat ,
+        rvec: alvision.Mat, tvec: alvision.Mat,
+        cameraMatrix: alvision.Mat,
+        distCoeffs: alvision.Mat,
+        imagePoints: Array<alvision.Point2f>,
+        dpdrot: alvision.Mat, dpdt: alvision.Mat, dpdf: alvision.Mat,
+        dpdc: alvision.Mat, dpddist: alvision.Mat,
+        aspectRatio: alvision.double = 0): void {
+    }
 };
 
-void CV_ProjectPointsTest::run(int)
-{
-    //typedef float matType;
-
-    int code = alvision.cvtest.FailureCode.OK;
-    const int pointCount = 100;
-
-    const float zMinVal = 10.0f, zMaxVal = 100.0f,
-                rMinVal = -0.3f, rMaxVal = 0.3f,
-                tMinVal = -2.0f, tMaxVal = 2.0f;
-
-    const float imgPointErr = 1e-3f,
-                dEps = 1e-3f;
-
-    double err;
-
-    Size imgSize( 600, 800 );
-    Mat_<float> objPoints( pointCount, 3), rvec( 1, 3), rmat, tvec( 1, 3 ), cameraMatrix( 3, 3 ), distCoeffs( 1, 4 ),
-      leftRvec, rightRvec, leftTvec, rightTvec, leftCameraMatrix, rightCameraMatrix, leftDistCoeffs, rightDistCoeffs;
-
-    var rng = this.ts.get_rng();
-
-    // generate data
-    cameraMatrix << 300.f,  0.f,    imgSize.width/2.f,
-                    0.f,    300.f,  imgSize.height/2.f,
-                    0.f,    0.f,    1.f;
-    distCoeffs << 0.1, 0.01, 0.001, 0.001;
-
-    rvec(0,0) = rng.uniform( rMinVal, rMaxVal );
-    rvec(0,1) = rng.uniform( rMinVal, rMaxVal );
-    rvec(0,2) = rng.uniform( rMinVal, rMaxVal );
-    Rodrigues( rvec, rmat );
-
-    tvec(0,0) = rng.uniform( tMinVal, tMaxVal );
-    tvec(0,1) = rng.uniform( tMinVal, tMaxVal );
-    tvec(0,2) = rng.uniform( tMinVal, tMaxVal );
-
-    for( int y = 0; y < objPoints.rows; y++ )
-    {
-        Mat point(1, 3, CV_32FC1, objPoints.ptr(y) );
-        float z = rng.uniform( zMinVal, zMaxVal );
-        point.at<float>(0,2) = z;
-        point.at<float>(0,0) = (rng.uniform(2.f,(float)(imgSize.width-2)) - cameraMatrix(0,2)) / cameraMatrix(0,0) * z;
-        point.at<float>(0,1) = (rng.uniform(2.f,(float)(imgSize.height-2)) - cameraMatrix(1,2)) / cameraMatrix(1,1) * z;
-        point = (point - tvec) * rmat;
-    }
-
-    Array<Point2f> imgPoints;
-    Array<Array<Point2f> > leftImgPoints;
-    Array<Array<Point2f> > rightImgPoints;
-    Mat dpdrot, dpdt, dpdf, dpdc, dpddist,
-        valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist;
-
-    project( objPoints, rvec, tvec, cameraMatrix, distCoeffs,
-        imgPoints, dpdrot, dpdt, dpdf, dpdc, dpddist, 0 );
-
-    // calculate and check image points
-    assert( (int)imgPoints.size() == pointCount );
-    Array<Point2f>::const_iterator it = imgPoints.begin();
-    for( int i = 0; i < pointCount; i++, ++it )
-    {
-        Point3d p( objPoints(i,0), objPoints(i,1), objPoints(i,2) );
-        double z = p.x*rmat(2,0) + p.y*rmat(2,1) + p.z*rmat(2,2) + tvec(0,2),
-               x = (p.x*rmat(0,0) + p.y*rmat(0,1) + p.z*rmat(0,2) + tvec(0,0)) / z,
-               y = (p.x*rmat(1,0) + p.y*rmat(1,1) + p.z*rmat(1,2) + tvec(0,1)) / z,
-               r2 = x*x + y*y,
-               r4 = r2*r2;
-        Point2f validImgPoint;
-        double a1 = 2*x*y,
-               a2 = r2 + 2*x*x,
-               a3 = r2 + 2*y*y,
-               cdist = 1+distCoeffs(0,0)*r2+distCoeffs(0,1)*r4;
-        validImgPoint.x = static_cast<float>((double)cameraMatrix(0,0)*(x*cdist + (double)distCoeffs(0,2)*a1 + (double)distCoeffs(0,3)*a2)
-            + (double)cameraMatrix(0,2));
-        validImgPoint.y = static_cast<float>((double)cameraMatrix(1,1)*(y*cdist + (double)distCoeffs(0,2)*a3 + distCoeffs(0,3)*a1)
-            + (double)cameraMatrix(1,2));
-
-        if( fabs(it.x - validImgPoint.x) > imgPointErr ||
-            fabs(it.y - validImgPoint.y) > imgPointErr )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad image point\n" );
-            code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
-        }
-    }
-
-    // check derivatives
-    // 1. rotation
-    leftImgPoints.resize(3);
-    rightImgPoints.resize(3);
-    for( int i = 0; i < 3; i++ )
-    {
-        rvec.copyTo( leftRvec ); leftRvec(0,i) -= dEps;
-        project( objPoints, leftRvec, tvec, cameraMatrix, distCoeffs,
-            leftImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-        rvec.copyTo( rightRvec ); rightRvec(0,i) += dEps;
-        project( objPoints, rightRvec, tvec, cameraMatrix, distCoeffs,
-            rightImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    }
-    calcdfdx( leftImgPoints, rightImgPoints, dEps, valDpdrot );
-    err = alvision.cvtest.norm( dpdrot, valDpdrot, NORM_INF );
-    if( err > 3 )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad dpdrot: too big difference = %g\n", err );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-    }
-
-    // 2. translation
-    for( int i = 0; i < 3; i++ )
-    {
-        tvec.copyTo( leftTvec ); leftTvec(0,i) -= dEps;
-        project( objPoints, rvec, leftTvec, cameraMatrix, distCoeffs,
-            leftImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-        tvec.copyTo( rightTvec ); rightTvec(0,i) += dEps;
-        project( objPoints, rvec, rightTvec, cameraMatrix, distCoeffs,
-            rightImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    }
-    calcdfdx( leftImgPoints, rightImgPoints, dEps, valDpdt );
-    if( alvision.cvtest.norm( dpdt, valDpdt, NORM_INF ) > 0.2 )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad dpdtvec\n" );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-    }
-
-    // 3. camera matrix
-    // 3.1. focus
-    leftImgPoints.resize(2);
-    rightImgPoints.resize(2);
-    cameraMatrix.copyTo( leftCameraMatrix ); leftCameraMatrix(0,0) -= dEps;
-    project( objPoints, rvec, tvec, leftCameraMatrix, distCoeffs,
-        leftImgPoints[0], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    cameraMatrix.copyTo( leftCameraMatrix ); leftCameraMatrix(1,1) -= dEps;
-    project( objPoints, rvec, tvec, leftCameraMatrix, distCoeffs,
-        leftImgPoints[1], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    cameraMatrix.copyTo( rightCameraMatrix ); rightCameraMatrix(0,0) += dEps;
-    project( objPoints, rvec, tvec, rightCameraMatrix, distCoeffs,
-        rightImgPoints[0], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    cameraMatrix.copyTo( rightCameraMatrix ); rightCameraMatrix(1,1) += dEps;
-    project( objPoints, rvec, tvec, rightCameraMatrix, distCoeffs,
-        rightImgPoints[1], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    calcdfdx( leftImgPoints, rightImgPoints, dEps, valDpdf );
-    if ( alvision.cvtest.norm( dpdf, valDpdf,alvision.NormTypes. NORM_L2 ) > 0.2 )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad dpdf\n" );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-    }
-    // 3.2. principal point
-    leftImgPoints.resize(2);
-    rightImgPoints.resize(2);
-    cameraMatrix.copyTo( leftCameraMatrix ); leftCameraMatrix(0,2) -= dEps;
-    project( objPoints, rvec, tvec, leftCameraMatrix, distCoeffs,
-        leftImgPoints[0], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    cameraMatrix.copyTo( leftCameraMatrix ); leftCameraMatrix(1,2) -= dEps;
-    project( objPoints, rvec, tvec, leftCameraMatrix, distCoeffs,
-        leftImgPoints[1], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    cameraMatrix.copyTo( rightCameraMatrix ); rightCameraMatrix(0,2) += dEps;
-    project( objPoints, rvec, tvec, rightCameraMatrix, distCoeffs,
-        rightImgPoints[0], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    cameraMatrix.copyTo( rightCameraMatrix ); rightCameraMatrix(1,2) += dEps;
-    project( objPoints, rvec, tvec, rightCameraMatrix, distCoeffs,
-        rightImgPoints[1], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    calcdfdx( leftImgPoints, rightImgPoints, dEps, valDpdc );
-    if ( alvision.cvtest.norm( dpdc, valDpdc,alvision.NormTypes. NORM_L2 ) > 0.2 )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad dpdc\n" );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-    }
-
-    // 4. distortion
-    leftImgPoints.resize(distCoeffs.cols);
-    rightImgPoints.resize(distCoeffs.cols);
-    for( int i = 0; i < distCoeffs.cols; i++ )
-    {
-        distCoeffs.copyTo( leftDistCoeffs ); leftDistCoeffs(0,i) -= dEps;
-        project( objPoints, rvec, tvec, cameraMatrix, leftDistCoeffs,
-            leftImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-        distCoeffs.copyTo( rightDistCoeffs ); rightDistCoeffs(0,i) += dEps;
-        project( objPoints, rvec, tvec, cameraMatrix, rightDistCoeffs,
-            rightImgPoints[i], valDpdrot, valDpdt, valDpdf, valDpdc, valDpddist, 0 );
-    }
-    calcdfdx( leftImgPoints, rightImgPoints, dEps, valDpddist );
-    if( alvision.cvtest.norm( dpddist, valDpddist,alvision.NormTypes. NORM_L2 ) > 0.3 )
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "bad dpddist\n" );
-        code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-    }
-
-_exit_:
-    RNG& _rng = ts.get_rng();
-    _rng = rng;
-    this.ts.set_failed_test_info( code );
-}
 
 //----------------------------------------- CV_ProjectPointsTest_C --------------------------------
 //class CV_ProjectPointsTest_C extends CV_ProjectPointsTest
@@ -1526,9 +1502,9 @@ class CV_StereoCalibrationTest extends alvision.cvtest.BaseTest
                 perspectiveTransform(_imgpt1, rectifPoints1, _H1);
                 perspectiveTransform(_imgpt2, rectifPoints2, _H2);
 
-                bool verticalStereo = abs(P2.at<double>(0, 3)) < abs(P2.at<double>(1, 3));
-                double maxDiff_c = 0, maxDiff_uc = 0;
-                for (int i = 0, k = 0; i < nframes; i++ )
+                var verticalStereo = abs(P2.at<double>(0, 3)) < abs(P2.at<double>(1, 3));
+                var maxDiff_c = 0, maxDiff_uc = 0;
+                for (var i = 0, k = 0; i < nframes; i++ )
                 {
                     Array < Point2f > temp[2];
                     undistortPoints(Mat(imgpt1[i]), temp[0], M1, D1, R1, P1);
@@ -1536,7 +1512,7 @@ class CV_StereoCalibrationTest extends alvision.cvtest.BaseTest
 
                     for (int j = 0; j < npoints; j++ , k++ )
                     {
-                        double diff_c = verticalStereo ? abs(temp[0][j].x - temp[1][j].x) : abs(temp[0][j].y - temp[1][j].y);
+                        var diff_c = verticalStereo ? abs(temp[0][j].x - temp[1][j].x) : abs(temp[0][j].y - temp[1][j].y);
                         Point2f d = rectifPoints1.at<Point2f>(k, 0) - rectifPoints2.at<Point2f>(k, 0);
                         double diff_uc = verticalStereo ? abs(d.x) : abs(d.y);
                         maxDiff_c = max(maxDiff_c, diff_c);

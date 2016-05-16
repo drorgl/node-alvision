@@ -245,7 +245,7 @@ enum SOLVEPNP { SOLVEPNP_ITERATIVE = 0,
 
 };
 
-enum CALIB_CB {
+export enum CALIB_CB {
     CALIB_CB_ADAPTIVE_THRESH = 1,
        CALIB_CB_NORMALIZE_IMAGE = 2,
        CALIB_CB_FILTER_QUADS    = 4,
@@ -2137,7 +2137,7 @@ interface StereoSGBM extends StereoMatcher
 /** @brief The methods in this namespace use a so-called fisheye camera model.
   @ingroup calib3d_fisheye
 */
-namespace fisheye {
+export namespace fisheye {
     //! @addtogroup calib3d_fisheye
     //! @{
 

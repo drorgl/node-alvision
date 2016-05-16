@@ -148,7 +148,7 @@ class CV_TemplMatchTest extends alvision.cvtest.ArrayTest
 
 
 
-function cvTsMatchTemplate( const CvMat* img, const CvMat* templ, CvMat* result, int method ) : void
+function cvTsMatchTemplate(img: alvision.Mat, templ : alvision.Mat, result : alvision.Mat, method  :alvision.int) : void
 {
     int i, j, k, l;
     int depth = CV_MAT_DEPTH(img.type), cn = CV_MAT_CN(img.type);

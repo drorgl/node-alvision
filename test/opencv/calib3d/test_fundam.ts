@@ -1246,12 +1246,12 @@ class CV_EssentialMatTest extends alvision.cvtest.ArrayTest
 
 
 
-    double* pose_prop1 = test_mat[REF_OUTPUT][2].ptr<double>();
-    double* pose_prop2 = test_mat[OUTPUT][2].ptr<double>();
-    double terr1 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) + test_mat[TEMP][3], alvision.NormTypes.NORM_L2);
-    double terr2 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) - test_mat[TEMP][3], alvision.NormTypes.NORM_L2);
+    double* pose_prop1 = this.test_mat[this.REF_OUTPUT][2].ptr<double>();
+    double* pose_prop2 = this.test_mat[this.OUTPUT][2].ptr<double>();
+    double terr1 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) + this.test_mat[this.TEMP][3], alvision.NormTypes.NORM_L2);
+    double terr2 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) - this.test_mat[this.TEMP][3], alvision.NormTypes.NORM_L2);
     Mat rvec;
-    Rodrigues(Rt0.colRange(0, 3), rvec);
+    alvision.Rodrigues(Rt0.colRange(0, 3), rvec);
     pose_prop1[0] = 0;
     // No check for CV_LMeDS on translation. Since it
     // involves with some degraded problem, when data is exact inliers.
@@ -1260,35 +1260,36 @@ class CV_EssentialMatTest extends alvision.cvtest.ArrayTest
 
     //    int inliers_count = countNonZero(test_mat[TEMP][1]);
     //    int good_count = countNonZero(test_mat[TEMP][4]);
-    test_mat[OUTPUT][3] = true; //good_count >= inliers_count / 2;
-    test_mat[REF_OUTPUT][3] = true;
+    this.test_mat[this.OUTPUT][3] = true; //good_count >= inliers_count / 2;
+    this.test_mat[this.REF_OUTPUT][3] = true;
     }
 
-    sampson_error(const double* f, double x1, double y1, double x2, double y2): alvision.double {
-        double Fx1[3] = {
-            f[0] * x1 + f[1] * y1 + f[2],
-            f[3] * x1 + f[4] * y1 + f[5],
-            f[6] * x1 + f[7] * y1 + f[8]
-        };
-        double Ftx2[3] = {
-            f[0] * x2 + f[3] * y2 + f[6],
-            f[1] * x2 + f[4] * y2 + f[7],
-            f[2] * x2 + f[5] * y2 + f[8]
-        };
-        double x2tFx1 = Fx1[0] * x2 + Fx1[1] * y2 + Fx1[2];
+sampson_error(f : Array < alvision.double >, x1 :alvision.double, y1 : alvision.double, x2 : alvision.double, y2 : alvision.double): alvision.double {
+    var Fx1 = [
+        f[0] * x1 + f[1] * y1 + f[2],
+        f[3] * x1 + f[4] * y1 + f[5],
+        f[6] * x1 + f[7] * y1 + f[8]
+    ]
+    var Ftx2 = [
+        f[0] * x2 + f[3] * y2 + f[6],
+        f[1] * x2 + f[4] * y2 + f[7],
+        f[2] * x2 + f[5] * y2 + f[8]
+    ]
+    var x2tFx1 = Fx1[0] * x2 + Fx1[1] * y2 + Fx1[2];
 
-        double error = x2tFx1 * x2tFx1 / (Fx1[0] * Fx1[0] + Fx1[1] * Fx1[1] + Ftx2[0] * Ftx2[0] + Ftx2[1] * Ftx2[1]);
-        error = sqrt(error);
-        return error;
-    }
+    var error = x2tFx1 * x2tFx1 / (Fx1[0] * Fx1[0] + Fx1[1] * Fx1[1] + Ftx2[0] * Ftx2[0] + Ftx2[1] * Ftx2[1]);
+    error = Math.sqrt(error);
+    return error;
+}
 
 
-    protected int method;
-    protected int img_size;
-    protected int cube_size;
-    protected int dims;
-    protected double min_f, max_f;
-    protected double sigma;
+    protected  method       : alvision.int;
+    protected  img_size     : alvision.int;
+    protected  cube_size    : alvision.int;
+    protected  dims: alvision.int;
+    protected min_f: alvision.double;
+    protected max_f: alvision.double;
+    protected sigma: alvision.double;
 };
 
 

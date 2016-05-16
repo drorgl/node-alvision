@@ -286,10 +286,12 @@ export interface MatxStatic<T> {
     ////! element access
     //const _Tp& operator()(int i, int j) const;
     //_Tp & operator()(int i, int j);
+    Element(i: _st.int, j: _st.int): T;
 
     ////! 1D element access
     //const _Tp& operator()(int i) const;
     //_Tp & operator()(int i);
+    Element(i: _st.int): T;
 
     //Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_AddOp);
     //Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_SubOp);

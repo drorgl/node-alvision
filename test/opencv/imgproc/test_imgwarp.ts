@@ -284,8 +284,8 @@ class CV_ResizeTest extends CV_ImgWarpBaseTest
 
 /////////////////////////
 
-function test_remap( const Mat& src, Mat& dst, const Mat& mapx, const Mat& mapy,
-                        Mat* mask=0, int interpolation=CV_INTER_LINEAR ) : void
+function test_remap(src: alvision.Mat, dst: alvision.Mat, mapx: alvision.Mat, mapy: alvision.Mat ,
+    mask: alvision.Mat = null, interpolation: alvision.int = alvision.InterpolationFlags.INTER_LINEAR ) : void
 {
     int x, y, k;
     int drows = dst.rows, dcols = dst.cols;
