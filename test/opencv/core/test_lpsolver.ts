@@ -47,104 +47,104 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <iostream>
+//#include "test_precomp.hpp"
+//#include <iostream>
 
-TEST(Core_LPSolver, regression_basic){
-    alvision.Mat A,B,z,etalon_z;
+alvision.cvtest.TEST('Core_LPSolver', 'regression_basic', () => {
+    alvision.Mat A, B, z, etalon_z;
 
-#if 1
+    //#if 1
     //cormen's example #1
-    A=(alvision.Mat_<double>(3,1)<<3,1,2);
-    B=(alvision.Mat_<double>(3,4)<<1,1,3,30,2,2,5,24,4,1,2,36);
-    std::cout<<"here A goes\n"<<A<<"\n";
-    alvision.solveLP(A,B,z);
-    std::cout<<"here z goes\n"<<z<<"\n";
-    etalon_z=(alvision.Mat_<double>(3,1)<<8,4,0);
+    A= (alvision.Mat_<double>(3, 1) << 3, 1, 2);
+    B = (alvision.Mat_<double>(3, 4) << 1, 1, 3, 30, 2, 2, 5, 24, 4, 1, 2, 36);
+    std::cout << "here A goes\n" << A << "\n";
+    alvision.solveLP(A, B, z);
+    std::cout << "here z goes\n" << z << "\n";
+    etalon_z = (alvision.Mat_<double>(3, 1) << 8, 4, 0);
     ASSERT_LT(alvision.cvtest.norm(z, etalon_z, alvision.NORM_L1), 1e-12);
-#endif
+    //#endif
 
-#if 1
+    //#if 1
     //cormen's example #2
-    A=(alvision.Mat_<double>(1,2)<<18,12.5);
-    B=(alvision.Mat_<double>(3,3)<<1,1,20,1,0,20,0,1,16);
-    std::cout<<"here A goes\n"<<A<<"\n";
-    alvision.solveLP(A,B,z);
-    std::cout<<"here z goes\n"<<z<<"\n";
-    etalon_z=(alvision.Mat_<double>(2,1)<<20,0);
+    A= (alvision.Mat_<double>(1, 2) << 18, 12.5);
+    B = (alvision.Mat_<double>(3, 3) << 1, 1, 20, 1, 0, 20, 0, 1, 16);
+    std::cout << "here A goes\n" << A << "\n";
+    alvision.solveLP(A, B, z);
+    std::cout << "here z goes\n" << z << "\n";
+    etalon_z = (alvision.Mat_<double>(2, 1) << 20, 0);
     ASSERT_LT(alvision.cvtest.norm(z, etalon_z, alvision.NORM_L1), 1e-12);
-#endif
+    //#endif
 
-#if 1
+    //#if 1
     //cormen's example #3
-    A=(alvision.Mat_<double>(1,2)<<5,-3);
-    B=(alvision.Mat_<double>(2,3)<<1,-1,1,2,1,2);
-    std::cout<<"here A goes\n"<<A<<"\n";
-    alvision.solveLP(A,B,z);
-    std::cout<<"here z goes\n"<<z<<"\n";
-    etalon_z=(alvision.Mat_<double>(2,1)<<1,0);
+    A= (alvision.Mat_<double>(1, 2) << 5, -3);
+    B = (alvision.Mat_<double>(2, 3) << 1, -1, 1, 2, 1, 2);
+    std::cout << "here A goes\n" << A << "\n";
+    alvision.solveLP(A, B, z);
+    std::cout << "here z goes\n" << z << "\n";
+    etalon_z = (alvision.Mat_<double>(2, 1) << 1, 0);
     ASSERT_LT(alvision.cvtest.norm(z, etalon_z, alvision.NORM_L1), 1e-12);
-#endif
-}
+    //#endif
+});
 
-TEST(Core_LPSolver, regression_init_unfeasible){
-    alvision.Mat A,B,z,etalon_z;
+alvision.cvtest.TEST('Core_LPSolver', 'regression_init_unfeasible', () => {
+    alvision.Mat A, B, z, etalon_z;
 
-#if 1
+    //#if 1
     //cormen's example #4 - unfeasible
-    A=(alvision.Mat_<double>(1,3)<<-1,-1,-1);
-    B=(alvision.Mat_<double>(2,4)<<-2,-7.5,-3,-10000,-20,-5,-10,-30000);
-    std::cout<<"here A goes\n"<<A<<"\n";
-    alvision.solveLP(A,B,z);
-    std::cout<<"here z goes\n"<<z<<"\n";
-    etalon_z=(alvision.Mat_<double>(3,1)<<1250,1000,0);
+    A = (alvision.Mat_<double>(1, 3) << -1, -1, -1);
+    B = (alvision.Mat_<double>(2, 4) << -2, -7.5, -3, -10000, -20, -5, -10, -30000);
+    std::cout << "here A goes\n" << A << "\n";
+    alvision.solveLP(A, B, z);
+    std::cout << "here z goes\n" << z << "\n";
+    etalon_z = (alvision.Mat_<double>(3, 1) << 1250, 1000, 0);
     ASSERT_LT(alvision.cvtest.norm(z, etalon_z, alvision.NORM_L1), 1e-12);
-#endif
-}
+    //#endif
+});
 
-TEST(DISABLED_Core_LPSolver, regression_absolutely_unfeasible){
-    alvision.Mat A,B,z,etalon_z;
+alvision.cvtest.TEST('DISABLED_Core_LPSolver', 'regression_absolutely_unfeasible', () => {
+    alvision.Mat A, B, z, etalon_z;
 
-#if 1
+    //#if 1
     //trivial absolutely unfeasible example
-    A=(alvision.Mat_<double>(1,1)<<1);
-    B=(alvision.Mat_<double>(2,2)<<1,-1);
-    std::cout<<"here A goes\n"<<A<<"\n";
-    int res=alvision.solveLP(A,B,z);
-    ASSERT_EQ(res,-1);
-#endif
-}
+    A = (alvision.Mat_<double>(1, 1) << 1);
+    B = (alvision.Mat_<double>(2, 2) << 1, -1);
+    std::cout << "here A goes\n" << A << "\n";
+    int res= alvision.solveLP(A, B, z);
+    ASSERT_EQ(res, -1);
+    //#endif
+});
 
-TEST(Core_LPSolver, regression_multiple_solutions){
-    alvision.Mat A,B,z,etalon_z;
+alvision.cvtest.TEST('Core_LPSolver', 'regression_multiple_solutions', () => {
+    alvision.Mat A, B, z, etalon_z;
 
-#if 1
+    //#if 1
     //trivial example with multiple solutions
-    A=(alvision.Mat_<double>(2,1)<<1,1);
-    B=(alvision.Mat_<double>(1,3)<<1,1,1);
-    std::cout<<"here A goes\n"<<A<<"\n";
-    int res=alvision.solveLP(A,B,z);
-    printf("res=%d\n",res);
-    printf("scalar %g\n",z.dot(A));
-    std::cout<<"here z goes\n"<<z<<"\n";
-    ASSERT_EQ(res,1);
+    A = (alvision.Mat_<double>(2, 1) << 1, 1);
+    B = (alvision.Mat_<double>(1, 3) << 1, 1, 1);
+    std::cout << "here A goes\n" << A << "\n";
+    int res= alvision.solveLP(A, B, z);
+    printf("res=%d\n", res);
+    printf("scalar %g\n", z.dot(A));
+    std::cout << "here z goes\n" << z << "\n";
+    ASSERT_EQ(res, 1);
     ASSERT_LT(fabs(z.dot(A) - 1), DBL_EPSILON);
-#endif
-}
+    //#endif
+});
 
-TEST(Core_LPSolver, regression_cycling){
-    alvision.Mat A,B,z,etalon_z;
+alvision.cvtest.TEST('Core_LPSolver', 'regression_cycling', () => {
+    alvision.Mat A, B, z, etalon_z;
 
-#if 1
+    //#if 1
     //example with cycling from http://people.orie.cornell.edu/miketodd/or630/SimplexCyclingExample.pdf
-    A=(alvision.Mat_<double>(4,1)<<10,-57,-9,-24);
-    B=(alvision.Mat_<double>(3,5)<<0.5,-5.5,-2.5,9,0,0.5,-1.5,-0.5,1,0,1,0,0,0,1);
-    std::cout<<"here A goes\n"<<A<<"\n";
-    int res=alvision.solveLP(A,B,z);
-    printf("res=%d\n",res);
-    printf("scalar %g\n",z.dot(A));
-    std::cout<<"here z goes\n"<<z<<"\n";
+    A = (alvision.Mat_<double>(4, 1) << 10, -57, -9, -24);
+    B = (alvision.Mat_<double>(3, 5) << 0.5, -5.5, -2.5, 9, 0, 0.5, -1.5, -0.5, 1, 0, 1, 0, 0, 0, 1);
+    std::cout << "here A goes\n" << A << "\n";
+    int res= alvision.solveLP(A, B, z);
+    printf("res=%d\n", res);
+    printf("scalar %g\n", z.dot(A));
+    std::cout << "here z goes\n" << z << "\n";
     ASSERT_LT(fabs(z.dot(A) - 1), DBL_EPSILON);
     //ASSERT_EQ(res,1);
-#endif
-}
+    //#endif
+});

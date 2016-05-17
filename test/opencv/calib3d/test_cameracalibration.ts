@@ -849,7 +849,7 @@ class CV_CalibrationMatrixValuesTest extends alvision.cvtest.BaseTest
 
 //----------------------------------------- CV_CalibrationMatrixValuesTest_C --------------------------------
 
-//class CV_CalibrationMatrixValuesTest_C : public CV_CalibrationMatrixValuesTest
+//class CV_CalibrationMatrixValuesTest_C extends CV_CalibrationMatrixValuesTest
 //{
 //public:
 //    CV_CalibrationMatrixValuesTest_C(){}

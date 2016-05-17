@@ -90,7 +90,7 @@ public:
     static YUVwriter* getWriter(int code);
 };
 
-class RGB888Writer : public RGBwriter
+class RGB888Writer extends RGBwriter
 {
     void write(Mat& rgb, int row, int col, const RGB& val)
     {
@@ -100,7 +100,7 @@ class RGB888Writer : public RGBwriter
     int channels() { return 3; }
 };
 
-class BGR888Writer : public RGBwriter
+class BGR888Writer extends RGBwriter
 {
     void write(Mat& rgb, int row, int col, const RGB& val)
     {
@@ -111,7 +111,7 @@ class BGR888Writer : public RGBwriter
     int channels() { return 3; }
 };
 
-class RGBA8888Writer : public RGBwriter
+class RGBA8888Writer extends RGBwriter
 {
     void write(Mat& rgb, int row, int col, const RGB& val)
     {
@@ -122,7 +122,7 @@ class RGBA8888Writer : public RGBwriter
     int channels() { return 4; }
 };
 
-class BGRA8888Writer : public RGBwriter
+class BGRA8888Writer extends RGBwriter
 {
     void write(Mat& rgb, int row, int col, const RGB& val)
     {
@@ -269,7 +269,7 @@ class YVYUReader: public YUV422Reader
     }
 };
 
-class YUV888Reader : public YUVreader
+class YUV888Reader extends YUVreader
 {
     YUV read(const Mat& yuv, int row, int col)
     {
@@ -282,7 +282,7 @@ class YUV888Reader : public YUVreader
     bool requiresEvenWidth() { return false; }
 };
 
-class RGB888Reader : public RGBreader
+class RGB888Reader extends RGBreader
 {
     RGB read(const Mat& rgb, int row, int col)
     {
@@ -292,7 +292,7 @@ class RGB888Reader : public RGBreader
     int channels() { return 3; }
 };
 
-class BGR888Reader : public RGBreader
+class BGR888Reader extends RGBreader
 {
     RGB read(const Mat& rgb, int row, int col)
     {
@@ -303,7 +303,7 @@ class BGR888Reader : public RGBreader
     int channels() { return 3; }
 };
 
-class RGBA8888Reader : public RGBreader
+class RGBA8888Reader extends RGBreader
 {
     RGB read(const Mat& rgb, int row, int col)
     {
@@ -314,7 +314,7 @@ class RGBA8888Reader : public RGBreader
     int channels() { return 4; }
 };
 
-class BGRA8888Reader : public RGBreader
+class BGRA8888Reader extends RGBreader
 {
     RGB read(const Mat& rgb, int row, int col)
     {

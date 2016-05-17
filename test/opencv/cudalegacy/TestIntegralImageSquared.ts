@@ -55,7 +55,7 @@ import fs = require('fs');
 #include "NCVTestSourceProvider.hpp"
 
 
-class TestIntegralImageSquared : public NCVTestProvider
+class TestIntegralImageSquared extends NCVTestProvider
 {
 public:
 

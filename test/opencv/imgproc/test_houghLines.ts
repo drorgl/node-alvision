@@ -49,13 +49,13 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
+//#include "test_precomp.hpp"
+//
+//using namespace cv;
+//using namespace std;
 
-using namespace cv;
-using namespace std;
-
-template<typename T>
-struct SimilarWith
+//template<typename T>
+class SimilarWith<T>
 {
     T value;
     float theta_eps;
@@ -92,9 +92,9 @@ int countMatIntersection(Mat expect, Mat actual, float eps, float rho_eps)
     return count;
 }
 
-String getTestCaseName(String filename)
+function getTestCaseName(filename : string) : string
 {
-    string temp(filename);
+    var temp = (filename);
     size_t pos = temp.find_first_of("\\/.");
     while ( pos != string::npos ) {
        temp.replace( pos, 1, "_" );
@@ -119,7 +119,7 @@ protected:
 };
 
 typedef std::tr1::tuple<string, double, double, int> Image_RhoStep_ThetaStep_Threshold_t;
-class StandartHoughLinesTest : public BaseHoughLineTest, public testing::TestWithParam<Image_RhoStep_ThetaStep_Threshold_t>
+class StandartHoughLinesTest extends BaseHoughLineTest, public testing::TestWithParam<Image_RhoStep_ThetaStep_Threshold_t>
 {
 public:
     StandartHoughLinesTest()
@@ -134,7 +134,7 @@ public:
 };
 
 typedef std::tr1::tuple<string, double, double, int, int, int> Image_RhoStep_ThetaStep_Threshold_MinLine_MaxGap_t;
-class ProbabilisticHoughLinesTest : public BaseHoughLineTest, public testing::TestWithParam<Image_RhoStep_ThetaStep_Threshold_MinLine_MaxGap_t>
+class ProbabilisticHoughLinesTest extends BaseHoughLineTest, public testing::TestWithParam<Image_RhoStep_ThetaStep_Threshold_MinLine_MaxGap_t>
 {
 public:
     ProbabilisticHoughLinesTest()

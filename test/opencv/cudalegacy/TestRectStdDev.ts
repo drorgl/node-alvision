@@ -55,7 +55,7 @@ import fs = require('fs');
 #include "NCVTestSourceProvider.hpp"
 
 
-class TestRectStdDev : public NCVTestProvider
+class TestRectStdDev extends NCVTestProvider
 {
 public:
 

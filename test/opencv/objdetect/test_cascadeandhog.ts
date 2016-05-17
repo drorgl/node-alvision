@@ -446,7 +446,7 @@ int CV_CascadeDetectorTest::detectMultiScale( int di, const Mat& img,
 }
 
 //----------------------------------------------- HOGDetectorTest -----------------------------------
-class CV_HOGDetectorTest : public CV_DetectorTest
+class CV_HOGDetectorTest extends CV_DetectorTest
 {
 public:
     CV_HOGDetectorTest();

@@ -55,7 +55,7 @@ import fs = require('fs');
 #include "NCVTestSourceProvider.hpp"
 
 
-class TestHypothesesGrow : public NCVTestProvider
+class TestHypothesesGrow extends NCVTestProvider
 {
 public:
 

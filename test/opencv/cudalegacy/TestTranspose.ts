@@ -56,7 +56,7 @@ import fs = require('fs');
 
 
 template <class T>
-class TestTranspose : public NCVTestProvider
+class TestTranspose extends NCVTestProvider
 {
 public:
 

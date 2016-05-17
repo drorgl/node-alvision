@@ -48,11 +48,11 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 //#define DUMP
 
@@ -230,7 +230,7 @@ INSTANTIATE_TEST_CASE_P(CUDA_ObjDetect, HOG, ALL_DEVICES);
 
 //============== caltech hog tests =====================//
 
-struct CalTech : public ::testing::TestWithParam<std::tr1::tuple<alvision.cuda::DeviceInfo, std::string> >
+struct CalTech extends ::testing::TestWithParam<std::tr1::tuple<alvision.cuda::DeviceInfo, std::string> >
 {
     alvision.cuda::DeviceInfo devInfo;
     alvision.Mat img;

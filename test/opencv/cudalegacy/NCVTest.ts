@@ -83,7 +83,7 @@ public:
 };
 
 
-class NCVTestProvider : public INCVTest
+class NCVTestProvider extends INCVTest
 {
 public:
 

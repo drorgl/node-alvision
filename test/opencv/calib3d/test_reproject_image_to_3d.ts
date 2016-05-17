@@ -136,7 +136,7 @@ runCase<InT>(caseId : alvision.int, min : InT, max : InT) : void
         CvMat cvdisp = disp; CvMat cv_3dImg = _3dImg; CvMat cvQ = Q;
         cvReprojectImageTo3D( &cvdisp, &cv_3dImg, &cvQ, handleMissingValues );
 
-        if (numeric_limits<OutT>::max() == numeric_limits<float>::max())
+        if (numeric_limits<OutT>::max() == alvision.FLT_MAX /*alvision.FLT_MAX*/)
             reprojectImageTo3D(disp, _3dImg, Q, handleMissingValues);
 
         for(int y = 0; y < disp.rows; ++y)

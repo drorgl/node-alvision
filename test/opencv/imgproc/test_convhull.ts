@@ -425,7 +425,7 @@ int CV_BaseShapeDescrTest::validate_test_results( int /*test_case_idx*/ )
 *                                     Convex Hull Test                                   *
 \****************************************************************************************/
 
-class CV_ConvHullTest : public CV_BaseShapeDescrTest
+class CV_ConvHullTest extends CV_BaseShapeDescrTest
 {
 public:
     CV_ConvHullTest();
@@ -674,7 +674,7 @@ _exit_:
 *                                     MinAreaRect Test                                   *
 \****************************************************************************************/
 
-class CV_MinAreaRectTest : public CV_BaseShapeDescrTest
+class CV_MinAreaRectTest extends CV_BaseShapeDescrTest
 {
 public:
     CV_MinAreaRectTest();
@@ -799,7 +799,7 @@ _exit_:
 *                                   MinEnclosingTriangle Test                            *
 \****************************************************************************************/
 
-class CV_MinTriangleTest : public CV_BaseShapeDescrTest
+class CV_MinTriangleTest extends CV_BaseShapeDescrTest
 {
 public:
     CV_MinTriangleTest();
@@ -938,7 +938,7 @@ int CV_MinTriangleTest::validate_test_results( int test_case_idx )
 *                                     MinEnclosingCircle Test                            *
 \****************************************************************************************/
 
-class CV_MinCircleTest : public CV_BaseShapeDescrTest
+class CV_MinCircleTest extends CV_BaseShapeDescrTest
 {
 public:
     CV_MinCircleTest();
@@ -1030,7 +1030,7 @@ _exit_:
 *                                   Perimeter Test                                     *
 \****************************************************************************************/
 
-class CV_PerimeterTest : public CV_BaseShapeDescrTest
+class CV_PerimeterTest extends CV_BaseShapeDescrTest
 {
 public:
     CV_PerimeterTest();
@@ -1138,7 +1138,7 @@ int CV_PerimeterTest::validate_test_results( int test_case_idx )
 *                                   FitEllipse Test                                      *
 \****************************************************************************************/
 
-class CV_FitEllipseTest : public CV_BaseShapeDescrTest
+class CV_FitEllipseTest extends CV_BaseShapeDescrTest
 {
 public:
     CV_FitEllipseTest();
@@ -1364,7 +1364,7 @@ protected:
 
 // Regression test for incorrect fitEllipse result reported in Bug #3989
 // Check edge cases for rotation angles of ellipse ([-180, 90, 0, 90, 180] degrees)
-class CV_FitEllipseParallelTest : public CV_FitEllipseTest
+class CV_FitEllipseParallelTest extends CV_FitEllipseTest
 {
 public:
     CV_FitEllipseParallelTest();
@@ -1423,7 +1423,7 @@ CV_FitEllipseParallelTest::~CV_FitEllipseParallelTest(){
 *                                   FitLine Test                                         *
 \****************************************************************************************/
 
-class CV_FitLineTest : public CV_BaseShapeDescrTest
+class CV_FitLineTest extends CV_BaseShapeDescrTest
 {
 public:
     CV_FitLineTest();
@@ -1704,7 +1704,7 @@ cvTsGenerateTousledBlob( CvPoint2D32f center, CvSize2D32f axes,
 }
 
 
-class CV_ContourMomentsTest : public CV_BaseShapeDescrTest
+class CV_ContourMomentsTest extends CV_BaseShapeDescrTest
 {
 public:
     CV_ContourMomentsTest();

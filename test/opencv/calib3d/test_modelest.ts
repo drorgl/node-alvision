@@ -98,7 +98,7 @@
 //    fill_array(test_case_idx : alvision.int, i : alvision.int, j : alvision.int, arr : alvision.Mat) : void {}
 //    get_success_error_level(test_case_idx : alvision.int, i : alvision.int , j  : alvision.int) : alvision.double {}
 //    run_func() : void {}
-//    void prepare_to_validation( int test_case_idx );
+//    prepare_to_validation(test_case_idx : alvision.int) : void {}
 
 //    bool checkPartialSubsets;
 //    int usedPointsCount;

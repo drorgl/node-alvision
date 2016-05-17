@@ -839,7 +839,7 @@ INSTANTIATE_TEST_CASE_P(UMat, UMatBasicTests, Combine(testing::Values(CV_8U), te
 //// Use iGPU or OPENCV_OPENCL_DEVICE=:CPU: to catch problem
 //alvision.cvtest.TEST(UMat, DISABLED_synchronization_map_unmap)
 //{
-//    class TestParallelLoopBody : public alvision.ParallelLoopBody
+//    class TestParallelLoopBody extends alvision.ParallelLoopBody
 //    {
 //        UMat u_;
 //    public:

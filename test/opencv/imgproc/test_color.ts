@@ -1335,7 +1335,7 @@ class CV_ColorBayerTest extends CV_ColorCvtBaseTest
         else if (depth == CV_16U)
             bayer2BGR_<ushort>(src, dst, fwd_code);
         else
-            CV_Error(CV_StsUnsupportedFormat, "");
+            CV_Error(alvision.cv.Error.Code.StsUnsupportedFormat, "");
     }
 };
 

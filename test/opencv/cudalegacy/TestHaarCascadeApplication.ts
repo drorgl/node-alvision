@@ -55,7 +55,7 @@ import fs = require('fs');
 #include "NCVTestSourceProvider.hpp"
 
 
-class TestHaarCascadeApplication : public NCVTestProvider
+class TestHaarCascadeApplication extends NCVTestProvider
 {
 public:
 

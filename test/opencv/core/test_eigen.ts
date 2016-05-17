@@ -102,7 +102,7 @@ protected:
     void print_information(const size_t norm_idx, const alvision.Mat& src, double diff, double max_diff);
 };
 
-class Core_EigenTest_Scalar : public Core_EigenTest
+class Core_EigenTest_Scalar extends Core_EigenTest
 {
 public:
     Core_EigenTest_Scalar() : Core_EigenTest() {}
@@ -111,7 +111,7 @@ public:
     virtual void run(int) = 0;
 };
 
-class Core_EigenTest_Scalar_32 : public Core_EigenTest_Scalar
+class Core_EigenTest_Scalar_32 extends Core_EigenTest_Scalar
 {
 public:
     Core_EigenTest_Scalar_32() : Core_EigenTest_Scalar() {}
@@ -120,7 +120,7 @@ public:
     void run(int);
 };
 
-class Core_EigenTest_Scalar_64 : public Core_EigenTest_Scalar
+class Core_EigenTest_Scalar_64 extends Core_EigenTest_Scalar
 {
 public:
     Core_EigenTest_Scalar_64() : Core_EigenTest_Scalar() {}
@@ -128,7 +128,7 @@ public:
     void run(int);
 };
 
-class Core_EigenTest_32 : public Core_EigenTest
+class Core_EigenTest_32 extends Core_EigenTest
 {
 public:
     Core_EigenTest_32(): Core_EigenTest() {}
@@ -136,7 +136,7 @@ public:
     void run(int);
 };
 
-class Core_EigenTest_64 : public Core_EigenTest
+class Core_EigenTest_64 extends Core_EigenTest
 {
 public:
     Core_EigenTest_64(): Core_EigenTest() {}

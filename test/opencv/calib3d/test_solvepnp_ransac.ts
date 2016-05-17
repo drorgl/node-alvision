@@ -73,7 +73,7 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
         -1, 5), pmax: alvision.Point3f = new alvision.Point3f(1, 1, 10)) : void
     {
         const delta = pmax.op_Substraction(pmin);
-        for (var i = 0; i < points.size(); i++)
+        for (var i = 0; i < points.length; i++)
         {
             var p = new alvision.Point3f ((rand()) / RAND_MAX, float(rand()) / RAND_MAX,
                 (rand()) / RAND_MAX);
@@ -115,39 +115,44 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
         }
     }
 
-    runTest(rng: alvision.RNG, mode: alvision.int, method: alvision.int, points: Array<alvision.Point3f>  ,epsilon : Array<alvision.double>,  maxError : alvision.double, maxErrorChanged:(maxError)=>void) : boolean
-    {
-        Mat rvec, tvec;
-        Array<int> inliers;
-        Mat trueRvec, trueTvec;
-        Mat intrinsics, distCoeffs;
-        generateCameraMatrix(intrinsics, rng);
+    runTest(rng: alvision.RNG, mode: alvision.int, method: alvision.int, points: Array<alvision.Point3f>  ,epsilon : Array<alvision.double>,  maxError : alvision.double, maxErrorChanged:(maxError)=>void) : boolean{
+        var rvec = new alvision.Mat();
+        var tvec = new alvision.Mat();
+        var inliers = new Array<alvision.int>();
+
+        var trueRvec = new alvision.Mat();
+        var trueTvec = new alvision.Mat();
+
+        var intrinsics = new alvision.Mat();
+        var distCoeffs = new alvision.Mat();
+        this.generateCameraMatrix(intrinsics, rng);
+
         if (method == 4) intrinsics.at<double>(1,1) = intrinsics.at<double>(0,0);
         if (mode == 0)
-            distCoeffs = Mat::zeros(4, 1, CV_64FC1);
+            distCoeffs = alvision.Mat.zeros(4, 1, alvision.MatrixType.CV_64FC1);
         else
-            generateDistCoeffs(distCoeffs, rng);
-        generatePose(trueRvec, trueTvec, rng);
+            this.generateDistCoeffs(distCoeffs, rng);
+        this.generatePose(trueRvec, trueTvec, rng);
 
-        Array<Point2f> projectedPoints;
-        projectedPoints.resize(points.size());
-        projectPoints(Mat(points), trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints);
-        for (size_t i = 0; i < projectedPoints.size(); i++)
+        var projectedPoints = new Array<alvision.Point2f>();
+        projectedPoints.length = (points.length);
+        alvision.projectPoints(new alvision.Mat(points), trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints);
+        for (var i = 0; i < projectedPoints.length; i++)
         {
             if (i % 20 == 0)
             {
-                projectedPoints[i] = projectedPoints[rng.uniform(0,(int)points.size()-1)];
+                projectedPoints[i] = projectedPoints[rng.uniform(0,points.length-1).valueOf()];
             }
         }
 
-        solvePnPRansac(points, projectedPoints, intrinsics, distCoeffs, rvec, tvec,
+        alvision.solvePnPRansac(points, projectedPoints, intrinsics, distCoeffs, rvec, tvec,
             false, 500, 0.5, 0.99, inliers, method);
 
-        bool isTestSuccess = inliers.size() >= points.size()*0.95;
+        var isTestSuccess = inliers.length >= points.length*0.95;
 
-        double rvecDiff = norm(rvec-trueRvec), tvecDiff = norm(tvec-trueTvec);
+        var rvecDiff = norm(rvec-trueRvec), tvecDiff = norm(tvec-trueTvec);
         isTestSuccess = isTestSuccess && rvecDiff < epsilon[method] && tvecDiff < epsilon[method];
-        double error = rvecDiff > tvecDiff ? rvecDiff : tvecDiff;
+        var error = rvecDiff > tvecDiff ? rvecDiff : tvecDiff;
         //cout << error << " " << inliers.size() << " " << eps[method] << endl;
         if (error > maxError)
             maxError = error;
@@ -162,33 +167,34 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
         var points = new Array<alvision.Point3f>(), points_dls = new Array<alvision.Point3f>() ;
         const pointsCount = 500;
         points.length   = (pointsCount);
-        generate3DPointCloud(points);
+        this.generate3DPointCloud(points);
 
-        const int methodsCount = 5;
+        const methodsCount = 5;
         var rng = this.ts.get_rng();
 
 
-        for (int mode = 0; mode < 2; mode++)
+        for (var mode = 0; mode < 2; mode++)
         {
-            for (int method = 0; method < methodsCount; method++)
+            for (var method = 0; method < methodsCount; method++)
             {
-                double maxError = 0;
-                int successfulTestsCount = 0;
-                for (int testIndex = 0; testIndex < totalTestsCount; testIndex++)
+                var maxError = 0;
+                var successfulTestsCount = 0;
+                for (var testIndex = 0; testIndex < this.totalTestsCount; testIndex++)
                 {
-                    if (runTest(rng, mode, method, points, eps, maxError))
+                    if (this.runTest(rng, mode, method, points, eps, maxError))
                         successfulTestsCount++;
                 }
                 //cout <<  maxError << " " << successfulTestsCount << endl;
-                if (successfulTestsCount < 0.7*totalTestsCount)
+                if (successfulTestsCount < 0.7* this.totalTestsCount.valueOf())
                 {
-                    ts.printf( alvision.cvtest.TSConstants.LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
-                        method, totalTestsCount - successfulTestsCount, totalTestsCount, maxError, mode);
+                    this.ts.printf( alvision.cvtest.TSConstants.LOG, "Invalid accuracy for method %d, failed %d tests from %d, maximum error equals %f, distortion mode equals %d\n",
+                        method, this.totalTestsCount.valueOf() - successfulTestsCount, this.totalTestsCount, maxError, mode);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+
                 }
-                cout << "mode: " << mode << ", method: " << method << " . "
-                     << ((double)successfulTestsCount / totalTestsCount) * 100 << "%"
-                     << " (err < " << maxError << ")" << endl;
+                console.log("mode: " + mode + ", method: " + method + " . "
+                    + (successfulTestsCount / this.totalTestsCount.valueOf()) * 100 + "%"
+                    + " (err < " + maxError + ")");
             }
         }
     }
@@ -212,17 +218,22 @@ class CV_solvePnP_Test extends CV_solvePnPRansac_Test
     runTest(rng: alvision.RNG, mode: alvision.int, method: alvision.int, points: Array<alvision.Point3f>, epsilon: Array<alvision.double>, maxError : alvision.double, maxErrorChanged:(maxError)=>void): boolean
     {
         var rvec = new alvision.Mat(), tvec = new alvision.Mat();
-        Mat trueRvec, trueTvec;
-        Mat intrinsics, distCoeffs;
-        generateCameraMatrix(intrinsics, rng);
+        var trueRvec = new alvision.Mat();
+        var trueTvec = new alvision.Mat();
+
+
+        var intrinsics = new alvision.Mat();
+        var distCoeffs = new alvision.Mat();
+
+        this.generateCameraMatrix(intrinsics, rng);
         if (method == 4) intrinsics.at<double>(1,1) = intrinsics.at<double>(0,0);
         if (mode == 0)
-            distCoeffs = Mat::zeros(4, 1, CV_64FC1);
+            distCoeffs = alvision.Mat.zeros(4, 1,alvision.MatrixType. CV_64FC1);
         else
-            generateDistCoeffs(distCoeffs, rng);
-        generatePose(trueRvec, trueTvec, rng);
+            this.generateDistCoeffs(distCoeffs, rng);
+        this.generatePose(trueRvec, trueTvec, rng);
 
-        Array<Point3f> opoints;
+        var opoints = new Array<alvision.Point3f>();
         if (method == 2)
         {
             opoints = Array<Point3f>(points.begin(), points.begin()+4);
@@ -234,17 +245,17 @@ class CV_solvePnP_Test extends CV_solvePnPRansac_Test
         else
             opoints = points;
 
-        Array<Point2f> projectedPoints;
-        projectedPoints.resize(opoints.size());
-        projectPoints(Mat(opoints), trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints);
+        var projectedPoints = new Array<alvision.Point2f>() ;
+        projectedPoints.length = (opoints.length);
+        alvision.projectPoints(new alvision.Mat(opoints), trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints);
 
-        solvePnP(opoints, projectedPoints, intrinsics, distCoeffs, rvec, tvec,
+        alvision.solvePnP(opoints, projectedPoints, intrinsics, distCoeffs, rvec, tvec,
             false, method);
 
-        double rvecDiff = norm(rvec-trueRvec), tvecDiff = norm(tvec-trueTvec);
-        bool isTestSuccess = rvecDiff < epsilon[method] && tvecDiff < epsilon[method];
+        var rvecDiff = norm(rvec-trueRvec), tvecDiff = norm(tvec-trueTvec);
+        var isTestSuccess = rvecDiff < epsilon[method] && tvecDiff < epsilon[method];
 
-        double error = rvecDiff > tvecDiff ? rvecDiff : tvecDiff;
+        var error = rvecDiff > tvecDiff ? rvecDiff : tvecDiff;
         if (error > maxError)
             maxError = error;
 
@@ -252,56 +263,60 @@ class CV_solvePnP_Test extends CV_solvePnPRansac_Test
     }
 };
 
-alvision.cvtest.TEST('Calib3d_SolvePnPRansac', 'accuracy', () => { CV_solvePnPRansac_Test test; test.safe_run(); });
-alvision.cvtest.TEST('Calib3d_SolvePnP', 'accuracy', () => { CV_solvePnP_Test test; test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_SolvePnPRansac', 'accuracy', () => { var test = new CV_solvePnPRansac_Test(); test.safe_run(); });
+alvision.cvtest.TEST('Calib3d_SolvePnP', 'accuracy', () => { var test = new CV_solvePnP_Test(); test.safe_run(); });
 
 
 //#ifdef HAVE_TBB
 
 alvision.cvtest.TEST('DISABLED_Calib3d_SolvePnPRansac', 'concurrency',()=>
 {
-    int count = 7*13;
+    var count = 7*13;
 
-    Mat object(1, count, CV_32FC3);
-    randu(object, -100, 100);
+    //TODO: possible bug, assign to object!!
+    var object = new alvision.Mat(1, count, CV_32FC3);
+    alvision.randu(object, -100, 100);
 
-    Mat camera_mat(3, 3, CV_32FC1);
-    randu(camera_mat, 0.5, 1);
+    var camera_mat = new alvision.Mat(3, 3, CV_32FC1);
+    alvision.randu(camera_mat, 0.5, 1);
     camera_mat.at<float>(0, 1) = 0.f;
     camera_mat.at<float>(1, 0) = 0.f;
     camera_mat.at<float>(2, 0) = 0.f;
     camera_mat.at<float>(2, 1) = 0.f;
 
-    Mat dist_coef(1, 8, CV_32F, alvision.alvision.Scalar.all(0));
+    var dist_coef = new alvision.Mat (1, 8, CV_32F, alvision.alvision.Scalar.all(0));
 
-    Array<alvision.Point2f> image_vec;
-    Mat rvec_gold(1, 3, CV_32FC1);
-    randu(rvec_gold, 0, 1);
-    Mat tvec_gold(1, 3, CV_32FC1);
-    randu(tvec_gold, 0, 1);
-    projectPoints(object, rvec_gold, tvec_gold, camera_mat, dist_coef, image_vec);
+    var image_vec = new Array<alvision.Point2f>();
+    var rvec_gold = new alvision.Mat(1, 3, CV_32FC1);
+    alvision.randu(rvec_gold, 0, 1);
+    var tvec_gold = new alvision.Mat(1, 3, CV_32FC1);
+    alvision.randu(tvec_gold, 0, 1);
+    alvision.projectPoints(object, rvec_gold, tvec_gold, camera_mat, dist_coef, image_vec);
 
-    Mat image(1, count, CV_32FC2, &image_vec[0]);
+    var image = new alvision.Mat(1, count, CV_32FC2, &image_vec[0]);
 
-    Mat rvec1, rvec2;
-    Mat tvec1, tvec2;
+    var rvec1 = new alvision.Mat();
+    var rvec2 = new alvision.Mat();
+
+    var tvec1 = new alvision.Mat();
+    var tvec2 = new alvision.Mat();
 
     {
         // limit concurrency to get deterministic result
         alvision.theRNG().state = 20121010;
         tbb::task_scheduler_init one_thread(1);
-        solvePnPRansac(object, image, camera_mat, dist_coef, rvec1, tvec1);
+        alvision.solvePnPRansac(object, image, camera_mat, dist_coef, rvec1, tvec1);
     }
 
     if(1)
     {
-        Mat rvec;
-        Mat tvec;
+        var rvec = new alvision.Mat();
+        var tvec = new alvision.Mat();
         // parallel executions
-        for(int i = 0; i < 10; ++i)
+        for(var i = 0; i < 10; ++i)
         {
             alvision.theRNG().state = 20121010;
-            solvePnPRansac(object, image, camera_mat, dist_coef, rvec, tvec);
+            alvision.solvePnPRansac(object, image, camera_mat, dist_coef, rvec, tvec);
         }
     }
 
@@ -309,14 +324,14 @@ alvision.cvtest.TEST('DISABLED_Calib3d_SolvePnPRansac', 'concurrency',()=>
         // single thread again
         alvision.theRNG().state = 20121010;
         tbb::task_scheduler_init one_thread(1);
-        solvePnPRansac(object, image, camera_mat, dist_coef, rvec2, tvec2);
+        alvision.solvePnPRansac(object, image, camera_mat, dist_coef, rvec2, tvec2);
     }
 
-    double rnorm = alvision.cvtest.norm(rvec1, rvec2, NORM_INF);
-    double tnorm = alvision.cvtest.norm(tvec1, tvec2, NORM_INF);
+    var rnorm = alvision.cvtest.norm(rvec1, rvec2, NORM_INF);
+    var tnorm = alvision.cvtest.norm(tvec1, tvec2, NORM_INF);
 
-    EXPECT_LT(rnorm, 1e-6);
-    EXPECT_LT(tnorm, 1e-6);
+    alvision.EXPECT_LT(rnorm, 1e-6);
+    alvision.EXPECT_LT(tnorm, 1e-6);
 
 });
 //#endif

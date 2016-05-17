@@ -6,12 +6,12 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#include <map>
-
-using namespace cv;
-using namespace std;
+//#include "test_precomp.hpp"
+//
+//#include <map>
+//
+//using namespace cv;
+//using namespace std;
 
 
 class Core_ReduceTest  extends alvision.cvtest.BaseTest
@@ -79,7 +79,7 @@ void testReduce( const Mat& src, Mat& sum, Mat& avg, Mat& max, Mat& min, int dim
     avg = avg * (1.0 / (dim==0 ? (double)src.rows : (double)src.cols));
 }
 
-void getMatTypeStr( int type, string& str)
+function getMatTypeStr(type: alvision.int , str : string) : void
 {
     str = type == CV_8UC1 ? "CV_8UC1" :
     type == CV_8SC1 ? "CV_8SC1" :
@@ -562,7 +562,7 @@ Core_ArrayOpTest::Core_ArrayOpTest()
 }
 Core_ArrayOpTest::~Core_ArrayOpTest() {}
 
-static string idx2string(const int* idx, int dims)
+function idx2string(const int* idx, int dims) : string
 {
     char buf[256];
     char* ptr = buf;
@@ -587,7 +587,7 @@ static const int* string2idx(const string& s, int* idx, int dims)
     return idx;
 }
 
-static double getValue(SparseMat& M, const int* idx, RNG& rng)
+function getValue(SparseMat& M, const int* idx, RNG& rng) : alvision.double
 {
     int d = M.dims();
     size_t hv = 0, *phv = 0;
@@ -604,14 +604,14 @@ static double getValue(SparseMat& M, const int* idx, RNG& rng)
     return !ptr ? 0 : M.type() == CV_32F ? *(float*)ptr : M.type() == CV_64F ? *(double*)ptr : 0;
 }
 
-static double getValue(const CvSparseMat* M, const int* idx)
+function getValue(const CvSparseMat* M, const int* idx) : alvision.double
 {
     int type = 0;
     const uchar* ptr = cvPtrND(M, idx, &type, 0);
     return !ptr ? 0 : type == CV_32F ? *(float*)ptr : type == CV_64F ? *(double*)ptr : 0;
 }
 
-static void eraseValue(SparseMat& M, const int* idx, RNG& rng)
+function eraseValue(SparseMat& M, const int* idx, RNG& rng) : void
 {
     int d = M.dims();
     size_t hv = 0, *phv = 0;
@@ -630,12 +630,12 @@ static void eraseValue(SparseMat& M, const int* idx, RNG& rng)
         M.erase(idx, phv);
 }
 
-static void eraseValue(CvSparseMat* M, const int* idx)
+function  eraseValue(CvSparseMat* M, const int* idx) : void
 {
     cvClearND(M, idx);
 }
 
-static void setValue(SparseMat& M, const int* idx, double value, RNG& rng)
+function setValue(SparseMat& M, const int* idx, double value, RNG& rng) : void
 {
     int d = M.dims();
     size_t hv = 0, *phv = 0;
@@ -654,7 +654,7 @@ static void setValue(SparseMat& M, const int* idx, double value, RNG& rng)
     else if( M.type() == CV_64F )
         *(double*)ptr = value;
     else
-        CV_Error(CV_StsUnsupportedFormat, "");
+        CV_Error(alvision.cv.Error.Code.StsUnsupportedFormat, "");
 }
 
 template<typename Pixel>

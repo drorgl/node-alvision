@@ -51,7 +51,7 @@ import fs = require('fs');
 //#include "test_precomp.hpp"
 //#include "opencv2/ts/ocl_test.hpp"
 
-class AllignedFrameSource : public alvision.superres::FrameSource
+class AllignedFrameSource extends alvision.superres::FrameSource
 {
 public:
     AllignedFrameSource(const alvision.Ptr<alvision.superres::FrameSource>& base, int scale);
@@ -90,7 +90,7 @@ void AllignedFrameSource::reset()
     base_.reset();
 }
 
-class DegradeFrameSource : public alvision.superres::FrameSource
+class DegradeFrameSource extends alvision.superres::FrameSource
 {
 public:
     DegradeFrameSource(const alvision.Ptr<alvision.superres::FrameSource>& base, int scale);
@@ -213,7 +213,7 @@ double MSSIM(alvision.InputArray _i1, alvision.InputArray _i2)
     return (mssim[0] + mssim[1] + mssim[3]) / 3;
 }
 
-class SuperResolution : public testing::Test
+class SuperResolution extends testing::Test
 {
 public:
     template <typename T>

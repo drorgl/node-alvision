@@ -246,10 +246,10 @@ function computeDepthDiscontMask(disp: alvision.Mat, depthDiscontMask: alvision.
 
     Mat curDisp; disp.copyTo( curDisp );
     if( !unknDispMask.empty() )
-        curDisp.setTo( Scalar(numeric_limits<float>::min()), unknDispMask );
+        curDisp.setTo( Scalar(alvision.FLT_MIN /*alvision.FLT_MIN*/), unknDispMask );
     Mat maxNeighbDisp; dilate( curDisp, maxNeighbDisp, Mat(3, 3, CV_8UC1, Scalar(1)) );
     if( !unknDispMask.empty() )
-        curDisp.setTo( Scalar(numeric_limits<float>::max()), unknDispMask );
+        curDisp.setTo( Scalar(alvision.FLT_MAX), unknDispMask );
     Mat minNeighbDisp; erode( curDisp, minNeighbDisp, Mat(3, 3, CV_8UC1, Scalar(1)) );
     depthDiscontMask = max( (Mat)(maxNeighbDisp-disp), (Mat)(disp-minNeighbDisp) ) > dispGap;
     if( !unknDispMask.empty() )
@@ -707,6 +707,13 @@ class CV_StereoBMTest extends CV_StereoMatchingTest
 
 //----------------------------------- StereoSGBM test -----------------------------------------------------
 
+class RunParams
+{
+    public ndisp: alvision.int; 
+    public winSize: alvision.int;
+    public fullDP : boolean;
+};
+
 class CV_StereoSGBMTest extends CV_StereoMatchingTest
 {
     constructor()
@@ -717,16 +724,10 @@ class CV_StereoSGBMTest extends CV_StereoMatchingTest
         fill(fracEps.begin(), fracEps.end(), 0.01f);
     }
 
-protected:
-    struct RunParams
-    {
-        int ndisp;
-        int winSize;
-        bool fullDP;
-    };
-    Array<RunParams> caseRunParams;
+    
+    protected caseRunParams: Array<RunParams>;
 
-    virtual int readRunParams( FileStorage& fs )
+    readRunParams(fs : alvision.FileStorage ) : alvision.int 
     {
         int code = CV_StereoMatchingTest::readRunParams(fs);
         FileNode fn = fs.getFirstTopLevelNode();
@@ -745,8 +746,8 @@ protected:
         return code;
     }
 
-    virtual int runStereoMatchingAlgorithm( const Mat& leftImg, const Mat& rightImg,
-                   Mat& leftDisp, Mat& /*rightDisp*/, int caseIdx )
+    runStereoMatchingAlgorithm(leftImg : alvision.Mat, rightImg : alvision.Mat,
+        leftDisp : alvision.Mat, rightDisp : alvision.Mat, caseIdx  : alvision.int ) : alvision.int
     {
         RunParams params = caseRunParams[caseIdx];
         assert( params.ndisp%16 == 0 );

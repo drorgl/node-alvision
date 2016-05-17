@@ -193,7 +193,7 @@ function calcDistance(set1: Array<alvision.Point2f>, set2: Array<alvision.Point2
     var sum_dist = 0.0;
     for(var i = 0; i < set1.length; i++)
     {
-        var min_dist = alvision.DBL_MAX;// std::numeric_limits<double>::max();
+        var min_dist = alvision.DBL_MAX;// std::alvision.DBL_MAX;
         var min_idx = -1;
 
         for(var j = 0; j < set2.length; j++)

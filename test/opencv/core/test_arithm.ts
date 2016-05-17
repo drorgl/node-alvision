@@ -596,7 +596,7 @@ class SetOp  extends  BaseElemWiseOp
     }
 
 //    template < typename _Tp> static void inRange_(const _Tp* src, const _Tp* a, const _Tp* b, uchar* dst, size_t total, int cn)
-function inRange_<T>(src:T, a : T, b: T, dst:string, total:alvision.size_t, cn : alvision.int) : void
+function inRange_<T>(src:Array<T>, a : Array<T>, b: Array<T>, dst:Array<T>, total:alvision.size_t, cn : alvision.int) : void
 {
     //size_t i;
     //int c;
@@ -624,12 +624,12 @@ function inRange(src: alvision.Mat, lb: alvision.Mat, rb: alvision.Mat, dst: alv
     const arrays = [src, lb, rb, dst, 0];
     var planes = new Array < alvision.Mat>(4);
 
-    NAryMatIterator it(arrays, planes);
+    //NAryMatIterator it(arrays, planes);
     var total = planes[0].total();
-    size_t i, nplanes = it.nplanes;
+    var nplanes = planes.length;
     var depth = src.depth(), cn = src.channels();
 
-    for(var i = 0; i < nplanes; i++, ++it )
+    for(var i = 0; i < nplanes; i++ )
     {
         const  sptr = planes[0].ptr<alvision.uchar>("uchar");
         const  aptr = planes[1].ptr<alvision.uchar>("uchar");
@@ -639,28 +639,56 @@ function inRange(src: alvision.Mat, lb: alvision.Mat, rb: alvision.Mat, dst: alv
         switch( depth )
         {
             case alvision.MatrixType.CV_8U:
-            inRange_((const uchar*)sptr, (const uchar*)aptr, (const uchar*)bptr, dptr, total, cn);
+                inRange_(
+                    planes[0].ptr<alvision.uchar>("uchar"),
+                    planes[1].ptr<alvision.uchar>("uchar"),
+                    planes[2].ptr<alvision.uchar>("uchar"),
+                    planes[3].ptr<alvision.uchar>("uchar"), total, cn);
             break;
             case alvision.MatrixType.CV_8S:
-            inRange_((const schar*)sptr, (const schar*)aptr, (const schar*)bptr, dptr, total, cn);
+                inRange_(
+                    planes[0].ptr<alvision.schar>("schar"),
+                    planes[1].ptr<alvision.schar>("schar"),
+                    planes[2].ptr<alvision.schar>("schar"),
+                    planes[3].ptr<alvision.schar>("schar"), total, cn);
             break;
             case alvision.MatrixType.CV_16U:
-            inRange_((const ushort*)sptr, (const ushort*)aptr, (const ushort*)bptr, dptr, total, cn);
+                inRange_(
+                    planes[0].ptr<alvision.ushort>("ushort"),
+                    planes[1].ptr<alvision.ushort>("ushort"),
+                    planes[2].ptr<alvision.ushort>("ushort"),
+                    planes[3].ptr<alvision.ushort>("ushort"), total, cn);
             break;
             case alvision.MatrixType.CV_16S:
-            inRange_((const short*)sptr, (const short*)aptr, (const short*)bptr, dptr, total, cn);
+                inRange_(
+                    planes[0].ptr<alvision.short>("short"),
+                    planes[1].ptr<alvision.short>("short"),
+                    planes[2].ptr<alvision.short>("short"),
+                    planes[3].ptr<alvision.short>("short"), total, cn);
             break;
             case alvision.MatrixType. CV_32S:
-            inRange_((const int*)sptr, (const int*)aptr, (const int*)bptr, dptr, total, cn);
+                inRange_(
+                    planes[0].ptr<alvision.int>("int"),
+                    planes[1].ptr<alvision.int>("int"),
+                    planes[2].ptr<alvision.int>("int"),
+                    planes[3].ptr<alvision.int>("int"), total, cn);
             break;
             case alvision.MatrixType.CV_32F:
-            inRange_((const float*)sptr, (const float*)aptr, (const float*)bptr, dptr, total, cn);
+                inRange_(
+                    planes[0].ptr<alvision.float>("float"),
+                    planes[1].ptr<alvision.float>("float"),
+                    planes[2].ptr<alvision.float>("float"),
+                    planes[3].ptr<alvision.float>("float"), total, cn);
             break;
             case alvision.MatrixType.CV_64F:
-            inRange_((const double*)sptr, (const double*)aptr, (const double*)bptr, dptr, total, cn);
+                inRange_(
+                    planes[0].ptr<alvision.double>("double"),
+                    planes[1].ptr<alvision.double>("double"),
+                    planes[2].ptr<alvision.double>("double"),
+                    planes[3].ptr<alvision.double>("double"), total, cn);
             break;
         default:
-            CV_Error(CV_StsUnsupportedFormat, "");
+            alvision.CV_Error(alvision.cv.Error.Code.StsUnsupportedFormat , "");
         }
     }
 }
@@ -710,7 +738,7 @@ function inRangeS(src: alvision.Mat, lb: alvision.Scalar, rb: alvision.Scalar, d
             inRangeS_((const double*)sptr, lbuf.d, rbuf.d, dptr, total, cn);
             break;
         default:
-            CV_Error(CV_StsUnsupportedFormat, "");
+            CV_Error(alvision.cv.Error.Code.StsUnsupportedFormat, "");
         }
     }
 }
@@ -1013,28 +1041,32 @@ function exp(src: alvision.Mat, dst: alvision.Mat ) : void
 function log(src: alvision.Mat, dst: alvision.Mat) : void
 {
     dst.create( src.dims, &src.size[0], src.type() );
-    const arrays [src, dst, 0];
-    Mat planes[2];
+    //const arrays [src, dst, 0];
+    var planes = new Array<alvision.Mat>(2);
 
-    NAryMatIterator it(arrays, planes);
-    size_t j, total = planes[0].total()*src.channels();
-    size_t i, nplanes = it.nplanes;
-    int depth = src.depth();
+    //TODO: possible bug, arrays are not copied to planes
 
-    for(var i = 0; i < nplanes; i++, ++it )
+    //NAryMatIterator it(arrays, planes);
+    //size_t j, 
+    var total = planes[0].total().valueOf() * src.channels().valueOf();
+    //size_t i, nplanes = it.nplanes;
+    var nplanes = planes.length;
+    var depth = src.depth();
+
+    for(var i = 0; i < nplanes; i++)
     {
         var sptr = planes[0].ptr<alvision.uchar>("uchar");
         var dptr = planes[1].ptr<alvision.uchar>("uchar");
 
         if( depth == alvision.MatrixType.CV_32F )
         {
-            for( j = 0; j < total; j++ )
-                ((float*)dptr)[j] = (float)Math.log(Math.abs(((const float*)sptr)[j]));
+            for(var j = 0; j < total; j++ )
+                planes[1].ptr<alvision.float>("float")[j] = Math.log(Math.abs(planes[0].ptr<alvision.float>("float")[j].valueOf()));
         }
-        else if( depth == CV_64F )
+        else if( depth == alvision.MatrixType.CV_64F )
         {
-            for( j = 0; j < total; j++ )
-                ((double*)dptr)[j] = Math.log(fabs(((const double*)sptr)[j]));
+            for(var j = 0; j < total; j++ )
+                planes[1].ptr<alvision.double>("double")[j] = Math.log(Math.abs(planes[0].ptr<alvision.double>("double")[j].valueOf()));
         }
     }
 }

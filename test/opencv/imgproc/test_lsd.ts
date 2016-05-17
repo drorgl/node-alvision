@@ -7,111 +7,82 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
+//#include "test_precomp.hpp"
+//
+//#include <vector>
+//
+//using namespace cv;
+//using namespace std;
+//
+//const Size img_size(640, 480);
+//const int LSD_TEST_SEED = 0x134679;
+//const int EPOCHS = 20;
 
-#include <vector>
+class LSDBase extends testing::Test {
 
-using namespace cv;
-using namespace std;
+    protected test_image : alvision.Mat;
+    protected lines: Array<alvision.Vecf>;
+    protected rng: alvision.RNG;
+    protected passedtests: alvision.int;
 
-const Size img_size(640, 480);
-const int LSD_TEST_SEED = 0x134679;
-const int EPOCHS = 20;
-
-class LSDBase : public testing::Test
-{
-public:
-    LSDBase() { }
-
-protected:
-    Mat test_image;
-    Array<Vec4f> lines;
-    RNG rng;
-    int passedtests;
-
-    void GenerateWhiteNoise(Mat& image);
-    void GenerateConstColor(Mat& image);
-    void GenerateLines(Mat& image, const unsigned int numLines);
-    void GenerateRotatedRect(Mat& image);
-    virtual void SetUp();
-};
-
-class Imgproc_LSD_ADV: public LSDBase
-{
-public:
-    Imgproc_LSD_ADV() { }
-protected:
-
-};
-
-class Imgproc_LSD_STD: public LSDBase
-{
-public:
-    Imgproc_LSD_STD() { }
-protected:
-
-};
-
-class Imgproc_LSD_NONE: public LSDBase
-{
-public:
-    Imgproc_LSD_NONE() { }
-protected:
-
-};
-
-void LSDBase::GenerateWhiteNoise(Mat& image)
-{
-    image = Mat(img_size, CV_8UC1);
-    rng.fill(image, RNG::UNIFORM, 0, 256);
-}
-
-void LSDBase::GenerateConstColor(Mat& image)
-{
-    image = Mat(img_size, CV_8UC1, Scalar::all(rng.uniform(0, 256)));
-}
-
-void LSDBase::GenerateLines(Mat& image, const unsigned int numLines)
-{
-    image = Mat(img_size, CV_8UC1, Scalar::all(rng.uniform(0, 128)));
-
-    for(unsigned int i = 0; i < numLines; ++i)
-    {
-        int y = rng.uniform(10, img_size.width - 10);
-        Point p1(y, 10);
-        Point p2(y, img_size.height - 10);
-        line(image, p1, p2, Scalar(255), 3);
+    GenerateWhiteNoise(image: alvision.Mat): void {
+        image = Mat(img_size, CV_8UC1);
+        rng.fill(image, RNG::UNIFORM, 0, 256);
     }
-}
-
-void LSDBase::GenerateRotatedRect(Mat& image)
-{
-    image = Mat::zeros(img_size, CV_8UC1);
-
-    Point center(rng.uniform(img_size.width/4, img_size.width*3/4),
-                 rng.uniform(img_size.height/4, img_size.height*3/4));
-    Size rect_size(rng.uniform(img_size.width/8, img_size.width/6),
-                   rng.uniform(img_size.height/8, img_size.height/6));
-    float angle = rng.uniform(0.f, 360.f);
-
-    Point2f vertices[4];
-
-    RotatedRect rRect = RotatedRect(center, rect_size, angle);
-
-    rRect.points(vertices);
-    for (int i = 0; i < 4; i++)
-    {
-        line(image, vertices[i], vertices[(i + 1) % 4], Scalar(255), 3);
+    GenerateConstColor(image: alvision.Mat): void {
+        image = Mat(img_size, CV_8UC1, Scalar::all(rng.uniform(0, 256)));
     }
-}
+    GenerateLines(image: alvision.Mat, numLines: alvision.uint64): void {
+        image = Mat(img_size, CV_8UC1, Scalar::all(rng.uniform(0, 128)));
 
-void LSDBase::SetUp()
+        for (unsigned int i = 0; i < numLines; ++i)
+        {
+            int y = rng.uniform(10, img_size.width - 10);
+            Point p1(y, 10);
+            Point p2(y, img_size.height - 10);
+            line(image, p1, p2, Scalar(255), 3);
+        }
+    }
+    GenerateRotatedRect(image: alvision.Mat): void {
+        image = Mat::zeros(img_size, CV_8UC1);
+
+        Point center(rng.uniform(img_size.width / 4, img_size.width * 3 / 4),
+            rng.uniform(img_size.height / 4, img_size.height * 3 / 4));
+        Size rect_size(rng.uniform(img_size.width / 8, img_size.width / 6),
+            rng.uniform(img_size.height / 8, img_size.height / 6));
+        float angle = rng.uniform(0.f, 360.f);
+
+        Point2f vertices[4];
+
+        RotatedRect rRect = RotatedRect(center, rect_size, angle);
+
+        rRect.points(vertices);
+        for (int i = 0; i < 4; i++)
+        {
+            line(image, vertices[i], vertices[(i + 1) % 4], Scalar(255), 3);
+        }
+    }
+    SetUp(): void {
+        lines.clear();
+        test_image = Mat();
+        rng = RNG(LSD_TEST_SEED);
+        passedtests = 0;
+    }
+};
+
+class Imgproc_LSD_ADV extends LSDBase
 {
-    lines.clear();
-    test_image = Mat();
-    rng = RNG(LSD_TEST_SEED);
-    passedtests = 0;
-}
+};
+
+class Imgproc_LSD_STD extends LSDBase
+{
+};
+
+class Imgproc_LSD_NONE extends LSDBase
+{
+};
+
+
 
 
 TEST_F(Imgproc_LSD_ADV, whiteNoise)

@@ -370,7 +370,7 @@ function calcError(v: Array<alvision.Point2f>, u: alvision.Mat): alvision.double
     var count_exp = u.cols.valueOf() * u.rows.valueOf();
     const u_data = u.ptr<alvision.Point2f>("Point2f");
 
-    var err = numeric_limits<double>::max();
+    var err = alvision.DBL_MAX;// alvision.DBL_MAX;
     for (var k = 0; k < 2; ++k) {
         var err1 = 0;
         for (var j = 0; j < count_exp; ++j) {
@@ -425,7 +425,7 @@ function validateData(cbg: chessgen. ChessBoardGenerator, imgSz: alvision.Size,
     var cornersSize = cbg.cornersSize();
     var mat = new alvision.MatPoint2f(cornersSize.height, cornersSize.width, corners_generated);
 
-    var minNeibDist = alvision.DBL_MAX;// std::numeric_limits<double>::max();
+    var minNeibDist = alvision.DBL_MAX;// std::alvision.DBL_MAX;
     var tmp = 0;
     for(var i = 1; i < mat.rows.valueOf() - 2; ++i)
         for(var j = 1; j < mat.cols.valueOf() - 2; ++j)

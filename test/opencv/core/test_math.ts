@@ -1531,7 +1531,7 @@ protected:
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
     prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     run_func() : void {}
-    void prepare_to_validation( int test_case_idx );
+    prepare_to_validation(test_case_idx : alvision.int) : void {}
     int flags;
     bool have_u, have_v, symmetric, compact, vector_w;
 };
@@ -1761,7 +1761,7 @@ protected:
     void get_minmax_bounds( int /*i*/, int /*j*/, int /*type*/, Scalar& low, Scalar& high );
     prepare_test_case(test_case_idx : alvision.int) : alvision.int{}
     run_func() : void {}
-    void prepare_to_validation( int test_case_idx );
+    prepare_to_validation(test_case_idx : alvision.int) : void {}
     int flags;
     bool have_b, symmetric, compact, vector_w;
 };
@@ -2216,7 +2216,7 @@ void Core_CheckRange_INT_MAX::run( int )
 
 TEST(Core_CheckRange_INT_MAX, accuracy) { Core_CheckRange_INT_MAX test; test.safe_run(); }
 
-template <typename T> class Core_CheckRange : public testing::Test {};
+template <typename T> class Core_CheckRange extends testing::Test {};
 
 TYPED_TEST_CASE_P(Core_CheckRange);
 

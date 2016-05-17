@@ -56,7 +56,7 @@ import fs = require('fs');
 
 
 template <class T_in, class T_out>
-class TestIntegralImage : public NCVTestProvider
+class TestIntegralImage extends NCVTestProvider
 {
 public:
 

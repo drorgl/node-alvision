@@ -55,7 +55,7 @@ import fs = require('fs');
 #include "NCVTestSourceProvider.hpp"
 
 template <class T>
-class TestResize : public NCVTestProvider
+class TestResize extends NCVTestProvider
 {
 public:
 

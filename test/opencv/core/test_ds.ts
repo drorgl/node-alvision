@@ -495,7 +495,7 @@ int Core_DynStructBaseTest::test_seq_block_consistence( int _struct_idx, CvSeq* 
 
 /////////////////////////////////// sequence tests ////////////////////////////////////
 
-class Core_SeqBaseTest : public Core_DynStructBaseTest
+class Core_SeqBaseTest extends Core_DynStructBaseTest
 {
 public:
     Core_SeqBaseTest();
@@ -1042,7 +1042,7 @@ void Core_SeqBaseTest::run( int )
 
 ////////////////////////////// more sequence tests //////////////////////////////////////
 
-class Core_SeqSortInvTest : public Core_SeqBaseTest
+class Core_SeqSortInvTest extends Core_SeqBaseTest
 {
 public:
     Core_SeqSortInvTest();
@@ -1210,7 +1210,7 @@ void Core_SeqSortInvTest::run( int )
 
 /////////////////////////////////////// set tests ///////////////////////////////////////
 
-class Core_SetTest : public Core_DynStructBaseTest
+class Core_SetTest extends Core_DynStructBaseTest
 {
 public:
     Core_SetTest();
@@ -1421,7 +1421,7 @@ void Core_SetTest::run( int )
 
 /////////////////////////////////////// graph tests //////////////////////////////////
 
-class Core_GraphTest : public Core_DynStructBaseTest
+class Core_GraphTest extends Core_DynStructBaseTest
 {
 public:
     Core_GraphTest();
@@ -1859,7 +1859,7 @@ void Core_GraphTest::run( int )
 
 //////////// graph scan test //////////////
 
-class Core_GraphScanTest : public Core_DynStructBaseTest
+class Core_GraphScanTest extends Core_DynStructBaseTest
 {
 public:
     Core_GraphScanTest();
