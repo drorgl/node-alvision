@@ -94,7 +94,7 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
         fpts.ptr<alvision.Point3f>("Point3f")[3] = new alvision.Point3f(rngIn(3, 4), rngIn(1, 2), rngIn(5, 6));
 
         
-        alvision.transformOp<alvision.Point3f>(fpts.ptr<alvision.Point3f>("Point3f"), new WrapAff(aff));
+        alvision.transformOp<alvision.Point3f>(fpts.ptr<alvision.Point3f>("Point3f"), tpts.ptr<alvision.Point3f>("Point3f"), new WrapAff(aff));
         //alvision.transform(fpts.ptr<alvision.Point3f>("Point3f"), fpts.ptr<alvision.Point3f>("Point3f") + 4, tpts.ptr<alvision.Point3f>("Point3f"), WrapAff(aff));
 
         var aff_est = new alvision.Mat();
@@ -125,15 +125,15 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
         var tpts = new alvision.Mat(1, n,alvision.MatrixType. CV_32FC3);
 
         alvision.randu(fpts, alvision.Scalar.all(0), alvision.Scalar.all(100));
-        alvision.transformOp<alvision.Point3f>(fpts.ptr<alvision.Point3f>("Point3f"), new WrapAff(aff));
+        alvision.transformOp<alvision.Point3f>(fpts.ptr<alvision.Point3f>("Point3f"), tpts.ptr<alvision.Point3f>("Point3f"), new WrapAff(aff));
         //alvision.transform(fpts.ptr<alvision.Point3f>("Point3f"), fpts.ptr<alvision.Point3f>("Point3f") + n, tpts.ptr<alvision.Point3f>("Point3f"), WrapAff(aff));
 
         /* adding noise*/
 
-        alvision.transformOp<alvision.Point3f>(tpts.ptr<alvision.Point3f>("Point3f"), new Plus(shift_outl));
+        alvision.transformOp<alvision.Point3f>(tpts.ptr<alvision.Point3f>("Point3f").slice(m, n), tpts.ptr<alvision.Point3f>("Point3f").slice(m), new Plus(shift_outl));
         //alvision.transform(tpts.ptr<alvision.Point3f>("Point3f") + m, tpts.ptr<alvision.Point3f>("Point3f") + n, tpts.ptr<alvision.Point3f>("Point3f") + m, bind2nd(plus<Point3f>(), shift_outl));
 
-        alvision.transformOp<alvision.Point3f>(tpts.ptr<alvision.Point3f>("Point3f"), new Noise(noise_level));
+        alvision.transformOp<alvision.Point3f>(tpts.ptr<alvision.Point3f>("Point3f").slice(m, n), tpts.ptr<alvision.Point3f>("Point3f").slice(m), new Noise(noise_level));
         //alvision.transform(tpts.ptr<alvision.Point3f>("Point3f") + m, tpts.ptr<alvision.Point3f>("Point3f") + n, tpts.ptr<alvision.Point3f>("Point3f") + m, Noise(noise_level));
 
         var aff_est = new alvision.Mat();
