@@ -47,6 +47,8 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
+import * as _cbgen from './test_chessboardgenerator';
+
 //#include "test_precomp.hpp"
 //#include "test_chessboardgenerator.hpp"
 //#include "opencv2/calib3d/calib3d_c.h"
@@ -79,17 +81,18 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         this.imgSize = new alvision.Size(800, 600);
     }
     run(iii: alvision.int): void {
-        var camMat = new alvision.Matf(3, 3);
-        var distCoeffs0 = new alvision.Matf(1, 5);
+        var camMat = new alvision.Matf(3, 3, [300., 0., this.imgSize.width.valueOf() / 2., 0, 300., this.imgSize.height.valueOf() / 2., 0., 0., 1.]);
+        var distCoeffs0 = new alvision.Matf(1, 5, [1.2, 0.2, 0., 0., 0.]);
 
-        camMat << 300., 0., this.imgSize.width / 2.f, 0, 300., this.imgSize.height / 2., 0., 0., 1.;
-        distCoeffs0 << 1.2, 0.2, 0., 0., 0.;
+        //camMat << 300., 0., this.imgSize.width / 2.f, 0, 300., this.imgSize.height / 2., 0., 0., 1.;
+        //distCoeffs0 << 1.2, 0.2, 0., 0., 0.;
 
-        var cbg = new ChessBoardGenerator (new alvision.Size(8, 6));
+        var cbg = new _cbgen.ChessBoardGenerator (new alvision.Size(8, 6));
         this.corSize = cbg.cornersSize();
         var exp_corn = new Array<alvision.Point2f>();
-        chessBoard = cbg(new alvision.Mat(imgSize, alvision.MatrixType.CV_8U, new alvision.Scalar(0)), camMat, distCoeffs0, exp_corn);
-        new alvision.Mat_<alvision.Point2f>(this.corSize.height, this.corSize.width, (Point2f *)& exp_corn[0]).copyTo(this.corners);
+        this.chessBoard = cbg.run1(new alvision.Mat(this.imgSize, alvision.MatrixType.CV_8U, new alvision.Scalar(0)), camMat, distCoeffs0, exp_corn);
+
+        (new alvision.MatPoint2f(this.corSize.height, this.corSize.width, exp_corn)).copyTo(this.corners);
 
         var objPts = new alvision.Mat();
         var imgPts = new alvision.Mat();
@@ -102,7 +105,7 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
 
 
 
-        var zeros = new alvision.Mat(1, sizeof(CvMat), alvision.MatrixType.CV_8U,new alvision.Scalar(0));
+        var zeros = new alvision.Mat(1, 10*10 /*sizeof(CvMat)*/, alvision.MatrixType.CV_8U,new alvision.Scalar(0));
 
         var caller = new C_CallerCalibrateCamera (), bad_caller= new C_CallerCalibrateCamera();
         caller.imageSize = this.imgSize;
@@ -123,13 +126,13 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         var rvecs_cpp = new alvision.Mat();
         var tvecs_cpp = new alvision.Mat();
 
-        objPts_cpp.create(corSize, alvision.MatrixType.CV_32FC3);
+        objPts_cpp.create(this.corSize, alvision.MatrixType.CV_32FC3);
         for (var j = 0; j < this.corSize.height.valueOf(); ++j)
-        for (var i = 0; i < this.corSize.width .valueOf(); ++i)
-        objPts_cpp.at<Point3f>(j, i) = new alvision.Point3i(i, j, 0);
+            for (var i = 0; i < this.corSize.width.valueOf(); ++i)
+                objPts_cpp.at<alvision.Point3f>("Point2f", j, i).set(new alvision.Point3i(i, j, 0));
         objPts_cpp = objPts_cpp.reshape(3, 1);
 
-        imgPts_cpp = corners.clone().reshape(2, 1);
+        imgPts_cpp = this.corners.clone().reshape(2, 1);
         npoints_cpp = new alvision.Mati(this.M, 1, this.corSize.width.valueOf() * this.corSize.height.valueOf());
         cameraMatrix_cpp.create(3, 3, alvision.MatrixType.CV_32F);
         distCoeffs_cpp.create(5, 1, alvision.MatrixType.CV_32F);
@@ -137,10 +140,10 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         tvecs_cpp.create(this.M, 1, alvision.MatrixType.CV_32FC3);
 
         caller.flags = 0;
-        //CV_CALIB_USE_INTRINSIC_GUESS;    //CV_CALIB_FIX_ASPECT_RATIO
-        //CV_CALIB_USE_INTRINSIC_GUESS    //CV_CALIB_FIX_ASPECT_RATIO
-        //CV_CALIB_FIX_PRINCIPAL_POINT    //CV_CALIB_ZERO_TANGENT_DIST
-        //CV_CALIB_FIX_FOCAL_LENGTH    //CV_CALIB_FIX_K1    //CV_CALIB_FIX_K2    //CV_CALIB_FIX_K3
+        //alvision.CALIB.CALIB_USE_INTRINSIC_GUESS;    //CV_CALIB_FIX_ASPECT_RATIO
+        //alvision.CALIB.CALIB_USE_INTRINSIC_GUESS    //CV_CALIB_FIX_ASPECT_RATIO
+        //CV_CALIB_FIX_PRINCIPAL_POINT    //alvision.CALIB.CALIB_ZERO_TANGENT_DIST
+        //CV_CALIB_FIX_FOCAL_LENGTH    //CV_CALIB_FIX_K1    //CV_CALIB_FIX_K2    //alvision.CALIB.CALIB_FIX_K3
 
         objPts = objPts_cpp;
         imgPts = imgPts_cpp;
@@ -195,11 +198,11 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         errors += this.run_test_case(alvision.cv.Error.Code.StsUnsupportedFormat, "Bad npoints size", bad_caller.run).valueOf();
 
         bad_caller= caller;
-        bad_caller.rvecs = zeros.ptr();
+        bad_caller.rvecs = zeros;//.ptr();
         errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "Bad rvecs header", bad_caller.run).valueOf();
 
         bad_caller= caller;
-        bad_caller.tvecs = zeros.ptr();
+        bad_caller.tvecs = zeros;//.ptr();
         errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "Bad tvecs header", bad_caller.run).valueOf();
 
         var bad_rvecs_cpp1 = new alvision.Mat(this.M + 1, 1, alvision.MatrixType.CV_32FC3); var bad_rvecs_c1 = bad_rvecs_cpp1;
@@ -266,8 +269,8 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         var CM = [ 0, 0, 0, /**/0, 0, 0, /**/0, 0, 0];
         var bad_cameraMatrix_cpp4 = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, CM); var bad_cameraMatrix_c4 = bad_cameraMatrix_cpp4;
 
-        bad_caller= caller;
-        bad_caller.flags |= CV_CALIB_USE_INTRINSIC_GUESS;
+        bad_caller = caller;
+        bad_caller.flags = bad_caller.flags.valueOf() | alvision.CALIB.CALIB_USE_INTRINSIC_GUESS ;
         bad_caller.cameraMatrix = bad_cameraMatrix_c4;
         CM[0] = 0; //bad fx
         errors += this.run_test_case(alvision.cv.Error.Code.StsOutOfRange, "Bad camearaMatrix data", bad_caller.run).valueOf();
@@ -311,8 +314,13 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         bad_caller.objPts = bad_objPts_c5;
 
         var rng = alvision.theRNG();
-        for (var i = 0; i < bad_objPts_cpp5.rows; ++i)
-        bad_objPts_cpp5.at<Point3f>(0, i).z += (rng.float().valueOf() - 0.5);
+        for (var i = 0; i < bad_objPts_cpp5.rows; ++i) {
+            var zptr = bad_objPts_cpp5.at<alvision.Point3f>("Poin3f", 0, i);
+            var zPoint = zptr.get();
+            zPoint.z = zPoint.z.valueOf() + (rng.float().valueOf() - 0.5);
+            zptr.set(zPoint);
+            //zptr.z += (rng.float().valueOf() - 0.5);
+        }
 
         errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "Bad objPts data", bad_caller.run).valueOf();
 
@@ -357,7 +365,7 @@ class CV_Rodrigues2BadArgTest extends alvision.cvtest.BadArgTest
 
     run(start_from: alvision.int  ) : void
     {
-        var zeros = new alvision.Mat (1, sizeof(CvMat), alvision.MatrixType.CV_8U, new alvision.Scalar(0));
+        var zeros = new alvision.Mat (1, 10*10 /*sizeof(CvMat)*/, alvision.MatrixType.CV_8U, new alvision.Scalar(0));
         var src_c = new alvision.Mat();
         var dst_c      = new alvision.Mat();
         var jacobian_c = new alvision.Mat();
@@ -403,7 +411,7 @@ class CV_Rodrigues2BadArgTest extends alvision.cvtest.BadArgTest
         errors += this.run_test_case(alvision.cv.Error.Code.StsUnmatchedFormats, "Bad dst formart", bad_caller.run ).valueOf();
 
         bad_caller= caller;
-        bad_caller.jacobian = zeros.ptr();
+        bad_caller.jacobian = zeros;//.ptr();
         errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "Bad jacobian ", bad_caller.run ).valueOf();
 
         bad_caller= caller;
@@ -491,11 +499,11 @@ class CV_ProjectPoints2BadArgTest extends alvision.cvtest.BadArgTest
     constructor() 
     {
         super();
-        this.camMat =new alvision.Matf (3, 3);
-        this.distCoeffs = new alvision.Matf (1, 5);
+        this.camMat = new alvision.Matf(3, 3, [300., 0., imsSize.width.valueOf() / 2., 0, 300., imsSize.height.valueOf() / 2., 0., 0., 1.]);
+        this.distCoeffs = new alvision.Matf(1, 5, [1.2, 0.2, 0., 0., 0.]);
         var imsSize = new alvision.Size (800, 600);
-        camMat << 300., 0., imsSize.width/2., 0, 300., imsSize.height/2., 0., 0., 1.;
-        distCoeffs << 1.2, 0.2, 0., 0., 0.;
+        //camMat << 300., 0., imsSize.width/2., 0, 300., imsSize.height/2., 0., 0., 1.;
+        //distCoeffs << 1.2, 0.2, 0., 0., 0.;
     }
 
     protected camMat: alvision.Mat_<alvision.float>;
@@ -530,8 +538,8 @@ class CV_ProjectPoints2BadArgTest extends alvision.cvtest.BadArgTest
         var r_vec_cpp = new alvision.Mat();
         alvision.Rodrigues(alvision.Mat.eye(3, 3,alvision.MatrixType. CV_32F), r_vec_cpp); r_vec_c = r_vec_cpp;
 
-        var A_cpp = camMat.clone(); A_c = A_cpp;
-        var distCoeffs_cpp = distCoeffs.clone(); distCoeffs_c = distCoeffs_cpp;
+        var A_cpp = this.camMat.clone(); A_c = A_cpp;
+        var distCoeffs_cpp = this.distCoeffs.clone(); distCoeffs_c = distCoeffs_cpp;
 
         //Mat dpdr_cpp(2*n, 3, CV_32F); dpdr_c = dpdr_cpp;
         //Mat dpdt_cpp(2*n, 3, CV_32F); dpdt_c = dpdt_cpp;
