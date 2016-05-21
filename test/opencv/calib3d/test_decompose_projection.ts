@@ -68,60 +68,68 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
         for (var iter = start_from.valueOf(); iter < this.test_case_count; ++iter)
         {
             this.ts.update_context(this, iter, true);
-            progress = this.update_progress(progress, iter, this.test_case_count, 0);
+            progress = this.update_progress(progress, iter, this.test_case_count, 0).valueOf();
 
             // Create the original (and random) camera matrix, rotation, and translation
-            alvision.Vec2d f, c;
-            rng.fill(f, alvision.RNG UNIFORM, 300, 1000);
-            rng.fill(c, alvision.RNG UNIFORM, 150, 600);
+            //alvision.Vec2d f, c;
+            var f = new alvision.Vecd(new Array[2]);
+            var c = new alvision.Vecd(new Array[2]);
+
+            rng.fill(f, alvision.DistType.UNIFORM, 300, 1000);
+            rng.fill(c, alvision.DistType.UNIFORM, 150, 600);
 
             var alpha = 0.01 * rng.gaussian(1).valueOf();
 
-            alvision.Matx33d origK(f(0), alpha * f(0), c(0),
-                0, f(1), c(1),
+            var origK = new alvision.Matxd(
+                f.Element(0), alpha * f.Element(0).valueOf(), c.Element(0),
+                0, f.Element(1), c.Element(1),
                 0, 0, 1);
 
 
             var rVec = new alvision.Vecd();
-            rng.fill(rVec, alvision.RNG::UNIFORM, -Math.PI, Math.PI);
+            rng.fill(rVec, alvision.DistType.UNIFORM, -Math.PI, Math.PI);
 
             var origR = new alvision.Matxd();
             alvision.Rodrigues(rVec, origR);
 
             var origT = new alvision.Vecd() //3
-            rng.fill(origT, alvision.RNG::NORMAL, 0, 1);
+            rng.fill(origT, alvision.DistType.NORMAL, 0, 1);
 
 
             // Compose the projection matrix
             var P = new alvision.Matxd(3, 4); //34
-            alvision.hconcat(origK * origR, origK * origT, P);
+            alvision.hconcat(alvision.Matxd.op_Multiplication( origK ,origR),alvision.Matxd.op_Multiplication( origK , origT), P);
 
 
             // Decompose
-            alvision.Matx33d K, R;
-            alvision.Vec4d homogCameraCenter;
-            decomposeProjectionMatrix(P, K, R, homogCameraCenter);
+            //alvision.Matx33d K, R;
+
+            var R = new alvision.Matxd();
+            var K = new alvision.Matxd();
+
+            var homogCameraCenter = new alvision.Vecd() ;
+            alvision.decomposeProjectionMatrix(P, K, R, homogCameraCenter);
 
 
             // Recover translation from the camera center
-            alvision.Vec3d cameraCenter(homogCameraCenter(0), homogCameraCenter(1), homogCameraCenter(2));
-            cameraCenter /= homogCameraCenter(3);
+            var cameraCenter = new alvision.Vecd(homogCameraCenter.Element(0), homogCameraCenter.Element(1), homogCameraCenter.Element(2));
+            cameraCenter = alvision.Vecd.op_Division(cameraCenter, homogCameraCenter.Element(3));
 
-            alvision.Vec3d t = -R * cameraCenter;
+            var t = alvision.Matxd.op_Substraction(R).op_Multiplication( cameraCenter);
 
 
-            const double thresh = 1e-6;
-            if (norm(origK, K, alvision.NORM_INF) > thresh) {
+            const thresh = 1e-6;
+            if (alvision.norm(origK, K, alvision.NormTypes.NORM_INF) > thresh) {
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 break;
             }
 
-            if (norm(origR, R, alvision.NORM_INF) > thresh) {
+            if (alvision.norm(origR, R, alvision.NormTypes.NORM_INF) > thresh) {
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 break;
             }
 
-            if (norm(origT, t, alvision.NORM_INF) > thresh) {
+            if (alvision.norm(origT, t, alvision.NormTypes.NORM_INF) > thresh) {
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 break;
             }
