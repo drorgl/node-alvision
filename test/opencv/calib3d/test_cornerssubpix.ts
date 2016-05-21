@@ -47,6 +47,8 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
+import * as _cbgen from './test_chessboardgenerator';
+
 //#include "test_precomp.hpp"
 //#include "opencv2/imgproc/imgproc_c.h"
 //#include <limits>
@@ -90,13 +92,13 @@ class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest {
             else {
                 pattern_size = new alvision.Size(pattern_width, pattern_height);
             }
-            var gen_chessboard = new ChessBoardGenerator(new alvision.Size(pattern_size.width + 1, pattern_size.height + 1));
+            var gen_chessboard = new _cbgen.ChessBoardGenerator(new alvision.Size(pattern_size.width.valueOf()+ 1, pattern_size.height.valueOf() + 1));
 
             // generates intrinsic camera and distortion matrices
             this.generateIntrinsicParams();
 
             var corners = new Array<alvision.Point2f>();
-            var chessboard_image = gen_chessboard(bg, intrinsic_matrix_, distortion_coeffs_, corners);
+            var chessboard_image = gen_chessboard.run1(bg, this.intrinsic_matrix_, this.distortion_coeffs_, corners);
 
             var test_corners = new Array<alvision.Point2f>();
             var result = alvision.findChessboardCorners(chessboard_image, pattern_size, test_corners, 15);
@@ -126,7 +128,7 @@ class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest {
             }
 
             var chessboard_image_header = chessboard_image;
-            alvision.cornerSubPix(chessboard_image_header, (CvPoint2D32f *)& test_corners[0],
+            alvision.cornerSubPix(chessboard_image_header, test_corners,
                 new alvision.Size(3, 3), new alvision.Size(1, 1), new alvision.TermCriteria(alvision.TermCriteriaType.EPS | alvision.TermCriteriaType.MAX_ITER, 300, 0.1));
             alvision.find4QuadCornerSubpix(chessboard_image, test_corners,new alvision.Size(5, 5));
 
@@ -175,8 +177,8 @@ class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest {
         var p2 = 0.05 * alvision.cvtest.randReal(rng).valueOf();
         var k3 = 0.0;
 
-        this.intrinsic_matrix_ = new alvision.Mat(new alvision.Matd(3, 3) << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0);
-        this.distortion_coeffs_ = new alvision.Mat(new alvision.Matd(1, 5) << k1, k2, p1, p2, k3);
+        this.intrinsic_matrix_ = new alvision.Mat(new alvision.Matd(3, 3,[ fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0]));
+        this.distortion_coeffs_ = new alvision.Mat(new alvision.Matd(1, 5,[ k1, k2, p1, p2, k3]));
     }
 }
 
