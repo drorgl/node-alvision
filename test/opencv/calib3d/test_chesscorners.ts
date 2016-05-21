@@ -202,7 +202,7 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
             }
             show_points(gray,new alvision. Mat(), v, pattern_size, result);
 
-            if (result ^ doesContatinChessboard || v.length != count_exp) {
+            if (result != doesContatinChessboard || v.length != count_exp) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "chessboard is detected incorrectly in %s\n", img_file);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
@@ -293,7 +293,7 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
                 continue;
             }
 
-            /*cb = cb * 0.8 + Scalar::all(30);
+            /*cb = cb * 0.8 + Scalar.all(30);
             GaussianBlur(cb, cb, Size(3, 3), 0.8);     */
             //alvision.addWeighted(cb, 0.8, bg, 0.2, 20, cb);
             //alvision.namedWindow("CB"); alvision.imshow("CB", cb); alvision.waitKey();
@@ -333,7 +333,9 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
             if (found)
                 res = false;
 
-            Point2f c =  std::accumulate(cg.begin(), cg.end(), Point2f(), plus<Point2f>()) * (1.f/ cg.size());
+            var c = alvision.Point2f.op_Multiplication(alvision.accumulateOp(cg, new alvision.Point2f(), (a, b) => alvision.Point2f.op_Addition(a, b)), (1. / cg.length));
+
+            //Point2f c =  std::accumulate(cg.begin(), cg.end(), Point2f(), plus<Point2f>()) * (1.f/ cg.size());
 
             var aff = new alvision.Matd(2, 3, [1.0, 0.0, -c.x, 0.0, 1.0, 0.0]);
             //aff << 1.0, 0.0, -(double)c.x, 0.0, 1.0, 0.0;
@@ -354,7 +356,7 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
             if (found)
                 res = false;
 
-            alvision.drawChessboardCorners(cb, cbg.cornersSize(), Mat(corners_found), found);
+            alvision.drawChessboardCorners(cb, cbg.cornersSize(), new alvision.Mat(corners_found), found);
         }
         //#endif
 
@@ -408,14 +410,14 @@ const precise_success_error_level = 2;
 function calcErrorMinError(cornSz: alvision.Size, corners_found: Array<alvision.Point2f>, corners_generated: Array<alvision.Point2f> ) : alvision.double
 {
     var m1 = new alvision.Mat (cornSz,alvision.MatrixType. CV_32FC2, corners_generated);
-    Mat m2; flip(m1, m2, 0);
+    var m2 = new alvision.Mat(); alvision.flip(m1, m2, 0);
 
-    Mat m3; flip(m1, m3, 1); m3 = m3.t(); flip(m3, m3, 1);
+    var m3 = new alvision.Mat(); alvision.flip(m1, m3, 1); m3 = m3.t().toMat(); alvision.flip(m3, m3, 1);
 
-    var m4 = m1.t(); flip(m4, m4, 1);
+    var m4 = m1.t().toMat(); alvision.flip(m4, m4, 1);
 
-    var min1 =  Math.min(calcError(corners_found, m1), calcError(corners_found, m2));
-    var min2 =  Math.min(calcError(corners_found, m3), calcError(corners_found, m4));
+    var min1 =  Math.min(calcError(corners_found, m1).valueOf(), calcError(corners_found, m2).valueOf());
+    var min2 =  Math.min(calcError(corners_found, m3).valueOf(), calcError(corners_found, m4).valueOf());
     return Math.min(min1, min2);
 }
 
@@ -432,19 +434,19 @@ function validateData(cbg: chessgen. ChessBoardGenerator, imgSz: alvision.Size,
         {
             const cur = mat.Element(i, j);
 
-            tmp = norm( cur.op_Substraction( mat.Element(i + 1, j + 1)) );
+            tmp = alvision.Point2f.norm( cur.op_Substraction( mat.Element(i + 1, j + 1)) ).valueOf();
             if (tmp < minNeibDist)
                 tmp = minNeibDist;
 
-            tmp = norm(cur.op_Substraction( mat.Element(i - 1, j + 1)));
+            tmp = alvision.Point2f.norm(cur.op_Substraction( mat.Element(i - 1, j + 1))).valueOf();
             if (tmp < minNeibDist)
                 tmp = minNeibDist;
 
-            tmp = norm( cur.op_Substraction( mat.Element(i + 1, j - 1) ));
+            tmp = alvision.Point2f.norm( cur.op_Substraction( mat.Element(i + 1, j - 1) )).valueOf();
             if (tmp < minNeibDist)
                 tmp = minNeibDist;
 
-            tmp = norm(cur.op_Substraction (mat.Element(i - 1, j - 1)));
+            tmp = alvision.Point2f.norm(cur.op_Substraction (mat.Element(i - 1, j - 1))).valueOf();
             if (tmp < minNeibDist)
                 tmp = minNeibDist;
         }
