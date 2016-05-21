@@ -73,15 +73,15 @@ class Differential
 
         for(var i = 0; i < 3; ++i)
         {
-            this.ev.setTo(new alvision.Scalar(0));    this.ev(i, 0) = eps;
+            this.ev.setTo(new alvision.Scalar(0));    this.ev.at<alvision.double>("double",i, 0).set( this.eps);
 
-            alvision.composeRT( this.rv1 + this.ev, this.tv1, this.rv2, this.tv2, this.rv3_p, this.tv3_p);
-            alvision.composeRT( this.rv1 - this.ev, this.tv1, this.rv2, this.tv2, this.rv3_m, this.tv3_m);
+            alvision.composeRT( this.rv1.op_Addition( this.ev), this.tv1, this.rv2, this.tv2, this.rv3_p, this.tv3_p);
+            alvision.composeRT( this.rv1.op_Substraction( this.ev), this.tv1, this.rv2, this.tv2, this.rv3_m, this.tv3_m);
 
-            dr3_dr1.col(i) = rv3_p - rv3_m;
-            dt3_dr1.col(i) = tv3_p - tv3_m;
+            dr3_dr1.col(i).setTo(alvision.MatExpr.op_Substraction(this.rv3_p, this.rv3_m));
+            dt3_dr1.col(i).setTo(alvision.MatExpr.op_Substraction(this.tv3_p, this.tv3_m));
         }
-        dr3_dr1 /= 2 * eps;       dt3_dr1 /= 2 * eps;
+        dr3_dr1.op_Division( 2 * this.eps.valueOf()).copyTo(dr3_dr1);       dt3_dr1.op_Division(2 * this.eps.valueOf()).copyTo(dt3_dr1);
     }
 
     dRv2(dr3_dr2 : alvision.Mat_ < alvision.double >, dt3_dr2 : alvision.Mat_<alvision.double>) : void
@@ -90,32 +90,30 @@ class Differential
 
         for(var i = 0; i < 3; ++i)
         {
-            this.ev.setTo(new alvision.Scalar(0));    this.ev(i, 0) = eps;
+            this.ev.setTo(new alvision.Scalar(0));    this.ev.at<alvision.double>("double", i, 0).set( this.eps);
 
-            alvision.composeRT( this.rv1, this.tv1, this.rv2 + this.ev, this.tv2, this.rv3_p, this.tv3_p);
-            alvision.composeRT( this.rv1, this.tv1, this.rv2 - this.ev, this.tv2, this.rv3_m, this.tv3_m);
+            alvision.composeRT( this.rv1, this.tv1, this.rv2.op_Addition( this.ev), this.tv2, this.rv3_p, this.tv3_p);
+            alvision.composeRT( this.rv1, this.tv1, this.rv2.op_Substraction(this.ev), this.tv2, this.rv3_m, this.tv3_m);
 
-            dr3_dr2.col(i) = rv3_p - rv3_m;
-            dt3_dr2.col(i) = tv3_p - tv3_m;
+            dr3_dr2.col(i).setTo( alvision.MatExpr.op_Substraction(this.rv3_p , this.rv3_m));
+            dt3_dr2.col(i).setTo( alvision.MatExpr.op_Substraction(this.tv3_p , this.tv3_m));
         }
-        dr3_dr2 /= 2 * eps;       dt3_dr2 /= 2 * eps;
+        dr3_dr2.op_Division(2 * this.eps.valueOf()).copyTo(dr3_dr2); dt3_dr2.op_Division( 2 * this.eps.valueOf()).copyTo(dt3_dr2);
     }
 
-    dTv1(drt3_dt1: alvision.Mat_<alvision.double>, dt3_dt1: alvision.Mat_<alvision.double>)
-    {
-        drt3_dt1.create(3, 3);     dt3_dt1.create(3, 3);
+    dTv1(drt3_dt1: alvision.Mat_<alvision.double>, dt3_dt1: alvision.Mat_<alvision.double>) {
+        drt3_dt1.create(3, 3); dt3_dt1.create(3, 3);
 
-        for(var i = 0; i < 3; ++i)
-        {
-            this.ev.setTo(Scalar(0));    this.ev(i, 0) = eps;
+        for (var i = 0; i < 3; ++i) {
+            this.ev.setTo(new alvision.Scalar(0)); this.ev.at<alvision.double>("double", i, 0).set(this.eps);
 
-            alvision.composeRT( this.rv1, this.tv1 + ev, this.rv2, this.tv2, this.rv3_p, this.tv3_p);
-            alvision.composeRT( this.rv1, this.tv1 - ev, this.rv2, this.tv2, this.rv3_m, this.tv3_m);
+            alvision.composeRT(this.rv1, this.tv1.op_Addition(this.ev), this.rv2, this.tv2, this.rv3_p, this.tv3_p);
+            alvision.composeRT(this.rv1, this.tv1.op_Substraction(this.ev), this.rv2, this.tv2, this.rv3_m, this.tv3_m);
 
-            drt3_dt1.col(i) = rv3_p - rv3_m;
-            dt3_dt1.col(i) = tv3_p - tv3_m;
+            drt3_dt1.col(i).setTo(alvision.MatExpr.op_Substraction(this.rv3_p, this.rv3_m));
+            dt3_dt1.col(i).setTo(alvision.MatExpr.op_Substraction(this.tv3_p, this.tv3_m));
         }
-        drt3_dt1 /= 2 * eps;       dt3_dt1 /= 2 * eps;
+        drt3_dt1.op_Division(2 * this.eps.valueOf()).copyTo(drt3_dt1); dt3_dt1.op_Division(2 * this.eps.valueOf()).copyTo(dt3_dt1);
     }
 
     dTv2(dr3_dt2: alvision.Mat_<alvision.double>, dt3_dt2 : alvision.Mat_<alvision.double>) : void
@@ -124,15 +122,15 @@ class Differential
 
         for(var i = 0; i < 3; ++i)
         {
-            this.ev.setTo(new alvision.Scalar(0));    this.ev(i, 0) = eps;
+            this.ev.setTo(new alvision.Scalar(0));    this.ev.at<alvision.double>("double", i, 0).set(this.eps);
 
-            alvision.composeRT( this.rv1, this.tv1, this.rv2, this.tv2 + this.ev, this.rv3_p, this.tv3_p);
-            alvision.composeRT( this.rv1, this.tv1, this.rv2, this.tv2 - this.ev, this.rv3_m, this.tv3_m);
+            alvision.composeRT( this.rv1, this.tv1, this.rv2, this.tv2.op_Addition( this.ev), this.rv3_p, this.tv3_p);
+            alvision.composeRT( this.rv1, this.tv1, this.rv2, this.tv2.op_Substraction( this.ev), this.rv3_m, this.tv3_m);
 
-            dr3_dt2.col(i) = rv3_p - rv3_m;
-            dt3_dt2.col(i) = tv3_p - tv3_m;
+            dr3_dt2.col(i).setTo( alvision.MatExpr.op_Substraction(this.rv3_p , this.rv3_m));
+            dt3_dt2.col(i).setTo( alvision.MatExpr.op_Substraction(this.tv3_p , this.tv3_m));
         }
-        dr3_dt2 /= 2 * eps;       dt3_dt2 /= 2 * eps;
+        dr3_dt2.op_Division( 2 * this.eps.valueOf()).copyTo(dr3_dt2);       dt3_dt2.op_Division( 2 * this.eps.valueOf()).copyTo(dt3_dt2);
     }
 
     protected rv1: alvision.Mat_<alvision.double>;
@@ -176,9 +174,9 @@ class CV_composeRT_Test extends alvision.cvtest.BaseTest {
         var rmat2 = new alvision.Mat();
         alvision.Rodrigues(rvec1, rmat1);
         alvision.Rodrigues(rvec2, rmat2);
-        alvision.Rodrigues(rmat2 * rmat1, rvec3_exp);
+        alvision.Rodrigues(alvision.MatExpr.op_Multiplication(rmat2 , rmat1).toMat(), rvec3_exp);
 
-        tvec3_exp = rmat2 * tvec1 + tvec2;
+        tvec3_exp = alvision.MatExpr.op_Multiplication(rmat2 , tvec1).op_Addition( tvec2).toMat();
 
         const thres = 1e-5;
         if (alvision.norm(rvec3_exp, rvec3) > thres || alvision.norm(tvec3_exp, tvec3) > thres)
