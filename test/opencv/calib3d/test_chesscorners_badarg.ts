@@ -47,6 +47,8 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
+import * as _cbgen from './test_chessboardgenerator';
+
 //#include "test_precomp.hpp"
 //#include "test_chessboardgenerator.hpp"
 //#include "opencv2/calib3d/calib3d_c.h"
@@ -68,18 +70,18 @@ class CV_ChessboardDetectorBadArgTest extends alvision.cvtest.BadArgTest {
 
     run(iii: alvision.int): void {
         var bg = new alvision.Mat (800, 600,alvision.MatrixType. CV_8U, new alvision.Scalar(0));
-        var camMat = new alvision.Matf(3, 3);
-        camMat << 300.f, 0.f, bg.cols / 2.f, 0, 300.f, bg.rows / 2.f, 0.f, 0.f, 1.f;
-        var distCoeffs = new alvision.Matf (1, 5);
-        distCoeffs << 1.2f, 0.2f, 0.f, 0.f, 0.f;
+        var camMat = new alvision.Matf(3, 3, [300., 0., bg.cols.valueOf() / 2., 0, 300., bg.rows.valueOf() / 2., 0., 0., 1.]);
+        //camMat << 300.f, 0.f, bg.cols / 2.f, 0, 300.f, bg.rows / 2.f, 0.f, 0.f, 1.f;
+        var distCoeffs = new alvision.Matf(1, 5, [1.2, 0.2, 0., 0., 0.]);
+        //distCoeffs << 1.2f, 0.2f, 0.f, 0.f, 0.f;
 
-        var cbg = new ChessBoardGenerator (new alvision.Size(8, 6));
+        var cbg = new _cbgen.ChessBoardGenerator (new alvision.Size(8, 6));
         var exp_corn = new Array<alvision.Point2f>();
-        var cb = cbg(bg, camMat, distCoeffs, exp_corn);
+        var cb = cbg.run1(bg, camMat, distCoeffs, exp_corn);
 
         /* /*//*/ */
         var errors = 0;
-        this.flags = CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_NORMALIZE_IMAGE;
+        this.flags = alvision.CALIB_CB.CALIB_CB_ADAPTIVE_THRESH | alvision.CALIB_CB.CALIB_CB_NORMALIZE_IMAGE;
         this.cpp = true;
 
         this.img = cb.clone();
@@ -90,16 +92,16 @@ class CV_ChessboardDetectorBadArgTest extends alvision.cvtest.BadArgTest {
         cb.convertTo(this.img,alvision.MatrixType. CV_32F);
         errors += this.run_test_case(alvision.cv.Error.Code.StsUnsupportedFormat, "Not 8-bit image").valueOf();
 
-        alvision.merge(new Array<alvision.Mat>(2, cb), this.img);
+        alvision.merge(alvision.NewArray<alvision.Mat>(2,()=> cb), this.img);
         errors += this.run_test_case(alvision.cv.Error.Code.StsUnsupportedFormat, "2 channel image").valueOf();
 
         this.cpp = false;
         this.drawCorners = false;
 
         this.img = cb.clone();
-        this.arr = img;
-        this.out_corner_count = 0;
-        this.out_corners = 0;
+        //this.arr = img;
+        //this.out_corner_count = 0;
+        //this.out_corners = 0;
         errors += this.run_test_case(alvision.cv.Error.Code.StsNullPtr, "Null pointer to corners").valueOf();
 
         this.drawCorners = true;
@@ -114,7 +116,7 @@ class CV_ChessboardDetectorBadArgTest extends alvision.cvtest.BadArgTest {
         else
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
     }
-    protected abstract checkByGenerator(): void;
+    protected checkByGenerator(): void {/*abstract*/ }
 
     protected cpp: boolean;
 
