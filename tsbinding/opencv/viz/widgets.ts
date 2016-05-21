@@ -470,7 +470,7 @@ interface WText3D extends Widget3D
 //        /** @brief This 2D Widget represents an image overlay. :
 //        */
 interface WImageOverlay extends Widget2D
-//        {
+{
 //        public:
 //            /** @brief Constructs an WImageOverlay.
 

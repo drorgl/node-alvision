@@ -596,7 +596,7 @@ export var addWeighted: IaddWeighted = alvision_module.addWeighted;
     */
 interface IconvertScaleAbs{
     (src: _st.InputArray, dst: _st.OutputArray,
-        alpha: _st.double /*= 1*/, beta: _st.double /*= 0*/): void;
+        alpha?: _st.double /*= 1*/, beta?: _st.double /*= 0*/): void;
 }
 
 export var convertScaleAbs: IconvertScaleAbs = alvision_module.convertScaleAbs;
@@ -1147,9 +1147,9 @@ export interface MixChannelsFromTo {
 }
 
 export interface ImixChannels {
-    (src : Array< _mat.Mat>, nsrcs : _st.size_t, dst : Array<_mat.Mat>, ndsts : _st.size_t,
+    (src : Array< _mat.Mat> | _mat.Mat, nsrcs : _st.size_t, dst : Array<_mat.Mat> | _mat.Mat, ndsts : _st.size_t,
         fromTo: MixChannelsFromTo, npairs: _st.size_t): void;
-    (src: Array<_mat.Mat>, dst: Array<_mat.Mat>,fromTo: MixChannelsFromTo): void;
+    (src: Array<_mat.Mat> | _mat.Mat, dst: Array<_mat.Mat> | _mat.Mat,fromTo: MixChannelsFromTo): void;
 }
 
 export var mixChannels: ImixChannels = alvision_module.mixChannels;
@@ -1666,7 +1666,7 @@ export var inRange: IinRange = alvision_module.inRange;
     */
 
 interface Icompare {
-    (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, cmpop: _st.int): void;
+    (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, cmpop: _base.CmpTypes | _st.int): void;
 }
 
 export var compare: Icompare = alvision_module.comapre;
@@ -2000,7 +2000,7 @@ export var patchNaNs: IpatchNaNs = alvision_module.patchNaNs;
     */
 interface Igemm {
     (src1: _st.InputArray, src2: _st.InputArray, alpha: _st.double,
-        src3: _st.InputArray, beta: _st.double, dst: _st.OutputArray, flags: _base.GemmFlags /* = 0*/): void;
+        src3: _st.InputArray, beta: _st.double, dst: _st.OutputArray, flags?: _base.GemmFlags /* = 0*/): void;
 }
 
 export var gemm: Igemm = alvision_module.gemm;
@@ -2173,7 +2173,7 @@ export var completeSymm: IcompleteSymm = alvision_module.completeSymm;
     */
 
 interface IsetIdentity {
-    (mtx: _st.InputOutputArray, s : _types.Scalar /* = new _scalar.Scalar(1)*/): void;
+    (mtx: _st.InputOutputArray, s? : _types.Scalar /* = new _scalar.Scalar(1)*/): void;
 }
 
 export var setIdentity: IsetIdentity = alvision_module.setIdentity;
@@ -3385,7 +3385,7 @@ export interface RNG
     /** @overload */
     short() : _st.short;
     /** @overload */
-    //operator unsigned() : _st.uint;
+    unsigned() : _st.uint;
     /** @overload */
     int(): _st.int;
     /** @overload */

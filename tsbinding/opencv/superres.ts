@@ -70,17 +70,17 @@ the papers @cite Farsiu03 and @cite Mitzel09 .
 
 //namespace cv
 //{
-namespace superres {
+export namespace superres {
 
     //! @addtogroup superres
     //! @{
 
-    interface FrameSource {
+    export interface FrameSource {
         //public:
         //    virtual ~FrameSource();
         //
-        //    virtual void nextFrame(OutputArray frame) = 0;
-        //    virtual void reset() = 0;
+        nextFrame(frame: _st.OutputArray ): void;
+        reset(): void;
     };
 
     interface IcreateFrameSource_Empty {

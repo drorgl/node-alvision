@@ -105,8 +105,8 @@ import * as _base from './base'
 // */
 ////typedef struct CvFileStorage CvFileStorage;
 
-export interface CvFileStorage {
-}
+//export interface CvFileStorage {
+//}
 
 //typedef struct CvFileStorage
 //{
@@ -156,8 +156,8 @@ export interface CvFileStorage {
 
 ////typedef struct CvFileNode CvFileNode;
 
-export interface CvFileNode {
-}
+//export interface CvFileNode {
+//}
 
 ///** Basic element of the file storage - scalar or collection: */
 //typedef struct CvFileNode
@@ -414,7 +414,7 @@ export enum FileStorageMode
         new (source : string, flags : FileStorageMode, encoding? : string): FileStorage;
 
     /** @overload */
-    new(fs : CvFileStorage, owning? : boolean /*=true*/) : FileStorage
+    //new(fs : CvFileStorage, owning? : boolean /*=true*/) : FileStorage
 
 //    //! the destructor. calls release()
 //    virtual ~FileStorage();
@@ -530,6 +530,7 @@ export interface FileStorage
 
     nodes: { [i: string]: FileNode };
 
+    
 
     write(name: string, value: _st.int  ): void;
     write(name: string, value: _st.float  ): void;
@@ -612,6 +613,8 @@ export interface FileNode
 //    @param nodename Name of an element in the mapping node.
 //    */
 //    CV_WRAP FileNode operator[](const char* nodename) const;
+    nodes: { [i: string]: FileNode };
+    data: FileNode[];
 
 //    /** @overload
 //    @param i Index of an element in the sequence node.
@@ -640,7 +643,7 @@ export interface FileNode
 //    //! returns true if the node has a name
 //    CV_WRAP bool isNamed() const;
 //    //! returns the node name or an empty string if the node is nameless
-//    CV_WRAP String name() const;
+    name(): string;
 //    //! returns the number of elements in the node, if it is a sequence or mapping, or 1 otherwise.
     size(): _st.size_t;
 //    //! returns the node content as an integer. If the node stores floating-point number, it is rounded.

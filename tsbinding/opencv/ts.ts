@@ -8,6 +8,7 @@ import * as _base from './base';
 import * as _types from './types';
 import * as _mat from './mat';
 import * as _cvdef from './cvdef';
+import * as _cudatest from './ts/cuda_test';
 
 import tape = require("tape");
 import path = require("path");
@@ -15,6 +16,7 @@ import colors = require("colors");
 import async = require("async");
 import util = require('util');
 import fs = require('fs');
+
 
 //#ifndef __OPENCV_GTESTCV_HPP__
 //#define __OPENCV_GTESTCV_HPP__
@@ -61,6 +63,56 @@ import fs = require('fs');
 //#include "opencv2/core/utility.hpp"
 
 export namespace cvtest {
+    //export namespace cuda {
+        export class CUDA_TEST extends TestWithParam {
+            constructor(public test_case_name: string, public test_name: string) {
+                super();
+            }
+
+            TestBody(): void {
+                try {
+                    this.UnsafeTestBody();
+                } catch (e) {
+                    //TODO: handle error
+                }
+            }
+
+            private UnsafeTestBody(): void {
+            }
+
+            private AddToRegistry(): boolean {
+                //add...
+                return true;
+            }
+
+
+        }
+
+        export function INSTANTIATE_TEST_CASE_P(testname: string, cbTestClassFactory: (test_case_name: string, test_name: string) => TestWithParam, values: Combine) {
+            var instance = cbTestClassFactory(testname, testname);
+
+            var nextValue = values.nextSet()
+
+            var test_number = 0;
+
+            while (nextValue != null) {
+                for (var i = 0; i < nextValue.length; i++) {
+                    instance.SET_PARAM(i, nextValue[i]);
+                }
+
+                instance.run(test_number);
+                test_number++;
+
+                nextValue = values.nextSet();
+            }
+        }
+        
+
+        
+
+        
+
+
     
     //class WithParamInterface<T> extends BaseTest {
     //    // The current parameter value. Is also available in the test fixture's
@@ -85,11 +137,60 @@ export namespace cvtest {
     //    //template < class TestClass> friend class internal::ParameterizedTestFactory;
     //}
 
-    export class TestWithParam extends BaseTest{//extends WithParamInterface<T>  {
-        private _params: any;
+        export class Channels {
+            constructor(arg: _st.int) {
+                this.val_ = arg;
+            }
+            public val_: _st.int;
+
+
+            public toString(): string {
+                return "Channels(" + this.val_ + ")";
+            }
+        }
+
+
+        export class Combine {
+            constructor(public values: Array<Array<any>>) {
+                this.NumberOfParameters = values.length;
+                this.counters = new Array<number>(this.NumberOfParameters);
+                this.counters.forEach((v, i, a) => a[i] = 0);
+            }
+
+            public NumberOfParameters: number;
+            public counters: Array<number>;
+
+            public nextSet(): Array<any> {
+                //check end
+                if (this.counters[this.NumberOfParameters] > 0) {
+                    return null;
+                }
+
+                //retrieve next set
+                var retval = new Array<any>(this.NumberOfParameters);
+                for (var i = 0; i < this.NumberOfParameters; i++) {
+                    retval[i] = this.values[i][this.counters[i]];
+                }
+                
+                //advance counters
+                this.counters[0]++;
+                for (var i = 0; i < this.NumberOfParameters; i++) {
+                    if (this.counters[i] >= this.values[i].length) {
+                        this.counters[i] = 0;
+                        this.counters[i + 1]++;
+                    }
+                }
+
+                return retval;
+            }
+        }
+
+    export class TestWithParam extends BaseTest {//extends WithParamInterface<T>  {
+        protected _params: Array<any>;
+
         constructor() {
             super();
-            this._params = {};
+            this._params = [];
         }
 
 
@@ -97,9 +198,13 @@ export namespace cvtest {
             return this._params[id];
         }
 
+        public SET_PARAM(id: number, val: any) {
+            this._params[id] = val;
+        }
+
         protected randomInt(minVal: _st.int, maxVal: _st.int): _st.int {
             return this.ts.get_rng().uniform(minVal, maxVal);
-        }   
+        }
     };
 
 
@@ -232,6 +337,11 @@ export namespace cvtest {
 
     //CV_EXPORTS int64 readSeed(const char* str);
     //
+
+    interface IrandUni {
+        (rng: _core.RNG, a: _mat.Mat, param1: _types.Scalar, param2: _types.Scalar): void;
+    }
+    export var randUni: IrandUni = alvision_module.IrandUni;
     //CV_EXPORTS void randUni( RNG& rng, Mat& a, const Scalar& param1, const Scalar& param2 );
     //
 
@@ -301,6 +411,7 @@ export namespace cvtest {
     interface IrandomMat {
         (rng: _core.RNG, size: _types.Size, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi?: boolean): _mat.Mat;
         (rng: _core.RNG, size: Array<_st.int>, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi?: boolean): _mat.Mat;
+        (size: _types.Size, type: _st.int, minVal?: _st.double  /*= 0.0*/, maxVal?: _st.double /*= 255.0*/) : _mat.Mat
     }
 
     export var randomMat: IrandomMat = alvision_module.randomMat;
@@ -341,6 +452,11 @@ export namespace cvtest {
     export var copy: Icopy = alvision_module.copy;
 
     //CV_EXPORTS void copy(const Mat& src, Mat& dst, const Mat& mask=Mat(), bool invertMask=false);
+
+    interface Iset {
+        (dst: _mat.Mat, gamma: _types.Scalar, mask?: _mat.Mat /* = new _mat.Mat()*/): void;
+    }
+    export var set: Iset = alvision_module.set;
     //CV_EXPORTS void set(Mat& dst, const Scalar& gamma, const Mat& mask=Mat());
     //
     //// working with multi-channel arrays
@@ -716,7 +832,7 @@ export namespace cvtest {
         protected test_case_count: _st.int; // the total number of test cases
         //
         //    // read test params
-        protected read_params(fs: _pers.CvFileStorage): _st.int {
+        protected read_params(fs: _pers.FileStorage): _st.int {
             return 0;
         }
         //
@@ -759,10 +875,16 @@ export namespace cvtest {
             return progress;
         }
         //
-        //    // finds test parameter
-        //    protected abstract  find_param(fs: _pers.CvFileStorage, param_name: string): _pers.CvFileNode {
-        //CvFileNode* node = cvGetFileNodeByName(fs, 0, get_name().c_str());
-        //return node ? cvGetFileNodeByName(fs, node, param_name) : 0;
+        
+        // finds test parameter
+        protected find_param(fs: _pers.FileStorage, param_name: string): _pers.FileNode {
+            if (fs.nodes[this.get_name()] != null) {
+                return fs.nodes[this.get_name()].nodes[param_name];
+            }
+            return null;
+            //CvFileNode * node = cvGetFileNodeByName(fs, 0, get_name().c_str());
+            //return node ? cvGetFileNodeByName(fs, node, param_name) : 0;
+        }
 
         
 
@@ -1000,7 +1122,7 @@ export class TS
 
 //
 //    // get file storage
-    get_file_storage(): _pers.CvFileStorage {
+    get_file_storage(): _pers.FileStorage {
         return null;
     }
 //

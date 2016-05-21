@@ -1670,9 +1670,9 @@ export var sepFilter2D: IsepFilter2D = alvision_module.sepFilter2D;
 
 interface ISobel {
     (src: _st.InputArray, dst: _st.OutputArray, ddepth: _st.int,
-        dx : _st.int, dy : _st.int, ksize : _st.int /* = 3*/,
-        scale : _st.double /* = 1*/, delta: _st.double /* = 0*/,
-        borderType: _st.int /* = BORDER_DEFAULT*/): void;
+        dx : _st.int, dy : _st.int, ksize? : _st.int /* = 3*/,
+        scale? : _st.double /* = 1*/, delta?: _st.double /* = 0*/,
+        borderType?: _base.BorderTypes | _st.int /* = BORDER_DEFAULT*/): void;
 }
 
 export var Sobel: ISobel = alvision_module.Sobel;
@@ -2328,9 +2328,9 @@ export var HoughCircles: IHoughCircles = alvision_module.HoughCircles;
 
 interface Ierode{
     (src: _st.InputArray, dst: _st.OutputArray, kernel: _st.InputArray,
-        anchor: _types.Point /* = Point(-1,-1)*/, iterations: _st.int /* = 1*/,
-        borderType: _st.int /* = BORDER_CONSTANT*/,
-        borderValue: _types.Scalar /* = morphologyDefaultBorderValue()*/): void;
+        anchor?: _types.Point /* = Point(-1,-1)*/, iterations?: _st.int /* = 1*/,
+        borderType?: _base.BorderTypes | _st.int /* = BORDER_CONSTANT*/,
+        borderValue?: _types.Scalar /* = morphologyDefaultBorderValue()*/): void;
 }
 
 export var erode: Ierode = alvision_module.erode;
@@ -2364,9 +2364,9 @@ export var erode: Ierode = alvision_module.erode;
 
 interface Idilate{
     (src: _st.InputArray, dst: _st.OutputArray, kernel: _st.InputArray,
-    anchor: _types.Point /* = Point(-1,-1)*/, iterations: _st.int /* = 1*/,
-    borderType: _st.int /* = BORDER_CONSTANT*/,
-    borderValue: _types.Scalar /* = morphologyDefaultBorderValue()*/): void;
+    anchor?: _types.Point /* = Point(-1,-1)*/, iterations?: _st.int /* = 1*/,
+    borderType?: _base.BorderTypes |  _st.int /* = BORDER_CONSTANT*/,
+    borderValue?: _types.Scalar /* = morphologyDefaultBorderValue()*/): void;
 }
 
 export var dilate: Idilate = alvision_module.dilate;
@@ -2579,8 +2579,8 @@ export var warpPerspective: IwarpPerspective = alvision_module.warpPerspective;
 interface Iremap{
     (src: _st.InputArray, dst: _st.OutputArray,
         Map1: _st.InputArray, Map2: _st.InputArray,
-        interpolation : _st.int, borderMode: _st.int /* = BORDER_CONSTANT*/,
-        borderValue: _types.Scalar /* = Scalar()*/): void;
+        interpolation: InterpolationFlags | _st.int, borderMode?: _base.BorderTypes | _st.int /* = BORDER_CONSTANT*/,
+        borderValue?: _types.Scalar /* = Scalar()*/): void;
 }
 
 export var remap: Iremap = alvision_module.remap;
@@ -3130,7 +3130,7 @@ export var createHanningWindow: IcreateHanningWindow = alvision_module.createHan
 
 interface Ithreshold {
     (src: _st.InputArray, dst: _st.OutputArray,
-        thresh: _st.double, Maxval: _st.double, type : _st.int ): _st.double;
+        thresh: _st.double, Maxval: _st.double, type: ThresholdTypes| _st.int ): _st.double;
 }
 
 export var threshold: Ithreshold = alvision_module.threshold;
@@ -3204,7 +3204,7 @@ export var adaptiveThreshold: IadaptiveThreshold = alvision_module.adaptiveThres
 
 interface IpyrDown{
         (src: _st.InputArray, dst: _st.OutputArray,
-            dstsize : _types.Size /* = Size()*/, borderType: _st.int /* = BORDER_DEFAULT*/);
+            dstsize? : _types.Size /* = Size()*/, borderType?: _base.BorderTypes | _st.int /* = BORDER_DEFAULT*/);
 }
 
 export var pyrDown: IpyrDown = alvision_module.pyrDown;

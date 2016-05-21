@@ -47,6 +47,7 @@ import * as _types from './types';
 import * as _matx from './matx';
 import * as _cuda from './cuda';
 import * as _cvdef from './cvdef';
+import * as _base from './base';
 
 //#ifndef __OPENCV_CORE_MAT_HPP__
 //#define __OPENCV_CORE_MAT_HPP__
@@ -858,7 +859,7 @@ including std::sort().
     the end of each row, if any. If the parameter is missing (set to AUTO_STEP ), no padding is assumed
     and the actual step is calculated as cols*elemSize(). See Mat::elemSize.
     */
-      //  new (Size size, int type, void* data, size_t step= AUTO_STEP) : Mat;
+        new (size: _types.Size, type: _cvdef.MatrixType | _st.int, data: Array<any>, step?: _st.size_t  /*= AUTO_STEP*/) : Mat;
 
     /** @overload
     @param ndims Array dimensionality.
@@ -952,7 +953,7 @@ including std::sort().
 
     //! download data from GpuMat
         //explicit Mat(const cuda::GpuMat& m);
-        new (m: _cuda.GpuMat): Mat;
+        new (m: _cuda.cuda.GpuMat): Mat;
 
     //! destructor - calls release()
     //~Mat();
@@ -1064,6 +1065,10 @@ including std::sort().
         [i: number]: T;
     }
 
+    export interface TrackedElement<T> {
+        get(): T;
+        set(val: T): T;
+    }
 export interface Mat
 {
     
@@ -1104,7 +1109,7 @@ export interface Mat
     @endcode
     @param y A 0-based row index.
      */
-    //Mat row(int y) const;
+    row(y: _st.int ): Mat;
 
     /** @brief Creates a matrix header for the specified matrix column.
 
@@ -1113,7 +1118,7 @@ export interface Mat
     original matrix. See also the Mat::row description.
     @param x A 0-based column index.
      */
-    //Mat col(int x) const;
+    col(x: _st.int ): Mat;
 
     /** @brief Creates a matrix header for the specified row span.
 
@@ -1280,7 +1285,7 @@ export interface Mat
     matrix expressions or can be assigned to a matrix.
     @param method Matrix inversion method. One of cv::DecompTypes
      */
-    //MatExpr inv(int method= DECOMP_LU) const;
+    inv(method?: _base.DecompTypes | _st.int /*= DECOMP_LU*/): MatExpr 
 
     /** @brief Performs an element-wise multiplication or division of the two matrices.
 
@@ -1511,6 +1516,7 @@ export interface Mat
     @param roi Extracted submatrix specified as a rectangle.
     */
     //Mat operator()( const Rect& roi ) const;
+    roi(roi : _types.Rect ): Mat;
 
     /** @overload
     @param ranges Array of selected ranges along each array dimension.
@@ -1757,8 +1763,9 @@ export interface Mat
     @param i0 Index along the dimension 0
      */
 
-    atGet<T>(T: string, i0: _st.int, i1?: _st.int, i2?: _st.int): T;
-    atSet<T>(T: string, value: T, i0: _st.int, i1?: _st.int, i2?: _st.int): void;
+    //atGet<T>(T: string, i0: _st.int, i1?: _st.int, i2?: _st.int): T;
+    //atSet<T>(T: string, value: T, i0: _st.int, i1?: _st.int, i2?: _st.int): void;
+    at<T>(T: string, i0: _st.int, i1?: _st.int, i2?: _st.int): TrackedElement<T>;
 
     //template < typename _Tp> _Tp & at(int i0= 0);
     /** @overload
@@ -2106,6 +2113,12 @@ export interface Mat_<T> extends Mat
 //    template < typename Functor> void forEach(const Functor& operation) const;
 
  //   //! equivalent to Mat::create(_rows, _cols, DataType<_Tp>::type)
+
+    //dummy overloads for typescript satisfaction
+    create(_rows: _st.int, _cols: _st.int, _type: _st.int): void;
+    create(size: _types.Size, type: _st.int): void;
+    //end dummy
+
     create(_rows: _st.int, _cols: _st.int ): void;
  //   //! equivalent to Mat::create(_size, DataType<_Tp>::type)
  //   void create(Size _size);
@@ -2344,6 +2357,7 @@ export interface UMat
 //    UMat t() const;
 //    //! matrix inversion by means of matrix expressions
 //    UMat inv(int method= DECOMP_LU) const;
+    inv(method?: _base.DecompTypes | _st.int /*= DECOMP_LU*/): UMat; 
 //    //! per-element matrix multiplication by means of matrix expressions
 //    UMat mul(InputArray m, double scale= 1) const;
 //
@@ -3481,27 +3495,17 @@ interface MatExprStatic {
     op_GreaterThan(a: Mat, s: _st.double): MatExpr;
     op_GreaterThan(s: _st.double, a: Mat): MatExpr;
 
-    op_And(a: Mat, b: Mat): MatExpr;
-    op_And(a: Mat, s: _types.Scalar): MatExpr;
-    op_And(s: _types.Scalar, a: Mat): MatExpr;
+    op_And(a: Mat | MatExpr | _types.Scalar, b: Mat | MatExpr | _types.Scalar): MatExpr;
 
-    op_Or(a: Mat, b: Mat): MatExpr;
-    op_Or(a: Mat, s: _types.Scalar): MatExpr;
-    op_Or(s: _types.Scalar, a: Mat): MatExpr;
+    op_Or(a: Mat | MatExpr | _types.Scalar, b: Mat | MatExpr | _types.Scalar): MatExpr;
 
-    op_Xor(a: Mat, b: Mat): MatExpr;
-    op_Xor(a: Mat, s: _types.Scalar): MatExpr;
-    op_Xor(s: _types.Scalar, a: Mat): MatExpr;
+    op_Xor(a: Mat | MatExpr | _types.Scalar, b: Mat | MatExpr | _types.Scalar): MatExpr;
 
     op_BinaryNot(m: Mat): MatExpr;
 
-    min(a: Mat, b: Mat): MatExpr;
-    min(a: Mat, s: _st.double): MatExpr;
-    min(s: _st.double, a: Mat): MatExpr;
+    min(a: Mat | MatExpr | _types.Scalar | _st.double, b: Mat | MatExpr | _types.Scalar | _st.double): MatExpr;
 
-    max(a: Mat, b: Mat): MatExpr;
-    max(a: Mat, s: _st.double): MatExpr;
-    max(s: _st.double, a: Mat): MatExpr;
+    max(a: Mat | MatExpr | _types.Scalar | _st.double, b: Mat | MatExpr | _types.Scalar | _st.double): MatExpr;
 
     /** @brief Calculates an absolute value of each matrix element.
     
@@ -3543,7 +3547,7 @@ interface MatExpr
 //    MatExpr operator()( const Rect& roi ) const;
 
 //    MatExpr t() const;
-//    MatExpr inv(int method = DECOMP_LU) const;
+    inv(method?: _base.DecompTypes | _st.int /*= DECOMP_LU*/): MatExpr; 
 //    MatExpr mul(e : MatExpr, double scale= 1) const;
 //    MatExpr mul(m : Mat, double scale= 1) const;
 
@@ -3556,6 +3560,23 @@ interface MatExpr
 //    Mat a, b, c;
 //    double alpha, beta;
 //    Scalar s;
+    toMat(): Mat;
+
+    op_Addition(other: Mat | MatExpr | _types.Scalar | _st.double ): MatExpr;
+
+    op_Substraction(other: Mat | MatExpr | _types.Scalar | _st.double ): MatExpr;
+
+    op_Multiplication(other: Mat | MatExpr | _types.Scalar | _st.double): MatExpr;
+
+    op_Division(other: Mat | MatExpr | _types.Scalar | _st.double): MatExpr;
+
+    op_And(other: Mat | MatExpr | _types.Scalar | _st.double): MatExpr;
+
+    op_Or(other: Mat | MatExpr | _types.Scalar | _st.double): MatExpr;
+
+    op_Xor(other: Mat | MatExpr | _types.Scalar | _st.double): MatExpr;
+
+    op_BinaryNot(): MatExpr;
 };
 
 export var MatExpr: MatExprStatic = alvision_module.MatExpr;

@@ -44,6 +44,8 @@
 var alvision_module = require('../../lib/bindings.js');
 import * as _st from './static';
 import * as _base from './base';
+import * as _types from './types';
+import * as _mat from './mat'
 
 //#ifndef __OPENCV_CORE_MATX_HPP__
 //#define __OPENCV_CORE_MATX_HPP__
@@ -217,6 +219,31 @@ export interface MatxStatic<T> {
 //}
     op_NotEquals(a: Matx<T>, b: Matx<T>): boolean;
 
+
+    //template < typename _Tp, int m, int n> static inline
+    norm(m?: Matx<T>): _st.double;
+//double norm(const Matx<_Tp, m, n>& M)
+//    {
+//        return std::sqrt(normL2Sqr<_Tp, double>(M.val, m * n));
+//}
+
+//template < typename _Tp, int m, int n> static inline
+//double norm(const Matx<_Tp, m, n>& M, int normType)
+//    {
+//        switch(normType) {
+//    case NORM_INF:
+//        return (double)normInf<_Tp, typename DataType<_Tp>::work_type > (M.val, m * n);
+//    case NORM_L1:
+//return (double)normL1<_Tp, typename DataType<_Tp>::work_type>(M.val, m * n);
+//    case NORM_L2SQR:
+//return (double)normL2Sqr<_Tp, typename DataType<_Tp>::work_type>(M.val, m * n);
+//    default:
+//    case NORM_L2:
+//return std::sqrt((double)normL2Sqr<_Tp, typename DataType<_Tp>::work_type>(M.val, m * n));
+//    }
+//}
+
+
 }
 
     export interface Matx<T>{
@@ -303,6 +330,14 @@ export interface MatxStatic<T> {
 
     //_Tp val[m * n]; //< matrix elements
     val: T[];
+
+
+
+
+   
+    op_Addition(other: Matx<T>): Matx<T>;
+    op_Substraction(other: Matx<T>): Matx<T>;
+    op_Multiplication(other: Matx<T>): Matx<T>;
 };
 
 export interface Matxf extends Matx<_st.float> { }
@@ -440,6 +475,170 @@ export interface VecStatic<T> {
     new (v: Vec<T>): Vec<T>;
     all(alpha : T) : Vec<T>;
 
+
+    ////////////////////////////// Vec out-of-class operators ////////////////////////////////
+
+//! @relates cv::Vec
+//! @{
+
+//template < typename _Tp1, typename _Tp2, int cn> static inline
+//Vec<_Tp1, cn>& operator += (Vec<_Tp1, cn>& a, const Vec<_Tp2, cn>& b)
+//    {
+//        for( int i = 0; i < cn; i++ )
+//a.val[i] = saturate_cast<_Tp1>(a.val[i] + b.val[i]);
+//return a;
+//}
+
+//template < typename _Tp1, typename _Tp2, int cn> static inline
+//Vec<_Tp1, cn>& operator -= (Vec<_Tp1, cn>& a, const Vec<_Tp2, cn>& b)
+//    {
+//        for( int i = 0; i < cn; i++ )
+//a.val[i] = saturate_cast<_Tp1>(a.val[i] - b.val[i]);
+//return a;
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator + (const Vec<_Tp, cn>& a, const Vec<_Tp, cn>& b)
+//    {
+//        return Vec<_Tp, cn>(a, b, Matx_AddOp());
+//}
+    op_Addition(a: Vec<T> | _st.float | _st.double | _st.int, b: Vec<T> | _st.float | _st.double | _st.int): Vec<T>;
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator - (const Vec<_Tp, cn>& a, const Vec<_Tp, cn>& b)
+//    {
+//        return Vec<_Tp, cn>(a, b, Matx_SubOp());
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec<_Tp, cn>& operator *= (Vec<_Tp, cn>& a, int alpha)
+//{
+//    for (int i = 0; i < cn; i++ )
+//a[i] = saturate_cast<_Tp>(a[i] * alpha);
+//return a;
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec<_Tp, cn>& operator *= (Vec<_Tp, cn>& a, float alpha)
+//{
+//    for (int i = 0; i < cn; i++ )
+//a[i] = saturate_cast<_Tp>(a[i] * alpha);
+//return a;
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec<_Tp, cn>& operator *= (Vec<_Tp, cn>& a, double alpha)
+//{
+//    for (int i = 0; i < cn; i++ )
+//a[i] = saturate_cast<_Tp>(a[i] * alpha);
+//return a;
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec<_Tp, cn>& operator /= (Vec<_Tp, cn>& a, int alpha)
+//{
+//        double ialpha = 1. / alpha;
+//        for(int i = 0; i <cn; i++ )
+//a[i] = saturate_cast<_Tp>(a[i] * ialpha);
+//return a;
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec<_Tp, cn>& operator /= (Vec<_Tp, cn>& a, float alpha)
+//{
+//        float ialpha = 1.f/alpha;
+//    for(int i = 0; i <cn; i++ )
+//a[i] = saturate_cast<_Tp>(a[i] * ialpha);
+//return a;
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec<_Tp, cn>& operator /= (Vec<_Tp, cn>& a, double alpha)
+//{
+//        double ialpha = 1. / alpha;
+//        for(int i = 0; i <cn; i++ )
+//a[i] = saturate_cast<_Tp>(a[i] * ialpha);
+//return a;
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator * (const Vec<_Tp, cn>& a, int alpha)
+//    {
+//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
+//}
+    op_Multiplication(a: Vec<T> | _st.float | _st.double | _st.int, b: Vec<T> | _st.float | _st.double | _st.int): Vec<T>;
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator * (int alpha, const Vec<_Tp, cn>& a)
+//    {
+//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
+//}
+
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator * (const Vec<_Tp, cn>& a, float alpha)
+//    {
+//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator * (float alpha, const Vec<_Tp, cn>& a)
+//    {
+//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator * (const Vec<_Tp, cn>& a, double alpha)
+//    {
+//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator * (double alpha, const Vec<_Tp, cn>& a)
+//    {
+//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator / (const Vec<_Tp, cn>& a, int alpha)
+//    {
+//        return Vec<_Tp, cn>(a, 1. / alpha, Matx_ScaleOp());
+//}
+    op_Division(a: Vec<T> | _st.float | _st.double | _st.int, b: Vec<T> | _st.float | _st.double | _st.int): Vec<T>;
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator / (const Vec<_Tp, cn>& a, float alpha)
+//    {
+//        return Vec<_Tp, cn>(a, 1.f/alpha, Matx_ScaleOp());
+//    }
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator / (const Vec<_Tp, cn>& a, double alpha)
+//    {
+//        return Vec<_Tp, cn>(a, 1. / alpha, Matx_ScaleOp());
+//}
+
+//template < typename _Tp, int cn> static inline
+//Vec < _Tp, cn > operator - (const Vec<_Tp, cn>& a)
+//    {
+//        Vec<_Tp,cn> t;
+//for (int i = 0; i < cn; i++ ) t.val[i] = saturate_cast<_Tp>(-a.val[i]);
+//return t;
+//}
+    op_Substraction(a: Vec<T> | _st.float | _st.double | _st.int, b: Vec<T> | _st.float | _st.double | _st.int): Vec<T>;
+//template < typename _Tp> inline Vec< _Tp, 4 > operator * (const Vec<_Tp, 4>& v1, const Vec<_Tp, 4>& v2)
+//{
+//    return Vec < _Tp, 4 > (saturate_cast<_Tp>(v1[0] * v2[0] - v1[1] * v2[1] - v1[2] * v2[2] - v1[3] * v2[3]),
+//        saturate_cast<_Tp>(v1[0] * v2[1] + v1[1] * v2[0] + v1[2] * v2[3] - v1[3] * v2[2]),
+//        saturate_cast<_Tp>(v1[0] * v2[2] - v1[1] * v2[3] + v1[2] * v2[0] + v1[3] * v2[1]),
+//        saturate_cast<_Tp>(v1[0] * v2[3] + v1[1] * v2[2] - v1[2] * v2[1] + v1[3] * v2[0]));
+//}
+
+//template < typename _Tp> inline Vec< _Tp, 4 >& operator *= (Vec < _Tp, 4 >& v1, const Vec<_Tp, 4>& v2)
+//{
+//    v1 = v1 * v2;
+//    return v1;
+//}
+    norm(m?: Vec<T>): _st.double;
 }
 
 //template < typename _Tp, int cn> class Vec : public Matx < _Tp, cn, 1 >
@@ -472,7 +671,8 @@ export interface Vec<T> extends Matx<T> {
     //_Tp& operator[](int i);
     //const _Tp& operator()(int i) const;
     //_Tp& operator()(int i);
-    valGet(i: _st.int): T;
+    //valGet(i: _st.int): T;
+    at(i: _st.int): _mat.TrackedElement<T>;
 
     //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_AddOp);
     //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_SubOp);
@@ -1010,27 +1210,6 @@ export var normalize: Inormalize = alvision_module.normalize;
 //return s;
 //}
 
-//template < typename _Tp, int m, int n> static inline
-//double norm(const Matx<_Tp, m, n>& M)
-//    {
-//        return std::sqrt(normL2Sqr<_Tp, double>(M.val, m * n));
-//}
-
-//template < typename _Tp, int m, int n> static inline
-//double norm(const Matx<_Tp, m, n>& M, int normType)
-//    {
-//        switch(normType) {
-//    case NORM_INF:
-//        return (double)normInf<_Tp, typename DataType<_Tp>::work_type > (M.val, m * n);
-//    case NORM_L1:
-//return (double)normL1<_Tp, typename DataType<_Tp>::work_type>(M.val, m * n);
-//    case NORM_L2SQR:
-//return (double)normL2Sqr<_Tp, typename DataType<_Tp>::work_type>(M.val, m * n);
-//    default:
-//    case NORM_L2:
-//return std::sqrt((double)normL2Sqr<_Tp, typename DataType<_Tp>::work_type>(M.val, m * n));
-//    }
-//}
 
 
 
@@ -1304,165 +1483,7 @@ export var normalize: Inormalize = alvision_module.normalize;
 
 //! @}
 
-////////////////////////////// Vec out-of-class operators ////////////////////////////////
 
-//! @relates cv::Vec
-//! @{
-
-//template < typename _Tp1, typename _Tp2, int cn> static inline
-//Vec<_Tp1, cn>& operator += (Vec<_Tp1, cn>& a, const Vec<_Tp2, cn>& b)
-//    {
-//        for( int i = 0; i < cn; i++ )
-//a.val[i] = saturate_cast<_Tp1>(a.val[i] + b.val[i]);
-//return a;
-//}
-
-//template < typename _Tp1, typename _Tp2, int cn> static inline
-//Vec<_Tp1, cn>& operator -= (Vec<_Tp1, cn>& a, const Vec<_Tp2, cn>& b)
-//    {
-//        for( int i = 0; i < cn; i++ )
-//a.val[i] = saturate_cast<_Tp1>(a.val[i] - b.val[i]);
-//return a;
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator + (const Vec<_Tp, cn>& a, const Vec<_Tp, cn>& b)
-//    {
-//        return Vec<_Tp, cn>(a, b, Matx_AddOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator - (const Vec<_Tp, cn>& a, const Vec<_Tp, cn>& b)
-//    {
-//        return Vec<_Tp, cn>(a, b, Matx_SubOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec<_Tp, cn>& operator *= (Vec<_Tp, cn>& a, int alpha)
-//{
-//    for (int i = 0; i < cn; i++ )
-//a[i] = saturate_cast<_Tp>(a[i] * alpha);
-//return a;
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec<_Tp, cn>& operator *= (Vec<_Tp, cn>& a, float alpha)
-//{
-//    for (int i = 0; i < cn; i++ )
-//a[i] = saturate_cast<_Tp>(a[i] * alpha);
-//return a;
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec<_Tp, cn>& operator *= (Vec<_Tp, cn>& a, double alpha)
-//{
-//    for (int i = 0; i < cn; i++ )
-//a[i] = saturate_cast<_Tp>(a[i] * alpha);
-//return a;
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec<_Tp, cn>& operator /= (Vec<_Tp, cn>& a, int alpha)
-//{
-//        double ialpha = 1. / alpha;
-//        for(int i = 0; i <cn; i++ )
-//a[i] = saturate_cast<_Tp>(a[i] * ialpha);
-//return a;
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec<_Tp, cn>& operator /= (Vec<_Tp, cn>& a, float alpha)
-//{
-//        float ialpha = 1.f/alpha;
-//    for(int i = 0; i <cn; i++ )
-//a[i] = saturate_cast<_Tp>(a[i] * ialpha);
-//return a;
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec<_Tp, cn>& operator /= (Vec<_Tp, cn>& a, double alpha)
-//{
-//        double ialpha = 1. / alpha;
-//        for(int i = 0; i <cn; i++ )
-//a[i] = saturate_cast<_Tp>(a[i] * ialpha);
-//return a;
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator * (const Vec<_Tp, cn>& a, int alpha)
-//    {
-//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator * (int alpha, const Vec<_Tp, cn>& a)
-//    {
-//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator * (const Vec<_Tp, cn>& a, float alpha)
-//    {
-//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator * (float alpha, const Vec<_Tp, cn>& a)
-//    {
-//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator * (const Vec<_Tp, cn>& a, double alpha)
-//    {
-//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator * (double alpha, const Vec<_Tp, cn>& a)
-//    {
-//        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator / (const Vec<_Tp, cn>& a, int alpha)
-//    {
-//        return Vec<_Tp, cn>(a, 1. / alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator / (const Vec<_Tp, cn>& a, float alpha)
-//    {
-//        return Vec<_Tp, cn>(a, 1.f/alpha, Matx_ScaleOp());
-//    }
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator / (const Vec<_Tp, cn>& a, double alpha)
-//    {
-//        return Vec<_Tp, cn>(a, 1. / alpha, Matx_ScaleOp());
-//}
-
-//template < typename _Tp, int cn> static inline
-//Vec < _Tp, cn > operator - (const Vec<_Tp, cn>& a)
-//    {
-//        Vec<_Tp,cn> t;
-//for (int i = 0; i < cn; i++ ) t.val[i] = saturate_cast<_Tp>(-a.val[i]);
-//return t;
-//}
-
-//template < typename _Tp> inline Vec< _Tp, 4 > operator * (const Vec<_Tp, 4>& v1, const Vec<_Tp, 4>& v2)
-//{
-//    return Vec < _Tp, 4 > (saturate_cast<_Tp>(v1[0] * v2[0] - v1[1] * v2[1] - v1[2] * v2[2] - v1[3] * v2[3]),
-//        saturate_cast<_Tp>(v1[0] * v2[1] + v1[1] * v2[0] + v1[2] * v2[3] - v1[3] * v2[2]),
-//        saturate_cast<_Tp>(v1[0] * v2[2] - v1[1] * v2[3] + v1[2] * v2[0] + v1[3] * v2[1]),
-//        saturate_cast<_Tp>(v1[0] * v2[3] + v1[1] * v2[2] - v1[2] * v2[1] + v1[3] * v2[0]));
-//}
-
-//template < typename _Tp> inline Vec< _Tp, 4 >& operator *= (Vec < _Tp, 4 >& v1, const Vec<_Tp, 4>& v2)
-//{
-//    v1 = v1 * v2;
-//    return v1;
-//}
 
 //! @}
 

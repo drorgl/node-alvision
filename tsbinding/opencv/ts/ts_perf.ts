@@ -1,3 +1,5 @@
+import * as _cvdef from './../cvdef'
+
 //#ifndef __OPENCV_TS_PERF_HPP__
 //#define __OPENCV_TS_PERF_HPP__
 
@@ -153,6 +155,16 @@
 //    inline void PrintTo(const class_name& t, std::ostream* os) { t.PrintTo(os); } }
 
 //CV_ENUM(MatDepth, CV_8U, CV_8S, CV_16U, CV_16S, CV_32S, CV_32F, CV_64F, CV_USRTYPE1)
+//export enum MatDepth {
+//    CV_8U =  <number>_cvdef.MatrixType.CV_8U,
+//    CV_8S  = <number>_cvdef.MatrixType.CV_8S,
+//    CV_16U = <number>_cvdef.MatrixType.CV_16U,
+//    CV_16S = <number>_cvdef.MatrixType.CV_16S,
+//    CV_32S = <number>_cvdef.MatrixType.CV_32S,
+//    CV_32F = <number>_cvdef.MatrixType.CV_32F,
+//    CV_64F = <number>_cvdef.MatrixType.CV_64F,
+//    CV_USRTYPE1 = <number>_cvdef.MatrixType.CV_USRTYPE1
+//}
 
 ///*****************************************************************************************\
 //*                 Regression control utility for performance testing                      *

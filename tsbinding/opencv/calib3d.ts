@@ -52,6 +52,8 @@ import * as _core from './core'
 import * as _base from './base'
 import * as _affine from './Affine'
 import * as _features2d from './features2d'
+import * as _imgproc from './imgproc';
+import * as _cvdef from './cvdef';
 
 //#ifndef __OPENCV_CALIB3D_HPP__
 //#define __OPENCV_CALIB3D_HPP__
@@ -1141,7 +1143,7 @@ interface IstereoCalibrate {
         cameraMatrix1: _st.InputOutputArray, distCoeffs1: _st.InputOutputArray ,
         cameraMatrix2: _st.InputOutputArray, distCoeffs2: _st.InputOutputArray ,
         imageSize: _types.Size, R: _st.OutputArray, T: _st.OutputArray, E: _st.OutputArray, F: _st.OutputArray ,
-        flags? : CALIB /* = CALIB_FIX_INTRINSIC*/,
+        flags? : CALIB | _st.int /* = CALIB_FIX_INTRINSIC*/,
         criteria?: _types.TermCriteria /* = TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, 30, 1e-6)*/);
 }
 export var stereoCalibrate: IstereoCalibrate = alvision_module.stereoCalibrate;
@@ -1241,7 +1243,7 @@ interface IstereoRectify{
         imageSize: _types.Size, R: _st.InputArray, T: _st.InputArray ,
         R1: _st.OutputArray, R2: _st.OutputArray ,
         P1: _st.OutputArray, P2: _st.OutputArray ,
-        Q: _st.OutputArray , flags? : CALIB /*= CALIB_ZERO_DISPARITY*/,
+        Q: _st.OutputArray , flags? : CALIB | _st.int /*= CALIB_ZERO_DISPARITY*/,
         alpha?: _st.double /* = -1*/, newImageSize?: _types.Size  /* = Size()*/,
          cb?: (validPixROI1 : _types.Rect, validPixROI2 : _types.Rect) => void ) : void;
     }
@@ -2462,3 +2464,158 @@ export namespace fisheye {
 //#endif
 //
 //#endif
+
+
+
+
+//Check Chessboard -----------------------------------------------------------------------
+
+function icvGetQuadrangleHypotheses(contours: Array<Array<_types.Point>>, quads: Array<_st.pair<_st.float, _st.int>>, class_id: _st.int): void {
+    const min_aspect_ratio = 0.3;
+    const max_aspect_ratio = 3.0;
+    const min_box_size = 10.0;
+
+    //for (CvSeq * seq = contours; seq != NULL; seq = seq ->h_next)
+    for (var i = 0; i < contours.length;i++)
+    {
+        var box = _imgproc.minAreaRect(new _mat.Mat(contours[i]));// cvMinAreaRect2(seq);
+        var box_size = Math.max(box.size.width.valueOf(), box.size.height.valueOf());
+        if (box_size < min_box_size) {
+            continue;
+        }
+
+        var aspect_ratio = box.size.width.valueOf() / Math.max(box.size.height.valueOf(), 1);
+        if (aspect_ratio < min_aspect_ratio || aspect_ratio > max_aspect_ratio) {
+            continue;
+        }
+
+        quads.push(new _st.pair<_st.float, _st.int>(box_size, class_id));
+    }
+}
+
+function countClasses(pairs: Array<_st.pair<_st.float, _st.int>>, idx1: _st.size_t, idx2: _st.size_t, counts: Array<_st.int>): void {
+    counts.length = 2;//.assign(2, 0);
+    counts.forEach((v, i, a) => a[i] = 0);
+
+    for (var i = idx1.valueOf(); i != idx2; i++) {
+        counts[pairs[i].second.valueOf()] = counts[pairs[i].second.valueOf()].valueOf() + 1;
+    }
+}
+
+
+
+// does a fast check if a chessboard is in the input image. This is a workaround to 
+// a problem of cvFindChessboardCorners being slow on images with no chessboard
+// - src: input image
+// - size: chessboard size
+// Returns 1 if a chessboard can be in this image and findChessboardCorners should be called, 
+// 0 if there is no chessboard, -1 in case of error
+export function cvCheckChessboard(src : _mat.Mat, size : _types.Size) : boolean
+{
+    if (src.channels() > 1) {
+        _base.CV_Error(_base.cv.Error.Code.BadNumChannels, "cvCheckChessboard - supports single-channel images only");
+    }
+
+    if (src.depth() != 8) {
+        _base.CV_Error(_base.cv.Error.Code.BadDepth, "cvCheckChessboard - supports depth=8 images only");
+    }
+
+    const erosion_count = 1;
+    const  black_level = 20.;
+    const  white_level = 130.;
+    const  black_white_gap = 70.;
+
+    //#if defined(DEBUG_WINDOWS)
+    //cvNamedWindow("1", 1);
+    //cvShowImage("1", src);
+    //cvWaitKey(0);
+    //#endif //DEBUG_WINDOWS
+
+    //CvMemStorage * storage = cvCreateMemStorage();
+    //
+    //IplImage * white = cvCloneImage(src);
+    var white = src.clone();
+    //IplImage * black = cvCloneImage(src);
+    var black = src.clone();
+
+    _imgproc.erode(white, white, null,null, erosion_count);
+    _imgproc.dilate(black, black, null,null, erosion_count);
+    //IplImage * thresh = cvCreateImage(cvGetSize(src), IPL_DEPTH_8U, 1);
+    var thresh = new _mat.Mat(src.size(), _cvdef.MatrixType.CV_8UC1);
+
+    var result = false;
+    for (var thresh_level = black_level; thresh_level < white_level && !result; thresh_level += 20.0)
+    {
+        _imgproc.threshold(white, thresh, thresh_level + black_white_gap, 255, _imgproc.ThresholdTypes.THRESH_BINARY);
+
+        //#if defined(DEBUG_WINDOWS)
+        //cvShowImage("1", thresh);
+        //cvWaitKey(0);
+        //#endif //DEBUG_WINDOWS
+        
+        //CvSeq * first = 0;
+        //var first = new _mat.Mat();
+        //std::vector < std::pair < float, int > > quads;
+        var quads = new Array<_st.pair<_st.float, _st.int>>();
+        var storage = new Array<Array<_types.Point>>();
+        _imgproc.findContours(thresh, storage, _imgproc.RetrievalModes.RETR_CCOMP, _imgproc.ContourApproximationModes.CHAIN_APPROX_SIMPLE);
+
+
+        icvGetQuadrangleHypotheses(storage, quads, 1);
+
+        _imgproc.threshold(black, thresh, thresh_level, 255, _imgproc.ThresholdTypes.THRESH_BINARY_INV);
+
+        //#if defined(DEBUG_WINDOWS)
+        //cvShowImage("1", thresh);
+        //cvWaitKey(0);
+        //#endif //DEBUG_WINDOWS
+
+        _imgproc.findContours(thresh, storage, _imgproc.RetrievalModes.RETR_CCOMP, _imgproc.ContourApproximationModes.CHAIN_APPROX_SIMPLE);
+        icvGetQuadrangleHypotheses(storage, quads, 0);
+
+        const min_quads_count = size.width.valueOf() * size.height.valueOf() / 2;
+
+        //return p1.first < p2.first;
+        quads = quads.sort((a, b) => {
+            return (a.first.valueOf() - b.first.valueOf());
+        });
+        //std::sort(quads.begin(), quads.end(), less_pred);
+        
+        // now check if there are many hypotheses with similar sizes
+        // do this by floodfill-style algorithm
+        const  size_rel_dev = 0.4;
+
+        for (var i = 0; i < quads.length; i++)
+        {
+            var j = i + 1;
+            for (; j < quads.length; j++) {
+                if (quads[j].first.valueOf() / quads[i].first.valueOf() > 1.0 + size_rel_dev)
+                {
+                    break;
+                }
+            }
+
+            if (j + 1 > min_quads_count + i) {
+                // check the number of black and white squares
+                var counts = new Array<_st.int>();
+                countClasses(quads, i, j, counts);
+                const  black_count = Math.round(Math.ceil(size.width .valueOf() / 2.0) *  Math.ceil(size.height.valueOf() / 2.0));
+                const  white_count = Math.round(Math.floor(size.width.valueOf() / 2.0) * Math.floor(size.height.valueOf() / 2.0));
+                if (counts[0] < black_count * 0.75 ||
+                    counts[1] < white_count * 0.75) {
+                    continue;
+                }
+                result = true;
+                break;
+            }
+        }
+    }
+
+
+    //cvReleaseImage(&thresh);
+    //cvReleaseImage(&white);
+    //cvReleaseImage(&black);
+    //cvReleaseMemStorage(&storage);
+
+    return result;
+}

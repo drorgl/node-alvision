@@ -74,7 +74,7 @@ import * as _base from './Base';
  */
 
 //namespace cv {
-    //export namespace cuda {
+    export namespace cuda {
 
         //! @addtogroup cudacore_struct
         //! @{
@@ -562,6 +562,10 @@ import * as _base from './Base';
 //        
 //        If the call of this function is omitted, a default device is initialized at the fist CUDA usage.
 //         */
+        interface IsetDevice {
+            (device: _st.int): void;
+        }
+        export var setDevice: IsetDevice = alvision_module.setDevice;
 //        CV_EXPORTS void setDevice(int device);
 //
 //        /** @brief Returns the current device index set by cuda::setDevice or initialized by default.
@@ -577,24 +581,24 @@ import * as _base from './Base';
 //
 //        /** @brief Enumeration providing CUDA computing features.
 //         */
-//        enum FeatureSet {
-//            FEATURE_SET_COMPUTE_10 = 10,
-//            FEATURE_SET_COMPUTE_11 = 11,
-//            FEATURE_SET_COMPUTE_12 = 12,
-//            FEATURE_SET_COMPUTE_13 = 13,
-//            FEATURE_SET_COMPUTE_20 = 20,
-//            FEATURE_SET_COMPUTE_21 = 21,
-//            FEATURE_SET_COMPUTE_30 = 30,
-//            FEATURE_SET_COMPUTE_32 = 32,
-//            FEATURE_SET_COMPUTE_35 = 35,
-//            FEATURE_SET_COMPUTE_50 = 50,
-//
-//            GLOBAL_ATOMICS = FEATURE_SET_COMPUTE_11,
-//            SHARED_ATOMICS = FEATURE_SET_COMPUTE_12,
-//            NATIVE_DOUBLE = FEATURE_SET_COMPUTE_13,
-//            WARP_SHUFFLE_FUNCTIONS = FEATURE_SET_COMPUTE_30,
-//            DYNAMIC_PARALLELISM = FEATURE_SET_COMPUTE_35
-//        };
+        export enum FeatureSet {
+            FEATURE_SET_COMPUTE_10 = 10,
+            FEATURE_SET_COMPUTE_11 = 11,
+            FEATURE_SET_COMPUTE_12 = 12,
+            FEATURE_SET_COMPUTE_13 = 13,
+            FEATURE_SET_COMPUTE_20 = 20,
+            FEATURE_SET_COMPUTE_21 = 21,
+            FEATURE_SET_COMPUTE_30 = 30,
+            FEATURE_SET_COMPUTE_32 = 32,
+            FEATURE_SET_COMPUTE_35 = 35,
+            FEATURE_SET_COMPUTE_50 = 50,
+
+            GLOBAL_ATOMICS = FEATURE_SET_COMPUTE_11,
+            SHARED_ATOMICS = FEATURE_SET_COMPUTE_12,
+            NATIVE_DOUBLE = FEATURE_SET_COMPUTE_13,
+            WARP_SHUFFLE_FUNCTIONS = FEATURE_SET_COMPUTE_30,
+            DYNAMIC_PARALLELISM = FEATURE_SET_COMPUTE_35
+        };
 //
 //        //! checks whether current device supports the given feature
 //        CV_EXPORTS bool deviceSupports(FeatureSet feature_set);
@@ -632,8 +636,8 @@ import * as _base from './Base';
 //
 //        /** @brief Class providing functionality for querying the specified GPU properties.
 //         */
-//        class CV_EXPORTS DeviceInfo
-//        {
+export interface DeviceInfo
+{
 //            public:
 //            //! creates DeviceInfo object for the current GPU
 //            DeviceInfo();
@@ -647,9 +651,9 @@ import * as _base from './Base';
 //             */
 //            DeviceInfo(int device_id);
 //
-//            /** @brief Returns system index of the CUDA device starting with 0.
-//            */
-//            int deviceID() const;
+    /** @brief Returns system index of the CUDA device starting with 0.
+    */
+    deviceID(): _st.int;
 //
 //            //! ASCII string identifying device
 //            const char* name() const;
@@ -836,7 +840,7 @@ import * as _base from './Base';
 //
 //            private:
 //            int device_id_;
-//        };
+};
 //
 //        CV_EXPORTS void printCudaDeviceInfo(int device);
 //        CV_EXPORTS void printShortCudaDeviceInfo(int device);
@@ -844,7 +848,7 @@ import * as _base from './Base';
 //        //! @} cudacore_init
 //
 //    }
-//} // namespace cv { namespace cuda {
+} // namespace cv { namespace cuda {
 //
 //
 //#include "opencv2/core/cuda.inl.hpp"

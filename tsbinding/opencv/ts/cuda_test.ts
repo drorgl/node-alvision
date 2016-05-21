@@ -52,6 +52,9 @@ import * as _base from './../base'
 import * as _affine from './../Affine'
 import * as _features2d from './../features2d'
 import * as _cuda from './../cuda'
+import * as _cvdef from './../cvdef'
+import * as _tsperf from './ts_perf';
+import * as _ts from './../ts';
 
 //#ifndef __OPENCV_CUDA_TEST_UTILITY_HPP__
 //#define __OPENCV_CUDA_TEST_UTILITY_HPP__
@@ -80,13 +83,20 @@ import * as _cuda from './../cuda'
 //    // GpuMat create
 
 interface IcreateMat {
-    (size : _types.Size, type : _st.int, useRoi? : boolean /* = false*/): _cuda.GpuMat;
+    (size : _types.Size, type : _st.int, useRoi? : boolean /* = false*/): _cuda.cuda.GpuMat;
 }
 
 export var createMat: IcreateMat = alvision_module.createMat;
 
 //    CV_EXPORTS cv::cuda::GpuMat createMat(cv::Size size, int type, bool useRoi = false);
-//    CV_EXPORTS cv::cuda::GpuMat loadMat(const cv::Mat& m, bool useRoi = false);
+
+
+interface IloadMat{
+    (m: _mat.Mat, useRoi?  : boolean /*= false*/): _cuda.cuda.GpuMat;
+}
+
+export var loadMat: IloadMat = alvision_module.loadMat;
+//CV_EXPORTS cv::cuda::GpuMat loadMat(const cv::Mat& m, bool useRoi = false);
 
 //    //////////////////////////////////////////////////////////////////////
 //    // Image load
@@ -101,22 +111,35 @@ export var createMat: IcreateMat = alvision_module.createMat;
 //    // Gpu devices
 
 //    //! return true if device supports specified feature and gpu module was built with support the feature.
+interface IsupportFeature {
+    (info: _cuda.cuda.DeviceInfo, feature: _cuda.cuda.FeatureSet): boolean;
+}
+export var supportFeature: IsupportFeature = alvision_module.supportFeature;
+//supportFeature(const cv::cuda::DeviceInfo& info, cv::cuda::FeatureSet feature);
 //    CV_EXPORTS bool supportFeature(const cv::cuda::DeviceInfo& info, cv::cuda::FeatureSet feature);
 
-//    class CV_EXPORTS DeviceManager
-//    {
+
+interface DeviceManagerStatic {
+    instance(): DeviceManager;
+}
+
+interface DeviceManager
+    {
 //    public:
-//        static DeviceManager& instance();
+
 
 //        void load(int i);
 //        void loadAll();
 
-//        const std::vector<cv::cuda::DeviceInfo>& values() const { return devices_; }
+    values(): Array<_cuda.cuda.DeviceInfo>;
 
 //    private:
 //        std::vector<cv::cuda::DeviceInfo> devices_;
-//    };
+};
 
+export var DeviceManager: DeviceManagerStatic = alvision_module.DeviceManager;
+
+export var ALL_DEVICES = DeviceManager.instance().values();
 //    #define ALL_DEVICES testing::ValuesIn(cvtest::DeviceManager::instance().values())
 
 //    //////////////////////////////////////////////////////////////////////
@@ -227,6 +250,7 @@ export var createMat: IcreateMat = alvision_module.createMat;
 //      } \
 //      void GTEST_TEST_CLASS_NAME_(test_case_name, test_name)::UnsafeTestBody()
 
+export var DIFFERENT_SIZES = [new _types.Size(128,128), new _types.Size(113,113)];
 //    #define DIFFERENT_SIZES testing::Values(cv::Size(128, 128), cv::Size(113, 113))
 
 //    // Depth
@@ -235,32 +259,33 @@ export var createMat: IcreateMat = alvision_module.createMat;
 
 //    #define ALL_DEPTH testing::Values(MatDepth(CV_8U), MatDepth(CV_8S), MatDepth(CV_16U), MatDepth(CV_16S), MatDepth(CV_32S), MatDepth(CV_32F), MatDepth(CV_64F))
 
-//    #define DEPTH_PAIRS testing::Values(std::make_pair(MatDepth(CV_8U), MatDepth(CV_8U)),   \
-//                                        std::make_pair(MatDepth(CV_8U), MatDepth(CV_16U)),  \
-//                                        std::make_pair(MatDepth(CV_8U), MatDepth(CV_16S)),  \
-//                                        std::make_pair(MatDepth(CV_8U), MatDepth(CV_32S)),  \
-//                                        std::make_pair(MatDepth(CV_8U), MatDepth(CV_32F)),  \
-//                                        std::make_pair(MatDepth(CV_8U), MatDepth(CV_64F)),  \
-//                                                                                            \
-//                                        std::make_pair(MatDepth(CV_16U), MatDepth(CV_16U)), \
-//                                        std::make_pair(MatDepth(CV_16U), MatDepth(CV_32S)), \
-//                                        std::make_pair(MatDepth(CV_16U), MatDepth(CV_32F)), \
-//                                        std::make_pair(MatDepth(CV_16U), MatDepth(CV_64F)), \
-//                                                                                            \
-//                                        std::make_pair(MatDepth(CV_16S), MatDepth(CV_16S)), \
-//                                        std::make_pair(MatDepth(CV_16S), MatDepth(CV_32S)), \
-//                                        std::make_pair(MatDepth(CV_16S), MatDepth(CV_32F)), \
-//                                        std::make_pair(MatDepth(CV_16S), MatDepth(CV_64F)), \
-//                                                                                            \
-//                                        std::make_pair(MatDepth(CV_32S), MatDepth(CV_32S)), \
-//                                        std::make_pair(MatDepth(CV_32S), MatDepth(CV_32F)), \
-//                                        std::make_pair(MatDepth(CV_32S), MatDepth(CV_64F)), \
-//                                                                                            \
-//                                        std::make_pair(MatDepth(CV_32F), MatDepth(CV_32F)), \
-//                                        std::make_pair(MatDepth(CV_32F), MatDepth(CV_64F)), \
-//                                                                                            \
-//                                        std::make_pair(MatDepth(CV_64F), MatDepth(CV_64F)))
+export var DEPTH_PAIRS = [
+    new _st.pair(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_8U ),
+    new _st.pair(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_16U),
+    new _st.pair(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_16S),
+    new _st.pair(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_32S),
+    new _st.pair(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_32F),
+    new _st.pair(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_64F),
 
+    new _st.pair(_cvdef.MatrixType.CV_16U, _cvdef.MatrixType.CV_16U),
+    new _st.pair(_cvdef.MatrixType.CV_16U, _cvdef.MatrixType.CV_32S),
+    new _st.pair(_cvdef.MatrixType.CV_16U, _cvdef.MatrixType.CV_32F),
+    new _st.pair(_cvdef.MatrixType.CV_16U, _cvdef.MatrixType.CV_64F),
+
+    new _st.pair(_cvdef.MatrixType.CV_16S, _cvdef.MatrixType.CV_16S),
+    new _st.pair(_cvdef.MatrixType.CV_16S, _cvdef.MatrixType.CV_32S),
+    new _st.pair(_cvdef.MatrixType.CV_16S, _cvdef.MatrixType.CV_32F),
+    new _st.pair(_cvdef.MatrixType.CV_16S, _cvdef.MatrixType.CV_64F),
+
+    new _st.pair(_cvdef.MatrixType.CV_32S, _cvdef.MatrixType.CV_32S),
+    new _st.pair(_cvdef.MatrixType.CV_32S, _cvdef.MatrixType.CV_32F),
+    new _st.pair(_cvdef.MatrixType.CV_32S, _cvdef.MatrixType.CV_64F),
+
+    new _st.pair(_cvdef.MatrixType.CV_32F, _cvdef.MatrixType.CV_32F),
+    new _st.pair(_cvdef.MatrixType.CV_32F, _cvdef.MatrixType.CV_64F),
+
+    new _st.pair(_cvdef.MatrixType.CV_64F, _cvdef.MatrixType.CV_64F)
+];
 //    // Type
 
 //    using perf::MatType;
@@ -276,8 +301,17 @@ export var createMat: IcreateMat = alvision_module.createMat;
 
 //    // ROI
 
-//    class UseRoi
-//    {
+export class UseRoi
+{
+    constructor(arg: boolean) {
+        this.val_ = arg;
+    }
+    public val_: boolean;
+
+
+    public toString(): string {
+        return "UseRoi(" + this.val_ + ")";
+    }
 //    public:
 //        inline UseRoi(bool val = false) : val_(val) {}
 
@@ -285,10 +319,11 @@ export var createMat: IcreateMat = alvision_module.createMat;
 
 //    private:
 //        bool val_;
-//    };
+};
 
 //    CV_EXPORTS void PrintTo(const UseRoi& useRoi, std::ostream* os);
 
+export var WHOLE_SUBMAT = [new UseRoi(false), new UseRoi(true)];
 //    #define WHOLE_SUBMAT testing::Values(UseRoi(false), UseRoi(true))
 
 //    // Direct/Inverse
@@ -327,6 +362,8 @@ export var createMat: IcreateMat = alvision_module.createMat;
 //    IMPLEMENT_PARAM_CLASS(Channels, int)
 
 //    #define ALL_CHANNELS testing::Values(Channels(1), Channels(2), Channels(3), Channels(4))
+export var ALL_CHANNELS = [new _ts.cvtest.Channels(1), new _ts.cvtest.Channels(2), new _ts.cvtest.Channels(3), new _ts.cvtest.Channels(4)];
+export var IMAGE_CHANNELS = [new _ts.cvtest.Channels(1), new _ts.cvtest.Channels(3), new _ts.cvtest.Channels(4)];
 //    #define IMAGE_CHANNELS testing::Values(Channels(1), Channels(3), Channels(4))
 
 //    // Flags and enums

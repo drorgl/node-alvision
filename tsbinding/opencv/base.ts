@@ -448,6 +448,10 @@ raise an error (see cv::error). The macro CV_Assert checks the condition in both
 configurations while CV_DbgAssert is only retained in the Debug configuration.
 */
 
+export function assert(expr: () => boolean) {
+    CV_Assert(expr);
+}
+
 export function CV_Assert(expr: () => boolean) {
     if (!expr()) {
         error(cv.Error.Code.StsAssert, expr.toString(), "", "", -1);
