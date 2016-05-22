@@ -59,34 +59,39 @@ function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvis
     //float Jf[27];
     //double J[27];
     //CvMat _Jf;
-    var matJ = new alvision.Mat(3, 9, alvision.MatrixType.CV_64F, J);
+    var matJ = new alvision.Mat(3, 9, alvision.MatrixType.CV_64F);//, J);
 
-    //var depth = CV_MAT_DEPTH(src.type);
+    var depth = src.type();// CV_MAT_DEPTH(src.type);
 
     if( jacobian )
     {
-        alvision.assert( (jacobian.rows == 9 && jacobian.cols == 3) ||
+        alvision.assert(()=> (jacobian.rows == 9 && jacobian.cols == 3) ||
                 (jacobian.rows == 3 && jacobian.cols == 9) );
     }
 
     if( src.cols == 1 || src.rows == 1 )
     {
         //double r[3], theta;
-        var _r = new alvision.Mat(src.rows, src.cols, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, src.channels()));// CV_MAT_CN(src.type)), r);
+        var rtype = alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, src.channels());
+        var _r = new alvision.Mat(src.rows, src.cols,rtype);// CV_MAT_CN(src.type)), r);
         var r = _r.ptr<alvision.double>("double");
 
-        alvision.assert( dst.rows == 3 && dst.cols == 3 );
+        alvision.assert(()=> dst.rows == 3 && dst.cols == 3 );
 
-        alvision.cvConvert( src, _r );
+        src.convertTo(_r, rtype);
+        //alvision.cvConvert( src, _r );
 
-        var theta = Math.sqrt(r[0]*r[0] + r[1]*r[1] + r[2]*r[2]);
+        var theta = Math.sqrt(r[0].valueOf() * r[0].valueOf() + r[1].valueOf() *r[1]. valueOf() + r[2].valueOf()*r[2].valueOf());
         if( theta < alvision.DBL_EPSILON )
         {
-            cvSetIdentity( dst );
+            alvision.setIdentity( dst );
 
             if( jacobian )
             {
-                memset( J, 0, sizeof(J) );
+                //memset( J, 0, sizeof(J) );
+                var J = matJ.ptr<alvision.double>("double");
+                J.forEach((v, i, a) => a[i] = 0);
+                
                 J[5] = J[15] = J[19] = 1;
                 J[7] = J[11] = J[21] = -1;
             }
@@ -95,7 +100,7 @@ function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvis
         {
             // omega = r/theta (~[w1, w2, w3])
             var itheta = 1./theta;
-            var w1 = r[0]*itheta, w2 = r[1]*itheta, w3 = r[2]*itheta;
+            var w1 = r[0].valueOf()*itheta, w2 = r[1].valueOf()*itheta, w3 = r[2].valueOf()*itheta;
             var alpha = Math.cos(theta);
             var beta =  Math.sin(theta);
             var gamma = 1 - alpha;
@@ -111,15 +116,15 @@ function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvis
                 w2*w1, w2*w2, w2*w3,
                 w3*w1, w3*w2, w3*w3
             ];
-            double R[9];
+            //double R[9];
             var _omegav = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, omegav);
             var matA =    new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, A);
-            var matR =    new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, R);
+            var matR = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, R);
 
-            cvSetIdentity( &matR, cvRealScalar(alpha) );
-            cvScaleAdd( &_omegav, cvRealScalar(beta), &matR, &matR );
-            cvScaleAdd( &matA, cvRealScalar(gamma), &matR, &matR );
-            cvConvert( &matR, dst );
+            alvision.setIdentity(matR, new alvision.Scalar(alpha));
+            alvision.scaleAdd( _omegav, (beta), matR, matR );
+            alvision.scaleAdd( matA, (gamma),   matR, matR );
+            matR.convertTo( dst,dst.type() );
 
             if( jacobian )
             {
@@ -139,19 +144,23 @@ function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvis
                     0, 0, itheta, -w3*itheta,
                     0, 0, 0, 1
                 ];
-                double t0[9*4];
-                double dm1dm2[21*4];
-                double dRdm1[9*21];
-                var _dm3din = new alvision.Mat(4, 3, alvision.MatrixType.CV_64FC1, dm3din );
+                //double t0[9*4];
+                //double dm1dm2[21*4];
+                //double dRdm1[9*21];
+                var _dm3din = new alvision.Mat(4, 3, alvision.MatrixType.CV_64FC1 , dm3din );
                 var _dm2dm3 = new alvision.Mat(4, 4, alvision.MatrixType.CV_64FC1, dm2dm3 );
-                var _dm1dm2 = new alvision.Mat(21, 4, alvision.MatrixType.CV_64FC1, dm1dm2 );
-                var _dRdm1 =  new alvision.Mat(9, 21, alvision.MatrixType.CV_64FC1, dRdm1 );
-                var _dRdm1_part = new alvision.Mat();
-                var _t0 = new alvision.Mat(9, 4, alvision.MatrixType.CV_64FC1, t0 );
-                var _t1 = new alvision.Mat(9, 4, alvision.MatrixType.CV_64FC1, dRdm1 );
+                var _dm1dm2 = new alvision.Mat(21, 4, alvision.MatrixType.CV_64FC1);//, dm1dm2 );
+                var _dRdm1 =  new alvision.Mat(9, 21, alvision.MatrixType.CV_64FC1);//, dRdm1 );
+                //var _dRdm1_part = new alvision.Mat();
+                var _t0 = new alvision.Mat(9, 4, alvision.MatrixType.CV_64FC1);//, t0 );
+                var _t1 = new alvision.Mat(9, 4, alvision.MatrixType.CV_64FC1);//, dRdm1 );
+
+                var dm1dm2 = _dm1dm2.ptr<alvision.double>("double");
+                var dRdm1 = _t1.ptr<alvision.double>("double");
 
                 // m1 = [alpha, beta, gamma, omegav; A]
-                memset( dm1dm2, 0, sizeof(dm1dm2) );
+                //memset(dm1dm2, 0, sizeof(dm1dm2));
+                dm1dm2.forEach((v, i, a) => a[i] = 0);
                 dm1dm2[3] = -beta;
                 dm1dm2[7] = alpha;
                 dm1dm2[11] = beta;
@@ -172,72 +181,89 @@ function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvis
                 ];
 
                 var _dm1dw = new alvision.Mat(3, 9, alvision.MatrixType.CV_64FC1, dm1dw );
-                CvMat _dm1dm2_part;
 
-                cvGetSubRect( &_dm1dm2, &_dm1dm2_part, cvRect(0,12,3,9) );
-                cvTranspose( &_dm1dw, &_dm1dm2_part );
 
-                memset( dRdm1, 0, sizeof(dRdm1) );
+                var _dm1dm2_part = _dm1dm2.roi(new alvision.Rect(0, 12, 3, 9));
+                alvision.transpose(_dm1dw, _dm1dm2_part);
+                //cvGetSubRect( &_dm1dm2, &_dm1dm2_part, cvRect(0,12,3,9) );
+                //alvision.transpose( &_dm1dw, &_dm1dm2_part );
+
+                dRdm1.forEach((v, i, a) => a[i] = 0);
+                //memset( dRdm1, 0, sizeof(dRdm1) );
+
+
                 dRdm1[0*21] = dRdm1[4*21] = dRdm1[8*21] = 1;
 
-                cvGetCol( &_dRdm1, &_dRdm1_part, 1 );
-                cvTranspose( &_omegav, &_omegav );
-                cvReshape( &_omegav, &_omegav, 1, 1 );
-                cvTranspose( &_omegav, &_dRdm1_part );
+                var _dRdm1_part  = _dRdm1.col(1)
+                //cvGetCol( &_dRdm1, &_dRdm1_part, 1 );
 
-                cvGetCol( &_dRdm1, &_dRdm1_part, 2 );
-                cvReshape( &matA, &matA, 1, 1 );
-                cvTranspose( &matA, &_dRdm1_part );
+                alvision.transpose(_omegav, _omegav);
+                
+                _omegav = _omegav.reshape(1,1)
 
-                cvGetSubRect( &_dRdm1, &_dRdm1_part, cvRect(3,0,9,9) );
-                cvSetIdentity( &_dRdm1_part, cvScalarAll(beta) );
+                alvision.transpose( _omegav, _dRdm1_part );
 
-                cvGetSubRect( &_dRdm1, &_dRdm1_part, cvRect(12,0,9,9) );
-                cvSetIdentity( &_dRdm1_part, cvScalarAll(gamma) );
+                _dRdm1_part = _dRdm1.col(2);
 
-                matJ = cvMat(9, 3, alvision.MatrixType.CV_64FC1, J );
+                matA = matA.reshape(1, 1);
 
-                cvMatMul( &_dRdm1, &_dm1dm2, &_t0 );
-                cvMatMul( &_t0, &_dm2dm3, &_t1 );
-                cvMatMul( &_t1, &_dm3din, &matJ );
+                alvision.transpose( matA, _dRdm1_part );
 
-                _t0 = cvMat(3, 9, alvision.MatrixType.CV_64FC1, t0 );
-                cvTranspose( &matJ, &_t0 );
+                _dRdm1_part = _dRdm1.roi(new alvision.Rect(3, 0, 9, 9));
 
-                for( i = 0; i < 3; i++ )
+                alvision.setIdentity( _dRdm1_part, alvision.Scalar.all(beta));
+
+                _dRdm1_part = _dRdm1.roi(new alvision.Rect(12, 0, 9, 9));
+
+                alvision.setIdentity( _dRdm1_part, alvision.Scalar.all(gamma));
+
+                matJ = new alvision.Mat(9, 3, alvision.MatrixType.CV_64FC1, J );
+
+                _t0 = alvision.MatExpr.op_Multiplication(_dRdm1, _dm1dm2).toMat();
+                _t1 = alvision.MatExpr.op_Multiplication(_t0, _dm2dm3).toMat();
+                matJ = alvision.MatExpr.op_Multiplication(_t1, _dm3din).toMat();
+
+
+                _t0 = new alvision.Mat(3, 9, alvision.MatrixType.CV_64FC1, _t0.ptr<alvision.double>("double") );
+                alvision.transpose( matJ, _t0 );
+
+                for(var i = 0; i < 3; i++ )
                 {
-                    _t1 = cvMat(3, 3, alvision.MatrixType.CV_64FC1, t0 + i*9 );
-                    cvTranspose( &_t1, &_t1 );
+                    _t1 = new alvision.Mat(3, 3, alvision.MatrixType.CV_64FC1, (alvision.MatExpr.op_Addition( _t0 , i*9).toMat().ptr<alvision.double>("double")) );
+                    alvision.transpose( _t1, _t1 );
                 }
 
-                cvTranspose( &_t0, &matJ );
+                alvision.transpose( _t0, matJ );
             }
         }
     }
     else if( src.cols == 3 && src.rows == 3 )
     {
-        double R[9], A[9], I[9], r[3], W[3], U[9], V[9];
-        double tr, alpha, beta, theta;
-        var matR = new alvision.Mat( 3, 3, alvision.MatrixType.CV_64F, R );
-        var matA = new alvision.Mat( 3, 3, alvision.MatrixType.CV_64F, A );
-        var matI = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, I );
-        var _r = new alvision.Mat(dst .rows, dst .cols, CV_MAKETYPE(alvision.MatrixType.CV_64F, CV_MAT_CN(dst.type)), r );
-        var matW = alvision.Mat( 1, 3, alvision.MatrixType.CV_64F, W );
-        var matU = alvision.Mat( 3, 3, alvision.MatrixType.CV_64F, U );
-        var matV = alvision.Mat(3, 3, alvision.MatrixType.CV_64F, V );
+        //double R[9], A[9], I[9], r[3], W[3], U[9], V[9];
+        //double tr, alpha, beta, theta;
+        var matR = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, R );
+        var R = matR.ptr<alvision.double>("double");
+        var matA = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, A );
+        var matI = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, I );
+        var _r = new alvision.Mat(dst.rows, dst.cols, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F,dst.channels()), r );
+        var matW = new alvision.Mat(1, 3, alvision.MatrixType.CV_64F);//, W );
+        var matU = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, U );
+        var matV = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, V );
 
-        cvConvert( src, &matR );
-        cvSVD( &matR, &matW, &matU, &matV, CV_SVD_MODIFY_A + CV_SVD_U_T + CV_SVD_V_T );
-        cvGEMM( &matU, &matV, 1, 0, 0, &matR, CV_GEMM_A_T );
+        src.convertTo(matR, matR.type());
 
-        cvMulTransposed( &matR, &matA, 0 );
-        cvSetIdentity( &matI );
 
-        if( cvNorm( &matA, &matI, CV_C ) > 1e-3 ||
-            fabs( cvDet(&matR) - 1 ) > 1e-3 )
+        alvision.SVD.compute(matR, matW, matU, matV, alvision.SVDFlags.MODIFY_A + alvision.SVDFlags.NO_UV + alvision.SVDFlags.FULL_UV);
+        alvision.gemm( matU, matV, 1, 0, 0, matR, alvision.GemmFlags.GEMM_1_T );
+
+        alvision.mulTransposed(matR, matA, false );
+        alvision.setIdentity(matI );
+
+        if( alvision.norm(matA,matI,alvision.NormTypes.NORM_INF) > 1e-3 ||
+            Math.abs(alvision.determinant(matR).valueOf() - 1 ) > 1e-3 )
             return 0;
 
-        tr = (cvTrace(&matR).val[0] - 1.)*0.5;
+        var tr = (alvision.trace(matR).Element(0).valueOf() - 1.)*0.5;
         tr = tr > 1. ? 1. : tr < -1. ? -1. : tr;
         theta = Math.acos(tr);
         alpha = Math.cos(theta);
@@ -249,13 +275,13 @@ function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvis
             var vth = 1/(2*beta);
 
             // om1 = [R(3,2) - R(2,3), R(1,3) - R(3,1), R(2,1) - R(1,2)]'
-            var om1 = [ R[7] - R[5], R[2] - R[6], R[3] - R[1] ];
+            var om1 = [ R[7].valueOf() - R[5].valueOf(), R[2].valueOf() - R[6].valueOf(), R[3].valueOf() - R[1].valueOf() ];
             // om = om1*vth
             // r = om*theta
             var d3 = vth*theta;
 
-            r[0] = om1[0]*d3; r[1] = om1[1]*d3; r[2] = om1[2]*d3;
-            cvConvert( &_r, dst );
+            r[0] = om1[0] * d3; r[1] = om1[1] * d3; r[2] = om1[2] * d3;
+            _r.convertTo(dst,dst.type());
 
             if( jacobian )
             {
@@ -291,66 +317,69 @@ function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvis
                 var _dvardR =      new alvision.Mat(5, 9, alvision.MatrixType.CV_64FC1, dvardR );
                 var _dvar2dvar =   new alvision.Mat(4, 5, alvision.MatrixType.CV_64FC1, dvar2dvar );
                 var _domegadvar2 = new alvision.Mat(3, 4, alvision.MatrixType.CV_64FC1, domegadvar2 );
-                double t0[3*5];
-                var _t0 = new alvision.Mat(3, 5, alvision.MatrixType.CV_64FC1, t0 );
+                //double t0[3*5];
+                var _t0 = new alvision.Mat(3, 5, alvision.MatrixType.CV_64FC1);//, t0 );
 
-                cvMatMul( &_domegadvar2, &_dvar2dvar, &_t0 );
-                cvMatMul( &_t0, &_dvardR, &matJ );
+                _t0 = alvision.MatExpr.op_Multiplication(_domegadvar2, _dvar2dvar).toMat();
+                //cvMatMul( &_domegadvar2, &_dvar2dvar, &_t0 );
+                matJ = alvision.MatExpr.op_Multiplication(_t0, _dvardR).toMat();
+                //cvMatMul( &_t0, &_dvardR, &matJ);
             }
         }
         else if( tr > 0 )
         {
-            cvZero( dst );
+            dst.setTo(new alvision.Scalar(0));
             if( jacobian )
             {
-                memset( J, 0, sizeof(J) );
+                J.forEach((v, i, a) => a[i] = 0);
                 J[5] = J[15] = J[19] = 0.5;
                 J[7] = J[11] = J[21] = -0.5;
             }
         }
         else
         {
-            r[0] = theta*sqrt((R[0] + 1)*0.5);
-            r[1] = theta*sqrt((R[4] + 1)*0.5)*(R[1] >= 0 ? 1 : -1);
-            r[2] = theta*sqrt((R[8] + 1)*0.5)*(R[2] >= 0 ? 1 : -1);
-            cvConvert( &_r, dst );
+            r[0] = theta*Math.sqrt((R[0].valueOf() + 1)*0.5);
+            r[1] = theta*Math.sqrt((R[4].valueOf() + 1)*0.5)*(R[1] >= 0 ? 1 : -1);
+            r[2] = theta * Math.sqrt((R[8].valueOf() + 1) * 0.5) * (R[2] >= 0 ? 1 : -1);
+            _r.convertTo(dst, dst.type());
 
-            if( jacobian )
-                memset( J, 0, sizeof(J) );
+            if (jacobian)
+                J.forEach((v, i, a) => a[i] = 0);
         }
 
         if( jacobian )
         {
             for( i = 0; i < 3; i++ )
             {
-                CvMat t = cvMat(3, 3, alvision.MatrixType.CV_64F, J + i*9 );
-                cvTranspose( &t, &t );
+                var t = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F,J.slice( i*9) );
+                alvision.transpose( t, t );
             }
         }
     }
     else
     {
-        assert(0);
+        alvision.assert(()=>false);
         return 0;
     }
 
     if( jacobian )
     {
-        if( depth == CV_32F )
-        {
-            if( jacobian.rows == matJ.rows )
-                cvConvert( &matJ, jacobian );
-            else
-            {
-                _Jf = cvMat( matJ.rows, matJ.cols, CV_32FC1, Jf );
-                cvConvert( &matJ, &_Jf );
-                cvTranspose( &_Jf, jacobian );
+        if (depth == alvision.MatrixType.CV_32F) {
+            if (jacobian.rows == matJ.rows)
+                matJ.convertTo(jacobian, jacobian.type());
+            //cvConvert( &matJ, jacobian );
+            else {
+                var _Jf = new alvision.Mat(matJ.rows, matJ.cols, alvision.MatrixType.CV_32FC1);//, Jf );
+                matJ.convertTo(_Jf, _Jf.type());
+                //cvConvert( &matJ, &_Jf );
+                alvision.transpose(_Jf, jacobian);
             }
         }
-        else if( jacobian.rows == matJ.rows )
-            cvCopy( &matJ, jacobian );
+        else if (jacobian.rows == matJ.rows)
+            matJ.copyTo(jacobian);
+            //cvCopy( &matJ, jacobian );
         else
-            cvTranspose( &matJ, jacobian );
+            alvision.transpose( matJ, jacobian );
     }
 
     return 1;
@@ -369,8 +398,8 @@ function Rodrigues(src : alvision.Mat, dst : alvision.Mat, jac : alvision.Mat) :
 function test_convertHomogeneous(_src: alvision.Mat, _dst: alvision.Mat ) : void
 {
     var src = _src, dst = _dst;
-    int i, count, sdims, ddims;
-    int sstep1, sstep2, dstep1, dstep2;
+    var count, sdims, ddims;
+    var sstep1 : number, sstep2 : number, dstep1 : number, dstep2 : number;
 
     if (src.depth() != alvision.MatrixType.CV_64F )
         _src.convertTo(src, alvision.MatrixType.CV_64F);
@@ -381,14 +410,14 @@ function test_convertHomogeneous(_src: alvision.Mat, _dst: alvision.Mat ) : void
     if( src.rows > src.cols )
     {
         count = src.rows;
-        sdims = src.channels()*src.cols;
-        sstep1 = (int)(src.step/sizeof(double));
+        sdims = src.channels().valueOf()*src.cols.valueOf();
+        sstep1 = src.step;//(int)(src.step/sizeof(double));
         sstep2 = 1;
     }
     else
     {
         count = src.cols;
-        sdims = src.channels()*src.rows;
+        sdims = src.channels().valueOf()*src.rows.valueOf();
         if( src.rows == 1 )
         {
             sstep1 = sdims;
@@ -397,21 +426,21 @@ function test_convertHomogeneous(_src: alvision.Mat, _dst: alvision.Mat ) : void
         else
         {
             sstep1 = 1;
-            sstep2 = (int)(src.step/sizeof(double));
+            sstep2 = src.step;//(int)(src.step/sizeof(double));
         }
     }
 
     if( dst.rows > dst.cols )
     {
-        alvision.CV_Assert( count == dst.rows );
-        ddims = dst.channels()*dst.cols;
-        dstep1 = (int)(dst.step/sizeof(double));
+        alvision.CV_Assert(()=> count == dst.rows );
+        ddims = dst.channels().valueOf()*dst.cols.valueOf();
+        dstep1 = dst.step;//(int)(dst.step/sizeof(double));
         dstep2 = 1;
     }
     else
     {
-        assert( count == dst.cols );
-        ddims = dst.channels()*dst.rows;
+        alvision.assert(()=> count == dst.cols );
+        ddims = dst.channels().valueOf()*dst.rows.valueOf();
         if( dst.rows == 1 )
         {
             dstep1 = ddims;
@@ -420,51 +449,53 @@ function test_convertHomogeneous(_src: alvision.Mat, _dst: alvision.Mat ) : void
         else
         {
             dstep1 = 1;
-            dstep2 = (int)(dst.step/sizeof(double));
+            dstep2 = dst.step;//(int)(dst.step/sizeof(double));
         }
     }
 
     var s = src.ptr<alvision.double>("double");
     var d = dst.ptr<alvision.double>("double");
+    var sstart = 0;
+    var dstart = 0;
 
     if( sdims <= ddims )
     {
-        int wstep = dstep2*(ddims - 1);
+        var wstep = dstep2*(ddims - 1);
 
-        for( i = 0; i < count; i++, s += sstep1, d += dstep1 )
+        for(var i = 0; i < count; i++, sstart += sstep1, dstart += dstep1 )
         {
-            double x = s[0];
-            double y = s[sstep2];
+            var x = s[sstart + 0];
+            var y = s[sstart + sstep2];
 
-            d[wstep] = 1;
-            d[0] = x;
-            d[dstep2] = y;
+            d[dstart + wstep] = 1;
+            d[dstart + 0] = x;
+            d[dstart + dstep2] = y;
 
             if( sdims >= 3 )
             {
-                d[dstep2*2] = s[sstep2*2];
+                d[dstart + dstep2*2] = s[sstart + sstep2*2];
                 if( sdims == 4 )
-                    d[dstep2*3] = s[sstep2*3];
+                    d[dstart + dstep2*3] = s[sstart + sstep2*3];
             }
         }
     }
     else
     {
-        int wstep = sstep2*(sdims - 1);
+        var wstep = sstep2*(sdims - 1);
 
-        for( i = 0; i < count; i++, s += sstep1, d += dstep1 )
+        for(var i = 0; i < count; i++, sstart += sstep1, dstart += dstep1 )
         {
-            double w = s[wstep];
-            double x = s[0];
-            double y = s[sstep2];
+            var w = s[sstart + wstep];
+            var x = s[sstart + 0];
+            var y = s[sstart + sstep2];
 
-            w = w ? 1./w : 1;
+            w = w ? 1./w.valueOf() : 1;
 
-            d[0] = x*w;
-            d[dstep2] = y*w;
+            d[dstart + 0] = x.valueOf()*w.valueOf();
+            d[dstart + dstep2] = y.valueOf()*w.valueOf();
 
             if( ddims == 3 )
-                d[dstep2*2] = s[sstep2*2]*w;
+                d[dstart + dstep2*2] = s[sstart + sstep2*2].valueOf()*w.valueOf();
         }
     }
 
@@ -475,10 +506,11 @@ function test_convertHomogeneous(_src: alvision.Mat, _dst: alvision.Mat ) : void
 
 function test_projectPoints( _3d : alvision.Mat,  Rt : alvision.Mat,  A : alvision.Mat, _2d : alvision.Mat, rng : alvision.RNG, sigma : alvision.double ) : void
 {
-    alvision.CV_Assert( _3d.isContinuous() );
+    alvision.CV_Assert(()=> _3d.isContinuous() );
 
-    double p[12];
-    var P  = new alvision.Mat(3, 4, alvision.MatrixType. CV_64F, p );
+    //double p[12];
+    var P = new alvision.Mat(3, 4, alvision.MatrixType.CV_64F);//, p );
+    var p = P.ptr<alvision.double>("double");
     alvision.gemm(A, Rt, 1,new alvision. Mat(), 0, P);
 
     var count = _3d.cols;
@@ -487,11 +519,11 @@ function test_projectPoints( _3d : alvision.Mat,  Rt : alvision.Mat,  A : alvisi
     if( rng )
     {
         if( sigma == 0 )
-            rng = 0;
+            rng = null;
         else
         {
             noise.create(1, _3d.cols, alvision.MatrixType.CV_64FC2 );
-            rng.fill(noise, RNG::NORMAL, alvision.Scalar.all(0), alvision.Scalar.all(sigma) );
+            rng.fill(noise, alvision.DistType.NORMAL, alvision.Scalar.all(0), alvision.Scalar.all(sigma) );
         }
     }
 
@@ -502,14 +534,14 @@ function test_projectPoints( _3d : alvision.Mat,  Rt : alvision.Mat,  A : alvisi
         var M = _3d.ptr<alvision.double>("double").slice( i*3);
         var m = temp.ptr<alvision.double>("double").slice(i * 3);
         var X = M[0], Y = M[1], Z = M[2];
-        var u = p[0]*X + p[1]*Y + p[2]*Z + p[3];
-        var v = p[4]*X + p[5]*Y + p[6]*Z + p[7];
-        var s = p[8]*X + p[9]*Y + p[10]*Z + p[11];
+        var u = p[0].valueOf()*X.valueOf() + p[1].valueOf()*Y.valueOf() + p[2].valueOf()*Z.valueOf() +  p[3].valueOf() ;
+        var v = p[4].valueOf()*X.valueOf() + p[5].valueOf()*Y.valueOf() + p[6].valueOf()*Z.valueOf() +  p[7] .valueOf();
+        var s = p[8].valueOf()*X.valueOf() + p[9].valueOf()*Y.valueOf() + p[10].valueOf()*Z.valueOf() + p[11].valueOf();
 
         if( !noise.empty() )
         {
-            u += noise.atGet<alvision.Point2d>("Point2d",i).x.valueOf()*s;
-            v += noise.atGet<alvision.Point2d>("Point2d",i).y.valueOf()*s;
+            u += noise.at<alvision.Point2d>("Point2d",i).get().x.valueOf()*s;
+            v += noise.at<alvision.Point2d>("Point2d",i).get().y.valueOf()*s;
         }
 
         m[0] = u;
@@ -554,7 +586,7 @@ class CV_RodriguesTest extends alvision.cvtest.ArrayTest
             //double //r[3],
             //theta0, theta1,
              var   f;
-             var _r = new alvision.Mat(arr.rows, arr.cols, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, arr.channels()), );
+             var _r = new alvision.Mat(arr.rows, arr.cols, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, arr.channels()) );
              var r = _r.ptr<alvision.double>("double");
             var rng = this.ts.get_rng();
 
@@ -569,9 +601,9 @@ class CV_RodriguesTest extends alvision.cvtest.ArrayTest
                 theta1 = -(Math.PI * 2 - theta1);
 
             f = theta1 / (theta0 ? theta0 : 1);
-            r[0] =r[0] * f;
-            r[1] =r[1] * f;
-            r[2] =r[2] * f;
+            r[0] =r[0].valueOf() * f;
+            r[1] =r[1].valueOf() * f;
+            r[2] =r[2].valueOf() * f;
 
             alvision.cvtest.convert(_r, arr, arr.type());
         }
@@ -641,30 +673,30 @@ class CV_RodriguesTest extends alvision.cvtest.ArrayTest
         }
 
         if (!this.test_cpp) {
-            CvMat _input = test_mat[INPUT][0], _output = test_mat[OUTPUT][0], _output2 = this.test_mat[this.OUTPUT][2];
-            cvRodrigues2( &_input, &_output, calc_jacobians ? &v2m_jac : 0);
-            cvRodrigues2( &_output, &_output2, calc_jacobians ? &m2v_jac : 0);
+            var _input = this.test_mat[this.INPUT][0], _output = this.test_mat[this.OUTPUT][0], _output2 = this.test_mat[this.OUTPUT][2];
+            alvision.Rodrigues(_input, _output, this.calc_jacobians ? v2m_jac : null);//Rodrigues2
+            alvision.Rodrigues(_output, _output2, this.calc_jacobians ? m2v_jac : null);//Rodrigues2
         }
         else {
             var v = this.test_mat[this.INPUT][0], M = this.test_mat[this.OUTPUT][0], v2 = this.test_mat[this.OUTPUT][2];
-            alvision.Mat M0 = M, v2_0 = v2;
+            var M0 = M, v2_0 = v2;
             if (!this.calc_jacobians) {
                 alvision.Rodrigues(v, M);
                 alvision.Rodrigues(M, v2);
             }
             else {
-                alvision.Mat J1 = test_mat[OUTPUT][1], J2 = test_mat[OUTPUT][3];
-                alvision.Mat J1_0 = J1, J2_0 = J2;
+                var J1 = this.test_mat[this.OUTPUT][1], J2 = this.test_mat[this.OUTPUT][3];
+                var J1_0 = J1, J2_0 = J2;
                 alvision.Rodrigues(v, M, J1);
                 alvision.Rodrigues(M, v2, J2);
                 if (J1.data != J1_0.data) {
                     if (J1.size() != J1_0.size())
-                        J1 = J1.t();
+                        J1 = J1.t().toMat();
                     J1.convertTo(J1_0, J1_0.type());
                 }
                 if (J2.data != J2_0.data) {
                     if (J2.size() != J2_0.size())
-                        J2 = J2.t();
+                        J2 = J2.t().toMat();
                     J2.convertTo(J2_0, J2_0.type());
                 }
             }
@@ -688,30 +720,30 @@ class CV_RodriguesTest extends alvision.cvtest.ArrayTest
         }
 
 
-        alvision.cvtest.Rodrigues(vec, m, v2m_jac);
-        alvision.cvtest.Rodrigues(m, vec2, m2v_jac);
+        alvision.Rodrigues(vec, m, v2m_jac);
+        alvision.Rodrigues(m, vec2, m2v_jac);
         alvision.cvtest.copy(vec, vec2);
 
-        var theta0 = norm(vec2, CV_L2);
-        var theta1 = (theta0)%( Math.PI * 2);
+        var theta0 = alvision.norm(vec2, alvision.NormTypes.NORM_L2);
+        var theta1 = (theta0.valueOf())%( Math.PI * 2);
 
         if (theta1 > Math.PI)
             theta1 = -(Math.PI * 2 - theta1);
-        vec2 *= theta1 / (theta0 ? theta0 : 1);
+        vec2 = alvision.MatExpr.op_Multiplication(vec2, theta1 / (theta0 ? theta0.valueOf() : 1)).toMat();
 
         if (this.calc_jacobians) {
-            //cvInvert( v2m_jac, m2v_jac, CV_SVD );
-            var nrm = alvision.cvtest.norm(this.test_mat[this.REF_OUTPUT][3], CV_C);
+            //cvInvert( v2m_jac, m2v_jac, alvision.DecompTypes.DECOMP_SVD );
+            var nrm = alvision.cvtest.norm(this.test_mat[this.REF_OUTPUT][3],alvision.NormTypes.NORM_INF );
             if (alvision.FLT_EPSILON < nrm && nrm < 1000) {
                 alvision.gemm(this.test_mat[this.OUTPUT][1], this.test_mat[this.OUTPUT][3],
                     1, new alvision.Mat(), 0, this.test_mat[this.OUTPUT][4],
-                    v2m_jac .rows == 3 ? 0 : CV_GEMM_A_T + CV_GEMM_B_T);
+                    v2m_jac.rows == 3 ? 0 : alvision.GemmFlags.GEMM_1_T + alvision.GemmFlags.GEMM_2_T);
             }
             else {
-                setIdentity(test_mat[OUTPUT][4], Scalar::all(1.));
-                alvision.cvtest.copy(test_mat[REF_OUTPUT][2], test_mat[OUTPUT][2]);
+                alvision.setIdentity(this.test_mat[this.OUTPUT][4], alvision. Scalar.all(1.));
+                alvision.cvtest.copy(this.test_mat[this.REF_OUTPUT][2], this.test_mat[this.OUTPUT][2]);
             }
-            setIdentity(test_mat[REF_OUTPUT][4], Scalar::all(1.));
+            alvision.setIdentity(this.test_mat[this.REF_OUTPUT][4],  alvision.Scalar.all(1.));
         }
     }
 
@@ -763,7 +795,7 @@ class CV_FundamentalMatTest extends alvision.cvtest.ArrayTest
         return code;
     }
     fill_array(test_case_idx: alvision.int, i: alvision.int, j: alvision.int, arr: alvision.Mat): void {
-        double t[12] = { 0};
+        //double t[12] = { 0};
         var rng = this.ts.get_rng();
 
         if (i != this.INPUT) {
@@ -778,36 +810,38 @@ class CV_FundamentalMatTest extends alvision.cvtest.ArrayTest
             case 2:
                 {
                     var p = arr.ptr<alvision.double>("double");
-                    for (i = 0; i < arr.cols * 3; i += 3) {
-                        p[i] = alvision.cvtest.randReal(rng) * cube_size;
-                        p[i + 1] = alvision.cvtest.randReal(rng) * cube_size;
-                        p[i + 2] = alvision.cvtest.randReal(rng) * cube_size + cube_size;
+                    for (i = 0; i < arr.cols.valueOf() * 3; i = i.valueOf() + 3) {
+                        p[i.valueOf()] = alvision.cvtest.randReal(rng).valueOf() * this.cube_size.valueOf();
+                        p[i.valueOf() + 1] = alvision.cvtest.randReal(rng).valueOf() * this.cube_size.valueOf();
+                        p[i.valueOf() + 2] = alvision.cvtest.randReal(rng).valueOf() * this.cube_size.valueOf() + this.cube_size.valueOf();
                     }
                 }
                 break;
             case 3:
                 {
-                    double r[3];
-                    var rot_vec = new alvision.Mat(3, 1, alvision.MatrixType.CV_64F, r);
-                    var rot_mat = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, t, 4 * sizeof(t[0]));
+                    //double r[3];
+                    var rot_vec = new alvision.Mat(3, 1, alvision.MatrixType.CV_64F);//, r);
+                    var r = rot_vec.ptr<alvision.double>("double");
+                    var rot_mat = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, t, 4 * sizeof(t[0]));
+                    var t = rot_mat.ptr<alvision.double>("double");
                     r[0] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
                     r[1] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
                     r[2] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
 
-                    alvision.cvtest.Rodrigues(rot_vec, rot_mat);
-                    t[3] = alvision.cvtest.randReal(rng).valueOf() * cube_size;
-                    t[7] = alvision.cvtest.randReal(rng).valueOf() * cube_size;
-                    t[11] = alvision.cvtest.randReal(rng).valueOf() * cube_size;
-                    Mat(3, 4, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
+                    alvision.Rodrigues(rot_vec, rot_mat);
+                    t[3] = alvision.cvtest.randReal(rng).valueOf() *  this.cube_size.valueOf();
+                    t[7] = alvision.cvtest.randReal(rng).valueOf() *  this.cube_size.valueOf();
+                    t[11] = alvision.cvtest.randReal(rng).valueOf() * this.cube_size.valueOf();
+                    new alvision.Mat(3, 4, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
                 }
                 break;
             case 4:
             case 5:
-                t[0] = t[4] = alvision.cvtest.randReal(rng) * (max_f - min_f) + min_f;
-                t[2] = (img_size * 0.5 + alvision.cvtest.randReal(rng) * 4. - 2.) * t[0];
-                t[5] = (img_size * 0.5 + alvision.cvtest.randReal(rng) * 4. - 2.) * t[4];
+                t[0] = t[4] = alvision.cvtest.randReal(rng).valueOf() * (this.max_f.valueOf() - this.min_f.valueOf()) + this.min_f.valueOf();
+                t[2] = (this.img_size.valueOf() * 0.5 + alvision.cvtest.randReal(rng).valueOf() * 4. - 2.) * t[0].valueOf();
+                t[5] = (this.img_size.valueOf() * 0.5 + alvision.cvtest.randReal(rng).valueOf() * 4. - 2.) * t[4].valueOf();
                 t[8] = 1.;
-                Mat(3, 3, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
+                new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
                 break;
         }
     }
@@ -836,25 +870,25 @@ class CV_FundamentalMatTest extends alvision.cvtest.ArrayTest
         var pt_count_exp = alvision.cvtest.randReal(rng).valueOf() * 6 + 1;
         var pt_count = Math.round(Math.exp(pt_count_exp));
 
-        dims = alvision.cvtest.randInt(rng).valueOf() % 2 + 2;
-        method = 1 << (alvision.cvtest.randInt(rng).valueOf() % 4);
+        this.dims = alvision.cvtest.randInt(rng).valueOf() % 2 + 2;
+        this.method = 1 << (alvision.cvtest.randInt(rng).valueOf() % 4);
 
-        if (method == CV_FM_7POINT)
+        if (this.method ==  alvision.FundMatrixAlgo.FM_7POINT)
             pt_count = 7;
         else {
-            pt_count = Math.max(pt_count, 8 + (method == CV_FM_8POINT));
+            pt_count = Math.max(pt_count, 8 + ((this.method == alvision.FundMatrixAlgo.FM_8POINT) ? 1 : 0));
             if (pt_count >= 8 && alvision.cvtest.randInt(rng).valueOf() % 2)
-                method |= CV_FM_8POINT;
+                this.method = this.method.valueOf() | alvision.FundMatrixAlgo.FM_8POINT;
         }
 
         types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, 1);
 
         if (alvision.cvtest.randInt(rng).valueOf() % 2)
-            sizes[this.INPUT][0] = new alvision.Size(pt_count, dims);
+            sizes[this.INPUT][0] = new alvision.Size(pt_count, this.dims);
         else {
-            sizes[this.INPUT][0] = new alvision.Size(dims, pt_count);
+            sizes[this.INPUT][0] = new alvision.Size(this.dims, pt_count);
             if (alvision.cvtest.randInt(rng).valueOf() % 2) {
-                types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, dims);
+                types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, this.dims);
                 if (alvision.cvtest.randInt(rng).valueOf() % 2)
                     sizes[this.INPUT][0] = new alvision.Size(pt_count, 1);
                 else
@@ -893,139 +927,159 @@ class CV_FundamentalMatTest extends alvision.cvtest.ArrayTest
         // cvFindFundamentalMat calls alvision.findFundamentalMat
         var _input0 = this.test_mat[this.INPUT][0], _input1 = this.test_mat[this.INPUT][1];
         var F = this.test_mat[this.TEMP][0], mask = this.test_mat[this.TEMP][1];
-        f_result = cvFindFundamentalMat( &_input0, &_input1, &F, method, MAX(sigma * 3, 0.01), 0, &mask);
+        //cvFindFundamentalMat
+
+
+
+        var fm = alvision.findFundamentalMat(_input0, _input1, mask, <alvision.FundMatrixAlgo> this.method, Math.max(this.sigma.valueOf() * 3, 0.01), 0);
+        if (fm.empty()) {
+            this.f_result = 0;
+        } else {
+            var fm1 = fm.rowRange(0, Math.min(fm.rows.valueOf(), F.rows.valueOf()));
+            fm.rowRange(0, fm1.rows).convertTo(fm1, fm1.type());
+            this.f_result = fm1.rows.valueOf() / 3;
+        }
+
+
+
     }
     prepare_to_validation(test_case_idx: alvision.int): void {
         var Rt = this.test_mat[this.INPUT][3];
         var A1 = this.test_mat[this.INPUT][4];
         var A2 = this.test_mat[this.INPUT][5];
-        double f0[9], f[9];
-        var F0 = new alvision.Mat (3, 3, alvision.MatrixType.CV_64FC1, f0), F = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, f);
+        //double f0[9], f[9];
+        var F0 = new alvision.Mat(3, 3, alvision.MatrixType.CV_64FC1);//, f0),
+        var f0 = F0.ptr<alvision.double>("double");
+        var F = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, f);
+        var f = F.ptr<alvision.double>("double");
 
-        Mat invA1, invA2, R = Rt.colRange(0, 3), T;
+        var invA1 = new alvision.Mat();
+        var invA2 = new alvision.Mat();
+        var R = Rt.colRange(0, 3);
+        var T = new alvision.Mat();
 
-        alvision.invert(A1, invA1, CV_SVD);
-        alvision.invert(A2, invA2, CV_SVD);
+        alvision.invert(A1, invA1,alvision.DecompTypes.DECOMP_SVD);
+        alvision.invert(A2, invA2, alvision.DecompTypes.DECOMP_SVD);
 
-        var tx = Rt.atGet<alvision.double>("double",0, 3);
-        var ty = Rt.atGet<alvision.double>("double",1, 3);
-        var tz = Rt.atGet<alvision.double>("double",2, 3);
+        var tx = Rt.at<alvision.double>("double", 0, 3).get();
+        var ty = Rt.at<alvision.double>("double", 1, 3).get();
+        var tz = Rt.at<alvision.double>("double", 2, 3).get();
 
         var _t_x = [0, -tz, ty, tz, 0, -tx, -ty, tx, 0];
-    };
+    
 
-    // F = (A2^-T)*[t]_x*R*(A1^-1)
-    alvision.gemm(invA2, new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, _t_x), 1, new alvision.Mat(), 0, T, CV_GEMM_A_T );
-    alvision.gemm(R, invA1, 1, new alvision.Mat(), 0, invA2 );
-    alvision.gemm(T, invA2, 1, new alvision.Mat(), 0, F0 );
-    F0 *= 1./f0[8];
+        // F = (A2^-T)*[t]_x*R*(A1^-1)
+        alvision.gemm(invA2, new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, _t_x), 1, new alvision.Mat(), 0, T, alvision.GemmFlags.GEMM_1_T);
+        alvision.gemm(R, invA1, 1, new alvision.Mat(), 0, invA2);
+        alvision.gemm(T, invA2, 1, new alvision.Mat(), 0, F0);
+        F0 = alvision.MatExpr.op_Multiplication(F0, 1. / f0[8].valueOf()).toMat();
 
-    uchar* status = test_mat[TEMP][1].ptr();
-    double err_level = get_success_error_level(test_case_idx, OUTPUT, 1);
-    uchar* mtfm1 = test_mat[REF_OUTPUT][1].ptr();
-    uchar* mtfm2 = test_mat[OUTPUT][1].ptr();
-    double* f_prop1 = test_mat[REF_OUTPUT][0].ptr<double>();
-    double* f_prop2 = test_mat[OUTPUT][0].ptr<double>();
+        var status = this.test_mat[this.TEMP][1].ptr<alvision.uchar>("uchar");
+        var err_level = this.get_success_error_level(test_case_idx, this.OUTPUT, 1);
+        var mtfm1 = this.test_mat[this.REF_OUTPUT][1].ptr<alvision.uchar>("uchar");
+        var mtfm2 = this.test_mat[this.OUTPUT][1].ptr<alvision.uchar>("uchar");
+        var f_prop1 = this.test_mat[this.REF_OUTPUT][0].ptr<alvision.double>("double");
+        var f_prop2 = this.test_mat[this.OUTPUT][0].ptr<alvision.double>("double");
 
-    int i, pt_count = test_mat[INPUT][2].cols;
-    Mat p1(1, pt_count, alvision.MatrixType.CV_64FC2);
-    Mat p2(1, pt_count, alvision.MatrixType.CV_64FC2);
+            var pt_count = this.test_mat[this.INPUT][2].cols;
+        var p1 = new alvision.Mat(1, pt_count, alvision.MatrixType.CV_64FC2);
+        var p2 = new alvision.Mat(1, pt_count, alvision.MatrixType.CV_64FC2);
 
-    test_convertHomogeneous(this.test_mat[this.INPUT][0], p1);
-    test_convertHomogeneous(this.test_mat[this.INPUT][1], p2);
+        test_convertHomogeneous(this.test_mat[this.INPUT][0], p1);
+        test_convertHomogeneous(this.test_mat[this.INPUT][1], p2);
 
-    alvision.cvtest.convert(this.test_mat[this.TEMP][0], F, F.type());
+        alvision.cvtest.convert(this.test_mat[this.TEMP][0], F, F.type());
 
-    if(method <= CV_FM_8POINT)
-    memset(status, 1, pt_count );
+        if (this.method <= alvision.FundMatrixAlgo.FM_8POINT)
+            status.forEach((v, i, a) => a[i] = 0);
 
-    for(i = 0; i < pt_count; i++ )
-    {
-        var x1 = p1.at<Point2d>(i).x;
-        var y1 = p1.at<Point2d>(i).y;
-        var x2 = p2.at<Point2d>(i).x;
-        var y2 = p2.at<Point2d>(i).y;
-        double n1 = 1. / sqrt(x1 * x1 + y1 * y1 + 1);
-        double n2 = 1. / sqrt(x2 * x2 + y2 * y2 + 1);
-        double t0 = fabs(f0[0] * x2 * x1 + f0[1] * x2 * y1 + f0[2] * x2 +
-            f0[3] * y2 * x1 + f0[4] * y2 * y1 + f0[5] * y2 +
-            f0[6] * x1 + f0[7] * y1 + f0[8]) * n1 * n2;
-        double t = fabs(f[0] * x2 * x1 + f[1] * x2 * y1 + f[2] * x2 +
-            f[3] * y2 * x1 + f[4] * y2 * y1 + f[5] * y2 +
-            f[6] * x1 + f[7] * y1 + f[8]) * n1 * n2;
-        mtfm1[i] = 1;
-        mtfm2[i] = !status[i] || t0 > err_level || t < err_level;
+        for (var i = 0; i < pt_count; i++) {
+            var x1 = p1.at<alvision.Point2d>("Point2d", i).get().x.valueOf();
+            var y1 = p1.at<alvision.Point2d>("Point2d", i).get().y.valueOf();
+            var x2 = p2.at<alvision.Point2d>("Point2d", i).get().x.valueOf();
+            var y2 = p2.at<alvision.Point2d>("Point2d", i).get().y.valueOf();
+            var n1 = 1. / Math.sqrt(x1 * x1 + y1 * y1 + 1);
+            var n2 = 1. / Math.sqrt(x2 * x2 + y2 * y2 + 1);
+            var t0 = Math.abs(f0[0].valueOf() * x2 * x1 + f0[1].valueOf() * x2 * y1 + f0[2].valueOf() * x2 +
+                f0[3].valueOf() * y2 * x1 + f0[4].valueOf() * y2 * y1 + f0[5].valueOf() * y2 +
+                f0[6].valueOf() * x1 + f0[7].valueOf() * y1 + f0[8].valueOf()) * n1 * n2;
+            var t = Math.abs(f[0].valueOf() * x2 * x1 + f[1].valueOf() * x2 * y1 + f[2].valueOf() * x2 +
+                f[3].valueOf() * y2 * x1 + f[4].valueOf() * y2 * y1 + f[5].valueOf() * y2 +
+                f[6].valueOf() * x1 + f[7].valueOf() * y1 + f[8].valueOf()) * n1 * n2;
+            mtfm1[i] = 1;
+            mtfm2[i] = !status[i] || t0 > err_level || t < err_level;
+        }
+
+        f_prop1[0] = 1;
+        f_prop1[1] = 1;
+        f_prop1[2] = 0;
+
+        f_prop2[0] = (this.f_result != 0) ? 1 : 0;
+        f_prop2[1] = f[8];
+        f_prop2[2] = alvision.determinant(F);
     }
 
-    f_prop1[0] = 1;
-    f_prop1[1] = 1;
-    f_prop1[2] = 0;
-
-    f_prop2[0] = f_result != 0;
-    f_prop2[1] = f[8];
-    f_prop2[2] = alvision.determinant(F);
-    }
-
-    int method;
-    int img_size;
-    int cube_size;
-    int dims;
-    int f_result;
-    double min_f, max_f;
-    double sigma;
-    bool test_cpp;
+    protected  method: alvision.int;
+    protected  img_size: alvision.int;
+    protected  cube_size: alvision.int;
+    protected  dims: alvision.int;
+    protected  f_result: alvision.int;
+    protected  min_f: alvision.double;
+        protected max_f: alvision.double;
+    protected sigma: alvision.double ;
+    protected test_cpp: boolean;
 };
 
 
 /******************************* find essential matrix ***********************************/
-class CV_EssentialMatTest extends alvision.cvtest.ArrayTest
-{
+class CV_EssentialMatTest extends alvision.cvtest.ArrayTest {
     constructor() {
+        super();
         // input arrays:
         //   0, 1 - arrays of 2d points that are passed to %func%.
         //          Can have different data type, layout, be stored in homogeneous coordinates or not.
         //   2 - array of 3d points that are projected to both view planes
         //   3 - [R|t] matrix for the second view plane (for the first one it is [I|0]
         //   4 - intrinsic matrix for both camera
-        test_array[INPUT].push(null);
-        test_array[INPUT].push(null);
-        test_array[INPUT].push(null);
-        test_array[INPUT].push(null);
-        test_array[INPUT].push(null);
-        test_array[TEMP].push(null);
-        test_array[TEMP].push(null);
-        test_array[TEMP].push(null);
-        test_array[TEMP].push(null);
-        test_array[TEMP].push(null);
-        test_array[OUTPUT].push(null); // Essential Matrix singularity
-        test_array[OUTPUT].push(null); // Inliers mask
-        test_array[OUTPUT].push(null); // Translation error
-        test_array[OUTPUT].push(null); // Positive depth count
-        test_array[REF_OUTPUT].push(null);
-        test_array[REF_OUTPUT].push(null);
-        test_array[REF_OUTPUT].push(null);
-        test_array[REF_OUTPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.TEMP].push(null);
+        this.test_array[this.TEMP].push(null);
+        this.test_array[this.TEMP].push(null);
+        this.test_array[this.TEMP].push(null);
+        this.test_array[this.TEMP].push(null);
+        this.test_array[this.OUTPUT].push(null); // Essential Matrix singularity
+        this.test_array[this.OUTPUT].push(null); // Inliers mask
+        this.test_array[this.OUTPUT].push(null); // Translation error
+        this.test_array[this.OUTPUT].push(null); // Positive depth count
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
 
-        element_wise_relative_error = false;
+        this.element_wise_relative_error = false;
 
-        method = 0;
-        img_size = 10;
-        cube_size = 10;
-        dims = 0;
-        min_f = 1;
-        max_f = 3;
-        sigma = 0;
+        this.method = 0;
+        this.img_size = 10;
+        this.cube_size = 10;
+        this.dims = 0;
+        this.min_f = 1;
+        this.max_f = 3;
+        this.sigma = 0;
     }
 
-    read_params(fs: alvision.FileStorage): alvision.int{
+    read_params(fs: alvision.FileStorage): alvision.int {
         var code = super.read_params(fs);
         return code;
     }
     fill_array(test_case_idx: alvision.int, i: alvision.int, j: alvision.int, arr: alvision.Mat): void {
-        double t[12] = { 0};
+        //double t[12] = { 0};
         var rng = this.ts.get_rng();
 
-        if (i != INPUT) {
+        if (i != this.INPUT) {
             super.fill_array(test_case_idx, i, j, arr);
             return;
         }
@@ -1036,54 +1090,55 @@ class CV_EssentialMatTest extends alvision.cvtest.ArrayTest
                 return; // fill them later in prepare_test_case
             case 2:
                 {
-                    double * p = arr.ptr<double>();
-                    for (i = 0; i < arr.cols * 3; i += 3) {
-                        p[i] = alvision.cvtest.randReal(rng) * cube_size;
-                        p[i + 1] = alvision.cvtest.randReal(rng) * cube_size;
-                        p[i + 2] = alvision.cvtest.randReal(rng) * cube_size + cube_size;
+                    var p = arr.ptr<alvision.double>("double");
+                    for (i = 0; i < arr.cols.valueOf() * 3; i = i.valueOf() + 3) {
+                        p[i.valueOf()] = alvision.cvtest.randReal(rng).valueOf() *     this.cube_size.valueOf();
+                        p[i.valueOf() + 1] = alvision.cvtest.randReal(rng).valueOf() * this.cube_size.valueOf();
+                        p[i.valueOf() + 2] = alvision.cvtest.randReal(rng).valueOf() * this.cube_size.valueOf() + this.cube_size.valueOf();
                     }
                 }
                 break;
             case 3:
                 {
-                    double r[3];
-                    Mat rot_vec(3, 1, alvision.MatrixType.CV_64F, r);
-                    Mat rot_mat(3, 3, alvision.MatrixType.CV_64F, t, 4 * sizeof(t[0]));
-                    r[0] = alvision.cvtest.randReal(rng) * Math.PI * 2;
-                    r[1] = alvision.cvtest.randReal(rng) * Math.PI * 2;
-                    r[2] = alvision.cvtest.randReal(rng) * Math.PI * 2;
+                    //double r[3];
+                    var rot_vec = new alvision.Mat(3, 1, alvision.MatrixType.CV_64F);//, r);
+                    var r = rot_vec.ptr<alvision.double>("double");
+                    var rot_mat = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, t, 4 * sizeof(t[0]));
+                    var t = rot_mat.ptr<alvision.double>("double");
+                    r[0] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
+                    r[1] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
+                    r[2] = alvision.cvtest.randReal(rng).valueOf() * Math.PI * 2;
 
-                    alvision.cvtest.Rodrigues(rot_vec, rot_mat);
-                    t[3] = alvision.cvtest.randReal(rng) * cube_size;
-                    t[7] = alvision.cvtest.randReal(rng) * cube_size;
-                    t[11] = alvision.cvtest.randReal(rng) * cube_size;
-                    Mat(3, 4, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
+                    alvision.Rodrigues(rot_vec, rot_mat);
+                    t[3] = alvision.cvtest.randReal(rng).valueOf() *  this.cube_size.valueOf();
+                    t[7] = alvision.cvtest.randReal(rng).valueOf() *  this.cube_size.valueOf();
+                    t[11] = alvision.cvtest.randReal(rng).valueOf() * this.cube_size.valueOf();
+                    new alvision.Mat(3, 4, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
                 }
                 break;
             case 4:
-                t[0] = t[4] = alvision.cvtest.randReal(rng) * (max_f - min_f) + min_f;
-                t[2] = (img_size * 0.5 + alvision.cvtest.randReal(rng) * 4. - 2.) * t[0];
-                t[5] = (img_size * 0.5 + alvision.cvtest.randReal(rng) * 4. - 2.) * t[4];
+                t[0] = t[4] = alvision.cvtest.randReal(rng).valueOf() * (this.max_f.valueOf() - this.min_f.valueOf()) + this.min_f.valueOf();
+                t[2] = (this.img_size.valueOf() * 0.5 + alvision.cvtest.randReal(rng).valueOf() * 4. - 2.) * t[0].valueOf();
+                t[5] = (this.img_size.valueOf() * 0.5 + alvision.cvtest.randReal(rng).valueOf() * 4. - 2.) * t[4].valueOf();
                 t[8] = 1.;
-                Mat(3, 3, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
+                new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, t).convertTo(arr, arr.type());
                 break;
         }
     }
-    prepare_test_case(test_case_idx: alvision.int): alvision.int{
-        int code = super.prepare_test_case(test_case_idx);
+    prepare_test_case(test_case_idx: alvision.int): alvision.int {
+        var code = super.prepare_test_case(test_case_idx);
         if (code > 0) {
-            const Mat& _3d = test_mat[INPUT][2];
+            const _3d = this.test_mat[this.INPUT][2];
             var rng = this.ts.get_rng();
-            double Idata[] = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0 };
-            Mat I(3, 4, alvision.MatrixType.CV_64F, Idata);
-            int k;
+            var Idata = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0];
+            var I = new alvision.Mat(3, 4, alvision.MatrixType.CV_64F, Idata);
 
-            for (k = 0; k < 2; k++) {
-                const Mat& Rt = k == 0 ? I : test_mat[INPUT][3];
-                const Mat& A = test_mat[INPUT][4];
-                Mat & _2d = test_mat[INPUT][k];
+            for (var k = 0; k < 2; k++) {
+                const Rt = k == 0 ? I : this.test_mat[this.INPUT][3];
+                const A = this.test_mat[this.INPUT][4];
+                var _2d = this.test_mat[this.INPUT][k];
 
-                test_projectPoints(_3d, Rt, A, _2d, &rng, sigma);
+                test_projectPoints(_3d, Rt, A, _2d, rng, this.sigma);
             }
         }
 
@@ -1091,206 +1146,210 @@ class CV_EssentialMatTest extends alvision.cvtest.ArrayTest
     }
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         var rng = this.ts.get_rng();
-        int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
-        double pt_count_exp = alvision.cvtest.randReal(rng) * 6 + 1;
-        int pt_count = MAX(5, Math.round(exp(pt_count_exp)));
+        var pt_depth = alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        var pt_count_exp = alvision.cvtest.randReal(rng).valueOf() * 6 + 1;
+        var pt_count = Math.max(5, Math.round(Math.exp(pt_count_exp)));
 
-        dims = alvision.cvtest.randInt(rng) % 2 + 2;
-        dims = 2;
-        method = CV_LMEDS << (alvision.cvtest.randInt(rng) % 2);
+        this.dims = alvision.cvtest.randInt(rng).valueOf() % 2 + 2;
+        this.dims = 2;
+        this.method = alvision.RobustEstimationAlgo.LMEDS << (alvision.cvtest.randInt(rng).valueOf() % 2);
 
-        types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, 1);
+        types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, 1);
 
-        if (0 && alvision.cvtest.randInt(rng) % 2)
-            sizes[INPUT][0] = alvision.Size(pt_count, dims);
+        if (0 && alvision.cvtest.randInt(rng).valueOf() % 2)
+            sizes[this.INPUT][0] = new alvision.Size(pt_count, this.dims);
         else {
-            sizes[INPUT][0] = alvision.Size(dims, pt_count);
-            if (alvision.cvtest.randInt(rng) % 2) {
-                types[INPUT][0] = CV_MAKETYPE(pt_depth, dims);
-                if (alvision.cvtest.randInt(rng) % 2)
-                    sizes[INPUT][0] = alvision.Size(pt_count, 1);
+            sizes[this.INPUT][0] = new alvision.Size(this.dims, pt_count);
+            if (alvision.cvtest.randInt(rng).valueOf() % 2) {
+                types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, this.dims);
+                if (alvision.cvtest.randInt(rng).valueOf() % 2)
+                    sizes[this.INPUT][0] = new alvision.Size(pt_count, 1);
                 else
-                    sizes[INPUT][0] = alvision.Size(1, pt_count);
+                    sizes[this.INPUT][0] = new alvision.Size(1, pt_count);
             }
         }
 
-        sizes[INPUT][1] = sizes[INPUT][0];
-        types[INPUT][1] = types[INPUT][0];
+        sizes[this.INPUT][1] = sizes[this.INPUT][0];
+        types[this.INPUT][1] = types[this.INPUT][0];
 
-        sizes[INPUT][2] = alvision.Size(pt_count, 1);
-        types[INPUT][2] = alvision.MatrixType.CV_64FC3;
+        sizes[this.INPUT][2] = new alvision.Size(pt_count, 1);
+        types[this.INPUT][2] = alvision.MatrixType.CV_64FC3;
 
-        sizes[INPUT][3] = alvision.Size(4, 3);
-        types[INPUT][3] = alvision.MatrixType.CV_64FC1;
+        sizes[this.INPUT][3] = new alvision.Size(4, 3);
+        types[this.INPUT][3] = alvision.MatrixType.CV_64FC1;
 
-        sizes[INPUT][4] = alvision.Size(3, 3);
-        types[INPUT][4] = alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 1);
+        sizes[this.INPUT][4] = new alvision.Size(3, 3);
+        types[this.INPUT][4] = alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 1);
 
-        sizes[TEMP][0] = alvision.Size(3, 3);
-        types[TEMP][0] = alvision.MatrixType.CV_64FC1;
-        sizes[TEMP][1] = alvision.Size(pt_count, 1);
-        types[TEMP][1] = CV_8UC1;
-        sizes[TEMP][2] = alvision.Size(3, 3);
-        types[TEMP][2] = alvision.MatrixType.CV_64FC1;
-        sizes[TEMP][3] = alvision.Size(3, 1);
-        types[TEMP][3] = alvision.MatrixType.CV_64FC1;
-        sizes[TEMP][4] = alvision.Size(pt_count, 1);
-        types[TEMP][4] = CV_8UC1;
+        sizes[this.TEMP][0] = new alvision.Size(3, 3);
+        types[this.TEMP][0] = alvision.MatrixType.CV_64FC1;
+        sizes[this.TEMP][1] = new alvision.Size(pt_count, 1);
+        types[this.TEMP][1] = alvision.MatrixType.CV_8UC1;
+        sizes[this.TEMP][2] = new alvision.Size(3, 3);
+        types[this.TEMP][2] = alvision.MatrixType.CV_64FC1;
+        sizes[this.TEMP][3] = new alvision.Size(3, 1);
+        types[this.TEMP][3] = alvision.MatrixType.CV_64FC1;
+        sizes[this.TEMP][4] = new alvision.Size(pt_count, 1);
+        types[this.TEMP][4] = alvision.MatrixType.CV_8UC1;
 
-        sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = alvision.Size(3, 1);
-        types[OUTPUT][0] = types[REF_OUTPUT][0] = alvision.MatrixType.CV_64FC1;
-        sizes[OUTPUT][1] = sizes[REF_OUTPUT][1] = alvision.Size(pt_count, 1);
-        types[OUTPUT][1] = types[REF_OUTPUT][1] = CV_8UC1;
-        sizes[OUTPUT][2] = sizes[REF_OUTPUT][2] = alvision.Size(1, 1);
-        types[OUTPUT][2] = types[REF_OUTPUT][2] = alvision.MatrixType.CV_64FC1;
-        sizes[OUTPUT][3] = sizes[REF_OUTPUT][3] = alvision.Size(1, 1);
-        types[OUTPUT][3] = types[REF_OUTPUT][3] = CV_8UC1;
+        sizes[this.OUTPUT][0] = sizes[this.REF_OUTPUT][0] = new alvision.Size(3, 1);
+        types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = alvision.MatrixType.CV_64FC1;
+        sizes[this.OUTPUT][1] = sizes[this.REF_OUTPUT][1] = new alvision.Size(pt_count, 1);
+        types[this.OUTPUT][1] = types[this.REF_OUTPUT][1] = alvision.MatrixType.CV_8UC1;
+        sizes[this.OUTPUT][2] = sizes[this.REF_OUTPUT][2] = new alvision.Size(1, 1);
+        types[this.OUTPUT][2] = types[this.REF_OUTPUT][2] = alvision.MatrixType.CV_64FC1;
+        sizes[this.OUTPUT][3] = sizes[this.REF_OUTPUT][3] = new alvision.Size(1, 1);
+        types[this.OUTPUT][3] = types[this.REF_OUTPUT][3] = alvision.MatrixType.CV_8UC1;
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
         return 1e-2;
     }
     run_func(): void {
-        Mat _input0(test_mat[INPUT][0]), _input1(test_mat[INPUT][1]);
-        Mat K(test_mat[INPUT][4]);
-        double focal(K.at<double>(0, 0));
-        alvision.Point2d pp(K.at<double>(0, 2), K.at<double>(1, 2));
+        var _input0 = new alvision.Mat(this.test_mat[this.INPUT][0]), _input1 = new alvision.Mat(this.test_mat[this.INPUT][1]);
+        var K = new alvision.Mat(this.test_mat[this.INPUT][4]);
+        var focal = (K.at<alvision.double>("double", 0, 0).get());
+        var pp = new alvision.Point2d(K.at<alvision.double>("double", 0, 2).get(), K.at<alvision.double>("double", 1, 2).get());
 
         var rng = this.ts.get_rng();
-        Mat E, mask1(test_mat[TEMP][1]);
-        E = alvision.findEssentialMat(_input0, _input1, focal, pp, method, 0.99, MAX(sigma * 3, 0.0001), mask1);
+        var E = new alvision.Mat(), mask1 = new alvision.Mat(this.test_mat[this.TEMP][1]);
+        E = alvision.findEssentialMat(_input0, _input1, focal, pp, this.method, 0.99, Math.max(this.sigma.valueOf() * 3, 0.0001), mask1);
         if (E.rows > 3) {
-            int count = E.rows / 3;
-            int row = (alvision.cvtest.randInt(rng) % count) * 3;
-            E = E.rowRange(row, row + 3) * 1.0;
+            var count = E.rows.valueOf() / 3;
+            var row = (alvision.cvtest.randInt(rng).valueOf() % count) * 3;
+            E = alvision.MatExpr.op_Multiplication( E.rowRange(row, row + 3) , 1.0).toMat();
         }
 
-        E.copyTo(test_mat[TEMP][0]);
+        E.copyTo(this.test_mat[this.TEMP][0]);
 
-        Mat R, t, mask2;
-        recoverPose(E, _input0, _input1, R, t, focal, pp, mask2);
-        R.copyTo(test_mat[TEMP][2]);
-        t.copyTo(test_mat[TEMP][3]);
-        mask2.copyTo(test_mat[TEMP][4]);
+        var R = new alvision.Mat(), t = new alvision.Mat(), mask2 = new alvision.Mat();
+        alvision.recoverPose(E, _input0, _input1, R, t, focal, pp, mask2);
+        R.copyTo(this.test_mat[this.TEMP][2]);
+        t.copyTo(this.test_mat[this.TEMP][3]);
+        mask2.copyTo(this.test_mat[this.TEMP][4]);
     }
     prepare_to_validation(test_case_idx: alvision.int): void {
-        const Mat& Rt0 = test_mat[INPUT][3];
-        const Mat& A = test_mat[INPUT][4];
-        double f0[9], f[9], e[9];
-        Mat F0(3, 3, alvision.MatrixType.CV_64FC1, f0), F(3, 3, alvision.MatrixType.CV_64F, f);
-        Mat E(3, 3, alvision.MatrixType.CV_64F, e);
+        const Rt0 = this.test_mat[this.INPUT][3];
+        const A = this.test_mat[this.INPUT][4];
+        //double f0[9], f[9], e[9];
+        var F0 = new alvision.Mat(3, 3, alvision.MatrixType.CV_64FC1);//, f0),
+        var f0 = F0.ptr<alvision.double>("double");
+        var F = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, f);
+        var f = F.ptr<alvision.double>("double");
+        var E = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, e);
+        var e = E.ptr<alvision.double>("double");
 
-        Mat invA, R = Rt0.colRange(0, 3), T1, T2;
+        var invA = new alvision.Mat, R = Rt0.colRange(0, 3), T1 = new alvision.Mat(), T2 = new alvision.Mat();
 
-        alvision.invert(A, invA, CV_SVD);
+        alvision.invert(A, invA, alvision.DecompTypes.DECOMP_SVD);
 
-        double tx = Rt0.at<double>(0, 3);
-        double ty = Rt0.at<double>(1, 3);
-        double tz = Rt0.at<double>(2, 3);
+        var tx = Rt0.at<alvision.double>("double", 0, 3);
+        var ty = Rt0.at<alvision.double>("double", 1, 3);
+        var tz = Rt0.at<alvision.double>("double", 2, 3);
 
-        double _t_x[] = { 0, -tz, ty, tz, 0, -tx, -ty, tx, 0
-    };
+        var _t_x = [0, -tz, ty, tz, 0, -tx, -ty, tx, 0];
+    
 
-    // F = (A2^-T)*[t]_x*R*(A1^-1)
-    alvision.gemm(invA, Mat(3, 3, alvision.MatrixType.CV_64F, _t_x), 1, Mat(), 0, T1, CV_GEMM_A_T );
-    alvision.gemm(R, invA, 1, Mat(), 0, T2 );
-    alvision.gemm(T1, T2, 1, Mat(), 0, F0 );
-    F0 *= 1./f0[8];
+        // F = (A2^-T)*[t]_x*R*(A1^-1)
+        alvision.gemm(invA, new alvision.Mat(3, 3, alvision.MatrixType.CV_64F, _t_x), 1, new alvision.Mat(), 0, T1, alvision.GemmFlags.GEMM_1_T);
+        alvision.gemm(R, invA, 1, new alvision.Mat(), 0, T2);
+        alvision.gemm(T1, T2, 1, new alvision.Mat(), 0, F0);
+        F0 = alvision.MatExpr.op_Multiplication(F0, 1. / f0[8].valueOf()).toMat();
 
-    uchar* status = test_mat[TEMP][1].ptr();
-    double err_level = get_success_error_level(test_case_idx, OUTPUT, 1);
-    uchar* mtfm1 = test_mat[REF_OUTPUT][1].ptr();
-    uchar* mtfm2 = test_mat[OUTPUT][1].ptr();
-    double* e_prop1 = test_mat[REF_OUTPUT][0].ptr<double>();
-    double* e_prop2 = test_mat[OUTPUT][0].ptr<double>();
-    Mat E_prop2 = Mat(3, 1, alvision.MatrixType.CV_64F, e_prop2);
+        var status = this.test_mat[this.TEMP][1].ptr<alvision.uchar>("uchar");
+        var err_level = this.get_success_error_level(test_case_idx, this.OUTPUT, 1);
+        var mtfm1 = this.test_mat[this.REF_OUTPUT][1].ptr<alvision.uchar>("uchar");
+        var mtfm2 = this.test_mat[this.OUTPUT][1].ptr<alvision.uchar>("uchar");
+        var e_prop1 = this.test_mat[this.REF_OUTPUT][0].ptr<alvision.double>("double");
+        var e_prop2 = this.test_mat[this.OUTPUT][0].ptr<alvision.double>("double");
+        var E_prop2 = new alvision.Mat(3, 1, alvision.MatrixType.CV_64F, e_prop2);
 
-    int i, pt_count = test_mat[INPUT][2].cols;
-    Mat p1(1, pt_count, alvision.MatrixType.CV_64FC2);
-    Mat p2(1, pt_count, alvision.MatrixType.CV_64FC2);
+        var pt_count = this.test_mat[this.INPUT][2].cols;
+        var p1 = new alvision.Mat(1, pt_count, alvision.MatrixType.CV_64FC2);
+        var p2 = new alvision.Mat(1, pt_count, alvision.MatrixType.CV_64FC2);
 
-    test_convertHomogeneous(test_mat[INPUT][0], p1);
-    test_convertHomogeneous(test_mat[INPUT][1], p2);
+        test_convertHomogeneous(this.test_mat[this.INPUT][0], p1);
+        test_convertHomogeneous(this.test_mat[this.INPUT][1], p2);
 
-    alvision.cvtest.convert(test_mat[TEMP][0], E, E.type());
-    alvision.gemm(invA, E, 1, Mat(), 0, T1, CV_GEMM_A_T );
-    alvision.gemm(T1, invA, 1, Mat(), 0, F );
+        alvision.cvtest.convert(this.test_mat[this.TEMP][0], E, E.type());
+        alvision.gemm(invA, E, 1,  new alvision.Mat(), 0, T1, alvision.GemmFlags.GEMM_1_T);
+        alvision.gemm(T1, invA, 1, new alvision.Mat(), 0, F);
 
-    for(i = 0; i < pt_count; i++ )
-    {
-        double x1 = p1.at<Point2d>(i).x;
-        double y1 = p1.at<Point2d>(i).y;
-        double x2 = p2.at<Point2d>(i).x;
-        double y2 = p2.at<Point2d>(i).y;
-        //        double t0 = sampson_error(f0, x1, y1, x2, y2);
-        //        double t = sampson_error(f, x1, y1, x2, y2);
-        double n1 = 1. / sqrt(x1 * x1 + y1 * y1 + 1);
-        double n2 = 1. / sqrt(x2 * x2 + y2 * y2 + 1);
-        double t0 = fabs(f0[0] * x2 * x1 + f0[1] * x2 * y1 + f0[2] * x2 +
-            f0[3] * y2 * x1 + f0[4] * y2 * y1 + f0[5] * y2 +
-            f0[6] * x1 + f0[7] * y1 + f0[8]) * n1 * n2;
-        double t = fabs(f[0] * x2 * x1 + f[1] * x2 * y1 + f[2] * x2 +
-            f[3] * y2 * x1 + f[4] * y2 * y1 + f[5] * y2 +
-            f[6] * x1 + f[7] * y1 + f[8]) * n1 * n2;
-        mtfm1[i] = 1;
-        mtfm2[i] = !status[i] || t0 > err_level || t < err_level;
+        for (var i = 0; i < pt_count; i++) {
+            var x1 = p1.at<alvision.Point2d>("Point2d", i).get().x.valueOf();
+            var y1 = p1.at<alvision.Point2d>("Point2d", i).get().y.valueOf();
+            var x2 = p2.at<alvision.Point2d>("Point2d", i).get().x.valueOf();
+            var y2 = p2.at<alvision.Point2d>("Point2d", i).get().y.valueOf();
+            //        double t0 = sampson_error(f0, x1, y1, x2, y2);
+            //        double t = sampson_error(f, x1, y1, x2, y2);
+            var n1 = 1. / Math.sqrt(x1.valueOf() * x1.valueOf() + y1.valueOf() * y1.valueOf() + 1);
+            var n2 = 1. / Math.sqrt(x2.valueOf() * x2.valueOf() + y2.valueOf() * y2.valueOf() + 1);
+            var t0 = Math.abs(f0[0].valueOf() * x2 * x1 + f0[1].valueOf() * x2 * y1 + f0[2].valueOf() * x2 +
+                f0[3].valueOf() * y2 * x1 + f0[4].valueOf() * y2 * y1 + f0[5].valueOf() * y2 +
+                f0[6].valueOf() * x1 + f0[7].valueOf() * y1 + f0[8].valueOf()) * n1 * n2;
+            var t = Math.abs(f[0].valueOf() * x2 * x1 + f[1].valueOf() * x2 * y1 + f[2].valueOf() * x2 +
+                f[3].valueOf() * y2 * x1 + f[4].valueOf() * y2 * y1 + f[5].valueOf() * y2 +
+                f[6].valueOf() * x1 + f[7].valueOf() * y1 + f[8].valueOf()) * n1 * n2;
+            mtfm1[i] = 1;
+            mtfm2[i] = !status[i] || t0 > err_level || t < err_level;
+        }
+
+        e_prop1[0] = Math.sqrt(0.5);
+        e_prop1[1] = Math.sqrt(0.5);
+        e_prop1[2] = 0;
+
+        e_prop2[0] = 0;
+        e_prop2[1] = 0;
+        e_prop2[2] = 0;
+        alvision.SVD.compute(E, E_prop2);
+
+
+
+        var pose_prop1 = this.test_mat[this.REF_OUTPUT][2].ptr<alvision.double>("double");
+        var pose_prop2 = this.test_mat[this.OUTPUT][2].ptr<alvision.double>("double");
+        var terr1 = alvision.norm(alvision.MatExpr.op_Division(Rt0.col(3) , alvision.norm(Rt0.col(3))).op_Addition( this.test_mat[this.TEMP][3]).toMat(), alvision.NormTypes.NORM_L2);
+        var terr2 = alvision.norm(alvision.MatExpr.op_Division(Rt0.col(3) , alvision.norm(Rt0.col(3))).op_Substraction( this.test_mat[this.TEMP][3]).toMat(), alvision.NormTypes.NORM_L2);
+        var rvec = new alvision.Mat();
+        alvision.Rodrigues(Rt0.colRange(0, 3), rvec);
+        pose_prop1[0] = 0;
+        // No check for CV_LMeDS on translation. Since it
+        // involves with some degraded problem, when data is exact inliers.
+        pose_prop2[0] = this.method == alvision.RobustEstimationAlgo.LMEDS || pt_count == 5 ? 0 : Math.min(terr1.valueOf(), terr2.valueOf());
+
+
+        //    int inliers_count = countNonZero(test_mat[TEMP][1]);
+        //    int good_count = countNonZero(test_mat[TEMP][4]);
+        this.test_mat[this.OUTPUT][3].setTo( 1); //good_count >= inliers_count / 2;
+        this.test_mat[this.REF_OUTPUT][3].setTo( 0);
     }
 
-    e_prop1[0] = sqrt(0.5);
-    e_prop1[1] = sqrt(0.5);
-    e_prop1[2] = 0;
 
-    e_prop2[0] = 0;
-    e_prop2[1] = 0;
-    e_prop2[2] = 0;
-    SVD::compute(E, E_prop2);
+    sampson_error(f: Array<alvision.double>, x1: alvision.double, y1: alvision.double, x2: alvision.double, y2: alvision.double): alvision.double {
+        var Fx1 = [
+            f[0].valueOf() * x1.valueOf() + f[1].valueOf() * y1.valueOf() + f[2].valueOf(),
+            f[3].valueOf() * x1.valueOf() + f[4].valueOf() * y1.valueOf() + f[5].valueOf(),
+            f[6].valueOf() * x1.valueOf() + f[7].valueOf() * y1.valueOf() + f[8].valueOf()
+        ]
+        var Ftx2 = [
+            f[0].valueOf() * x2.valueOf() + f[3].valueOf() * y2.valueOf() + f[6].valueOf(),
+            f[1].valueOf() * x2.valueOf() + f[4].valueOf() * y2.valueOf() + f[7].valueOf(),
+            f[2].valueOf() * x2.valueOf() + f[5].valueOf() * y2.valueOf() + f[8].valueOf()
+        ]
+        var x2tFx1 = Fx1[0] * x2.valueOf() + Fx1[1] * y2.valueOf() + Fx1[2];
 
-
-
-    double* pose_prop1 = this.test_mat[this.REF_OUTPUT][2].ptr<double>();
-    double* pose_prop2 = this.test_mat[this.OUTPUT][2].ptr<double>();
-    double terr1 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) + this.test_mat[this.TEMP][3], alvision.NormTypes.NORM_L2);
-    double terr2 = alvision.cvtest.norm(Rt0.col(3) / norm(Rt0.col(3)) - this.test_mat[this.TEMP][3], alvision.NormTypes.NORM_L2);
-    Mat rvec;
-    alvision.Rodrigues(Rt0.colRange(0, 3), rvec);
-    pose_prop1[0] = 0;
-    // No check for CV_LMeDS on translation. Since it
-    // involves with some degraded problem, when data is exact inliers.
-    pose_prop2[0] = method == CV_LMEDS || pt_count == 5 ? 0 : MIN(terr1, terr2);
-
-
-    //    int inliers_count = countNonZero(test_mat[TEMP][1]);
-    //    int good_count = countNonZero(test_mat[TEMP][4]);
-    this.test_mat[this.OUTPUT][3] = true; //good_count >= inliers_count / 2;
-    this.test_mat[this.REF_OUTPUT][3] = true;
+        var error = x2tFx1 * x2tFx1 / (Fx1[0] * Fx1[0] + Fx1[1] * Fx1[1] + Ftx2[0] * Ftx2[0] + Ftx2[1] * Ftx2[1]);
+        error = Math.sqrt(error);
+        return error;
     }
 
-sampson_error(f : Array < alvision.double >, x1 :alvision.double, y1 : alvision.double, x2 : alvision.double, y2 : alvision.double): alvision.double {
-    var Fx1 = [
-        f[0] * x1 + f[1] * y1 + f[2],
-        f[3] * x1 + f[4] * y1 + f[5],
-        f[6] * x1 + f[7] * y1 + f[8]
-    ]
-    var Ftx2 = [
-        f[0] * x2 + f[3] * y2 + f[6],
-        f[1] * x2 + f[4] * y2 + f[7],
-        f[2] * x2 + f[5] * y2 + f[8]
-    ]
-    var x2tFx1 = Fx1[0] * x2 + Fx1[1] * y2 + Fx1[2];
 
-    var error = x2tFx1 * x2tFx1 / (Fx1[0] * Fx1[0] + Fx1[1] * Fx1[1] + Ftx2[0] * Ftx2[0] + Ftx2[1] * Ftx2[1]);
-    error = Math.sqrt(error);
-    return error;
-}
-
-
-    protected  method       : alvision.int;
-    protected  img_size     : alvision.int;
-    protected  cube_size    : alvision.int;
-    protected  dims: alvision.int;
+    protected method: alvision.int;
+    protected img_size: alvision.int;
+    protected cube_size: alvision.int;
+    protected dims: alvision.int;
     protected min_f: alvision.double;
     protected max_f: alvision.double;
     protected sigma: alvision.double;
-};
+}
 
 
 
@@ -1299,80 +1358,85 @@ sampson_error(f : Array < alvision.double >, x1 :alvision.double, y1 : alvision.
 class CV_ConvertHomogeneousTest extends alvision.cvtest.ArrayTest
 {
     constructor() {
-        test_array[INPUT].push(null);
-        test_array[OUTPUT].push(null);
-        test_array[REF_OUTPUT].push(null);
-        element_wise_relative_error = false;
+        super();
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.element_wise_relative_error = false;
 
-        pt_count = dims1 = dims2 = 0;
+        this.pt_count = this.dims1 = this.dims2 = 0;
 
     }
 
     read_params(fs: alvision.FileStorage): alvision.int{
-        int code = super.read_params(fs);
+        var code = super.read_params(fs);
         return code;
     }
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         var rng = this.ts.get_rng();
-        int pt_depth1 = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
-        int pt_depth2 = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
-        double pt_count_exp = alvision.cvtest.randReal(rng) * 6 + 1;
-        int t;
+        var pt_depth1 = alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        var pt_depth2 = alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        var pt_count_exp = alvision.cvtest.randReal(rng).valueOf() * 6 + 1;
+        //int t;
 
-        pt_count = Math.round(exp(pt_count_exp));
-        pt_count = MAX(pt_count, 5);
+        this.pt_count = Math.round(Math.exp(pt_count_exp));
+        this.pt_count = Math.max(this.pt_count.valueOf(), 5);
 
-        dims1 = 2 + (alvision.cvtest.randInt(rng) % 3);
-        dims2 = 2 + (alvision.cvtest.randInt(rng) % 3);
+        this.dims1 = 2 + (alvision.cvtest.randInt(rng).valueOf() % 3);
+        this.dims2 = 2 + (alvision.cvtest.randInt(rng).valueOf() % 3);
 
-        if (dims1 == dims2 + 2)
-            dims1--;
-        else if (dims1 == dims2 - 2)
-            dims1++;
+        if (this.dims1 == this.dims2.valueOf() + 2)
+            this.dims1 = this.dims1.valueOf() - 1;
+        else if (this.dims1 == this.dims2.valueOf() - 2)
+                this.dims1 = this.dims1.valueOf() + 1;
 
-        if (alvision.cvtest.randInt(rng) % 2)
-            CV_SWAP(dims1, dims2, t);
+        if (alvision.cvtest.randInt(rng).valueOf() % 2) {
+            var t = this.dims1;
+            this.dims1 = this.dims2;
+            this.dims2 = t;
+            //CV_SWAP(dims1, dims2, t);
+        }
 
-        types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth1, 1);
+        types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth1, 1);
 
-        if (alvision.cvtest.randInt(rng) % 2)
-            sizes[INPUT][0] = alvision.Size(pt_count, dims1);
+        if (alvision.cvtest.randInt(rng).valueOf() % 2)
+            sizes[this.INPUT][0] = new alvision.Size(this.pt_count, this.dims1);
         else {
-            sizes[INPUT][0] = alvision.Size(dims1, pt_count);
-            if (alvision.cvtest.randInt(rng) % 2) {
-                types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth1, dims1);
-                if (alvision.cvtest.randInt(rng) % 2)
-                    sizes[INPUT][0] = alvision.Size(pt_count, 1);
+            sizes[this.INPUT][0] = new alvision.Size(this.dims1, this.pt_count);
+            if (alvision.cvtest.randInt(rng).valueOf() % 2) {
+                types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth1, this.dims1);
+                if (alvision.cvtest.randInt(rng).valueOf() % 2)
+                    sizes[this.INPUT][0] = new alvision.Size(this.pt_count, 1);
                 else
-                    sizes[INPUT][0] = alvision.Size(1, pt_count);
+                    sizes[this.INPUT][0] = new alvision.Size(1, this.pt_count);
             }
         }
 
-        types[OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth2, 1);
+        types[this.OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth2, 1);
 
-        if (alvision.cvtest.randInt(rng) % 2)
-            sizes[OUTPUT][0] = alvision.Size(pt_count, dims2);
+        if (alvision.cvtest.randInt(rng).valueOf() % 2)
+            sizes[this.OUTPUT][0] = new alvision.Size(this.pt_count, this.dims2);
         else {
-            sizes[OUTPUT][0] = alvision.Size(dims2, pt_count);
-            if (alvision.cvtest.randInt(rng) % 2) {
-                types[OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth2, dims2);
-                if (alvision.cvtest.randInt(rng) % 2)
-                    sizes[OUTPUT][0] = alvision.Size(pt_count, 1);
+            sizes[this.OUTPUT][0] = new alvision.Size(this.dims2, this.pt_count);
+            if (alvision.cvtest.randInt(rng).valueOf() % 2) {
+                types[this.OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth2, this.dims2);
+                if (alvision.cvtest.randInt(rng).valueOf() % 2)
+                    sizes[this.OUTPUT][0] = new alvision.Size(this.pt_count, 1);
                 else
-                    sizes[OUTPUT][0] = alvision.Size(1, pt_count);
+                    sizes[this.OUTPUT][0] = new alvision.Size(1, this.pt_count);
             }
         }
 
-        types[REF_OUTPUT][0] = types[OUTPUT][0];
-        sizes[REF_OUTPUT][0] = sizes[OUTPUT][0];
+        types[this.REF_OUTPUT][0] = types[this.OUTPUT][0];
+        sizes[this.REF_OUTPUT][0] = sizes[this.OUTPUT][0];
     }
     fill_array(test_case_idx: alvision.int, i: alvision.int, j: alvision.int, arr: alvision.Mat): void {
-        Mat temp(1, pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64FC1, dims1));
+        var temp = new alvision.Mat(1, this.pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64FC1, this.dims1));
         var rng = this.ts.get_rng();
-        CvScalar low = cvScalarAll(0), high = cvScalarAll(10);
+        var low = alvision.Scalar.all(0), high = alvision.Scalar.all(10);
 
-        if (dims1 > dims2)
-            low.val[dims1 - 1] = 1.;
+        if (this.dims1 > this.dims2)
+            low.val[this.dims1.valueOf() - 1] = 1.;
 
         alvision.cvtest.randUni(rng, temp, low, high);
         test_convertHomogeneous(temp, arr);
@@ -1381,15 +1445,16 @@ class CV_ConvertHomogeneousTest extends alvision.cvtest.ArrayTest
         return 1e-5;
     }
     run_func(): void {
-        CvMat _input = test_mat[INPUT][0], _output = test_mat[OUTPUT][0];
-        cvConvertPointsHomogeneous( &_input, &_output);
+        var _input = this.test_mat[this.INPUT][0], _output = this.test_mat[this.OUTPUT][0];
+        alvision.convertPointsToHomogeneous(_input, _output);
     }
     prepare_to_validation(test_case_idx: alvision.int): void {
-        test_convertHomogeneous(test_mat[INPUT][0], test_mat[REF_OUTPUT][0]);
+        test_convertHomogeneous(this.test_mat[this.INPUT][0], this.test_mat[this.REF_OUTPUT][0]);
     }
 
-    int dims1, dims2;
-    int pt_count;
+    protected dims1: alvision.int;
+    protected dims2: alvision.int;
+    protected pt_count: alvision.int;
 };
 
 /************************** compute corresponding epipolar lines ************************/
@@ -1397,80 +1462,81 @@ class CV_ConvertHomogeneousTest extends alvision.cvtest.ArrayTest
 class CV_ComputeEpilinesTest extends alvision.cvtest.ArrayTest
 {
     constructor() {
-        test_array[INPUT].push(null);
-        test_array[INPUT].push(null);
-        test_array[OUTPUT].push(null);
-        test_array[REF_OUTPUT].push(null);
-        element_wise_relative_error = false;
+        super()
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.INPUT].push(null);
+        this.test_array[this.OUTPUT].push(null);
+        this.test_array[this.REF_OUTPUT].push(null);
+        this.element_wise_relative_error = false;
 
-        pt_count = dims = which_image = 0;
+        this.pt_count = this.dims = this.which_image = 0;
     }
 
-    read_params(fs: alvision.FileStorage): alvision.int{
-    int code = super.read_params(fs);
-    return code;
-}
+    read_params(fs: alvision.FileStorage): alvision.int {
+        var code = super.read_params(fs);
+        return code;
+    }
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         var rng = this.ts.get_rng();
-        int fm_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
-        int pt_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
-        int ln_depth = alvision.cvtest.randInt(rng) % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
-        double pt_count_exp = alvision.cvtest.randReal(rng) * 6;
+        var fm_depth = alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        var pt_depth = alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        var ln_depth = alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+        var pt_count_exp = alvision.cvtest.randReal(rng).valueOf() * 6;
 
-        which_image = 1 + (alvision.cvtest.randInt(rng) % 2);
+        this.which_image = 1 + (alvision.cvtest.randInt(rng).valueOf() % 2);
 
-        pt_count = Math.round(exp(pt_count_exp));
-        pt_count = MAX(pt_count, 1);
-        bool few_points = pt_count < 5;
+        this.pt_count = Math.round(Math.exp(pt_count_exp));
+        this.pt_count = Math.max(this.pt_count.valueOf(), 1);
+        var few_points = this.pt_count < 5;
 
-        dims = 2 + (alvision.cvtest.randInt(rng) % 2);
+        this.dims = 2 + (alvision.cvtest.randInt(rng).valueOf() % 2);
 
-        types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, 1);
+        types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, 1);
 
-        if (alvision.cvtest.randInt(rng) % 2 && !few_points)
-            sizes[INPUT][0] = alvision.Size(pt_count, dims);
+        if (alvision.cvtest.randInt(rng).valueOf() % 2 && !few_points)
+            sizes[this.INPUT][0] = new alvision.Size(this.pt_count, this.dims);
         else {
-            sizes[INPUT][0] = alvision.Size(dims, pt_count);
-            if (alvision.cvtest.randInt(rng) % 2 || few_points) {
-                types[INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, dims);
-                if (alvision.cvtest.randInt(rng) % 2)
-                    sizes[INPUT][0] = alvision.Size(pt_count, 1);
+            sizes[this.INPUT][0] = new alvision.Size(this.dims, this.pt_count);
+            if (alvision.cvtest.randInt(rng).valueOf() % 2 || few_points) {
+                types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(pt_depth, this.dims);
+                if (alvision.cvtest.randInt(rng).valueOf() % 2)
+                    sizes[this.INPUT][0] = new alvision.Size(this.pt_count, 1);
                 else
-                    sizes[INPUT][0] = alvision.Size(1, pt_count);
+                    sizes[this.INPUT][0] = new alvision.Size(1, this.pt_count);
             }
         }
 
-        types[INPUT][1] = alvision.MatrixType.CV_MAKETYPE(fm_depth, 1);
-        sizes[INPUT][1] = alvision.Size(3, 3);
+        types[this.INPUT][1] = alvision.MatrixType.CV_MAKETYPE(fm_depth, 1);
+        sizes[this.INPUT][1] = new alvision.Size(3, 3);
 
-        types[OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(ln_depth, 1);
+        types[this.OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(ln_depth, 1);
 
-        if (alvision.cvtest.randInt(rng) % 2 && !few_points)
-            sizes[OUTPUT][0] = alvision.Size(pt_count, 3);
+        if (alvision.cvtest.randInt(rng).valueOf() % 2 && !few_points)
+            sizes[this.OUTPUT][0] = new alvision.Size(this.pt_count, 3);
         else {
-            sizes[OUTPUT][0] = alvision.Size(3, pt_count);
-            if (alvision.cvtest.randInt(rng) % 2 || few_points) {
-                types[OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(ln_depth, 3);
-                if (alvision.cvtest.randInt(rng) % 2)
-                    sizes[OUTPUT][0] = alvision.Size(pt_count, 1);
+            sizes[this.OUTPUT][0] = new alvision.Size(3, this.pt_count);
+            if (alvision.cvtest.randInt(rng).valueOf() % 2 || few_points) {
+                types[this.OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(ln_depth, 3);
+                if (alvision.cvtest.randInt(rng).valueOf() % 2)
+                    sizes[this.OUTPUT][0] = new alvision.Size(this.pt_count, 1);
                 else
-                    sizes[OUTPUT][0] = alvision.Size(1, pt_count);
+                    sizes[this.OUTPUT][0] = new alvision.Size(1, this.pt_count);
             }
         }
 
-        types[REF_OUTPUT][0] = types[OUTPUT][0];
-        sizes[REF_OUTPUT][0] = sizes[OUTPUT][0];
+        types[this.REF_OUTPUT][0] = types[this.OUTPUT][0];
+        sizes[this.REF_OUTPUT][0] = sizes[this.OUTPUT][0];
     }
     fill_array(test_case_idx: alvision.int, i: alvision.int, j: alvision.int, arr: alvision.Mat): void {
         var rng = this.ts.get_rng();
 
-        if (i == INPUT && j == 0) {
-            Mat temp(1, pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64FC1, dims));
-            alvision.cvtest.randUni(rng, temp, cvScalar(0, 0, 1), cvScalarAll(10));
+        if (i == this.INPUT && j == 0) {
+            var temp = new alvision.Mat(1, this.pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64FC1, this.dims));
+            alvision.cvtest.randUni(rng, temp, new alvision.Scalar(0, 0, 1), alvision.Scalar.all(10));
             test_convertHomogeneous(temp, arr);
         }
-        else if (i == INPUT && j == 1)
-            alvision.cvtest.randUni(rng, arr, cvScalarAll(0), cvScalarAll(10));
+        else if (i == this.INPUT && j == 1)
+            alvision.cvtest.randUni(rng, arr, alvision.Scalar.all(0), alvision.Scalar.all(10));
         else
             super.fill_array(test_case_idx, i, j, arr);
     }
@@ -1478,38 +1544,39 @@ class CV_ComputeEpilinesTest extends alvision.cvtest.ArrayTest
         return 1e-5;
     }
     run_func(): void {
-        CvMat _points = test_mat[INPUT][0], _F = test_mat[INPUT][1], _lines = test_mat[OUTPUT][0];
-        cvComputeCorrespondEpilines( &_points, which_image, &_F, &_lines);
+        var _points = this.test_mat[this.INPUT][0], _F = this.test_mat[this.INPUT][1], _lines = this.test_mat[this.OUTPUT][0];
+        alvision.computeCorrespondEpilines( _points, this.which_image, _F, _lines);
     }
     prepare_to_validation(test_case_idx: alvision.int): void {
-        Mat pt(1, pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 3));
-        Mat lines(1, pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 3));
-        double f[9];
-        Mat F(3, 3, alvision.MatrixType.CV_64F, f);
+        var pt = new alvision.Mat(1,    this.pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 3));
+        var lines = new alvision.Mat(1, this.pt_count, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_64F, 3));
+        //double f[9];
+        var F = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);//, f);
+        var f = F.ptr<alvision.double>("double");
 
-        test_convertHomogeneous(test_mat[INPUT][0], pt);
-        test_mat[INPUT][1].convertTo(F, alvision.MatrixType.CV_64F);
-        if (which_image == 2)
+        test_convertHomogeneous(this.test_mat[this.INPUT][0], pt);
+        this.test_mat[this.INPUT][1].convertTo(F, alvision.MatrixType.CV_64F);
+        if (this.which_image == 2)
             alvision.transpose(F, F);
 
-        for (int i = 0; i < pt_count; i++ )
+        for (var i = 0; i < this.pt_count; i++ )
         {
-            double * p = pt.ptr<double>() + i * 3;
-            double * l = lines.ptr<double>() + i * 3;
-            double t0 = f[0] * p[0] + f[1] * p[1] + f[2] * p[2];
-            double t1 = f[3] * p[0] + f[4] * p[1] + f[5] * p[2];
-            double t2 = f[6] * p[0] + f[7] * p[1] + f[8] * p[2];
-            double d = sqrt(t0 * t0 + t1 * t1);
+            var p = pt.ptr<alvision.double>("double").slice(i * 3);
+            var l = lines.ptr<alvision.double>("double").slice(i * 3);
+            var t0 = f[0].valueOf() * p[0].valueOf() + f[1].valueOf() * p[1].valueOf() + f[2].valueOf() * p[2].valueOf();
+            var t1 = f[3].valueOf() * p[0].valueOf() + f[4].valueOf() * p[1].valueOf() + f[5].valueOf() * p[2].valueOf();
+            var t2 = f[6].valueOf() * p[0].valueOf() + f[7].valueOf() * p[1].valueOf() + f[8].valueOf() * p[2].valueOf();
+            var d = Math.sqrt(t0 * t0 + t1 * t1);
             d = d ? 1. / d : 1.;
             l[0] = t0 * d; l[1] = t1 * d; l[2] = t2 * d;
         }
 
-        test_convertHomogeneous(lines, test_mat[REF_OUTPUT][0]);
+        test_convertHomogeneous(lines, this.test_mat[this.REF_OUTPUT][0]);
     }
 
-    int which_image;
-    int dims;
-    int pt_count;
+    protected which_image: alvision.int;
+    protected dims: alvision.int;   
+    protected pt_count: alvision.int;
 };
 
 
