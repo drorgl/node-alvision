@@ -50,28 +50,29 @@ import fs = require('fs');
 //#include "test_precomp.hpp"
 //#include <cstdlib>
 
-static void mytest(alvision.Ptr<alvision.ConjGradSolver> solver,alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F,alvision.Mat& x,
-        alvision.Mat& etalon_x,double etalon_res){
+function mytest(solver: alvision.ConjGradSolver, ptr_F: alvision.MinProblemSolverFunction, x: alvision.Mat,
+    etalon_x: alvision.Mat, etalon_res: alvision.double ) : void{
     solver.setFunction(ptr_F);
     //int ndim=MAX(step.cols,step.rows);
-    double res=solver.minimize(x);
-    std::cout<<"res:\n\t"<<res<<std::endl;
-    std::cout<<"x:\n\t"<<x<<std::endl;
-    std::cout<<"etalon_res:\n\t"<<etalon_res<<std::endl;
-    std::cout<<"etalon_x:\n\t"<<etalon_x<<std::endl;
-    double tol = 1e-2;
-    ASSERT_TRUE(std::abs(res-etalon_res)<tol);
+    var res=solver.minimize(x);
+    console.log("res:\n\t"+ res);
+    console.log("x:\n\t" + x);
+    console.log("etalon_res:\n\t" + etalon_res);
+    console.log("etalon_x:\n\t" + etalon_x);
+    var tol = 1e-2;
+    alvision.ASSERT_TRUE(Math.abs(res.valueOf()-etalon_res.valueOf())<tol);
     /*for(alvision.Mat_<double>::iterator it1=x.begin<double>(),it2=etalon_x.begin<double>();it1!=x.end<double>();it1++,it2++){
         ASSERT_TRUE(std::abs((*it1)-(*it2))<tol);
     }*/
-    std::cout<<"--------------------------\n";
+    
+    console.log("--------------------------\n");
 }
 
-class SphereF_CG extends alvision.MinProblemSolver.Function{
-public:
-    int getDims() const { return 4; }
-    double calc(const double* x)const{
-        return x[0]*x[0]+x[1]*x[1]+x[2]*x[2]+x[3]*x[3];
+class SphereF_CG implements alvision.MinProblemSolverFunction{
+    getDims(): alvision.int{ return 4; }
+
+    calc(x: Array<alvision.double>): alvision.double {
+        return x[0].valueOf()*x[0].valueOf()+x[1].valueOf()*x[1].valueOf()+x[2].valueOf()*x[2].valueOf()+x[3].valueOf()*x[3].valueOf();
     }
     // use automatically computed gradient
     /*void getGradient(const double* x,double* grad){
@@ -80,35 +81,36 @@ public:
         }
     }*/
 };
-class RosenbrockF_CG:public alvision.MinProblemSolver::Function{
-    int getDims() const { return 2; }
-    double calc(const double* x)const{
-        return 100*(x[1]-x[0]*x[0])*(x[1]-x[0]*x[0])+(1-x[0])*(1-x[0]);
+class RosenbrockF_CG implements alvision.MinProblemSolverFunction{
+    getDims(): alvision.int { return 2; }
+    calc(x: Array<alvision.double>) : alvision.double{
+        return 100*(x[1].valueOf()-x[0].valueOf()*x[0].valueOf())*(x[1].valueOf()-x[0].valueOf()*x[0].valueOf())+(1-x[0].valueOf())*(1-x[0].valueOf());
     }
-    void getGradient(const double* x,double* grad){
-            grad[0]=-2*(1-x[0])-400*(x[1]-x[0]*x[0])*x[0];
-            grad[1]=200*(x[1]-x[0]*x[0]);
+    getGradient(x: Array<alvision.double>, grad: Array<alvision.double>) : void{
+            grad[0]=-2*(1-x[0].valueOf())-400*(x[1].valueOf()-x[0].valueOf()*x[0].valueOf())*x[0].valueOf();
+            grad[1]=200*(x[1].valueOf()-x[0].valueOf()*x[0].valueOf());
     }
 };
 
-alvision.cvtest.TEST('Core_ConjGradSolver', 'regression_basic',()=>{
-    alvision.Ptr<alvision.ConjGradSolver> solver=alvision.ConjGradSolver::create();
+alvision.cvtest.TEST('Core_ConjGradSolver', 'regression_basic', () => {
+    
+    var solver=alvision.ConjGradSolver.create();
 //#if 1
-    {
-        alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F(new SphereF_CG());
-        alvision.Mat x=(alvision.Mat_<double>(4,1)<<50.0,10.0,1.0,-10.0),
-            etalon_x=(alvision.Mat_<double>(1,4)<<0.0,0.0,0.0,0.0);
-        double etalon_res=0.0;
-        mytest(solver,ptr_F,x,etalon_x,etalon_res);
-    }
+    (() => {
+        var ptr_F = new SphereF_CG();
+        var x = new alvision.Mat(new alvision.Matd(4, 1, [50.0, 10.0, 1.0, -10.0])),
+            etalon_x = new alvision.Mat(new alvision.Matd(1, 4, [0.0, 0.0, 0.0, 0.0]));
+        var etalon_res = 0.0;
+        mytest(solver, ptr_F, x, etalon_x, etalon_res);
+    })();
 //#endif
 //#if 1
-    {
-        alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F(new RosenbrockF_CG());
-        alvision.Mat x=(alvision.Mat_<double>(2,1)<<0.0,0.0),
-            etalon_x=(alvision.Mat_<double>(2,1)<<1.0,1.0);
-        double etalon_res=0.0;
-        mytest(solver,ptr_F,x,etalon_x,etalon_res);
-    }
+    (() => {
+        var ptr_F = new RosenbrockF_CG();
+        var x = (new alvision.Matd(2, 1, [0.0, 0.0])),
+            etalon_x = (new alvision.Matd(2, 1, [1.0, 1.0]));
+        var etalon_res = 0.0;
+        mytest(solver, ptr_F, x, etalon_x, etalon_res);
+    })();
 //#endif
 });
