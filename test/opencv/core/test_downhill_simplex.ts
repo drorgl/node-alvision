@@ -52,63 +52,77 @@ import fs = require('fs');
 //#include <cmath>
 //#include <algorithm>
 
-static void mytest(alvision.Ptr<alvision.DownhillSolver> solver,alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F,alvision.Mat& x,alvision.Mat& step,
-        alvision.Mat& etalon_x,double etalon_res){
+function mytest(solver: alvision.DownhillSolver, ptr_F: alvision.MinProblemSolverFunction, x: alvision.Mat, step: alvision.Mat ,
+    etalon_x: alvision.Mat, etalon_res: alvision.double ) : void{
     solver.setFunction(ptr_F);
-    int ndim=MAX(step.cols,step.rows);
+    var ndim=Math.max(step.cols.valueOf(),step.rows.valueOf());
     solver.setInitStep(step);
-    alvision.Mat settedStep;
+    var settedStep = new alvision.Mat();
     solver.getInitStep(settedStep);
-    ASSERT_TRUE(settedStep.rows==1 && settedStep.cols==ndim);
-    ASSERT_TRUE(std::equal(step.begin<double>(),step.end<double>(),settedStep.begin<double>()));
-    std::cout<<"step setted:\n\t"<<step<<std::endl;
-    double res=solver.minimize(x);
-    std::cout<<"res:\n\t"<<res<<std::endl;
-    std::cout<<"x:\n\t"<<x<<std::endl;
-    std::cout<<"etalon_res:\n\t"<<etalon_res<<std::endl;
-    std::cout<<"etalon_x:\n\t"<<etalon_x<<std::endl;
-    double tol=1e-2;//solver.getTermCriteria().epsilon;
-    ASSERT_TRUE(std::abs(res-etalon_res)<tol);
+    alvision.ASSERT_TRUE(settedStep.rows == 1 && settedStep.cols == ndim);
+
+    var stepPtr = step.ptr<alvision.double>("double");
+    var settedStepPtr = settedStep.ptr<alvision.double>("double");
+
+    if (stepPtr.length == settedStepPtr.length
+        && stepPtr.every(function (u, i) {
+        return u === settedStepPtr[i];
+        })
+    ) {
+        alvision.ASSERT_TRUE(true);
+    } else {
+        alvision.ASSERT_TRUE(false, "step and settedStep not the same");
+    }
+
+
+    //alvision.ASSERT_TRUE(std::equal(step.begin<double>(),step.end<double>(),settedStep.begin<double>()));
+    console.log("step setted:\n\t" + step);
+    var res=solver.minimize(x);
+    console.log("res:\n\t" + res);
+    console.log("x:\n\t" + x);
+    console.log("etalon_res:\n\t" + etalon_res);
+    console.log("etalon_x:\n\t" + etalon_x);
+    var tol=1e-2;//solver.getTermCriteria().epsilon;
+    alvision.ASSERT_TRUE(Math.abs(res.valueOf()-etalon_res.valueOf())<tol);
     /*for(alvision.Mat_<double>::iterator it1=x.begin<double>(),it2=etalon_x.begin<double>();it1!=x.end<double>();it1++,it2++){
         ASSERT_TRUE(std::abs((*it1)-(*it2))<tol);
     }*/
-    std::cout<<"--------------------------\n";
+    console.log("--------------------------\n");
 }
 
-class SphereF:public alvision.MinProblemSolver::Function{
-public:
-    int getDims() const { return 2; }
-    double calc(const double* x)const{
-        return x[0]*x[0]+x[1]*x[1];
+class SphereF implements alvision.MinProblemSolverFunction{
+    getDims() : alvision.int{ return 2; }
+    calc(x: Array<alvision.double>): alvision.double{
+        return x[0].valueOf()*x[0].valueOf()+x[1].valueOf()*x[1].valueOf();
     }
 };
-class RosenbrockF:public alvision.MinProblemSolver::Function{
-    int getDims() const { return 2; }
-    double calc(const double* x)const{
-        return 100*(x[1]-x[0]*x[0])*(x[1]-x[0]*x[0])+(1-x[0])*(1-x[0]);
+class RosenbrockF implements alvision.MinProblemSolverFunction{
+    getDims() : alvision.int{ return 2; }
+    calc(x: Array<alvision.double>): alvision.double {
+        return 100*(x[1].valueOf()-x[0].valueOf()*x[0].valueOf())*(x[1].valueOf()-x[0].valueOf()*x[0].valueOf())+(1-x[0].valueOf())*(1-x[0].valueOf());
     }
 };
 
-TEST(Core_DownhillSolver, regression_basic){
-    alvision.Ptr<alvision.DownhillSolver> solver=alvision.DownhillSolver::create();
-#if 1
-    {
-        alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F = alvision.makePtr<SphereF>();
-        alvision.Mat x=(alvision.Mat_<double>(1,2)<<1.0,1.0),
-            step=(alvision.Mat_<double>(2,1)<<-0.5,-0.5),
-            etalon_x=(alvision.Mat_<double>(1,2)<<-0.0,0.0);
-        double etalon_res=0.0;
-        mytest(solver,ptr_F,x,step,etalon_x,etalon_res);
-    }
-#endif
-#if 1
-    {
-        alvision.Ptr<alvision.MinProblemSolver::Function> ptr_F = alvision.makePtr<RosenbrockF>();
-        alvision.Mat x=(alvision.Mat_<double>(2,1)<<0.0,0.0),
-            step=(alvision.Mat_<double>(2,1)<<0.5,+0.5),
-            etalon_x=(alvision.Mat_<double>(2,1)<<1.0,1.0);
-        double etalon_res=0.0;
-        mytest(solver,ptr_F,x,step,etalon_x,etalon_res);
-    }
-#endif
-}
+alvision.cvtest.TEST('Core_DownhillSolver', 'regression_basic', () => {
+    var solver = alvision.DownhillSolver.create();
+    //#if 1
+    (() => {
+        var ptr_F = new SphereF();
+        var x = new alvision.Mat(new alvision.Matd(1, 2, [1.0, 1.0])),
+            step = new alvision.Mat(new alvision.Matd(2, 1, [-0.5, -0.5])),
+            etalon_x = new alvision.Mat(new alvision.Matd(1, 2, [-0.0, 0.0]));
+        var etalon_res = 0.0;
+        mytest(solver, ptr_F, x, step, etalon_x, etalon_res);
+    })();
+    //#endif
+    //#if 1
+    (() => {
+        var ptr_F = new RosenbrockF();
+        var x = new alvision.Mat(new alvision.Matd(2, 1, [0.0, 0.0])),
+            step = new alvision.Mat(new alvision.Matd(2, 1, [0.5, +0.5])),
+            etalon_x = new alvision.Mat(new alvision.Matd(2, 1, [1.0, 1.0]));
+        var etalon_res = 0.0;
+        mytest(solver, ptr_F, x, step, etalon_x, etalon_res);
+    })();
+    //#endif
+});
