@@ -48,375 +48,319 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include <time.h>
+//#include "test_precomp.hpp"
+//#include <time.h>
+//
+//using namespace cv;
+//using namespace std;
 
-using namespace cv;
-using namespace std;
+function sign(a) {
+    return a > 0 ? 1 : a == 0 ? 0 : -1
+}
+                               
+const CORE_EIGEN_ERROR_COUNT = 1;
+const CORE_EIGEN_ERROR_SIZE  =2;
+const CORE_EIGEN_ERROR_DIFF  =3;
+const CORE_EIGEN_ERROR_ORTHO =4;
+const CORE_EIGEN_ERROR_ORDER =5;
 
-#define sign(a) a > 0 ? 1 : a == 0 ? 0 : -1
+const MESSAGE_ERROR_COUNT ="Matrix of eigen values must have the same rows as source matrix and 1 column.";
+const MESSAGE_ERROR_SIZE  ="Source matrix and matrix of eigen vectors must have the same sizes."          ;
+const MESSAGE_ERROR_DIFF_1= "Accurasy of eigen values computing less than required."                      ;
+const MESSAGE_ERROR_DIFF_2= "Accuracy of eigen vectors computing less than required."                     ;
+const MESSAGE_ERROR_ORTHO ="Matrix of eigen vectors is not orthogonal."                                   ;
+const MESSAGE_ERROR_ORDER = "Eigen values are not sorted in ascending order.";
 
-#define CORE_EIGEN_ERROR_COUNT 1
-#define CORE_EIGEN_ERROR_SIZE  2
-#define CORE_EIGEN_ERROR_DIFF  3
-#define CORE_EIGEN_ERROR_ORTHO 4
-#define CORE_EIGEN_ERROR_ORDER 5
-
-#define MESSAGE_ERROR_COUNT "Matrix of eigen values must have the same rows as source matrix and 1 column."
-#define MESSAGE_ERROR_SIZE "Source matrix and matrix of eigen vectors must have the same sizes."
-#define MESSAGE_ERROR_DIFF_1 "Accurasy of eigen values computing less than required."
-#define MESSAGE_ERROR_DIFF_2 "Accuracy of eigen vectors computing less than required."
-#define MESSAGE_ERROR_ORTHO "Matrix of eigen vectors is not orthogonal."
-#define MESSAGE_ERROR_ORDER "Eigen values are not sorted in ascending order."
-
-const int COUNT_NORM_TYPES = 3;
-const int NORM_TYPE[COUNT_NORM_TYPES] = {alvision.NORM_L1, alvision.NORM_L2, alvision.NORM_INF};
+const COUNT_NORM_TYPES = 3;
+const NORM_TYPE/*[COUNT_NORM_TYPES]*/ = [alvision.NormTypes.NORM_L1, alvision.NormTypes.NORM_L2, alvision.NormTypes.NORM_INF];
 
 enum TASK_TYPE_EIGEN {VALUES, VECTORS};
 
 class Core_EigenTest extends alvision.cvtest.BaseTest
 {
-public:
 
-    Core_EigenTest();
-    ~Core_EigenTest();
+    test_values(src: alvision.Mat): boolean {
+        var type = src.type();
+        var eps_val = type == alvision.MatrixType.CV_32FC1 ? this.eps_val_32 : this.eps_val_64;
 
-protected:
+        var eigen_values_1 = new alvision.Mat(), eigen_values_2 = new alvision.Mat(), eigen_vectors = new alvision.Mat ();
 
-    bool test_values(const alvision.Mat& src);												// complex test for eigen without vectors
-    bool check_full(int type);													// compex test for symmetric matrix
-    virtual void run (int) = 0;													// main testing method
+        if (!this.test_pairs(src)) return false;
 
-protected:
+        alvision.eigen(src, eigen_values_1, eigen_vectors);
+        alvision.eigen(src, eigen_values_2);
 
-    float eps_val_32, eps_vec_32;
-    float eps_val_64, eps_vec_64;
-    int ntests;
+        if (!this.check_pair_count1(src, eigen_values_2)) return false;
 
-    bool check_pair_count(const alvision.Mat& src, const alvision.Mat& evalues, int low_index = -1, int high_index = -1);
-    bool check_pair_count(const alvision.Mat& src, const alvision.Mat& evalues, const alvision.Mat& evectors, int low_index = -1, int high_index = -1);
-    bool check_pairs_order(const alvision.Mat& eigen_values);											// checking order of eigen values & vectors (it should be none up)
-    bool check_orthogonality(const alvision.Mat& U);												// checking is matrix of eigen vectors orthogonal
-    bool test_pairs(const alvision.Mat& src);													// complex test for eigen with vectors
+        for (var i = 0; i < COUNT_NORM_TYPES; ++i)
+        {
+            var diff = alvision.cvtest.norm(eigen_values_1, eigen_values_2, NORM_TYPE[i]);
+            if (diff > eps_val) {
+                console.log("Checking accuracy of eigen values computing for matrix " + src + ": ");
+                this.print_information(i, src, diff, eps_val);
+                alvision.CV_Error(CORE_EIGEN_ERROR_DIFF, MESSAGE_ERROR_DIFF_1);
+                return false;
+            }
+        }
 
-    void print_information(const size_t norm_idx, const alvision.Mat& src, double diff, double max_diff);
+        return true;
+    }											// complex test for eigen without vectors
+    check_full(type: alvision.int): boolean {
+        const  MAX_DEGREE = 7;
+
+        //srand((unsigned int)time(0));
+
+        for (var i = 0; i < this.ntests; ++i)
+        {
+            //var src_size = (Math.pow(2.0, (rand() % MAX_DEGREE) + 1.));
+            var src_size = (Math.pow(2.0, (alvision.theRNG().int().valueOf() % MAX_DEGREE) + 1.));
+
+            var src = new alvision.Mat(src_size, src_size, type);
+
+            for (var j = 0; j < src.rows; ++j)
+                for (var k = j; k < src.cols; ++k)
+                    if (type == alvision.MatrixType.CV_32FC1) {
+                        src.at<alvision.float>("float", k, j).set(src.at<alvision.float>("float", j, k).set(alvision.theRNG().float()));//alvision.randu<float>()));
+                    }
+                    else {
+                        src.at<alvision.double>("double", k, j).set(src.at<alvision.double>("double", j, k).set(alvision.theRNG().double()));//alvision.randu<double>()));
+                    }
+
+            if (!this.test_values(src)) return false;
+        }
+
+        return true;
+    }													// compex test for symmetric matrix
+    run(int): void { }													// main testing method
+
+
+    protected eps_val_32 : alvision.float;
+    protected eps_vec_32: alvision.float;
+    protected eps_val_64: alvision.float; 
+    protected eps_vec_64: alvision.float;
+    protected ntests: alvision.int ;
+
+    check_pair_count1(src: alvision.Mat, evalues: alvision.Mat, low_index: alvision.int = -1, high_index: alvision.int = -1): boolean {
+        var n = src.rows.valueOf(), s = sign(high_index);
+        if (!((evalues.rows == n - Math.max(0, low_index.valueOf()) - (((n / 2.0) * (s * s - s)) + (1 + s - s * s) * (n - (high_index.valueOf() + 1)))) && (evalues.cols == 1))) {
+            console.log("Checking sizes of eigen values matrix " + evalues + "...");
+            console.log("Number of rows: " + evalues.rows + "   Number of cols: " + evalues.cols);
+            console.log("Size of src symmetric matrix: " + src.rows + " * " + src.cols);
+            alvision.CV_Error(CORE_EIGEN_ERROR_COUNT, MESSAGE_ERROR_COUNT);
+            return false;
+        }
+        return true;
+    }
+    check_pair_count2(src: alvision.Mat, evalues: alvision.Mat, evectors: alvision.Mat, low_index: alvision.int = -1, high_index: alvision.int = -1): boolean {
+        var n = src.rows.valueOf(), s = sign(high_index);
+        var right_eigen_pair_count = n - Math.max(0, low_index.valueOf()) - (((n / 2.0) * (s * s - s)) + (1 + s - s * s) * (n - (high_index.valueOf() + 1)));
+
+        if (!(evectors.rows == right_eigen_pair_count && evectors.cols == right_eigen_pair_count)) {
+            console.log("Checking sizes of eigen vectors matrix " + evectors + "...");
+            console.log("Number of rows: " + evectors.rows + "   Number of cols: " + evectors.cols);
+            console.log("Size of src symmetric matrix: " + src.rows + " * " + src.cols);
+            alvision.CV_Error(CORE_EIGEN_ERROR_SIZE, MESSAGE_ERROR_SIZE);
+            return false;
+        }
+
+        if (!(evalues.rows == right_eigen_pair_count && evalues.cols == 1)) {
+            console.log("Checking sizes of eigen values matrix " + evalues + "...");
+            console.log("Number of rows: " + evalues.rows + "   Number of cols: " + evalues.cols);
+            console.log("Size of src symmetric matrix: " + src.rows + " * " + src.cols);
+            alvision.CV_Error(CORE_EIGEN_ERROR_COUNT, MESSAGE_ERROR_COUNT);
+            return false;
+        }
+
+        return true;
+    }
+    check_pairs_order(eigen_values: alvision.Mat): boolean {
+        switch (eigen_values.type()) {
+            case alvision.MatrixType.CV_32FC1:
+                {
+                    for (var i = 0; i < (eigen_values.total().valueOf() - 1); ++i)
+                        if (!(eigen_values.at<alvision.float>("float", i, 0).get() > eigen_values.at<alvision.float>("float",i + 1, 0).get())) {
+                            console.log("Checking order of eigen values vector " + eigen_values + "...");
+                            console.log("Pair of indexes with non ascending of eigen values: (" + i + ", " + i + 1 + ").");
+                            alvision.CV_Error(CORE_EIGEN_ERROR_ORDER, MESSAGE_ERROR_ORDER);
+                            return false;
+                        }
+
+                    break;
+                }
+
+            case alvision.MatrixType.CV_64FC1:
+                {
+                    for (var i = 0; i <(eigen_values.total().valueOf() - 1); ++i)
+                        if (!(eigen_values.at<alvision.double>("double", i, 0).get() > eigen_values.at<alvision.double>("double", i + 1, 0).get())) {
+                            console.log("Checking order of eigen values vector " + eigen_values + "...");
+                            console.log("Pair of indexes with non ascending of eigen values: (" + i + ", " + i + 1 + ").");
+                            alvision.CV_Error(CORE_EIGEN_ERROR_ORDER, "Eigen values are not sorted in ascending order.");
+                            return false;
+                        }
+
+                    break;
+                }
+
+            default: ;
+        }
+
+        return true;
+    }											// checking order of eigen values & vectors (it should be none up)
+    check_orthogonality(U: alvision.Mat): boolean {
+        var type = U.type();
+        var eps_vec = type == alvision.MatrixType.CV_32FC1 ? this.eps_vec_32 : this.eps_vec_64;
+        var UUt = new alvision.Mat();
+        alvision.mulTransposed(U, UUt, false);
+
+        var E = alvision.Mat.eye(U.rows, U.cols, type).toMat();
+
+        for (var i = 0; i < COUNT_NORM_TYPES; ++i) {
+            var diff = alvision.cvtest.norm(UUt, E, NORM_TYPE[i]);
+            if (diff > eps_vec) {
+                console.log("Checking orthogonality of matrix " + U + ": ");
+                this.print_information(i, U, diff, eps_vec);
+                alvision.CV_Error(CORE_EIGEN_ERROR_ORTHO, MESSAGE_ERROR_ORTHO);
+                return false;
+            }
+        }
+
+        return true;
+    }												// checking is matrix of eigen vectors orthogonal
+    test_pairs(src: alvision.Mat): boolean {									// complex test for eigen with vectors
+        var type = src.type();
+        var eps_vec = type == alvision.MatrixType.CV_32FC1 ? this.eps_vec_32 : this.eps_vec_64;
+
+        var eigen_values = new alvision.Mat(), eigen_vectors = new alvision.Mat ();
+
+        alvision.eigen(src, eigen_values, eigen_vectors);
+
+        if (!this.check_pair_count2(src, eigen_values, eigen_vectors))
+            return false;
+
+        if (!this.check_orthogonality(eigen_vectors))
+            return false;
+
+        if (!this.check_pairs_order(eigen_values))
+            return false;
+
+        var eigen_vectors_t = new alvision.Mat (); alvision.transpose(eigen_vectors, eigen_vectors_t);
+
+        var src_evec = new alvision.Mat (src.rows, src.cols, type);
+        src_evec = alvision.MatExpr.op_Multiplication( src ,eigen_vectors_t).toMat();
+
+        var eval_evec = new alvision.Mat (src.rows, src.cols, type);
+
+        switch (type) {
+            case alvision.MatrixType.CV_32FC1:
+                {
+                    for (var i = 0; i < src.cols; ++i)
+                    {
+                        var tmp =alvision.MatExpr.op_Multiplication( eigen_values.at<alvision.float>("float",i, 0).get() , eigen_vectors_t.col(i)).toMat();
+                        for (var j = 0; j < src.rows; ++j) {
+                            eval_evec.at<alvision.float>("float",j, i).set(tmp.at<alvision.float>("float",j, 0).get());
+                        }
+                    }
+
+                    break;
+                }
+
+            case alvision.MatrixType.CV_64FC1:
+                {
+                    for (var i = 0; i < src.cols; ++i) {
+                        var tmp = alvision.MatExpr.op_Multiplication( eigen_values.at < alvision.double>("double", i, 0).get() , eigen_vectors_t.col(i)).toMat();
+                        for (var j = 0; j < src.rows; ++j) {
+                            eval_evec.at<alvision.double>("double", j, i).set( tmp.at<alvision.double>("double",j, 0).get());
+                        }
+                    }
+
+                    break;
+                }
+
+            default: ;
+        }
+
+        var disparity = alvision.MatExpr.op_Substraction( src_evec , eval_evec).toMat();
+
+        for (var i = 0; i < COUNT_NORM_TYPES; ++i) {
+            var diff = alvision.cvtest.norm(disparity, NORM_TYPE[i]);
+            if (diff > eps_vec) {
+                console.log("Checking accuracy of eigen vectors computing for matrix " + src + ": ");
+                this.print_information(i, src, diff, eps_vec);
+                alvision.CV_Error(CORE_EIGEN_ERROR_DIFF, MESSAGE_ERROR_DIFF_2);
+                return false;
+            }
+        }
+
+        return true;
+    }				
+
+    print_information(norm_idx: alvision.size_t, src: alvision.Mat, diff: alvision.double, max_diff: alvision.double): void{
+
+        switch (NORM_TYPE[norm_idx.valueOf()]) {
+            case alvision.NormTypes.NORM_L1: console.log("L1"); break;
+            case alvision.NormTypes.NORM_L2: console.log("L2"); break;
+            case alvision.NormTypes.NORM_INF: console.log("INF"); break;
+            default: break;
+        }
+
+        console.log("-criteria... ");
+        console.log("Source size: " + src.rows + " * " + src.cols);
+        console.log("Difference between original eigen vectors matrix and result: " + diff);
+        console.log("Maximum allowed difference: " + max_diff);
+    }
+
+    
 };
 
 class Core_EigenTest_Scalar extends Core_EigenTest
 {
-public:
-    Core_EigenTest_Scalar() : Core_EigenTest() {}
-    ~Core_EigenTest_Scalar();
+    constructor() {
+        super()
+        this.eps_val_32 = (1e-3);
+        this.eps_vec_32 = (12e-3);
+        this.eps_val_64 = (1e-4);
+        this.eps_vec_64 = (1e-3);
+        this.ntests = (100);
 
-    virtual void run(int) = 0;
+    }
+    run(int): void { }
 };
 
 class Core_EigenTest_Scalar_32 extends Core_EigenTest_Scalar
 {
-public:
-    Core_EigenTest_Scalar_32() : Core_EigenTest_Scalar() {}
-    ~Core_EigenTest_Scalar_32();
-
-    void run(int);
+    run(int): void {
+        for (var i = 0; i < this.ntests; ++i) {
+            var value = alvision.theRNG().float();// alvision.randu<alvision.float>();
+            var src = new alvision.Mat (1, 1, alvision.MatrixType.CV_32FC1, alvision.Scalar.all(value));
+            this.test_values(src);
+        }
+    }
 };
 
 class Core_EigenTest_Scalar_64 extends Core_EigenTest_Scalar
 {
-public:
-    Core_EigenTest_Scalar_64() : Core_EigenTest_Scalar() {}
-    ~Core_EigenTest_Scalar_64();
-    void run(int);
+    run(int): void {
+        for (var i = 0; i < this.ntests; ++i) {
+            var value = alvision.theRNG().float();// alvision.randu<float>();
+            var src = new alvision.Mat (1, 1, alvision.MatrixType.CV_64FC1, alvision.Scalar.all(value));
+            this.test_values(src);
+        }
+    }
 };
 
 class Core_EigenTest_32 extends Core_EigenTest
 {
-public:
-    Core_EigenTest_32(): Core_EigenTest() {}
-    ~Core_EigenTest_32() {}
-    void run(int);
+    run(int): void { this.check_full(alvision.MatrixType.CV_32FC1);  }
 };
 
 class Core_EigenTest_64 extends Core_EigenTest
 {
-public:
-    Core_EigenTest_64(): Core_EigenTest() {}
-    ~Core_EigenTest_64() {}
-    void run(int);
+    run(int): void { this.check_full(alvision.MatrixType.CV_64FC1);  }
 };
 
-Core_EigenTest_Scalar::~Core_EigenTest_Scalar() {}
-Core_EigenTest_Scalar_32::~Core_EigenTest_Scalar_32() {}
-Core_EigenTest_Scalar_64::~Core_EigenTest_Scalar_64() {}
 
-void Core_EigenTest_Scalar_32::run(int)
-{
-    for (int i = 0; i < ntests; ++i)
-    {
-        float value = alvision.randu<float>();
-        alvision.Mat src(1, 1, CV_32FC1, Scalar::all((float)value));
-        test_values(src);
-    }
-}
 
-void Core_EigenTest_Scalar_64::run(int)
-{
-    for (int i = 0; i < ntests; ++i)
-    {
-        float value = alvision.randu<float>();
-        alvision.Mat src(1, 1, CV_64FC1, Scalar::all((double)value));
-        test_values(src);
-    }
-}
-
-void Core_EigenTest_32::run(int) { check_full(CV_32FC1); }
-void Core_EigenTest_64::run(int) { check_full(CV_64FC1); }
-
-Core_EigenTest::Core_EigenTest()
-: eps_val_32(1e-3f), eps_vec_32(12e-3f),
-  eps_val_64(1e-4f), eps_vec_64(1e-3f), ntests(100) {}
-Core_EigenTest::~Core_EigenTest() {}
-
-bool Core_EigenTest::check_pair_count(const alvision.Mat& src, const alvision.Mat& evalues, int low_index, int high_index)
-{
-    int n = src.rows, s = sign(high_index);
-    if (!( (evalues.rows == n - max<int>(0, low_index) - ((int)((n/2.0)*(s*s-s)) + (1+s-s*s)*(n - (high_index+1)))) && (evalues.cols == 1)))
-    {
-        std::cout << endl; std::cout << "Checking sizes of eigen values matrix " << evalues << "..." << endl;
-        std::cout << "Number of rows: " << evalues.rows << "   Number of cols: " << evalues.cols << endl;
-        std::cout << "Size of src symmetric matrix: " << src.rows << " * " << src.cols << endl; std::cout << endl;
-        CV_Error(CORE_EIGEN_ERROR_COUNT, MESSAGE_ERROR_COUNT);
-        return false;
-    }
-    return true;
-}
-
-bool Core_EigenTest::check_pair_count(const alvision.Mat& src, const alvision.Mat& evalues, const alvision.Mat& evectors, int low_index, int high_index)
-{
-    int n = src.rows, s = sign(high_index);
-    int right_eigen_pair_count = n - max<int>(0, low_index) - ((int)((n/2.0)*(s*s-s)) + (1+s-s*s)*(n - (high_index+1)));
-
-    if (!(evectors.rows == right_eigen_pair_count && evectors.cols == right_eigen_pair_count))
-    {
-        std::cout << endl; std::cout << "Checking sizes of eigen vectors matrix " << evectors << "..." << endl;
-        std::cout << "Number of rows: " << evectors.rows << "   Number of cols: " << evectors.cols << endl;
-        std:: cout << "Size of src symmetric matrix: " << src.rows << " * " << src.cols << endl; std::cout << endl;
-        CV_Error (CORE_EIGEN_ERROR_SIZE, MESSAGE_ERROR_SIZE);
-        return false;
-    }
-
-    if (!(evalues.rows == right_eigen_pair_count && evalues.cols == 1))
-    {
-        std::cout << endl; std::cout << "Checking sizes of eigen values matrix " << evalues << "..." << endl;
-        std::cout << "Number of rows: " << evalues.rows << "   Number of cols: " << evalues.cols << endl;
-        std:: cout << "Size of src symmetric matrix: " << src.rows << " * " << src.cols << endl; std::cout << endl;
-        CV_Error (CORE_EIGEN_ERROR_COUNT, MESSAGE_ERROR_COUNT);
-        return false;
-    }
-
-    return true;
-}
-
-void Core_EigenTest::print_information(const size_t norm_idx, const alvision.Mat& src, double diff, double max_diff)
-{
-    switch (NORM_TYPE[norm_idx])
-    {
-    case alvision.NORM_L1: std::cout << "L1"; break;
-    case alvision.NORM_L2: std::cout << "L2"; break;
-    case alvision.NORM_INF: std::cout << "INF"; break;
-    default: break;
-    }
-
-    cout << "-criteria... " << endl;
-    cout << "Source size: " << src.rows << " * " << src.cols << endl;
-    cout << "Difference between original eigen vectors matrix and result: " << diff << endl;
-    cout << "Maximum allowed difference: " << max_diff << endl; cout << endl;
-}
-
-bool Core_EigenTest::check_orthogonality(const alvision.Mat& U)
-{
-    int type = U.type();
-    double eps_vec = type == CV_32FC1 ? eps_vec_32 : eps_vec_64;
-    alvision.Mat UUt; alvision.mulTransposed(U, UUt, false);
-
-    alvision.Mat E = Mat::eye(U.rows, U.cols, type);
-
-    for (int i = 0; i < COUNT_NORM_TYPES; ++i)
-    {
-        double diff = alvision.cvtest.norm(UUt, E, NORM_TYPE[i]);
-        if (diff > eps_vec)
-        {
-            std::cout << endl; std::cout << "Checking orthogonality of matrix " << U << ": ";
-            print_information(i, U, diff, eps_vec);
-            CV_Error(CORE_EIGEN_ERROR_ORTHO, MESSAGE_ERROR_ORTHO);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool Core_EigenTest::check_pairs_order(const alvision.Mat& eigen_values)
-{
-    switch (eigen_values.type())
-    {
-    case CV_32FC1:
-        {
-            for (int i = 0; i < (int)(eigen_values.total() - 1); ++i)
-                if (!(eigen_values.at<float>(i, 0) > eigen_values.at<float>(i+1, 0)))
-                {
-                std::cout << endl; std::cout << "Checking order of eigen values vector " << eigen_values << "..." << endl;
-                std::cout << "Pair of indexes with non ascending of eigen values: (" << i << ", " << i+1 << ")." << endl;
-                std::cout << endl;
-                CV_Error(CORE_EIGEN_ERROR_ORDER, MESSAGE_ERROR_ORDER);
-                return false;
-            }
-
-            break;
-        }
-
-    case CV_64FC1:
-        {
-            for (int i = 0; i < (int)(eigen_values.total() - 1); ++i)
-                if (!(eigen_values.at<double>(i, 0) > eigen_values.at<double>(i+1, 0)))
-                {
-                    std::cout << endl; std::cout << "Checking order of eigen values vector " << eigen_values << "..." << endl;
-                    std::cout << "Pair of indexes with non ascending of eigen values: (" << i << ", " << i+1 << ")." << endl;
-                    std::cout << endl;
-                    CV_Error(CORE_EIGEN_ERROR_ORDER, "Eigen values are not sorted in ascending order.");
-                    return false;
-                }
-
-            break;
-        }
-
-    default:;
-    }
-
-    return true;
-}
-
-bool Core_EigenTest::test_pairs(const alvision.Mat& src)
-{
-    int type = src.type();
-    double eps_vec = type == CV_32FC1 ? eps_vec_32 : eps_vec_64;
-
-    alvision.Mat eigen_values, eigen_vectors;
-
-    alvision.eigen(src, eigen_values, eigen_vectors);
-
-    if (!check_pair_count(src, eigen_values, eigen_vectors))
-        return false;
-
-    if (!check_orthogonality (eigen_vectors))
-        return false;
-
-    if (!check_pairs_order(eigen_values))
-        return false;
-
-    alvision.Mat eigen_vectors_t; alvision.transpose(eigen_vectors, eigen_vectors_t);
-
-    alvision.Mat src_evec(src.rows, src.cols, type);
-    src_evec = src*eigen_vectors_t;
-
-    alvision.Mat eval_evec(src.rows, src.cols, type);
-
-    switch (type)
-    {
-    case CV_32FC1:
-        {
-            for (int i = 0; i < src.cols; ++i)
-            {
-                alvision.Mat tmp = eigen_values.at<float>(i, 0) * eigen_vectors_t.col(i);
-                for (int j = 0; j < src.rows; ++j) eval_evec.at<float>(j, i) = tmp.at<float>(j, 0);
-            }
-
-            break;
-        }
-
-    case CV_64FC1:
-        {
-            for (int i = 0; i < src.cols; ++i)
-            {
-                alvision.Mat tmp = eigen_values.at<double>(i, 0) * eigen_vectors_t.col(i);
-                for (int j = 0; j < src.rows; ++j) eval_evec.at<double>(j, i) = tmp.at<double>(j, 0);
-            }
-
-            break;
-        }
-
-    default:;
-    }
-
-    alvision.Mat disparity = src_evec - eval_evec;
-
-    for (int i = 0; i < COUNT_NORM_TYPES; ++i)
-    {
-        double diff = alvision.cvtest.norm(disparity, NORM_TYPE[i]);
-        if (diff > eps_vec)
-        {
-            std::cout << endl; std::cout << "Checking accuracy of eigen vectors computing for matrix " << src << ": ";
-            print_information(i, src, diff, eps_vec);
-            CV_Error(CORE_EIGEN_ERROR_DIFF, MESSAGE_ERROR_DIFF_2);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool Core_EigenTest::test_values(const alvision.Mat& src)
-{
-    int type = src.type();
-    double eps_val = type == CV_32FC1 ? eps_val_32 : eps_val_64;
-
-    alvision.Mat eigen_values_1, eigen_values_2, eigen_vectors;
-
-    if (!test_pairs(src)) return false;
-
-    alvision.eigen(src, eigen_values_1, eigen_vectors);
-    alvision.eigen(src, eigen_values_2);
-
-    if (!check_pair_count(src, eigen_values_2)) return false;
-
-    for (int i = 0; i < COUNT_NORM_TYPES; ++i)
-    {
-        double diff = alvision.cvtest.norm(eigen_values_1, eigen_values_2, NORM_TYPE[i]);
-        if (diff > eps_val)
-        {
-            std::cout << endl; std::cout << "Checking accuracy of eigen values computing for matrix " << src << ": ";
-            print_information(i, src, diff, eps_val);
-            CV_Error(CORE_EIGEN_ERROR_DIFF, MESSAGE_ERROR_DIFF_1);
-            return false;
-        }
-    }
-
-    return true;
-}
-
-bool Core_EigenTest::check_full(int type)
-{
-    const int MAX_DEGREE = 7;
-
-    srand((unsigned int)time(0));
-
-    for (int i = 0; i < ntests; ++i)
-    {
-        int src_size = (int)(std::pow(2.0, (rand()%MAX_DEGREE)+1.));
-
-        alvision.Mat src(src_size, src_size, type);
-
-        for (int j = 0; j < src.rows; ++j)
-            for (int k = j; k < src.cols; ++k)
-                if (type == CV_32FC1)  src.at<float>(k, j) = src.at<float>(j, k) = alvision.randu<float>();
-        else	src.at<double>(k, j) = src.at<double>(j, k) = alvision.randu<double>();
-
-        if (!test_values(src)) return false;
-    }
-
-    return true;
-}
-
-TEST(Core_Eigen, scalar_32) {Core_EigenTest_Scalar_32 test; test.safe_run(); }
-TEST(Core_Eigen, scalar_64) {Core_EigenTest_Scalar_64 test; test.safe_run(); }
-TEST(Core_Eigen, vector_32) { Core_EigenTest_32 test; test.safe_run(); }
-TEST(Core_Eigen, vector_64) { Core_EigenTest_64 test; test.safe_run(); }
+alvision.cvtest.TEST('Core_Eigen', 'scalar_32', () => { var test = new Core_EigenTest_Scalar_32(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Eigen', 'scalar_64', () => { var test = new Core_EigenTest_Scalar_64 (); test.safe_run(); });
+alvision.cvtest.TEST('Core_Eigen', 'vector_32', () => { var test = new Core_EigenTest_32(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Eigen', 'vector_64', () => { var test = new Core_EigenTest_64(); test.safe_run(); });
