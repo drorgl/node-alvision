@@ -34,9 +34,9 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
 
             var depth = alvision.cvtest.randInt(rng).valueOf() % (alvision.MatrixType.CV_64F + 1);
             var  cn = (alvision.cvtest.randInt(rng).valueOf() % 4) + 1;
-            var type = alvision.MatrixType. CV_MAKETYPE(depth, cn);
-            var dist_type = alvision.cvtest.randInt(rng).valueOf() % (CV_RAND_NORMAL + 1);
-            var i, k, SZ = N / cn;
+            var type = alvision.MatrixType.CV_MAKETYPE(depth, cn);
+            var dist_type = alvision.cvtest.randInt(rng).valueOf() % (alvision.DistType.NORMAL  + 1);
+            var  SZ = N / cn;
 
             var A = new alvision.Scalar();
             var B = new alvision.Scalar();
@@ -45,18 +45,18 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
             if (depth == alvision.MatrixType.CV_64F)
                 eps = 1.e-7;
 
-            var do_sphere_test = dist_type == CV_RAND_UNI;
+            var do_sphere_test = dist_type == alvision.DistType.UNIFORM;
             var arr = new Array<alvision.Mat>(2);
             var hist = new Array<alvision.Mat>(4);
             var W = [ 0,0,0,0];
 
             arr[0].create(1, SZ, type);
             arr[1].create(1, SZ, type);
-            var fast_algo = dist_type == CV_RAND_UNI && depth < alvision.MatrixType.CV_32F;
+            var fast_algo = dist_type == alvision.DistType.UNIFORM && depth < alvision.MatrixType.CV_32F;
 
             for (var c = 0; c < cn; c++) {
                 var a, b, hsz;
-                if (dist_type == CV_RAND_UNI) {
+                if (dist_type == alvision.DistType.UNIFORM) {
                     a = (alvision.cvtest.randInt(rng).valueOf() % (_ranges[depth][1] -
                         _ranges[depth][0])) + _ranges[depth][0];
                     do {
@@ -64,12 +64,14 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
                             _ranges[depth][0])) + _ranges[depth][0];
                     }
                     while (Math.abs(a - b) <= 1);
-                    if (a > b)
-                        std::swap(a, b);
+                    if (a > b) {
+                        var tmp = a; a = b; b = tmp;
+                        //std::swap(a, b);
+                    }
 
-                    unsigned r = (unsigned)(b - a);
+                    var r = (b - a);
                     fast_algo = fast_algo && r <= 256 && (r & (r - 1)) == 0;
-                    hsz = Math.min((b - a), (unsigned)MAX_HIST_SIZE);
+                    hsz = Math.min((b - a), MAX_HIST_SIZE);
                     do_sphere_test = do_sphere_test && b - a >= 100;
                 }
                 else {
@@ -100,68 +102,70 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
                 }
             }
 
-            if (maxk >= 1 && alvision.cvtest.norm(arr[0], arr[1], NORM_INF) > eps) {
+            if (maxk >= 1 && alvision.cvtest.norm(arr[0], arr[1], alvision.NormTypes. NORM_INF) > eps) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "RNG output depends on the array lengths (some generated numbers get lost?)");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return;
             }
 
             for (c = 0; c < cn; c++) {
-                const data = arr[0].ptr<alvision.uchar>("uchar");
-                var H = hist[c].ptr<alvision.int>("int");
-                var HSZ = hist[c].cols;
-                var minVal = dist_type == CV_RAND_UNI ? A[c] : A[c] - B[c] * 4;
-                var maxVal = dist_type == CV_RAND_UNI ? B[c] : A[c] + B[c] * 4;
-                var scale = HSZ.valueOf() / (maxVal - minVal);
-                var delta = -minVal * scale;
+                (() => {
+                    //const data = arr[0].ptr<alvision.uchar>("uchar");
+                    var H = hist[c].ptr<alvision.int>("int");
+                    var HSZ = hist[c].cols;
+                    var minVal = dist_type == alvision.DistType.UNIFORM ? A[c] : A[c] - B[c] * 4;
+                    var maxVal = dist_type == alvision.DistType.UNIFORM ? B[c] : A[c] + B[c] * 4;
+                    var scale = HSZ.valueOf() / (maxVal - minVal);
+                    var delta = -minVal * scale;
 
-                hist[c] = alvision.Scalar.all(0);
+                    hist[c].setTo(alvision.Scalar.all(0));
 
-                for (i = c; i < SZ * cn; i += cn) {
-                    var val = depth == alvision.MatrixType.CV_8U ? ((const uchar*)data)[i]:
-                        depth == alvision.MatrixType.CV_8S ? ((const schar*)data)[i]:
-                            depth == alvision.MatrixType.CV_16U ? ((const ushort*)data)[i]:
-                                depth == alvision.MatrixType.CV_16S ? ((const short*)data)[i]:
-                                    depth == alvision.MatrixType.CV_32S ? ((const int*)data)[i]:
-                                        depth == alvision.MatrixType.CV_32F ? ((const float*)data)[i]:
-                                            ((const double*)data)[i];
-                    var ival = Math.floor(val * scale + delta);
-                    if ((unsigned)ival < (unsigned)HSZ )
-                    {
-                        H[ival]++;
-                        W[c]++;
-                    }
-                else if (dist_type == CV_RAND_UNI) {
-                        if ((minVal <= val && val < maxVal) || (depth >= alvision.MatrixType.CV_32F && val == maxVal)) {
-                            H[ival < 0 ? 0 : HSZ - 1]++;
+                    for (var i = c; i < SZ * cn; i += cn) {
+                        var val = depth == alvision.MatrixType.CV_8U ? arr[0].ptr<alvision.uchar>("uchar")[i] :
+                            depth == alvision.MatrixType.CV_8S ? arr[0].ptr<alvision.schar>("schar")[i] :
+                                depth == alvision.MatrixType.CV_16U ? arr[0].ptr<alvision.ushort>("ushort")[i] :
+                                    depth == alvision.MatrixType.CV_16S ? arr[0].ptr<alvision.short>("short")[i] :
+                                        depth == alvision.MatrixType.CV_32S ? arr[0].ptr<alvision.int>("int")[i] :
+                                            depth == alvision.MatrixType.CV_32F ? arr[0].ptr<alvision.float>("float")[i] :
+                                                arr[0].ptr<alvision.double>("double")[i];
+                        var ival = Math.floor(<any>val * scale + delta);
+                        if (ival < HSZ) {
+                            H[ival] = H[ival].valueOf() + 1;
                             W[c]++;
                         }
-                        else {
-                            putchar('^');
+                        else if (dist_type == alvision.DistType.UNIFORM) {
+                            if ((minVal <= val && val < maxVal) || (depth >= alvision.MatrixType.CV_32F && val == maxVal)) {
+                                H[ival < 0 ? 0 : HSZ.valueOf() - 1] = H[ival < 0 ? 0 : HSZ.valueOf() - 1].valueOf() + 1;
+                                W[c]++;
+                            }
+                            else {
+                                console.log("^");
+                                //putchar('^');
+                            }
                         }
                     }
-                }
 
-                if (dist_type == CV_RAND_UNI && W[c] != SZ) {
-                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "Uniform RNG gave values out of the range [%g,%g) on channel %d/%d\n",
-                        A[c], B[c], c, cn);
-                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
-                    return;
-                }
-                if (dist_type == CV_RAND_NORMAL && W[c] < SZ * .90) {
-                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "Normal RNG gave too many values out of the range (%g+4*%g,%g+4*%g) on channel %d/%d\n",
-                        A[c], B[c], A[c], B[c], c, cn);
-                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
-                    return;
-                }
-                var refval = 0, realval = 0;
+                    if (dist_type == alvision.DistType.UNIFORM && W[c] != SZ) {
+                        this.ts.printf(alvision.cvtest.TSConstants.LOG, "Uniform RNG gave values out of the range [%g,%g) on channel %d/%d\n",
+                            A[c], B[c], c, cn);
+                        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
+                        return;
+                    }
+                    if (dist_type == alvision.DistType.NORMAL && W[c] < SZ * .90) {
+                        this.ts.printf(alvision.cvtest.TSConstants.LOG, "Normal RNG gave too many values out of the range (%g+4*%g,%g+4*%g) on channel %d/%d\n",
+                            A[c], B[c], A[c], B[c], c, cn);
+                        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
+                        return;
+                    }
+                    var refval = 0, realval = 0;
 
-                if (!this.check_pdf(hist[c], 1. / W[c], dist_type, refval, realval)) {
-                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "RNG failed Chi-square test (got %g vs probable maximum %g) on channel %d/%d\n",
-                        realval, refval, c, cn);
-                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
-                    return;
-                }
+                    if (!this.check_pdf(hist[c], 1. / W[c], dist_type, refval, realval)) {
+                        this.ts.printf(alvision.cvtest.TSConstants.LOG, "RNG failed Chi-square test (got %g vs probable maximum %g) on channel %d/%d\n",
+                            realval, refval, c, cn);
+                        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
+                        return;
+                    }
+                })();
             }
 
             // Monte-Carlo test. Compute volume of SDIM-dimensional sphere
@@ -170,25 +174,25 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
                 var SDIM = alvision.cvtest.randInt(rng).valueOf() % (MAX_SDIM - 1) + 2;
                 var N0 = (SZ * cn / SDIM), n = 0;
                 var r2 = 0;
-                const  data = arr[0].ptr<alvision.uchar>("uchar");
-                double scale[4], delta[4];
+                //const  data = arr[0].ptr<alvision.uchar>("uchar");
+                var scale = new Array<alvision.double>(4), delta = new Array<alvision.double>(4);
                 for (c = 0; c < cn; c++) {
                     scale[c] = 2. / (B[c] - A[c]);
-                    delta[c] = -A[c] * scale[c] - 1;
+                    delta[c] = -A[c] * scale[c].valueOf() - 1;
                 }
 
-                for (i = k = c = 0; i <= SZ * cn - SDIM; i++ , k++ , c++) {
-                    double val = depth == CV_8U ? ((const uchar*)data)[i]:
-                        depth == CV_8S ? ((const schar*)data)[i]:
-                            depth == CV_16U ? ((const ushort*)data)[i]:
-                                depth == CV_16S ? ((const short*)data)[i]:
-                                    depth == CV_32S ? ((const int*)data)[i]:
-                                        depth == CV_32F ? ((const float*)data)[i]: ((const double*)data)[i];
+                for (var i = k = c = 0; i <= SZ * cn - SDIM; i++ , k++ , c++) {
+                    var val = depth == alvision.MatrixType.CV_8U ? arr[0].ptr<alvision.uchar>("uchar")[i]:
+                        depth == alvision.MatrixType.CV_8S ? arr[0].ptr<alvision.schar>("schar")[i]:
+                            depth == alvision.MatrixType.CV_16U ? arr[0].ptr<alvision.ushort>("ushort")[i]:
+                                depth == alvision.MatrixType.CV_16S ? arr[0].ptr<alvision.short>("short")[i]:
+                                    depth == alvision.MatrixType.CV_32S ? arr[0].ptr<alvision.int>("int")[i]:
+                                        depth == alvision.MatrixType.CV_32F ? arr[0].ptr<alvision.float>("float")[i] : arr[0].ptr<alvision.double>("double")[i];
                     c &= c < cn ? -1 : 0;
-                    val = val * scale[c] + delta[c];
-                    r2 += val * val;
+                    val = <any>val * scale[c].valueOf() + delta[c].valueOf();
+                    r2 += <any>val * <any>val;
                     if (k == SDIM - 1) {
-                        n += r2 <= 1;
+                        n += (r2 <= 1) ? 1 : 0;
                         r2 = 0;
                         k = -1;
                     }
@@ -218,42 +222,42 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
         var hist0 = new alvision.Mat(hist.size(), alvision.MatrixType.CV_32F);
         const  H = hist.ptr<alvision.int>("int");
         var  H0 = hist0.ptr<alvision.float>("float");
-        var hsz = hist.cols;
+        var hsz = hist.cols.valueOf();
 
         var sum = 0;
         for (var i = 0; i < hsz; i++)
-            sum += H[i];
-        alvision.CV_Assert(()=>Math.abs(1. / sum - scale) < alvision.FLT_EPSILON);
+            sum += H[i].valueOf();
+        alvision.CV_Assert(()=>Math.abs(1. / sum - scale.valueOf()) < alvision.FLT_EPSILON);
 
-        if (dist_type == CV_RAND_UNI) {
-            float scale0 = (float)(1. / hsz);
+        if (dist_type == alvision.DistType.UNIFORM) {
+            var scale0 = (1. / hsz);
             for (i = 0; i < hsz; i++)
                 H0[i] = scale0;
         }
         else {
-            double sum2 = 0, r = (hsz - 1.) / 2;
-            double alpha = 2 * sqrt(2.) / r, beta = -alpha * r;
+            var sum2 = 0, r = (hsz - 1.) / 2;
+            var alpha = 2 * Math.sqrt(2.) / r, beta = -alpha * r;
             for (i = 0; i < hsz; i++) {
-                double x = i * alpha + beta;
-                H0[i] = (float)exp(-x * x);
-                sum2 += H0[i];
+                var x = i * alpha + beta;
+                H0[i] = Math.exp(-x * x);
+                sum2 += H0[i].valueOf();
             }
             sum2 = 1. / sum2;
             for (i = 0; i < hsz; i++)
-                H0[i] = (float)(H0[i] * sum2);
+                H0[i] = (H0[i].valueOf() * sum2);
         }
 
-        double chi2 = 0;
+        var chi2 = 0;
         for (i = 0; i < hsz; i++) {
-            double a = H0[i];
-            double b = H[i] * scale;
-            if (a > DBL_EPSILON)
-                chi2 += (a - b) * (a - b) / (a + b);
+            var a = H0[i];
+            var b = H[i].valueOf() * scale.valueOf();
+            if (a > alvision.DBL_EPSILON)
+                chi2 += (a.valueOf() - b.valueOf()) * (a.valueOf() - b.valueOf()) / (a.valueOf() + b.valueOf());
         }
         realval = chi2;
 
-        double chi2_pval = chi2_p95(hsz - 1 - (dist_type == CV_RAND_NORMAL ? 2 : 0));
-        refval = chi2_pval * 0.01;
+        var chi2_pval = chi2_p95(hsz.valueOf() - 1 - (dist_type == alvision.DistType.NORMAL ? 2 : 0));
+        refval = chi2_pval.valueOf() * 0.01;
         return realval <= refval;
     }
 };
@@ -269,7 +273,7 @@ function chi2_p95(n: alvision.int ) : alvision.double
     alvision.CV_Assert(()=>n >= 1);
 
     if( n <= 30 )
-        return chi2_tab95[n-1];
+        return chi2_tab95[n.valueOf()-1];
     return n.valueOf() + Math.sqrt(2*n.valueOf())*xp + 0.6666666666666*(xp*xp - 1);
 }
 
@@ -283,16 +287,16 @@ class Core_RandRangeTest  extends alvision.cvtest.BaseTest
     {
         var a = new alvision.Mat(new alvision.Size(1280, 720),alvision.MatrixType. CV_8U,new alvision.Scalar(20));
         var af = new alvision.Mat (new alvision.Size(1280, 720),alvision.MatrixType. CV_32F,new alvision.Scalar(20));
-        alvision.theRNG().fill(a, RNG::UNIFORM, -DBL_MAX, DBL_MAX);
-        alvision.theRNG().fill(af, RNG::UNIFORM, -DBL_MAX, DBL_MAX);
-        int n0 = 0, n255 = 0, nx = 0;
-        int nfmin = 0, nfmax = 0, nfx = 0;
+        alvision.theRNG().fill(a, alvision.DistType.UNIFORM,  -alvision.DBL_MAX, alvision.DBL_MAX);
+        alvision.theRNG().fill(af, alvision.DistType.UNIFORM, -alvision.DBL_MAX, alvision.DBL_MAX);
+        var n0 = 0, n255 = 0, nx = 0;
+        var nfmin = 0, nfmax = 0, nfx = 0;
 
         for( var i = 0; i < a.rows; i++ )
             for( var j = 0; j < a.cols; j++ )
             {
-                int v = a.at<uchar>(i,j);
-                double vf = af.at<float>(i,j);
+                var v = a.at<alvision.uchar>("uchar",i,j).get();
+                var vf = af.at<alvision.float>("float",i,j).get();
                 if( v == 0 ) n0++;
                 else if( v == 255 ) n255++;
                 else nx++;
@@ -310,12 +314,12 @@ alvision.cvtest.TEST('Core_Rand', 'range', () => { var test = new Core_RandRange
 
 alvision.cvtest.TEST('Core_RNG_MT19937', 'regression',()=>
 {
-    alvision.RNG_MT19937 rng;
-    int actual[61] = {0, };
-    const size_t length = (sizeof(actual) / sizeof(actual[0]));
+    var rng = new alvision.RNG_MT19937();
+    var actual = alvision.NewArray(61, () => 0);// = {0, };
+    const length = actual.length;//(sizeof(actual) / sizeof(actual[0]));
     for (var i = 0; i < 10000; ++i )
     {
-        actual[(unsigned)(rng.next() ^ i) % length]++;
+        actual[(rng.next().valueOf() ^ i) % length]++;
     }
 
     var expected = [
