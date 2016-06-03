@@ -67,17 +67,20 @@ class Core_RotatedRectConstructorTest extends alvision.cvtest.BaseTest
         do {
             this.b = new alvision.Point2f(rng.uniform(-this.MAX_COORD_VAL, this.MAX_COORD_VAL), rng.uniform(-this.MAX_COORD_VAL, this.MAX_COORD_VAL));
         }
-        while (alvision.norm(a - b) <= alvision.FLT_EPSILON);
-        var along = new alvision.Vecf (a - b);
+        while (alvision.norm(this.a.op_Substraction(this.b)) <= alvision.FLT_EPSILON);
+
+        var pointab = this.a.op_Substraction(this.b);
+        var along = new alvision.Vecf(pointab.x, pointab.y);
+
         var perp = new alvision.Vecf(-along[1], along[0]);
-        var d =  rng.uniform(1.0f, 5.0f);
+        var d =  rng.uniform(1.0, 5.0);
         if (alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ) d = -d;
-        this.c = new alvision.Point2f((float)((double) b.x + d * perp[0]), (float)((double) b.y + d * perp[1]));
+        this.c = new alvision.Point2f((this.b.x.valueOf() + d.valueOf() * perp.Element(0).valueOf()), (this.b.y.valueOf() + d.valueOf() * perp.Element(1).valueOf()));
         return 1;
 }
 
     run_func(): void {
-        this.rec = new alvision.RotatedRect(a, b, c);
+        this.rec = new alvision.RotatedRect(this.a, this.b, this.c);
 }
 
     validate_test_results(int): alvision.int{
@@ -86,9 +89,9 @@ class Core_RotatedRectConstructorTest extends alvision.cvtest.BaseTest
         var count_match = 0;
         for (var i = 0; i < 4; i++ )
         {
-            if (alvision.norm(vertices[i] - a) <= 0.001) count_match++;
-            else if (alvision.norm(vertices[i] - b) <= 0.001) count_match++;
-            else if (alvision.norm(vertices[i] - c) <= 0.001) count_match++;
+            if (alvision.norm(vertices[i].op_Substraction( this.a)) <= 0.001) count_match++;
+            else if (alvision.norm(vertices[i] .op_Substraction( this.b)) <= 0.001) count_match++;
+            else if (alvision.norm(vertices[i] .op_Substraction( this.c)) <= 0.001) count_match++;
         }
         if (count_match == 3)
             return alvision.cvtest.FailureCode.OK;
@@ -100,7 +103,9 @@ class Core_RotatedRectConstructorTest extends alvision.cvtest.BaseTest
 
 
     protected MAX_COORD_VAL: alvision.float;
-    protected a: alvision.Point2f, b : alvision.Point2f, c : alvision.Point2f ;
+    protected a: alvision.Point2f;
+    protected b: alvision.Point2f;
+    protected c: alvision.Point2f;
     protected rec: alvision.RotatedRect;
 };
 
