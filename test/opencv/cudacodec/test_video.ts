@@ -52,82 +52,89 @@ import fs = require('fs');
 //
 //#ifdef HAVE_NVCUVID
 //
-//PARAM_TEST_CASE(Video, alvision.cuda::DeviceInfo, std::string)
+//PARAM_TEST_CASE(Video, alvision.cuda.DeviceInfo, std::string)
 //{
 //};
 
 //////////////////////////////////////////////////////
 // VideoReader
 
-CUDA_TEST_P(Video, Reader)
+//CUDA_TEST_P(Video, Reader)
+class Video_Reader extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::setDevice(GET_PARAM(0).deviceID());
+    public TestBody(): void {
+        alvision.cuda.setDevice(this.GET_PARAM<alvision.cuda.DeviceInfo>(0).deviceID());
 
-    const std::string inputFile = std::alvision.cvtest.TS.ptr().get_data_path() + "video/" + GET_PARAM(1);
+        const inputFile = alvision.cvtest.TS.ptr().get_data_path() + "video/" + this.GET_PARAM<string>(1);
 
-    alvision.Ptr<alvision.cudacodec::VideoReader> reader = alvision.cudacodec::createVideoReader(inputFile);
+        var reader = alvision.cudacodec.createVideoReader(inputFile);
 
-    alvision.cuda::GpuMat frame;
+        var frame = new alvision.cuda.GpuMat();
 
-    for (int i = 0; i < 10; ++i)
-    {
-        ASSERT_TRUE(reader.nextFrame(frame));
-        ASSERT_FALSE(frame.empty());
+        for (var i = 0; i < 10; ++i)
+        {
+            alvision.ASSERT_TRUE(reader.nextFrame(frame));
+            alvision.ASSERT_FALSE(frame == null);
+        }
     }
 }
 
 //////////////////////////////////////////////////////
 // VideoWriter
 
-#ifdef WIN32
+//#ifdef WIN32
 
-CUDA_TEST_P(Video, Writer)
+
+//CUDA_TEST_P(Video, Writer)
+class Video_Writer extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::setDevice(GET_PARAM(0).deviceID());
+    public TestBody(): void {
+        alvision.cuda.setDevice(this.GET_PARAM<alvision.cuda.DeviceInfo>(0).deviceID());
 
-    const std::string inputFile = std::alvision.cvtest.TS.ptr().get_data_path() + "video/" + GET_PARAM(1);
+        const inputFile = alvision.cvtest.TS.ptr().get_data_path() + "video/" + this.GET_PARAM<string>(1);
 
-    std::string outputFile = alvision.tempfile(".avi");
-    const double FPS = 25.0;
+        var outputFile = alvision.tempfile(".avi");
+        const FPS = 25.0;
 
-    alvision.VideoCapture reader(inputFile);
-    ASSERT_TRUE(reader.isOpened());
+        var reader = new alvision.VideoCapture (inputFile);
+        alvision.ASSERT_TRUE(reader.isOpened());
 
-    alvision.Ptr<alvision.cudacodec::VideoWriter> d_writer;
+        var d_writer: alvision.cudacodec.VideoWriter;
 
-    alvision.Mat frame;
-    alvision.cuda::GpuMat d_frame;
+        var frame = new alvision.Mat();
+        var d_frame = new alvision.cuda.GpuMat();
 
-    for (int i = 0; i < 10; ++i)
-    {
-        reader >> frame;
-        ASSERT_FALSE(frame.empty());
+        for (var i = 0; i < 10; ++i)
+        {
+            reader.read(frame);
+            alvision.ASSERT_FALSE(frame == null);
 
-        d_frame.upload(frame);
+            d_frame.upload(frame);
 
-        if (d_writer.empty())
-            d_writer = alvision.cudacodec::createVideoWriter(outputFile, frame.size(), FPS);
+            if (d_writer == null)
+                d_writer = alvision.cudacodec.createVideoWriter(outputFile, frame.size(), FPS);
 
-        d_writer.write(d_frame);
-    }
+            d_writer.write(d_frame);
+        }
 
-    reader.release();
-    d_writer.release();
+        reader.release();
+        d_writer = null;//.release();
 
-    reader.open(outputFile);
-    ASSERT_TRUE(reader.isOpened());
+        reader.open(outputFile);
+        alvision.ASSERT_TRUE(reader.isOpened());
 
-    for (int i = 0; i < 5; ++i)
-    {
-        reader >> frame;
-        ASSERT_FALSE(frame.empty());
+        for (var  i = 0; i < 5; ++i)
+        {
+            reader.read(frame);
+            alvision.ASSERT_FALSE(frame.empty());
+        }
     }
 }
 
-#endif // WIN32
+//#endif // WIN32
 
-INSTANTIATE_TEST_CASE_P(CUDA_Codec, Video, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(std::string("768x576.avi"), std::string("1920x1080.avi"))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Codec', 'Video', (case_name, test_name) => { return null; },new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    ["768x576.avi","1920x1080.avi"]]));
 
-#endif // HAVE_NVCUVID
+//#endif // HAVE_NVCUVID
