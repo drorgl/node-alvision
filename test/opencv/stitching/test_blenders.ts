@@ -64,12 +64,12 @@ alvision.cvtest.TEST('MultiBandBlender', 'CanBlendTwoImages', () => {
     image2.convertTo(image2s, alvision.MatrixType.CV_16S);
 
     var mask1 = new alvision.Mat(image1s.size(), alvision.MatrixType.CV_8U);
-    mask1 = new alvision.Mat(new alvision.Rect(0, 0, mask1.cols.valueOf() / 2, mask1.rows)).setTo(255);
-    mask1 = new alvision.Mat(new alvision.Rect(mask1.cols.valueOf() / 2, 0, mask1.cols.valueOf() - mask1.cols.valueOf() / 2, mask1.rows)).setTo(0);
+    mask1.roi(new alvision.Rect(0, 0, mask1.cols.valueOf() / 2, mask1.rows)).setTo(255);
+    mask1.roi(new alvision.Rect(mask1.cols.valueOf() / 2, 0, mask1.cols.valueOf() - mask1.cols.valueOf() / 2, mask1.rows)).setTo(0);
 
     var mask2 = new alvision.Mat(image2s.size(), alvision.MatrixType.CV_8U);
-    mask2 = new alvision.Mat(new alvision.Rect(0, 0, mask2.cols.valueOf() / 2, mask2.rows)).setTo(0);
-    mask2 = new alvision.Mat(new alvision.Rect(mask2.cols.valueOf() / 2, 0, mask2.cols.valueOf() - mask2.cols.valueOf() / 2, mask2.rows)).setTo(255);
+    mask2.roi(new alvision.Rect(0, 0, mask2.cols.valueOf() / 2, mask2.rows)).setTo(0);
+    mask2.roi(new alvision.Rect(mask2.cols.valueOf() / 2, 0, mask2.cols.valueOf() - mask2.cols.valueOf() / 2, mask2.rows)).setTo(255);
 
     var blender = new alvision.detail.MultiBandBlender(false, 5);
     //detail::MultiBandBlender blender(false, 5);
