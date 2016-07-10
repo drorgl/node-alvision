@@ -226,7 +226,7 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
                 //find4QuadCornerSubpix(gray, v, Size(5, 5));
                 show_points(gray, expected, v, pattern_size, result);
                 //#ifndef WRITE_POINTS
-                //        printf("called find4QuadCornerSubpix\n");
+                //        console.log(util.format("called find4QuadCornerSubpix\n");
                 err = calcError(v, expected);
                 sum_error += err.valueOf();
                 count++;
@@ -245,7 +245,7 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
             //#ifdef WRITE_POINTS
             var mat_v = new alvision.Mat (pattern_size,alvision.MatrixType. CV_32FC2, v);
             var fs = new alvision.FileStorage (_filename,alvision.FileStorageMode.WRITE);
-            fs.write("isFound", result);
+            fs.write("isFound", result ? 1 : 0);
             fs.write("corners", mat_v);
             fs.release();
             //#endif
@@ -387,9 +387,9 @@ function calcError(v: Array<alvision.Point2f>, u: alvision.Mat): alvision.double
             if (dx > err1)
                 err1 = dx;
             //#endif //_L2_ERR
-            //printf("dx = %f\n", dx);
+            //console.log(util.format("dx = %f\n", dx);
         }
-        //printf("\n");
+        //console.log(util.format("\n");
         err = Math.min(err, err1);
     }
 
