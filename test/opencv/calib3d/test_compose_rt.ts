@@ -78,8 +78,8 @@ class Differential
             alvision.composeRT( this.rv1.op_Addition( this.ev), this.tv1, this.rv2, this.tv2, this.rv3_p, this.tv3_p);
             alvision.composeRT( this.rv1.op_Substraction( this.ev), this.tv1, this.rv2, this.tv2, this.rv3_m, this.tv3_m);
 
-            dr3_dr1.col(i).setTo(alvision.MatExpr.op_Substraction(this.rv3_p, this.rv3_m));
-            dt3_dr1.col(i).setTo(alvision.MatExpr.op_Substraction(this.tv3_p, this.tv3_m));
+            dr3_dr1.col(i).setTo(alvision.MatExpr.op_Substraction(this.rv3_p, this.rv3_m).toMat());
+            dt3_dr1.col(i).setTo(alvision.MatExpr.op_Substraction(this.tv3_p, this.tv3_m).toMat());
         }
         dr3_dr1.op_Division( 2 * this.eps.valueOf()).copyTo(dr3_dr1);       dt3_dr1.op_Division(2 * this.eps.valueOf()).copyTo(dt3_dr1);
     }
@@ -95,8 +95,8 @@ class Differential
             alvision.composeRT( this.rv1, this.tv1, this.rv2.op_Addition( this.ev), this.tv2, this.rv3_p, this.tv3_p);
             alvision.composeRT( this.rv1, this.tv1, this.rv2.op_Substraction(this.ev), this.tv2, this.rv3_m, this.tv3_m);
 
-            dr3_dr2.col(i).setTo( alvision.MatExpr.op_Substraction(this.rv3_p , this.rv3_m));
-            dt3_dr2.col(i).setTo( alvision.MatExpr.op_Substraction(this.tv3_p , this.tv3_m));
+            dr3_dr2.col(i).setTo( alvision.MatExpr.op_Substraction(this.rv3_p , this.rv3_m).toMat());
+            dt3_dr2.col(i).setTo( alvision.MatExpr.op_Substraction(this.tv3_p , this.tv3_m).toMat());
         }
         dr3_dr2.op_Division(2 * this.eps.valueOf()).copyTo(dr3_dr2); dt3_dr2.op_Division( 2 * this.eps.valueOf()).copyTo(dt3_dr2);
     }
@@ -110,8 +110,8 @@ class Differential
             alvision.composeRT(this.rv1, this.tv1.op_Addition(this.ev), this.rv2, this.tv2, this.rv3_p, this.tv3_p);
             alvision.composeRT(this.rv1, this.tv1.op_Substraction(this.ev), this.rv2, this.tv2, this.rv3_m, this.tv3_m);
 
-            drt3_dt1.col(i).setTo(alvision.MatExpr.op_Substraction(this.rv3_p, this.rv3_m));
-            dt3_dt1.col(i).setTo(alvision.MatExpr.op_Substraction(this.tv3_p, this.tv3_m));
+            drt3_dt1.col(i).setTo(alvision.MatExpr.op_Substraction(this.rv3_p, this.rv3_m).toMat());
+            dt3_dt1.col(i).setTo(alvision.MatExpr.op_Substraction(this.tv3_p, this.tv3_m) .toMat());
         }
         drt3_dt1.op_Division(2 * this.eps.valueOf()).copyTo(drt3_dt1); dt3_dt1.op_Division(2 * this.eps.valueOf()).copyTo(dt3_dt1);
     }
@@ -127,8 +127,8 @@ class Differential
             alvision.composeRT( this.rv1, this.tv1, this.rv2, this.tv2.op_Addition( this.ev), this.rv3_p, this.tv3_p);
             alvision.composeRT( this.rv1, this.tv1, this.rv2, this.tv2.op_Substraction( this.ev), this.rv3_m, this.tv3_m);
 
-            dr3_dt2.col(i).setTo( alvision.MatExpr.op_Substraction(this.rv3_p , this.rv3_m));
-            dt3_dt2.col(i).setTo( alvision.MatExpr.op_Substraction(this.tv3_p , this.tv3_m));
+            dr3_dt2.col(i).setTo( alvision.MatExpr.op_Substraction(this.rv3_p , this.rv3_m).toMat());
+            dt3_dt2.col(i).setTo( alvision.MatExpr.op_Substraction(this.tv3_p , this.tv3_m).toMat());
         }
         dr3_dt2.op_Division( 2 * this.eps.valueOf()).copyTo(dr3_dt2);       dt3_dt2.op_Division( 2 * this.eps.valueOf()).copyTo(dt3_dt2);
     }
