@@ -333,7 +333,7 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         //catch(e)
         //{
         //    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
-        //    printf("+!");
+        //    console.log(util.format("+!");
         //}
     }
     run_func(): void { }
@@ -382,7 +382,7 @@ class CV_Rodrigues2BadArgTest extends alvision.cvtest.BadArgTest
        /* try { caller(); }
         catch(e)
         {
-            printf("badasfas");
+            console.log(util.format("badasfas");
         }*/
 
         /*/*//*/*/
@@ -490,7 +490,7 @@ class C_CallerProjectPoints2
     run() : void
     {
         alvision.projectPoints(this.objectPoints, this.r_vec, this.t_vec,this. A,this. distCoeffs, this.imagePoints,
-            /*this.dpdr, this.dpdt,this. dpdf,this. dpdc,this. dpdk, */this.aspectRatio);
+            /*this.dpdr, this.dpdt,this. dpdf,this. dpdc,this. dpdk, */null,this.aspectRatio);
     }
 };
 
@@ -534,9 +534,9 @@ class CV_ProjectPoints2BadArgTest extends alvision.cvtest.BadArgTest
         alvision.randu(objectPoints_cpp, alvision.Scalar.all(1), alvision.Scalar.all(10));
         objectPoints_c = objectPoints_cpp;
 
-        var t_vec_cpp = new alvision.Mat (alvision.Mat.zeros(1, 3, alvision.MatrixType.CV_32F)); t_vec_c = t_vec_cpp;
+        var t_vec_cpp = alvision.Mat.zeros(1, 3, alvision.MatrixType.CV_32F).toMat(); t_vec_c = t_vec_cpp;
         var r_vec_cpp = new alvision.Mat();
-        alvision.Rodrigues(alvision.Mat.eye(3, 3,alvision.MatrixType. CV_32F), r_vec_cpp); r_vec_c = r_vec_cpp;
+        alvision.Rodrigues(alvision.Mat.eye(3, 3,alvision.MatrixType. CV_32F).toMat(), r_vec_cpp); r_vec_c = r_vec_cpp;
 
         var A_cpp = this.camMat.clone(); A_c = A_cpp;
         var distCoeffs_cpp = this.distCoeffs.clone(); distCoeffs_c = distCoeffs_cpp;
