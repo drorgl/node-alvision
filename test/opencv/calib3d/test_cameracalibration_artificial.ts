@@ -193,11 +193,11 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
                 if (err_count++ < errMsgNum)
                 {
                     if (err_count == errMsgNum)
-                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) ...\n", this.r);
+                        this.ts.printf(alvision.cvtest.TSConstants.LOG, "%d) ...\n", this.r);
                     else
                     {
                         this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Bad accuracy in returned tvecs. Index = %d\n", this.r, i);
-                        this.ts.printf(alvision.cvtest.TSConstants.LOG, "%d) norm(tvec_est - tvec) = %f, norm(tvec_exp) = %f \n", this.r, alvision.Point3d.norm(alvision.Point3d.op_Substraction(tvec_est, tvec)), alvision.Point3d.norm(tvec));
+                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) norm(tvec_est - tvec) = %f, norm(tvec_exp) = %f \n", this.r, alvision.Point3d.norm(alvision.Point3d.op_Substraction(tvec_est, tvec)), alvision.Point3d.norm(tvec));
                     }
                 }
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
@@ -227,8 +227,8 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
                         this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) ...\n", this.r);
                     else
                     {
-                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Bad accuracy in returned rvecs (rotation matrs). Index = %d\n", this.r, i);
-                        this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) norm(rot_mat_est - rot_mat_exp) = %f, norm(rot_mat_exp) = %f \n", this.r,
+                        this.ts.printf (alvision.cvtest.TSConstants.LOG, "%d) Bad accuracy in returned rvecs (rotation matrs). Index = %d\n", this.r, i);
+                        this.ts.printf (alvision.cvtest.TSConstants.LOG, "%d) norm(rot_mat_est - rot_mat_exp) = %f, norm(rot_mat_exp) = %f \n", this.r,
                                    alvision.cvtest.norm(rmat_est, rmat,alvision.NormTypes. NORM_L2), alvision.cvtest.norm(rmat,alvision.NormTypes. NORM_L2));
 
                     }
@@ -362,7 +362,7 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
         const thres = 1;
         if (rep_error > thres)
         {
-            this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error = %f\n", this.r, rep_error);
+            this.ts.printf (alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error = %f\n", this.r, rep_error);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
@@ -377,7 +377,7 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
         const thres2 = 0.01;
         if (rep_errorWOI > thres2)
         {
-            this.ts.printf( alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error without intrinsics = %f\n", this.r, rep_errorWOI);
+            this.ts.printf (alvision.cvtest.TSConstants.LOG, "%d) Too big reproject error without intrinsics = %f\n", this.r, rep_errorWOI);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
         }
 
@@ -431,18 +431,18 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
             cbg.cov = 0.8;
 
             progress = this.update_progress(progress, this.r, repeat_num, 0).valueOf();
-            this.ts.printf( alvision.cvtest.TSConstants.LOG, "\n");
+            this.ts.printf (alvision.cvtest.TSConstants.LOG, "\n");
             this.prepareForTest(bg, camMat, distCoeffs, brds_num, cbg);
 
-            this.ts.printf( alvision.cvtest.TSConstants.LOG, "artificial corners\n");
+            this.ts.printf (alvision.cvtest.TSConstants.LOG, "artificial corners\n");
             this.runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), ARTIFICIAL_CORNERS);
             progress = this.update_progress(progress, this.r, repeat_num, 0).valueOf();
 
-            this.ts.printf( alvision.cvtest.TSConstants.LOG, "findChessboard corners\n");
+            this.ts.printf (alvision.cvtest.TSConstants.LOG, "findChessboard corners\n");
             this.runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), JUST_FIND_CORNERS);
             progress = this.update_progress(progress, this.r, repeat_num, 0).valueOf();
 
-            this.ts.printf( alvision.cvtest.TSConstants.LOG, "cornersSubPix corners\n");
+            this.ts.printf (alvision.cvtest.TSConstants.LOG, "cornersSubPix corners\n");
             this.runTest(bg.size(), camMat, distCoeffs, brds_num, cbg.cornersSize(), USE_CORNERS_SUBPIX);
             progress = this.update_progress(progress, this.r, repeat_num, 0).valueOf();
 
