@@ -144,13 +144,13 @@ function checkDispMapsAndUnknDispMasks(leftDispMap: alvision.Mat, rightDispMap: 
     if (leftUnknDispMask.empty())
         alvision.minMaxLoc(leftDispMap, (minVal) => {leftMinVal = minVal.valueOf()});
     else
-        alvision.minMaxLoc(leftDispMap, (minVal) => { leftMinVal = minVal.valueOf() }, ~leftUnknDispMask );
+        alvision.minMaxLoc(leftDispMap, (minVal) => { leftMinVal = minVal.valueOf() }, alvision.MatExpr.op_BinaryNot( leftUnknDispMask) );
     if( !rightDispMap.empty() )
     {
         if( rightUnknDispMask.empty() )
             alvision.minMaxLoc(rightDispMap, (minVal) => { rightMinVal = minVal.valueOf() } );
         else
-            alvision.minMaxLoc(rightDispMap, (minVal) => { rightMinVal = minVal.valueOf() }, ~rightUnknDispMask );
+            alvision.minMaxLoc(rightDispMap, (minVal) => { rightMinVal = minVal.valueOf() }, alvision.MatExpr.op_BinaryNot( rightUnknDispMask) );
     }
     if( leftMinVal < 0 || rightMinVal < 0)
         alvision.CV_Error( alvision.cv.Error.Code.StsBadArg, "known disparity values must be positive" );
