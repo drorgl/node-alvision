@@ -224,13 +224,13 @@ function calcDistance(set1: Array<alvision.Point2f>, set2: Array<alvision.Point2
         }
         indices.push(min_idx);
 
-//        printf("dist %d = %f\n", (int)i, min_dist);
+//        console.log(util.format("dist %d = %f\n", (int)i, min_dist);
 
         sum_dist += min_dist*min_dist;
     }
 
     mean_dist = Math.sqrt(sum_dist/set1.length);
-//    printf("sum_dist = %f, set1.size() = %d, mean_dist = %f\n", sum_dist, (int)set1.size(), mean_dist);
+//    console.log(util.format("sum_dist = %f, set1.size() = %d, mean_dist = %f\n", sum_dist, (int)set1.size(), mean_dist);
 
     return 1;
 }
