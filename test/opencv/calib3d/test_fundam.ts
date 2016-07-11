@@ -254,7 +254,7 @@ function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvis
 
 
         alvision.SVD.compute(matR, matW, matU, matV, alvision.SVDFlags.MODIFY_A + alvision.SVDFlags.NO_UV + alvision.SVDFlags.FULL_UV);
-        alvision.gemm( matU, matV, 1, 0, 0, matR, alvision.GemmFlags.GEMM_1_T );
+        alvision.gemm( matU, matV, 1, null, 0, matR, alvision.GemmFlags.GEMM_1_T );
 
         alvision.mulTransposed(matR, matA, false );
         alvision.setIdentity(matI );
