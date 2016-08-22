@@ -81,8 +81,8 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
             var alpha = 0.01 * rng.gaussian(1).valueOf();
 
             var origK = new alvision.Matxd(
-                f.Element(0), alpha * f.Element(0).valueOf(), c.Element(0),
-                0, f.Element(1), c.Element(1),
+                f.at(0).get(), alpha * f.at(0).get().valueOf(), c.at(0).get(),
+                0, f.at(1).get(), c.at(1).get(),
                 0, 0, 1);
 
 
@@ -112,8 +112,8 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
 
 
             // Recover translation from the camera center
-            var cameraCenter = new alvision.Vecd(homogCameraCenter.Element(0), homogCameraCenter.Element(1), homogCameraCenter.Element(2));
-            cameraCenter = alvision.Vecd.op_Division(cameraCenter, homogCameraCenter.Element(3));
+            var cameraCenter = new alvision.Vecd(homogCameraCenter.at(0).get(), homogCameraCenter.at(1).get(), homogCameraCenter.at(2).get());
+            cameraCenter = alvision.Vecd.op_Division(cameraCenter, homogCameraCenter.at(3).get());
 
             var t = alvision.Matxd.op_Substraction(R).op_Multiplication( cameraCenter);
 

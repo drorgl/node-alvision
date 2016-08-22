@@ -93,7 +93,7 @@
 //        //tests
 //        CvMat * temp1;
 //        CvMat * temp;
-//        IplImage * temp_img = cvCreateImage(cvSize(img_size.width, img_size.height), 8, 3);
+//        IplImage * temp_img = cvCreateImage(alvision.Size(img_size.width, img_size.height), 8, 3);
 
 //        //-----------
 //        temp = (CvMat *)temp_img;

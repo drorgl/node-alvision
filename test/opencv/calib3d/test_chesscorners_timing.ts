@@ -128,7 +128,7 @@ class CV_ChessboardDetectorTimingTest extends alvision.cvtest.BaseTest
             var _v = new alvision.Mat(1, count0,alvision.MatrixType. CV_32FC2);
             count = count0;
 
-            var v = _v.ptr<alvision.CvPoint2D32f>("CvPoint2D32f");
+            var v = _v.ptr<alvision.Point2f>("Point2f");
             //v = (CvPoint2D32f *)_v.data.fl;
 
             var _time0 = alvision.cvGetTickCount();

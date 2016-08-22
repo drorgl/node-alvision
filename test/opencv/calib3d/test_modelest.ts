@@ -58,7 +58,7 @@
 //class BareModelEstimator extends CvModelEstimator2
 //{
 //public:
-//    BareModelEstimator(int modelPoints, CvSize modelSize, int maxBasicSolutions);
+//    BareModelEstimator(int modelPoints, alvision.Size modelSize, int maxBasicSolutions);
 
 //    virtual int runKernel( const CvMat*, const CvMat*, CvMat* );
 //    virtual void computeReprojError( const CvMat*, const CvMat*,
@@ -67,7 +67,7 @@
 //    bool checkSubsetPublic( const CvMat* ms1, int count, bool checkPartialSubset );
 //};
 
-//BareModelEstimator::BareModelEstimator(int _modelPoints, CvSize _modelSize, int _maxBasicSolutions)
+//BareModelEstimator::BareModelEstimator(int _modelPoints, alvision.Size _modelSize, int _maxBasicSolutions)
 //    :CvModelEstimator2(_modelPoints, _modelSize, _maxBasicSolutions)
 //{
 //}
@@ -127,10 +127,10 @@
 //    int pointsCount = alvision.cvtest.randInt(rng) % maxPointsCount;
 //    usedPointsCount = pointsCount == 0 ? 0 : alvision.cvtest.randInt(rng) % pointsCount;
 
-//    sizes[INPUT][0] = cvSize(1, pointsCount);
+//    sizes[INPUT][0] = alvision.Size(1, pointsCount);
 //    types[INPUT][0] = CV_64FC2;
 
-//    sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = cvSize(1, 1);
+//    sizes[OUTPUT][0] = sizes[REF_OUTPUT][0] = alvision.Size(1, 1);
 //    types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_8UC1;
 //}
 
@@ -172,7 +172,7 @@
 
 //                        const float eps = 1e-4f;
 //                        //TODO: perhaps it is better to normalize the cross product by norms of the tangent vectors
-//                        if (fabs(tangentVector_1.cross(tangentVector_2)) < eps)
+//                        if (Math.abs(tangentVector_1.cross(tangentVector_2)) < eps)
 //                        {
 //                            isGeneralPosition = false;
 //                        }
@@ -228,7 +228,7 @@
 
 //    RNG &rng = ts.get_rng();
 //    int modelPoints = alvision.cvtest.randInt(rng);
-//    CvSize modelSize = cvSize(2, modelPoints);
+//    alvision.Size modelSize = alvision.Size(2, modelPoints);
 //    int maxBasicSolutions = alvision.cvtest.randInt(rng);
 //    BareModelEstimator modelEstimator(modelPoints, modelSize, maxBasicSolutions);
 //    checkSubsetResult = modelEstimator.checkSubsetPublic(&_input, usedPointsCount, checkPartialSubsets);

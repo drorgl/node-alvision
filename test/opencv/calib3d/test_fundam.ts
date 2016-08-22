@@ -263,7 +263,7 @@ function cvTsRodrigues(src : alvision.Mat, dst : alvision.Mat, jacobian  : alvis
             Math.abs(alvision.determinant(matR).valueOf() - 1 ) > 1e-3 )
             return 0;
 
-        var tr = (alvision.trace(matR).Element(0).valueOf() - 1.)*0.5;
+        var tr = (alvision.trace(matR).at(0).get().valueOf() - 1.)*0.5;
         tr = tr > 1. ? 1. : tr < -1. ? -1. : tr;
         theta = Math.acos(tr);
         alpha = Math.cos(theta);
