@@ -279,7 +279,7 @@ See cv::imread for the list of supported formats and flags description.
 */
 
 interface Iimdecode {
-    (buf: _st.InputArray, flags: ImreadModes): _mat.Mat;
+    (buf: _st.InputArray | Buffer, flags: ImreadModes): _mat.Mat;
 }
 
 export var imdecode: Iimdecode = alvision_module.imdecode;

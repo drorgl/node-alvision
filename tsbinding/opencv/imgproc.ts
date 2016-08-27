@@ -791,12 +791,12 @@ location of points on the plane, building special graphs (such as NNG,RNG), and 
     interface GeneralizedHough extends _core.Algorithm
     {
         //! set template to search
-        setTemplate(templ: _st.InputArray,templCenter: _types.Point /*= Point(-1, -1)*/) : void;
-        setTemplate(edges : _st.InputArray, dx : _st.InputArray, dy : _st.InputArray, templCenter : _types.Point /*= Point(-1, -1)*/): void;
+        setTemplate(templ: _st.InputArray,templCenter?: _types.Point /*= Point(-1, -1)*/) : void;
+        setTemplate(edges : _st.InputArray, dx : _st.InputArray, dy : _st.InputArray, templCenter ?: _types.Point /*= Point(-1, -1)*/): void;
 
         //! find template on image
-        detect(image : _st.InputArray, positions: _st.OutputArray, votes : _st.OutputArray /*= noArray()*/): void;
-        detect(edges: _st.InputArray, dx: _st.InputArray, dy: _st.InputArray, positions: _st.OutputArray ,votes: _st.OutputArray /*= noArray()*/): void;
+        detect(image : _st.InputArray, positions: _st.OutputArray, votes? : _st.OutputArray /*= noArray()*/): void;
+        detect(edges: _st.InputArray, dx: _st.InputArray, dy: _st.InputArray, positions: _st.OutputArray ,votes?: _st.OutputArray /*= noArray()*/): void;
 
         //! Canny low threshold.
         setCannyLowThresh(cannyLowThresh: _st.int): void;
@@ -821,7 +821,7 @@ location of points on the plane, building special graphs (such as NNG,RNG), and 
 
     //! Ballard, D.H. (1981). Generalizing the Hough transform to detect arbitrary shapes. Pattern Recognition 13 (2): 111-122.
     //! Detects position only without traslation and rotation
-    interface GeneralizedHoughBallard extends GeneralizedHough
+    export interface GeneralizedHoughBallard extends GeneralizedHough
     {
         //! R-Table levels.
          setLevels(levels: _st.int) : void;
@@ -886,7 +886,7 @@ location of points on the plane, building special graphs (such as NNG,RNG), and 
     };
 
 
-    interface CLAHE extends Algorithm
+    export interface CLAHE extends Algorithm
     {
         apply(src : _st.InputArray, dst : _st.OutputArray) : void;
 
@@ -1209,8 +1209,8 @@ location of points on the plane, building special graphs (such as NNG,RNG), and 
         - 1 corresponds to 0.1 mean false alarms
         This vector will be calculated only when the objects type is LSD_REFINE_ADV.
         */
-        detect(_image: _st.InputArray, _lines: _st.OutputArray, width: _st.OutputArray /*= noArray()*/,
-            prec: _st.OutputArray /*= noArray()*/, nfa: _st.OutputArray /*= noArray()*/): void;
+        detect(_image: _st.InputArray, _lines: _st.OutputArray, width?: _st.OutputArray /*= noArray()*/,
+            prec?: _st.OutputArray /*= noArray()*/, nfa?: _st.OutputArray /*= noArray()*/): void;
 
         /** @brief Draws the line segments on a given image.
         @param _image The image, where the liens will be drawn. Should be bigger or equal to the image,
@@ -1247,9 +1247,9 @@ location of points on the plane, building special graphs (such as NNG,RNG), and 
      */
     interface IcreateLineSegmentDetector {
         (
-            _refine: _st.int /* = LSD_REFINE_STD*/, _scale: _st.double /* = 0.8*/,
-            _sigma_scale: _st.double /* = 0.6*/, _quant: _st.double /* = 2.0*/, _ang_th: _st.double /* = 22.5*/,
-            _log_eps: _st.double  /*= 0*/, _density_th: _st.double /* = 0.7*/, _n_bins: _st.int  /*= 1024*/): LineSegmentDetector;
+            _refine?: LineSegmentDetectorModes | _st.int /* = LSD_REFINE_STD*/, _scale?: _st.double /* = 0.8*/,
+            _sigma_scale?: _st.double /* = 0.6*/, _quant?: _st.double /* = 2.0*/, _ang_th?: _st.double /* = 22.5*/,
+            _log_eps?: _st.double  /*= 0*/, _density_th?: _st.double /* = 0.7*/, _n_bins?: _st.int  /*= 1024*/): LineSegmentDetector;
     }
 
     export var createLineSegmentDetector: IcreateLineSegmentDetector = alvision_module.createLineSegmentDetector;
@@ -1396,7 +1396,7 @@ export var medianBlur: ImedianBlur = alvision_module.medianBlur;
 interface IGaussianBlur{
     (src: _st.InputArray, dst: _st.OutputArray, ksize: _types.Size,
         sigmaX: _st.double, sigmaY?: _st.double /* = 0*/,
-        borderType?: _base.BorderTypes /* = BORDER_DEFAULT*/);
+        borderType?: _base.BorderTypes | _st.int /* = BORDER_DEFAULT*/);
 }
 
 export var GaussianBlur: IGaussianBlur = alvision_module.GaussianBlur;
@@ -1777,8 +1777,8 @@ export var Scharr: IScharr = alvision_module.Scharr;
 
 interface ILaplacian{
     (src: _st.InputArray, dst: _st.OutputArray, ddepth: _st.int,
-    ksize : _st.int /* = 1*/, scale: _st.double /* = 1*/, delta: _st.double /* = 0*/,
-    borderType: _st.int /* = BORDER_DEFAULT*/): void;
+    ksize? : _st.int /* = 1*/, scale?: _st.double /* = 1*/, delta?: _st.double /* = 0*/,
+    borderType?: _st.int /* = BORDER_DEFAULT*/): void;
 }
 
 export var Laplacian: ILaplacian = alvision_module.Laplacian;
@@ -1817,7 +1817,7 @@ export var Laplacian: ILaplacian = alvision_module.Laplacian;
 interface ICanny {
     (image: _st.InputArray, edges : _st.OutputArray,
         threshold1 : _st.double, threshold2 : _st.double,
-        apertureSize : _st.int /* = 3*/, L2gradient : boolean /* = false*/): void;
+        apertureSize? : _st.int /* = 3*/, L2gradient? : boolean /* = false*/): void;
 }
 
 export var Canny: ICanny = alvision_module.Canny;
@@ -2061,8 +2061,8 @@ export var cornerSubPix: IcornerSubPix = alvision_module.cornerSubPix;
 interface IgoodFeaturesToTrack{
     (image: _st.InputArray, corners: _st.OutputArray,
         maxCorners : _st.int, qualityLevel : _st.double, minDistance : _st.double,
-        mask : _st.InputArray /* = noArray()*/, blockSize: _st.int /*= 3*/,
-        useHarrisDetector : boolean /*= false*/, k: _st.double /*= 0.04*/): void;
+        mask? : _st.InputArray /* = noArray()*/, blockSize?: _st.int /*= 3*/,
+        useHarrisDetector? : boolean /*= false*/, k?: _st.double /*= 0.04*/): void;
 }
 
 export var goodFeaturesToTrack: IgoodFeaturesToTrack = alvision_module.goodFeaturesToTrack;
@@ -2401,9 +2401,9 @@ export var dilate: Idilate = alvision_module.dilate;
 interface ImorphologyEx{
     (src: _st.InputArray, dst: _st.OutputArray,
     op : _st.int, kernel: _st.InputArray,
-    anchor: _types.Point /* = Point(-1,-1)*/, iterations: _st.int /* = 1*/,
-    borderType: _st.int /* = BORDER_CONSTANT*/,
-    borderValue: _types.Scalar /* = morphologyDefaultBorderValue()*/): void;
+    anchor?: _types.Point /* = Point(-1,-1)*/, iterations?: _st.int /* = 1*/,
+    borderType?: _st.int /* = BORDER_CONSTANT*/,
+    borderValue?: _types.Scalar /* = morphologyDefaultBorderValue()*/): void;
 }
 
 export var morphologyEx: ImorphologyEx = alvision_module.morphologyEx;
@@ -2457,7 +2457,7 @@ export var morphologyEx: ImorphologyEx = alvision_module.morphologyEx;
 interface Iresize{
     (src: _st.InputArray, dst: _st.OutputArray,
     dsize : _types.Size, fx? : _st.double /* = 0*/, fy? : _st.double /* = 0*/,
-    interpolation?: InterpolationFlags /* = INTER_LINEAR*/): void;
+    interpolation?: InterpolationFlags | _st.int /* = INTER_LINEAR*/): void;
 }
 
 export var resize: Iresize = alvision_module.resize;
@@ -2532,9 +2532,9 @@ export var warpAffine: IwarpAffine = alvision_module.warpAffine;
 interface IwarpPerspective{
     (src: _st.InputArray, dst: _st.OutputArray,
         M: _st.InputArray, dsize: _types.Size,
-        flags: _st.int /* = INTER_LINEAR*/,
-        borderMode: _st.int /* = BORDER_CONSTANT*/,
-        borderValue: _types.Scalar /* = Scalar()*/): void;
+        flags?: _st.int /* = INTER_LINEAR*/,
+        borderMode?: _st.int /* = BORDER_CONSTANT*/,
+        borderValue?: _types.Scalar /* = Scalar()*/): void;
 }
 
 export var warpPerspective: IwarpPerspective = alvision_module.warpPerspective;
@@ -2624,7 +2624,7 @@ export var remap: Iremap = alvision_module.remap;
 interface IconvertMaps{
     (Map1: _st.InputArray, Map2: _st.InputArray,
         dstmap1: _st.OutputArray, dstmap2: _st.OutputArray,
-        dstmap1type : _st.int, nninterpolation : boolean /* = false*/): void;
+        dstmap1type : _st.int, nninterpolation? : boolean /* = false*/): void;
 }
 
 export var convertMaps: IconvertMaps = alvision_module.convertMaps;
@@ -3232,7 +3232,7 @@ export var pyrDown: IpyrDown = alvision_module.pyrDown;
 
 interface IpyrUp{
     (src: _st.InputArray, dst: _st.OutputArray,
-        dstsize: _types.Size /*= Size()*/, borderType: _st.int /* = BORDER_DEFAULT*/): void;
+        dstsize?: _types.Size /*= Size()*/, borderType?: _st.int /* = BORDER_DEFAULT*/): void;
 }
 
 export var pyrUp: IpyrUp = alvision_module.pyrUp;
@@ -3590,19 +3590,19 @@ export var undistortPoints: IundistortPoints = alvision_module.undistortPoints;
 interface IcalcHist{
     ( images : Array<_mat.Mat>,channels : Array<_st.int>, Mask: _st.InputArray,
         hist: _st.OutputArray , dims : _st.int, histSize : Array<_st.int>,
-   ranges : Array<_st.float>,  uniform : boolean /*= true*/, accumulate : boolean /*= false */) : void;
+   ranges : Array<_st.float>,  uniform? : boolean /*= true*/, accumulate? : boolean /*= false */) : void;
 
 
     ( images : Array<_mat.Mat>,
     channels : Array<_st.int>, Mask: _st.InputArray,
         hist : _mat.SparseMat, dims : _st.int,
         histSize: Array<_st.int>, ranges: Array<_st.float>,
-        uniform: boolean /*= true*/, accumulate: boolean /*= false */ ) : void;
+        uniform?: boolean /*= true*/, accumulate?: boolean /*= false */ ) : void;
 
     /** @overload */
     (images : _st.InputArrayOfArrays, channels : Array<_st.int>,
         Mask: _st.InputArray, hist: _st.OutputArray ,
-        histSize : Array<_st.int>, ranges : Array<_st.float>, accumulate : boolean /*= false */ ) : void;
+        histSize : Array<_st.int>, ranges : Array<_st.float>, accumulate? : boolean /*= false */ ) : void;
 
 }
 
@@ -4185,7 +4185,7 @@ export var floodFill: IfloodFill = alvision_module.floodFill;
      */
 
 interface IcvtColor{
-    (src: _st.InputArray, dst: _st.OutputArray, code: ColorConversionCodes, dstCn?: _st.int /*= 0*/): void;
+    (src: _st.InputArray, dst: _st.OutputArray, code: ColorConversionCodes | _st.int, dstCn?: _st.int /*= 0*/): void;
 }
 
 export var cvtColor: IcvtColor = alvision_module.cvtColor;
@@ -4197,7 +4197,7 @@ export var cvtColor: IcvtColor = alvision_module.cvtColor;
     // main function for all demosaicing procceses
 
 interface Idemosaicing{
-    (_src: _st.InputArray, _dst: _st.OutputArray, code : _st.int, dcn : _st.int/* = 0*/): void;
+    (_src: _st.InputArray, _dst: _st.OutputArray, code : _st.int, dcn? : _st.int/* = 0*/): void;
 }
 
 export var demosaicing: Idemosaicing = alvision_module.demosaicing;
@@ -4222,7 +4222,7 @@ export var demosaicing: Idemosaicing = alvision_module.demosaicing;
      */
 
 interface Imoments {
-    (array: _st.InputArray , binaryImage : boolean /* = false*/): _types.Moments;
+    (array: _st.InputArray , binaryImage? : boolean /* = false*/): _types.Moments;
 }
 
 export var moments: Imoments = alvision_module.moments;
@@ -4303,7 +4303,7 @@ export var HuMoments: IHuMoments = alvision_module.HuMoments;
 
     interface ImatchTemplate{
         (image: _st.InputArray, templ: _st.InputArray,
-            result: _st.OutputArray, method: _st.int, mask: _st.InputArray /* = noArray()*/): void;
+            result: _st.OutputArray, method: _st.int, mask?: _st.InputArray /* = noArray()*/): void;
     }
 export var matchTemplate: ImatchTemplate = alvision_module.matchTemplate;
 
@@ -4643,7 +4643,7 @@ export var matchShapes: ImatchShapes = alvision_module.matchShapes;
 
 interface IconvexHull{
     (points: _st.InputArray, hull: _st.OutputArray ,
-        clockwise : boolean /*= false*/, returnPoints : boolean /*= true*/): void;
+        clockwise? : boolean /*= false*/, returnPoints? : boolean /*= true*/): void;
 }
 
 export var convexHull: IconvexHull = alvision_module.convexHull;
@@ -4825,7 +4825,7 @@ export var rotatedRectangleIntersection: IrotatedRectangleIntersection = alvisio
     //! @} imgproc_shape
 
 interface IcreateCLAHE{
-    (clipLimit: _st.double /*= 40.0*/, tileGridSize: _types.Size /* = Size(8, 8)*/) : CLAHE
+    (clipLimit?: _st.double /*= 40.0*/, tileGridSize?: _types.Size /* = Size(8, 8)*/) : CLAHE
 }
 
 export var createCLAHE: IcreateCLAHE = alvision_module.createCLAHE;
@@ -5160,7 +5160,7 @@ export var fillConvexPoly: IfillConvexPoly = alvision_module.fillConvexPoly;
     /** @overload */
 
     interface IfillPoly{
-        (img: _mat.Mat, pts : Array<_types.Point>, ncontours: _st.int,
+        (img: _mat.Mat, pts : Array<Array<_types.Point>>, /*ncontours: _st.int,*/
             color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/,
         offset?: _types.Point /* = Point()*/): void;
     }
@@ -5463,7 +5463,7 @@ export var putText: IputText = alvision_module.putText;
     @see cv::putText
      */
     interface IgetTextSize{
-        (text: string, fontFace: _st.int,
+        (text: string, fontFace: _core.HersheyFonts |  _st.int,
         fontScale: _st.double, thickness: _st.int,
         cb: (baseLine: _st.int) => void): _types.Size;
     }
@@ -5507,20 +5507,23 @@ export var getTextSize: IgetTextSize = alvision_module.getTextSize;
     @endcode
     */
     //class CV_EXPORTS LineIterator
+interface LineIteratorStatic {
+           /** @brief intializes the iterator
+        
+            creates iterators for the line connecting pt1 and pt2
+            the line will be clipped on the image boundaries
+            the line is 8-connected or 4-connected
+            If leftToRight=true, then the iteration is always done
+            from the left-most point to the right most,
+            not to depend on the ordering of pt1 and pt2 parameters
+            */
+    new (img: _mat.Mat , pt1: _types.Point, pt2: _types.Point,
+        connectivity?: _st.int /* = 8*/, leftToRight?  : boolean /*= false*/): LineIterator;
+     
+}
 interface LineIterator
     {
 //        public:
-//        /** @brief intializes the iterator
-//    
-//        creates iterators for the line connecting pt1 and pt2
-//        the line will be clipped on the image boundaries
-//        the line is 8-connected or 4-connected
-//        If leftToRight=true, then the iteration is always done
-//        from the left-most point to the right most,
-//        not to depend on the ordering of pt1 and pt2 parameters
-//        */
-//        LineIterator( const Mat& img, pt1 : _types.Point, pt2 : _types.Point,
-//            connectivity : _st.int /* = 8*/, bool leftToRight = false );
 //        /** @brief returns pointer to the current pixel
 //        */
 //        uchar * operator * ();
@@ -5533,6 +5536,7 @@ interface LineIterator
 //        /** @brief returns coordinates of the current pixel
 //        */
 //        Point pos() const;
+    each(cb : (pos: _types.Point) => void);
 //
 //        uchar * ptr;
 //        const uchar* ptr0;
@@ -5540,7 +5544,9 @@ interface LineIterator
 //        int err, count;
 //        int minusDelta, plusDelta;
 //        int minusStep, plusStep;
-    };
+};
+
+export var LineIterator: LineIteratorStatic = alvision_module.LineIterator;
 
     //! @cond IGNORED
 
@@ -5593,3 +5599,23 @@ interface LineIterator
 //#endif
 
 export const CV_FILLED = -1;
+
+
+/** Connected component structure */
+export class ConnectedComp
+{
+    public area: _st.double ;    /**<area of the connected component  */
+    public value: _types.Scalar ; /**<average color of the connected component */
+    public rect: _types.Rect ;    /**<ROI of the component  */
+    public contour: any;//CvSeq ; /**<optional component boundary (the contour might have child contours corresponding to the holes)*/
+}
+
+
+export const CV_CANNY_L2_GRADIENT = (1 << 31);
+
+/** Shape orientation */
+export enum ShapeOrientation
+{
+    CLOCKWISE = 1,
+    COUNTER_CLOCKWISE = 2
+};

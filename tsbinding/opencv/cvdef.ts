@@ -51,6 +51,15 @@ import * as _st from './static';
 //    "CV_64FC4"// = <any>"CV_64FC4"
 //}
 
+const CV_CN_MAX = 512;
+const CV_CN_SHIFT = 3;
+const CV_DEPTH_MAX = (1 << CV_CN_SHIFT);
+export const CV_MAT_DEPTH_MASK = (CV_DEPTH_MAX - 1);
+
+const CV_MAT_CN_MASK = ((CV_CN_MAX - 1) << CV_CN_SHIFT);
+const CV_MAT_TYPE_MASK = (CV_DEPTH_MAX * CV_CN_MAX - 1);
+
+
 
 export enum MatrixType {
     //const CV_8U = CV_MAKETYPE();
@@ -64,8 +73,8 @@ export enum MatrixType {
      CV_64F       = 6,
      CV_USRTYPE1  = 7,
 
-    //#define CV_MAT_DEPTH_MASK       (CV_DEPTH_MAX - 1)
-    //#define CV_MAT_DEPTH(flags)((flags) & CV_MAT_DEPTH_MASK)
+    
+    
     //
     //#define CV_MAKETYPE(depth, cn)(CV_MAT_DEPTH(depth) + (((cn) - 1) << CV_CN_SHIFT))
     //#define CV_MAKE_TYPE CV_MAKETYPE
@@ -120,9 +129,55 @@ export module MatrixType {
         //(depth: MatrixType, channels: number | _st.int): number;
     }
 
+    export function CV_MAT_DEPTH(flags: _st.int): _st.int {
+        return ((flags.valueOf()) & CV_MAT_DEPTH_MASK)
+    }
+
+    export function CV_MAT_CN(flags: _st.int) : _st.int{
+        return ((((flags.valueOf()) & CV_MAT_CN_MASK) >> CV_CN_SHIFT) + 1)
+    }
+
+    export function CV_MAT_TYPE(flags: _st.int): _st.int {
+        return ((flags.valueOf()) & CV_MAT_TYPE_MASK)
+    }
+
+    interface ICV_ELEM_SIZE {
+        (type: _st.int): _st.int;
+    }
+
+    export var CV_ELEM_SIZE: ICV_ELEM_SIZE = alvision_module.MatrixType.CV_ELEM_SIZE;
+    //export function CV_ELEM_SIZE(type: _st.int): _st.int {
+    //    return (CV_MAT_CN(type).valueOf() << ((((sizeof(size_t) / 4 + 1) * 16384 | 0x3a50) >> CV_MAT_DEPTH(type).valueOf() * 2) & 3))
+    //}
+
+
     //export declare function CV_MAKETYPE(depth: number, channels: number): number = alvision_module.MatrixType.CV_MAKETYPE;
     export var CV_MAKETYPE: ICV_MAKETYPE = alvision_module.MatrixType.CV_MAKETYPE;
+
+    export function ToString(type: _st.int | MatrixType) {
+        var depth = type.valueOf() & CV_MAT_DEPTH_MASK;
+        var chans = 1 + (type.valueOf() >> CV_CN_SHIFT);
+
+        var r = "";
+
+        switch (depth) {
+            case MatrixType.CV_8U: r = "8U"; break;
+            case MatrixType.CV_8S: r = "8S"; break;
+            case MatrixType.CV_16U: r = "16U"; break;
+            case MatrixType.CV_16S: r = "16S"; break;
+            case MatrixType.CV_32S: r = "32S"; break;
+            case MatrixType.CV_32F: r = "32F"; break;
+            case MatrixType.CV_64F: r = "64F"; break;
+            default: r = "User"; break;
+        }
+
+        r += "C";
+        r += (chans + '0');
+
+        return r;
+    }
 }
 //}
+
 
 

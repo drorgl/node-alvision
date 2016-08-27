@@ -63,7 +63,7 @@ import * as _circlesgrid from './../../calib3d/circlesgrid.ts';
 //#include "camera.hpp"
 
 //namespace cv {
-namespace detail {
+export namespace detail_motion_estimators {
 
     //! @addtogroup stitching_rotation
     //! @{
@@ -270,7 +270,7 @@ namespace detail {
     // Returns matches graph representation in DOT language
 
     interface ImatchesGraphAsString {
-        (pathes: Array<string>, pairwise_matches: Array<_matchers.detail.MatchesInfo>,
+        (pathes: Array<string>, pairwise_matches: Array<_matchers.detail_matchers.MatchesInfo>,
             conf_threshold : _st.float): string;
     }
     export var matchesGraphAsString: ImatchesGraphAsString = alvision_module.matchesGraphAsString;
@@ -280,8 +280,8 @@ namespace detail {
 
     interface IleaveBiggestComponent {
         (
-            features : Array<_matchers.detail.ImageFeatures>,
-            pairwise_matches : Array<_matchers.detail.MatchesInfo>,
+            features: Array<_matchers.detail_matchers.ImageFeatures>,
+            pairwise_matches : Array<_matchers.detail_matchers.MatchesInfo>,
             conf_threshold: _st.float ): Array<_st.int>;
     }
     export var leaveBiggestComponent: IleaveBiggestComponent = alvision_module.leaveBiggestComponent;
@@ -293,7 +293,7 @@ namespace detail {
 
     interface IfindMaxSpanningTree{
         (
-            num_images: _st.int, pairwise_matches : Array<_matchers.detail.MatchesInfo> ,
+            num_images: _st.int, pairwise_matches : Array<_matchers.detail_matchers.MatchesInfo> ,
             span_tree: _circlesgrid.Graph, centers : Array<_st.int>) : void;
     }
 
@@ -305,7 +305,7 @@ namespace detail {
 
 //! @} stitching_rotation
 
-} // namespace detail
+} // namespace detail.motion_estimators
 //} // namespace cv
 
 //#endif // __OPENCV_STITCHING_MOTION_ESTIMATORS_HPP__

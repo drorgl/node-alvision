@@ -49,6 +49,7 @@ import * as _st from './static'
 import * as _types from './types'
 import * as _core from './core'
 import * as _base from './base'
+import * as _persistence from './persistence'
 //import * as _vec from './Vec'
 //import * as _point from './Point'
 //import * as _algorithm from './Algorithm'
@@ -101,9 +102,9 @@ This section describes approaches based on local 2D features and used to categor
 //! @{
 
 // //! writes vector of keypoints to the file storage
-// CV_EXPORTS void write(FileStorage& fs, const String& name, const std::vector<KeyPoint>& keypoints);
+// CV_EXPORTS void write(FileStorage& fs, const String& name, const Array<KeyPoint>& keypoints);
 // //! reads vector of keypoints from the specified file storage node
-// CV_EXPORTS void read(const FileNode& node, CV_OUT std::vector<KeyPoint>& keypoints);
+// CV_EXPORTS void read(const FileNode& node, CV_OUT Array<KeyPoint>& keypoints);
 
 /** @brief A class filters a vector of keypoints.
 
@@ -186,7 +187,7 @@ interface Feature2D extends _core.Algorithm
      */
     compute(image: _st.InputArray,
         keypoints: Array<_types.KeyPoint>,
-        cb: (keypoints: Array<_types.KeyPoint>)=>void,
+        //cb: (keypoints: Array<_types.KeyPoint>)=>void,
         descriptors: _st.OutputArray ): void;
 
     /** @overload
@@ -204,10 +205,10 @@ interface Feature2D extends _core.Algorithm
          descriptors: _st.OutputArrayOfArrays  ): void;
 
     /** Detects keypoints and computes the descriptors */
-//    detectAndCompute(image: _st.InputArray, mask: _st.InputArray ,
-//        CV_OUT std::vector<KeyPoint>& keypoints,
-//        descriptors: _st.OutputArray ,
-//        useProvidedKeypoints: boolean /*= false*/): void;
+    detectAndCompute(image: _st.InputArray, mask: _st.InputArray,
+        cb:(keypoints : Array<_types.KeyPoint>)=>void,
+        descriptors: _st.OutputArray ,
+        useProvidedKeypoints?: boolean /*= false*/): void;
 
     descriptorSize() : _st.int;
     descriptorType() : _st.int;
@@ -260,7 +261,7 @@ scale 1).
 keypoint scale 1).
 @param indexChange index remapping of the bits. */
    create(radiusList : Array<_st.float>, numberList : Array<_st.int>,
-       dMax?: _st.float /*= 5.85f*/, dMin?: _st.float /*= 8.2f*/, indexChange? : Array<_st.int> /*=std::vector<int>()*/) : BRISK;
+       dMax?: _st.float /*= 5.85f*/, dMin?: _st.float /*= 8.2f*/, indexChange? : Array<_st.int> /*=Array<int>()*/) : BRISK;
 
 }
 
@@ -312,42 +313,42 @@ interface ORBStatic {
     @param fastThreshold
      */
     create(nfeatures?: _st.int /*= 500*/, scaleFactor?: _st.float /*= 1.2f*/, nlevels?: _st.int /*= 8*/, edgeThreshold?: _st.int /*= 31*/,
-        firstLevel?: _st.int /* = 0*/, WTA_K?: _st.int /*= 2*/, scoreType?: ORBEnum /*= HARRIS_SCORE*/, patchSize?: _st.int /*= 31*/, fastThreshold?: _st.int /*= 20*/): ORB;
+        firstLevel?: _st.int /* = 0*/, WTA_K?: _st.int /*= 2*/, scoreType?: ORBEnum | _st.int /*= HARRIS_SCORE*/, patchSize?: _st.int /*= 31*/, fastThreshold?: _st.int /*= 20*/): ORB;
 }
 
-interface ORB extends Feature2D
+export interface ORB extends Feature2D
 {
 //public:
     
 
     
-//
-//    CV_WRAP virtual void setMaxFeatures(int maxFeatures) = 0;
-//    CV_WRAP virtual int getMaxFeatures() const = 0;
-//
-//    CV_WRAP virtual void setScaleFactor(double scaleFactor) = 0;
-//    CV_WRAP virtual double getScaleFactor() const = 0;
-//
-//    CV_WRAP virtual void setNLevels(int nlevels) = 0;
-//    CV_WRAP virtual int getNLevels() const = 0;
-//
-//    CV_WRAP virtual void setEdgeThreshold(int edgeThreshold) = 0;
-//    CV_WRAP virtual int getEdgeThreshold() const = 0;
-//
-//    CV_WRAP virtual void setFirstLevel(int firstLevel) = 0;
-//    CV_WRAP virtual int getFirstLevel() const = 0;
-//
-//    CV_WRAP virtual void setWTA_K(int wta_k) = 0;
-//    CV_WRAP virtual int getWTA_K() const = 0;
-//
-//    CV_WRAP virtual void setScoreType(int scoreType) = 0;
-//    CV_WRAP virtual int getScoreType() const = 0;
-//
-//    CV_WRAP virtual void setPatchSize(int patchSize) = 0;
-//    CV_WRAP virtual int getPatchSize() const = 0;
-//
-//    CV_WRAP virtual void setFastThreshold(int fastThreshold) = 0;
-//    CV_WRAP virtual int getFastThreshold() const = 0;
+
+    setMaxFeatures(maxFeatures: _st.int ): void;
+    getMaxFeatures(): _st.int;
+
+    setScaleFactor(scaleFactor: _st.double ): void;
+    getScaleFactor(): _st.double;
+
+    setNLevels(nlevels: _st.int ): void;
+    getNLevels(): _st.int;
+
+    setEdgeThreshold(edgeThreshold: _st.int ): void;
+    getEdgeThreshold(): _st.int;
+
+    setFirstLevel(firstLevel: _st.int): void;
+    getFirstLevel(): _st.int;
+
+    setWTA_K(wta_k: _st.int ): void;
+    getWTA_K(): _st.int;
+
+    setScoreType(scoreType: _st.int ): void;
+    getScoreType(): _st.int;
+
+    setPatchSize(patchSize: _st.int ): void;
+    getPatchSize(): _st.int;
+
+    setFastThreshold(fastThreshold: _st.int ): void;
+    getFastThreshold(): _st.int;
 };
 
 export var ORB: ORBStatic = alvision_module.ORB;
@@ -368,9 +369,8 @@ code which is distributed under GPL.
 
 - (Python) A complete example showing the use of the %MSER detector can be found at samples/python/mser.py
 */
-interface MSER extends Feature2D
-{
-//public:
+
+interface MSERStatic {
     /** @brief Full consturctor for %MSER detector
 
     @param _delta it compares \f$(size_{i}-size_{i-delta})/size_{i-delta}\f$
@@ -383,10 +383,16 @@ interface MSER extends Feature2D
     @param _min_margin for color image, ignore too small margin
     @param _edge_blur_size for color image, the aperture size for edge blur
      */
-//    CV_WRAP static Ptr<MSER> create( int _delta=5, int _min_area=60, int _max_area=14400,
-//          double _max_variation=0.25, double _min_diversity=.2,
-//          int _max_evolution=200, double _area_threshold=1.01,
-//          double _min_margin=0.003, int _edge_blur_size=5 );
+    create(_delta?: _st.int /*= 5*/, _min_area?: _st.int /*= 60*/, _max_area?: _st.int /*= 14400*/,
+        _max_variation?: _st.double /*= 0.25*/, _min_diversity?: _st.double /*= .2*/,
+        _max_evolution?: _st.int/*= 200*/, _area_threshold?: _st.double /*= 1.01*/,
+        _min_margin?: _st.double /*= 0.003*/, _edge_blur_size?: _st.int /*= 5*/): MSER;
+}
+
+interface MSER extends Feature2D
+{
+//public:
+    
 
     /** @brief Detect %MSER regions
 
@@ -394,33 +400,35 @@ interface MSER extends Feature2D
     @param msers resulting list of point sets
     @param bboxes resulting bounding boxes
     */
-//    CV_WRAP virtual void detectRegions( InputArray image,
-//                                        CV_OUT std::vector<std::vector<Point> >& msers,
-//                                        std::vector<Rect>& bboxes ) = 0;
-//
-//    CV_WRAP virtual void setDelta(int delta) = 0;
-//    CV_WRAP virtual int getDelta() const = 0;
-//
-//    CV_WRAP virtual void setMinArea(int minArea) = 0;
-//    CV_WRAP virtual int getMinArea() const = 0;
-//
-//    CV_WRAP virtual void setMaxArea(int maxArea) = 0;
-//    CV_WRAP virtual int getMaxArea() const = 0;
-//
-//    CV_WRAP virtual void setPass2Only(bool f) = 0;
-//    CV_WRAP virtual bool getPass2Only() const = 0;
+    detectRegions(image: _st.InputArray,
+        cb : (msers : Array<Array<_types.Point>>)=> void,
+        bboxes: Array<_types.Rect>): void;
+
+    setDelta(delta: _st.int ): void;
+    getDelta(): _st.int;
+
+    setMinArea(minArea: _st.int ): void;
+    getMinArea(): _st.int;
+
+    setMaxArea(maxArea: _st.int): void;
+    getMaxArea(): _st.int;
+
+    setPass2Only(f: boolean): void;
+    getPass2Only(): boolean;
 };
+
+export var MSER: MSERStatic = alvision_module.MSER;
 
 /** @overload */
 
 interface IFAST {
-//    (image: _st.InputArray, CV_OUT std::vector<KeyPoint>& keypoints,
-//        int threshold, bool nonmaxSuppression= true): void;
+    (image: _st.InputArray, cb: (keypoints: Array<_types.KeyPoint>) => void,
+        threshold: _st.int , nonmaxSuppression : boolean/*= true*/): void;
 }
 
 export var FAST: IFAST = alvision_module.FAST;
 
-//CV_EXPORTS void FAST( InputArray image, CV_OUT std::vector<KeyPoint>& keypoints,
+//CV_EXPORTS void FAST( InputArray image, CV_OUT Array<KeyPoint>& keypoints,
 //                      int threshold, bool nonmaxSuppression=true );
 
 /** @brief Detects corners using the FAST algorithm
@@ -443,13 +451,13 @@ detection, use cv2.FAST.detect() method.
  */
 
 interface IFAST {
-//    (InputArray image, CV_OUT std::vector<KeyPoint>& keypoints,
-//        int threshold, bool nonmaxSuppression, int type ): void;
+    (image: _st.InputArray, cb: (keypoints: Array<_types.KeyPoint> )=>void,
+        threshold: _st.int, nonmaxSuppression: boolean, type: _st.int ): void;
 }
 
 export var FAST: IFAST = alvision_module.FAST;
 
-//CV_EXPORTS void FAST( InputArray image, CV_OUT std::vector<KeyPoint>& keypoints,
+//CV_EXPORTS void FAST( InputArray image, CV_OUT Array<KeyPoint>& keypoints,
 //                      int threshold, bool nonmaxSuppression, int type );
 
 //! @} features2d_main
@@ -459,28 +467,37 @@ export var FAST: IFAST = alvision_module.FAST;
 
 /** @brief Wrapping class for feature detection using the FAST method. :
  */
-interface FastFeatureDetector extends Feature2D
+
+    enum FastFeatureDetectorType
+    {
+        TYPE_5_8 = 0, TYPE_7_12 = 1, TYPE_9_16 = 2,
+        THRESHOLD = 10000, NONMAX_SUPPRESSION=10001, FAST_N=10002,
+    };
+
+
+interface FastFeatureDetectorStatic {
+    create(threshold?: _st.int/*= 10*/,
+        nonmaxSuppression? : boolean /*= true*/,
+        type?: _st.int /*= FastFeatureDetector::TYPE_9_16*/):FastFeatureDetector;
+
+}
+
+export interface FastFeatureDetector extends Feature2D
 {
 //public:
-//    enum
-//    {
-//        TYPE_5_8 = 0, TYPE_7_12 = 1, TYPE_9_16 = 2,
-//        THRESHOLD = 10000, NONMAX_SUPPRESSION=10001, FAST_N=10002,
-//    };
 //
-//    CV_WRAP static Ptr<FastFeatureDetector> create( int threshold=10,
-//                                                    bool nonmaxSuppression=true,
-//                                                    int type=FastFeatureDetector::TYPE_9_16 );
 //
-//    CV_WRAP virtual void setThreshold(int threshold) = 0;
-//    CV_WRAP virtual int getThreshold() const = 0;
-//
-//    CV_WRAP virtual void setNonmaxSuppression(bool f) = 0;
-//    CV_WRAP virtual bool getNonmaxSuppression() const = 0;
-//
-//    CV_WRAP virtual void setType(int type) = 0;
-//    CV_WRAP virtual int getType() const = 0;
+    setThreshold(threshold: _st.int ): void;
+    getThreshold(): _st.int;
+
+    setNonmaxSuppression(f : boolean): void;
+    getNonmaxSuppression(): boolean;
+
+    setType(type: _st.int ): void;
+    getType(): _st.int;
 };
+
+export var FastFeatureDetector: FastFeatureDetectorStatic = alvision_module.FastFeatureDetector;
 
 interface IAGAST {
     (image: _st.InputArray ,cb : (keypoints : Array<_types.KeyPoint>) => void,
@@ -490,7 +507,7 @@ interface IAGAST {
 export var AGAST: IAGAST = alvision_module.AGAST;
 
 /** @overload */
-//CV_EXPORTS void AGAST( InputArray image, CV_OUT std::vector<KeyPoint>& keypoints,
+//CV_EXPORTS void AGAST( InputArray image, CV_OUT Array<KeyPoint>& keypoints,
 //                      int threshold, bool nonmaxSuppression=true );
 
 /** @brief Detects corners using the AGAST algorithm
@@ -519,7 +536,7 @@ interface IAGAST {
 
 export var AGAST: IAGAST = alvision_module.AGAST;
 
-//CV_EXPORTS void AGAST( InputArray image, CV_OUT std::vector<KeyPoint>& keypoints,
+//CV_EXPORTS void AGAST( InputArray image, CV_OUT Array<KeyPoint>& keypoints,
 //                      int threshold, bool nonmaxSuppression, int type );
 
 
@@ -537,49 +554,63 @@ export enum AgastFeatureDetectorTypes
 
 /** @brief Wrapping class for feature detection using the AGAST method. :
  */
+
+    interface AgastFeatureDetectorStatic {
+        create(threshold?: _st.int/*= 10*/,
+            nonmaxSuppression? : boolean /*= true*/,
+            type?: AgastFeatureDetectorTypes | _st.int /*= AgastFeatureDetector::OAST_9_16*/): AgastFeatureDetector;
+
+    }
+
 interface AgastFeatureDetector extends Feature2D
 {
 //public:
 //
-//    CV_WRAP static Ptr<AgastFeatureDetector> create( int threshold=10,
-//                                                     bool nonmaxSuppression=true,
-//                                                     int type=AgastFeatureDetector::OAST_9_16 );
 //
-//    CV_WRAP virtual void setThreshold(int threshold) = 0;
-//    CV_WRAP virtual int getThreshold() const = 0;
-//
-//    CV_WRAP virtual void setNonmaxSuppression(bool f) = 0;
-//    CV_WRAP virtual bool getNonmaxSuppression() const = 0;
-//
-//    CV_WRAP virtual void setType(int type) = 0;
-//    CV_WRAP virtual int getType() const = 0;
+    setThreshold( threshold : _st.int): void;
+    getThreshold(): _st.int;
+
+    setNonmaxSuppression(f : boolean): void;
+    getNonmaxSuppression(): boolean;
+
+    setType(type: AgastFeatureDetectorTypes | _st.int ): void;
+    getType(): _st.int;
 };
+
+export var AgastFeatureDetector: AgastFeatureDetectorStatic = alvision_module.AgastFeatureDetector;
 
 /** @brief Wrapping class for feature detection using the goodFeaturesToTrack function. :
  */
+
+interface GFTTDetectorStatic {
+    create(maxCorners?: _st.int /*= 1000*/, qualityLevel?: _st.double /*= 0.01*/, minDistance?: _st.double /*= 1*/,
+        blockSize?: _st.int /*= 3*/, useHarrisDetector?: boolean /*= false*/, k?: _st.double /*= 0.04*/): GFTTDetector;
+
+}
+
 interface GFTTDetector extends Feature2D
 {
 //public:
-//    CV_WRAP static Ptr<GFTTDetector> create( int maxCorners=1000, double qualityLevel=0.01, double minDistance=1,
-//                                             int blockSize=3, bool useHarrisDetector=false, double k=0.04 );
-//    CV_WRAP virtual void setMaxFeatures(int maxFeatures) = 0;
-//    CV_WRAP virtual int getMaxFeatures() const = 0;
-//
-//    CV_WRAP virtual void setQualityLevel(double qlevel) = 0;
-//    CV_WRAP virtual double getQualityLevel() const = 0;
-//
-//    CV_WRAP virtual void setMinDistance(double minDistance) = 0;
-//    CV_WRAP virtual double getMinDistance() const = 0;
-//
-//    CV_WRAP virtual void setBlockSize(int blockSize) = 0;
-//    CV_WRAP virtual int getBlockSize() const = 0;
-//
-//    CV_WRAP virtual void setHarrisDetector(bool val) = 0;
-//    CV_WRAP virtual bool getHarrisDetector() const = 0;
-//
-//    CV_WRAP virtual void setK(double k) = 0;
-//    CV_WRAP virtual double getK() const = 0;
+    setMaxFeatures(maxFeatures: _st.int ): void;
+    getMaxFeatures(): _st.int 
+
+    setQualityLevel(qlevel: _st.double ): void;
+    getQualityLevel(): _st.double;
+
+    setMinDistance(minDistance: _st.double ) : void ;
+    getMinDistance(): _st.double;
+
+    setBlockSize(blockSize: _st.int): void;
+    getBlockSize(): _st.int;
+
+    setHarrisDetector(val : boolean): void 
+    getHarrisDetector(): boolean;
+
+    setK(k : _st.double ): void;
+    getK(): _st.double;
 };
+
+export var GFTTDetector: GFTTDetectorStatic = alvision_module.GFTTDetector;
 
 /** @brief Class for extracting blobs from an image. :
 
@@ -612,40 +643,52 @@ minConvexity (inclusive) and maxConvexity (exclusive).
 
 Default values of parameters are tuned to extract dark circular blobs.
  */
+
+interface SimpleBlobDetectorParams {
+    //CV_WRAP Params();
+    thresholdStep: _st.float;
+    minThreshold: _st.float;
+    maxThreshold: _st.float;
+    minRepeatability: _st.size_t
+    minDistBetweenBlobs: _st.float
+
+    filterByColor: boolean;
+    blobColor: _st.uchar;
+
+    filterByArea: boolean;
+    minArea: _st.float;
+    maxArea: _st.float;
+
+    filterByCircularity: boolean;
+    minCircularity: _st.float;
+    maxCircularity: _st.float;
+
+    filterByInertia: boolean;
+    minInertiaRatio: _st.float;
+    maxInertiaRatio: _st.float;
+
+    filterByConvexity: boolean;
+    minConvexity: _st.float;
+    maxConvexity: _st.float;
+
+    read(fn: _persistence.FileNode): void;
+    write(fs: _persistence.FileStorage): void;
+}
+
+
+  interface SimpleBlobDetectorStatic {
+
+      create(parameters?: SimpleBlobDetectorParams /*= new SimpleBlobDetectorParams()*/): SimpleBlobDetector;
+
+  }
+
 interface SimpleBlobDetector extends Feature2D
 {
 //public:
-//  struct CV_EXPORTS_W_SIMPLE Params
-//  {
-//      CV_WRAP Params();
-//      CV_PROP_RW float thresholdStep;
-//      CV_PROP_RW float minThreshold;
-//      CV_PROP_RW float maxThreshold;
-//      CV_PROP_RW size_t minRepeatability;
-//      CV_PROP_RW float minDistBetweenBlobs;
-//
-//      CV_PROP_RW bool filterByColor;
-//      CV_PROP_RW uchar blobColor;
-//
-//      CV_PROP_RW bool filterByArea;
-//      CV_PROP_RW float minArea, maxArea;
-//
-//      CV_PROP_RW bool filterByCircularity;
-//      CV_PROP_RW float minCircularity, maxCircularity;
-//
-//      CV_PROP_RW bool filterByInertia;
-//      CV_PROP_RW float minInertiaRatio, maxInertiaRatio;
-//
-//      CV_PROP_RW bool filterByConvexity;
-//      CV_PROP_RW float minConvexity, maxConvexity;
-//
-//      void read( const FileNode& fn );
-//      void write( FileStorage& fs ) const;
-//  };
 
-//  CV_WRAP static Ptr<SimpleBlobDetector>
-//    create(const SimpleBlobDetector::Params &parameters = SimpleBlobDetector::Params());
-};
+  };
+
+export var SimpleBlobDetector: SimpleBlobDetectorStatic = alvision_module.SimpleBlobDetector;
 
 //! @} features2d_main
 
@@ -658,18 +701,18 @@ interface SimpleBlobDetector extends Feature2D
 F. Alcantarilla, Adrien Bartoli and Andrew J. Davison. In European Conference on Computer Vision
 (ECCV), Fiorenze, Italy, October 2012.
 */
-interface KAZE extends Feature2D
-{
-//public:
-//    enum
-//    {
-//        DIFF_PM_G1 = 0,
-//        DIFF_PM_G2 = 1,
-//        DIFF_WEICKERT = 2,
-//        DIFF_CHARBONNIER = 3
-//    };
 
-    /** @brief The KAZE constructor
+enum Diffusivity
+    {
+        DIFF_PM_G1 = 0,
+        DIFF_PM_G2 = 1,
+        DIFF_WEICKERT = 2,
+        DIFF_CHARBONNIER = 3
+    };
+
+
+interface KAZEStatic {
+        /** @brief The KAZE constructor
 
     @param extended Set to enable extraction of extended (128-byte) descriptor.
     @param upright Set to enable use of upright descriptors (non rotation-invariant).
@@ -679,29 +722,38 @@ interface KAZE extends Feature2D
     @param diffusivity Diffusivity type. DIFF_PM_G1, DIFF_PM_G2, DIFF_WEICKERT or
     DIFF_CHARBONNIER
      */
-//    CV_WRAP static Ptr<KAZE> create(bool extended=false, bool upright=false,
-//                                    float threshold = 0.001f,
-//                                    int nOctaves = 4, int nOctaveLayers = 4,
-//                                    int diffusivity = KAZE::DIFF_PM_G2);
-//
-//    CV_WRAP virtual void setExtended(bool extended) = 0;
-//    CV_WRAP virtual bool getExtended() const = 0;
-//
-//    CV_WRAP virtual void setUpright(bool upright) = 0;
-//    CV_WRAP virtual bool getUpright() const = 0;
-//
-//    CV_WRAP virtual void setThreshold(double threshold) = 0;
-//    CV_WRAP virtual double getThreshold() const = 0;
-//
-//    CV_WRAP virtual void setNOctaves(int octaves) = 0;
-//    CV_WRAP virtual int getNOctaves() const = 0;
-//
-//    CV_WRAP virtual void setNOctaveLayers(int octaveLayers) = 0;
-//    CV_WRAP virtual int getNOctaveLayers() const = 0;
-//
-//    CV_WRAP virtual void setDiffusivity(int diff) = 0;
-//    CV_WRAP virtual int getDiffusivity() const = 0;
+    create(extended ? : boolean /*= false*/, upright ? : boolean /*= false*/,
+        threshold?: _st.float /*= 0.001f*/,
+        nOctaves?: _st.int /*= 4*/, nOctaveLayers?: _st.int /*= 4*/,
+        diffusivity?: Diffusivity | _st.int /*= KAZE::DIFF_PM_G2*/): KAZE;
+
+}
+
+interface KAZE extends Feature2D
+{
+//public:
+
+
+    setExtended(extended : boolean): void;
+    getExtended(): boolean;
+
+    setUpright(upright : boolean): void;
+    getUpright(): boolean;
+
+    setThreshold(threshold : _st.double): void;
+    getThreshold(): _st.double;
+
+    setNOctaves(octaves: _st.int ): void;
+    getNOctaves(): _st.int;
+
+    setNOctaveLayers(octaveLayers: _st.int ): void;
+    getNOctaveLayers(): _st.int;
+
+    setDiffusivity(diff: _st.int ): void;
+    getDiffusivity(): _st.int;
 };
+
+export var KAZE: KAZEStatic = alvision_module.KAZE;
 
 /** @brief Class implementing the AKAZE keypoint detector and descriptor extractor, described in @cite ANB13 . :
 
@@ -710,19 +762,18 @@ and *detect* instead of *operator()* due to performance reasons. .. [ANB13] Fast
 for Accelerated Features in Nonlinear Scale Spaces. Pablo F. Alcantarilla, Jesús Nuevo and Adrien
 Bartoli. In British Machine Vision Conference (BMVC), Bristol, UK, September 2013.
  */
-interface AKAZE extends Feature2D
-{
-//public:
-//    // AKAZE descriptor type
-//    enum
-//    {
-//        DESCRIPTOR_KAZE_UPRIGHT = 2, ///< Upright descriptors, not invariant to rotation
-//        DESCRIPTOR_KAZE = 3,
-//        DESCRIPTOR_MLDB_UPRIGHT = 4, ///< Upright descriptors, not invariant to rotation
-//        DESCRIPTOR_MLDB = 5
-//    };
 
-    /** @brief The AKAZE constructor
+    export enum DescriptorType
+    {
+        DESCRIPTOR_KAZE_UPRIGHT = 2, ///< Upright descriptors, not invariant to rotation
+        DESCRIPTOR_KAZE = 3,
+        DESCRIPTOR_MLDB_UPRIGHT = 4, ///< Upright descriptors, not invariant to rotation
+        DESCRIPTOR_MLDB = 5
+    };
+
+
+interface AKAZEStatic {
+        /** @brief The AKAZE constructor
 
     @param descriptor_type Type of the extracted descriptor: DESCRIPTOR_KAZE,
     DESCRIPTOR_KAZE_UPRIGHT, DESCRIPTOR_MLDB or DESCRIPTOR_MLDB_UPRIGHT.
@@ -734,32 +785,42 @@ interface AKAZE extends Feature2D
     @param diffusivity Diffusivity type. DIFF_PM_G1, DIFF_PM_G2, DIFF_WEICKERT or
     DIFF_CHARBONNIER
      */
-//    CV_WRAP static Ptr<AKAZE> create(int descriptor_type=AKAZE::DESCRIPTOR_MLDB,
-//                                     int descriptor_size = 0, int descriptor_channels = 3,
-//                                     float threshold = 0.001f, int nOctaves = 4,
-//                                     int nOctaveLayers = 4, int diffusivity = KAZE::DIFF_PM_G2);
-//
-//    CV_WRAP virtual void setDescriptorType(int dtype) = 0;
-//    CV_WRAP virtual int getDescriptorType() const = 0;
-//
-//    CV_WRAP virtual void setDescriptorSize(int dsize) = 0;
-//    CV_WRAP virtual int getDescriptorSize() const = 0;
-//
-//    CV_WRAP virtual void setDescriptorChannels(int dch) = 0;
-//    CV_WRAP virtual int getDescriptorChannels() const = 0;
-//
-//    CV_WRAP virtual void setThreshold(double threshold) = 0;
-//    CV_WRAP virtual double getThreshold() const = 0;
-//
-//    CV_WRAP virtual void setNOctaves(int octaves) = 0;
-//    CV_WRAP virtual int getNOctaves() const = 0;
-//
-//    CV_WRAP virtual void setNOctaveLayers(int octaveLayers) = 0;
-//    CV_WRAP virtual int getNOctaveLayers() const = 0;
-//
-//    CV_WRAP virtual void setDiffusivity(int diff) = 0;
-//    CV_WRAP virtual int getDiffusivity() const = 0;
+    create(descriptor_type?: DescriptorType | _st.int /*= AKAZE::DESCRIPTOR_MLDB*/,
+        descriptor_size?: _st.int /*= 0*/, descriptor_channels?: _st.int /*= 3*/,
+        threshold?: _st.float /*= 0.001f*/, nOctaves?: _st.int /*= 4*/,
+        nOctaveLayers?: _st.int /*= 4*/, diffusivity?: _st.int /*= KAZE::DIFF_PM_G2*/): AKAZE;
+
+}
+
+interface AKAZE extends Feature2D
+{
+//public:
+//    // AKAZE descriptor type
+
+
+    setDescriptorType(dtype: _st.int): void;
+    getDescriptorType(): _st.int;
+
+    setDescriptorSize(dsize: _st.int ): void;
+    getDescriptorSize(): _st.int;
+
+    setDescriptorChannels(dch: _st.int ): void;
+    getDescriptorChannels(): _st.int;
+
+    setThreshold(threshold: _st.double ): void;
+    getThreshold(): _st.double;
+
+    setNOctaves(octaves: _st.int ): void;
+    getNOctaves(): _st.int;
+
+    setNOctaveLayers(octaveLayers: _st.int ): void;
+    getNOctaveLayers(): _st.int;
+
+    setDiffusivity(diff : _st.int ): void ;
+    getDiffusivity(): _st.int;
 };
+
+export var AKAZE: AKAZEStatic = alvision_module.AKAZE;
 
 //! @} features2d_main
 
@@ -768,10 +829,10 @@ interface AKAZE extends Feature2D
 \****************************************************************************************/
 
 //template<typename T>
-//struct CV_EXPORTS Accumulator
-//{
+interface Accumulator<T>
+{
 //    typedef T Type;
-//};
+};
 //
 //template<> struct Accumulator<unsigned char>  { typedef float Type; };
 //template<> struct Accumulator<unsigned short> { typedef float Type; };
@@ -782,8 +843,8 @@ interface AKAZE extends Feature2D
  * Squared Euclidean distance functor
  */
 //template<class T>
-//struct CV_EXPORTS SL2
-//{
+export interface SL2<T>
+{
 //    enum { normType = NORM_L2SQR };
 //    typedef T ValueType;
 //    typedef typename Accumulator<T>::Type ResultType;
@@ -792,14 +853,14 @@ interface AKAZE extends Feature2D
 //    {
 //        return normL2Sqr<ValueType, ResultType>(a, b, size);
 //    }
-//};
+};
 
 /*
  * Euclidean distance functor
  */
 //template<class T>
-//struct CV_EXPORTS L2
-//{
+export interface L2<T>
+{
 //    enum { normType = NORM_L2 };
 //    typedef T ValueType;
 //    typedef typename Accumulator<T>::Type ResultType;
@@ -808,14 +869,14 @@ interface AKAZE extends Feature2D
 //    {
 //        return (ResultType)std::sqrt((double)normL2Sqr<ValueType, ResultType>(a, b, size));
 //    }
-//};
+};
 
 /*
  * Manhattan distance (city block distance) functor
  */
 //template<class T>
-//struct CV_EXPORTS L1
-//{
+export interface L1<T>
+{
 //    enum { normType = NORM_L1 };
 //    typedef T ValueType;
 //    typedef typename Accumulator<T>::Type ResultType;
@@ -824,7 +885,7 @@ interface AKAZE extends Feature2D
 //    {
 //        return normL1<ValueType, ResultType>(a, b, size);
 //    }
-//};
+};
 
 /****************************************************************************************\
 *                                  DescriptorMatcher                                     *
@@ -841,7 +902,7 @@ interface DescriptorCollection {
     //        virtual ~DescriptorCollection();
     //
     //        // Vector of matrices "descriptors" will be merged to one matrix "mergedDescriptors" here.
-    //        void set( const std::vector<Mat>& descriptors );
+    //        void set( const Array<Mat>& descriptors );
     //        virtual void clear();
     //
     //        const Mat& getDescriptors() const;
@@ -853,7 +914,7 @@ interface DescriptorCollection {
     //
     //    protected:
     //        Mat mergedDescriptors;
-    //        std::vector<int> startIdxs;
+    //        Array<int> startIdxs;
 };
 
 //! @addtogroup features2d_match
@@ -864,7 +925,27 @@ interface DescriptorCollection {
 It has two groups of match methods: for matching descriptors of an image with another image or with
 an image set.
  */
-interface DescriptorMatcher extends Algorithm
+export interface DescriptorMatcherStatic {
+         /** @brief Creates a descriptor matcher of a given type with the default parameters (using default
+    constructor).
+
+    @param descriptorMatcherType Descriptor matcher type. Now the following matcher types are
+    supported:
+    -   `BruteForce` (it uses L2 )
+    -   `BruteForce-L1`
+    -   `BruteForce-Hamming`
+    -   `BruteForce-Hamming(2)`
+    -   `FlannBased`
+     */
+    create(descriptorMatcherType : string): DescriptorMatcher;
+
+    isPossibleMatch(mask: _st.InputArray, queryIdx: _st.int, trainIdx: _st.int ): boolean;
+    isMaskedOut(masks: _st.InputArrayOfArrays, queryIdx: _st.int ) : boolean;
+
+    //static Mat clone_op( Mat m ) { return m.clone(); }
+}
+
+export interface DescriptorMatcher extends Algorithm
 {
 //public:
 //    virtual ~DescriptorMatcher();
@@ -877,23 +958,23 @@ interface DescriptorMatcher extends Algorithm
     @param descriptors Descriptors to add. Each descriptors[i] is a set of descriptors from the same
     train image.
      */
-//    CV_WRAP virtual void add( InputArrayOfArrays descriptors );
+    add(descriptors: _st.InputArrayOfArrays): void;
 
     /** @brief Returns a constant link to the train descriptor collection trainDescCollection .
      */
-//    CV_WRAP const std::vector<Mat>& getTrainDescriptors() const;
+    getTrainDescriptors(): Array<_mat.Mat>;
 
     /** @brief Clears the train descriptor collections.
      */
-//    CV_WRAP virtual void clear();
+    clear(): void;
 
     /** @brief Returns true if there are no train descriptors in the both collections.
      */
-//    CV_WRAP virtual bool empty() const;
+    empty(): boolean;
 
     /** @brief Returns true if the descriptor matcher supports masking permissible matches.
      */
-//    CV_WRAP virtual bool isMaskSupported() const = 0;
+    isMaskSupported(): boolean;
 
     /** @brief Trains a descriptor matcher
 
@@ -902,7 +983,7 @@ interface DescriptorMatcher extends Algorithm
     have an empty implementation of this method. Other matchers really train their inner structures (for
     example, FlannBasedMatcher trains flann::Index ).
      */
-//    CV_WRAP virtual void train();
+    train(): void;
 
     /** @brief Finds the best match for each descriptor from a query set.
 
@@ -920,8 +1001,8 @@ interface DescriptorMatcher extends Algorithm
     matched. Namely, queryDescriptors[i] can be matched with trainDescriptors[j] only if
     mask.at\<uchar\>(i,j) is non-zero.
      */
-//    CV_WRAP void match( InputArray queryDescriptors, InputArray trainDescriptors,
-//                CV_OUT std::vector<DMatch>& matches, InputArray mask=noArray() ) const;
+    match(queryDescriptors: _st.InputArray, trainDescriptors: _st.InputArray ,
+        cb: (matches: Array<_types.DMatch> )=>void, mask ? : _st.InputArray /*= noArray()*/) : void;
 
     /** @brief Finds the k best matches for each descriptor from a query set.
 
@@ -941,9 +1022,9 @@ interface DescriptorMatcher extends Algorithm
     descriptor. The matches are returned in the distance increasing order. See DescriptorMatcher::match
     for the details about query and train descriptors.
      */
-//    CV_WRAP void knnMatch( InputArray queryDescriptors, InputArray trainDescriptors,
-//                   CV_OUT std::vector<std::vector<DMatch> >& matches, int k,
-//                   InputArray mask=noArray(), bool compactResult=false ) const;
+    knnMatch(queryDescriptors: _st.InputArray, trainDescriptors: _st.InputArray ,
+        cb: (matches: Array<Array<_types.DMatch>>) => void, k: _st.int ,
+        mask?: _st.InputArray /*= noArray()*/, compactResult ? : boolean /*= false*/) : void;
 
     /** @brief For each query descriptor, finds the training descriptors not farther than the specified distance.
 
@@ -964,9 +1045,9 @@ interface DescriptorMatcher extends Algorithm
     query descriptor and the training descriptor is equal or smaller than maxDistance. Found matches are
     returned in the distance increasing order.
      */
-//    void radiusMatch( InputArray queryDescriptors, InputArray trainDescriptors,
-//                      std::vector<std::vector<DMatch> >& matches, float maxDistance,
-//                      InputArray mask=noArray(), bool compactResult=false ) const;
+    radiusMatch(queryDescriptors: _st.InputArray, trainDescriptors: _st.InputArray ,
+        matches: Array<Array<_types.DMatch>>, maxDistance: _st.float ,
+        mask?: _st.InputArray /*= noArray()*/, compactResult ? : boolean /*= false*/): void;
 
     /** @overload
     @param queryDescriptors Query set of descriptors.
@@ -975,8 +1056,8 @@ interface DescriptorMatcher extends Algorithm
     @param masks Set of masks. Each masks[i] specifies permissible matches between the input query
     descriptors and stored train descriptors from the i-th image trainDescCollection[i].
     */
-//    CV_WRAP void match( InputArray queryDescriptors, CV_OUT std::vector<DMatch>& matches,
-//                        InputArrayOfArrays masks=noArray() );
+    match(queryDescriptors: _st.InputArray, cb: (matches: Array<_types.DMatch>)=>void,
+        masks?: _st.InputArrayOfArrays /*= noArray()*/) : void ;
     /** @overload
     @param queryDescriptors Query set of descriptors.
     @param matches Matches. Each matches[i] is k or less matches for the same query descriptor.
@@ -988,8 +1069,8 @@ interface DescriptorMatcher extends Algorithm
     false, the matches vector has the same size as queryDescriptors rows. If compactResult is true,
     the matches vector does not contain matches for fully masked-out query descriptors.
     */
-//    CV_WRAP void knnMatch( InputArray queryDescriptors, CV_OUT std::vector<std::vector<DMatch> >& matches, int k,
-//                           InputArrayOfArrays masks=noArray(), bool compactResult=false );
+    knnMatch(queryDescriptors: _st.InputArray, cb: (matches: Array<Array<_types.DMatch>>) => void, k: _st.int ,
+        masks?: _st.InputArrayOfArrays /*= noArray()*/, compactResult?: boolean/*= false*/) : void;
     /** @overload
     @param queryDescriptors Query set of descriptors.
     @param matches Found matches.
@@ -1002,13 +1083,13 @@ interface DescriptorMatcher extends Algorithm
     false, the matches vector has the same size as queryDescriptors rows. If compactResult is true,
     the matches vector does not contain matches for fully masked-out query descriptors.
     */
-//    void radiusMatch( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, float maxDistance,
-//                      InputArrayOfArrays masks=noArray(), bool compactResult=false );
+    radiusMatch(queryDescriptors: _st.InputArray, cb: (matches: Array<Array<_types.DMatch>>) => void, maxDistance: _st.float ,
+        masks?: _st.InputArrayOfArrays /*= noArray()*/, compactResult? : boolean/* = false*/): void;
 
     // Reads matcher object from a file node
-//    virtual void read( const FileNode& );
+    read( fn : _persistence.FileNode ) : void;
     // Writes matcher object to a file storage
-//    virtual void write( FileStorage& ) const;
+    write(fs : _persistence.FileStorage ) : void;
 
     /** @brief Clones the matcher.
 
@@ -1016,41 +1097,28 @@ interface DescriptorMatcher extends Algorithm
     that is, copies both parameters and train data. If emptyTrainData is true, the method creates an
     object copy with the current parameters but with empty train data.
      */
-//    virtual Ptr<DescriptorMatcher> clone( bool emptyTrainData=false ) const = 0;
+    clone(emptyTrainData? : boolean/*= false*/): DescriptorMatcher;
 
-    /** @brief Creates a descriptor matcher of a given type with the default parameters (using default
-    constructor).
-
-    @param descriptorMatcherType Descriptor matcher type. Now the following matcher types are
-    supported:
-    -   `BruteForce` (it uses L2 )
-    -   `BruteForce-L1`
-    -   `BruteForce-Hamming`
-    -   `BruteForce-Hamming(2)`
-    -   `FlannBased`
-     */
-//    CV_WRAP static Ptr<DescriptorMatcher> create( const String& descriptorMatcherType );
+   
 //protected:
   
 
     //! In fact the matching is implemented only by the following two methods. These methods suppose
     //! that the class object has been trained already. Public match methods call these methods
     //! after calling train().
-//    virtual void knnMatchImpl( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, int k,
+//    virtual void knnMatchImpl( InputArray queryDescriptors, Array<Array<DMatch> >& matches, int k,
 //        InputArrayOfArrays masks=noArray(), bool compactResult=false ) = 0;
-//    virtual void radiusMatchImpl( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, float maxDistance,
+//    virtual void radiusMatchImpl( InputArray queryDescriptors, Array<Array<DMatch> >& matches, float maxDistance,
 //        InputArrayOfArrays masks=noArray(), bool compactResult=false ) = 0;
 //
-//    static bool isPossibleMatch( InputArray mask, int queryIdx, int trainIdx );
-//    static bool isMaskedOut( InputArrayOfArrays masks, int queryIdx );
-//
-//    static Mat clone_op( Mat m ) { return m.clone(); }
 //    void checkMasks( InputArrayOfArrays masks, int queryDescriptorsCount ) const;
 
     //! Collection of descriptors from train images.
-//    std::vector<Mat> trainDescCollection;
-//    std::vector<UMat> utrainDescCollection;
+//    Array<Mat> trainDescCollection;
+//    Array<UMat> utrainDescCollection;
 };
+
+export var DescriptorMatcher: DescriptorMatcherStatic = alvision_module.DescriptorMatcher;
 
 /** @brief Brute-force descriptor matcher.
 
@@ -1058,9 +1126,8 @@ For each descriptor in the first set, this matcher finds the closest descriptor 
 by trying each one. This descriptor matcher supports masking permissible matches of descriptor
 sets.
  */
-interface BFMatcher extends DescriptorMatcher
-{
-//public:
+
+interface BFMatcherStatic {
     /** @brief Brute-force matcher constructor.
 
     @param normType One of NORM_L1, NORM_L2, NORM_HAMMING, NORM_HAMMING2. L1 and L2 norms are
@@ -1074,21 +1141,27 @@ interface BFMatcher extends DescriptorMatcher
     pairs. Such technique usually produces best results with minimal number of outliers when there are
     enough matches. This is alternative to the ratio test, used by D. Lowe in SIFT paper.
      */
-//    CV_WRAP BFMatcher( int normType=NORM_L2, bool crossCheck=false );
+    new (normType?: _base.NormTypes | _st.int /*= NORM_L2*/, crossCheck ? : boolean /*= false*/): BFMatcher;
 //    virtual ~BFMatcher() {}
-//
-//    virtual bool isMaskSupported() const { return true; }
-//
-//    virtual Ptr<DescriptorMatcher> clone( bool emptyTrainData=false ) const;
-//protected:
-//    virtual void knnMatchImpl( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, int k,
-//        InputArrayOfArrays masks=noArray(), bool compactResult=false );
-//    virtual void radiusMatchImpl( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, float maxDistance,
-//        InputArrayOfArrays masks=noArray(), bool compactResult=false );
-//
-//    int normType;
-//    bool crossCheck;
-};
+
+}
+
+interface BFMatcher extends DescriptorMatcher {
+    //public:
+    //
+    isMaskSupported(): boolean;
+    //
+    clone(emptyTrainData?: boolean /*= false*/): DescriptorMatcher
+    //protected:
+    knnMatchImpl(queryDescriptors: _st.InputArray, matches: Array<Array<_types.DMatch>>, k: _st.int, masks?: _st.InputArrayOfArrays /*=noArray()*/, compactResult?: boolean /*=false */): void;
+    radiusMatchImpl(queryDescriptors: _st.InputArray, matches: Array<Array<_types.DMatch>>, maxDistance: _st.float,
+        masks?: _st.InputArrayOfArrays /*=noArray()*/, compactResult?: boolean /*=false */): void;
+
+    normType: _st.int;
+    crossCheck: boolean;
+}
+
+export var BFMatcher: BFMatcherStatic = alvision_module.BFMatcher;
 
 
 /** @brief Flann-based descriptor matcher.
@@ -1119,11 +1192,11 @@ interface FlannBasedMatcher extends DescriptorMatcher
 //protected:
 //    static void convertToDMatches( const DescriptorCollection& descriptors,
 //                                   const Mat& indices, const Mat& distances,
-//                                   std::vector<std::vector<DMatch> >& matches );
+//                                   Array<Array<DMatch> >& matches );
 //
-//    virtual void knnMatchImpl( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, int k,
+//    virtual void knnMatchImpl( InputArray queryDescriptors, Array<Array<DMatch> >& matches, int k,
 //        InputArrayOfArrays masks=noArray(), bool compactResult=false );
-//    virtual void radiusMatchImpl( InputArray queryDescriptors, std::vector<std::vector<DMatch> >& matches, float maxDistance,
+//    virtual void radiusMatchImpl( InputArray queryDescriptors, Array<Array<DMatch> >& matches, float maxDistance,
 //        InputArrayOfArrays masks=noArray(), bool compactResult=false );
 //
 //    Ptr<flann::IndexParams> indexParams;
@@ -1175,13 +1248,13 @@ cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS
  */
 
 interface IdrawKeypoints {
-//    (InputArray image, const std::vector<KeyPoint>& keypoints, InputOutputArray outImage,
+//    (InputArray image, const Array<KeyPoint>& keypoints, InputOutputArray outImage,
 //                               const Scalar& color=Scalar::all(-1), int flags= DrawMatchesFlags::DEFAULT): void;
 }
 
 export var drawKeypoints: IdrawKeypoints = alvision_module.drawKeypoints;
 
-//CV_EXPORTS_W void drawKeypoints( InputArray image, const std::vector<KeyPoint>& keypoints, InputOutputArray outImage,
+//CV_EXPORTS_W void drawKeypoints( InputArray image, const Array<KeyPoint>& keypoints, InputOutputArray outImage,
 //                               const Scalar& color=Scalar::all(-1), int flags=DrawMatchesFlags::DEFAULT );
 
 /** @brief Draws the found matches of keypoints from two images.
@@ -1206,18 +1279,18 @@ DrawMatchesFlags.
 This function draws matches of keypoints from two images in the output image. Match is a line
 connecting two keypoints (circles). See cv::DrawMatchesFlags.
  */
-//CV_EXPORTS_W void drawMatches( InputArray img1, const std::vector<KeyPoint>& keypoints1,
-//                             InputArray img2, const std::vector<KeyPoint>& keypoints2,
-//                             const std::vector<DMatch>& matches1to2, InputOutputArray outImg,
+//CV_EXPORTS_W void drawMatches( InputArray img1, const Array<KeyPoint>& keypoints1,
+//                             InputArray img2, const Array<KeyPoint>& keypoints2,
+//                             const Array<DMatch>& matches1to2, InputOutputArray outImg,
 //                             const Scalar& matchColor=Scalar::all(-1), const Scalar& singlePointColor=Scalar::all(-1),
-//                             const std::vector<char>& matchesMask=std::vector<char>(), int flags=DrawMatchesFlags::DEFAULT );
+//                             const Array<char>& matchesMask=Array<char>(), int flags=DrawMatchesFlags::DEFAULT );
 //
 ///** @overload */
-//CV_EXPORTS_AS(drawMatchesKnn) void drawMatches( InputArray img1, const std::vector<KeyPoint>& keypoints1,
-//                             InputArray img2, const std::vector<KeyPoint>& keypoints2,
-//                             const std::vector<std::vector<DMatch> >& matches1to2, InputOutputArray outImg,
+//CV_EXPORTS_AS(drawMatchesKnn) void drawMatches( InputArray img1, const Array<KeyPoint>& keypoints1,
+//                             InputArray img2, const Array<KeyPoint>& keypoints2,
+//                             const Array<Array<DMatch> >& matches1to2, InputOutputArray outImg,
 //                             const Scalar& matchColor=Scalar::all(-1), const Scalar& singlePointColor=Scalar::all(-1),
-//                             const std::vector<std::vector<char> >& matchesMask=std::vector<std::vector<char> >(), int flags=DrawMatchesFlags::DEFAULT );
+//                             const Array<Array<char> >& matchesMask=Array<Array<char> >(), int flags=DrawMatchesFlags::DEFAULT );
 //
 ////! @} features2d_draw
 //
@@ -1226,16 +1299,16 @@ connecting two keypoints (circles). See cv::DrawMatchesFlags.
 //\****************************************************************************************/
 //
 //CV_EXPORTS void evaluateFeatureDetector( const Mat& img1, const Mat& img2, const Mat& H1to2,
-//                                         std::vector<KeyPoint>* keypoints1, std::vector<KeyPoint>* keypoints2,
+//                                         Array<KeyPoint>* keypoints1, Array<KeyPoint>* keypoints2,
 //                                         float& repeatability, int& correspCount,
 //                                         const Ptr<FeatureDetector>& fdetector=Ptr<FeatureDetector>() );
 //
-//CV_EXPORTS void computeRecallPrecisionCurve( const std::vector<std::vector<DMatch> >& matches1to2,
-//                                             const std::vector<std::vector<uchar> >& correctMatches1to2Mask,
-//                                             std::vector<Point2f>& recallPrecisionCurve );
+//CV_EXPORTS void computeRecallPrecisionCurve( const Array<Array<DMatch> >& matches1to2,
+//                                             const Array<Array<uchar> >& correctMatches1to2Mask,
+//                                             Array<Point2f>& recallPrecisionCurve );
 //
-//CV_EXPORTS float getRecall( const std::vector<Point2f>& recallPrecisionCurve, float l_precision );
-//CV_EXPORTS int getNearestPoint( const std::vector<Point2f>& recallPrecisionCurve, float l_precision );
+//CV_EXPORTS float getRecall( const Array<Point2f>& recallPrecisionCurve, float l_precision );
+//CV_EXPORTS int getNearestPoint( const Array<Point2f>& recallPrecisionCurve, float l_precision );
 
 /****************************************************************************************\
 *                                     Bag of visual words                                *
@@ -1266,7 +1339,7 @@ interface BOWTrainer
 //
 //    /** @brief Returns a training set of descriptors.
 //    */
-//    CV_WRAP const std::vector<Mat>& getDescriptors() const;
+//    CV_WRAP const Array<Mat>& getDescriptors() const;
 //
 //    /** @brief Returns the count of all descriptors stored in the training set.
 //    */
@@ -1275,7 +1348,7 @@ interface BOWTrainer
 //    CV_WRAP virtual void clear();
 //
 //    /** @overload */
-//    CV_WRAP virtual Mat cluster() const = 0;
+//    CV_WRAP virtual Mat cluster() 
 //
 //    /** @brief Clusters train descriptors.
 //
@@ -1286,10 +1359,10 @@ interface BOWTrainer
 //    variant of the method, train descriptors stored in the object are clustered. In the second variant,
 //    input descriptors are clustered.
 //     */
-//    CV_WRAP virtual Mat cluster( const Mat& descriptors ) const = 0;
+//    CV_WRAP virtual Mat cluster( const Mat& descriptors ) 
 //
 //protected:
-//    std::vector<Mat> descriptors;
+//    Array<Mat> descriptors;
 //    int size;
 };
 
@@ -1365,8 +1438,8 @@ interface BOWImgDescriptorExtractor
 //    returned if it is non-zero.
 //    @param descriptors Descriptors of the image keypoints that are returned if they are non-zero.
 //     */
-//    void compute( InputArray image, std::vector<KeyPoint>& keypoints, OutputArray imgDescriptor,
-//                  std::vector<std::vector<int> >* pointIdxsOfClusters=0, Mat* descriptors=0 );
+//    void compute( InputArray image, Array<KeyPoint>& keypoints, OutputArray imgDescriptor,
+//                  Array<Array<int> >* pointIdxsOfClusters=0, Mat* descriptors=0 );
 //    /** @overload
 //    @param keypointDescriptors Computed descriptors to match with vocabulary.
 //    @param imgDescriptor Computed output image descriptor.
@@ -1375,10 +1448,10 @@ interface BOWImgDescriptorExtractor
 //    returned if it is non-zero.
 //    */
 //    void compute( InputArray keypointDescriptors, OutputArray imgDescriptor,
-//                  std::vector<std::vector<int> >* pointIdxsOfClusters=0 );
+//                  Array<Array<int> >* pointIdxsOfClusters=0 );
 //    // compute() is not constant because DescriptorMatcher::match is not constant
 //
-//    CV_WRAP_AS(compute) void compute2( const Mat& image, std::vector<KeyPoint>& keypoints, CV_OUT Mat& imgDescriptor )
+//    CV_WRAP_AS(compute) void compute2( const Mat& image, Array<KeyPoint>& keypoints, CV_OUT Mat& imgDescriptor )
 //    { compute(image,keypoints,imgDescriptor); }
 //
 //    /** @brief Returns an image descriptor size if the vocabulary is set. Otherwise, it returns 0.

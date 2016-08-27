@@ -64,7 +64,13 @@ import * as _affine from './../../Affine'
 //#endif
 
 //namespace cv {
-export namespace detail {
+
+//export import detail = _affine;
+
+export namespace detail_matchers {
+    //import * as _affine from './../../Affine';
+    //export * from './../../Affine';
+    
 
 //! @addtogroup stitching_match
 //! @{
@@ -117,7 +123,7 @@ interface FeaturesFinder
             num_octaves_descr?: _st.int  /*=*/ /*4*/ /*3*/, num_layers_descr?: _st.int /* = */ /*2*/ /*4*/): SurfFeaturesFinder;
 }
 
-interface SurfFeaturesFinder extends FeaturesFinder
+export interface SurfFeaturesFinder extends FeaturesFinder
 {
 //public:
 //    SurfFeaturesFinder(double hess_thresh = 300., int num_octaves = 3, int num_layers = 4,
@@ -287,7 +293,7 @@ interface BestOf2NearestRangeMatcher extends BestOf2NearestMatcher
 
 //! @} stitching_match
 
-} // namespace detail
+} // namespace detail.matchers
 //} // namespace cv
 
 //#endif // __OPENCV_STITCHING_MATCHERS_HPP__

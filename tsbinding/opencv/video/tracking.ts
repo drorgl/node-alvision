@@ -65,7 +65,7 @@ import * as _features2d from './../features2d'
 //! @addtogroup video_track
 //! @{
 
-enum OPTFLOW{ OPTFLOW_USE_INITIAL_FLOW     = 4,
+export enum OPTFLOW{ OPTFLOW_USE_INITIAL_FLOW     = 4,
        OPTFLOW_LK_GET_MIN_EIGENVALS = 8,
        OPTFLOW_FARNEBACK_GAUSSIAN   = 256
      };
@@ -89,7 +89,7 @@ See the OpenCV sample camshiftdemo.c that tracks colored objects.
     opencv_source_code/samples/python/camshift.py
  */
      interface ICamShift {
-         (probImage: _st.InputArray , window : _types.Rect, cb:(window : _types.Rect)=>void,
+         (probImage: _st.InputArray , window : _types.Rect, 
              criteria: _types.TermCriteria ): _types.RotatedRect;
      }
 
@@ -120,7 +120,7 @@ remaining contours with drawContours.
 -   A mean-shift tracking sample can be found at opencv_source_code/samples/cpp/camshiftdemo.cpp
  */
 interface ImeanShift {
-    (probImage: _st.InputArray, window: _types.Rect, cb: (window: _types.Rect) => void, criteria: _types.TermCriteria ): _st.int;
+    (probImage: _st.InputArray, window: _types.Rect, criteria: _types.TermCriteria ): _st.int;
 }
 
 export var meanShift: ImeanShift = alvision_module.meanShift;
@@ -465,15 +465,16 @@ export var KalmanFilter: KalmanFilterStatic = alvision_module.KalmanFilter;
 interface DenseOpticalFlow extends _core.Algorithm
 {
 //public:
-//    /** @brief Calculates an optical flow.
-//
-//    @param I0 first 8-bit single-channel input image.
-//    @param I1 second input image of the same size and the same type as prev.
-//    @param flow computed flow image that has the same size as prev and type CV_32FC2.
-//     */
-//    CV_WRAP virtual void calc( InputArray I0, InputArray I1, InputOutputArray flow ) = 0;
-//    /** @brief Releases all inner buffers.
-//    */
+/** @brief Calculates an optical flow.
+
+@param I0 first 8-bit single-channel input image.
+@param I1 second input image of the same size and the same type as prev.
+@param flow computed flow image that has the same size as prev and type CV_32FC2.
+ */
+
+    calc(I0: _st.InputArray, I1: _st.InputArray, flow: _st.InputOutputArray ): void;
+/** @brief Releases all inner buffers.
+*/
 //    CV_WRAP virtual void collectGarbage() = 0;
 };
 
@@ -522,66 +523,66 @@ Javier Sanchez, Enric Meinhardt-Llopis and Gabriele Facciolo. "TV-L1 Optical Flo
 interface DualTVL1OpticalFlow extends DenseOpticalFlow
 {
 //public:
-//    //! @brief Time step of the numerical scheme
-//    /** @see setTau */
-//    virtual double getTau() const = 0;
-//    /** @copybrief getTau @see getTau */
-//    virtual void setTau(double val) = 0;
-//    //! @brief Weight parameter for the data term, attachment parameter
-//    /** @see setLambda */
-//    virtual double getLambda() const = 0;
-//    /** @copybrief getLambda @see getLambda */
-//    virtual void setLambda(double val) = 0;
-//    //! @brief Weight parameter for (u - v)^2, tightness parameter
-//    /** @see setTheta */
-//    virtual double getTheta() const = 0;
-//    /** @copybrief getTheta @see getTheta */
-//    virtual void setTheta(double val) = 0;
-//    //! @brief coefficient for additional illumination variation term
-//    /** @see setGamma */
-//    virtual double getGamma() const = 0;
-//    /** @copybrief getGamma @see getGamma */
-//    virtual void setGamma(double val) = 0;
-//    //! @brief Number of scales used to create the pyramid of images
-//    /** @see setScalesNumber */
-//    virtual int getScalesNumber() const = 0;
-//    /** @copybrief getScalesNumber @see getScalesNumber */
-//    virtual void setScalesNumber(int val) = 0;
-//    //! @brief Number of warpings per scale
-//    /** @see setWarpingsNumber */
-//    virtual int getWarpingsNumber() const = 0;
-//    /** @copybrief getWarpingsNumber @see getWarpingsNumber */
-//    virtual void setWarpingsNumber(int val) = 0;
-//    //! @brief Stopping criterion threshold used in the numerical scheme, which is a trade-off between precision and running time
-//    /** @see setEpsilon */
-//    virtual double getEpsilon() const = 0;
-//    /** @copybrief getEpsilon @see getEpsilon */
-//    virtual void setEpsilon(double val) = 0;
-//    //! @brief Inner iterations (between outlier filtering) used in the numerical scheme
-//    /** @see setInnerIterations */
-//    virtual int getInnerIterations() const = 0;
-//    /** @copybrief getInnerIterations @see getInnerIterations */
-//    virtual void setInnerIterations(int val) = 0;
-//    //! @brief Outer iterations (number of inner loops) used in the numerical scheme
-//    /** @see setOuterIterations */
-//    virtual int getOuterIterations() const = 0;
-//    /** @copybrief getOuterIterations @see getOuterIterations */
-//    virtual void setOuterIterations(int val) = 0;
-//    //! @brief Use initial flow
-//    /** @see setUseInitialFlow */
-//    virtual bool getUseInitialFlow() const = 0;
-//    /** @copybrief getUseInitialFlow @see getUseInitialFlow */
-//    virtual void setUseInitialFlow(bool val) = 0;
-//    //! @brief Step between scales (<1)
-//    /** @see setScaleStep */
-//    virtual double getScaleStep() const = 0;
-//    /** @copybrief getScaleStep @see getScaleStep */
-//    virtual void setScaleStep(double val) = 0;
-//    //! @brief Median filter kernel size (1 = no filter) (3 or 5)
-//    /** @see setMedianFiltering */
-//    virtual int getMedianFiltering() const = 0;
-//    /** @copybrief getMedianFiltering @see getMedianFiltering */
-//    virtual void setMedianFiltering(int val) = 0;
+    //! @brief Time step of the numerical scheme
+    /** @see setTau */
+    getTau(): _st.double;
+    /** @copybrief getTau @see getTau */
+    setTau(val: _st.double): void;
+    //! @brief Weight parameter for the data term, attachment parameter
+    /** @see setLambda */
+    getLambda(): _st.double;
+    /** @copybrief getLambda @see getLambda */
+    setLambda(val: _st.double ): void;
+    //! @brief Weight parameter for (u - v)^2, tightness parameter
+    /** @see setTheta */
+    getTheta(): _st.double;
+    /** @copybrief getTheta @see getTheta */
+    setTheta(val: _st.double): void;
+    //! @brief coefficient for additional illumination variation term
+    /** @see setGamma */
+    getGamma(): _st.double;
+    /** @copybrief getGamma @see getGamma */
+    setGamma(val: _st.double): void;
+    //! @brief Number of scales used to create the pyramid of images
+    /** @see setScalesNumber */
+    getScalesNumber(): _st.int;
+    /** @copybrief getScalesNumber @see getScalesNumber */
+    setScalesNumber(val: _st.int): void;
+    //! @brief Number of warpings per scale
+    /** @see setWarpingsNumber */
+    getWarpingsNumber(): _st.int;
+    /** @copybrief getWarpingsNumber @see getWarpingsNumber */
+    setWarpingsNumber(val: _st.int): void;
+    //! @brief Stopping criterion threshold used in the numerical scheme, which is a trade-off between precision and running time
+    /** @see setEpsilon */
+    getEpsilon(): _st.double;
+    /** @copybrief getEpsilon @see getEpsilon */
+    setEpsilon(val: _st.double): void;
+    //! @brief Inner iterations (between outlier filtering) used in the numerical scheme
+    /** @see setInnerIterations */
+    getInnerIterations(): _st.int;
+    /** @copybrief getInnerIterations @see getInnerIterations */
+    setInnerIterations(val: _st.int): void;
+    //! @brief Outer iterations (number of inner loops) used in the numerical scheme
+    /** @see setOuterIterations */
+    getOuterIterations(): _st.int;
+    /** @copybrief getOuterIterations @see getOuterIterations */
+    setOuterIterations(val: _st.int): void;
+    //! @brief Use initial flow
+    /** @see setUseInitialFlow */
+    getUseInitialFlow(): boolean;
+    /** @copybrief getUseInitialFlow @see getUseInitialFlow */
+    setUseInitialFlow( val : boolean): void;
+    //! @brief Step between scales (<1)
+    /** @see setScaleStep */
+    getScaleStep(): _st.double;
+    /** @copybrief getScaleStep @see getScaleStep */
+    setScaleStep(val: _st.double): void;
+    //! @brief Median filter kernel size (1 = no filter) (3 or 5)
+    /** @see setMedianFiltering */
+    getMedianFiltering(): _st.int;
+    /** @copybrief getMedianFiltering @see getMedianFiltering */
+    setMedianFiltering( val : _st.int): void;
 };
 
 /** @brief Creates instance of cv::DenseOpticalFlow

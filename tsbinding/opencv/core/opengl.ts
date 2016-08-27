@@ -40,6 +40,19 @@
 //
 //M*/
 
+var alvision_module = require('../../../lib/bindings.js');
+
+import * as _mat from './../mat'
+import * as _matx from './../matx'
+//import * as _st from './Constants'
+import * as _st from './../static'
+import * as _types from './../types'
+import * as _core from './../core'
+import * as _base from './../base'
+import * as _affine from './../Affine'
+import * as _features2d from './../features2d'
+import * as _cuda from './../cuda';
+
 //#ifndef __OPENCV_CORE_OPENGL_HPP__
 //#define __OPENCV_CORE_OPENGL_HPP__
 //
@@ -77,135 +90,142 @@ ogl::Buffer has interface similar with Mat interface and represents 2D array mem
 
 ogl::Buffer supports memory transfers between host and device and also can be mapped to CUDA memory.
  */
-interface Buffer
+
+export     enum BufferTarget
+    {
+        ARRAY_BUFFER         = 0x8892, //!< The buffer will be used as a source for vertex data
+        ELEMENT_ARRAY_BUFFER = 0x8893, //!< The buffer will be used for indices (in glDrawElements, for example)
+        PIXEL_PACK_BUFFER    = 0x88EB, //!< The buffer will be used for reading from OpenGL textures
+        PIXEL_UNPACK_BUFFER  = 0x88EC  //!< The buffer will be used for writing to OpenGL textures
+    };
+
+    export enum BufferAccess
+    {
+        READ_ONLY  = 0x88B8,
+        WRITE_ONLY = 0x88B9,
+        READ_WRITE = 0x88BA
+    };
+
+    interface BufferStatic {
+        /** @brief The constructors.
+
+    Creates empty ogl::Buffer object, creates ogl::Buffer object from existed buffer ( abufId
+    parameter), allocates memory for ogl::Buffer object or copies from host/device memory.
+     */
+        new (): Buffer;
+
+        /** @overload
+        @param arows Number of rows in a 2D array.
+        @param acols Number of columns in a 2D array.
+        @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
+        @param abufId Buffer object name.
+        @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+        */
+        new (arows: _st.int, acols: _st.int, atype: _st.int, abufId: _st.uint , autoRelease?  : boolean /*= false*/): Buffer;
+
+        /** @overload
+        @param asize 2D array size.
+        @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
+        @param abufId Buffer object name.
+        @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+        */
+        new (asize: _types.Size, atype: _st.int, abufId: _st.uint , autoRelease  : boolean /*= false*/): Buffer;
+
+        /** @overload
+        @param arows Number of rows in a 2D array.
+        @param acols Number of columns in a 2D array.
+        @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
+        @param target Buffer usage. See cv::ogl::Buffer::Target .
+        @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+        */
+        new (arows: _st.int, acols: _st.int, atype: _st.int, target?: BufferTarget  /*= ARRAY_BUFFER*/, autoRelease?  : boolean/*= false*/): Buffer;
+
+        /** @overload
+        @param asize 2D array size.
+        @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
+        @param target Buffer usage. See cv::ogl::Buffer::Target .
+        @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+        */
+        new (asize: _types.Size, atype: _st.int, target?: BufferTarget /*= ARRAY_BUFFER*/, autoRelease?  : boolean /*= false*/): Buffer;
+
+        /** @overload
+        @param arr Input array (host or device memory, it can be Mat , cuda::GpuMat or std::vector ).
+        @param target Buffer usage. See cv::ogl::Buffer::Target .
+        @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+        */
+        new (arr: _st.InputArray, target?: BufferTarget /*= ARRAY_BUFFER*/, autoRelease?  : boolean /*= false*/): Buffer;
+
+    }
+
+interface Buffer extends _st.IOArray
 {
 //public:
 //    /** @brief The target defines how you intend to use the buffer object.
 //    */
-//    enum Target
-//    {
-//        ARRAY_BUFFER         = 0x8892, //!< The buffer will be used as a source for vertex data
-//        ELEMENT_ARRAY_BUFFER = 0x8893, //!< The buffer will be used for indices (in glDrawElements, for example)
-//        PIXEL_PACK_BUFFER    = 0x88EB, //!< The buffer will be used for reading from OpenGL textures
-//        PIXEL_UNPACK_BUFFER  = 0x88EC  //!< The buffer will be used for writing to OpenGL textures
-//    };
+
 //
-//    enum Access
-//    {
-//        READ_ONLY  = 0x88B8,
-//        WRITE_ONLY = 0x88B9,
-//        READ_WRITE = 0x88BA
-//    };
 //
-//    /** @brief The constructors.
+    /** @brief Allocates memory for ogl::Buffer object.
+
+    @param arows Number of rows in a 2D array.
+    @param acols Number of columns in a 2D array.
+    @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
+    @param target Buffer usage. See cv::ogl::Buffer::Target .
+    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+     */
+    create(arows: _st.int, acols: _st.int, atype: _st.int, target?: BufferTarget /*= ARRAY_BUFFER*/,autoRelease?  : boolean /*= false*/): void;
+
+    /** @overload
+    @param asize 2D array size.
+    @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
+    @param target Buffer usage. See cv::ogl::Buffer::Target .
+    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+    */
+    create(asize: _types.Size, atype: _st.int , target?  : BufferTarget /*= ARRAY_BUFFER*/, autoRelease?  : boolean /*= false*/): void;
+
+    /** @brief Decrements the reference counter and destroys the buffer object if needed.
+
+    The function will call setAutoRelease(true) .
+     */
+    release(): void;
+
+    /** @brief Sets auto release mode.
+
+    The lifetime of the OpenGL object is tied to the lifetime of the context. If OpenGL context was
+    bound to a window it could be released at any time (user can close a window). If object's destructor
+    is called after destruction of the context it will cause an error. Thus ogl::Buffer doesn't destroy
+    OpenGL object in destructor by default (all OpenGL resources will be released with OpenGL context).
+    This function can force ogl::Buffer destructor to destroy OpenGL object.
+    @param flag Auto release mode (if true, release will be called in object's destructor).
+     */
+    setAutoRelease(flag : boolean): void;
+
+    /** @brief Copies from host/device memory to OpenGL buffer.
+    @param arr Input array (host or device memory, it can be Mat , cuda::GpuMat or std::vector ).
+    @param target Buffer usage. See cv::ogl::Buffer::Target .
+    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+     */
+    copyFrom(arr: _st.InputArray, target?: BufferTarget /*= ARRAY_BUFFER*/, autoRelease?  : boolean /*= false*/): void;
+
+    /** @overload */
+    //copyFrom(arr: _st.InputArray, stream: cuda::Stream& , target?: BufferTarget /*= ARRAY_BUFFER*/, autoRelease? : boolean /*= false*/): void;
 //
-//    Creates empty ogl::Buffer object, creates ogl::Buffer object from existed buffer ( abufId
-//    parameter), allocates memory for ogl::Buffer object or copies from host/device memory.
-//     */
-//    Buffer();
-//
-//    /** @overload
-//    @param arows Number of rows in a 2D array.
-//    @param acols Number of columns in a 2D array.
-//    @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
-//    @param abufId Buffer object name.
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    Buffer(int arows, int acols, int atype, unsigned int abufId, bool autoRelease = false);
-//
-//    /** @overload
-//    @param asize 2D array size.
-//    @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
-//    @param abufId Buffer object name.
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    Buffer(Size asize, int atype, unsigned int abufId, bool autoRelease = false);
-//
-//    /** @overload
-//    @param arows Number of rows in a 2D array.
-//    @param acols Number of columns in a 2D array.
-//    @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
-//    @param target Buffer usage. See cv::ogl::Buffer::Target .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    Buffer(int arows, int acols, int atype, Target target = ARRAY_BUFFER, bool autoRelease = false);
-//
-//    /** @overload
-//    @param asize 2D array size.
-//    @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
-//    @param target Buffer usage. See cv::ogl::Buffer::Target .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    Buffer(Size asize, int atype, Target target = ARRAY_BUFFER, bool autoRelease = false);
-//
-//    /** @overload
-//    @param arr Input array (host or device memory, it can be Mat , cuda::GpuMat or std::vector ).
-//    @param target Buffer usage. See cv::ogl::Buffer::Target .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    explicit Buffer(InputArray arr, Target target = ARRAY_BUFFER, bool autoRelease = false);
-//
-//    /** @brief Allocates memory for ogl::Buffer object.
-//
-//    @param arows Number of rows in a 2D array.
-//    @param acols Number of columns in a 2D array.
-//    @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
-//    @param target Buffer usage. See cv::ogl::Buffer::Target .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//     */
-//    void create(int arows, int acols, int atype, Target target = ARRAY_BUFFER, bool autoRelease = false);
-//
-//    /** @overload
-//    @param asize 2D array size.
-//    @param atype Array type ( CV_8UC1, ..., CV_64FC4 ). See Mat for details.
-//    @param target Buffer usage. See cv::ogl::Buffer::Target .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    void create(Size asize, int atype, Target target = ARRAY_BUFFER, bool autoRelease = false);
-//
-//    /** @brief Decrements the reference counter and destroys the buffer object if needed.
-//
-//    The function will call setAutoRelease(true) .
-//     */
-//    void release();
-//
-//    /** @brief Sets auto release mode.
-//
-//    The lifetime of the OpenGL object is tied to the lifetime of the context. If OpenGL context was
-//    bound to a window it could be released at any time (user can close a window). If object's destructor
-//    is called after destruction of the context it will cause an error. Thus ogl::Buffer doesn't destroy
-//    OpenGL object in destructor by default (all OpenGL resources will be released with OpenGL context).
-//    This function can force ogl::Buffer destructor to destroy OpenGL object.
-//    @param flag Auto release mode (if true, release will be called in object's destructor).
-//     */
-//    void setAutoRelease(bool flag);
-//
-//    /** @brief Copies from host/device memory to OpenGL buffer.
-//    @param arr Input array (host or device memory, it can be Mat , cuda::GpuMat or std::vector ).
-//    @param target Buffer usage. See cv::ogl::Buffer::Target .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//     */
-//    void copyFrom(InputArray arr, Target target = ARRAY_BUFFER, bool autoRelease = false);
-//
-//    /** @overload */
-//    void copyFrom(InputArray arr, cuda::Stream& stream, Target target = ARRAY_BUFFER, bool autoRelease = false);
-//
-//    /** @brief Copies from OpenGL buffer to host/device memory or another OpenGL buffer object.
-//
-//    @param arr Destination array (host or device memory, can be Mat , cuda::GpuMat , std::vector or
-//    ogl::Buffer ).
-//     */
-//    void copyTo(OutputArray arr) const;
-//
-//    /** @overload */
-//    void copyTo(OutputArray arr, cuda::Stream& stream) const;
-//
-//    /** @brief Creates a full copy of the buffer object and the underlying data.
-//
-//    @param target Buffer usage for destination buffer.
-//    @param autoRelease Auto release mode for destination buffer.
-//     */
-//    Buffer clone(Target target = ARRAY_BUFFER, bool autoRelease = false) const;
+    /** @brief Copies from OpenGL buffer to host/device memory or another OpenGL buffer object.
+
+    @param arr Destination array (host or device memory, can be Mat , cuda::GpuMat , std::vector or
+    ogl::Buffer ).
+     */
+    copyTo(arr: _st.OutputArray ): void;
+
+    /** @overload */
+    //copyTo(arr: _st.OutputArray, stream: cuda::Stream): void;
+
+    /** @brief Creates a full copy of the buffer object and the underlying data.
+
+    @param target Buffer usage for destination buffer.
+    @param autoRelease Auto release mode for destination buffer.
+     */
+    clone(target?: BufferTarget /* = ARRAY_BUFFER*/, autoRelease? : boolean/* = false*/): Buffer;
 //
 //    /** @brief Binds OpenGL buffer to the specified buffer binding point.
 //
@@ -219,30 +239,30 @@ interface Buffer
 //     */
 //    static void unbind(Target target);
 //
-//    /** @brief Maps OpenGL buffer to host memory.
-//
-//    mapHost maps to the client's address space the entire data store of the buffer object. The data can
-//    then be directly read and/or written relative to the returned pointer, depending on the specified
-//    access policy.
-//
-//    A mapped data store must be unmapped with ogl::Buffer::unmapHost before its buffer object is used.
-//
-//    This operation can lead to memory transfers between host and device.
-//
-//    Only one buffer object can be mapped at a time.
-//    @param access Access policy, indicating whether it will be possible to read from, write to, or both
-//    read from and write to the buffer object's mapped data store. The symbolic constant must be
-//    ogl::Buffer::READ_ONLY , ogl::Buffer::WRITE_ONLY or ogl::Buffer::READ_WRITE .
-//     */
-//    Mat mapHost(Access access);
-//
-//    /** @brief Unmaps OpenGL buffer.
-//    */
-//    void unmapHost();
-//
-//    //! map to device memory (blocking)
-//    cuda::GpuMat mapDevice();
-//    void unmapDevice();
+    /** @brief Maps OpenGL buffer to host memory.
+
+    mapHost maps to the client's address space the entire data store of the buffer object. The data can
+    then be directly read and/or written relative to the returned pointer, depending on the specified
+    access policy.
+
+    A mapped data store must be unmapped with ogl::Buffer::unmapHost before its buffer object is used.
+
+    This operation can lead to memory transfers between host and device.
+
+    Only one buffer object can be mapped at a time.
+    @param access Access policy, indicating whether it will be possible to read from, write to, or both
+    read from and write to the buffer object's mapped data store. The symbolic constant must be
+    ogl::Buffer::READ_ONLY , ogl::Buffer::WRITE_ONLY or ogl::Buffer::READ_WRITE .
+     */
+    mapHost(access: BufferAccess ) : _mat.Mat
+
+    /** @brief Unmaps OpenGL buffer.
+    */
+    unmapHost(): void;
+
+    //! map to device memory (blocking)
+    mapDevice(): _cuda.cuda.GpuMat 
+    unmapDevice(): void;
 //
 //    /** @brief Maps OpenGL buffer to CUDA device memory.
 //
@@ -256,19 +276,19 @@ interface Buffer
 //    */
 //    void unmapDevice(cuda::Stream& stream);
 //
-//    int rows() const;
-//    int cols() const;
-//    Size size() const;
-//    bool empty() const;
-//
-//    int type() const;
-//    int depth() const;
-//    int channels() const;
-//    int elemSize() const;
-//    int elemSize1() const;
-//
-//    //! get OpenGL opject id
-//    unsigned int bufId() const;
+    rows(): _st.int;
+    cols(): _st.int;
+    size(): _types.Size;
+    empty(): boolean;
+
+    type(): _st.int;
+    depth(): _st.int;
+    channels(): _st.int;
+    elemSize(): _st.int;
+    elemSize1(): _st.int;
+
+    //! get OpenGL opject id
+    bufId(): _st.uint;
 //
 //    class Impl;
 //
@@ -277,71 +297,79 @@ interface Buffer
 //    int rows_;
 //    int cols_;
 //    int type_;
-};
+    };
+
+    export var Buffer: BufferStatic = alvision_module.Buffer;
 
 /** @brief Smart pointer for OpenGL 2D texture memory with reference counting.
  */
-export interface Texture2D
+export enum Texture2DFormat
+    {
+        NONE            = 0,
+        DEPTH_COMPONENT = 0x1902, //!< Depth
+        RGB             = 0x1907, //!< Red, Green, Blue
+        RGBA            = 0x1908  //!< Red, Green, Blue, Alpha
+    };
+
+    export interface Texture2DStatic {
+    /** @brief The constructors.
+
+    Creates empty ogl::Texture2D object, allocates memory for ogl::Texture2D object or copies from
+    host/device memory.
+     */
+        new (): Texture2D;
+
+    /** @overload */
+        new (arows: _st.int, acols: _st.int, aformat: Texture2DFormat, atexId: _st.uint , autoRelease?  : boolean /*= false*/): Texture2D;
+
+    /** @overload */
+        new (asize: _types.Size, aformat: Texture2DFormat, atexId: _st.uint , autoRelease?  : boolean /*= false*/): Texture2D;
+
+    /** @overload
+    @param arows Number of rows.
+    @param acols Number of columns.
+    @param aformat Image format. See cv::ogl::Texture2D::Format .
+    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+    */
+        new (arows: _st.int, acols: _st.int, aformat: Texture2DFormat , autoRelease ? : boolean/*= false*/): Texture2D;
+
+    /** @overload
+    @param asize 2D array size.
+    @param aformat Image format. See cv::ogl::Texture2D::Format .
+    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+    */
+        new (asize: _types.Size, aformat: Texture2DFormat , autoRelease ? : boolean /*= false*/): Texture2D;
+
+    /** @overload
+    @param arr Input array (host or device memory, it can be Mat , cuda::GpuMat or ogl::Buffer ).
+    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+    */
+        new (arr: _st.InputArray , autoRelease  ? : boolean /*= false*/): Texture2D;
+    }
+
+export interface Texture2D extends _st.IOArray
 {
 //public:
 //    /** @brief An Image Format describes the way that the images in Textures store their data.
 //    */
-//    enum Format
-//    {
-//        NONE            = 0,
-//        DEPTH_COMPONENT = 0x1902, //!< Depth
-//        RGB             = 0x1907, //!< Red, Green, Blue
-//        RGBA            = 0x1908  //!< Red, Green, Blue, Alpha
-//    };
+
 //
-//    /** @brief The constructors.
-//
-//    Creates empty ogl::Texture2D object, allocates memory for ogl::Texture2D object or copies from
-//    host/device memory.
-//     */
-//    Texture2D();
-//
-//    /** @overload */
-//    Texture2D(int arows, int acols, Format aformat, unsigned int atexId, bool autoRelease = false);
-//
-//    /** @overload */
-//    Texture2D(Size asize, Format aformat, unsigned int atexId, bool autoRelease = false);
-//
-//    /** @overload
-//    @param arows Number of rows.
-//    @param acols Number of columns.
-//    @param aformat Image format. See cv::ogl::Texture2D::Format .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    Texture2D(int arows, int acols, Format aformat, bool autoRelease = false);
-//
-//    /** @overload
-//    @param asize 2D array size.
-//    @param aformat Image format. See cv::ogl::Texture2D::Format .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    Texture2D(Size asize, Format aformat, bool autoRelease = false);
-//
-//    /** @overload
-//    @param arr Input array (host or device memory, it can be Mat , cuda::GpuMat or ogl::Buffer ).
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    explicit Texture2D(InputArray arr, bool autoRelease = false);
-//
-//    /** @brief Allocates memory for ogl::Texture2D object.
-//
-//    @param arows Number of rows.
-//    @param acols Number of columns.
-//    @param aformat Image format. See cv::ogl::Texture2D::Format .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//     */
-//    void create(int arows, int acols, Format aformat, bool autoRelease = false);
-//    /** @overload
-//    @param asize 2D array size.
-//    @param aformat Image format. See cv::ogl::Texture2D::Format .
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//    */
-//    void create(Size asize, Format aformat, bool autoRelease = false);
+
+
+    /** @brief Allocates memory for ogl::Texture2D object.
+
+    @param arows Number of rows.
+    @param acols Number of columns.
+    @param aformat Image format. See cv::ogl::Texture2D::Format .
+    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+     */
+    create(arows: _st.int, acols: _st.int , aformat : Texture2DFormat, autoRelease ? : boolean/*= false*/): void;
+    /** @overload
+    @param asize 2D array size.
+    @param aformat Image format. See cv::ogl::Texture2D::Format .
+    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+    */
+    create(asize: _types.Size , aformat : Texture2DFormat, autoRelease  ? : boolean /*= false*/): void;
 //
 //    /** @brief Decrements the reference counter and destroys the texture object if needed.
 //
@@ -361,35 +389,35 @@ export interface Texture2D
 //     */
 //    void setAutoRelease(bool flag);
 //
-//    /** @brief Copies from host/device memory to OpenGL texture.
-//
-//    @param arr Input array (host or device memory, it can be Mat , cuda::GpuMat or ogl::Buffer ).
-//    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
-//     */
-//    void copyFrom(InputArray arr, bool autoRelease = false);
-//
-//    /** @brief Copies from OpenGL texture to host/device memory or another OpenGL texture object.
-//
-//    @param arr Destination array (host or device memory, can be Mat , cuda::GpuMat , ogl::Buffer or
-//    ogl::Texture2D ).
-//    @param ddepth Destination depth.
-//    @param autoRelease Auto release mode for destination buffer (if arr is OpenGL buffer or texture).
-//     */
-//    void copyTo(OutputArray arr, int ddepth = CV_32F, bool autoRelease = false) const;
+    /** @brief Copies from host/device memory to OpenGL texture.
+
+    @param arr Input array (host or device memory, it can be Mat , cuda::GpuMat or ogl::Buffer ).
+    @param autoRelease Auto release mode (if true, release will be called in object's destructor).
+     */
+    copyFrom(arr: _st.InputArray , autoRelease? : boolean /* = false*/): void;
+
+    /** @brief Copies from OpenGL texture to host/device memory or another OpenGL texture object.
+
+    @param arr Destination array (host or device memory, can be Mat , cuda::GpuMat , ogl::Buffer or
+    ogl::Texture2D ).
+    @param ddepth Destination depth.
+    @param autoRelease Auto release mode for destination buffer (if arr is OpenGL buffer or texture).
+     */
+    copyTo(arr: _st.OutputArray, ddepth?: _st.int /*= CV_32F*/, autoRelease?  : boolean/*= false*/): void;
 //
 //    /** @brief Binds texture to current active texture unit for GL_TEXTURE_2D target.
 //    */
 //    void bind() const;
 //
-//    int rows() const;
-//    int cols() const;
-//    Size size() const;
-//    bool empty() const;
-//
-//    Format format() const;
-//
-//    //! get OpenGL opject id
-//    unsigned int texId() const;
+    rows(): _st.int;
+    cols()  : _st.int;
+    size()  :_types.Size;
+    empty() : boolean;
+
+    format() : Texture2DFormat;
+
+    //! get OpenGL opject id
+    texId() : _st.uint;
 //
 //    class Impl;
 //
@@ -399,6 +427,8 @@ export interface Texture2D
 //    int cols_;
 //    Format format_;
 };
+
+    export var Texture2D: Texture2DStatic = alvision_module.Texture2D;
 
 /** @brief Wrapper for OpenGL Client-Side Vertex arrays.
 

@@ -51,6 +51,7 @@ import * as _mat from './Mat';
 import * as _types from './types';
 //import * as _core from './Core';
 import * as _base from './base';
+import * as _persistence from './persistence'
 //import * as _scalar from './Scalar'
 
 //#ifndef __OPENCV_CORE_HPP__
@@ -480,7 +481,7 @@ export var subtract: Isubtract = alvision_module.subtract;
     */
 
 interface Imultiply {
-    (src1: _st.InputArray, src2: _st.InputArray,
+    (src1: _st.InputArray | Number, src2: _st.InputArray | Number,
         dst: _st.OutputArray, scale?: _st.double /* = 1 */, dtype?: _st.int /* = -1 */): void;
 }
 
@@ -564,7 +565,7 @@ export var scaleAdd: IscaleAdd = alvision_module.scaleAdd;
     */
 interface IaddWeighted {
     (src1: _st.InputArray, alpha: _st.double, src2: _st.InputArray,
-        beta: _st.double, gamma: _st.double, dst: _st.OutputArray, dtype: _st.int /* = -1 */): void;
+        beta: _st.double, gamma: _st.double, dst: _st.OutputArray, dtype?: _st.int /* = -1 */): void;
 }
 
 export var addWeighted: IaddWeighted = alvision_module.addWeighted;
@@ -730,7 +731,7 @@ export var mean: Imean = alvision_module.mean;
 
 interface ImeanStdDev{
     (src: _st.InputArray, mean: _st.OutputArray, stddev: _st.OutputArray,
-    mask: _st.InputArray /* = noArray()*/): void;
+    mask?: _st.InputArray /* = noArray()*/): void;
 }
 
 export var meanStdDev: ImeanStdDev = alvision_module.meanStdDev;
@@ -965,13 +966,10 @@ export var minMaxLoc : IminMaxLoc = alvision_module.minMaxLoc;
     @param mask specified array region
     */
 
-interface IminMaxIdxCallback {
-    (minVal: _st.double, maxVal: _st.double /* = 0*/,
-    minIdx : _st.int /* = 0*/, maxIdx : _st.int /*= 0*/) : void;
-}
 
 interface IminMaxIdx {
-    (src: _st.InputArray, cb: IminMaxIdxCallback, mask : _st.InputArray /* = noArray()*/) : void;
+    (src: _st.InputArray, cb: (minVal: _st.double, maxVal: _st.double /* = 0*/,
+        minIdx: _st.int /* = 0*/, maxIdx: _st.int /*= 0*/) =>void, mask? : _st.InputArray /* = noArray()*/) : void;
 }
 
 export var minMaxIdx: IminMaxIdx = alvision_module.minMaxIdx;
@@ -1021,7 +1019,7 @@ export var minMaxLoc: IminMaxLoc = alvision_module.minMaxLoc;
     */
 
 interface Ireduce {
-    (src: _st.InputArray, dst: _st.OutputArray, dim : _st.int, rtype : _st.int, dtype: _st.int /* = -1 */): void;
+    (src: _st.InputArray, dst: _st.OutputArray, dim: _st.int, rtype: ReduceTypes | _st.int, dtype?: _st.int /* = -1 */): void;
 }
 
 export var reduce: Ireduce = alvision_module.reduce;
@@ -1475,7 +1473,7 @@ export var vconcat: Ivconcat = alvision_module.vconcat;
     */
 export interface Ibitwise_and{
     (src1: _st.InputArray, src2: _st.InputArray,
-        dst: _st.OutputArray, mask: _st.InputArray /* = noArray()*/): void;
+        dst: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/): void;
 }
 
 export var bitwise_and: Ibitwise_and = alvision_module.bitwise_and;
@@ -1510,7 +1508,7 @@ export var bitwise_and: Ibitwise_and = alvision_module.bitwise_and;
 
 export interface Ibitwise_or {
     (src1: _st.InputArray, src2: _st.InputArray,
-        dst: _st.OutputArray, mask: _st.InputArray /* = noArray()*/): void;
+        dst: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/): void;
 }
 
 export var bitwise_or: Ibitwise_or = alvision_module.bitwise_or;
@@ -1546,7 +1544,7 @@ export var bitwise_or: Ibitwise_or = alvision_module.bitwise_or;
 
 export interface Ibitwise_xor {
     (src1: _st.InputArray, src2: _st.InputArray,
-        dst: _st.OutputArray, mask: _st.InputArray /* = noArray()*/): void;
+        dst: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/): void;
 }
 
 export var bitwise_xor: Ibitwise_xor = alvision_module.bitwise_xor;
@@ -1666,7 +1664,7 @@ export var inRange: IinRange = alvision_module.inRange;
     */
 
 interface Icompare {
-    (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, cmpop: _base.CmpTypes | _st.int): void;
+    (src1: _st.InputArray, src2: _st.InputArray | Number, dst: _st.OutputArray, cmpop: _base.CmpTypes | _st.int): void;
 }
 
 export var compare: Icompare = alvision_module.comapre;
@@ -1950,8 +1948,8 @@ export var log: Ilog = alvision_module.log;
     }
 
     interface IcheckRange {
-        (a: _st.InputArray, quiet: boolean/* = true*/, cb: IcheckRangeCallback,
-            minVal: _st.double  /*= -DBL_MAX*/, maxVal: _st.double /* = DBL_MAX*/) : boolean;
+        (a: _st.InputArray, quiet?: boolean/* = true*/, cb?: IcheckRangeCallback,
+            minVal?: _st.double  /*= -DBL_MAX*/, maxVal?: _st.double /* = DBL_MAX*/) : boolean;
     }
 
 export var checkRange: IcheckRange = alvision_module.checkRange;
@@ -2000,7 +1998,7 @@ export var patchNaNs: IpatchNaNs = alvision_module.patchNaNs;
     */
 interface Igemm {
     (src1: _st.InputArray, src2: _st.InputArray, alpha: _st.double,
-        src3: _st.InputArray, beta: _st.double, dst: _st.OutputArray, flags?: _base.GemmFlags /* = 0*/): void;
+        src3: _st.InputArray, beta: _st.double, dst: _st.OutputArray, flags?: _base.GemmFlags | _st.int /* = 0*/): void;
 }
 
 export var gemm: Igemm = alvision_module.gemm;
@@ -2039,8 +2037,8 @@ export var gemm: Igemm = alvision_module.gemm;
 
 interface ImulTransposed{
     (src: _st.InputArray, dst: _st.OutputArray,  aTa : boolean,
-        delta: _st.InputArray  /*= noArray()*/,
-    scale: _st.double /* = 1 */, dtype: _st.int /* = -1 */): void;
+        delta?: _st.InputArray  /*= noArray()*/,
+    scale?: _st.double /* = 1 */, dtype?: _st.int /* = -1 */): void;
 }
 
 export var mulTransposed: ImulTransposed = alvision_module.mulTransposed;
@@ -2244,7 +2242,7 @@ export var trace: Itrace = alvision_module.trace;
     */
 
 export interface Iinvert {
-    (src: _st.InputArray, dst: _st.OutputArray, flags : _st.int /*= DECOMP_LU*/): _st.double;
+    (src: _st.InputArray, dst: _st.OutputArray, flags? : _base.DecompTypes |  _st.int /*= DECOMP_LU*/): _st.double;
 }
 
 export var invert: Iinvert = alvision_module.invert;
@@ -2390,7 +2388,7 @@ export var solvePoly: IsolvePoly = alvision_module.solvePoly;
 
 export interface Ieigen {
     (src: _st.InputArray, eigenvalues: _st.OutputArray ,
-        eigenvectors: _st.OutputArray /* = noArray()*/): boolean;
+        eigenvectors?: _st.OutputArray /* = noArray()*/): boolean;
 }
 
 export var eigen: Ieigen = alvision_module.eigen;
@@ -2414,7 +2412,7 @@ export var eigen: Ieigen = alvision_module.eigen;
 
 export interface IcalcCovarMatrix {
     (samples: Array<_mat.Mat>, covar: _mat.Mat, mean: _mat.Mat,
-        flags: _st.int, ctype: _st.int /* = CV_64F*/): void;
+        flags: _st.int, ctype?: _st.int /* = CV_64F*/): void;
 }
 
 export var calcCovarMatrix: IcalcCovarMatrix = alvision_module.calcCovarMatrix;
@@ -2433,7 +2431,7 @@ export var calcCovarMatrix: IcalcCovarMatrix = alvision_module.calcCovarMatrix;
 
 export interface IcalcCovarMatrix {
     (samples: _st.InputArray , covar: _st.OutputArray,
-        Inputmean: _st.OutputArray, flags: _st.int, ctype: _st.int /* = CV_64F*/): void;
+        Inputmean: _st.OutputArray, flags: _st.int, ctype?: _st.int /* = CV_64F*/): void;
 }
 
 export var calcCovarMatrix: IcalcCovarMatrix = alvision_module.calcCovarMatrix;
@@ -2659,7 +2657,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
     magnitude , phase
     */
     interface Idft{
-        (src: _st.InputArray, dst: _st.OutputArray, flags: _st.int /* = 0*/, nonzeroRows : _st.int /* = 0*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, flags?: _base.DftFlags | _st.int /* = 0*/, nonzeroRows? : _st.int /* = 0*/): void;
     }
 
     export var dft: Idft = alvision_module.dft;
@@ -2681,7 +2679,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
     */
 
     interface Iidft{
-        (src: _st.InputArray, dst: _st.OutputArray, flags: _st.int /* = 0*/, nonzeroRows: _st.int /* = 0*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, flags?: _base.DftFlags | _st.int /* = 0*/, nonzeroRows?: _st.int /* = 0*/): void;
     }
 
     export var idft: Iidft = alvision_module.idft;
@@ -2838,7 +2836,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
     */
 
     interface Irandu {
-        (Inputdst: _st.OutputArray, low : _st.InputArray, high : _st.InputArray): void;
+        (Inputdst: _st.OutputArray, low : _st.InputArray | Number, high : _st.InputArray | Number): void;
     }
     
     export var randu: Irandu = alvision_module.randu;
@@ -2951,13 +2949,19 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
     @sa calcCovarMatrix, mulTransposed, SVD, dft, dct
     */
 
+      export enum PCAFlags {
+           DATA_AS_ROW = 0, //!< indicates that the input samples are stored as matrix rows
+           DATA_AS_COL = 1, //!< indicates that the input samples are stored as matrix columns
+           USE_AVG = 2  //!
+       };
+
     interface PCAStatic {
         /** @brief default constructor
   
       The default constructor initializes an empty %PCA structure. The other
       constructors initialize the structure and call PCA::operator()().
       */
-  //      PCA();
+        new (): PCA;
 
         /** @overload
         @param data input samples stored as matrix rows or matrix columns.
@@ -2968,7 +2972,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
         @param maxComponents maximum number of components that %PCA should
         retain; by default, all the components are retained.
         */
- //       PCA(data: _st.InputArray, mean: _st.InputArray, int flags, int maxComponents = 0);
+        new (data: _st.InputArray, mean: _st.InputArray, flags: PCAFlags | _st.int, maxComponents?: _st.int /*= 0*/): PCA;
 
         /** @overload
         @param data input samples stored as matrix rows or matrix columns.
@@ -2980,18 +2984,14 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
         Using this parameter will let the PCA decided how many components to
         retain but it will always keep at least 2.
         */
-//        PCA(data: _st.InputArray, mean: _st.InputArray, int flags, double retainedVariance);
+        new (data: _st.InputArray, mean: _st.InputArray, flags: PCAFlags |_st.int, retainedVariance: _st.double ): PCA;
 
     }
 
     interface PCA
     {
         //public:
-  //      enum Flags {
-  //          DATA_AS_ROW = 0, //!< indicates that the input samples are stored as matrix rows
-  //          DATA_AS_COL = 1, //!< indicates that the input samples are stored as matrix columns
-  //          USE_AVG = 2  //!
-  //      };
+ 
 
       
         /** @brief performs %PCA
@@ -3014,7 +3014,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
         @param maxComponents maximum number of components that PCA should
         retain; by default, all the components are retained.
         */
-  //      PCA & operator()(data : _st.InputArray, mean : _st.InputArray, int flags, int maxComponents = 0);
+        pca(data: _st.InputArray, mean: _st.InputArray, flags: PCAFlags | _st.int, maxComponents?: _st.int /* = 0*/): PCA;
 
         /** @overload
         @param data input samples stored as the matrix rows or as the matrix
@@ -3027,7 +3027,8 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
         Using this parameter will let the %PCA decided how many components to
         retain but it will always keep at least 2.
          */
- //       PCA & operator()(data : _st.InputArray, mean : _st.InputArray, int flags, double retainedVariance);
+        //TODO: dangerous overload!
+        pca(data: _st.InputArray, mean: _st.InputArray, flags: PCAFlags | _st.int, retainedVariance: _st.double ) : PCA;
 
         /** @brief Projects vector(s) to the principal component subspace.
     
@@ -3043,7 +3044,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
         (vector dimensionality) and `vec.rows` is the number of vectors to
         project, and the same is true for the PCA::DATA_AS_COL case.
         */
- //       Mat project(InputArray vec) const;
+        project(vec: _st.InputArray ): _mat.Mat;
 
         /** @overload
         @param vec input vector(s); must have the same dimensionality and the
@@ -3057,7 +3058,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
         number of principal components (for example, `maxComponents` parameter
         passed to the constructor).
          */
-  //      void project(InputArray vec, result : _st.OutputArray) const;
+        project(vec: _st.InputArray, result: _st.OutputArray): void;
 
         /** @brief Reconstructs vectors from their PC projections.
     
@@ -3072,7 +3073,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
         subspace, the layout and size are the same as of PCA::project output
         vectors.
          */
-  //      Mat backProject(InputArray vec) const;
+        backProject(vec: _st.InputArray): _mat.Mat;
 
         /** @overload
         @param vec coordinates of the vectors in the principal component
@@ -3081,18 +3082,20 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
         @param result reconstructed vectors; the layout and size are the same as
         of PCA::project input vectors.
          */
- //       void backProject(InputArray vec, result : _st.OutputArray) const;
+        backProject(vec: _st.InputArray , result: _st.OutputArray): void;
 
         /** @brief write and load PCA matrix
     
     */
- //       void write(FileStorage & fs) const;
- //       void read(const FileNode& fs);
- //
- //       Mat eigenvectors; //!< eigenvectors of the covariation matrix
- //       Mat eigenvalues; //!< eigenvalues of the covariation matrix
- //       Mat mean; //!< mean value subtracted before the projection and added after the back projection
+        write(fs: _persistence. FileStorage): void;
+        read(fs: _persistence.FileNode): void;
+ 
+        eigenvectors: _mat.Mat ; //!< eigenvectors of the covariation matrix
+        eigenvalues: _mat.Mat ; //!< eigenvalues of the covariation matrix
+        mean: _mat.Mat ; //!< mean value subtracted before the projection and added after the back projection
     };
+
+export var PCA: PCAStatic = alvision_module.PCA;
 
     /** @example pca.cpp
       An example using %PCA for dimensionality reduction while maintaining an amount of variance
@@ -3216,7 +3219,7 @@ interface SVDStatic {
     @param src decomposed matrix.
     @param flags operation flags (SVD::Flags)
       */
-    new (src: _st.InputArray, flags?: SVDFlags /* = 0*/);
+    new (src: _st.InputArray, flags?: SVDFlags /* = 0*/): SVD;
     
 
     /** @brief decomposes matrix and stores the results to user-provided matrices
@@ -3323,6 +3326,9 @@ interface SVD
  //   void backSubst( const Matx<_Tp, nm, 1>& w, const Matx<_Tp, m, nm>& u, const Matx<_Tp, n, nm>& vt, const Matx<_Tp, m, nb>& rhs, Matx<_Tp, n, nb>& dst );
  //
  //   Mat u, w, vt;
+    u: _mat.Mat;
+    w: _mat.Mat;
+    vt: _mat.Mat;
 };
 
 export var SVD: SVDStatic = alvision_module.SVD;
@@ -3369,7 +3375,7 @@ export interface RNG
 // 
 //    /**The method updates the state using the MWC algorithm and returns the
 //    next 32-bit random number.*/
-//    unsigned next();
+    next(): _st.uint;
 //
     /**Each of the methods updates the state using the MWC algorithm and
     returns the next random number of the specified type. In case of integer
@@ -3385,7 +3391,7 @@ export interface RNG
     /** @overload */
     short() : _st.short;
     /** @overload */
-    unsigned() : _st.uint;
+    unsigned(upperBoundary? : _st.uint) : _st.uint;
     /** @overload */
     int(): _st.int;
     /** @overload */
@@ -3482,7 +3488,7 @@ export interface RNG
     with zero mean and identity covariation matrix, and then transforms them
     using transform to get samples from the specified Gaussian distribution.
     */
-    fill(mat: _st.InputOutputArray , distType : DistType, a : _st.InputArray, b : _st.InputArray, saturateRange? : boolean /* = false*/) : void;
+    fill(mat: _st.InputOutputArray , distType : DistType, a : _st.InputArray | Number, b : _st.InputArray | Number, saturateRange? : boolean /* = false*/) : void;
 
     /** @brief Returns the next random number sampled from the Gaussian distribution
     @param sigma standard deviation of the distribution.
@@ -3506,8 +3512,8 @@ Inspired by http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/MT2002/CODES/mt19937
  */
 interface RNG_MT19937Static {
 //    public:
-//    RNG_MT19937();
-//    RNG_MT19937(unsigned s);
+    new (): RNG_MT19937;
+    new (s : _st.uint): RNG_MT19937;
 //
 }
 
@@ -3515,7 +3521,7 @@ interface RNG_MT19937
 {
 //    void seed(unsigned s);
 //
-//    unsigned next();
+    next(): _st.uint;
 //
 //    operator int();
 //    operator unsigned();
@@ -3543,6 +3549,8 @@ interface RNG_MT19937
 //    unsigned state[N];
 //    int mti;
 };
+
+export var RNG_MT19937: RNG_MT19937Static = alvision_module.RNG_MT19937;
 
 //! @} core_array
 
@@ -3691,58 +3699,39 @@ Here is example of SIFT use in your application via Algorithm interface:
     sift->detectAndCompute(image, noArray(), keypoints, descriptors);
 @endcode
  */
-export interface Algorithm
-{
-//    //public:
-//    //Algorithm();
-//    //virtual ~Algorithm();
-//
-//    /** @brief Clears the algorithm state
-//    */
-//    CV_WRAP virtual void clear() {}
-//
-//    /** @brief Stores algorithm parameters in a file storage
-//    */
-//    virtual void write(FileStorage & fs) const { (void)fs;
-//}
+interface AlgorithmStatic {
+    /** @brief Reads algorithm from the file node
 
-///** @brief Reads algorithm parameters from a file storage
-//*/
-//virtual void read(const FileNode& fn) { (void)fn; }
-//
-///** @brief Returns true if the Algorithm is empty (e.g. in the very beginning or after unsuccessful read
-// */
-//virtual bool empty() const { return false; }
-//
-///** @brief Reads algorithm from the file node
-//
-// This is static template method of Algorithm. It's usage is following (in the case of SVM):
-// @code
-// Ptr<SVM> svm = Algorithm::read<SVM>(fn);
-// @endcode
-// In order to make this method work, the derived class must overwrite Algorithm::read(const
-// FileNode& fn) and also have static create() method without parameters
-// (or with all the optional parameters)
-// */
+ This is static template method of Algorithm. It's usage is following (in the case of SVM):
+ @code
+ Ptr<SVM> svm = Algorithm::read<SVM>(fn);
+ @endcode
+ In order to make this method work, the derived class must overwrite Algorithm::read(const
+ FileNode& fn) and also have static create() method without parameters
+ (or with all the optional parameters)
+ */
+    read<T>(Ttype: string, fn: _persistence.FileNode): T;
+
 //template < typename _Tp> static Ptr< _Tp > read(const FileNode& fn)
 //    {
 //        Ptr<_Tp>obj = _Tp::create();
 //obj ->read(fn);
 //return !obj ->empty() ? obj : Ptr<_Tp>();
 //    }
-//
-///** @brief Loads algorithm from the file
-//
-// @param filename Name of the file to read.
-// @param objname The optional name of the node to read (if empty, the first top-level node will be used)
-//
-// This is static template method of Algorithm. It's usage is following (in the case of SVM):
-// @code
-// Ptr<SVM> svm = Algorithm::load<SVM>("my_svm_model.xml");
-// @endcode
-// In order to make this method work, the derived class must overwrite Algorithm::read(const
-// FileNode& fn).
-// */
+
+/** @brief Loads algorithm from the file
+
+ @param filename Name of the file to read.
+ @param objname The optional name of the node to read (if empty, the first top-level node will be used)
+
+ This is static template method of Algorithm. It's usage is following (in the case of SVM):
+ @code
+ Ptr<SVM> svm = Algorithm::load<SVM>("my_svm_model.xml");
+ @endcode
+ In order to make this method work, the derived class must overwrite Algorithm::read(const
+ FileNode& fn).
+ */
+    load<T>(Ttype : string, filename: string, objname?: string): T;
 //template < typename _Tp> static Ptr< _Tp > load(const String& filename, const String& objname=String())
 //    {
 //        FileStorage fs(filename, FileStorage::READ);
@@ -3751,17 +3740,18 @@ export interface Algorithm
 //obj ->read(fn);
 //return !obj ->empty() ? obj : Ptr<_Tp>();
 //    }
-//
-///** @brief Loads algorithm from a String
-//
-// @param strModel The string variable containing the model you want to load.
-// @param objname The optional name of the node to read (if empty, the first top-level node will be used)
-//
-// This is static template method of Algorithm. It's usage is following (in the case of SVM):
-// @code
-// Ptr<SVM> svm = Algorithm::loadFromString<SVM>(myStringModel);
-// @endcode
-// */
+
+/** @brief Loads algorithm from a String
+
+ @param strModel The string variable containing the model you want to load.
+ @param objname The optional name of the node to read (if empty, the first top-level node will be used)
+
+ This is static template method of Algorithm. It's usage is following (in the case of SVM):
+ @code
+ Ptr<SVM> svm = Algorithm::loadFromString<SVM>(myStringModel);
+ @endcode
+ */
+    loadFromString<T>(Ttype : string, strModel: string, objname?: string): T;
 //template < typename _Tp> static Ptr< _Tp > loadFromString(const String& strModel, const String& objname=String())
 //    {
 //        FileStorage fs(strModel, FileStorage::READ + FileStorage::MEMORY);
@@ -3770,15 +3760,42 @@ export interface Algorithm
 //obj ->read(fn);
 //return !obj ->empty() ? obj : Ptr<_Tp>();
 //    }
+}
+
+export interface Algorithm
+{
+//    //public:
+//    //Algorithm();
+//    //virtual ~Algorithm();
 //
-///** Saves the algorithm to a file.
-// In order to make this method work, the derived class must implement Algorithm::write(FileStorage& fs). */
-//CV_WRAP virtual void save(const String& filename) const;
-//
-///** Returns the algorithm string identifier.
-// This string is used as top level xml/yml node tag when the object is saved to a file or string. */
-//CV_WRAP virtual String getDefaultName() const;
+//    /** @brief Clears the algorithm state
+//    */
+    clear(): void;
+
+    /** @brief Stores algorithm parameters in a file storage
+    */
+    write(fs: _persistence.FileStorage): void;
+
+/** @brief Reads algorithm parameters from a file storage
+*/
+    read(fn: _persistence.FileNode): void;
+
+/** @brief Returns true if the Algorithm is empty (e.g. in the very beginning or after unsuccessful read
+ */
+    empty(): boolean;
+
+
+
+/** Saves the algorithm to a file.
+ In order to make this method work, the derived class must implement Algorithm::write(FileStorage& fs). */
+    save(filename : string): void;
+
+/** Returns the algorithm string identifier.
+ This string is used as top level xml/yml node tag when the object is saved to a file or string. */
+    getDefaultName(): string;
 };
+
+export var Algorithm: AlgorithmStatic = alvision_module.Algorithm;
 
 //struct Param {
 //    enum { INT = 0, BOOLEAN = 1, REAL = 2, STRING = 3, MAT = 4, MAT_VECTOR = 5, ALGORITHM = 6, FLOAT = 7,
@@ -3886,3 +3903,8 @@ export interface Algorithm
 //#include "opencv2/core/optim.hpp"
 
 //#endif /*__OPENCV_CORE_HPP__*/
+
+
+export function sign(a) {
+    return a > 0 ? 1 : a == 0 ? 0 : -1
+}

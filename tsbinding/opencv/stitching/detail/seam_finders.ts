@@ -59,7 +59,7 @@ import * as _affine from './../../Affine'
 //#include "opencv2/opencv_modules.hpp"
 
 //namespace cv {
-namespace detail {
+export namespace detail_seam_finders {
 
 //! @addtogroup stitching_seam
 //! @{
@@ -290,7 +290,7 @@ interface GraphCutSeamFinderGpu extends GraphCutSeamFinderBase, PairwiseSeamFind
 
 //! @}
 
-} // namespace detail
+} // namespace detail.seam_finders
 //} // namespace cv
 
 //#endif // __OPENCV_STITCHING_SEAM_FINDERS_HPP__

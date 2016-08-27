@@ -1,44 +1,44 @@
-///*M///////////////////////////////////////////////////////////////////////////////////////
-////
-////  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-////
-////  By downloading, copying, installing or using the software you agree to this license.
-////  If you do not agree to this license, do not download, install,
-////  copy or use the software.
-////
-////
-////                           License Agreement
-////                For Open Source Computer Vision Library
-////
-//// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
-//// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
-//// Third party copyrights are property of their respective owners.
-////
-//// Redistribution and use in source and binary forms, with or without modification,
-//// are permitted provided that the following conditions are met:
-////
-////   * Redistribution's of source code must retain the above copyright notice,
-////     this list of conditions and the following disclaimer.
-////
-////   * Redistribution's in binary form must reproduce the above copyright notice,
-////     this list of conditions and the following disclaimer in the documentation
-////     and/or other materials provided with the distribution.
-////
-////   * The name of the copyright holders may not be used to endorse or promote products
-////     derived from this software without specific prior written permission.
-////
-//// This software is provided by the copyright holders and contributors "as is" and
-//// any express or implied warranties, including, but not limited to, the implied
-//// warranties of merchantability and fitness for a particular purpose are disclaimed.
-//// In no event shall the Intel Corporation or contributors be liable for any direct,
-//// indirect, incidental, special, exemplary, or consequential damages
-//// (including, but not limited to, procurement of substitute goods or services;
-//// loss of use, data, or profits; or business interruption) however caused
-//// and on any theory of liability, whether in contract, strict liability,
-//// or tort (including negligence or otherwise) arising in any way out of
-//// the use of this software, even if advised of the possibility of such damage.
-////
-////M*/
+/*M///////////////////////////////////////////////////////////////////////////////////////
+//
+//  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+//
+//  By downloading, copying, installing or using the software you agree to this license.
+//  If you do not agree to this license, do not download, install,
+//  copy or use the software.
+//
+//
+//                           License Agreement
+//                For Open Source Computer Vision Library
+//
+// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
+// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
+// Third party copyrights are property of their respective owners.
+//
+// Redistribution and use in source and binary forms, with or without modification,
+// are permitted provided that the following conditions are met:
+//
+//   * Redistribution's of source code must retain the above copyright notice,
+//     this list of conditions and the following disclaimer.
+//
+//   * Redistribution's in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//
+//   * The name of the copyright holders may not be used to endorse or promote products
+//     derived from this software without specific prior written permission.
+//
+// This software is provided by the copyright holders and contributors "as is" and
+// any express or implied warranties, including, but not limited to, the implied
+// warranties of merchantability and fitness for a particular purpose are disclaimed.
+// In no event shall the Intel Corporation or contributors be liable for any direct,
+// indirect, incidental, special, exemplary, or consequential damages
+// (including, but not limited to, procurement of substitute goods or services;
+// loss of use, data, or profits; or business interruption) however caused
+// and on any theory of liability, whether in contract, strict liability,
+// or tort (including negligence or otherwise) arising in any way out of
+// the use of this software, even if advised of the possibility of such damage.
+//
+//M*/
 
 var alvision_module = require('../../../lib/bindings.js');
 
@@ -53,6 +53,7 @@ import * as _affine from './../Affine'
 import * as _features2d from './../features2d'
 import * as _cuda from './../cuda'
 import * as _cvdef from './../cvdef'
+import * as _imgcodecs from './../imgcodecs'
 import * as _tsperf from './ts_perf';
 import * as _ts from './../ts';
 
@@ -74,9 +75,40 @@ import * as _ts from './../ts';
 //    // random generators
 
 //    CV_EXPORTS int randomInt(int minVal, int maxVal);
+interface IrandomInt{
+    (minVal: _st.int, maxVal: _st.int ): _st.int;
+}
+
+export var randomInt: IrandomInt = alvision_module.randomInt;
+
 //    CV_EXPORTS double randomDouble(double minVal, double maxVal);
+interface IrandomDouble{
+    (minVal: _st.double, maxVal: _st.double ): _st.double;
+}
+
+export var randomDouble: IrandomDouble = alvision_module.randomDouble;
+
 //    CV_EXPORTS cv::Size randomSize(int minVal, int maxVal);
+interface IrandomSize{
+    (minVal: _st.int, maxVal: _st.int ): _types.Size;
+}
+
+export var randomSize: IrandomSize = alvision_module.randomSize;
+
+interface IrandomScalar{
+    (minVal: _st.double, maxVal: _st.double ): _types.Scalar;
+}
+
+export var randomScalar: IrandomScalar = alvision_module.randomScalar;
+
 //    CV_EXPORTS cv::Scalar randomScalar(double minVal, double maxVal);
+
+interface IrandomMat {
+    (size: _types.Size, type: _st.int, minVal?: _st.double /*= 0.0*/, maxVal?: _st.double /*= 255.0*/): _mat.Mat;
+}
+
+export var randomMat: IrandomMat = alvision_module.randomMat;
+
 //    CV_EXPORTS cv::Mat randomMat(cv::Size size, int type, double minVal = 0.0, double maxVal = 255.0);
 
 //    //////////////////////////////////////////////////////////////////////
@@ -102,9 +134,19 @@ export var loadMat: IloadMat = alvision_module.loadMat;
 //    // Image load
 
 //    //! read image from testdata folder
+
+interface IreadImage {
+    (fileName: string, flags?: _imgcodecs.ImreadModes | _st.int /*= cv::IMREAD_COLOR*/): _mat.Mat;
+}
+export var readImage: IreadImage = alvision_module.readImage;
 //    CV_EXPORTS cv::Mat readImage(const std::string& fileName, int flags = cv::IMREAD_COLOR);
 
 //    //! read image from testdata folder and convert it to specified type
+interface IreadImageType {
+    (fname: string, type: _st.int): _mat.Mat;
+}
+
+export var readImageType: IreadImageType = alvision_module.readImageType;
 //    CV_EXPORTS cv::Mat readImageType(const std::string& fname, int type);
 
 //    //////////////////////////////////////////////////////////////////////
@@ -146,11 +188,155 @@ export var ALL_DEVICES = DeviceManager.instance().values();
 //    // Additional assertion
 
 //    CV_EXPORTS void minMaxLocGold(const cv::Mat& src, double* minVal_, double* maxVal_ = 0, cv::Point* minLoc_ = 0, cv::Point* maxLoc_ = 0, const cv::Mat& mask = cv::Mat());
+function minMaxLocGold(src: _mat.Mat, cb:(minVal_: _st.double, maxVal_: _st.double, minLoc_: _types.Point, maxLoc_: _types.Point) => void, mask?: _mat.Mat): void {
+    if (src.depth() != _cvdef.MatrixType.CV_8S) {
+        _core.minMaxLoc(src, (minVal_, maxVal_, minLoc_, maxLoc_) => { cb(minVal_, maxVal_, minLoc_, maxLoc_); }, mask);
+        return;
+    }
 
-//    CV_EXPORTS cv::Mat getMat(cv::InputArray arr);
+    // OpenCV's minMaxLoc doesn't support CV_8S type
+    var minVal = _st.DBL_MAX;// std::numeric_limits<double>::max();
+    var minLoc = new _types.Point(-1, -1);
 
-//    CV_EXPORTS testing::AssertionResult assertMatNear(const char* expr1, const char* expr2, const char* eps_expr, cv::InputArray m1, cv::InputArray m2, double eps);
+    var maxVal = -_st.DBL_MAX;// std::numeric_limits<double>::max();
+    var maxLoc = new _types.Point(-1, -1);
 
+    for (var y = 0; y < src.rows; ++y) {
+        const src_row = src.ptr<_st.schar>("schar", y);
+        const mask_row = mask.empty() ? null : mask.ptr<_st.uchar>("uchar", y);
+
+        for (var x = 0; x < src.cols; ++x) {
+            if (!mask_row || mask_row[x]) {
+                var val = src_row[x];
+
+                if (val < minVal) {
+                    minVal = <any>val;
+                    minLoc = new _types.Point(x, y);
+                }
+
+                if (val > maxVal) {
+                    maxVal = <any>val;
+                    maxLoc = new _types.Point(x, y);
+                }
+            }
+        }
+    }
+
+    cb(minVal, maxVal, minLoc, maxLoc);
+    //if (minVal_) *minVal_ = minVal;
+    //if (maxVal_) *maxVal_ = maxVal;
+    //
+    //if (minLoc_) *minLoc_ = minLoc;
+    //if (maxLoc_) *maxLoc_ = maxLoc;
+}
+
+
+function getMat(arr: _st.InputArray): _mat.Mat {
+    if (arr.kind() == _st.IOArrayKind.CUDA_GPU_MAT) {
+        var m = new _mat.Mat();
+        arr.getGpuMat().download(m);
+        return m;
+    }
+
+    return arr.getMat();
+}
+
+function PrintToString(val: any): string {
+    return val.toString();
+}
+
+function MatType(matType: _st.int | _cvdef.MatrixType) {
+    return matType.toString();
+}
+
+//template < typename T, typename OutT>
+function printMatValImpl(Ttype : string, m: _mat.Mat, p: _types.Point): string {
+    const cn = m.channels();
+
+    //std::ostringstream ostr;
+    var ostr = "";
+    ostr += "(";
+
+    p.x = p.x.valueOf()  / cn.valueOf();
+
+    ostr += (m.at<any>(Ttype, p.y.valueOf(), p.x.valueOf() * cn.valueOf())).get().toString();
+    for (var c = 1; c < m.channels(); ++c)
+    {
+        ostr += ", " + (m.at<any>(Ttype, p.y.valueOf(), p.x.valueOf() * cn.valueOf() + c)).get().toString();
+    }
+    ostr += ")";
+
+    return ostr;
+}
+
+function printMatVal(m: _mat.Mat, p: _types.Point ): string {
+    //typedef std::string(*func_t)(const Mat& m, Point p);
+    var funcsDepthName = ["uchar", "schar", "ushort", "short", "int", "float","double"];
+
+    //static const  funcs =
+    //    [
+    //        printMatValImpl < _st.uchar>, 
+    //        printMatValImpl < _st.schar>, 
+    //        printMatValImpl < _st.ushort>, 
+    //        printMatValImpl < _st.short>,
+    //        printMatValImpl < _st.int>, 
+    //        printMatValImpl < _st.float>, 
+    //        printMatValImpl<_st.double>
+    //        ];
+
+    //return funcs[m.depth().valueOf()](funcsDepthName[m.depth().valueOf()], m, p);
+    return printMatValImpl(funcsDepthName[m.depth().valueOf()], m, p);
+}
+
+
+
+
+
+//CV_EXPORTS testing::AssertionResult assertMatNear(const char* expr1, const char* expr2, const char* eps_expr, cv::InputArray m1, cv::InputArray m2, double eps);
+function assertMatNear(expr1: string, expr2: string, eps_expr: string, m1_: _st.InputArray, m2_: _st.InputArray, eps: _st.double) {
+    var m1 = getMat(m1_);
+    var m2 = getMat(m2_);
+
+    if (m1.size() != m2.size()) {
+        throw new Error("Matrices \"" + expr1 + "\" and \"" + expr2 + "\" have different sizes : \"" +
+            + expr1 + "\" [" + PrintToString(m1.size()) + "] vs \"" +
+            + expr2 + "\" [" + PrintToString(m2.size()) + "]");
+    }
+
+    if (m1.type() != m2.type()) {
+        throw new Error("Matrices \"" + expr1 + "\" and \"" + expr2 + "\" have different types : \"" +
+            + expr1 + "\" [" + PrintToString(MatType(m1.type())) + "] vs \"" +
+            + expr2 + "\" [" + PrintToString(MatType(m2.type())) + "]");
+    }
+
+    var diff = new _mat.Mat();
+    _core.absdiff(m1.reshape(1), m2.reshape(1), diff);
+
+    var maxVal = 0.0;
+    var maxLoc = new _types.Point();
+    minMaxLocGold(diff, (minVal_, maxVal_, minLoc_, maxLoc_) => { maxVal = maxVal_.valueOf(); maxLoc = maxLoc_; });
+
+    if (maxVal > eps) {
+        throw new Error("The max difference between matrices \"" + expr1 + "\" and \"" + expr2
+            + "\" is " + maxVal + " at (" + maxLoc.y + ", " + maxLoc.x.valueOf() / m1.channels().valueOf() + ")"
+            + ", which exceeds \"" + eps_expr + "\", where \""
+            + expr1 + "\" at (" + maxLoc.y + ", " + maxLoc.x.valueOf() / m1.channels().valueOf() + ") evaluates to " + printMatVal(m1, maxLoc) + ", \""
+            + expr2 + "\" at (" + maxLoc.y + ", " + maxLoc.x.valueOf() / m1.channels().valueOf() + ") evaluates to " + printMatVal(m2, maxLoc) + ", \""
+            + eps_expr + "\" evaluates to " + eps);
+    }
+
+    //return AssertionSuccess();
+}
+
+export function ASSERT_MAT_NEAR(m1: _st.InputArray, m2: _st.InputArray, eps: _st.double) {
+    assertMatNear(m1.toString(), m2.toString(), eps.toString(), m1, m2, eps);
+}
+
+export function EXPECT_MAT_NEAR(m1 : _st.InputArray, m2 : _st.InputArray, eps : _st.double) {
+    assertMatNear(m1.toString(), m2.toString(), eps.toString(), m1, m2, eps);
+    //assertMatNear(m1, m2, eps);
+    //EXPECT_PRED_FORMAT3(assertMatNear, m1, m2, eps)
+}
 //    #define EXPECT_MAT_NEAR(m1, m2, eps) EXPECT_PRED_FORMAT3(cvtest::assertMatNear, m1, m2, eps)
 //    #define ASSERT_MAT_NEAR(m1, m2, eps) ASSERT_PRED_FORMAT3(cvtest::assertMatNear, m1, m2, eps)
 
@@ -195,12 +381,27 @@ export var ALL_DEVICES = DeviceManager.instance().values();
 
 //    CV_EXPORTS double checkSimilarity(cv::InputArray m1, cv::InputArray m2);
 
-//    #define EXPECT_MAT_SIMILAR(mat1, mat2, eps) \
-//        { \
-//            ASSERT_EQ(mat1.type(), mat2.type()); \
-//            ASSERT_EQ(mat1.size(), mat2.size()); \
-//            EXPECT_LE(checkSimilarity(mat1, mat2), eps); \
-//        }
+
+interface IcheckSimilarity{
+    (m1: _st.InputArray, m2: _st.InputArray ): _st.double;
+}
+
+export var checkSimilarity: IcheckSimilarity = alvision_module.checkSimilarity;
+
+export function EXPECT_MAT_SIMILAR(mat1 : _mat.Mat, mat2 : _mat.Mat, eps : _st.double)  : void
+        {
+            _base.ASSERT_EQ(mat1.type(), mat2.type()); 
+            _base.ASSERT_EQ(mat1.size(), mat2.size()); 
+            _base.EXPECT_LE(checkSimilarity(mat1, mat2), eps); 
+}
+
+export function ASSERT_MAT_SIMILAR(mat1: _mat.Mat, mat2: _mat.Mat, eps: _st.double): void {
+    _base.ASSERT_EQ(mat1.type(), mat2.type());
+    _base.ASSERT_EQ(mat1.size(), mat2.size());
+    _base.EXPECT_LE(checkSimilarity(mat1, mat2), eps);
+}
+
+
 //    #define ASSERT_MAT_SIMILAR(mat1, mat2, eps) \
 //        { \
 //            ASSERT_EQ(mat1.type(), mat2.type()); \
@@ -250,7 +451,7 @@ export var ALL_DEVICES = DeviceManager.instance().values();
 //      } \
 //      void GTEST_TEST_CLASS_NAME_(test_case_name, test_name)::UnsafeTestBody()
 
-export var DIFFERENT_SIZES = [new _types.Size(128,128), new _types.Size(113,113)];
+export const DIFFERENT_SIZES = [new _types.Size(128,128), new _types.Size(113,113)];
 //    #define DIFFERENT_SIZES testing::Values(cv::Size(128, 128), cv::Size(113, 113))
 
 //    // Depth
@@ -258,8 +459,9 @@ export var DIFFERENT_SIZES = [new _types.Size(128,128), new _types.Size(113,113)
 //    using perf::MatDepth;
 
 //    #define ALL_DEPTH testing::Values(MatDepth(CV_8U), MatDepth(CV_8S), MatDepth(CV_16U), MatDepth(CV_16S), MatDepth(CV_32S), MatDepth(CV_32F), MatDepth(CV_64F))
+export const ALL_DEPTH = [_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_8S, _cvdef.MatrixType.CV_16U, _cvdef.MatrixType.CV_16S, _cvdef.MatrixType.CV_32S, _cvdef.MatrixType.CV_32F, _cvdef.MatrixType.CV_64F];
 
-export var DEPTH_PAIRS = [
+export const DEPTH_PAIRS = [
     new _st.pair(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_8U ),
     new _st.pair(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_16U),
     new _st.pair(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_16S),
@@ -293,10 +495,29 @@ export var DEPTH_PAIRS = [
 //    //! return vector with types from specified range.
 //    CV_EXPORTS std::vector<MatType> types(int depth_start, int depth_end, int cn_start, int cn_end);
 
+
+function types(depth_start: _st.int, depth_end: _st.int, cn_start: _st.int, cn_end: _st.int): Array<_cvdef.MatrixType> {
+    var v = new Array<_cvdef.MatrixType>((depth_end.valueOf() - depth_start.valueOf() + 1) * (cn_end.valueOf() - cn_start.valueOf() + 1));
+
+    for (var depth = depth_start.valueOf(); depth <= depth_end; ++depth) {
+        for (var cn = cn_start.valueOf(); cn <= cn_end; ++cn) {
+            v.push(_cvdef.MatrixType.CV_MAKETYPE(depth, cn));
+        }
+    }
+
+    return v;
+}
+
+function all_types(): Array<_cvdef.MatrixType> {
+    return types(_cvdef.MatrixType.CV_8U, _cvdef.MatrixType.CV_64F, 1, 4);
+}
+
+
 //    //! return vector with all types (depth: CV_8U-CV_64F, channels: 1-4).
 //    CV_EXPORTS const std::vector<MatType>& all_types();
 
 //    #define ALL_TYPES testing::ValuesIn(all_types())
+export const ALL_TYPES = all_types();
 //    #define TYPES(depth_start, depth_end, cn_start, cn_end) testing::ValuesIn(types(depth_start, depth_end, cn_start, cn_end))
 
 //    // ROI
@@ -323,7 +544,7 @@ export class UseRoi
 
 //    CV_EXPORTS void PrintTo(const UseRoi& useRoi, std::ostream* os);
 
-export var WHOLE_SUBMAT = [new UseRoi(false), new UseRoi(true)];
+export const WHOLE_SUBMAT = [false, true];// [new UseRoi(false), new UseRoi(true)];
 //    #define WHOLE_SUBMAT testing::Values(UseRoi(false), UseRoi(true))
 
 //    // Direct/Inverse
@@ -341,7 +562,7 @@ export var WHOLE_SUBMAT = [new UseRoi(false), new UseRoi(true)];
 
 //    CV_EXPORTS void PrintTo(const Inverse& useRoi, std::ostream* os);
 
-//    #define DIRECT_INVERSE testing::Values(Inverse(false), Inverse(true))
+export const DIRECT_INVERSE = [false, true];// testing::Values(Inverse(false), Inverse(true))
 
 //    // Param class
 
@@ -374,6 +595,7 @@ export var IMAGE_CHANNELS = [new _ts.cvtest.Channels(1), new _ts.cvtest.Channels
 
 //    CV_ENUM(BorderType, BORDER_REFLECT101, BORDER_REPLICATE, BORDER_CONSTANT, BORDER_REFLECT, BORDER_WRAP)
 //    #define ALL_BORDER_TYPES testing::Values(BorderType(cv::BORDER_REFLECT101), BorderType(cv::BORDER_REPLICATE), BorderType(cv::BORDER_CONSTANT), BorderType(cv::BORDER_REFLECT), BorderType(cv::BORDER_WRAP))
+export var ALL_BORDER_TYPES = [_base.BorderTypes.BORDER_REFLECT101, _base.BorderTypes.BORDER_REPLICATE, _base.BorderTypes.BORDER_CONSTANT, _base.BorderTypes.BORDER_REFLECT, _base.BorderTypes. BORDER_WRAP];
 
 //    CV_FLAGS(WarpFlags, INTER_NEAREST, INTER_LINEAR, INTER_CUBIC, WARP_INVERSE_MAP)
 

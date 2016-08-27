@@ -525,7 +525,7 @@ import * as _base from './base';
 //    UMatData * u;
 //};
 
-    interface MatSize {
+    interface MatSize extends _types.Size {
         [i: number]: _st.int;
     }
 
@@ -805,7 +805,7 @@ including std::sort().
         @param type Array type. Use CV_8UC1, ..., CV_64FC4 to create 1-4 channel matrices, or
         CV_8UC(n), ..., CV_64FC(n) to create multi-channel (up to CV_CN_MAX channels) matrices.
         */
-        //new (ndims: _st.int , const int* sizes, int type): Mat;
+        new (ndims: _st.int, sizes: Array<_st.int>, type: _st.int ): Mat;
 
         /** @overload
         @param ndims Array dimensionality.
@@ -816,7 +816,7 @@ including std::sort().
         the particular value after the construction, use the assignment operator
         Mat::operator=(const Scalar& value) .
         */
-        //new (int ndims, const int* sizes, int type, const Scalar& s): Mat;
+        new (ndims: _st.int, sizes: Array<_st.int>, type: _st.int, s: _types.Scalar): Mat;
 
         /** @overload
         @param m Array that (as a whole or partly) is assigned to the constructed matrix. No data is copied
@@ -1014,7 +1014,7 @@ including std::sort().
     @param sz Array of integers specifying the array shape.
     @param type Created matrix type.
     */
-    ones(ndims : _st.int, sz : Array<_st.int>, type : _st.int) : MatExpr;
+    ones(ndims : _st.int, sz : Array<_st.int>, type : _cvdef.MatrixType | _st.int) : MatExpr;
 
     /** @brief Returns an identity matrix of the specified size and type.
 
@@ -1061,7 +1061,7 @@ including std::sort().
 
     }
 
-    interface TrackedPtr<T> extends Array<T> {
+    export interface TrackedPtr<T> extends Array<T> {
         [i: number]: T;
     }
 
@@ -1069,7 +1069,7 @@ including std::sort().
         get(): T;
         set(val: T): T;
     }
-export interface Mat
+export interface Mat extends _st.IOArray
 {
     
 
@@ -1235,7 +1235,7 @@ export interface Mat
     @param value Assigned scalar converted to the actual array type.
     @param mask Operation mask of the same size as \*this.
      */
-    setTo(value: _st.InputArray, mask?: _st.InputArray /*= noArray()*/): Mat;
+    setTo(value: _st.InputArray | _types.Scalar | _st.int, mask?: _st.InputArray /*= noArray()*/): Mat;
 
     /** @brief Changes the shape and/or the number of channels of a 2D matrix without copying the data.
 
@@ -1299,7 +1299,7 @@ export interface Mat
     @param m Another array of the same type and the same size as \*this, or a matrix expression.
     @param scale Optional scale factor.
      */
-    //MatExpr mul(InputArray m, double scale= 1) const;
+    mul(m: _st.InputArray, scale?: _st.double /*= 1*/): MatExpr;
 
     /** @brief Computes a cross-product of two 3-element vectors.
 
@@ -1363,14 +1363,14 @@ export interface Mat
     @param size Alternative new matrix size specification: Size(cols, rows)
     @param type New matrix type.
     */
-    create(size : _types.Size, type : _st.int    ): void;
+    create(size : _types.Size | MatSize, type : _st.int    ): void;
 
     /** @overload
     @param ndims New array dimensionality.
     @param sizes Array of integers specifying a new array shape.
     @param type New matrix type.
     */
-    //void create(int ndims, const int* sizes, int type);
+    create(ndims: _st.int, sizes: Array<_st.int> | MatSize, type: _st.int): void;
 
     /** @brief Increments the reference counter.
 
@@ -1419,13 +1419,13 @@ export interface Mat
     vector class.
     @param sz New number of rows.
      */
-    //void resize(size_t sz);
+    resize(sz: _st.size_t ): void;
 
     /** @overload
     @param sz New number of rows.
     @param s Value assigned to the newly added elements.
      */
-    //void resize(size_t sz, const Scalar& s);
+    resize(sz: _st.size_t, s: _types.Scalar): void;
 
     //! internal function
     //void push_back_(const void* elem);
@@ -1521,7 +1521,7 @@ export interface Mat
     /** @overload
     @param ranges Array of selected ranges along each array dimension.
     */
-    //Mat operator()( const Range* ranges ) const;
+    roi(ranges: Array<_types.Range>): Mat;
 
     // //! converts header to CvMat; no data is copied
     // operator CvMat() const;
@@ -1608,7 +1608,7 @@ export interface Mat
     allocated arrays are always continuous, you still need to check the destination array because
     Mat::create does not always allocate a new matrix.
      */
-    //bool isContinuous() const;
+    isContinuous(): boolean;
 
     //! returns true if the matrix is a submatrix of another matrix
     //bool isSubmatrix() const;
@@ -1618,14 +1618,14 @@ export interface Mat
     The method returns the matrix element size in bytes. For example, if the matrix type is CV_16SC3 ,
     the method returns 3\*sizeof(short) or 6.
      */
-    //size_t elemSize() const;
+    elemSize(): _st.size_t;
 
     /** @brief Returns the size of each matrix element channel in bytes.
 
     The method returns the matrix element channel size in bytes, that is, it ignores the number of
     channels. For example, if the matrix type is CV_16SC3 , the method returns sizeof(short) or 2.
      */
-    //size_t elemSize1() const;
+    elemSize1(): _st.size_t;
 
     /** @brief Returns the type of a matrix element.
 
@@ -1968,7 +1968,7 @@ export interface Mat
     //UMatData * u;
 
     //MatSize size;
-    size(): _types.Size;
+    size(): MatSize;// _types.Size;
     
     //row length in number of elements
     step: number;
@@ -1979,6 +1979,8 @@ export interface Mat
 };
 
 export var Mat: MatStatic = alvision_module.Mat;
+
+export var MatND: MatStatic = alvision_module.MatND;
 
 ///////////////////////////////// Mat_<_Tp> ////////////////////////////////////
 
@@ -2063,24 +2065,27 @@ export interface Mat_Static<T> {
 ////! selects a submatrix, n-dim version
 //Mat_(const Mat_& m, const Range* ranges);
 ////! from a matrix expression
-//explicit Mat_(const MatExpr& e);
+    new (e: MatExpr): Mat_<T>;
 ////! makes a matrix out of Vec, std::vector, Point_ or Point3_. The matrix will have a single column
 //explicit Mat_(const std::vector<_Tp>& vec, bool copyData= false);
+    new (vec: Array<T>, copyData?: boolean): Mat_<T>;
 //template < int n> explicit Mat_(const Vec<typename DataType<_Tp>::channel_type, n >& vec, bool copyData= true);
 //template < int m, int n> explicit Mat_(const Matx<typename DataType<_Tp>::channel_type, m, n >& mtx, bool copyData= true);
 //explicit Mat_(const Point_<typename DataType<_Tp>::channel_type >& pt, bool copyData= true);
 //explicit Mat_(const Point3_<typename DataType<_Tp>::channel_type >& pt, bool copyData= true);
 //explicit Mat_(const MatCommaInitializer_<_Tp>& commaInitializer);
 // //! overridden forms of Mat::zeros() etc. Data type is omitted, of course
-//    static MatExpr zeros(int rows, int cols);
-//    static MatExpr zeros(Size size);
-//    static MatExpr zeros(int _ndims, const int* _sizes);
-//    static MatExpr ones(int rows, int cols);
-//    static MatExpr ones(Size size);
-//    static MatExpr ones(int _ndims, const int* _sizes);
-//    static MatExpr eye(int rows, int cols);
-//    static MatExpr eye(Size size);
+    zeros(rows: _st.int, cols: _st.int ): MatExpr;
+    zeros(size: _types.Size ): MatExpr;
+    zeros(_ndims: _st.int , _sizes: Array<_st.int> ): MatExpr;
+    ones(rows: _st.int, cols: _st.int ): MatExpr;
+    ones(size: _types.Size ): MatExpr;
+    ones(_ndims: _st.int , _sizes : Array<_st.int>): MatExpr;
+    eye(rows: _st.int, cols: _st.int ): MatExpr;
+    eye(size: _types.Size ): MatExpr;
 
+
+  
 }
 
 //template < typename _Tp> class Mat_ : public Mat
@@ -2117,13 +2122,14 @@ export interface Mat_<T> extends Mat
     //dummy overloads for typescript satisfaction
     create(_rows: _st.int, _cols: _st.int, _type: _st.int): void;
     create(size: _types.Size, type: _st.int): void;
+    create(ndims: _st.int, sizes: Array<_st.int> | MatSize, type: _st.int): void;
     //end dummy
 
     create(_rows: _st.int, _cols: _st.int ): void;
- //   //! equivalent to Mat::create(_size, DataType<_Tp>::type)
- //   void create(Size _size);
- //   //! equivalent to Mat::create(_ndims, _sizes, DatType<_Tp>::type)
- //   void create(int _ndims, const int* _sizes);
+    //! equivalent to Mat::create(_size, DataType<_Tp>::type)
+    create(_size: _types.Size ): void;
+    //! equivalent to Mat::create(_ndims, _sizes, DatType<_Tp>::type)
+    create(_ndims: _st.int, _sizes: Array<_st.int>): void;
  //   //! cross-product
  //   Mat_ cross(const Mat_& m) const;
  //   //! data type conversion
@@ -2201,6 +2207,22 @@ export interface Mat_<T> extends Mat
 //
 //    Mat_(MatExpr && e);
 //    #endif
+
+    op_Addition(other: Mat_<T> | _types.Scalar | _st.double): Mat_<T>;
+
+    op_Substraction(other: Mat_<T> | _types.Scalar | _st.double): Mat_<T>;
+
+    op_Multiplication(other: Mat_<T> | _types.Scalar | _st.double): Mat_<T>;
+
+    op_Division(other: Mat_<T>  | _types.Scalar | _st.double): Mat_<T>;
+
+    op_And(other: Mat_<T> | _types.Scalar | _st.double): Mat_<T>;
+
+    op_Or(other: Mat_<T>  | _types.Scalar | _st.double): Mat_<T>;
+
+    op_Xor(other: Mat_<T>  | _types.Scalar | _st.double): Mat_<T>;
+
+    op_BinaryNot(): Mat_<T>;
 };
 
 export interface Matb extends Mat_<_st.uchar> { }
@@ -2291,7 +2313,7 @@ interface UMatStatic {
 
 /** @todo document */
 //class CV_EXPORTS UMat
-export interface UMat
+export interface UMat extends _st.IOArray
 {
    
 //    //! builds matrix from std::vector with or without copying the data
@@ -2575,6 +2597,31 @@ export interface SparseMatStatic {
 //~SparseMat();
 }
 
+    interface SparseNode
+    {
+        //! hash value
+        hashval: _st.size_t;
+        //! index of the next node in the same hash table entry
+        next: _st.size_t;
+        //! index of the matrix element
+        idx: Array<_st.int>;//[MAX_DIM];
+};
+
+//! the sparse matrix header
+interface SparseHdr {
+    //Hdr(int _dims, const int* _sizes, int _type);
+    //void clear();
+    refcount: _st.int;
+    dims: _st.int;
+    valueOffset: _st.int;
+    nodeSize: _st.size_t;
+    nodeCount: _st.size_t;
+    freeList: _st.size_t;
+    pool: Array<_st.uchar>;
+    hashtab: Array<_st.size_t>;
+    size: Array<_st.int>;//[MAX_DIM];
+}
+
 export interface SparseMat
 {
 //    public:
@@ -2583,32 +2630,10 @@ export interface SparseMat
 //
 //    enum { MAGIC_VAL = 0x42FD0000, MAX_DIM = 32, HASH_SCALE = 0x5bd1e995, HASH_BIT = 0x80000000 };
 //
-//    //! the sparse matrix header
-//    struct CV_EXPORTS Hdr
-//    {
-//        Hdr(int _dims, const int* _sizes, int _type);
-//        void clear();
-//        int refcount;
-//        int dims;
-//        int valueOffset;
-//        size_t nodeSize;
-//        size_t nodeCount;
-//        size_t freeList;
-//        std::vector < uchar > pool;
-//        std::vector < size_t > hashtab;
-//        int size[MAX_DIM];
-//    };
+
 //
 //    //! sparse matrix node - element of a hash table
-//    struct CV_EXPORTS Node
-//    {
-//        //! hash value
-//        size_t hashval;
-//        //! index of the next node in the same hash table entry
-//        size_t next;
-//        //! index of the matrix element
-//        int idx[MAX_DIM];
-//    };
+
 //
 //   
 //
@@ -2620,12 +2645,12 @@ export interface SparseMat
 //    //! creates full copy of the matrix
 //    SparseMat clone() const;
 //
-//    //! copies all the data to the destination matrix. All the previous content of m is erased
-//    void copyTo(SparseMat & m) const;
-//    //! converts sparse matrix to dense matrix.
-//    void copyTo(Mat & m) const;
-//    //! multiplies all the matrix elements by the specified scale factor alpha and converts the results to the specified data type
-//    void convertTo(SparseMat & m, int rtype, double alpha= 1) const;
+    //! copies all the data to the destination matrix. All the previous content of m is erased
+    copyTo(m: SparseMat): void;
+    //! converts sparse matrix to dense matrix.
+    copyTo(m: Mat ): void;
+    //! multiplies all the matrix elements by the specified scale factor alpha and converts the results to the specified data type
+    convertTo(m: SparseMat, rtype: _st.int, alpha?: _st.double /*= 1*/): void;
 //    //! converts sparse matrix to dense n-dim matrix with optional type conversion and scaling.
 //    /*!
 //        @param [out] m - output matrix; if it does not have a proper size or type before the operation,
@@ -2663,7 +2688,7 @@ export interface SparseMat
 //    size_t elemSize1() const;
 //
 //    //! returns type of sparse matrix elements
-//    int type() const;
+    type(): _st.int;
 //    //! returns the depth of sparse matrix elements
 //    int depth() const;
 //    //! returns the number of channels
@@ -2674,18 +2699,18 @@ export interface SparseMat
 //    //! returns the size of i-th matrix dimension (or 0)
 //    int size(int i) const;
 //    //! returns the matrix dimensionality
-//    int dims() const;
-//    //! returns the number of non-zero elements (=the number of hash table nodes)
-//    size_t nzcount() const;
-//
-//    //! computes the element hash value (1D case)
-//    size_t hash(int i0) const;
-//    //! computes the element hash value (2D case)
-//    size_t hash(int i0, int i1) const;
-//    //! computes the element hash value (3D case)
-//    size_t hash(int i0, int i1, int i2) const;
-//    //! computes the element hash value (nD case)
-//    size_t hash(const int* idx) const;
+    dims(): _st.int;
+    //! returns the number of non-zero elements (=the number of hash table nodes)
+    nzcount(): _st.size_t;
+
+    //! computes the element hash value (1D case)
+    hash(i0: _st.int): _st.size_t;
+    //! computes the element hash value (2D case)
+    hash(i0: _st.int, i1: _st.int ): _st.size_t;
+    //! computes the element hash value (3D case)
+    hash(i0: _st.int, i1: _st.int, i2: _st.int ): _st.size_t;
+    //! computes the element hash value (nD case)
+    //hash(const int* idx): size_t 
 //
 //    //!@{
 //    /*!
@@ -2699,13 +2724,21 @@ export interface SparseMat
 //        not computed, but *hashval is taken instead.
 //    */
 //    //! returns pointer to the specified element (1D case)
-//    uchar * ptr(int i0, bool createMissing, size_t * hashval=0);
+    //    uchar * ptr(int i0, bool createMissing, size_t * hashval=0);
+    ptr<T>(type : string, i0: _st.int, createMissing: boolean, hashval?: _st.size_t /* = 0*/): TrackedElement<T>;
+
 //    //! returns pointer to the specified element (2D case)
 //    uchar * ptr(int i0, int i1, bool createMissing, size_t * hashval=0);
+    ptr<T>(type: string, i0: _st.int, i1 : _st.int, createMissing: boolean, hashval?: _st.size_t /* = 0*/): TrackedElement<T>;
+
 //    //! returns pointer to the specified element (3D case)
 //    uchar * ptr(int i0, int i1, int i2, bool createMissing, size_t * hashval=0);
+    ptr<T>(type: string, i0: _st.int, i1: _st.int, i2 : _st.int, createMissing: boolean, hashval?: _st.size_t /* = 0*/): TrackedElement<T>;
+
 //    //! returns pointer to the specified element (nD case)
 //    uchar * ptr(const int* idx, bool createMissing, size_t* hashval=0);
+    ptr<T>(type: string, idx : Array<_st.int>, createMissing: boolean, hashval?: _st.size_t /* = 0*/): TrackedElement<T>;
+
 //    //!@}
 //
 //    //!@{
@@ -2765,12 +2798,12 @@ export interface SparseMat
 //    template < typename _Tp> const _Tp* find(const int* idx, size_t* hashval=0) const ;
 //    //!@}
 //
-//    //! erases the specified element (2D case)
-//    void erase(int i0, int i1, size_t * hashval=0);
-//    //! erases the specified element (3D case)
-//    void erase(int i0, int i1, int i2, size_t * hashval=0);
-//    //! erases the specified element (nD case)
-//    void erase(const int* idx, size_t* hashval=0);
+    //! erases the specified element (2D case)
+    erase(i0: _st.int, i1: _st.int, hashval?: _st.size_t /*=0*/) : void;
+    //! erases the specified element (3D case)
+    erase(i0: _st.int, i1: _st.int, i2: _st.int, hashval?: _st.size_t /*=0*/) : void;
+    //! erases the specified element (nD case)
+    erase(idx: Array<_st.int>, hashval?: _st.size_t /*=0*/) : void;
 //
 //    //!@{
 //    /*!
@@ -3432,44 +3465,13 @@ interface MatExprStatic {
 
     //! @relates cv::MatExpr
     //! @{
-    op_Addition(a: Mat, b: Mat): MatExpr;
-    op_Addition(a: Mat, s: _types.Scalar): MatExpr;
-    op_Addition(s: _types.Scalar, a: Mat): MatExpr;
-    op_Addition(e: MatExpr, m: Mat): MatExpr;
-    op_Addition(m: Mat, e: MatExpr): MatExpr;
-    op_Addition(e: MatExpr, s: _types.Scalar): MatExpr;
-    op_Addition(s: _types.Scalar, e: MatExpr): MatExpr;
-    op_Addition(e1: MatExpr, e2: MatExpr): MatExpr;
+    op_Addition(a: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int, b: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int): MatExpr;
 
-    op_Substraction(a: Mat, b: Mat): MatExpr;
-    op_Substraction(a: Mat, s: _types.Scalar): MatExpr;
-    op_Substraction(s: _types.Scalar, a: Mat): MatExpr;
-    op_Substraction(e: MatExpr, m: Mat): MatExpr;
-    op_Substraction(m: Mat, e: MatExpr): MatExpr;
-    op_Substraction(e: MatExpr, s: _types.Scalar): MatExpr;
-    op_Substraction(s: _types.Scalar, e: MatExpr): MatExpr;
-    op_Substraction(e1: MatExpr, e2: MatExpr): MatExpr;
+    op_Substraction(a: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int, b?: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int): MatExpr;
 
-    op_Substraction(m: Mat): MatExpr;
-    op_Substraction(e: MatExpr): MatExpr;
+    op_Multiplication(a: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int, b: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int): MatExpr;
 
-    op_Multiplication(a: Mat, b: Mat): MatExpr;
-    op_Multiplication(a: Mat, s: _st.double): MatExpr;
-    op_Multiplication(s: _st.double, a: Mat): MatExpr;
-    op_Multiplication(e: MatExpr, m: Mat): MatExpr;
-    op_Multiplication(m: Mat, e: MatExpr): MatExpr;
-    op_Multiplication(e: MatExpr, s: _st.double): MatExpr;
-    op_Multiplication(s: _st.double, e: MatExpr): MatExpr;
-    op_Multiplication(e1: MatExpr, e2: MatExpr): MatExpr;
-
-    op_Division(a: Mat, b: Mat): MatExpr;
-    op_Division(a: Mat, s: _st.double): MatExpr;
-    op_Division(s: _st.double, a: Mat): MatExpr;
-    op_Division(e: MatExpr, m: Mat): MatExpr;
-    op_Division(m: Mat, e: MatExpr): MatExpr;
-    op_Division(e: MatExpr, s: _st.double): MatExpr;
-    op_Division(s: _st.double, e: MatExpr): MatExpr;
-    op_Division(e1: MatExpr, e2: MatExpr): MatExpr;
+    op_Division(a: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int, b: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int): MatExpr;
 
     op_LessThan(a: Mat, b: Mat): MatExpr;
     op_LessThan(a: Mat, s: _st.double): MatExpr;
@@ -3491,9 +3493,7 @@ interface MatExprStatic {
     op_GreaterThanOrEqual(a: Mat, s: _st.double): MatExpr;
     op_GreaterThanOrEqual(s: _st.double, a: Mat): MatExpr;
 
-    op_GreaterThan(a: Mat, b: Mat): MatExpr;
-    op_GreaterThan(a: Mat, s: _st.double): MatExpr;
-    op_GreaterThan(s: _st.double, a: Mat): MatExpr;
+    op_GreaterThan(a: Mat | MatExpr | _st.double, b: Mat | MatExpr | _st.double): MatExpr;
 
     op_And(a: Mat | MatExpr | _types.Scalar, b: Mat | MatExpr | _types.Scalar): MatExpr;
 
@@ -3530,7 +3530,7 @@ interface MatExprStatic {
 
 }
 
-interface MatExpr
+interface MatExpr extends _st.IOArray
 {
 //    const Mat& _c = Mat(), double _alpha = 1, double _beta = 1, const Scalar& _s = Scalar());
 

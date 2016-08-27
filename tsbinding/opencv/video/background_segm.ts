@@ -81,7 +81,7 @@ export interface BackgroundSubtractor extends _core.Algorithm
     rate. 0 means that the background model is not updated at all, 1 means that the background model
     is completely reinitialized from the last frame.
      */
-//    CV_WRAP virtual void apply(InputArray image, OutputArray fgmask, double learningRate=-1) = 0;
+    apply(image: _st.InputArray, fgmask: _st.OutputArray, learningRate?: _st.double /*= -1*/): void;
 
     /** @brief Computes a background image.
 
@@ -90,7 +90,7 @@ export interface BackgroundSubtractor extends _core.Algorithm
     @note Sometimes the background image can be very blurry, as it contain the average background
     statistics.
      */
-//    CV_WRAP virtual void getBackgroundImage(OutputArray backgroundImage) const = 0;
+    getBackgroundImage(backgroundImage: _st.OutputArray ): void;
 };
 
 
@@ -184,7 +184,7 @@ export interface BackgroundSubtractorMOG2 extends BackgroundSubtractor
 //    CV_WRAP virtual bool getDetectShadows() const = 0;
 //    /** @brief Enables or disables shadow detection
 //    */
-//    CV_WRAP virtual void setDetectShadows(bool detectShadows) = 0;
+    setDetectShadows(detectShadows : boolean): void;
 //
 //    /** @brief Returns the shadow value
 //
@@ -218,6 +218,14 @@ affect the background update.
 @param detectShadows If true, the algorithm will detect shadows and mark them. It decreases the
 speed a bit, so if you do not need this feature, set the parameter to false.
  */
+
+interface IcreateBackgroundSubtractorMOG2{
+    (history?: _st.int/*= 500*/, varThreshold?: _st.double /*= 16*/,
+        detectShadows? : boolean /*= true*/) : BackgroundSubtractorMOG2;
+}
+
+export var createBackgroundSubtractorMOG2: IcreateBackgroundSubtractorMOG2 = alvision_module.createBackgroundSubtractorMOG2;
+
 //CV_EXPORTS_W Ptr<BackgroundSubtractorMOG2>
 //    createBackgroundSubtractorMOG2(int history=500, double varThreshold=16,
 //                                   bool detectShadows=true);
@@ -274,7 +282,7 @@ export interface BackgroundSubtractorKNN extends BackgroundSubtractor
 //    CV_WRAP virtual bool getDetectShadows() const = 0;
 //    /** @brief Enables or disables shadow detection
 //    */
-//    CV_WRAP virtual void setDetectShadows(bool detectShadows) = 0;
+    setDetectShadows(detectShadows : boolean): void;
 //
 //    /** @brief Returns the shadow value
 //

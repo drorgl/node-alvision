@@ -839,3 +839,12 @@ export var VideoWriter: VideoWriterStatic = alvision_module.VideoWriter;
 //} // cv
 //
 //#endif //__OPENCV_VIDEOIO_HPP__
+
+export function CV_FOURCC_MACRO(c1 : number, c2 : number, c3 : number, c4 : number) : number {
+    return (((c1) & 255) + (((c2) & 255) << 8) + (((c3) & 255) << 16) + (((c4) & 255) << 24));
+}
+
+export function CV_FOURCC(c1 : _st.char, c2 : _st.char, c3 : _st.char, c4 : _st.char)
+{
+    return CV_FOURCC_MACRO(c1.charCodeAt(0), c2.charCodeAt(0), c3.charCodeAt(0), c4.charCodeAt(0));
+}

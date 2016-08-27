@@ -1,12 +1,18 @@
 //////// <reference path="Matrix.ts" />
 var alvision_module = require('../../lib/bindings.js');
 
+import * as _types from './types';
+import * as _cvdef from './cvdef';
+import * as _cuda from './cuda';
+import * as _mat from './mat';
+
+
 export interface double extends Number { };
 export interface char extends String { };
 export interface uchar { };
 export interface schar { };
-export interface short { };
-export interface ushort { };
+export interface short extends Number { };
+export interface ushort extends Number { };
 export interface int extends Number { };
 export interface uint extends Number { };
 export interface float extends Number { };
@@ -19,14 +25,40 @@ export interface size_t extends Number { };
 //import * as _constants from './Constants'
 //import * as _scalar from './Scalar'
 
-export interface IOArray {}
+export enum IOArrayKind{
+    KIND_SHIFT = 16,
+    FIXED_TYPE = 0x8000 << KIND_SHIFT,
+    FIXED_SIZE = 0x4000 << KIND_SHIFT,
+    KIND_MASK = 31 << KIND_SHIFT,
+
+    NONE = 0 << KIND_SHIFT,
+    MAT = 1 << KIND_SHIFT,
+    MATX = 2 << KIND_SHIFT,
+    STD_VECTOR = 3 << KIND_SHIFT,
+    STD_VECTOR_VECTOR = 4 << KIND_SHIFT,
+    STD_VECTOR_MAT = 5 << KIND_SHIFT,
+    EXPR = 6 << KIND_SHIFT,
+    OPENGL_BUFFER = 7 << KIND_SHIFT,
+    CUDA_HOST_MEM = 8 << KIND_SHIFT,
+    CUDA_GPU_MAT = 9 << KIND_SHIFT,
+    UMAT = 10 << KIND_SHIFT,
+    STD_VECTOR_UMAT = 11 << KIND_SHIFT,
+    STD_BOOL_VECTOR = 12 << KIND_SHIFT,
+    STD_VECTOR_CUDA_GPU_MAT = 13 << KIND_SHIFT
+};
+
+export interface IOArray extends Array<any> {
+    kind?(): IOArrayKind;
+    getGpuMat?(): _cuda.cuda.GpuMat;
+    getMat?(idx?: int /*= -1*/): _mat.Mat;
+}
 
 export interface InputArray extends IOArray {}
-export interface InputArrayOfArrays extends InputArray { }
+export interface InputArrayOfArrays extends Array<InputArray> { }
 export interface OutputArray extends IOArray { }
-export interface OutputArrayOfArrays extends OutputArray { }
+export interface OutputArrayOfArrays extends Array<InputArray> { }
 export interface InputOutputArray extends IOArray {}
-export interface InputOutputArrayOfArrays extends InputOutputArray { }
+export interface InputOutputArrayOfArrays extends  Array<InputArray> { }
 
 //-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //
@@ -560,4 +592,112 @@ export function cvGetTickCount()  : number {
 
 export function cvGetTickFrequency(): number {
     return 1e9;
+}
+
+export function arrcopy<D, S>(dst: Array<D>, src: Array<S>, len: number): void {
+    for (var i = 0; i < len; i++) {
+        dst[i] = <any>(src[i]);
+    }
+}
+
+
+export function scalarToRawData<T>(s: _types.Scalar, _buf : Array<T>,  type : int, unroll_to : int) : void
+{
+    var i = 0;
+        //var depth = CV_MAT_DEPTH(type), cn = CV_MAT_CN(type);
+    var cn = _cvdef.MatrixType.CV_MAT_CN(type);
+    
+    for (var i = 0; i < cn; i++) {
+        _buf[i] = <any>s.val[i];
+    }
+
+    for (; i < unroll_to; i++) {
+        _buf[i] = _buf[i - cn.valueOf()];
+    }
+    //
+    ////CV_Assert(cn <= 4);
+    //switch (depth) {
+    //    case CV_8U:
+    //        {
+    //            uchar * buf = (uchar *)_buf;
+    //            for (i = 0; i < cn; i++)
+    //                buf[i] = saturate_cast<uchar>(s.val[i]);
+    //            for (; i < unroll_to; i++)
+    //                buf[i] = buf[i - cn];
+    //        }
+    //        break;
+    //    case CV_8S:
+    //        {
+    //            schar * buf = (schar *)_buf;
+    //            for (i = 0; i < cn; i++)
+    //                buf[i] = saturate_cast<schar>(s.val[i]);
+    //            for (; i < unroll_to; i++)
+    //                buf[i] = buf[i - cn];
+    //        }
+    //        break;
+    //    case CV_16U:
+    //        {
+    //            ushort * buf = (ushort *)_buf;
+    //            for (i = 0; i < cn; i++)
+    //                buf[i] = saturate_cast<ushort>(s.val[i]);
+    //            for (; i < unroll_to; i++)
+    //                buf[i] = buf[i - cn];
+    //        }
+    //        break;
+    //    case CV_16S:
+    //        {
+    //            short * buf = (short *)_buf;
+    //            for (i = 0; i < cn; i++)
+    //                buf[i] = saturate_cast<short>(s.val[i]);
+    //            for (; i < unroll_to; i++)
+    //                buf[i] = buf[i - cn];
+    //        }
+    //        break;
+    //    case CV_32S:
+    //        {
+    //            int * buf = (int *)_buf;
+    //            for (i = 0; i < cn; i++)
+    //                buf[i] = saturate_cast<int>(s.val[i]);
+    //            for (; i < unroll_to; i++)
+    //                buf[i] = buf[i - cn];
+    //        }
+    //        break;
+    //    case CV_32F:
+    //        {
+    //            float * buf = (float *)_buf;
+    //            for (i = 0; i < cn; i++)
+    //                buf[i] = saturate_cast<float>(s.val[i]);
+    //            for (; i < unroll_to; i++)
+    //                buf[i] = buf[i - cn];
+    //        }
+    //        break;
+    //    case CV_64F:
+    //        {
+    //            double * buf = (double *)_buf;
+    //            for (i = 0; i < cn; i++)
+    //                buf[i] = saturate_cast<double>(s.val[i]);
+    //            for (; i < unroll_to; i++)
+    //                buf[i] = buf[i - cn];
+    //            break;
+    //        }
+    //    default:
+    //        CV_Error(CV_StsUnsupportedFormat, "");
+    //}
+}
+
+
+export var CV_MAX_DIM = alvision_module.CV_MAX_DIM;
+
+/**
+ * random shuffle array in place
+ * @param array
+ */
+export function random_shuffle<T>(array: Array<T>): Array<T> {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
 }

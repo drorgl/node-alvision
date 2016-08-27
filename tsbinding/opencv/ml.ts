@@ -46,6 +46,7 @@ var alvision_module = require('../../lib/bindings.js');
 //import * as _constants from './Constants'
 import * as _st from './static';
 import * as _mat from './Mat';
+import * as _matx from './Matx';
 import * as _types from './Types';
 import * as _core from './Core';
 import * as _base from './Base';
@@ -203,6 +204,7 @@ export namespace ml {
             missch? : _st.char /*= '?'*/): TrainData;
 
 
+        getSubVector(vec: _mat.Mat, idx: _mat.Mat): _mat.Mat;
     }
 
     export interface TrainData {
@@ -216,148 +218,149 @@ export namespace ml {
           getNSamples() : _st.int;
           getNVars() : _st.int;
           getNAllVars() : _st.int;
-        //
-        //    CV_WRAP virtual void getSample(InputArray varIdx, int sidx, float* buf) const = 0;
+        
+          //getSample(varIdx: _st.InputArray, sidx: _st.int , float* buf): void;
           getSamples(): _mat.Mat;
           getMissing() : _mat.Mat;
-        //
-        //    /** @brief Returns matrix of train samples
-        //
-        //    @param layout The requested layout. If it's different from the initial one, the matrix is
-        //        transposed. See ml::SampleTypes.
-        //    @param compressSamples if true, the function returns only the training samples (specified by
-        //        sampleIdx)
-        //    @param compressVars if true, the function returns the shorter training samples, containing only
-        //        the active variables.
-        //
-        //    In current implementation the function tries to avoid physical data copying and returns the
-        //    matrix stored inside TrainData (unless the transposition or compression is needed).
-        //     */
-        //    CV_WRAP virtual Mat getTrainSamples(int layout=ROW_SAMPLE,
-        //                                bool compressSamples=true,
-        //                                bool compressVars=true) const = 0;
-        //
-        //    /** @brief Returns the vector of responses
-        //
-        //    The function returns ordered or the original categorical responses. Usually it's used in
-        //    regression algorithms.
-        //     */
-        //    CV_WRAP virtual Mat getTrainResponses() const = 0;
-        //
-        //    /** @brief Returns the vector of normalized categorical responses
-        //
-        //    The function returns vector of responses. Each response is integer from `0` to `<number of
-        //    classes>-1`. The actual label value can be retrieved then from the class label vector, see
-        //    TrainData::getClassLabels.
-        //     */
-        //    CV_WRAP virtual Mat getTrainNormCatResponses() const = 0;
-        //    CV_WRAP virtual Mat getTestResponses() const = 0;
-        //    CV_WRAP virtual Mat getTestNormCatResponses() const = 0;
-        //    CV_WRAP virtual Mat getResponses() const = 0;
-        //    CV_WRAP virtual Mat getNormCatResponses() const = 0;
-        //    CV_WRAP virtual Mat getSampleWeights() const = 0;
-        //    CV_WRAP virtual Mat getTrainSampleWeights() const = 0;
-        //    CV_WRAP virtual Mat getTestSampleWeights() const = 0;
-        //    CV_WRAP virtual Mat getVarIdx() const = 0;
-        //    CV_WRAP virtual Mat getVarType() const = 0;
-        //    CV_WRAP virtual int getResponseType() const = 0;
-        //    CV_WRAP virtual Mat getTrainSampleIdx() const = 0;
-        //    CV_WRAP virtual Mat getTestSampleIdx() const = 0;
-        //    CV_WRAP virtual void getValues(int vi, InputArray sidx, float* values) const = 0;
-        //    virtual void getNormCatValues(int vi, InputArray sidx, int* values) const = 0;
-        //    CV_WRAP virtual Mat getDefaultSubstValues() const = 0;
-        //
-        //    CV_WRAP virtual int getCatCount(int vi) const = 0;
-        //
-        //    /** @brief Returns the vector of class labels
-        //
-        //    The function returns vector of unique labels occurred in the responses.
-        //     */
-        //    CV_WRAP virtual Mat getClassLabels() const = 0;
-        //
-        //    CV_WRAP virtual Mat getCatOfs() const = 0;
-        //    CV_WRAP virtual Mat getCatMap() const = 0;
-        //
-        //    /** @brief Splits the training data into the training and test parts
-        //    @sa TrainData::setTrainTestSplitRatio
-        //     */
-        //    CV_WRAP virtual void setTrainTestSplit(int count, bool shuffle=true) = 0;
+        
+            /** @brief Returns matrix of train samples
+        
+            @param layout The requested layout. If it's different from the initial one, the matrix is
+                transposed. See ml::SampleTypes.
+            @param compressSamples if true, the function returns only the training samples (specified by
+                sampleIdx)
+            @param compressVars if true, the function returns the shorter training samples, containing only
+                the active variables.
+        
+            In current implementation the function tries to avoid physical data copying and returns the
+            matrix stored inside TrainData (unless the transposition or compression is needed).
+             */
+          getTrainSamples(layout?: _st.int /*= ROW_SAMPLE*/,
+              compressSamples?: boolean /*= true*/,
+              compressVars? : boolean /*= true*/)   : _mat.Mat;
+        
+            /** @brief Returns the vector of responses
+        
+            The function returns ordered or the original categorical responses. Usually it's used in
+            regression algorithms.
+             */
+            getTrainResponses() : _mat.Mat
+        
+            /** @brief Returns the vector of normalized categorical responses
+        
+            The function returns vector of responses. Each response is integer from `0` to `<number of
+            classes>-1`. The actual label value can be retrieved then from the class label vector, see
+            TrainData::getClassLabels.
+             */
+            getTrainNormCatResponses(): _mat.Mat;
+            getTestResponses() : _mat.Mat;
+            getTestNormCatResponses() : _mat.Mat;
+            getResponses() : _mat.Mat;
+            getNormCatResponses() : _mat.Mat;
+            getSampleWeights() : _mat.Mat;
+            getTrainSampleWeights() : _mat.Mat;
+            getTestSampleWeights() : _mat.Mat;
+            getVarIdx() : _mat.Mat;
+            getVarType() : _mat.Mat;
+            getResponseType() : _mat.Mat;
+            getTrainSampleIdx() : _mat.Mat;
+            getTestSampleIdx() : _mat.Mat;
+            //getValues(vi: _st.int, sidx: _st.InputArray , float* values): void;
+            //getNormCatValues(vi: _st.int, sidx: _st.InputArray , int* values): void;
+            getDefaultSubstValues(): _mat.Mat;
+        
+            getCatCount(vi: _st.int ): _st.int;
+        
+            /** @brief Returns the vector of class labels
+        
+            The function returns vector of unique labels occurred in the responses.
+             */
+            getClassLabels() : _mat.Mat;
+        
+            getCatOfs() : _mat.Mat;
+            getCatMap() : _mat.Mat;
+        
+            /** @brief Splits the training data into the training and test parts
+            @sa TrainData::setTrainTestSplitRatio
+             */
+            setTrainTestSplit(count: _st.int , shuffle? : boolean /*= true*/): void;
 
-        //    /** @brief Splits the training data into the training and test parts
-        //
-        //    The function selects a subset of specified relative size and then returns it as the training
-        //    set. If the function is not called, all the data is used for training. Please, note that for
-        //    each of TrainData::getTrain\* there is corresponding TrainData::getTest\*, so that the test
-        //    subset can be retrieved and processed as well.
-        //    @sa TrainData::setTrainTestSplit
-        //     */
-        //    CV_WRAP virtual void setTrainTestSplitRatio(double ratio, bool shuffle=true) = 0;
-        //    CV_WRAP virtual void shuffleTrainTest() = 0;
-        //
-        //    /** @brief Returns matrix of test samples */
-        //    CV_WRAP Mat getTestSamples() const;
-        //
-        //    CV_WRAP static Mat getSubVector(const Mat& vec, const Mat& idx);
-        //
+            /** @brief Splits the training data into the training and test parts
+        
+            The function selects a subset of specified relative size and then returns it as the training
+            set. If the function is not called, all the data is used for training. Please, note that for
+            each of TrainData::getTrain\* there is corresponding TrainData::getTest\*, so that the test
+            subset can be retrieved and processed as well.
+            @sa TrainData::setTrainTestSplit
+             */
+            setTrainTestSplitRatio(ratio : _st.double, shuffle ? : boolean /*= true*/) : void;
+            shuffleTrainTest() : void;
+        
+            /** @brief Returns matrix of test samples */
+            getTestSamples() : _mat.Mat;
+        
+            
+        
 
     };
 
     export var TrainData: TrainDataStatic = alvision_module.TrainData;
 
+    export enum StatModelFlags {
+        UPDATE_MODEL = 1,
+        RAW_OUTPUT = 1, //!< makes the method return the raw results (the sum), not the class label
+        COMPRESSED_INPUT = 2,
+        PREPROCESSED_INPUT = 4
+    };
     /** @brief Base class for statistical models in OpenCV ML.
      */
-    interface StatModel extends _core.Algorithm {
+    export interface StatModel extends _core.Algorithm {
         //public:
-        //    /** Predict options */
-        //    enum Flags {
-        //        UPDATE_MODEL = 1,
-        //        RAW_OUTPUT=1, //!< makes the method return the raw results (the sum), not the class label
-        //        COMPRESSED_INPUT=2,
-        //        PREPROCESSED_INPUT=4
-        //    };
-        //
-        //    /** @brief Returns the number of variables in training samples */
-        //    CV_WRAP virtual int getVarCount() const = 0;
-        //
-        //    CV_WRAP virtual bool empty() const;
-        //
-        //    /** @brief Returns true if the model is trained */
-        //    CV_WRAP virtual bool isTrained() const = 0;
-        //    /** @brief Returns true if the model is classifier */
-        //    CV_WRAP virtual bool isClassifier() const = 0;
-        //
-        //    /** @brief Trains the statistical model
-        //
-        //    @param trainData training data that can be loaded from file using TrainData::loadFromCSV or
-        //        created with TrainData::create.
-        //    @param flags optional flags, depending on the model. Some of the models can be updated with the
-        //        new training samples, not completely overwritten (such as NormalBayesClassifier or ANN_MLP).
-        //     */
-        //    CV_WRAP virtual bool train( const Ptr<TrainData>& trainData, int flags=0 );
-        //
-        //    /** @brief Trains the statistical model
-        //
-        //    @param samples training samples
-        //    @param layout See ml::SampleTypes.
-        //    @param responses vector of responses associated with the training samples.
-        //    */
-        //    CV_WRAP virtual bool train( InputArray samples, int layout, InputArray responses );
-        //
-        //    /** @brief Computes error on the training or test dataset
-        //
-        //    @param data the training data
-        //    @param test if true, the error is computed over the test subset of the data, otherwise it's
-        //        computed over the training subset of the data. Please note that if you loaded a completely
-        //        different dataset to evaluate already trained classifier, you will probably want not to set
-        //        the test subset at all with TrainData::setTrainTestSplitRatio and specify test=false, so
-        //        that the error is computed for the whole new set. Yes, this sounds a bit confusing.
-        //    @param resp the optional output responses.
-        //
-        //    The method uses StatModel::predict to compute the error. For regression models the error is
-        //    computed as RMS, for classifiers - as a percent of missclassified samples (0%-100%).
-        //     */
-        //    CV_WRAP virtual float calcError( const Ptr<TrainData>& data, bool test, OutputArray resp ) const;
-        //
+            /** Predict options */
+           
+        
+            /** @brief Returns the number of variables in training samples */
+        getVarCount(): _st.int;
+        
+        empty(): boolean;
+        
+            /** @brief Returns true if the model is trained */
+        isTrained(): boolean;
+            /** @brief Returns true if the model is classifier */
+        isClassifier(): boolean;
+        
+            /** @brief Trains the statistical model
+        
+            @param trainData training data that can be loaded from file using TrainData::loadFromCSV or
+                created with TrainData::create.
+            @param flags optional flags, depending on the model. Some of the models can be updated with the
+                new training samples, not completely overwritten (such as NormalBayesClassifier or ANN_MLP).
+             */
+        train(trainData: TrainData, flags?: _st.int /*= 0*/) : boolean;
+        
+            /** @brief Trains the statistical model
+        
+            @param samples training samples
+            @param layout See ml::SampleTypes.
+            @param responses vector of responses associated with the training samples.
+            */
+        train(samples: _st.InputArray, layout: _st.int, responses: _st.InputArray ): boolean;
+        
+            /** @brief Computes error on the training or test dataset
+        
+            @param data the training data
+            @param test if true, the error is computed over the test subset of the data, otherwise it's
+                computed over the training subset of the data. Please note that if you loaded a completely
+                different dataset to evaluate already trained classifier, you will probably want not to set
+                the test subset at all with TrainData::setTrainTestSplitRatio and specify test=false, so
+                that the error is computed for the whole new set. Yes, this sounds a bit confusing.
+            @param resp the optional output responses.
+        
+            The method uses StatModel::predict to compute the error. For regression models the error is
+            computed as RMS, for classifiers - as a percent of missclassified samples (0%-100%).
+             */
+        calcError(data: TrainData, test: boolean, resp: _st.OutputArray ) : _st.float ;
+        
             /** @brief Predicts response(s) for the provided sample(s)
         
             @param samples The input samples, floating-point matrix
@@ -385,7 +388,13 @@ export namespace ml {
     
     @sa @ref ml_intro_bayes
      */
-    interface NormalBayesClassifier extends StatModel {
+    interface NormalBayesClassifierStatic {
+            /** Creates empty model
+            Use StatModel::train to train the model after creation. */
+        create(): NormalBayesClassifier;
+    }
+
+    export interface NormalBayesClassifier extends StatModel {
         //public:
         //    /** @brief Predicts the response for sample(s).
         //
@@ -395,13 +404,13 @@ export namespace ml {
         //    The vector outputProbs contains the output probabilities corresponding to each element of
         //    result.
         //     */
-        //    CV_WRAP virtual float predictProb( InputArray inputs, OutputArray outputs,
+        //    float predictProb( InputArray inputs, OutputArray outputs,
         //                               OutputArray outputProbs, int flags=0 ) const = 0;
         //
-        //    /** Creates empty model
-        //    Use StatModel::train to train the model after creation. */
-        //    CV_WRAP static Ptr<NormalBayesClassifier> create();
+       
     };
+
+    export var NormalBayesClassifier: NormalBayesClassifierStatic = alvision_module.NormalBayesClassifier;
 
     /****************************************************************************************\
     *                          K-Nearest Neighbour Classifier                                *
@@ -411,78 +420,85 @@ export namespace ml {
     
     @sa @ref ml_intro_knn
      */
-    interface KNearest extends StatModel {
+
+     
+         /** @brief Implementations of KNearest algorithm
+            */
+         export enum KNearestTypes
+         {
+             BRUTE_FORCE=1,
+             KDTREE=2
+         };
+     
+
+    interface KNearestStatic {
+            /** @brief Creates the empty model
+        
+            The static method creates empty %KNearest classifier. It should be then trained using StatModel::train method.
+             */
+        create(): KNearest;
+    }
+    export interface KNearest extends StatModel {
         //public:
-        //
-        //    /** Default number of neighbors to use in predict method. */
-        //    /** @see setDefaultK */
-        //    CV_WRAP virtual int getDefaultK() const = 0;
-        //    /** @copybrief getDefaultK @see getDefaultK */
-        //    CV_WRAP virtual void setDefaultK(int val) = 0;
-        //
-        //    /** Whether classification or regression model should be trained. */
-        //    /** @see setIsClassifier */
-        //    CV_WRAP virtual bool getIsClassifier() const = 0;
-        //    /** @copybrief getIsClassifier @see getIsClassifier */
-        //    CV_WRAP virtual void setIsClassifier(bool val) = 0;
-        //
-        //    /** Parameter for KDTree implementation. */
-        //    /** @see setEmax */
-        //    CV_WRAP virtual int getEmax() const = 0;
-        //    /** @copybrief getEmax @see getEmax */
-        //    CV_WRAP virtual void setEmax(int val) = 0;
-        //
-        //    /** %Algorithm type, one of KNearest::Types. */
-        //    /** @see setAlgorithmType */
-        //    CV_WRAP virtual int getAlgorithmType() const = 0;
-        //    /** @copybrief getAlgorithmType @see getAlgorithmType */
-        //    CV_WRAP virtual void setAlgorithmType(int val) = 0;
-        //
-        //    /** @brief Finds the neighbors and predicts responses for input vectors.
-        //
-        //    @param samples Input samples stored by rows. It is a single-precision floating-point matrix of
-        //        `<number_of_samples> * k` size.
-        //    @param k Number of used nearest neighbors. Should be greater than 1.
-        //    @param results Vector with results of prediction (regression or classification) for each input
-        //        sample. It is a single-precision floating-point vector with `<number_of_samples>` elements.
-        //    @param neighborResponses Optional output values for corresponding neighbors. It is a single-
-        //        precision floating-point matrix of `<number_of_samples> * k` size.
-        //    @param dist Optional output distances from the input vectors to the corresponding neighbors. It
-        //        is a single-precision floating-point matrix of `<number_of_samples> * k` size.
-        //
-        //    For each input vector (a row of the matrix samples), the method finds the k nearest neighbors.
-        //    In case of regression, the predicted result is a mean value of the particular vector's neighbor
-        //    responses. In case of classification, the class is determined by voting.
-        //
-        //    For each input vector, the neighbors are sorted by their distances to the vector.
-        //
-        //    In case of C++ interface you can use output pointers to empty matrices and the function will
-        //    allocate memory itself.
-        //
-        //    If only a single input vector is passed, all output matrices are optional and the predicted
-        //    value is returned by the method.
-        //
-        //    The function is parallelized with the TBB library.
-        //     */
-        //    CV_WRAP virtual float findNearest( InputArray samples, int k,
-        //                               OutputArray results,
-        //                               OutputArray neighborResponses=noArray(),
-        //                               OutputArray dist=noArray() ) const = 0;
-        //
-        //    /** @brief Implementations of KNearest algorithm
-        //       */
-        //    enum Types
-        //    {
-        //        BRUTE_FORCE=1,
-        //        KDTREE=2
-        //    };
-        //
-        //    /** @brief Creates the empty model
-        //
-        //    The static method creates empty %KNearest classifier. It should be then trained using StatModel::train method.
-        //     */
-        //    CV_WRAP static Ptr<KNearest> create();
+        
+            /** Default number of neighbors to use in predict method. */
+            /** @see setDefaultK */
+        getDefaultK(): _st.int;
+            /** @copybrief getDefaultK @see getDefaultK */
+        setDefaultK(val: _st.int): void;
+        
+            /** Whether classification or regression model should be trained. */
+            /** @see setIsClassifier */
+        getIsClassifier(): boolean;
+            /** @copybrief getIsClassifier @see getIsClassifier */
+        setIsClassifier( val : boolean): void;
+        
+            /** Parameter for KDTree implementation. */
+            /** @see setEmax */
+        getEmax(): _st.int;
+            /** @copybrief getEmax @see getEmax */
+        setEmax(val: _st.int): void;
+        
+            /** %Algorithm type, one of KNearest::Types. */
+            /** @see setAlgorithmType */
+        getAlgorithmType(): _st.int;
+        /** @copybrief getAlgorithmType @see getAlgorithmType */
+        setAlgorithmType(val: KNearestTypes | _st.int): void;
+        
+            /** @brief Finds the neighbors and predicts responses for input vectors.
+        
+            @param samples Input samples stored by rows. It is a single-precision floating-point matrix of
+                `<number_of_samples> * k` size.
+            @param k Number of used nearest neighbors. Should be greater than 1.
+            @param results Vector with results of prediction (regression or classification) for each input
+                sample. It is a single-precision floating-point vector with `<number_of_samples>` elements.
+            @param neighborResponses Optional output values for corresponding neighbors. It is a single-
+                precision floating-point matrix of `<number_of_samples> * k` size.
+            @param dist Optional output distances from the input vectors to the corresponding neighbors. It
+                is a single-precision floating-point matrix of `<number_of_samples> * k` size.
+        
+            For each input vector (a row of the matrix samples), the method finds the k nearest neighbors.
+            In case of regression, the predicted result is a mean value of the particular vector's neighbor
+            responses. In case of classification, the class is determined by voting.
+        
+            For each input vector, the neighbors are sorted by their distances to the vector.
+        
+            In case of C++ interface you can use output pointers to empty matrices and the function will
+            allocate memory itself.
+        
+            If only a single input vector is passed, all output matrices are optional and the predicted
+            value is returned by the method.
+        
+            The function is parallelized with the TBB library.
+             */
+        findNearest(samples: _st.InputArray, k: _st.int ,
+            results: _st.OutputArray ,
+            neighborResponses?: _st.OutputArray /*= noArray()*/,
+            dist?: _st.OutputArray /*= noArray()*/): _st.float;
+       
+        
     };
+    export var KNearest: KNearestStatic = alvision_module.KNearest;
 
     /****************************************************************************************\
     *                                   Support Vector Machines                              *
@@ -540,6 +556,13 @@ export namespace ml {
         INTER = 5
     }
 
+            interface SVMKernel extends _core.Algorithm
+            {
+                getType(): _st.int;
+                //calc(int vcount, int n, const float* vecs, const float* another, float* results): void;
+            };
+        
+
     /** @brief Support Vector Machines.
     
     @sa @ref ml_intro_svm
@@ -573,95 +596,89 @@ export namespace ml {
 
     }
 
-    interface SVM extends StatModel {
+    export interface SVM extends StatModel {
         //public:
         //
-        //    class CV_EXPORTS Kernel : public Algorithm
-        //    {
-        //    public:
-        //        virtual int getType() const = 0;
-        //        virtual void calc( int vcount, int n, const float* vecs, const float* another, float* results ) = 0;
-        //    };
-        //
+        
             /** Type of a %SVM formulation.
             See SVM::Types. Default value is SVM::C_SVC. */
             /** @see setType */
         getType(): _st.int;
             /** @copybrief getType @see getType */
         setType(val: _st.int): void;
-        //
-        //    /** Parameter \f$\gamma\f$ of a kernel function.
-        //    For SVM::POLY, SVM::RBF, SVM::SIGMOID or SVM::CHI2. Default value is 1. */
-        //    /** @see setGamma */
-        //    CV_WRAP virtual double getGamma() const = 0;
-        //    /** @copybrief getGamma @see getGamma */
-        //    CV_WRAP virtual void setGamma(double val) = 0;
-        //
-        //    /** Parameter _coef0_ of a kernel function.
-        //    For SVM::POLY or SVM::SIGMOID. Default value is 0.*/
-        //    /** @see setCoef0 */
-        //    CV_WRAP virtual double getCoef0() const = 0;
-        //    /** @copybrief getCoef0 @see getCoef0 */
-        //    CV_WRAP virtual void setCoef0(double val) = 0;
-        //
-        //    /** Parameter _degree_ of a kernel function.
-        //    For SVM::POLY. Default value is 0. */
-        //    /** @see setDegree */
-        //    CV_WRAP virtual double getDegree() const = 0;
-        //    /** @copybrief getDegree @see getDegree */
-        //    CV_WRAP virtual void setDegree(double val) = 0;
-        //
-        //    /** Parameter _C_ of a %SVM optimization problem.
-        //    For SVM::C_SVC, SVM::EPS_SVR or SVM::NU_SVR. Default value is 0. */
-        //    /** @see setC */
-        //    CV_WRAP virtual double getC() const = 0;
-        //    /** @copybrief getC @see getC */
-        //    CV_WRAP virtual void setC(double val) = 0;
-        //
-        //    /** Parameter \f$\nu\f$ of a %SVM optimization problem.
-        //    For SVM::NU_SVC, SVM::ONE_CLASS or SVM::NU_SVR. Default value is 0. */
-        //    /** @see setNu */
-        //    CV_WRAP virtual double getNu() const = 0;
-        //    /** @copybrief getNu @see getNu */
-        //    CV_WRAP virtual void setNu(double val) = 0;
-        //
-        //    /** Parameter \f$\epsilon\f$ of a %SVM optimization problem.
-        //    For SVM::EPS_SVR. Default value is 0. */
-        //    /** @see setP */
-        //    CV_WRAP virtual double getP() const = 0;
-        //    /** @copybrief getP @see getP */
-        //    CV_WRAP virtual void setP(double val) = 0;
-        //
-        //    /** Optional weights in the SVM::C_SVC problem, assigned to particular classes.
-        //    They are multiplied by _C_ so the parameter _C_ of class _i_ becomes `classWeights(i) * C`. Thus
-        //    these weights affect the misclassification penalty for different classes. The larger weight,
-        //    the larger penalty on misclassification of data from the corresponding class. Default value is
-        //    empty Mat. */
-        //    /** @see setClassWeights */
-        //    CV_WRAP virtual cv::Mat getClassWeights() const = 0;
-        //    /** @copybrief getClassWeights @see getClassWeights */
-        //    CV_WRAP virtual void setClassWeights(const cv::Mat &val) = 0;
-        //
-        //    /** Termination criteria of the iterative %SVM training procedure which solves a partial
-        //    case of constrained quadratic optimization problem.
-        //    You can specify tolerance and/or the maximum number of iterations. Default value is
-        //    `TermCriteria( TermCriteria::MAX_ITER + TermCriteria::EPS, 1000, FLT_EPSILON )`; */
-        //    /** @see setTermCriteria */
-        //    CV_WRAP virtual cv::TermCriteria getTermCriteria() const = 0;
-        //    /** @copybrief getTermCriteria @see getTermCriteria */
-        //    CV_WRAP virtual void setTermCriteria(const cv::TermCriteria &val) = 0;
-        //
-        //    /** Type of a %SVM kernel.
-        //    See SVM::KernelTypes. Default value is SVM::RBF. */
-        //    CV_WRAP virtual int getKernelType() const = 0;
-        //
-        //    /** Initialize with one of predefined kernels.
-        //    See SVM::KernelTypes. */
-        //    CV_WRAP virtual void setKernel(int kernelType) = 0;
-        //
-        //    /** Initialize with custom kernel.
-        //    See SVM::Kernel class for implementation details */
-        //    virtual void setCustomKernel(const Ptr<Kernel> &_kernel) = 0;
+        
+            /** Parameter \f$\gamma\f$ of a kernel function.
+            For SVM::POLY, SVM::RBF, SVM::SIGMOID or SVM::CHI2. Default value is 1. */
+            /** @see setGamma */
+        getGamma(): _st.double;
+            /** @copybrief getGamma @see getGamma */
+        setGamma(val: _st.double): void;
+        
+            /** Parameter _coef0_ of a kernel function.
+            For SVM::POLY or SVM::SIGMOID. Default value is 0.*/
+            /** @see setCoef0 */
+        getCoef0(): _st.double;
+            /** @copybrief getCoef0 @see getCoef0 */
+        setCoef0(val: _st.double): void;
+        
+            /** Parameter _degree_ of a kernel function.
+            For SVM::POLY. Default value is 0. */
+            /** @see setDegree */
+        getDegree(): _st.double 
+            /** @copybrief getDegree @see getDegree */
+        setDegree(val: _st.double): void;
+        
+            /** Parameter _C_ of a %SVM optimization problem.
+            For SVM::C_SVC, SVM::EPS_SVR or SVM::NU_SVR. Default value is 0. */
+            /** @see setC */
+        getC(): _st.double 
+            /** @copybrief getC @see getC */
+        setC(val: _st.double): void;
+        
+            /** Parameter \f$\nu\f$ of a %SVM optimization problem.
+            For SVM::NU_SVC, SVM::ONE_CLASS or SVM::NU_SVR. Default value is 0. */
+            /** @see setNu */
+        getNu() : _st.double;
+            /** @copybrief getNu @see getNu */
+        setNu(val: _st.double ) : void ;
+        
+            /** Parameter \f$\epsilon\f$ of a %SVM optimization problem.
+            For SVM::EPS_SVR. Default value is 0. */
+            /** @see setP */
+        getP() : _st.double;
+            /** @copybrief getP @see getP */
+        setP(val: _st.double) : void ;
+        
+            /** Optional weights in the SVM::C_SVC problem, assigned to particular classes.
+            They are multiplied by _C_ so the parameter _C_ of class _i_ becomes `classWeights(i) * C`. Thus
+            these weights affect the misclassification penalty for different classes. The larger weight,
+            the larger penalty on misclassification of data from the corresponding class. Default value is
+            empty Mat. */
+            /** @see setClassWeights */
+        getClassWeights() : _mat.Mat;
+            /** @copybrief getClassWeights @see getClassWeights */
+        setClassWeights(val: _mat.Mat) : void ;
+        
+            /** Termination criteria of the iterative %SVM training procedure which solves a partial
+            case of constrained quadratic optimization problem.
+            You can specify tolerance and/or the maximum number of iterations. Default value is
+            `TermCriteria( TermCriteria::MAX_ITER + TermCriteria::EPS, 1000, FLT_EPSILON )`; */
+            /** @see setTermCriteria */
+        getTermCriteria() : _types.TermCriteria;
+            /** @copybrief getTermCriteria @see getTermCriteria */
+        setTermCriteria(val : _types.TermCriteria ) : void ;
+        
+            /** Type of a %SVM kernel.
+            See SVM::KernelTypes. Default value is SVM::RBF. */
+        getKernelType() : _st.int;
+        
+            /** Initialize with one of predefined kernels.
+            See SVM::KernelTypes. */
+        setKernel(kernelType : _st.int ) : void ;
+        
+            /** Initialize with custom kernel.
+            See SVM::Kernel class for implementation details */
+        setCustomKernel(_kernel : SVMKernel) : void ;
         //
         
         
@@ -718,39 +735,39 @@ export namespace ml {
              coeffGrid? : ParamGrid /*= SVM.getDefaultGrid(SVM::COEF)  */,
              degreeGrid?: ParamGrid /*= SVM.getDefaultGrid(SVM::DEGREE)*/,
              balanced? : boolean /*= false*/) : boolean;
-        //
-        //    /** @brief Retrieves all the support vectors
-        //
-        //    The method returns all the support vectors as a floating-point matrix, where support vectors are
-        //    stored as matrix rows.
-        //     */
-        //    CV_WRAP virtual Mat getSupportVectors() const = 0;
-        //
-        //    /** @brief Retrieves all the uncompressed support vectors of a linear %SVM
-        //
-        //    The method returns all the uncompressed support vectors of a linear %SVM that the compressed
-        //    support vector, used for prediction, was derived from. They are returned in a floating-point
-        //    matrix, where the support vectors are stored as matrix rows.
-        //     */
-        //    CV_WRAP Mat getUncompressedSupportVectors() const;
-        //
-        //    /** @brief Retrieves the decision function
-        //
-        //    @param i the index of the decision function. If the problem solved is regression, 1-class or
-        //        2-class classification, then there will be just one decision function and the index should
-        //        always be 0. Otherwise, in the case of N-class classification, there will be \f$N(N-1)/2\f$
-        //        decision functions.
-        //    @param alpha the optional output vector for weights, corresponding to different support vectors.
-        //        In the case of linear %SVM all the alpha's will be 1's.
-        //    @param svidx the optional output vector of indices of support vectors within the matrix of
-        //        support vectors (which can be retrieved by SVM::getSupportVectors). In the case of linear
-        //        %SVM each decision function consists of a single "compressed" support vector.
-        //
-        //    The method returns rho parameter of the decision function, a scalar subtracted from the weighted
-        //    sum of kernel responses.
-        //     */
-        //    CV_WRAP virtual double getDecisionFunction(int i, OutputArray alpha, OutputArray svidx) const = 0;
-        //
+        
+            /** @brief Retrieves all the support vectors
+        
+            The method returns all the support vectors as a floating-point matrix, where support vectors are
+            stored as matrix rows.
+             */
+        getSupportVectors(): _mat.Mat;
+        
+            /** @brief Retrieves all the uncompressed support vectors of a linear %SVM
+        
+            The method returns all the uncompressed support vectors of a linear %SVM that the compressed
+            support vector, used for prediction, was derived from. They are returned in a floating-point
+            matrix, where the support vectors are stored as matrix rows.
+             */
+        getUncompressedSupportVectors(): _mat.Mat;
+        
+            /** @brief Retrieves the decision function
+        
+            @param i the index of the decision function. If the problem solved is regression, 1-class or
+                2-class classification, then there will be just one decision function and the index should
+                always be 0. Otherwise, in the case of N-class classification, there will be \f$N(N-1)/2\f$
+                decision functions.
+            @param alpha the optional output vector for weights, corresponding to different support vectors.
+                In the case of linear %SVM all the alpha's will be 1's.
+            @param svidx the optional output vector of indices of support vectors within the matrix of
+                support vectors (which can be retrieved by SVM::getSupportVectors). In the case of linear
+                %SVM each decision function consists of a single "compressed" support vector.
+        
+            The method returns rho parameter of the decision function, a scalar subtracted from the weighted
+            sum of kernel responses.
+             */
+        getDecisionFunction(i: _st.int, alpha: _st.OutputArray, svidx: _st.OutputArray ): _st.double;
+        
     };
 
     export var SVM: SVMStatic = alvision_module.SVM;
@@ -759,192 +776,202 @@ export namespace ml {
     *                              Expectation - Maximization                                *
     \****************************************************************************************/
 
+
+
+      //! Type of covariation matrices
+           export enum EMTypes {
+                /** A scaled identity matrix \f$\mu_k * I\f$. There is the only
+                parameter \f$\mu_k\f$ to be estimated for each matrix. The option may be used in special cases,
+                when the constraint is relevant, or as a first step in the optimization (for example in case
+                when the data is preprocessed with PCA). The results of such preliminary estimation may be
+                passed again to the optimization procedure, this time with
+                covMatType=EM::COV_MAT_DIAGONAL. */
+                COV_MAT_SPHERICAL=0,
+                /** A diagonal matrix with positive diagonal elements. The number of
+                free parameters is d for each matrix. This is most commonly used option yielding good
+                estimation results. */
+                COV_MAT_DIAGONAL=1,
+                /** A symmetric positively defined matrix. The number of free
+                parameters in each matrix is about \f$d^2/2\f$. It is not recommended to use this option, unless
+                there is pretty accurate initial estimation of the parameters and/or a huge number of
+                training samples. */
+                COV_MAT_GENERIC=2,
+                COV_MAT_DEFAULT=COV_MAT_DIAGONAL
+            };
+        
+            //! Default parameters
+            export enum EMDefault {DEFAULT_NCLUSTERS=5, DEFAULT_MAX_ITERS=100};
+        
+            //! The initial step
+            export enum EMStartStep {START_E_STEP=1, START_M_STEP=2, START_AUTO_STEP=0};
+        
+
     /** @brief The class implements the Expectation Maximization algorithm.
     
     @sa @ref ml_intro_em
      */
-    interface EM extends StatModel {
-        //public:
-        //    //! Type of covariation matrices
-        //    enum Types {
-        //        /** A scaled identity matrix \f$\mu_k * I\f$. There is the only
-        //        parameter \f$\mu_k\f$ to be estimated for each matrix. The option may be used in special cases,
-        //        when the constraint is relevant, or as a first step in the optimization (for example in case
-        //        when the data is preprocessed with PCA). The results of such preliminary estimation may be
-        //        passed again to the optimization procedure, this time with
-        //        covMatType=EM::COV_MAT_DIAGONAL. */
-        //        COV_MAT_SPHERICAL=0,
-        //        /** A diagonal matrix with positive diagonal elements. The number of
-        //        free parameters is d for each matrix. This is most commonly used option yielding good
-        //        estimation results. */
-        //        COV_MAT_DIAGONAL=1,
-        //        /** A symmetric positively defined matrix. The number of free
-        //        parameters in each matrix is about \f$d^2/2\f$. It is not recommended to use this option, unless
-        //        there is pretty accurate initial estimation of the parameters and/or a huge number of
-        //        training samples. */
-        //        COV_MAT_GENERIC=2,
-        //        COV_MAT_DEFAULT=COV_MAT_DIAGONAL
-        //    };
-        //
-        //    //! Default parameters
-        //    enum {DEFAULT_NCLUSTERS=5, DEFAULT_MAX_ITERS=100};
-        //
-        //    //! The initial step
-        //    enum {START_E_STEP=1, START_M_STEP=2, START_AUTO_STEP=0};
-        //
-        //    /** The number of mixture components in the Gaussian mixture model.
-        //    Default value of the parameter is EM::DEFAULT_NCLUSTERS=5. Some of %EM implementation could
-        //    determine the optimal number of mixtures within a specified value range, but that is not the
-        //    case in ML yet. */
-        //    /** @see setClustersNumber */
-        //    CV_WRAP virtual int getClustersNumber() const = 0;
-        //    /** @copybrief getClustersNumber @see getClustersNumber */
-        //    CV_WRAP virtual void setClustersNumber(int val) = 0;
-        //
-        //    /** Constraint on covariance matrices which defines type of matrices.
-        //    See EM::Types. */
-        //    /** @see setCovarianceMatrixType */
-        //    CV_WRAP virtual int getCovarianceMatrixType() const = 0;
-        //    /** @copybrief getCovarianceMatrixType @see getCovarianceMatrixType */
-        //    CV_WRAP virtual void setCovarianceMatrixType(int val) = 0;
-        //
-        //    /** The termination criteria of the %EM algorithm.
-        //    The %EM algorithm can be terminated by the number of iterations termCrit.maxCount (number of
-        //    M-steps) or when relative change of likelihood logarithm is less than termCrit.epsilon. Default
-        //    maximum number of iterations is EM::DEFAULT_MAX_ITERS=100. */
-        //    /** @see setTermCriteria */
-        //    CV_WRAP virtual TermCriteria getTermCriteria() const = 0;
-        //    /** @copybrief getTermCriteria @see getTermCriteria */
-        //    CV_WRAP virtual void setTermCriteria(const TermCriteria &val) = 0;
-        //
-        //    /** @brief Returns weights of the mixtures
-        //
-        //    Returns vector with the number of elements equal to the number of mixtures.
-        //     */
-        //    CV_WRAP virtual Mat getWeights() const = 0;
-        //    /** @brief Returns the cluster centers (means of the Gaussian mixture)
-        //
-        //    Returns matrix with the number of rows equal to the number of mixtures and number of columns
-        //    equal to the space dimensionality.
-        //     */
-        //    CV_WRAP virtual Mat getMeans() const = 0;
-        //    /** @brief Returns covariation matrices
-        //
-        //    Returns vector of covariation matrices. Number of matrices is the number of gaussian mixtures,
-        //    each matrix is a square floating-point matrix NxN, where N is the space dimensionality.
-        //     */
-        //    CV_WRAP virtual void getCovs(CV_OUT std::vector<Mat>& covs) const = 0;
-        //
-        //    /** @brief Returns a likelihood logarithm value and an index of the most probable mixture component
-        //    for the given sample.
-        //
-        //    @param sample A sample for classification. It should be a one-channel matrix of
-        //        \f$1 \times dims\f$ or \f$dims \times 1\f$ size.
-        //    @param probs Optional output matrix that contains posterior probabilities of each component
-        //        given the sample. It has \f$1 \times nclusters\f$ size and CV_64FC1 type.
-        //
-        //    The method returns a two-element double vector. Zero element is a likelihood logarithm value for
-        //    the sample. First element is an index of the most probable mixture component for the given
-        //    sample.
-        //     */
-        //    CV_WRAP virtual Vec2d predict2(InputArray sample, OutputArray probs) const = 0;
-        //
-        //    /** @brief Estimate the Gaussian mixture parameters from a samples set.
-        //
-        //    This variation starts with Expectation step. Initial values of the model parameters will be
-        //    estimated by the k-means algorithm.
-        //
-        //    Unlike many of the ML models, %EM is an unsupervised learning algorithm and it does not take
-        //    responses (class labels or function values) as input. Instead, it computes the *Maximum
-        //    Likelihood Estimate* of the Gaussian mixture parameters from an input sample set, stores all the
-        //    parameters inside the structure: \f$p_{i,k}\f$ in probs, \f$a_k\f$ in means , \f$S_k\f$ in
-        //    covs[k], \f$\pi_k\f$ in weights , and optionally computes the output "class label" for each
-        //    sample: \f$\texttt{labels}_i=\texttt{arg max}_k(p_{i,k}), i=1..N\f$ (indices of the most
-        //    probable mixture component for each sample).
-        //
-        //    The trained model can be used further for prediction, just like any other classifier. The
-        //    trained model is similar to the NormalBayesClassifier.
-        //
-        //    @param samples Samples from which the Gaussian mixture model will be estimated. It should be a
-        //        one-channel matrix, each row of which is a sample. If the matrix does not have CV_64F type
-        //        it will be converted to the inner matrix of such type for the further computing.
-        //    @param logLikelihoods The optional output matrix that contains a likelihood logarithm value for
-        //        each sample. It has \f$nsamples \times 1\f$ size and CV_64FC1 type.
-        //    @param labels The optional output "class label" for each sample:
-        //        \f$\texttt{labels}_i=\texttt{arg max}_k(p_{i,k}), i=1..N\f$ (indices of the most probable
-        //        mixture component for each sample). It has \f$nsamples \times 1\f$ size and CV_32SC1 type.
-        //    @param probs The optional output matrix that contains posterior probabilities of each Gaussian
-        //        mixture component given the each sample. It has \f$nsamples \times nclusters\f$ size and
-        //        CV_64FC1 type.
-        //     */
-        //    CV_WRAP virtual bool trainEM(InputArray samples,
-        //                         OutputArray logLikelihoods=noArray(),
-        //                         OutputArray labels=noArray(),
-        //                         OutputArray probs=noArray()) = 0;
-        //
-        //    /** @brief Estimate the Gaussian mixture parameters from a samples set.
-        //
-        //    This variation starts with Expectation step. You need to provide initial means \f$a_k\f$ of
-        //    mixture components. Optionally you can pass initial weights \f$\pi_k\f$ and covariance matrices
-        //    \f$S_k\f$ of mixture components.
-        //
-        //    @param samples Samples from which the Gaussian mixture model will be estimated. It should be a
-        //        one-channel matrix, each row of which is a sample. If the matrix does not have CV_64F type
-        //        it will be converted to the inner matrix of such type for the further computing.
-        //    @param means0 Initial means \f$a_k\f$ of mixture components. It is a one-channel matrix of
-        //        \f$nclusters \times dims\f$ size. If the matrix does not have CV_64F type it will be
-        //        converted to the inner matrix of such type for the further computing.
-        //    @param covs0 The vector of initial covariance matrices \f$S_k\f$ of mixture components. Each of
-        //        covariance matrices is a one-channel matrix of \f$dims \times dims\f$ size. If the matrices
-        //        do not have CV_64F type they will be converted to the inner matrices of such type for the
-        //        further computing.
-        //    @param weights0 Initial weights \f$\pi_k\f$ of mixture components. It should be a one-channel
-        //        floating-point matrix with \f$1 \times nclusters\f$ or \f$nclusters \times 1\f$ size.
-        //    @param logLikelihoods The optional output matrix that contains a likelihood logarithm value for
-        //        each sample. It has \f$nsamples \times 1\f$ size and CV_64FC1 type.
-        //    @param labels The optional output "class label" for each sample:
-        //        \f$\texttt{labels}_i=\texttt{arg max}_k(p_{i,k}), i=1..N\f$ (indices of the most probable
-        //        mixture component for each sample). It has \f$nsamples \times 1\f$ size and CV_32SC1 type.
-        //    @param probs The optional output matrix that contains posterior probabilities of each Gaussian
-        //        mixture component given the each sample. It has \f$nsamples \times nclusters\f$ size and
-        //        CV_64FC1 type.
-        //    */
-        //    CV_WRAP virtual bool trainE(InputArray samples, InputArray means0,
-        //                        InputArray covs0=noArray(),
-        //                        InputArray weights0=noArray(),
-        //                        OutputArray logLikelihoods=noArray(),
-        //                        OutputArray labels=noArray(),
-        //                        OutputArray probs=noArray()) = 0;
-        //
-        //    /** @brief Estimate the Gaussian mixture parameters from a samples set.
-        //
-        //    This variation starts with Maximization step. You need to provide initial probabilities
-        //    \f$p_{i,k}\f$ to use this option.
-        //
-        //    @param samples Samples from which the Gaussian mixture model will be estimated. It should be a
-        //        one-channel matrix, each row of which is a sample. If the matrix does not have CV_64F type
-        //        it will be converted to the inner matrix of such type for the further computing.
-        //    @param probs0
-        //    @param logLikelihoods The optional output matrix that contains a likelihood logarithm value for
-        //        each sample. It has \f$nsamples \times 1\f$ size and CV_64FC1 type.
-        //    @param labels The optional output "class label" for each sample:
-        //        \f$\texttt{labels}_i=\texttt{arg max}_k(p_{i,k}), i=1..N\f$ (indices of the most probable
-        //        mixture component for each sample). It has \f$nsamples \times 1\f$ size and CV_32SC1 type.
-        //    @param probs The optional output matrix that contains posterior probabilities of each Gaussian
-        //        mixture component given the each sample. It has \f$nsamples \times nclusters\f$ size and
-        //        CV_64FC1 type.
-        //    */
-        //    CV_WRAP virtual bool trainM(InputArray samples, InputArray probs0,
-        //                        OutputArray logLikelihoods=noArray(),
-        //                        OutputArray labels=noArray(),
-        //                        OutputArray probs=noArray()) = 0;
-        //
-        //    /** Creates empty %EM model.
-        //    The model should be trained then using StatModel::train(traindata, flags) method. Alternatively, you
-        //    can use one of the EM::train\* methods or load it from file using Algorithm::load\<EM\>(filename).
-        //     */
-        //    CV_WRAP static Ptr<EM> create();
-    };
+            interface EMStatic {
+                /** Creates empty %EM model.
+            The model should be trained then using StatModel::train(traindata, flags) method. Alternatively, you
+            can use one of the EM::train\* methods or load it from file using Algorithm::load\<EM\>(filename).
+             */
+                create(): EM;
+            }
+
+            export interface EM extends StatModel {
+                //public:
+        
+                /** The number of mixture components in the Gaussian mixture model.
+                Default value of the parameter is EM::DEFAULT_NCLUSTERS=5. Some of %EM implementation could
+                determine the optimal number of mixtures within a specified value range, but that is not the
+                case in ML yet. */
+                /** @see setClustersNumber */
+                getClustersNumber(): _st.int;
+                /** @copybrief getClustersNumber @see getClustersNumber */
+                setClustersNumber(val: _st.int): void;
+        
+                /** Constraint on covariance matrices which defines type of matrices.
+                See EM::Types. */
+                /** @see setCovarianceMatrixType */
+                getCovarianceMatrixType(): _st.int;
+                /** @copybrief getCovarianceMatrixType @see getCovarianceMatrixType */
+                setCovarianceMatrixType(val: _st.int): void;
+        
+                /** The termination criteria of the %EM algorithm.
+                The %EM algorithm can be terminated by the number of iterations termCrit.maxCount (number of
+                M-steps) or when relative change of likelihood logarithm is less than termCrit.epsilon. Default
+                maximum number of iterations is EM::DEFAULT_MAX_ITERS=100. */
+                /** @see setTermCriteria */
+                getTermCriteria(): _types.TermCriteria;
+                /** @copybrief getTermCriteria @see getTermCriteria */
+                setTermCriteria(val: _types.TermCriteria): void;
+        
+                /** @brief Returns weights of the mixtures
+            
+                Returns vector with the number of elements equal to the number of mixtures.
+                 */
+                getWeights(): _mat.Mat;
+                /** @brief Returns the cluster centers (means of the Gaussian mixture)
+            
+                Returns matrix with the number of rows equal to the number of mixtures and number of columns
+                equal to the space dimensionality.
+                 */
+                getMeans(): _mat.Mat;
+                /** @brief Returns covariation matrices
+            
+                Returns vector of covariation matrices. Number of matrices is the number of gaussian mixtures,
+                each matrix is a square floating-point matrix NxN, where N is the space dimensionality.
+                 */
+                getCovs(cb: (covs: Array<_mat.Mat>) => void): void;
+        
+                /** @brief Returns a likelihood logarithm value and an index of the most probable mixture component
+                for the given sample.
+            
+                @param sample A sample for classification. It should be a one-channel matrix of
+                    \f$1 \times dims\f$ or \f$dims \times 1\f$ size.
+                @param probs Optional output matrix that contains posterior probabilities of each component
+                    given the sample. It has \f$1 \times nclusters\f$ size and CV_64FC1 type.
+            
+                The method returns a two-element double vector. Zero element is a likelihood logarithm value for
+                the sample. First element is an index of the most probable mixture component for the given
+                sample.
+                 */
+                predict2(sample: _st.InputArray, probs: _st.OutputArray): _matx.Vecd;
+        
+                /** @brief Estimate the Gaussian mixture parameters from a samples set.
+            
+                This variation starts with Expectation step. Initial values of the model parameters will be
+                estimated by the k-means algorithm.
+            
+                Unlike many of the ML models, %EM is an unsupervised learning algorithm and it does not take
+                responses (class labels or function values) as input. Instead, it computes the *Maximum
+                Likelihood Estimate* of the Gaussian mixture parameters from an input sample set, stores all the
+                parameters inside the structure: \f$p_{i,k}\f$ in probs, \f$a_k\f$ in means , \f$S_k\f$ in
+                covs[k], \f$\pi_k\f$ in weights , and optionally computes the output "class label" for each
+                sample: \f$\texttt{labels}_i=\texttt{arg max}_k(p_{i,k}), i=1..N\f$ (indices of the most
+                probable mixture component for each sample).
+            
+                The trained model can be used further for prediction, just like any other classifier. The
+                trained model is similar to the NormalBayesClassifier.
+            
+                @param samples Samples from which the Gaussian mixture model will be estimated. It should be a
+                    one-channel matrix, each row of which is a sample. If the matrix does not have CV_64F type
+                    it will be converted to the inner matrix of such type for the further computing.
+                @param logLikelihoods The optional output matrix that contains a likelihood logarithm value for
+                    each sample. It has \f$nsamples \times 1\f$ size and CV_64FC1 type.
+                @param labels The optional output "class label" for each sample:
+                    \f$\texttt{labels}_i=\texttt{arg max}_k(p_{i,k}), i=1..N\f$ (indices of the most probable
+                    mixture component for each sample). It has \f$nsamples \times 1\f$ size and CV_32SC1 type.
+                @param probs The optional output matrix that contains posterior probabilities of each Gaussian
+                    mixture component given the each sample. It has \f$nsamples \times nclusters\f$ size and
+                    CV_64FC1 type.
+                 */
+                trainEM(samples: _st.InputArray,
+                    logLikelihoods?: _st.OutputArray /*= noArray()*/,
+                    labels?: _st.OutputArray /*= noArray()*/,
+                    probs?: _st.OutputArray /*= noArray()*/): boolean;
+        
+                /** @brief Estimate the Gaussian mixture parameters from a samples set.
+            
+                This variation starts with Expectation step. You need to provide initial means \f$a_k\f$ of
+                mixture components. Optionally you can pass initial weights \f$\pi_k\f$ and covariance matrices
+                \f$S_k\f$ of mixture components.
+            
+                @param samples Samples from which the Gaussian mixture model will be estimated. It should be a
+                    one-channel matrix, each row of which is a sample. If the matrix does not have CV_64F type
+                    it will be converted to the inner matrix of such type for the further computing.
+                @param means0 Initial means \f$a_k\f$ of mixture components. It is a one-channel matrix of
+                    \f$nclusters \times dims\f$ size. If the matrix does not have CV_64F type it will be
+                    converted to the inner matrix of such type for the further computing.
+                @param covs0 The vector of initial covariance matrices \f$S_k\f$ of mixture components. Each of
+                    covariance matrices is a one-channel matrix of \f$dims \times dims\f$ size. If the matrices
+                    do not have CV_64F type they will be converted to the inner matrices of such type for the
+                    further computing.
+                @param weights0 Initial weights \f$\pi_k\f$ of mixture components. It should be a one-channel
+                    floating-point matrix with \f$1 \times nclusters\f$ or \f$nclusters \times 1\f$ size.
+                @param logLikelihoods The optional output matrix that contains a likelihood logarithm value for
+                    each sample. It has \f$nsamples \times 1\f$ size and CV_64FC1 type.
+                @param labels The optional output "class label" for each sample:
+                    \f$\texttt{labels}_i=\texttt{arg max}_k(p_{i,k}), i=1..N\f$ (indices of the most probable
+                    mixture component for each sample). It has \f$nsamples \times 1\f$ size and CV_32SC1 type.
+                @param probs The optional output matrix that contains posterior probabilities of each Gaussian
+                    mixture component given the each sample. It has \f$nsamples \times nclusters\f$ size and
+                    CV_64FC1 type.
+                */
+                trainE(samples: _st.InputArray, means0: _st.InputArray,
+                    covs0?: _st.InputArray /*= noArray()*/,
+                    weights0?: _st.InputArray /*= noArray()*/,
+                    logLikelihoods?: _st.OutputArray /*= noArray()*/,
+                    labels?: _st.OutputArray /*= noArray()*/,
+                    probs?: _st.OutputArray /*= noArray()*/): boolean;
+        
+                /** @brief Estimate the Gaussian mixture parameters from a samples set.
+            
+                This variation starts with Maximization step. You need to provide initial probabilities
+                \f$p_{i,k}\f$ to use this option.
+            
+                @param samples Samples from which the Gaussian mixture model will be estimated. It should be a
+                    one-channel matrix, each row of which is a sample. If the matrix does not have CV_64F type
+                    it will be converted to the inner matrix of such type for the further computing.
+                @param probs0
+                @param logLikelihoods The optional output matrix that contains a likelihood logarithm value for
+                    each sample. It has \f$nsamples \times 1\f$ size and CV_64FC1 type.
+                @param labels The optional output "class label" for each sample:
+                    \f$\texttt{labels}_i=\texttt{arg max}_k(p_{i,k}), i=1..N\f$ (indices of the most probable
+                    mixture component for each sample). It has \f$nsamples \times 1\f$ size and CV_32SC1 type.
+                @param probs The optional output matrix that contains posterior probabilities of each Gaussian
+                    mixture component given the each sample. It has \f$nsamples \times nclusters\f$ size and
+                    CV_64FC1 type.
+                */
+                trainM(samples: _st.InputArray, probs0: _st.InputArray,
+                    logLikelihoods?: _st.OutputArray /*= noArray()*/,
+                    labels?: _st.OutputArray /*= noArray()*/,
+                    probs?: _st.OutputArray /*= noArray()*/): boolean;
+
+
+            };
+
+            export var EM: EMStatic = alvision_module.ml.EM;
 
     /****************************************************************************************\
     *                                      Decision Tree                                     *
@@ -959,179 +986,188 @@ export namespace ml {
     
     @sa @ref ml_intro_trees
     */
-    interface DTrees extends StatModel {
+    /** Predict options */
+            export enum DTreesFlags { PREDICT_AUTO = 0, PREDICT_SUM = (1 << 8), PREDICT_MAX_VOTE = (2 << 8), PREDICT_MASK = (3 << 8) };
+
+            interface DTreesStatic {
+                /** @brief Creates the empty model
+        
+        The static method creates empty decision tree with the specified parameters. It should be then
+        trained using train method (see StatModel::train). Alternatively, you can load the model from
+        file using Algorithm::load\<DTrees\>(filename).
+         */
+                create(): DTrees;
+            }
+
+    export interface DTrees extends StatModel {
         //public:
-        //    /** Predict options */
-        //    enum Flags { PREDICT_AUTO=0, PREDICT_SUM=(1<<8), PREDICT_MAX_VOTE=(2<<8), PREDICT_MASK=(3<<8) };
+        
+        
+        
+        /** Cluster possible values of a categorical variable into K\<=maxCategories clusters to
+        find a suboptimal split.
+        If a discrete variable, on which the training procedure tries to make a split, takes more than
+        maxCategories values, the precise best subset estimation may take a very long time because the
+        algorithm is exponential. Instead, many decision trees engines (including our implementation)
+        try to find sub-optimal split in this case by clustering all the samples into maxCategories
+        clusters that is some categories are merged together. The clustering is applied only in n \>
+        2-class classification problems for categorical variables with N \> max_categories possible
+        values. In case of regression and 2-class classification the optimal split can be found
+        efficiently without employing clustering, thus the parameter is not used in these cases.
+        Default value is 10.*/
+        /** @see setMaxCategories */
+        getMaxCategories(): _st.int;
+        /** @copybrief getMaxCategories @see getMaxCategories */
+        setMaxCategories(val: _st.int): void;
+        
+        /** The maximum possible depth of the tree.
+        That is the training algorithms attempts to split a node while its depth is less than maxDepth.
+        The root node has zero depth. The actual depth may be smaller if the other termination criteria
+        are met (see the outline of the training procedure @ref ml_intro_trees "here"), and/or if the
+        tree is pruned. Default value is INT_MAX.*/
+        /** @see setMaxDepth */
+        getMaxDepth(): _st.int;
+        /** @copybrief getMaxDepth @see getMaxDepth */
+        setMaxDepth(val: _st.int ): void;
+        
+        /** If the number of samples in a node is less than this parameter then the node will not be split.
+        
+        Default value is 10.*/
+        /** @see setMinSampleCount */
+        getMinSampleCount(): _st.int;
+        /** @copybrief getMinSampleCount @see getMinSampleCount */
+        setMinSampleCount(val: _st.int ): void;
+        
+        /** If CVFolds \> 1 then algorithms prunes the built decision tree using K-fold
+        cross-validation procedure where K is equal to CVFolds.
+        Default value is 10.*/
+        /** @see setCVFolds */
+        getCVFolds(): _st.int 
+        /** @copybrief getCVFolds @see getCVFolds */
+        setCVFolds(val: _st.int): void;
+        
+        /** If true then surrogate splits will be built.
+        These splits allow to work with missing data and compute variable importance correctly.
+        Default value is false.
+        @note currently it's not implemented.*/
+        /** @see setUseSurrogates */
+        getUseSurrogates(): boolean;
+        /** @copybrief getUseSurrogates @see getUseSurrogates */
+        setUseSurrogates(val: boolean): void;
+        
+        /** If true then a pruning will be harsher.
+        This will make a tree more compact and more resistant to the training data noise but a bit less
+        accurate. Default value is true.*/
+        /** @see setUse1SERule */
+        getUse1SERule(): boolean;
+        /** @copybrief getUse1SERule @see getUse1SERule */
+        setUse1SERule(val : boolean): void;
+        
+        /** If true then pruned branches are physically removed from the tree.
+        Otherwise they are retained and it is possible to get results from the original unpruned (or
+        pruned less aggressively) tree. Default value is true.*/
+        /** @see setTruncatePrunedTree */
+        getTruncatePrunedTree(): boolean;
+        /** @copybrief getTruncatePrunedTree @see getTruncatePrunedTree */
+        setTruncatePrunedTree(val: boolean): void;
+        
+        /** Termination criteria for regression trees.
+        If all absolute differences between an estimated value in a node and values of train samples
+        in this node are less than this parameter then the node will not be split further. Default
+        value is 0.01f*/
+        /** @see setRegressionAccuracy */
+        getRegressionAccuracy(): _st.float;
+        /** @copybrief getRegressionAccuracy @see getRegressionAccuracy */
+        setRegressionAccuracy(val: _st.float ): void;
+        
+        /** @brief The array of a priori class probabilities, sorted by the class label value.
+        
+        The parameter can be used to tune the decision tree preferences toward a certain class. For
+        example, if you want to detect some rare anomaly occurrence, the training base will likely
+        contain much more normal cases than anomalies, so a very good classification performance
+        will be achieved just by considering every case as normal. To avoid this, the priors can be
+        specified, where the anomaly probability is artificially increased (up to 0.5 or even
+        greater), so the weight of the misclassified anomalies becomes much bigger, and the tree is
+        adjusted properly.
+        
+        You can also think about this parameter as weights of prediction categories which determine
+        relative weights that you give to misclassification. That is, if the weight of the first
+        category is 1 and the weight of the second category is 10, then each mistake in predicting
+        the second category is equivalent to making 10 mistakes in predicting the first category.
+        Default value is empty Mat.*/
+        /** @see setPriors */
+        getPriors(): _mat.Mat;
+        /** @copybrief getPriors @see getPriors */
+        setPriors(val: _mat.Mat ): void;
+        
+        /** @brief The class represents a decision tree node.
+         */
+        //class CV_EXPORTS Node
+        //{
+        //public:
+        //    Node();
+        //    double value; //!< Value at the node: a class label in case of classification or estimated
+        //                  //!< function value in case of regression.
+        //    int classIdx; //!< Class index normalized to 0..class_count-1 range and assigned to the
+        //                  //!< node. It is used internally in classification trees and tree ensembles.
+        //    int parent; //!< Index of the parent node
+        //    int left; //!< Index of the left child node
+        //    int right; //!< Index of right child node
+        //    int defaultDir; //!< Default direction where to go (-1: left or +1: right). It helps in the
+        //                    //!< case of missing values.
+        //    int split; //!< Index of the first split
+        //};
         //
-        //    /** Cluster possible values of a categorical variable into K\<=maxCategories clusters to
-        //    find a suboptimal split.
-        //    If a discrete variable, on which the training procedure tries to make a split, takes more than
-        //    maxCategories values, the precise best subset estimation may take a very long time because the
-        //    algorithm is exponential. Instead, many decision trees engines (including our implementation)
-        //    try to find sub-optimal split in this case by clustering all the samples into maxCategories
-        //    clusters that is some categories are merged together. The clustering is applied only in n \>
-        //    2-class classification problems for categorical variables with N \> max_categories possible
-        //    values. In case of regression and 2-class classification the optimal split can be found
-        //    efficiently without employing clustering, thus the parameter is not used in these cases.
-        //    Default value is 10.*/
-        //    /** @see setMaxCategories */
-        //    CV_WRAP virtual int getMaxCategories() const = 0;
-        //    /** @copybrief getMaxCategories @see getMaxCategories */
-        //    CV_WRAP virtual void setMaxCategories(int val) = 0;
+        ///** @brief The class represents split in a decision tree.
+        // */
+        //class CV_EXPORTS Split
+        //{
+        //public:
+        //    Split();
+        //    int varIdx; //!< Index of variable on which the split is created.
+        //    bool inversed; //!< If true, then the inverse split rule is used (i.e. left and right
+        //                   //!< branches are exchanged in the rule expressions below).
+        //    float quality; //!< The split quality, a positive number. It is used to choose the best split.
+        //    int next; //!< Index of the next split in the list of splits for the node
+        //    float c; /**< The threshold value in case of split on an ordered variable.
+        //                  The rule is:
+        //                  @code{.none}
+        //                  if var_value < c
+        //                    then next_node <- left
+        //                    else next_node <- right
+        //                  @endcode */
+        //    int subsetOfs; /**< Offset of the bitset used by the split on a categorical variable.
+        //                        The rule is:
+        //                        @code{.none}
+        //                        if bitset[var_value] == 1
+        //                            then next_node <- left
+        //                            else next_node <- right
+        //                        @endcode */
+        //};
+        
+        /** @brief Returns indices of root nodes
+        */
+        getRoots(): Array<_st.int> ;
+        /** @brief Returns all the nodes
+        
+        //all the node indices are indices in the returned vector
+        // */
+        // Array<Node>& getNodes() const = 0;
+        ///** @brief Returns all the splits
         //
-        //    /** The maximum possible depth of the tree.
-        //    That is the training algorithms attempts to split a node while its depth is less than maxDepth.
-        //    The root node has zero depth. The actual depth may be smaller if the other termination criteria
-        //    are met (see the outline of the training procedure @ref ml_intro_trees "here"), and/or if the
-        //    tree is pruned. Default value is INT_MAX.*/
-        //    /** @see setMaxDepth */
-        //    CV_WRAP virtual int getMaxDepth() const = 0;
-        //    /** @copybrief getMaxDepth @see getMaxDepth */
-        //    CV_WRAP virtual void setMaxDepth(int val) = 0;
+        //all the split indices are indices in the returned vector
+        // */
+        // Array<Split>& getSplits() const = 0;
+        ///** @brief Returns all the bitsets for categorical splits
         //
-        //    /** If the number of samples in a node is less than this parameter then the node will not be split.
-        //
-        //    Default value is 10.*/
-        //    /** @see setMinSampleCount */
-        //    CV_WRAP virtual int getMinSampleCount() const = 0;
-        //    /** @copybrief getMinSampleCount @see getMinSampleCount */
-        //    CV_WRAP virtual void setMinSampleCount(int val) = 0;
-        //
-        //    /** If CVFolds \> 1 then algorithms prunes the built decision tree using K-fold
-        //    cross-validation procedure where K is equal to CVFolds.
-        //    Default value is 10.*/
-        //    /** @see setCVFolds */
-        //    CV_WRAP virtual int getCVFolds() const = 0;
-        //    /** @copybrief getCVFolds @see getCVFolds */
-        //    CV_WRAP virtual void setCVFolds(int val) = 0;
-        //
-        //    /** If true then surrogate splits will be built.
-        //    These splits allow to work with missing data and compute variable importance correctly.
-        //    Default value is false.
-        //    @note currently it's not implemented.*/
-        //    /** @see setUseSurrogates */
-        //    CV_WRAP virtual bool getUseSurrogates() const = 0;
-        //    /** @copybrief getUseSurrogates @see getUseSurrogates */
-        //    CV_WRAP virtual void setUseSurrogates(bool val) = 0;
-        //
-        //    /** If true then a pruning will be harsher.
-        //    This will make a tree more compact and more resistant to the training data noise but a bit less
-        //    accurate. Default value is true.*/
-        //    /** @see setUse1SERule */
-        //    CV_WRAP virtual bool getUse1SERule() const = 0;
-        //    /** @copybrief getUse1SERule @see getUse1SERule */
-        //    CV_WRAP virtual void setUse1SERule(bool val) = 0;
-        //
-        //    /** If true then pruned branches are physically removed from the tree.
-        //    Otherwise they are retained and it is possible to get results from the original unpruned (or
-        //    pruned less aggressively) tree. Default value is true.*/
-        //    /** @see setTruncatePrunedTree */
-        //    CV_WRAP virtual bool getTruncatePrunedTree() const = 0;
-        //    /** @copybrief getTruncatePrunedTree @see getTruncatePrunedTree */
-        //    CV_WRAP virtual void setTruncatePrunedTree(bool val) = 0;
-        //
-        //    /** Termination criteria for regression trees.
-        //    If all absolute differences between an estimated value in a node and values of train samples
-        //    in this node are less than this parameter then the node will not be split further. Default
-        //    value is 0.01f*/
-        //    /** @see setRegressionAccuracy */
-        //    CV_WRAP virtual float getRegressionAccuracy() const = 0;
-        //    /** @copybrief getRegressionAccuracy @see getRegressionAccuracy */
-        //    CV_WRAP virtual void setRegressionAccuracy(float val) = 0;
-        //
-        //    /** @brief The array of a priori class probabilities, sorted by the class label value.
-        //
-        //    The parameter can be used to tune the decision tree preferences toward a certain class. For
-        //    example, if you want to detect some rare anomaly occurrence, the training base will likely
-        //    contain much more normal cases than anomalies, so a very good classification performance
-        //    will be achieved just by considering every case as normal. To avoid this, the priors can be
-        //    specified, where the anomaly probability is artificially increased (up to 0.5 or even
-        //    greater), so the weight of the misclassified anomalies becomes much bigger, and the tree is
-        //    adjusted properly.
-        //
-        //    You can also think about this parameter as weights of prediction categories which determine
-        //    relative weights that you give to misclassification. That is, if the weight of the first
-        //    category is 1 and the weight of the second category is 10, then each mistake in predicting
-        //    the second category is equivalent to making 10 mistakes in predicting the first category.
-        //    Default value is empty Mat.*/
-        //    /** @see setPriors */
-        //    CV_WRAP virtual cv::Mat getPriors() const = 0;
-        //    /** @copybrief getPriors @see getPriors */
-        //    CV_WRAP virtual void setPriors(const cv::Mat &val) = 0;
-        //
-        //    /** @brief The class represents a decision tree node.
-        //     */
-        //    class CV_EXPORTS Node
-        //    {
-        //    public:
-        //        Node();
-        //        double value; //!< Value at the node: a class label in case of classification or estimated
-        //                      //!< function value in case of regression.
-        //        int classIdx; //!< Class index normalized to 0..class_count-1 range and assigned to the
-        //                      //!< node. It is used internally in classification trees and tree ensembles.
-        //        int parent; //!< Index of the parent node
-        //        int left; //!< Index of the left child node
-        //        int right; //!< Index of right child node
-        //        int defaultDir; //!< Default direction where to go (-1: left or +1: right). It helps in the
-        //                        //!< case of missing values.
-        //        int split; //!< Index of the first split
-        //    };
-        //
-        //    /** @brief The class represents split in a decision tree.
-        //     */
-        //    class CV_EXPORTS Split
-        //    {
-        //    public:
-        //        Split();
-        //        int varIdx; //!< Index of variable on which the split is created.
-        //        bool inversed; //!< If true, then the inverse split rule is used (i.e. left and right
-        //                       //!< branches are exchanged in the rule expressions below).
-        //        float quality; //!< The split quality, a positive number. It is used to choose the best split.
-        //        int next; //!< Index of the next split in the list of splits for the node
-        //        float c; /**< The threshold value in case of split on an ordered variable.
-        //                      The rule is:
-        //                      @code{.none}
-        //                      if var_value < c
-        //                        then next_node <- left
-        //                        else next_node <- right
-        //                      @endcode */
-        //        int subsetOfs; /**< Offset of the bitset used by the split on a categorical variable.
-        //                            The rule is:
-        //                            @code{.none}
-        //                            if bitset[var_value] == 1
-        //                                then next_node <- left
-        //                                else next_node <- right
-        //                            @endcode */
-        //    };
-        //
-        //    /** @brief Returns indices of root nodes
-        //    */
-        //    virtual const std::vector<int>& getRoots() const = 0;
-        //    /** @brief Returns all the nodes
-        //
-        //    all the node indices are indices in the returned vector
-        //     */
-        //    virtual const std::vector<Node>& getNodes() const = 0;
-        //    /** @brief Returns all the splits
-        //
-        //    all the split indices are indices in the returned vector
-        //     */
-        //    virtual const std::vector<Split>& getSplits() const = 0;
-        //    /** @brief Returns all the bitsets for categorical splits
-        //
-        //    Split::subsetOfs is an offset in the returned vector
-        //     */
-        //    virtual const std::vector<int>& getSubsets() const = 0;
-        //
-        //    /** @brief Creates the empty model
-        //
-        //    The static method creates empty decision tree with the specified parameters. It should be then
-        //    trained using train method (see StatModel::train). Alternatively, you can load the model from
-        //    file using Algorithm::load\<DTrees\>(filename).
-        //     */
-        //    CV_WRAP static Ptr<DTrees> create();
-    };
+        //Split::subsetOfs is an offset in the returned vector
+        // */
+        // Array<int>& getSubsets() const = 0;
+        
+        
+            };
+
+            export var DTrees: DTreesStatic = alvision_module.DTrees;
 
     /****************************************************************************************\
     *                                   Random Trees Classifier                              *
@@ -1149,44 +1185,44 @@ export namespace ml {
         create(): RTrees;
     }
 
-    interface RTrees extends DTrees {
+export    interface RTrees extends DTrees {
         //public:
-        //
-        //    /** If true then variable importance will be calculated and then it can be retrieved by RTrees::getVarImportance.
-        //    Default value is false.*/
-        //    /** @see setCalculateVarImportance */
-        //    CV_WRAP virtual bool getCalculateVarImportance() const = 0;
-        //    /** @copybrief getCalculateVarImportance @see getCalculateVarImportance */
-        //    CV_WRAP virtual void setCalculateVarImportance(bool val) = 0;
-        //
-        //    /** The size of the randomly selected subset of features at each tree node and that are used
-        //    to find the best split(s).
-        //    If you set it to 0 then the size will be set to the square root of the total number of
-        //    features. Default value is 0.*/
-        //    /** @see setActiveVarCount */
-        //    CV_WRAP virtual int getActiveVarCount() const = 0;
-        //    /** @copybrief getActiveVarCount @see getActiveVarCount */
-        //    CV_WRAP virtual void setActiveVarCount(int val) = 0;
-        //
-        //    /** The termination criteria that specifies when the training algorithm stops.
-        //    Either when the specified number of trees is trained and added to the ensemble or when
-        //    sufficient accuracy (measured as OOB error) is achieved. Typically the more trees you have the
-        //    better the accuracy. However, the improvement in accuracy generally diminishes and asymptotes
-        //    pass a certain number of trees. Also to keep in mind, the number of tree increases the
-        //    prediction time linearly. Default value is TermCriteria(TermCriteria::MAX_ITERS +
-        //    TermCriteria::EPS, 50, 0.1)*/
-        //    /** @see setTermCriteria */
-        //    CV_WRAP virtual TermCriteria getTermCriteria() const = 0;
-        //    /** @copybrief getTermCriteria @see getTermCriteria */
-        //    CV_WRAP virtual void setTermCriteria(const TermCriteria &val) = 0;
-        //
-        //    /** Returns the variable importance array.
-        //    The method returns the variable importance vector, computed at the training stage when
-        //    CalculateVarImportance is set to true. If this flag was set to false, the empty matrix is
-        //    returned.
-        //     */
-        //    CV_WRAP virtual Mat getVarImportance() const = 0;
-        //
+        
+            /** If true then variable importance will be calculated and then it can be retrieved by RTrees::getVarImportance.
+            Default value is false.*/
+            /** @see setCalculateVarImportance */
+        getCalculateVarImportance(): boolean;
+            /** @copybrief getCalculateVarImportance @see getCalculateVarImportance */
+        setCalculateVarImportance(val : boolean): void;
+        
+            /** The size of the randomly selected subset of features at each tree node and that are used
+            to find the best split(s).
+            If you set it to 0 then the size will be set to the square root of the total number of
+            features. Default value is 0.*/
+            /** @see setActiveVarCount */
+        getActiveVarCount(): _st.int;
+            /** @copybrief getActiveVarCount @see getActiveVarCount */
+        setActiveVarCount(val: _st.int ): void;
+        
+            /** The termination criteria that specifies when the training algorithm stops.
+            Either when the specified number of trees is trained and added to the ensemble or when
+            sufficient accuracy (measured as OOB error) is achieved. Typically the more trees you have the
+            better the accuracy. However, the improvement in accuracy generally diminishes and asymptotes
+            pass a certain number of trees. Also to keep in mind, the number of tree increases the
+            prediction time linearly. Default value is TermCriteria(TermCriteria::MAX_ITERS +
+            TermCriteria::EPS, 50, 0.1)*/
+            /** @see setTermCriteria */
+        getTermCriteria(): _types.TermCriteria;
+            /** @copybrief getTermCriteria @see getTermCriteria */
+        setTermCriteria(val: _types.TermCriteria): void;
+        
+            /** Returns the variable importance array.
+            The method returns the variable importance vector, computed at the training stage when
+            CalculateVarImportance is set to true. If this flag was set to false, the empty matrix is
+            returned.
+             */
+        getVarImportance(): _mat.Mat;
+        
        
     };
     export var RTrees: RTreesStatic = alvision_module.RTrees;
@@ -1199,49 +1235,52 @@ export namespace ml {
     
     @sa @ref ml_intro_boost
      */
+
+        /** Boosting type.
+        Gentle AdaBoost and Real AdaBoost are often the preferable choices. */
+        export enum BoostTypes {
+            DISCRETE=0, //!< Discrete AdaBoost.
+            REAL=1, //!< Real AdaBoost. It is a technique that utilizes confidence-rated predictions
+                    //!< and works well with categorical data.
+            LOGIT=2, //!< LogitBoost. It can produce good regression fits.
+            GENTLE=3 //!< Gentle AdaBoost. It puts less weight on outlier data points and for that
+                     //!<reason is often good with regression data.
+        };
+    
+
     interface BoostStatic {
             /** Creates the empty model.
            Use StatModel::train to train the model, Algorithm::load\<Boost\>(filename) to load the pre-trained model. */
         create(): Boost;
     }
 
-    interface Boost extends DTrees {
+    export interface Boost extends DTrees {
         //public:
-        //    /** Type of the boosting algorithm.
-        //    See Boost::Types. Default value is Boost::REAL. */
-        //    /** @see setBoostType */
-        //    CV_WRAP virtual int getBoostType() const = 0;
-        //    /** @copybrief getBoostType @see getBoostType */
-        //    CV_WRAP virtual void setBoostType(int val) = 0;
-        //
-        //    /** The number of weak classifiers.
-        //    Default value is 100. */
-        //    /** @see setWeakCount */
-        //    CV_WRAP virtual int getWeakCount() const = 0;
-        //    /** @copybrief getWeakCount @see getWeakCount */
-        //    CV_WRAP virtual void setWeakCount(int val) = 0;
-        //
-        //    /** A threshold between 0 and 1 used to save computational time.
-        //    Samples with summary weight \f$\leq 1 - weight_trim_rate\f$ do not participate in the *next*
-        //    iteration of training. Set this parameter to 0 to turn off this functionality. Default value is 0.95.*/
-        //    /** @see setWeightTrimRate */
-        //    CV_WRAP virtual double getWeightTrimRate() const = 0;
-        //    /** @copybrief getWeightTrimRate @see getWeightTrimRate */
-        //    CV_WRAP virtual void setWeightTrimRate(double val) = 0;
-        //
-        //    /** Boosting type.
-        //    Gentle AdaBoost and Real AdaBoost are often the preferable choices. */
-        //    enum Types {
-        //        DISCRETE=0, //!< Discrete AdaBoost.
-        //        REAL=1, //!< Real AdaBoost. It is a technique that utilizes confidence-rated predictions
-        //                //!< and works well with categorical data.
-        //        LOGIT=2, //!< LogitBoost. It can produce good regression fits.
-        //        GENTLE=3 //!< Gentle AdaBoost. It puts less weight on outlier data points and for that
-        //                 //!<reason is often good with regression data.
-        //    };
-        //
-       
-    };
+        /** Type of the boosting algorithm.
+        See Boost::Types. Default value is Boost::REAL. */
+        /** @see setBoostType */
+        getBoostType(): _st.int;
+        /** @copybrief getBoostType @see getBoostType */
+        setBoostType(val: _st.int): void;
+        
+        /** The number of weak classifiers.
+        Default value is 100. */
+        /** @see setWeakCount */
+        getWeakCount(): _st.int;
+        /** @copybrief getWeakCount @see getWeakCount */
+        setWeakCount(val: _st.int): void;
+        
+        /** A threshold between 0 and 1 used to save computational time.
+        Samples with summary weight \f$\leq 1 - weight_trim_rate\f$ do not participate in the *next*
+        iteration of training. Set this parameter to 0 to turn off this functionality. Default value is 0.95.*/
+        /** @see setWeightTrimRate */
+        getWeightTrimRate(): _st.double;
+        /** @copybrief getWeightTrimRate @see getWeightTrimRate */
+        setWeightTrimRate(val: _st.double): void;
+
+
+
+    }
     export var Boost: BoostStatic = alvision_module.Boost;
 
     /****************************************************************************************\
@@ -1298,151 +1337,160 @@ export namespace ml {
     
     @sa @ref ml_intro_ann
      */
-    interface ANN_MLP extends StatModel {
-        //public:
-        //    /** Available training methods */
-        
-        //
-        //    /** Sets training method and common parameters.
-        //    @param method Default value is ANN_MLP::RPROP. See ANN_MLP::TrainingMethods.
-        //    @param param1 passed to setRpropDW0 for ANN_MLP::RPROP and to setBackpropWeightScale for ANN_MLP::BACKPROP
-        //    @param param2 passed to setRpropDWMin for ANN_MLP::RPROP and to setBackpropMomentumScale for ANN_MLP::BACKPROP.
-        //    */
-        //    CV_WRAP virtual void setTrainMethod(int method, double param1 = 0, double param2 = 0) = 0;
-        //
-        //    /** Returns current training method */
-        //    CV_WRAP virtual int getTrainMethod() const = 0;
-        //
-        //    /** Initialize the activation function for each neuron.
-        //    Currently the default and the only fully supported activation function is ANN_MLP::SIGMOID_SYM.
-        //    @param type The type of activation function. See ANN_MLP::ActivationFunctions.
-        //    @param param1 The first parameter of the activation function, \f$\alpha\f$. Default value is 0.
-        //    @param param2 The second parameter of the activation function, \f$\beta\f$. Default value is 0.
-        //    */
-        //    CV_WRAP virtual void setActivationFunction(int type, double param1 = 0, double param2 = 0) = 0;
-        //
-        //    /**  Integer vector specifying the number of neurons in each layer including the input and output layers.
-        //    The very first element specifies the number of elements in the input layer.
-        //    The last element - number of elements in the output layer. Default value is empty Mat.
-        //    @sa getLayerSizes */
-        //    CV_WRAP virtual void setLayerSizes(InputArray _layer_sizes) = 0;
-        //
-        //    /**  Integer vector specifying the number of neurons in each layer including the input and output layers.
-        //    The very first element specifies the number of elements in the input layer.
-        //    The last element - number of elements in the output layer.
-        //    @sa setLayerSizes */
-        //    CV_WRAP virtual cv::Mat getLayerSizes() const = 0;
-        //
-        //    /** Termination criteria of the training algorithm.
-        //    You can specify the maximum number of iterations (maxCount) and/or how much the error could
-        //    change between the iterations to make the algorithm continue (epsilon). Default value is
-        //    TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 1000, 0.01).*/
-        //    /** @see setTermCriteria */
-        //    CV_WRAP virtual TermCriteria getTermCriteria() const = 0;
-        //    /** @copybrief getTermCriteria @see getTermCriteria */
-        //    CV_WRAP virtual void setTermCriteria(TermCriteria val) = 0;
-        //
-        //    /** BPROP: Strength of the weight gradient term.
-        //    The recommended value is about 0.1. Default value is 0.1.*/
-        //    /** @see setBackpropWeightScale */
-        //    CV_WRAP virtual double getBackpropWeightScale() const = 0;
-        //    /** @copybrief getBackpropWeightScale @see getBackpropWeightScale */
-        //    CV_WRAP virtual void setBackpropWeightScale(double val) = 0;
-        //
-        //    /** BPROP: Strength of the momentum term (the difference between weights on the 2 previous iterations).
-        //    This parameter provides some inertia to smooth the random fluctuations of the weights. It can
-        //    vary from 0 (the feature is disabled) to 1 and beyond. The value 0.1 or so is good enough.
-        //    Default value is 0.1.*/
-        //    /** @see setBackpropMomentumScale */
-        //    CV_WRAP virtual double getBackpropMomentumScale() const = 0;
-        //    /** @copybrief getBackpropMomentumScale @see getBackpropMomentumScale */
-        //    CV_WRAP virtual void setBackpropMomentumScale(double val) = 0;
-        //
-        //    /** RPROP: Initial value \f$\Delta_0\f$ of update-values \f$\Delta_{ij}\f$.
-        //    Default value is 0.1.*/
-        //    /** @see setRpropDW0 */
-        //    CV_WRAP virtual double getRpropDW0() const = 0;
-        //    /** @copybrief getRpropDW0 @see getRpropDW0 */
-        //    CV_WRAP virtual void setRpropDW0(double val) = 0;
-        //
-        //    /** RPROP: Increase factor \f$\eta^+\f$.
-        //    It must be \>1. Default value is 1.2.*/
-        //    /** @see setRpropDWPlus */
-        //    CV_WRAP virtual double getRpropDWPlus() const = 0;
-        //    /** @copybrief getRpropDWPlus @see getRpropDWPlus */
-        //    CV_WRAP virtual void setRpropDWPlus(double val) = 0;
-        //
-        //    /** RPROP: Decrease factor \f$\eta^-\f$.
-        //    It must be \<1. Default value is 0.5.*/
-        //    /** @see setRpropDWMinus */
-        //    CV_WRAP virtual double getRpropDWMinus() const = 0;
-        //    /** @copybrief getRpropDWMinus @see getRpropDWMinus */
-        //    CV_WRAP virtual void setRpropDWMinus(double val) = 0;
-        //
-        //    /** RPROP: Update-values lower limit \f$\Delta_{min}\f$.
-        //    It must be positive. Default value is FLT_EPSILON.*/
-        //    /** @see setRpropDWMin */
-        //    CV_WRAP virtual double getRpropDWMin() const = 0;
-        //    /** @copybrief getRpropDWMin @see getRpropDWMin */
-        //    CV_WRAP virtual void setRpropDWMin(double val) = 0;
-        //
-        //    /** RPROP: Update-values upper limit \f$\Delta_{max}\f$.
-        //    It must be \>1. Default value is 50.*/
-        //    /** @see setRpropDWMax */
-        //    CV_WRAP virtual double getRpropDWMax() const = 0;
-        //    /** @copybrief getRpropDWMax @see getRpropDWMax */
-        //    CV_WRAP virtual void setRpropDWMax(double val) = 0;
-        //
-        //    /** possible activation functions */
-        //    enum ActivationFunctions {
-        //        /** Identity function: \f$f(x)=x\f$ */
-        //        IDENTITY = 0,
-        //        /** Symmetrical sigmoid: \f$f(x)=\beta*(1-e^{-\alpha x})/(1+e^{-\alpha x}\f$
-        //        @note
-        //        If you are using the default sigmoid activation function with the default parameter values
-        //        fparam1=0 and fparam2=0 then the function used is y = 1.7159\*tanh(2/3 \* x), so the output
-        //        will range from [-1.7159, 1.7159], instead of [0,1].*/
-        //        SIGMOID_SYM = 1,
-        //        /** Gaussian function: \f$f(x)=\beta e^{-\alpha x*x}\f$ */
-        //        GAUSSIAN = 2
-        //    };
-        //
-        //    /** Train options */
-        //    enum TrainFlags {
-        //        /** Update the network weights, rather than compute them from scratch. In the latter case
-        //        the weights are initialized using the Nguyen-Widrow algorithm. */
-        //        UPDATE_WEIGHTS = 1,
-        //        /** Do not normalize the input vectors. If this flag is not set, the training algorithm
-        //        normalizes each input feature independently, shifting its mean value to 0 and making the
-        //        standard deviation equal to 1. If the network is assumed to be updated frequently, the new
-        //        training data could be much different from original one. In this case, you should take care
-        //        of proper normalization. */
-        //        NO_INPUT_SCALE = 2,
-        //        /** Do not normalize the output vectors. If the flag is not set, the training algorithm
-        //        normalizes each output feature independently, by transforming it to the certain range
-        //        depending on the used activation function. */
-        //        NO_OUTPUT_SCALE = 4
-        //    };
-        //
-        //    CV_WRAP virtual Mat getWeights(int layerIdx) const = 0;
-        //
-        //    /** @brief Creates empty model
-        //
-        //    Use StatModel::train to train the model, Algorithm::load\<ANN_MLP\>(filename) to load the pre-trained model.
-        //    Note that the train method has optional flags: ANN_MLP::TrainFlags.
-        //     */
-        //    CV_WRAP static Ptr<ANN_MLP> create();
-        //
-        //    /** @brief Loads and creates a serialized ANN from a file
-        //     *
-        //     * Use ANN::save to serialize and store an ANN to disk.
-        //     * Load the ANN from this file again, by calling this function with the path to the file.
-        //     *
-        //     * @param filepath path to serialized ANN
-        //     */
-        //    CV_WRAP static Ptr<ANN_MLP> load(const String& filepath);
-        //
+
+    /** possible activation functions */
+        export enum ANN_MLP_ActivationFunctions {
+        /** Identity function: \f$f(x)=x\f$ */
+        IDENTITY = 0,
+        /** Symmetrical sigmoid: \f$f(x)=\beta*(1-e^{-\alpha x})/(1+e^{-\alpha x}\f$
+        @note
+        If you are using the default sigmoid activation function with the default parameter values
+        fparam1=0 and fparam2=0 then the function used is y = 1.7159\*tanh(2/3 \* x), so the output
+        will range from [-1.7159, 1.7159], instead of [0,1].*/
+        SIGMOID_SYM = 1,
+        /** Gaussian function: \f$f(x)=\beta e^{-\alpha x*x}\f$ */
+        GAUSSIAN = 2
     };
+      
+    /** Train options */
+    export enum ANN_MLP_TrainFlags {
+        /** Update the network weights, rather than compute them from scratch. In the latter case
+        the weights are initialized using the Nguyen-Widrow algorithm. */
+        UPDATE_WEIGHTS = 1,
+        /** Do not normalize the input vectors. If this flag is not set, the training algorithm
+        normalizes each input feature independently, shifting its mean value to 0 and making the
+        standard deviation equal to 1. If the network is assumed to be updated frequently, the new
+        training data could be much different from original one. In this case, you should take care
+        of proper normalization. */
+        NO_INPUT_SCALE = 2,
+        /** Do not normalize the output vectors. If the flag is not set, the training algorithm
+        normalizes each output feature independently, by transforming it to the certain range
+        depending on the used activation function. */
+        NO_OUTPUT_SCALE = 4
+    };
+
+        interface ANN_MLPStatic {
+            /** @brief Creates empty model
+        
+            Use StatModel::train to train the model, Algorithm::load\<ANN_MLP\>(filename) to load the pre-trained model.
+            Note that the train method has optional flags: ANN_MLP::TrainFlags.
+             */
+            create(): ANN_MLP;
+        
+            /** @brief Loads and creates a serialized ANN from a file
+             *
+             * Use ANN::save to serialize and store an ANN to disk.
+             * Load the ANN from this file again, by calling this function with the path to the file.
+             *
+             * @param filepath path to serialized ANN
+             */
+            load(filepath : string): ANN_MLP;
+        
+        }
+
+    export interface ANN_MLP extends StatModel {
+        //public:
+            /** Available training methods */
+        
+        
+            /** Sets training method and common parameters.
+            @param method Default value is ANN_MLP::RPROP. See ANN_MLP::TrainingMethods.
+            @param param1 passed to setRpropDW0 for ANN_MLP::RPROP and to setBackpropWeightScale for ANN_MLP::BACKPROP
+            @param param2 passed to setRpropDWMin for ANN_MLP::RPROP and to setBackpropMomentumScale for ANN_MLP::BACKPROP.
+            */
+        setTrainMethod(method: _st.int, param1?: _st.double /* = 0*/, param2?: _st.double /* = 0*/): void;
+        
+            /** Returns current training method */
+        getTrainMethod() : _st.int;
+        
+            /** Initialize the activation function for each neuron.
+            Currently the default and the only fully supported activation function is ANN_MLP::SIGMOID_SYM.
+            @param type The type of activation function. See ANN_MLP::ActivationFunctions.
+            @param param1 The first parameter of the activation function, \f$\alpha\f$. Default value is 0.
+            @param param2 The second parameter of the activation function, \f$\beta\f$. Default value is 0.
+            */
+        setActivationFunction(type : _st.int, param1 ? : _st.double /* = 0*/, param2 ? : _st.double /* = 0*/) : void ;
+        
+            /**  Integer vector specifying the number of neurons in each layer including the input and output layers.
+            The very first element specifies the number of elements in the input layer.
+            The last element - number of elements in the output layer. Default value is empty Mat.
+            @sa getLayerSizes */
+        setLayerSizes(_layer_sizes : _st.InputArray ) : void ;
+        
+            /**  Integer vector specifying the number of neurons in each layer including the input and output layers.
+            The very first element specifies the number of elements in the input layer.
+            The last element - number of elements in the output layer.
+            @sa setLayerSizes */
+        getLayerSizes(): _mat.Mat;
+        
+            /** Termination criteria of the training algorithm.
+            You can specify the maximum number of iterations (maxCount) and/or how much the error could
+            change between the iterations to make the algorithm continue (epsilon). Default value is
+            TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 1000, 0.01).*/
+            /** @see setTermCriteria */
+        getTermCriteria(): _types.TermCriteria;
+            /** @copybrief getTermCriteria @see getTermCriteria */
+        setTermCriteria(val: _types.TermCriteria): void;
+        
+            /** BPROP: Strength of the weight gradient term.
+            The recommended value is about 0.1. Default value is 0.1.*/
+            /** @see setBackpropWeightScale */
+        getBackpropWeightScale(): _st.double;
+            /** @copybrief getBackpropWeightScale @see getBackpropWeightScale */
+        setBackpropWeightScale(val: _st.double ): void;
+        
+            /** BPROP: Strength of the momentum term (the difference between weights on the 2 previous iterations).
+            This parameter provides some inertia to smooth the random fluctuations of the weights. It can
+            vary from 0 (the feature is disabled) to 1 and beyond. The value 0.1 or so is good enough.
+            Default value is 0.1.*/
+            /** @see setBackpropMomentumScale */
+        getBackpropMomentumScale(): _st.double;
+            /** @copybrief getBackpropMomentumScale @see getBackpropMomentumScale */
+        setBackpropMomentumScale(val: _st.double ): void;
+        
+            /** RPROP: Initial value \f$\Delta_0\f$ of update-values \f$\Delta_{ij}\f$.
+            Default value is 0.1.*/
+            /** @see setRpropDW0 */
+        getRpropDW0(): _st.double;
+            /** @copybrief getRpropDW0 @see getRpropDW0 */
+        setRpropDW0(val: _st.double ): void;
+        
+            /** RPROP: Increase factor \f$\eta^+\f$.
+            It must be \>1. Default value is 1.2.*/
+            /** @see setRpropDWPlus */
+        getRpropDWPlus(): _st.double;
+            /** @copybrief getRpropDWPlus @see getRpropDWPlus */
+        setRpropDWPlus(val: _st.double ): void;
+        
+            /** RPROP: Decrease factor \f$\eta^-\f$.
+            It must be \<1. Default value is 0.5.*/
+            /** @see setRpropDWMinus */
+        getRpropDWMinus(): _st.double;
+            /** @copybrief getRpropDWMinus @see getRpropDWMinus */
+        setRpropDWMinus(val: _st.double): void;
+        
+            /** RPROP: Update-values lower limit \f$\Delta_{min}\f$.
+            It must be positive. Default value is FLT_EPSILON.*/
+            /** @see setRpropDWMin */
+        getRpropDWMin(): _st.double;
+            /** @copybrief getRpropDWMin @see getRpropDWMin */
+        setRpropDWMin(val: _st.double): void;
+        
+            /** RPROP: Update-values upper limit \f$\Delta_{max}\f$.
+            It must be \>1. Default value is 50.*/
+            /** @see setRpropDWMax */
+        getRpropDWMax(): _st.double;
+            /** @copybrief getRpropDWMax @see getRpropDWMax */
+        setRpropDWMax(val: _st.double ): void;
+        
+            
+        
+            getWeights(layerIdx : _st.int ) : _mat.Mat;
+        
+       
+        };
+
+        export var ANN_MLP: ANN_MLPStatic = alvision_module.ANN_MLP;
 
     /****************************************************************************************\
     *                           Logistic Regression                                          *
@@ -1457,41 +1505,41 @@ export namespace ml {
         //
         //    /** Learning rate. */
         //    /** @see setLearningRate */
-        //    CV_WRAP virtual double getLearningRate() const = 0;
+        //    double getLearningRate() const = 0;
         //    /** @copybrief getLearningRate @see getLearningRate */
-        //    CV_WRAP virtual void setLearningRate(double val) = 0;
+        //    void setLearningRate(double val) = 0;
         //
         //    /** Number of iterations. */
         //    /** @see setIterations */
-        //    CV_WRAP virtual int getIterations() const = 0;
+        //    int getIterations() const = 0;
         //    /** @copybrief getIterations @see getIterations */
-        //    CV_WRAP virtual void setIterations(int val) = 0;
+        //    void setIterations(int val) = 0;
         //
         //    /** Kind of regularization to be applied. See LogisticRegression::RegKinds. */
         //    /** @see setRegularization */
-        //    CV_WRAP virtual int getRegularization() const = 0;
+        //    int getRegularization() const = 0;
         //    /** @copybrief getRegularization @see getRegularization */
-        //    CV_WRAP virtual void setRegularization(int val) = 0;
+        //    void setRegularization(int val) = 0;
         //
         //    /** Kind of training method used. See LogisticRegression::Methods. */
         //    /** @see setTrainMethod */
-        //    CV_WRAP virtual int getTrainMethod() const = 0;
+        //    int getTrainMethod() const = 0;
         //    /** @copybrief getTrainMethod @see getTrainMethod */
-        //    CV_WRAP virtual void setTrainMethod(int val) = 0;
+        //    void setTrainMethod(int val) = 0;
         //
         //    /** Specifies the number of training samples taken in each step of Mini-Batch Gradient
         //    Descent. Will only be used if using LogisticRegression::MINI_BATCH training algorithm. It
         //    has to take values less than the total number of training samples. */
         //    /** @see setMiniBatchSize */
-        //    CV_WRAP virtual int getMiniBatchSize() const = 0;
+        //    int getMiniBatchSize() const = 0;
         //    /** @copybrief getMiniBatchSize @see getMiniBatchSize */
-        //    CV_WRAP virtual void setMiniBatchSize(int val) = 0;
+        //    void setMiniBatchSize(int val) = 0;
         //
         //    /** Termination criteria of the algorithm. */
         //    /** @see setTermCriteria */
-        //    CV_WRAP virtual TermCriteria getTermCriteria() const = 0;
+        //    TermCriteria getTermCriteria() const = 0;
         //    /** @copybrief getTermCriteria @see getTermCriteria */
-        //    CV_WRAP virtual void setTermCriteria(TermCriteria val) = 0;
+        //    void setTermCriteria(TermCriteria val) = 0;
         //
         //    //! Regularization kinds
         //    enum RegKinds {
@@ -1513,14 +1561,14 @@ export namespace ml {
         //    @param results Predicted labels as a column matrix of type CV_32S.
         //    @param flags Not used.
         //     */
-        //    CV_WRAP virtual float predict( InputArray samples, OutputArray results=noArray(), int flags=0 ) const = 0;
+        //    float predict( InputArray samples, OutputArray results=noArray(), int flags=0 ) const = 0;
         //
         //    /** @brief This function returns the trained paramters arranged across rows.
         //
         //    For a two class classifcation problem, it returns a row matrix. It returns learnt paramters of
         //    the Logistic Regression as a matrix of type CV_32F.
         //     */
-        //    CV_WRAP virtual Mat get_learnt_thetas() const = 0;
+        //    Mat get_learnt_thetas() const = 0;
         //
         //    /** @brief Creates empty model.
         //

@@ -246,7 +246,7 @@ export interface MatxStatic<T> {
 
 }
 
-    export interface Matx<T>{
+    export interface Matx<T> extends _st.IOArray{
     //template < typename _Tp, int m, int n> class Matx {
     //    public:
     //enum { depth = DataType<_Tp>::depth,
@@ -313,12 +313,13 @@ export interface MatxStatic<T> {
     ////! element access
     //const _Tp& operator()(int i, int j) const;
     //_Tp & operator()(int i, int j);
-    Element(i: _st.int, j: _st.int): T;
+    //Element(i: _st.int, j: _st.int): T;
 
     ////! 1D element access
     //const _Tp& operator()(int i) const;
     //_Tp & operator()(int i);
-    Element(i: _st.int): T;
+    //Element(i: _st.int): T;
+    at(i0: _st.int, i1?: _st.int, i2?: _st.int): _mat.TrackedElement<T>;
 
     //Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_AddOp);
     //Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_SubOp);
@@ -335,9 +336,16 @@ export interface MatxStatic<T> {
 
 
    
-    op_Addition(other: Matx<T>): Matx<T>;
-    op_Substraction(other: Matx<T>): Matx<T>;
-    op_Multiplication(other: Matx<T>): Matx<T>;
+    op_Addition(other: Matx<T> | _st.int | _st.double | _st.float): Matx<T>;
+    op_Substraction(other: Matx<T> | _st.int | _st.double | _st.float): Matx<T>;
+    op_Multiplication(other: Matx<T> | _st.int | _st.double | _st.float): Matx<T>;
+
+    mul(a: Matx<T>): Matx<T>;
+//template < typename _Tp, int m, int n> inline
+//Matx < _Tp, m, n > Matx<_Tp, m, n>::mul(const Matx<_Tp, m, n>& a) const
+//    {
+//        return Matx<_Tp, m, n>(*this, a, Matx_MulOp());
+//}
 };
 
 export interface Matxf extends Matx<_st.float> { }
@@ -672,7 +680,8 @@ export interface Vec<T> extends Matx<T> {
     //const _Tp& operator()(int i) const;
     //_Tp& operator()(int i);
     //valGet(i: _st.int): T;
-    at(i: _st.int): _mat.TrackedElement<T>;
+    //at(i: _st.int): _mat.TrackedElement<T>;
+    at(i0: _st.int, i1?: _st.int, i2?: _st.int): _mat.TrackedElement<T>;
 
     //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_AddOp);
     //Vec(const Matx< _Tp, cn, 1>& a, const Matx< _Tp, cn, 1>& b, Matx_SubOp);
@@ -714,6 +723,9 @@ export interface Vec<T> extends Matx<T> {
     export interface Vecf extends Vec<_st.float> { }
     export interface Vecd extends Vec<_st.double> { }
 
+    export var Vecb: VecStatic<_st.uchar> = alvision_module.Vecb;
+    export var Vecs: VecStatic<_st.short> = alvision_module.Vecs;
+    export var Veci: VecStatic<_st.int> = alvision_module.Veci;
     export var Vecd: VecStatic<_st.double> = alvision_module.Vecd;
     export var Vecf: VecStatic<_st.float> = alvision_module.Vecf;
 
@@ -1170,11 +1182,7 @@ export var normalize: Inormalize = alvision_module.normalize;
 //val[i * n + j] = a(j, i);
 //}
 
-//template < typename _Tp, int m, int n> inline
-//Matx < _Tp, m, n > Matx<_Tp, m, n>::mul(const Matx<_Tp, m, n>& a) const
-//    {
-//        return Matx<_Tp, m, n>(*this, a, Matx_MulOp());
-//}
+
 
 //template < typename _Tp, int m, int n> inline
 //Matx < _Tp, m, n > Matx<_Tp, m, n>::div(const Matx<_Tp, m, n>& a) const

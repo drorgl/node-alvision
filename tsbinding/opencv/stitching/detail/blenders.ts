@@ -61,7 +61,7 @@ import * as _affine from './../../Affine'
 //#include "opencv2/core.hpp"
 //
 //namespace cv {
-export namespace detail {
+export namespace detail_blenders {
 
     //! @addtogroup stitching_blend
     //! @{
@@ -212,7 +212,7 @@ export namespace detail {
 
 //! @}
 
-} // namespace detail
+} // namespace detail.blenders
 //} // namespace cv
 
 //#endif // __OPENCV_STITCHING_BLENDERS_HPP__

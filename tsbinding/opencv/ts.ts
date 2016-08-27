@@ -64,49 +64,113 @@ import fs = require('fs');
 
 export namespace cvtest {
     //export namespace cuda {
-        export class CUDA_TEST extends TestWithParam {
-            constructor(public test_case_name: string, public test_name: string) {
-                super();
-            }
-
-            TestBody(): void {
-                try {
-                    this.UnsafeTestBody();
-                } catch (e) {
-                    //TODO: handle error
-                }
-            }
-
-            private UnsafeTestBody(): void {
-            }
-
-            private AddToRegistry(): boolean {
-                //add...
-                return true;
-            }
-
-
+    export class CUDA_TEST extends TestWithParam {
+        constructor(public test_case_name: string, public test_name: string) {
+            super();
         }
 
-        export function INSTANTIATE_TEST_CASE_P(testname: string, cbTestClassFactory: (test_case_name: string, test_name: string) => TestWithParam, values: Combine) {
-            var instance = cbTestClassFactory(testname, testname);
-
-            var nextValue = values.nextSet()
-
-            var test_number = 0;
-
-            while (nextValue != null) {
-                for (var i = 0; i < nextValue.length; i++) {
-                    instance.SET_PARAM(i, nextValue[i]);
-                }
-
-                instance.run(test_number);
-                test_number++;
-
-                nextValue = values.nextSet();
+        TestBody(): void {
+            try {
+                this.UnsafeTestBody();
+            } catch (e) {
+                //TODO: handle error
             }
         }
+
+        private UnsafeTestBody(): void {
+        }
+
+        private AddToRegistry(): boolean {
+            //add...
+            return true;
+        }
+
+
+    }
+
+    export function INSTANTIATE_TEST_CASE_P(casename: string, testname: string, cbTestClassFactory: (test_case_name: string, test_name: string) => TestWithParam, values: Combine) {
+        var instance = cbTestClassFactory(testname, testname);
+
+        var nextValue = values.nextSet()
+
+        var test_number = 0;
+
+        while (nextValue != null) {
+            for (var i = 0; i < nextValue.length; i++) {
+                instance.SET_PARAM(i, nextValue[i]);
+            }
+
+            instance.run(test_number);
+            test_number++;
+
+            nextValue = values.nextSet();
+        }
+    }
+
+    function keyPointsEquals(p1: _types.KeyPoint, p2: _types.KeyPoint): boolean {
+        const maxPtDif = 1.0;
+        const maxSizeDif = 1.0;
+        const maxAngleDif = 2.0;
+        const maxResponseDif = 0.1;
+
+        let dist = _types.Point2f.norm(p1.pt.op_Substraction( p2.pt));
+
+        if (dist < maxPtDif &&
+            Math.abs(p1.size.valueOf() - p2.size.valueOf()) < maxSizeDif &&
+            Math.abs(p1.angle.valueOf() - p2.angle.valueOf()) < maxAngleDif &&
+            Math.abs(p1.response.valueOf() - p2.response.valueOf()) < maxResponseDif &&
+            p1.octave == p2.octave &&
+            p1.class_id == p2.class_id) {
+            return true;
+        }
+
+        return false;
+    }
         
+    function KeyPointLess(kp1: _types.KeyPoint, kp2: _types.KeyPoint): number {
+        if (kp1.pt.y == kp2.pt.y && kp1.pt.x == kp2.pt.x) {
+            return 0;
+        } else if (kp1.pt.y < kp2.pt.y || (kp1.pt.y == kp2.pt.y && kp1.pt.x < kp2.pt.x)) {
+            return 1;
+        } else {
+            return -1
+        }
+    }
+
+    export function getMatchedPointsCount1(gold: Array<_types.KeyPoint>, actual: Array<_types.KeyPoint>): _st.int {
+        actual = actual.sort(KeyPointLess);
+        gold = gold.sort(KeyPointLess);
+
+        let validCount = 0;
+
+        for (let i = 0; i < gold.length; ++i)
+        {
+            const p1 = gold[i];
+            const p2 = actual[i];
+
+            if ( keyPointsEquals(p1, p2))
+                ++validCount;
+        }
+
+        return validCount;
+    }
+
+    export function getMatchedPointsCount2(keypoints1: Array<_types.KeyPoint>, keypoints2: Array<_types.KeyPoint>, matches: Array<_types.DMatch> ): _st.int {
+        let validCount = 0;
+
+        for (let i = 0; i < matches.length; ++i)
+        {
+            const m = matches[i];
+
+            const p1 = keypoints1[m.queryIdx.valueOf()];
+            const p2 = keypoints2[m.trainIdx.valueOf()];
+
+            if (keyPointsEquals(p1, p2))
+                ++validCount;
+        }
+
+        return validCount;
+    }
 
         
 
@@ -137,53 +201,53 @@ export namespace cvtest {
     //    //template < class TestClass> friend class internal::ParameterizedTestFactory;
     //}
 
-        export class Channels {
-            constructor(arg: _st.int) {
-                this.val_ = arg;
-            }
-            public val_: _st.int;
+    export class Channels {
+        constructor(arg: _st.int) {
+            this.val_ = arg;
+        }
+        public val_: _st.int;
 
 
-            public toString(): string {
-                return "Channels(" + this.val_ + ")";
-            }
+        public toString(): string {
+            return "Channels(" + this.val_ + ")";
+        }
+    }
+
+
+    export class Combine {
+        constructor(public values: Array<Array<any>>) {
+            this.NumberOfParameters = values.length;
+            this.counters = new Array<number>(this.NumberOfParameters);
+            this.counters.forEach((v, i, a) => a[i] = 0);
         }
 
+        public NumberOfParameters: number;
+        public counters: Array<number>;
 
-        export class Combine {
-            constructor(public values: Array<Array<any>>) {
-                this.NumberOfParameters = values.length;
-                this.counters = new Array<number>(this.NumberOfParameters);
-                this.counters.forEach((v, i, a) => a[i] = 0);
+        public nextSet(): Array<any> {
+            //check end
+            if (this.counters[this.NumberOfParameters] > 0) {
+                return null;
             }
 
-            public NumberOfParameters: number;
-            public counters: Array<number>;
-
-            public nextSet(): Array<any> {
-                //check end
-                if (this.counters[this.NumberOfParameters] > 0) {
-                    return null;
-                }
-
-                //retrieve next set
-                var retval = new Array<any>(this.NumberOfParameters);
-                for (var i = 0; i < this.NumberOfParameters; i++) {
-                    retval[i] = this.values[i][this.counters[i]];
-                }
+            //retrieve next set
+            var retval = new Array<any>(this.NumberOfParameters);
+            for (var i = 0; i < this.NumberOfParameters; i++) {
+                retval[i] = this.values[i][this.counters[i]];
+            }
                 
-                //advance counters
-                this.counters[0]++;
-                for (var i = 0; i < this.NumberOfParameters; i++) {
-                    if (this.counters[i] >= this.values[i].length) {
-                        this.counters[i] = 0;
-                        this.counters[i + 1]++;
-                    }
+            //advance counters
+            this.counters[0]++;
+            for (var i = 0; i < this.NumberOfParameters; i++) {
+                if (this.counters[i] >= this.values[i].length) {
+                    this.counters[i] = 0;
+                    this.counters[i + 1]++;
                 }
-
-                return retval;
             }
+
+            return retval;
         }
+    }
 
     export class TestWithParam extends BaseTest {//extends WithParamInterface<T>  {
         protected _params: Array<any>;
@@ -314,12 +378,25 @@ export namespace cvtest {
         //TODO:!!
     }
 
+    export function TEST_P(test_case_name: string, test_name: string, cb: () => void) {
+        cb();
+        //tape(
+        //TODO:!!
+    }
+
     export function CUDA_TEST_P(test_case_name: string, test_name: string, cb: () => void) {
         cb();
         //tape...
         //TODO:!!
     }
 
+
+    export function SCOPED_TRACE(message: string): void {
+        //?
+    }
+ 
+
+ 
 
     //using std::vector;
     //using std::string;
@@ -341,7 +418,7 @@ export namespace cvtest {
     interface IrandUni {
         (rng: _core.RNG, a: _mat.Mat, param1: _types.Scalar, param2: _types.Scalar): void;
     }
-    export var randUni: IrandUni = alvision_module.IrandUni;
+    export var randUni: IrandUni = alvision_module.cvtest.IrandUni;
     //CV_EXPORTS void randUni( RNG& rng, Mat& a, const Scalar& param1, const Scalar& param2 );
     //
 
@@ -381,13 +458,13 @@ export namespace cvtest {
     interface IgetMinVal {
         (depth: _st.int): _st.double;
     }
-    export var getMinVal: IgetMinVal = alvision_module.getMinVal;
+    export var getMinVal: IgetMinVal = alvision_module.cvtest.getMinVal;
     //CV_EXPORTS double getMinVal(int depth);
 
     interface IgetMaxVal {
         (depth: _st.int): _st.double;
     }
-    export var getMaxVal: IgetMaxVal = alvision_module.getMaxVal;
+    export var getMaxVal: IgetMaxVal = alvision_module.cvtest.getMaxVal;
     //CV_EXPORTS double getMaxVal(int depth);
     //
 
@@ -396,14 +473,14 @@ export namespace cvtest {
         (rng: _core.RNG, minDims: _st.int, maxDims: _st.int, maxSizeLog: _st.double, sz: Array<_st.int>): void;
     }
 
-    export var randomSize: IrandomSize = alvision_module.randomSize;
+    export var randomSize: IrandomSize = alvision_module.cvtest.randomSize;
 
 
     interface IrandomType {
         (rng: _core.RNG, typeMask: _st.int, minChannels: _st.int, maxChannels: _st.int): _st.int;
     }
 
-    export var randomType: IrandomType = alvision_module.randomType;
+    export var randomType: IrandomType = alvision_module.cvtest.randomType;
     //CV_EXPORTS int randomType(RNG& rng, int typeMask, int minChannels, int maxChannels);
 
 
@@ -411,19 +488,19 @@ export namespace cvtest {
     interface IrandomMat {
         (rng: _core.RNG, size: _types.Size, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi?: boolean): _mat.Mat;
         (rng: _core.RNG, size: Array<_st.int>, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi?: boolean): _mat.Mat;
-        (size: _types.Size, type: _st.int, minVal?: _st.double  /*= 0.0*/, maxVal?: _st.double /*= 255.0*/) : _mat.Mat
+        (size: _types.Size, type: _st.int, minVal?: _st.double  /*= 0.0*/, maxVal?: _st.double /*= 255.0*/): _mat.Mat
     }
 
-    export var randomMat: IrandomMat = alvision_module.randomMat;
+    export var randomMat: IrandomMat = alvision_module.cvtest.randomMat;
 
-    
+
 
     interface Iadd {
         (a: _mat.Mat, alpha: _st.double, b: _mat.Mat, beta: _st.double,
             gamma: _types.Scalar, c: _mat.Mat, ctype: _st.int, calcAbs?: boolean /*=false*/): void;
     }
 
-    export var add: Iadd = alvision_module.add;
+    export var add: Iadd = alvision_module.cvtest.add;
 
     //CV_EXPORTS void add(const Mat& a, double alpha, const Mat& b, double beta,
     //                      Scalar gamma, Mat& c, int ctype, bool calcAbs=false);
@@ -432,7 +509,7 @@ export namespace cvtest {
         (a: _mat.Mat, b: _mat.Mat, c: _mat.Mat, alpha?: _st.double  /*= 1*/): void;
     }
 
-    export var multiply: Imultiply = alvision_module.multiply;
+    export var multiply: Imultiply = alvision_module.cvtest.multiply;
 
     //CV_EXPORTS void multiply(const Mat& a, const Mat& b, Mat& c, double alpha=1);
     //CV_EXPORTS void divide(const Mat& a, const Mat& b, Mat& c, double alpha=1);
@@ -442,25 +519,38 @@ export namespace cvtest {
         (src: _mat.Mat, dst: _st.OutputArray, dtype: _st.int, alpha?: _st.double /*= 1*/, beta?: _st.double /*= 0*/): void;
     }
 
-    export var convert: Iconvert = alvision_module.convert;
+    export var convert: Iconvert = alvision_module.cvtest.convert;
 
     //CV_EXPORTS void convert(const Mat& src, cv::OutputArray dst, int dtype, double alpha=1, double beta=0);
 
     interface Icopy {
         (src: _mat.Mat, dst: _mat.Mat, mask?: _mat.Mat /*=Mat()*/, invertMask?: boolean /*= false*/): void;
     }
-    export var copy: Icopy = alvision_module.copy;
+    export var copy: Icopy = alvision_module.cvtest.copy;
 
     //CV_EXPORTS void copy(const Mat& src, Mat& dst, const Mat& mask=Mat(), bool invertMask=false);
 
     interface Iset {
         (dst: _mat.Mat, gamma: _types.Scalar, mask?: _mat.Mat /* = new _mat.Mat()*/): void;
     }
-    export var set: Iset = alvision_module.set;
+    export var set: Iset = alvision_module.cvtest.set;
     //CV_EXPORTS void set(Mat& dst, const Scalar& gamma, const Mat& mask=Mat());
     //
     //// working with multi-channel arrays
+
+    interface Iextract {
+        (a: _mat.Mat, plane: _mat.Mat, coi: _st.int): void;
+    }
+    export var extract: Iextract = alvision_module.cvtest.extract;
+
     //CV_EXPORTS void extract( const Mat& a, Mat& plane, int coi );
+
+    interface Iinsert {
+        (plane: _mat.Mat, a: _mat.Mat, coi: _st.int): void;
+    }
+
+    export var insert: Iinsert = alvision_module.cvtest.insert;
+
     //CV_EXPORTS void insert( const Mat& plane, Mat& a, int coi );
     //
     //// checks that the array does not have NaNs and/or Infs and all the elements are
@@ -475,11 +565,24 @@ export namespace cvtest {
     //                      int borderType=0, const Scalar& borderValue=Scalar());
     //CV_EXPORTS void dilate(const Mat& src, Mat& dst, const Mat& _kernel, Point anchor=Point(-1,-1),
     //                       int borderType=0, const Scalar& borderValue=Scalar());
+    interface Ifilter2D {
+        (src: _mat.Mat, dst: _mat.Mat, ddepth: _st.int, kernel: _mat.Mat ,
+            anchor: _types.Point, delta: _st.double, borderType: _base.BorderTypes | _st.int,
+            borderValue?: _types.Scalar /*=Scalar()*/): void;
+    }
+    export var filter2D: Ifilter2D = alvision_module.cvtest.filter2D;
+
     //CV_EXPORTS void filter2D(const Mat& src, Mat& dst, int ddepth, const Mat& kernel,
     //                         Point anchor, double delta, int borderType,
     //                         const Scalar& borderValue=Scalar());
     //CV_EXPORTS void copyMakeBorder(const Mat& src, Mat& dst, int top, int bottom, int left, int right,
     //                               int borderType, const Scalar& borderValue=Scalar());
+
+    interface IcalcSobelKernel2D {
+        (dx: _st.int, dy: _st.int, apertureSize: _st.int, origin?: _st.int /*= 0*/): _mat.Mat;
+    }
+    export var calcSobelKernel2D: IcalcSobelKernel2D = alvision_module.cvtest.calcSobelKernel2D;
+
     //CV_EXPORTS Mat calcSobelKernel2D( int dx, int dy, int apertureSize, int origin=0 );
     //CV_EXPORTS Mat calcLaplaceKernel2D( int aperture_size );
     //
@@ -492,19 +595,19 @@ export namespace cvtest {
         (src1: _st.InputArray, src2: _st.InputArray, normType: _base.NormTypes, mask?: _st.InputArray /*= noArray()*/): _st.double;
     }
 
-    export var norm: Inorm = alvision_module.norm;
+    export var norm: Inorm = alvision_module.cvtest.norm;
 
 
     interface Imean {
         (src: _mat.Mat, mask?: _mat.Mat /*=Mat()*/): _types.Scalar;
     }
-    export var mean: Imean = alvision_module.mean;
+    export var mean: Imean = alvision_module.cvtest.mean;
     //CV_EXPORTS Scalar mean(const Mat& src, const Mat& mask=Mat());
 
     interface IPSNR {
         (src1: _st.InputArray, src2: _st.InputArray): _st.double;
     }
-    export var PSNR: IPSNR = alvision_module.PSNR;
+    export var PSNR: IPSNR = alvision_module.cvtest.PSNR;
 
     //CV_EXPORTS double PSNR(InputArray src1, InputArray src2);
     //
@@ -527,7 +630,7 @@ export namespace cvtest {
             cb: (idx: Array<_st.int>, max_diff: _st.double) => void): CMP_EPS_CODE
     }
 
-    export var cmpEps: IcmpEps = alvision_module.cmpEps;
+    export var cmpEps: IcmpEps = alvision_module.cvtest.cmpEps;
 
 
     //CV_EXPORTS int cmpEps( const Mat& data, const Mat& refdata, double* max_diff,
@@ -536,31 +639,29 @@ export namespace cvtest {
     //
     //// a wrapper for the previous function. in case of error prints the message to log file.
 
-    function vec2str(sep : string, v : Array<_st.int>) : string
-    {
+    function vec2str(sep: string, v: Array<_st.int>): string {
         var buff = "";
         var result = "";
-        for (var i = 0; i < v.length; i++ )
-        {
+        for (var i = 0; i < v.length; i++) {
             result += util.format("%d", v[i]);
-            if (i < v.length- 1)
+            if (i < v.length - 1)
                 result += sep;
         }
         return result;
     }
 
 
-    export function cmpEps2(ts: TS, a: _mat.Mat, b: _mat.Mat, success_err_level: _st.double ,
+    export function cmpEps2(ts: TS, a: _mat.Mat, b: _mat.Mat, success_err_level: _st.double,
         element_wise_relative_error: boolean, desc: string): FailureCode {
         var msg = "";
         var diff = 0;
         var idx = new Array<_st.int>();
 
-        var code = <any> cmpEps(a, b, success_err_level, element_wise_relative_error, (iidx, imax_diff) => { idx = iidx; diff = imax_diff.valueOf(); });
+        var code = <any>cmpEps(a, b, success_err_level, element_wise_relative_error, (iidx, imax_diff) => { idx = iidx; diff = imax_diff.valueOf(); });
 
         switch (code) {
             case CMP_EPS_CODE.CMP_EPS_BIG_DIFF:
-                msg = util.format( "%s: Too big difference (=%g)", desc, diff);
+                msg = util.format("%s: Too big difference (=%g)", desc, diff);
                 code = FailureCode.FAIL_BAD_ACCURACY;
                 break;
             case CMP_EPS_CODE.CMP_EPS_INVALID_TEST_DATA:
@@ -596,16 +697,16 @@ export namespace cvtest {
     //        bool element_wise_relative_error, const char* desc): _st.int;
     //}
 
-    //export var cmpEps2 = : IcmpEps2 = alvision_module.cmpEps2;
+    //export var cmpEps2 = : IcmpEps2 = alvision_module.cvtest.cmpEps2;
 
     //CV_EXPORTS int cmpEps2( TS* ts, const Mat& data, const Mat& refdata, double success_err_level,
     //                        bool element_wise_relative_error, const char* desc );
     //
 
-    export function cmpEps2_64f(ts: TS, val: Array<_st.double>, refval : Array<_st.double>,
-        eps : _st.double , param_name : string): _st.int {
-        var _val    = new _mat.Mat(1, val.length, _cvdef.MatrixType.CV_64F,<any>val);
-        var _refval = new _mat.Mat(1, refval.length, _cvdef.MatrixType.CV_64F,<any>refval);
+    export function cmpEps2_64f(ts: TS, val: Array<_st.double>, refval: Array<_st.double>,
+        eps: _st.double, param_name: string): _st.int {
+        var _val = new _mat.Mat(1, val.length, _cvdef.MatrixType.CV_64F, <any>val);
+        var _refval = new _mat.Mat(1, refval.length, _cvdef.MatrixType.CV_64F, <any>refval);
 
         return cmpEps2(ts, _val, _refval, eps, true, param_name);
     }
@@ -616,7 +717,7 @@ export namespace cvtest {
     //        double eps, const char* param_name): _st.int;
     //}
 
-    //export var cmpEps2_64f: IcmpEps2_64f = alvision_module.cmpEps2_64f;
+    //export var cmpEps2_64f: IcmpEps2_64f = alvision_module.cvtest.cmpEps2_64f;
 
     //CV_EXPORTS int cmpEps2_64f( TS* ts, const double* val, const double* refval, int len,
     //                        double eps, const char* param_name );
@@ -627,7 +728,7 @@ export namespace cvtest {
         (src: _mat.Mat, s: _types.Scalar, dst: _mat.Mat, c: _st.char): void;
     }
 
-    export var logicOp: IlogicOp = alvision_module.logicOp;
+    export var logicOp: IlogicOp = alvision_module.cvtest.logicOp;
 
     //CV_EXPORTS void logicOp(const Mat& src1, const Mat& src2, Mat& dst, char c);
     //CV_EXPORTS void logicOp(const Mat& src, const Scalar& s, Mat& dst, char c);
@@ -640,19 +741,19 @@ export namespace cvtest {
     //CV_EXPORTS void compare(const Mat& src, double s, Mat& dst, int cmpop);
 
     interface Igemm {
-        (src1 : _mat.Mat, src2 : _mat.Mat, alpha : _st.double,
-                         src3 : _mat.Mat, beta : _st.double, dst : _mat.Mat, flags : _st.int): void;
+        (src1: _mat.Mat, src2: _mat.Mat, alpha: _st.double,
+            src3: _mat.Mat, beta: _st.double, dst: _mat.Mat, flags: _st.int): void;
     }
-    export var gemm: Igemm = alvision_module.gemm;
+    export var gemm: Igemm = alvision_module.cvtest.gemm;
 
     //CV_EXPORTS void gemm(const Mat& src1, const Mat& src2, double alpha,
     //                     const Mat& src3, double beta, Mat& dst, int flags);
     //CV_EXPORTS void transform( const Mat& src, Mat& dst, const Mat& transmat, const Mat& shift );
 
     interface IcrossCorr {
-        (src1 : _mat.Mat, src2 : _mat.Mat): _st.double;
+        (src1: _mat.Mat, src2: _mat.Mat): _st.double;
     }
-    export var crossCorr: IcrossCorr = alvision_module.crossCorr;
+    export var crossCorr: IcrossCorr = alvision_module.cvtest.crossCorr;
 
 
     //CV_EXPORTS double crossCorr(const Mat& src1, const Mat& src2);
@@ -668,60 +769,187 @@ export namespace cvtest {
     //
     //CV_EXPORTS std::ostream& operator << (std::ostream& out, const MatInfo& m);
     //
-//    class MatComparator {
-//        constructor(_maxdiff: _st.double, _context: _st.int) {
-//            this.maxdiff = _maxdiff;
-//            this.realmaxdiff = _st.DBL_MAX;
-//            this.context = _context;
-//        }
 
-//        //AssertionResult
-//        public run(expr1: string, expr2: string,
-//            m1: _mat.Mat, m2: _mat.Mat): AssertionResult {
-//            if (m1.type() != m2.type() || m1.size != m2.size)
-//                return ::testing::AssertionFailure()
-//                    << "The reference and the actual output arrays have different type or size:\n"
-//                    << expr1 << " ~ " << MatInfo(m1) << "\n"
-//                    << expr2 << " ~ " << MatInfo(m2) << "\n";
+    class AssertionResult {
+        // Copy constructor.
+        // Used in the EXPECT_TRUE/FALSE(bool_expression).
+        constructor(public success: boolean, public message: string) {
+        }
+    }
 
-//            //bool ok = cvtest::cmpUlps(m1, m2, maxdiff, &realmaxdiff, &loc0);
-//            var code = cmpEps(m1, m2,true, &realmaxdiff, maxdiff, &loc0, true);
+    class AssertionFailure extends AssertionResult {
+        constructor(message: string) {
+            super(false, message);
+        }
+    }
 
-//            if (code >= 0)
-//                return ::testing::AssertionSuccess();
+    class AssertionSuccess extends AssertionResult {
+        constructor(message?: string) {
+            super(true, message);
+        }
+    }
 
-//            var m = [ m1.reshape(1, 0), m2.reshape(1, 0) ];
-//            var dims = m[0].dims;
-            
-//            var loc = new Array<_st.int>();
-//            var border = dims <= 2 ? context : 0;
+    export function ASSERT_PRED_FORMAT2(result: AssertionResult, msg?: string) {
+        _base.ASSERT_TRUE(result.success, result.message + msg);
+    }
 
-//            var m1part = new _mat.Mat();
-//            var m2part = new _mat.Mat();
+    export function MatInfo(m: _mat.Mat): string {
+        var retval = "";
+        if (!m || m.empty())
+            retval += "<Empty>";
+        else {
+            const depthstr = ["8u", "8s", "16u", "16s", "32s", "32f", "64f", "?"];
 
-//            if (border == 0) {
-//                loc = loc0;
-//                m1part = new _mat.Mat(1, 1, m[0].depth(), m[0].ptr(&loc[0]));
-//                m2part = new _mat.Mat(1, 1, m[1].depth(), m[1].ptr(&loc[0]));
-//            }
-//            else {
-//                m1part = getSubArray(m[0], border, loc0, loc);
-//                m2part = getSubArray(m[1], border, loc0, loc);
-//            }
+            retval += depthstr[m.depth().valueOf()] + "C" + m.channels() + " " + m.dims + "-dim (";
+            for (var i = 0; i < m.dims; i++) {
+                retval += m.size()[i].valueOf() + (i < m.dims.valueOf() - 1 ? " x " : ")");
+            }
+        }
+        return retval;
+    }
 
-//            return ::testing::AssertionFailure()
-//                << "too big relative difference (" << realmaxdiff << " > "
-//                << maxdiff << ") between "
-//                << MatInfo(m1) << " '" << expr1 << "' and '" << expr2 << "' at " << Mat(loc0) << ".\n\n"
-//                << "'" << expr1 << "': " << MatPart(m1part, border > 0 ? &loc : 0) << ".\n\n"
-//                << "'" << expr2 << "': " << MatPart(m2part, border > 0 ? &loc : 0) << ".\n";
-//        }
 
-//    var maxdiff: _st.double;
-//    var realmaxdiff: _st.double;
-//    var loc0: Array<_st.int>;
-//    var context: _st.int;
-//}
+    //template < typename _Tp, typename _WTp> static void
+    function writeElems(data : Array<any>, nelems : _st.int, starpos : _st.int ) : string
+    {
+        var retval = "";
+        for (var i = 0; i < nelems; i++)
+        {
+            if (i == starpos)
+                retval += "*";
+            retval += data[i];
+            if (i == starpos)
+                retval += "*";
+            retval += (i + 1 < nelems ? ", " : "");
+        }
+        return retval;
+    }
+
+   
+    //get the mat ptr from mat type
+    function GetMatPtr(m: _mat.Mat,i0 : _st.int): Array<any> {
+        var depth = _cvdef.MatrixType.CV_MAT_DEPTH(m.type());
+
+        switch (depth) {
+            case _cvdef.MatrixType.CV_8U:
+                return m.ptr<any>("uchar",i0);
+                break;
+            case _cvdef.MatrixType.CV_8S:
+                return m.ptr<any>("schar",i0);
+                break;
+            case _cvdef.MatrixType.CV_16U:
+                return m.ptr<any>("ushort",i0);
+                break;
+            case _cvdef.MatrixType.CV_16S:
+                return m.ptr<any>("short",i0);
+                break;
+            case _cvdef.MatrixType.CV_32S:
+                return m.ptr<any>("int",i0);
+                break;
+            case _cvdef.MatrixType.CV_32F:
+                return m.ptr<any>("float",i0);
+                break;
+            case _cvdef.MatrixType.CV_64F:
+                return m.ptr<any>("double",i0);
+                break;
+            default:
+                //unimplemented
+                return null;
+        }
+        //var ptr = m.ptr<any>("
+    }
+
+    function MatPart(m: _mat.Mat, loc: Array<_st.int>) {
+        var retval = "";
+        _base.CV_Assert(() => !loc || (loc.length == m.dims && m.dims <= 2));
+        if (!loc)
+            retval += m;
+        else {
+            var depth = m.depth(), cn = m.channels(), width = m.cols.valueOf() * cn.valueOf();
+            for (var i = 0; i < m.rows; i++) {
+                retval += writeElems(GetMatPtr(m, i), width, depth);//, i == (*loc)[0] ? (*loc)[1] : -1);
+                retval += (i < m.rows.valueOf() - 1 ? ";\n" : "");
+            }
+        }
+        return retval;
+    }
+
+
+    function getSubArray(m: _mat.Mat, border: _st.int, ofs0: Array<_st.int>, ofs: Array<_st.int> ): _mat.Mat {
+        ofs.length = (ofs0.length);
+        if (border < 0) {
+            ofs.forEach((v, i, a) => { ofs[i] = a[i]; });
+            //std::copy(ofs0.begin(), ofs0.end(), ofs.begin());
+            return m;
+        }
+        //int i, 
+        var d = m.dims.valueOf();
+        _base.CV_Assert(()=>d == ofs.length);
+        var r = _st.NewArray<_types.Range> (d,()=>new _types.Range());
+        for (var i = 0; i < d; i++) {
+            r[i].start = Math.max(0, ofs0[i].valueOf() - border.valueOf());
+            r[i].end = Math.min(ofs0[i].valueOf() + 1 + border.valueOf(), m.size[i]);
+            ofs[i] = Math.min(ofs0[i].valueOf(), border.valueOf());
+        }
+        return m.roi (r);
+    }
+
+    export class MatComparator {
+        constructor(_maxdiff: _st.double, _context: _st.int) {
+            this.maxdiff = _maxdiff;
+            this.realmaxdiff = _st.DBL_MAX;
+            this.context = _context;
+        }
+
+        //AssertionResult
+        public run(m1: _mat.Mat, m2: _mat.Mat)
+        {
+            var expr1: string = m1.toString();
+            var expr2: string = m2.toString();
+            if (m1.type() != m2.type() || m1.size != m2.size)
+                return new AssertionFailure(
+                     "The reference and the actual output arrays have different type or size:\n" +
+                     expr1 + " ~ " + MatInfo(m1) + "\n" + 
+                     expr2 + " ~ " + MatInfo(m2) + "\n")
+
+            //bool ok = cvtest::cmpUlps(m1, m2, maxdiff, &realmaxdiff, &loc0);
+            var code = cmpEps(m1, m2, 1, true, (idx_, max_diff_) => { this.loc0 = idx_; this.maxdiff = this.realmaxdiff = max_diff_; });// &realmaxdiff, maxdiff, &loc0, true);
+
+            if (code >= 0)
+                return new AssertionSuccess();
+
+            var m = [m1.reshape(1, 0), m2.reshape(1, 0)];
+            var dims = m[0].dims;
+
+            var loc = new Array<_st.int>();
+            var border = dims <= 2 ? this.context : 0;
+
+            var m1part = new _mat.Mat();
+            var m2part = new _mat.Mat();
+
+            if (border == 0) {
+                loc = this.loc0;
+                m1part = new _mat.Mat(1, 1, m[0].depth(),GetMatPtr( m[0], loc[0]));
+                m2part = new _mat.Mat(1, 1, m[1].depth(),GetMatPtr( m[1], loc[0]));
+            }
+            else {
+                m1part = getSubArray(m[0], border, this.loc0, loc);
+                m2part = getSubArray(m[1], border, this.loc0, loc);
+            }
+
+            return new AssertionFailure(
+                + "too big relative difference (" + this.realmaxdiff.valueOf() + " > "
+                + this.maxdiff + ") between "
+                + MatInfo(m1) + " '" + expr1 + "' and '" + expr2 + "' at " + new _mat.Mat(this.loc0) + ".\n\n"
+                + "'" + expr1 + "': " + MatPart(m1part, border.valueOf() > 0 ? loc : null) + ".\n\n"
+                + "'" + expr2 + "': " + MatPart(m2part, border.valueOf() > 0 ? loc : null) + ".\n");
+        }
+
+        protected maxdiff: _st.double;
+        protected realmaxdiff: _st.double;
+        protected loc0: Array<_st.int>;
+        protected context: _st.int;
+    }
     //
     //
     //
@@ -1091,7 +1319,7 @@ export class TS
     get_current_test_info() : TestInfo { return this.current_test_info; }
 //
 //    // sets information about a failed test
-    set_failed_test_info(fail_code: FailureCode): void {
+    set_failed_test_info(fail_code: FailureCode | _st.int): void {
         if (this.current_test_info.code >= 0)
             this.current_test_info.code = fail_code;
     }
@@ -1133,7 +1361,7 @@ export class TS
     get_err_code(): FailureCode  { return this.current_test_info.code.valueOf(); }
 //
 //    // returns the test extensivity scale
-//    double get_test_case_count_scale() { return params.test_case_count_scale; }
+    get_test_case_count_scale() : _st.double { return this.params.test_case_count_scale; } 
 //
 //    const string& get_data_path() const { return data_path; }
     get_data_path() : string { return this.data_path; }
@@ -1199,8 +1427,8 @@ export abstract class ArrayTest extends BaseTest
             }
         }
     }
-//    virtual void fill_array( int test_case_idx, int i, int j, Mat& arr );
-//    virtual void get_minmax_bounds( int i, int j, int type, Scalar& low, Scalar& high );
+    fill_array(test_case_idx: _st.int, i: _st.int, j: _st.int, arr: _mat.Mat): void { }
+    get_minmax_bounds(i: _st.int, j: _st.int, type: _st.int, low: _types.Scalar, high: _types.Scalar): void { }
     get_success_error_level(test_case_idx: _st.int, i: _st.int, j: _st.int): _st.double { return 0;}
 //
 //    bool cvmat_allowed;
@@ -1462,7 +1690,7 @@ namespace cvtest { namespace ocl {
 interface IdumpImage {
     (fileName : string, image : _mat.Mat): void;
 }
-    export var dumpImage: IdumpImage = alvision_module.dumpImage;
+export var dumpImage: IdumpImage = alvision_module.cvtest.dumpImage;
     //CV_EXPORTS void dumpImage(const std::string& fileName, const cv::Mat& image);
 }
 

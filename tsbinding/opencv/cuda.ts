@@ -120,36 +120,36 @@ import * as _base from './Base';
             new (size: _types.Size, type: _st.int, s: _types.Scalar /*, Allocator * allocator = defaultAllocator()*/): GpuMat;
 
             //! copy constructor
-            //GpuMat(const GpuMat& m);
+            new (m: GpuMat): GpuMat;
 
-//            //! constructor for GpuMat headers pointing to user-allocated data
-//            GpuMat(int rows, int cols, int type, void* data, size_t step = Mat::AUTO_STEP);
-//            GpuMat(Size size, int type, void* data, size_t step = Mat::AUTO_STEP);
-//
-//            //! creates a GpuMat header for a part of the bigger matrix
-//            GpuMat(const GpuMat& m, Range rowRange, Range colRange);
-//            GpuMat(const GpuMat& m, Rect roi);
-//
-//            //! builds GpuMat from host memory (Blocking call)
+            //! constructor for GpuMat headers pointing to user-allocated data
+            new (rows: _st.int, cols: _st.int, type: _st.int, data: Array<any>, step?: _st.size_t /*= Mat::AUTO_STEP*/): GpuMat;
+            new (size: _types.Size, type: _st.int, data: Array<any>, step?: _st.size_t /*= Mat::AUTO_STEP*/): GpuMat;
+
+            //! creates a GpuMat header for a part of the bigger matrix
+            new (m: GpuMat, rowRange: _types.Range, colRange: _types.Range): GpuMat;
+            new (m: GpuMat, roi: _types.Rect): GpuMat;
+
+            //! builds GpuMat from host memory (Blocking call)
             new (arr: _st.InputArray /*, Allocator * allocator = defaultAllocator()*/): GpuMat;
-//
-//            //! destructor - calls release()
-//            ~GpuMat();
-//
-//            //! assignment operators
-//            GpuMat & operator =(const GpuMat& m);
+            //
+            //            //! destructor - calls release()
+            //            ~GpuMat();
+            //
+            //            //! assignment operators
+            //            GpuMat & operator =(const GpuMat& m);
         }
 
-        export interface GpuMat
+        export interface GpuMat extends _st.IOArray
         {
 
     
 
 
-//
-//            //! allocates new GpuMat data unless the GpuMat already has specified size and type
-//            void create(int rows, int cols, int type);
-//            void create(Size size, int type);
+
+            //! allocates new GpuMat data unless the GpuMat already has specified size and type
+            create(rows: _st.int, cols: _st.int, type: _st.int ): void;
+            create(size: _types.Size, type: _st.int ): void;
 //
 //            //! decreases reference counter, deallocate the data when reference counter reaches 0
 //            void release();
@@ -158,64 +158,65 @@ import * as _base from './Base';
 //            void swap(GpuMat & mat);
 //
 //            //! pefroms upload data to GpuMat (Blocking call)
-//            void upload(InputArray arr);
-//
-//            //! pefroms upload data to GpuMat (Non-Blocking call)
-//            void upload(InputArray arr, Stream & stream);
-//
-//            //! pefroms download data from device to host memory (Blocking call)
-//            void download(OutputArray dst) const;
-//
-//            //! pefroms download data from device to host memory (Non-Blocking call)
-//            void download(OutputArray dst, Stream & stream) const;
+            upload(arr: _st.InputArray ) : void
+
+            //! pefroms upload data to GpuMat (Non-Blocking call)
+            upload(arr: _st.InputArray, stream: Stream): void;
+
+            //! pefroms download data from device to host memory (Blocking call)
+            download(dst: _st.OutputArray ): void;
+
+            //! pefroms download data from device to host memory (Non-Blocking call)
+            download(dst: _st.OutputArray, stream: Stream ): void;
 //
 //            //! returns deep copy of the GpuMat, i.e. the data is copied
 //            GpuMat clone() const;
 //
-//            //! copies the GpuMat content to device memory (Blocking call)
-//            void copyTo(OutputArray dst) const;
-//
-//            //! copies the GpuMat content to device memory (Non-Blocking call)
-//            void copyTo(OutputArray dst, Stream & stream) const;
-//
-//            //! copies those GpuMat elements to "m" that are marked with non-zero mask elements (Blocking call)
-//            void copyTo(OutputArray dst, InputArray mask) const;
-//
-//            //! copies those GpuMat elements to "m" that are marked with non-zero mask elements (Non-Blocking call)
-//            void copyTo(OutputArray dst, InputArray mask, Stream & stream) const;
-//
-//            //! sets some of the GpuMat elements to s (Blocking call)
-//            GpuMat & setTo(Scalar s);
-//
-//            //! sets some of the GpuMat elements to s (Non-Blocking call)
-//            GpuMat & setTo(Scalar s, Stream & stream);
-//
-//            //! sets some of the GpuMat elements to s, according to the mask (Blocking call)
-//            GpuMat & setTo(Scalar s, InputArray mask);
-//
-//            //! sets some of the GpuMat elements to s, according to the mask (Non-Blocking call)
-//            GpuMat & setTo(Scalar s, InputArray mask, Stream & stream);
-//
-//            //! converts GpuMat to another datatype (Blocking call)
-//            void convertTo(OutputArray dst, int rtype) const;
-//
-//            //! converts GpuMat to another datatype (Non-Blocking call)
-//            void convertTo(OutputArray dst, int rtype, Stream & stream) const;
-//
-//            //! converts GpuMat to another datatype with scaling (Blocking call)
-//            void convertTo(OutputArray dst, int rtype, double alpha, double beta = 0.0) const;
-//
-//            //! converts GpuMat to another datatype with scaling (Non-Blocking call)
-//            void convertTo(OutputArray dst, int rtype, double alpha, Stream & stream) const;
-//
-//            //! converts GpuMat to another datatype with scaling (Non-Blocking call)
-//            void convertTo(OutputArray dst, int rtype, double alpha, double beta, Stream & stream) const;
-//
+            //! copies the GpuMat content to device memory (Blocking call)
+            copyTo(dst: _st.OutputArray ): void;
+
+            //! copies the GpuMat content to device memory (Non-Blocking call)
+            copyTo(dst: _st.OutputArray, stream: Stream ): void;
+
+            //! copies those GpuMat elements to "m" that are marked with non-zero mask elements (Blocking call)
+            copyTo(dst: _st.OutputArray, mask: _st.InputArray ): void;
+
+            //! copies those GpuMat elements to "m" that are marked with non-zero mask elements (Non-Blocking call)
+            copyTo(dst: _st.OutputArray, mask: _st.InputArray, stream: Stream): void;
+
+            //! sets some of the GpuMat elements to s (Blocking call)
+            setTo(s: _types.Scalar ): GpuMat;
+
+            //! sets some of the GpuMat elements to s (Non-Blocking call)
+            setTo(s: _types.Scalar, stream: Stream): GpuMat;
+
+            //! sets some of the GpuMat elements to s, according to the mask (Blocking call)
+            setTo(s: _types.Scalar, mask: _st.InputArray ): GpuMat;
+
+            //! sets some of the GpuMat elements to s, according to the mask (Non-Blocking call)
+            setTo(s: _types.Scalar, mask: _st.InputArray, stream: Stream): GpuMat;
+
+            //! converts GpuMat to another datatype (Blocking call)
+            convertTo(dst: _st.OutputArray, rtype: _st.int ): void;
+
+            //! converts GpuMat to another datatype (Non-Blocking call)
+            convertTo(dst: _st.OutputArray, rtype: _st.int, stream: Stream ): void;
+
+            //! converts GpuMat to another datatype with scaling (Blocking call)
+            convertTo(dst: _st.OutputArray, rtype: _st.int, alpha: _st.double, beta?: _st.double  /*= 0.0*/): void;
+
+            //! converts GpuMat to another datatype with scaling (Non-Blocking call)
+            convertTo(dst: _st.OutputArray, rtype: _st.int, alpha: _st.double, stream: Stream): void;
+
+            //! converts GpuMat to another datatype with scaling (Non-Blocking call)
+            convertTo(dst: _st.OutputArray, rtype: _st.int, alpha: _st.double, beta: _st.double, stream: Stream): void;
+
 //            void assignTo(GpuMat & m, int type= -1) const;
 //
 //            //! returns pointer to y-th row
 //            uchar * ptr(int y = 0);
 //            const uchar* ptr(int y = 0) const;
+            ptr<T>(T: string, i0?: _st.int /* = 0*/): _mat.TrackedPtr<T>;
 //
 //            //! template version of the above method
 //            template < typename _Tp> _Tp * ptr(int y = 0);
@@ -223,24 +224,26 @@ import * as _base from './Base';
 //
 //            template < typename _Tp> operator PtrStepSz<_Tp>() const;
 //            template < typename _Tp> operator PtrStep<_Tp>() const;
-//
-//            //! returns a new GpuMat header for the specified row
-//            GpuMat row(int y) const;
-//
-//            //! returns a new GpuMat header for the specified column
-//            GpuMat col(int x) const;
-//
-//            //! ... for the specified row span
-//            GpuMat rowRange(int startrow, int endrow) const;
-//            GpuMat rowRange(Range r) const;
-//
-//            //! ... for the specified column span
-//            GpuMat colRange(int startcol, int endcol) const;
-//            GpuMat colRange(Range r) const;
-//
+
+            //! returns a new GpuMat header for the specified row
+            row(y: _st.int ): GpuMat;
+
+            //! returns a new GpuMat header for the specified column
+            col(x: _st.int ) : GpuMat;
+
+            //! ... for the specified row span
+            rowRange(startrow: _st.int, endrow: _st.int ): GpuMat;
+            rowRange(r: _types.Range ): GpuMat;
+
+            //! ... for the specified column span
+            colRange(startcol: _st.int, endcol: _st.int ): GpuMat;
+            colRange(r: _types.Range ): GpuMat;
+
 //            //! extracts a rectangular sub-GpuMat (this is a generalized form of row, rowRange etc.)
 //            GpuMat operator ()(Range rowRange, Range colRange) const;
+            roi(rowRange: _types.Range, colRange: _types.Range): GpuMat;
 //            GpuMat operator ()(Rect roi) const;
+            roi(roi: _types.Rect): GpuMat;
 //
 //            //! creates alternative GpuMat header for the same data, with different
 //            //! number of channels and/or different number of rows
@@ -256,29 +259,29 @@ import * as _base from './Base';
 //            //! (i.e. when there are no gaps between successive rows)
 //            bool isContinuous() const;
 //
-//            //! returns element size in bytes
-//            size_t elemSize() const;
-//
-//            //! returns the size of element channel in bytes
-//            size_t elemSize1() const;
-//
-//            //! returns element type
-//            int type() const;
-//
-//            //! returns element type
-//            int depth() const;
-//
-//            //! returns number of channels
-//            int channels() const;
+            //! returns element size in bytes
+            elemSize(): _st.size_t;
+
+            //! returns the size of element channel in bytes
+            elemSize1(): _st.size_t;
+
+            //! returns element type
+            type(): _st.int;
+
+            //! returns element type
+            depth(): _st.int;
+
+            //! returns number of channels
+            channels(): _st.int;
 //
 //            //! returns step/elemSize1()
 //            size_t step1() const;
 //
-//            //! returns GpuMat size : width == number of columns, height == number of rows
-//            Size size() const;
+//! returns GpuMat size : width == number of columns, height == number of rows
+            size(): _types.Size;
 //
-//            //! returns true if GpuMat data is NULL
-//            bool empty() const;
+            //! returns true if GpuMat data is NULL
+            empty(): boolean;
 //
 //            /*! includes several bit-fields:
 //            - the magic signature
@@ -288,8 +291,9 @@ import * as _base from './Base';
 //            */
 //            int flags;
 //
-//            //! the number of rows and columns
-//            int rows, cols;
+                //! the number of rows and columns
+            rows: _st.int;
+            cols: _st.int;
 //
 //            //! a distance between successive rows in bytes; includes the gap if any
 //            size_t step;
@@ -333,6 +337,12 @@ import * as _base from './Base';
         
         The function does not reallocate memory if the matrix has proper attributes already.
          */
+        interface IensureSizeIsEnough {
+            (rows: _st.int, cols: _st.int, type: _st.int, arr: _st.OutputArray ): void;
+        }
+
+        export var ensureSizeIsEnough: IensureSizeIsEnough = alvision_module.ensureSizeIsEnough;
+
 //        CV_EXPORTS void ensureSizeIsEnough(int rows, int cols, int type, OutputArray arr);
 //
 //        //! BufferPool management (must be called before Stream creation)
@@ -358,26 +368,33 @@ import * as _base from './Base';
         @note Allocation size of such memory types is usually limited. For more details, see *CUDA 2.2
         Pinned Memory APIs* document or *CUDA C Programming Guide*.
          */
-//        class CV_EXPORTS HostMem
-//        {
+
+        export enum HostMemAllocType { PAGE_LOCKED = 1, SHARED = 2, WRITE_COMBINED = 4 };
+
+        interface HostMemStatic {
+            new (alloc_type?: HostMemAllocType/* = PAGE_LOCKED*/): HostMem;
+
+            new (m: HostMem): HostMem
+
+            new (rows: _st.int, cols: _st.int, type: _st.int, alloc_type?: HostMemAllocType /*= PAGE_LOCKED*/): HostMem;
+            new (size: _types.Size, type: _st.int, alloc_type?: HostMemAllocType/*= PAGE_LOCKED*/): HostMem;
+
+            //! creates from host memory with coping data
+            new (arr: _st.InputArray, alloc_type?: HostMemAllocType/*= PAGE_LOCKED*/): HostMem;
+            //
+            //            ~HostMem();
+            //
+            //            HostMem & operator =(const HostMem& m);
+
+        }
+
+export interface HostMem extends _st.IOArray
+{
 //            public:
-//            enum AllocType { PAGE_LOCKED = 1, SHARED = 2, WRITE_COMBINED = 4 };
+
 //
 //    static MatAllocator * getAllocator(AllocType alloc_type = PAGE_LOCKED);
 //
-//            explicit HostMem(AllocType alloc_type = PAGE_LOCKED);
-//
-//            HostMem(const HostMem& m);
-//
-//            HostMem(int rows, int cols, int type, AllocType alloc_type = PAGE_LOCKED);
-//            HostMem(Size size, int type, AllocType alloc_type = PAGE_LOCKED);
-//
-//            //! creates from host memory with coping data
-//            explicit HostMem(InputArray arr, AllocType alloc_type = PAGE_LOCKED);
-//
-//            ~HostMem();
-//
-//            HostMem & operator =(const HostMem& m);
 //
 //            //! swaps with other smart pointer
 //            void swap(HostMem & b);
@@ -396,8 +413,8 @@ import * as _base from './Base';
 //            //! decrements reference counter and released memory if needed.
 //            void release();
 //
-//            //! returns matrix header with disabled reference counting for HostMem data.
-//            Mat createMatHeader() const;
+            //! returns matrix header with disabled reference counting for HostMem data.
+    createMatHeader(): _mat.Mat;
 //
 //            /** @brief Maps CPU memory to GPU address space and creates the cuda::GpuMat header without reference counting
 //            for it.
@@ -410,13 +427,13 @@ import * as _base from './Base';
 //
 //            // Please see cv::Mat for descriptions
 //            bool isContinuous() const;
-//            size_t elemSize() const;
-//            size_t elemSize1() const;
-//            int type() const;
+    elemSize(): _st.size_t;
+            elemSize1(): _st.size_t;
+            type(): _st.int;
 //            int depth() const;
 //            int channels() const;
 //            size_t step1() const;
-//            Size size() const;
+            size(): _types.Size;
 //            bool empty() const;
 //
 //            // Please see cv::Mat for descriptions
@@ -431,7 +448,10 @@ import * as _base from './Base';
 //            const uchar* dataend;
 //
 //            AllocType alloc_type;
-//        };
+        };
+
+        export var HostMem: HostMemStatic = alvision_module.HostMem;
+
 //
 //        /** @brief Page-locks the memory of matrix and maps it for the device(s).
 //        
@@ -457,58 +477,65 @@ import * as _base from './Base';
 //        has its own constant buffer. Memory copy/upload/download/set operations to the buffers you hold are
 //        also safe. :
 //         */
-//        class CV_EXPORTS Stream
-//        {
-//            typedef void (Stream::*bool_type)() const;
-//            void this_type_does_not_support_comparisons() const {}
+        interface StreamStatic {
+            //! creates a new asynchronous stream
+            new (): Stream;
+
+        }
+
+
+        export interface Stream {
+            //            typedef void (Stream::*bool_type)() const;
+            //            void this_type_does_not_support_comparisons() const {}
+            //
+            //            public:
+            //            typedef void (*StreamCallback)(int status, void* userData);
+            //
+            //
+            /** @brief Returns true if the current stream queue is finished. Otherwise, it returns false.
+            */
+            queryIfComplete(): boolean;
+
+            /** @brief Blocks the current CPU thread until all operations in the stream are complete.
+            */
+            waitForCompletion(cb: () => void): void;
+
+            /** @brief Makes a compute stream wait on an event.
+            */
+            waitEvent(event: Event): void;
+
+            /** @brief Adds a callback to be called on the host after all currently enqueued items in the stream have
+            completed.
+        
+            @note Callbacks must not make any CUDA API calls. Callbacks must not perform any synchronization
+            that may depend on outstanding device work or other callbacks that are not mandated to run earlier.
+            Callbacks without a mandated order (in independent streams) execute in undefined order and may be
+            serialized.
+             */
+            enqueueHostCallback(callback: (status: _st.int, userData: any) => void, userData: any): void;
+            //
+            //    //! return Stream object for default CUDA stream
+            //    static Stream & Null();
+            //
+            //            //! returns true if stream object is not default (!= 0)
+            //            operator bool_type() const;
+            //
+            //            class Impl;
+            //
+            //            private:
+            //            Ptr < Impl > impl_;
+            //            Stream(const Ptr<Impl>& impl);
+            //
+            //            friend struct StreamAccessor;
+            //            friend class BufferPool;
+            //            friend class DefaultDeviceInitializer;
+        }
+
+        export var Stream: StreamStatic = alvision_module.Stream;
+
 //
-//            public:
-//            typedef void (*StreamCallback)(int status, void* userData);
-//
-//            //! creates a new asynchronous stream
-//            Stream();
-//
-//            /** @brief Returns true if the current stream queue is finished. Otherwise, it returns false.
-//            */
-//            bool queryIfComplete() const;
-//
-//            /** @brief Blocks the current CPU thread until all operations in the stream are complete.
-//            */
-//            void waitForCompletion();
-//
-//            /** @brief Makes a compute stream wait on an event.
-//            */
-//            void waitEvent(const Event& event);
-//
-//            /** @brief Adds a callback to be called on the host after all currently enqueued items in the stream have
-//            completed.
-//        
-//            @note Callbacks must not make any CUDA API calls. Callbacks must not perform any synchronization
-//            that may depend on outstanding device work or other callbacks that are not mandated to run earlier.
-//            Callbacks without a mandated order (in independent streams) execute in undefined order and may be
-//            serialized.
-//             */
-//            void enqueueHostCallback(StreamCallback callback, void* userData);
-//
-//    //! return Stream object for default CUDA stream
-//    static Stream & Null();
-//
-//            //! returns true if stream object is not default (!= 0)
-//            operator bool_type() const;
-//
-//            class Impl;
-//
-//            private:
-//            Ptr < Impl > impl_;
-//            Stream(const Ptr<Impl>& impl);
-//
-//            friend struct StreamAccessor;
-//            friend class BufferPool;
-//            friend class DefaultDeviceInitializer;
-//        };
-//
-//        class CV_EXPORTS Event
-//        {
+interface Event
+{
 //            public:
 //            enum CreateFlags {
 //                DEFAULT = 0x00,  /**< Default event flag */
@@ -538,7 +565,9 @@ import * as _base from './Base';
 //            Event(const Ptr<Impl>& impl);
 //
 //            friend struct EventAccessor;
-//        };
+        };
+
+
 //
 //        //! @} cudacore_struct
 //
@@ -688,11 +717,11 @@ export interface DeviceInfo
 //            //! constant memory available on device in bytes
 //            size_t totalConstMem() const;
 //
-//            //! major compute capability
-//            int majorVersion() const;
-//
-//            //! minor compute capability
-//            int minorVersion() const;
+            //! major compute capability
+    majorVersion(): _st.int;
+
+            //! minor compute capability
+    minorVersion(): _st.int;
 //
 //            //! alignment requirement for textures
 //            size_t textureAlignment() const;

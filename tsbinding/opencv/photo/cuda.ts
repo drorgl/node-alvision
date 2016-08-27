@@ -58,7 +58,7 @@ import * as _features2d from './../features2d'
 //#include "opencv2/core/cuda.hpp"
 
 //namespace cv {
-//export namespace cuda {
+export namespace cudaphoto {
 
     //! @addtogroup photo_denoise
     //! @{
@@ -152,24 +152,25 @@ import * as _features2d from './../features2d'
     @sa
        fastNlMeansDenoisingColored
      */
-    interface IfastNlMeansDenoisingColored{
-        (src: _st.InputArray, dst: _st.OutputArray ,
-            h_luminance: _st.float, photo_render: _st.float ,
+    interface IfastNlMeansDenoisingColored {
+        (src: _st.InputArray, dst: _st.OutputArray,
+            h_luminance: _st.float, photo_render: _st.float,
             search_window?: _st.int /*= 21*/,
             block_size?: _st.int /*= 7*/
             /*,Stream & stream = Stream::Null()*/): void;
     }
     export var fastNlMeansDenoisingColored: IfastNlMeansDenoisingColored = alvision_module.fastNlMeansDenoisingColored;
 
-//CV_EXPORTS void fastNlMeansDenoisingColored(InputArray src, OutputArray dst,
-//                                            float h_luminance, float photo_render,
-//                                            int search_window = 21,
-//                                            int block_size = 7,
-//                                            Stream& stream = Stream::Null());
+    //CV_EXPORTS void fastNlMeansDenoisingColored(InputArray src, OutputArray dst,
+    //                                            float h_luminance, float photo_render,
+    //                                            int search_window = 21,
+    //                                            int block_size = 7,
+    //                                            Stream& stream = Stream::Null());
 
-//! @} photo
+    //! @} photo
 
-//}
-//} // namespace cv { namespace cuda {
+    //}
+    //} // namespace cv { namespace cuda {
 
-//#endif /* __OPENCV_PHOTO_CUDA_HPP__ */
+    //#endif /* __OPENCV_PHOTO_CUDA_HPP__ */
+}

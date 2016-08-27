@@ -103,6 +103,12 @@ export interface Complex<T> {
 //    };
 
 //    typedef Complex< float > Complexf;
+export interface Complexf extends Complex<_st.float> { }
+export interface Complexd extends Complex<_st.double> { }
+
+export var Complexf: ComplexStatic<_st.float> = alvision_module.Complexf;
+export var Complexd: ComplexStatic<_st.double> = alvision_module.Complexd;
+
 //    typedef Complex< double > Complexd;
 
 //    template < typename _Tp> class DataType<Complex<_Tp > >
@@ -166,6 +172,7 @@ export interface Point_Static<T> {
     new (_x : T, _y : T): Point_<T>;
     new (sz: Size_<T>): Point_<T>;
     new (v: _matx.Vec<T>): Point_<T>;
+    new (buf: Buffer): Point_<T>; //from Buffer (deserialize)
 
 //template< typename _Tp> static inline
 //double norm(const Point_<_Tp>& pt)
@@ -290,7 +297,7 @@ export interface Point_Static<T> {
 
 }
 
-export interface Point_<T> {
+export interface Point_<T> extends _st.IOArray {
     dot(pt: Point_<T>): T;
     //! dot product computed in double-precision arithmetics
     ddot(pt: Point_<T>): _st.double;
@@ -310,6 +317,8 @@ export interface Point_<T> {
     op_Multiplication(other: _st.int | _st.float | _st.double | number): Point_<T>;
     op_Multiplication(other: _matx.Matx<T>): Point_<T>;
     op_Division(other: _st.int | _st.float | _st.double): Point_<T>;
+
+    toBuffer(): Buffer;
 }
 
 //    template < typename _Tp> class Point_ {
@@ -1016,6 +1025,8 @@ export interface Rect_Static<T> {
     new (r : Rect_<T>): Rect_<T>;
     new (org: Point_<T>, sz: Size_<T>): Rect_<T>;
     new (pt1: Point_<T>, pt2: Point_<T>): Rect_<T>;
+
+    op_And(a: Rect_<T>, b: Rect_<T>): Rect_<T>;
 }
 
 export interface Rect_<T> {
@@ -1269,7 +1280,184 @@ export interface Scalar_Static<T> {
     new (v: _matx.Vec<T>): Scalar_<T>;
 
         //! returns a scalar with all elements set to v0
-    all(v0 : T): Scalar_<T>;
+    all(v0: T): Scalar_<T>;
+
+
+    //template < typename _Tp> static inline
+//Scalar_<_Tp>& operator += (Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
+//    {
+//        a.val[0] += b.val[0];
+//a.val[1] += b.val[1];
+//a.val[2] += b.val[2];
+//a.val[3] += b.val[3];
+//return a;
+//}
+
+//template < typename _Tp> static inline
+//Scalar_<_Tp>& operator -= (Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
+//    {
+//        a.val[0] -= b.val[0];
+//a.val[1] -= b.val[1];
+//a.val[2] -= b.val[2];
+//a.val[3] -= b.val[3];
+//return a;
+//}
+
+//template < typename _Tp> static inline
+//Scalar_<_Tp>& operator *= (Scalar_<_Tp>& a, _Tp v )
+//{
+//    a.val[0] *= v;
+//    a.val[1] *= v;
+//    a.val[2] *= v;
+//    a.val[3] *= v;
+//    return a;
+//}
+
+//template< typename _Tp> static inline
+//bool operator == ( const Scalar_<_Tp>& a, const Scalar_<_Tp>& b )
+//    {
+//        return a.val[0] == b.val[0] && a.val[1] == b.val[1] &&
+//        a.val[2] == b.val[2] && a.val[3] == b.val[3];
+//}
+    op_Equals(a: Scalar_<T>, b: Scalar_<T>): boolean;
+
+//template < typename _Tp> static inline
+//bool operator != ( const Scalar_<_Tp>& a, const Scalar_<_Tp>& b )
+//    {
+//        return a.val[0] != b.val[0] || a.val[1] != b.val[1] ||
+//        a.val[2] != b.val[2] || a.val[3] != b.val[3];
+//}
+    op_NotEquals(a: Scalar_<T>, b: Scalar_<T>): boolean;
+
+//template < typename _Tp> static inline
+//Scalar_ < _Tp > operator + (const Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
+//    {
+//        return Scalar_<_Tp>(a.val[0] + b.val[0],
+//            a.val[1] + b.val[1],
+//            a.val[2] + b.val[2],
+//            a.val[3] + b.val[3]);
+//}
+    op_Addition(a: Scalar_<T>, b: Scalar_<T>): Scalar_<T>;
+
+//template < typename _Tp> static inline
+//Scalar_ < _Tp > operator - (const Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
+//    {
+//        return Scalar_<_Tp>(saturate_cast<_Tp>(a.val[0] - b.val[0]),
+//            saturate_cast<_Tp>(a.val[1] - b.val[1]),
+//            saturate_cast<_Tp>(a.val[2] - b.val[2]),
+//            saturate_cast<_Tp>(a.val[3] - b.val[3]));
+//}
+    op_Substraction(a: Scalar_<T>, b: Scalar_<T>): Scalar_<T>;
+
+//template < typename _Tp> static inline
+//Scalar_ < _Tp > operator * (const Scalar_<_Tp>& a, _Tp alpha)
+//    {
+//        return Scalar_<_Tp>(a.val[0] * alpha,
+//            a.val[1] * alpha,
+//            a.val[2] * alpha,
+//            a.val[3] * alpha);
+//}
+    op_Multiplication(a: Scalar_<T> | _matx.Matx<T>, b: Scalar_<T> | T): Scalar_<T>;
+
+//template < typename _Tp> static inline
+//Scalar_ < _Tp > operator * (_Tp alpha, const Scalar_<_Tp>& a)
+//    {
+//        return a*alpha;
+//}
+
+//template < typename _Tp> static inline
+//Scalar_ < _Tp > operator - (const Scalar_<_Tp>& a)
+//    {
+//        return Scalar_<_Tp>(saturate_cast<_Tp>(-a.val[0]),
+//            saturate_cast<_Tp>(-a.val[1]),
+//            saturate_cast<_Tp>(-a.val[2]),
+//            saturate_cast<_Tp>(-a.val[3]));
+//}
+    op_Substraction(a: Scalar_<T>): Scalar_<T>;
+
+
+//template < typename _Tp> static inline
+//Scalar_ < _Tp > operator * (const Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
+//    {
+//        return Scalar_<_Tp>(saturate_cast<_Tp>(a[0] * b[0] - a[1] * b[1] - a[2] * b[2] - a[3] * b[3]),
+//            saturate_cast<_Tp>(a[0] * b[1] + a[1] * b[0] + a[2] * b[3] - a[3] * b[2]),
+//            saturate_cast<_Tp>(a[0] * b[2] - a[1] * b[3] + a[2] * b[0] + a[3] * b[1]),
+//            saturate_cast<_Tp>(a[0] * b[3] + a[1] * b[2] - a[2] * b[1] + a[3] * b[0]));
+//}
+
+//template < typename _Tp> static inline
+//Scalar_<_Tp>& operator *= (Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
+//    {
+//        a = a * b;
+//return a;
+//}
+
+//template < typename _Tp> static inline
+//Scalar_ < _Tp > operator / (const Scalar_<_Tp>& a, _Tp alpha)
+//    {
+//        return Scalar_<_Tp>(a.val[0] / alpha,
+//            a.val[1] / alpha,
+//            a.val[2] / alpha,
+//            a.val[3] / alpha);
+//}
+    op_Division(a: Scalar_<T> | T, b: Scalar_<T> | T | _st.float | _st.double): Scalar_<T>;
+
+//template < typename _Tp> static inline
+//Scalar_ < float > operator / (const Scalar_<float>& a, float alpha)
+//    {
+//        float s = 1 / alpha;
+//return Scalar_<float>(a.val[0] * s, a.val[1] * s, a.val[2] * s, a.val[3] * s);
+//}
+
+//template < typename _Tp> static inline
+//Scalar_ < double > operator / (const Scalar_<double>& a, double alpha)
+//    {
+//        double s = 1 / alpha;
+//return Scalar_<double>(a.val[0] * s, a.val[1] * s, a.val[2] * s, a.val[3] * s);
+//}
+
+//template < typename _Tp> static inline
+//Scalar_<_Tp>& operator /= (Scalar_<_Tp>& a, _Tp alpha)
+//{
+//        a = a / alpha;
+//        return a;
+//    }
+
+//template< typename _Tp> static inline
+//Scalar_< _Tp > operator / (_Tp a, const Scalar_<_Tp>& b)
+//    {
+//        _Tp s = a / (b[0] * b[0] + b[1] * b[1] + b[2] * b[2] + b[3] * b[3]);
+//return b.conj() * s;
+//}
+
+//template < typename _Tp> static inline
+//Scalar_ < _Tp > operator / (const Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
+//    {
+//        return a * ((_Tp)1 / b);
+//    }
+
+//template < typename _Tp> static inline
+//Scalar_<_Tp>& operator /= (Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
+//{
+//        a = a / b;
+//        return a;
+//    }
+
+//template< typename _Tp> static inline
+//Scalar operator * (const Matx<_Tp, 4, 4 >& a, const Scalar& b)
+//    {
+//        Matx<double, 4, 1> c((Matx < double, 4, 4 >)a, b, Matx_MatMulOp());
+//return reinterpret_cast <const Scalar&>(c);
+//}
+
+//template <> inline
+//Scalar operator * (const Matx<double, 4, 4 >& a, const Scalar& b)
+//    {
+//        Matx<double, 4, 1> c(a, b, Matx_MatMulOp());
+//return reinterpret_cast <const Scalar&>(c);
+//}
+
+
 }
 
 //template < typename _Tp> class Scalar_ : public Vec < _Tp, 4 >
@@ -1344,7 +1532,7 @@ export interface KeyPointStatic {
 @param _octave pyramid octave in which the keypoint has been detected
 @param _class_id object id
  */
-    new (_pt: Point2f, _size: _st.float, _angle: _st.float /*= -1*/, _response: _st.float  /*= 0*/, _octave: _st.int /*= 0*/, _class_id: _st.int /*= -1*/): KeyPoint;
+    new (_pt: Point2f, _size: _st.float, _angle?: _st.float /*= -1*/, _response?: _st.float  /*= 0*/, _octave?: _st.int /*= 0*/, _class_id?: _st.int /*= -1*/): KeyPoint;
 /**
 @param x x-coordinate of the keypoint
 @param y y-coordinate of the keypoint
@@ -1354,7 +1542,36 @@ export interface KeyPointStatic {
 @param _octave pyramid octave in which the keypoint has been detected
 @param _class_id object id
  */
-    new (x: _st.float, y: _st.float, _size: _st.float, _angle: _st.float /*= -1*/, _response: _st.float  /*= 0*/, _octave: _st.int  /*= 0*/, _class_id: _st.int /*= -1*/): KeyPoint;
+    new (x: _st.float, y: _st.float, _size: _st.float, _angle?: _st.float /*= -1*/, _response?: _st.float  /*= 0*/, _octave?: _st.int  /*= 0*/, _class_id?: _st.int /*= -1*/): KeyPoint;
+
+      /**
+    This method converts vector of keypoints to vector of points or the reverse, where each keypoint is
+    assigned the same size and the same orientation.
+
+    @param keypoints Keypoints obtained from any feature detection algorithm like SIFT/SURF/ORB
+    @param points2f Array of (x,y) coordinates of each keypoint
+    @param keypointIndexes Array of indexes of keypoints to be converted to points. (Acts like a mask to
+    convert only specified keypoints)
+    */
+    convert(keypoints: Array<KeyPoint>,
+        cb: (points2f: Array<Point2f> )=>void,
+        keypointIndexes?: Array<_st.int>/* =Array<int>()*/) : void;
+    /** @overload
+    @param points2f Array of (x,y) coordinates of each keypoint
+    @param keypoints Keypoints obtained from any feature detection algorithm like SIFT/SURF/ORB
+    @param size keypoint diameter
+    @param response keypoint detector response on the keypoint (that is, strength of the keypoint)
+    @param octave pyramid octave in which the keypoint has been detected
+    @param class_id object id
+    */
+    convert(points2f: Array<Point2f> ,
+        cb: (keypoints: Array<KeyPoint> )=>void,
+        size?: _st.float /*= 1*/, response?: _st.float /*= 1*/, octave?: _st.int /*= 0*/, class_id?: _st.int /*= -1*/) : void;
+
+    /** 
+        c++ structure size of
+    */
+    sizeof(): _st.int;
 }
 
 //class CV_EXPORTS_W_SIMPLE KeyPoint
@@ -1364,30 +1581,7 @@ export interface KeyPoint
 
     //size_t hash() const;
 
-    /**
-    This method converts vector of keypoints to vector of points or the reverse, where each keypoint is
-    assigned the same size and the same orientation.
-
-    @param keypoints Keypoints obtained from any feature detection algorithm like SIFT/SURF/ORB
-    @param points2f Array of (x,y) coordinates of each keypoint
-    @param keypointIndexes Array of indexes of keypoints to be converted to points. (Acts like a mask to
-    convert only specified keypoints)
-    */
-    //CV_WRAP static void convert(const std::vector<KeyPoint>& keypoints,
-    //    CV_OUT std::vector<Point2f>& points2f,
-    //const std::vector<int>& keypointIndexes=std::vector<int>());
-    /** @overload
-    @param points2f Array of (x,y) coordinates of each keypoint
-    @param keypoints Keypoints obtained from any feature detection algorithm like SIFT/SURF/ORB
-    @param size keypoint diameter
-    @param response keypoint detector response on the keypoint (that is, strength of the keypoint)
-    @param octave pyramid octave in which the keypoint has been detected
-    @param class_id object id
-    */
-    //CV_WRAP static void convert(const std::vector<Point2f>& points2f,
-    //    CV_OUT std::vector<KeyPoint>& keypoints,
-    //    float size= 1, float response= 1, int octave= 0, int class_id= -1);
-
+  
     /**
     This method computes overlap for pair of keypoints. Overlap is the ratio between area of keypoint
     regions' intersection and area of keypoint regions' union (considering keypoint region as circle).
@@ -1402,10 +1596,12 @@ export interface KeyPoint
     angle : _st.float; //!< computed orientation of the keypoint (-1 if not applicable);
     ////!< it's in [0,360) degrees and measured relative to
     ////!< image coordinate system, ie in clockwise.
-    //CV_PROP_RW float response; //!< the response by which the most strong keypoints have been selected. Can be used for the further sorting or subsampling
-    //CV_PROP_RW int octave; //!< octave (pyramid layer) from which the keypoint has been extracted
-    //CV_PROP_RW int class_id; //!< object class (if the keypoints need to be clustered by an object they belong to)
+    response: _st.float ; //!< the response by which the most strong keypoints have been selected. Can be used for the further sorting or subsampling
+    octave: _st.int ; //!< octave (pyramid layer) from which the keypoint has been extracted
+    class_id: _st.int ; //!< object class (if the keypoints need to be clustered by an object they belong to)
 };
+
+export var KeyPoint: KeyPointStatic = alvision_module.KeyPoint;
 
 //template <> class DataType<KeyPoint>
 //{
@@ -1436,9 +1632,9 @@ descriptors.
 
 export interface DMatchStatic {
 //    public:
-//    CV_WRAP DMatch();
-//    CV_WRAP DMatch(int _queryIdx, int _trainIdx, float _distance);
-//CV_WRAP DMatch(int _queryIdx, int _trainIdx, int _imgIdx, float _distance);
+    new (): DMatch;
+    new (_queryIdx: _st.int, _trainIdx: _st.int, _distance: _st.float ): DMatch;
+    new (_queryIdx: _st.int, _trainIdx: _st.int, _imgIdx: _st.int, _distance: _st.float ): DMatch;
 }
 
 //class CV_EXPORTS_W_SIMPLE DMatch
@@ -1446,15 +1642,17 @@ export interface DMatch
 {
     
 
-    //CV_PROP_RW int queryIdx; // query descriptor index
-    //CV_PROP_RW int trainIdx; // train descriptor index
-    //CV_PROP_RW int imgIdx;   // train image index
+    queryIdx: _st.int ; // query descriptor index
+    trainIdx: _st.int ; // train descriptor index
+    imgIdx: _st.int ;   // train image index
 
-    //CV_PROP_RW float distance;
+    distance: _st.float;
 
     //// less is better
-    //bool operator< (const DMatch &m) const;
+    ////bool operator< (const DMatch &m) const;
 };
+
+export var DMatch: DMatchStatic = alvision_module.DMatch;
 
 //template <> class DataType<DMatch>
 //{
@@ -2279,173 +2477,6 @@ export var Moments: MomentsStatic = alvision_module.Moments;
 //}
 
 
-//template < typename _Tp> static inline
-//Scalar_<_Tp>& operator += (Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
-//    {
-//        a.val[0] += b.val[0];
-//a.val[1] += b.val[1];
-//a.val[2] += b.val[2];
-//a.val[3] += b.val[3];
-//return a;
-//}
-
-//template < typename _Tp> static inline
-//Scalar_<_Tp>& operator -= (Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
-//    {
-//        a.val[0] -= b.val[0];
-//a.val[1] -= b.val[1];
-//a.val[2] -= b.val[2];
-//a.val[3] -= b.val[3];
-//return a;
-//}
-
-//template < typename _Tp> static inline
-//Scalar_<_Tp>& operator *= (Scalar_<_Tp>& a, _Tp v )
-//{
-//    a.val[0] *= v;
-//    a.val[1] *= v;
-//    a.val[2] *= v;
-//    a.val[3] *= v;
-//    return a;
-//}
-
-//template< typename _Tp> static inline
-//bool operator == ( const Scalar_<_Tp>& a, const Scalar_<_Tp>& b )
-//    {
-//        return a.val[0] == b.val[0] && a.val[1] == b.val[1] &&
-//        a.val[2] == b.val[2] && a.val[3] == b.val[3];
-//}
-
-//template < typename _Tp> static inline
-//bool operator != ( const Scalar_<_Tp>& a, const Scalar_<_Tp>& b )
-//    {
-//        return a.val[0] != b.val[0] || a.val[1] != b.val[1] ||
-//        a.val[2] != b.val[2] || a.val[3] != b.val[3];
-//}
-
-//template < typename _Tp> static inline
-//Scalar_ < _Tp > operator + (const Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
-//    {
-//        return Scalar_<_Tp>(a.val[0] + b.val[0],
-//            a.val[1] + b.val[1],
-//            a.val[2] + b.val[2],
-//            a.val[3] + b.val[3]);
-//}
-
-//template < typename _Tp> static inline
-//Scalar_ < _Tp > operator - (const Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
-//    {
-//        return Scalar_<_Tp>(saturate_cast<_Tp>(a.val[0] - b.val[0]),
-//            saturate_cast<_Tp>(a.val[1] - b.val[1]),
-//            saturate_cast<_Tp>(a.val[2] - b.val[2]),
-//            saturate_cast<_Tp>(a.val[3] - b.val[3]));
-//}
-
-//template < typename _Tp> static inline
-//Scalar_ < _Tp > operator * (const Scalar_<_Tp>& a, _Tp alpha)
-//    {
-//        return Scalar_<_Tp>(a.val[0] * alpha,
-//            a.val[1] * alpha,
-//            a.val[2] * alpha,
-//            a.val[3] * alpha);
-//}
-
-//template < typename _Tp> static inline
-//Scalar_ < _Tp > operator * (_Tp alpha, const Scalar_<_Tp>& a)
-//    {
-//        return a*alpha;
-//}
-
-//template < typename _Tp> static inline
-//Scalar_ < _Tp > operator - (const Scalar_<_Tp>& a)
-//    {
-//        return Scalar_<_Tp>(saturate_cast<_Tp>(-a.val[0]),
-//            saturate_cast<_Tp>(-a.val[1]),
-//            saturate_cast<_Tp>(-a.val[2]),
-//            saturate_cast<_Tp>(-a.val[3]));
-//}
-
-
-//template < typename _Tp> static inline
-//Scalar_ < _Tp > operator * (const Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
-//    {
-//        return Scalar_<_Tp>(saturate_cast<_Tp>(a[0] * b[0] - a[1] * b[1] - a[2] * b[2] - a[3] * b[3]),
-//            saturate_cast<_Tp>(a[0] * b[1] + a[1] * b[0] + a[2] * b[3] - a[3] * b[2]),
-//            saturate_cast<_Tp>(a[0] * b[2] - a[1] * b[3] + a[2] * b[0] + a[3] * b[1]),
-//            saturate_cast<_Tp>(a[0] * b[3] + a[1] * b[2] - a[2] * b[1] + a[3] * b[0]));
-//}
-
-//template < typename _Tp> static inline
-//Scalar_<_Tp>& operator *= (Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
-//    {
-//        a = a * b;
-//return a;
-//}
-
-//template < typename _Tp> static inline
-//Scalar_ < _Tp > operator / (const Scalar_<_Tp>& a, _Tp alpha)
-//    {
-//        return Scalar_<_Tp>(a.val[0] / alpha,
-//            a.val[1] / alpha,
-//            a.val[2] / alpha,
-//            a.val[3] / alpha);
-//}
-
-//template < typename _Tp> static inline
-//Scalar_ < float > operator / (const Scalar_<float>& a, float alpha)
-//    {
-//        float s = 1 / alpha;
-//return Scalar_<float>(a.val[0] * s, a.val[1] * s, a.val[2] * s, a.val[3] * s);
-//}
-
-//template < typename _Tp> static inline
-//Scalar_ < double > operator / (const Scalar_<double>& a, double alpha)
-//    {
-//        double s = 1 / alpha;
-//return Scalar_<double>(a.val[0] * s, a.val[1] * s, a.val[2] * s, a.val[3] * s);
-//}
-
-//template < typename _Tp> static inline
-//Scalar_<_Tp>& operator /= (Scalar_<_Tp>& a, _Tp alpha)
-//{
-//        a = a / alpha;
-//        return a;
-//    }
-
-//template< typename _Tp> static inline
-//Scalar_< _Tp > operator / (_Tp a, const Scalar_<_Tp>& b)
-//    {
-//        _Tp s = a / (b[0] * b[0] + b[1] * b[1] + b[2] * b[2] + b[3] * b[3]);
-//return b.conj() * s;
-//}
-
-//template < typename _Tp> static inline
-//Scalar_ < _Tp > operator / (const Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
-//    {
-//        return a * ((_Tp)1 / b);
-//    }
-
-//template < typename _Tp> static inline
-//Scalar_<_Tp>& operator /= (Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
-//{
-//        a = a / b;
-//        return a;
-//    }
-
-//template< typename _Tp> static inline
-//Scalar operator * (const Matx<_Tp, 4, 4 >& a, const Scalar& b)
-//    {
-//        Matx<double, 4, 1> c((Matx < double, 4, 4 >)a, b, Matx_MatMulOp());
-//return reinterpret_cast <const Scalar&>(c);
-//}
-
-//template <> inline
-//Scalar operator * (const Matx<double, 4, 4 >& a, const Scalar& b)
-//    {
-//        Matx<double, 4, 1> c(a, b, Matx_MatMulOp());
-//return reinterpret_cast <const Scalar&>(c);
-//}
-
 
 
 ////////////////////////////////// KeyPoint ///////////////////////////////
@@ -2518,42 +2549,44 @@ export enum ShapeMatchModes {
 };
 
 
-export interface CvPoint2D64f {
-    x: _st.double;
-    y: _st.double;
-}
+//export interface CvPoint2D64f {
+//    x: _st.double;
+//    y: _st.double;
+//}
 
 
-export interface CvPoint3D64f {
-    x: _st.double;
-    y: _st.double;
-    z: _st.double;
-}
+//export interface CvPoint3D64f {
+//    x: _st.double;
+//    y: _st.double;
+//    z: _st.double;
+//}
 
-export interface CvPoint3D32f {
-    x: _st.float;
-    y: _st.float;
-    z: _st.float;
+//export interface CvPoint3D32f {
+//    x: _st.float;
+//    y: _st.float;
+//    z: _st.float;
 
-    //#ifdef __cplusplus
-    //CvPoint3D32f(float _x = 0, float _y = 0, float _z = 0): x(_x), y(_y), z(_z) {}
-    //template < typename _Tp>
-    //    CvPoint3D32f(const cv::Point3_<_Tp>& pt): x((float)pt.x), y((float)pt.y), z((float)pt.z) {}
-    //template < typename _Tp>
-    //    operator cv::Point3_<_Tp>() const { return cv::Point3_<_Tp>(cv::saturate_cast<_Tp>(x), cv::saturate_cast<_Tp>(y), cv::saturate_cast<_Tp>(z)); }
-    //#endif
-}
+//    //#ifdef __cplusplus
+//    //CvPoint3D32f(float _x = 0, float _y = 0, float _z = 0): x(_x), y(_y), z(_z) {}
+//    //template < typename _Tp>
+//    //    CvPoint3D32f(const cv::Point3_<_Tp>& pt): x((float)pt.x), y((float)pt.y), z((float)pt.z) {}
+//    //template < typename _Tp>
+//    //    operator cv::Point3_<_Tp>() const { return cv::Point3_<_Tp>(cv::saturate_cast<_Tp>(x), cv::saturate_cast<_Tp>(y), cv::saturate_cast<_Tp>(z)); }
+//    //#endif
+//}
 
 
-export interface CvPoint2D32f {
-    x: _st.float;
-    y: _st.float;
+//export interface CvPoint2D32f {
+//    x: _st.float;
+//    y: _st.float;
 
-    //    #ifdef __cplusplus
-    //    CvPoint2D32f(float _x = 0, float _y = 0): x(_x), y(_y) {}
-    //    template < typename _Tp>
-    //        CvPoint2D32f(const cv::Point_<_Tp>& pt): x((float)pt.x), y((float)pt.y) {}
-    //    template < typename _Tp>
-    //        operator cv::Point_<_Tp>() const { return cv::Point_<_Tp>(cv::saturate_cast<_Tp>(x), cv::saturate_cast<_Tp>(y)); }
-    //#endif
-}
+//    //    #ifdef __cplusplus
+//    //    CvPoint2D32f(float _x = 0, float _y = 0): x(_x), y(_y) {}
+//    //    template < typename _Tp>
+//    //        CvPoint2D32f(const cv::Point_<_Tp>& pt): x((float)pt.x), y((float)pt.y) {}
+//    //    template < typename _Tp>
+//    //        operator cv::Point_<_Tp>() const { return cv::Point_<_Tp>(cv::saturate_cast<_Tp>(x), cv::saturate_cast<_Tp>(y)); }
+//    //#endif
+//}
+
+

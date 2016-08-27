@@ -61,7 +61,7 @@ import * as _affine from './../../Affine'
 //#include "opencv2/core.hpp"
 //
 //namespace cv {
-namespace detail {
+export namespace detail_exposure_compensate {
 
 //! @addtogroup stitching_exposure
 //! @{
@@ -141,7 +141,7 @@ interface BlocksGainCompensator extends ExposureCompensator
 
 //! @}
 
-} // namespace detail
+} // namespace detail.exposure_compensate
 //} // namespace cv
 //
 //#endif // __OPENCV_STITCHING_EXPOSURE_COMPENSATE_HPP__

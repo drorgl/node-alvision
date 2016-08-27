@@ -414,7 +414,7 @@ export enum FileStorageMode
         new (source : string, flags : FileStorageMode, encoding? : string): FileStorage;
 
     /** @overload */
-    //new(fs : CvFileStorage, owning? : boolean /*=true*/) : FileStorage
+    new(fs : FileStorage, owning? : boolean /*=true*/) : FileStorage
 
 //    //! the destructor. calls release()
 //    virtual ~FileStorage();
@@ -564,27 +564,31 @@ export var FileStorage: FileStorageStatic = alvision_module.FileStorage;
 //Note that file nodes are only used for navigating file storages opened for reading. When a file
 //storage is opened for writing, no data is stored in memory after it is written.
 // */
+
+    export enum FileNodeType
+    {
+        NONE      = 0, //!< empty node
+        INT       = 1, //!< an integer
+        REAL      = 2, //!< floating-point number
+        FLOAT     = REAL, //!< synonym or REAL
+        STR       = 3, //!< text string in UTF-8 encoding
+        STRING    = STR, //!< synonym for STR
+        REF       = 4, //!< integer of size size_t. Typically used for storing complex dynamic structures where some elements reference the others
+        SEQ       = 5, //!< sequence
+        MAP       = 6, //!< mapping
+        TYPE_MASK = 7,
+        FLOW      = 8,  //!< compact representation of a sequence or mapping. Used only by YAML writer
+        USER      = 16, //!< a registered object (e.g. a matrix)
+        EMPTY     = 32, //!< empty structure (sequence or mapping)
+        NAMED     = 64  //!< the node has a name (i.e. it is element of a mapping)
+    };
+
+
 export interface FileNode
 {
 //public:
 //    //! type of the file storage node
-//    enum Type
-//    {
-//        NONE      = 0, //!< empty node
-//        INT       = 1, //!< an integer
-//        REAL      = 2, //!< floating-point number
-//        FLOAT     = REAL, //!< synonym or REAL
-//        STR       = 3, //!< text string in UTF-8 encoding
-//        STRING    = STR, //!< synonym for STR
-//        REF       = 4, //!< integer of size size_t. Typically used for storing complex dynamic structures where some elements reference the others
-//        SEQ       = 5, //!< sequence
-//        MAP       = 6, //!< mapping
-//        TYPE_MASK = 7,
-//        FLOW      = 8,  //!< compact representation of a sequence or mapping. Used only by YAML writer
-//        USER      = 16, //!< a registered object (e.g. a matrix)
-//        EMPTY     = 32, //!< empty structure (sequence or mapping)
-//        NAMED     = 64  //!< the node has a name (i.e. it is element of a mapping)
-//    };
+
 //    /** @brief The constructors.
 
 //    These constructors are used to create a default file node, construct it from obsolete structures or
@@ -624,36 +628,36 @@ export interface FileNode
 //    /** @brief Returns type of the node.
 //    @returns Type of the node. See FileNode::Type
 //     */
-//    CV_WRAP int type() const;
+    type(): FileNodeType;
 
-//    //! returns true if the node is empty
-//    CV_WRAP bool empty() const;
-//    //! returns true if the node is a "none" object
-//    CV_WRAP bool isNone() const;
-//    //! returns true if the node is a sequence
+    //! returns true if the node is empty
+    empty(): boolean;
+    //! returns true if the node is a "none" object
+    isNone(): boolean;
+    //! returns true if the node is a sequence
     isSeq(): boolean;
-//    //! returns true if the node is a mapping
-//    CV_WRAP bool isMap() const;
-//    //! returns true if the node is an integer
-//    CV_WRAP bool isInt() const;
-//    //! returns true if the node is a floating-point number
-//    CV_WRAP bool isReal() const;
-//    //! returns true if the node is a text string
-//    CV_WRAP bool isString() const;
-//    //! returns true if the node has a name
-//    CV_WRAP bool isNamed() const;
-//    //! returns the node name or an empty string if the node is nameless
+    //! returns true if the node is a mapping
+    isMap(): boolean;
+    //! returns true if the node is an integer
+    isInt(): boolean;
+    //! returns true if the node is a floating-point number
+    isReal(): boolean;
+    //! returns true if the node is a text string
+    isString(): boolean;
+    //! returns true if the node has a name
+    isNamed(): boolean;
+    //! returns the node name or an empty string if the node is nameless
     name(): string;
-//    //! returns the number of elements in the node, if it is a sequence or mapping, or 1 otherwise.
-    size(): _st.size_t;
-//    //! returns the node content as an integer. If the node stores floating-point number, it is rounded.
-//    operator int() const;
-//    //! returns the node content as float
-//    operator float() const;
-//    //! returns the node content as double
-//    operator double() const;
-//    //! returns the node content as text string
-//    operator String() const;
+    //! returns the number of elements in the node, if it is a sequence or mapping, or 1 otherwise.
+  size(): _st.size_t;
+    //! returns the node content as an integer. If the node stores floating-point number, it is rounded.
+  int(): _st.int;
+    //! returns the node content as float
+  float(): _st.float;
+    //! returns the node content as double
+  double(): _st.double;
+    //! returns the node content as text string
+  String(): string;
 //#ifndef OPENCV_NOSTL
 //    operator std::string() const;
 //#endif
@@ -692,7 +696,9 @@ export interface FileNode
     readMat(default_mat?: _mat.Mat): _mat.Mat;
     readSparseMat(default_mat?: _mat.SparseMat): _mat.SparseMat;
     readKeyPoint(keypoints: Array<_types.KeyPoint>);
-    readDMatch(  matches : Array<_types.DMatch>);
+    readDMatch(matches: Array<_types.DMatch>);
+    readPoint2d(points: Array<_types.Point2d>);
+    readPoint3d(points: Array<_types.Point3d>);
 };
 
 
@@ -1304,3 +1310,10 @@ export interface FileNode
 //} // cv
 
 //#endif // __OPENCV_CORE_PERSISTENCE_HPP__
+
+
+export function cvReadInt(node: FileNode, default_value: _st.int = 0/* CV_DEFAULT(0)*/): _st.int {
+    return !node ? default_value :
+        node.type() == FileNodeType.INT ? node.readInt() :
+            node.type() == FileNodeType.REAL ? Math.round(node.readFloat().valueOf()) : 0x7fffffff;
+}

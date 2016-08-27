@@ -199,7 +199,8 @@ export namespace cv {
         NORM_HAMMING2 = 7,
         NORM_TYPE_MASK = 7,
         NORM_RELATIVE = 8, //!< flag
-        NORM_MINMAX = 32 //!< flag
+        NORM_MINMAX = 32, //!< flag
+        NORM_RELATIVE_L2 = NORM_L2 | NORM_RELATIVE
     };
 
     //! comparison types
@@ -486,7 +487,7 @@ export function ASSERT_TRUE(val: boolean, msg?) {
     //TODO: what to do with failed msg??
 }
 
-export function ASSERT_EQ(val: any, expected: any) {
+export function ASSERT_EQ(val: any, expected: any,msg? : string) {
     CV_Assert(() => val == expected);
 }
 
@@ -505,6 +506,10 @@ export function ASSERT_LE(low: any, high: any) {
 
 export function ASSERT_GT(low: any, high: any) {
     CV_Assert(() => low > high);
+}
+
+export function ASSERT_GE(low: any, high: any) {
+    CV_Assert(() => low >= high);
 }
 
 export function EXPECT_TRUE(val: boolean) {
@@ -529,9 +534,50 @@ export function EXPECT_GE(high: any, low: any) {
     CV_Assert(() => low <= high);
 }
 
+
+export function EXPECT_GT(high: any, low: any) {
+    CV_Assert(() => low < high);
+}
+
+
 export function EXPECT_EQ(val: any, expected: any) {
     CV_Assert(() => val == expected);
 }
+
+export function EXPECT_NE(val: any, expected: any) {
+    CV_Assert(() => val != expected);
+}
+
+//AssertionResult DoubleNearPredFormat(const char* expr1,
+//const char* expr2,
+//const char* abs_error_expr,
+//    double val1,
+//    double val2,
+//    double abs_error) {
+//        const double diff = fabs(val1 - val2);
+//if (diff <= abs_error) return AssertionSuccess();
+
+//// TODO(wan): do not print the value of an expression if it's
+//// already a literal.
+//return AssertionFailure()
+//    << "The difference between " << expr1 << " and " << expr2
+//    << " is " << diff << ", which exceeds " << abs_error_expr << ", where\n"
+//    << expr1 << " evaluates to " << val1 << ",\n"
+//    << expr2 << " evaluates to " << val2 << ", and\n"
+//    << abs_error_expr << " evaluates to " << abs_error << ".";
+//}
+
+
+export function EXPECT_NEAR(val1, val2, abs_error){
+  //EXPECT_PRED_FORMAT3(::testing::internal::DoubleNearPredFormat, val1, val2, abs_error)
+
+}
+
+
+export function ASSERT_KEYPOINTS_EQ(gold, actual) {
+    //EXPECT_PRED_FORMAT2(assertKeyPointsEquals, gold, actual)
+}
+
 
 export function ASSERT_THROW(expr: () => void, expectedException) {
     try {
@@ -548,6 +594,26 @@ export function EXPECT_NO_THROW(expr: () => void) {
         CV_Assert(() => false);
     }
 }
+
+export function EXPECT_THROW(expr: () => void) {
+    try {
+        expr();
+        CV_Assert(() => false);
+    } catch (e) {
+        CV_Assert(() => true);
+    }
+}
+
+
+export function ASSERT_NO_THROW(expr: () => void) {
+    try {
+        expr();
+        CV_Assert(() => true);
+    } catch (e) {
+        CV_Assert(() => false);
+    }
+}
+
 
 export function ASSERT_FALSE(val: boolean, msg?: string) {
     if (!val) {
@@ -566,8 +632,8 @@ export function ASSERT_FALSE(val: boolean, msg?: string) {
  * Hamming distance functor - counts the bit differences between two strings - useful for the Brief descriptor
  * bit count of A exclusive XOR'ed with B
  */
-//struct CV_EXPORTS Hamming
-//{
+export interface Hamming
+{
 //    enum { normType = NORM_HAMMING };
 //    typedef unsigned char ValueType;
 //    typedef int ResultType;
@@ -575,7 +641,7 @@ export function ASSERT_FALSE(val: boolean, msg?: string) {
 //    /** this will count the bits in a ^ b
 //     */
 //    ResultType operator()( const unsigned char* a, const unsigned char* b, int size ) const;
-//};
+};
 //
 //typedef Hamming HammingLUT;
 

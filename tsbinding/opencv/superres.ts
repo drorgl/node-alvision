@@ -51,6 +51,7 @@ import * as _core from './core'
 import * as _base from './base'
 import * as _affine from './Affine'
 import * as _features2d from './features2d'
+import * as _superres_opticalflow from './superres/optical_flow';
 
 
 //#ifndef __OPENCV_SUPERRES_HPP__
@@ -119,84 +120,84 @@ export namespace superres {
     The class is only used to define the common interface for the whole family of Super Resolution
     algorithms.
      */
-    interface SuperResolution extends _core.Algorithm, FrameSource {
+    export interface SuperResolution extends _core.Algorithm, FrameSource {
         //        public:
-        //            /** @brief Set input frame source for Super Resolution algorithm.
-        //
-        //            @param frameSource Input frame source
-        //             */
-        //            void setInput(const Ptr<FrameSource>& frameSource);
-        //
-        //            /** @brief Process next frame from input and return output result.
-        //
-        //            @param frame Output result
-        //             */
-        //            void nextFrame(OutputArray frame);
-        //            void reset();
-        //
-        //            /** @brief Clear all inner buffers.
-        //            */
-        //            virtual void collectGarbage();
-        //
-        //            //! @brief Scale factor
-        //            /** @see setScale */
-        //            virtual int getScale() const = 0;
-        //            /** @copybrief getScale @see getScale */
-        //            virtual void setScale(int val) = 0;
-        //
-        //            //! @brief Iterations count
-        //            /** @see setIterations */
-        //            virtual int getIterations() const = 0;
-        //            /** @copybrief getIterations @see getIterations */
-        //            virtual void setIterations(int val) = 0;
-        //
-        //            //! @brief Asymptotic value of steepest descent method
-        //            /** @see setTau */
-        //            virtual double getTau() const = 0;
-        //            /** @copybrief getTau @see getTau */
-        //            virtual void setTau(double val) = 0;
-        //
-        //            //! @brief Weight parameter to balance data term and smoothness term
-        //            /** @see setLabmda */
-        //            virtual double getLabmda() const = 0;
-        //            /** @copybrief getLabmda @see getLabmda */
-        //            virtual void setLabmda(double val) = 0;
-        //
-        //            //! @brief Parameter of spacial distribution in Bilateral-TV
-        //            /** @see setAlpha */
-        //            virtual double getAlpha() const = 0;
-        //            /** @copybrief getAlpha @see getAlpha */
-        //            virtual void setAlpha(double val) = 0;
-        //
-        //            //! @brief Kernel size of Bilateral-TV filter
-        //            /** @see setKernelSize */
-        //            virtual int getKernelSize() const = 0;
-        //            /** @copybrief getKernelSize @see getKernelSize */
-        //            virtual void setKernelSize(int val) = 0;
-        //
-        //            //! @brief Gaussian blur kernel size
-        //            /** @see setBlurKernelSize */
-        //            virtual int getBlurKernelSize() const = 0;
-        //            /** @copybrief getBlurKernelSize @see getBlurKernelSize */
-        //            virtual void setBlurKernelSize(int val) = 0;
-        //
-        //            //! @brief Gaussian blur sigma
-        //            /** @see setBlurSigma */
-        //            virtual double getBlurSigma() const = 0;
-        //            /** @copybrief getBlurSigma @see getBlurSigma */
-        //            virtual void setBlurSigma(double val) = 0;
-        //
-        //            //! @brief Radius of the temporal search area
-        //            /** @see setTemporalAreaRadius */
-        //            virtual int getTemporalAreaRadius() const = 0;
-        //            /** @copybrief getTemporalAreaRadius @see getTemporalAreaRadius */
-        //            virtual void setTemporalAreaRadius(int val) = 0;
-        //
-        //            //! @brief Dense optical flow algorithm
-        //            /** @see setOpticalFlow */
-        //            virtual Ptr<cv::superres::DenseOpticalFlowExt> getOpticalFlow() const = 0;
-        //            /** @copybrief getOpticalFlow @see getOpticalFlow */
-        //            virtual void setOpticalFlow(const Ptr<cv::superres::DenseOpticalFlowExt> &val) = 0;
+                    /** @brief Set input frame source for Super Resolution algorithm.
+        
+                    @param frameSource Input frame source
+                     */
+        setInput(frameSource: FrameSource) : void;
+        
+                    /** @brief Process next frame from input and return output result.
+        
+                    @param frame Output result
+                     */
+        nextFrame(frame: _st.OutputArray): void;
+        reset(): void;
+        
+                    /** @brief Clear all inner buffers.
+                    */
+        collectGarbage(): void;
+        
+                    //! @brief Scale factor
+                    /** @see setScale */
+        getScale(): _st.int;
+                    /** @copybrief getScale @see getScale */
+        setScale(val: _st.int): void;
+        
+                    //! @brief Iterations count
+                    /** @see setIterations */
+        getIterations(): _st.int;
+                    /** @copybrief getIterations @see getIterations */
+        setIterations(val: _st.int): void;
+        
+                    //! @brief Asymptotic value of steepest descent method
+                    /** @see setTau */
+        getTau(): _st.double;
+                    /** @copybrief getTau @see getTau */
+        setTau(val: _st.double): void;
+        
+                    //! @brief Weight parameter to balance data term and smoothness term
+                    /** @see setLabmda */
+        getLabmda(): _st.double;
+                    /** @copybrief getLabmda @see getLabmda */
+        setLabmda(val: _st.double): void;
+        
+                    //! @brief Parameter of spacial distribution in Bilateral-TV
+                    /** @see setAlpha */
+        getAlpha():_st.double;
+                    /** @copybrief getAlpha @see getAlpha */
+        setAlpha(val: _st.double): void;
+        
+                    //! @brief Kernel size of Bilateral-TV filter
+                    /** @see setKernelSize */
+        getKernelSize(): _st.int;
+                    /** @copybrief getKernelSize @see getKernelSize */
+        setKernelSize(val: _st.int): void;
+        
+                    //! @brief Gaussian blur kernel size
+                    /** @see setBlurKernelSize */
+        getBlurKernelSize(): _st.int;
+                    /** @copybrief getBlurKernelSize @see getBlurKernelSize */
+        setBlurKernelSize(val: _st.int): void;
+        
+                    //! @brief Gaussian blur sigma
+                    /** @see setBlurSigma */
+        getBlurSigma(): _st.double;
+                    /** @copybrief getBlurSigma @see getBlurSigma */
+        setBlurSigma(val: _st.double ): void;
+        
+                    //! @brief Radius of the temporal search area
+                    /** @see setTemporalAreaRadius */
+        getTemporalAreaRadius(): _st.int;
+                    /** @copybrief getTemporalAreaRadius @see getTemporalAreaRadius */
+        setTemporalAreaRadius(val: _st.int ): void;
+        
+                    //! @brief Dense optical flow algorithm
+        /** @see setOpticalFlow */
+        getOpticalFlow(): _superres_opticalflow.super_res_optical_flow.DenseOpticalFlowExt;
+                    /** @copybrief getOpticalFlow @see getOpticalFlow */
+        setOpticalFlow(val: _superres_opticalflow.super_res_optical_flow.DenseOpticalFlowExt) : void;
         //
         //        protected:
         //            SuperResolution();
@@ -230,7 +231,18 @@ export namespace superres {
     -   **int temporalAreaRadius** Radius of the temporal search area.
     -   **Ptr\<DenseOpticalFlowExt\> opticalFlow** Dense optical flow algorithm.
      */
+    interface IcreateSuperResolution_BTVL1 {
+        () :  SuperResolution;
+    }
+
+    export var createSuperResolution_BTVL1: IcreateSuperResolution_BTVL1 = alvision_module.superres.createSuperResolution_BTVL1;
     //        CV_EXPORTS Ptr<SuperResolution> createSuperResolution_BTVL1();
+
+    interface IcreateSuperResolution_BTVL1_CUDA {
+        (): SuperResolution;
+    }
+
+    export var createSuperResolution_BTVL1_CUDA: IcreateSuperResolution_BTVL1_CUDA = alvision_module.superres.createSuperResolution_BTVL1_CUDA;
     //        CV_EXPORTS Ptr<SuperResolution> createSuperResolution_BTVL1_CUDA();
 
     //! @} superres
