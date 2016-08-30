@@ -54,2750 +54,2871 @@ import fs = require('fs');
 //
 //using namespace cvtest;
 
-////////////////////////////////////////////////////////////////////////////////
-// Add_Array
+//////////////////////////////////////////////////////////////////////////////
+ Add_Array
 
-PARAM_TEST_CASE(Add_Array, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, Channels, UseRoi)
-{
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    int channels;
-    bool useRoi;
-
-    int stype;
-    int dtype;
-
-    virtual void SetUp()
-    {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        channels = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
-
-        alvision.cuda::setDevice(devInfo.deviceID());
-
-        stype = CV_MAKE_TYPE(depth.first, channels);
-        dtype = CV_MAKE_TYPE(depth.second, channels);
+//PARAM_TEST_CASE(Add_Array, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair < MatDepth, MatDepth >, Channels, this.useRoi)
+class Add_Array extends alvision.cvtest.CUDA_TEST {
+    constructor(test_case_name: string, test_name: string) {
+        super(test_case_name, test_name);
     }
-};
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected channels: alvision.int;
+    protected useRoi: boolean;
 
-CUDA_TEST_P(Add_Array, Accuracy)
-{
-    alvision.Mat mat1 = randomMat(size, stype);
-    alvision.Mat mat2 = randomMat(size, stype);
+    protected stype: alvision.int;
+    protected dtype: alvision.int;
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::add(loadMat(mat1), loadMat(mat2), dst, alvision.cuda::GpuMat(), depth.second);
-        }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
-        }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::add(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, alvision.cuda::GpuMat(), depth.second);
+    SetUp(): void {
+        this.devInfo = <any>this.GET_PARAM(0);
+        this.size =    <any>this.GET_PARAM(1);
+        this.depth =   <any>this.GET_PARAM(2);
+        this.channels =<any>this.GET_PARAM(3);
+        this.useRoi =  <any>this.GET_PARAM(4);
 
-        alvision.Mat dst_gold(size, dtype, alvision.alvision.Scalar.all(0));
-        alvision.add(mat1, mat2, dst_gold, alvision.noArray(), depth.second);
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
+        this.stype = alvision.MatrixType.CV_MAKETYPE(this.depth.first, this.channels);
+        this.dtype = alvision.MatrixType.CV_MAKETYPE(this.depth.second, this.channels);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Add_Array, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    ALL_CHANNELS,
-    WHOLE_SUBMAT));
-
-PARAM_TEST_CASE(Add_Array_Mask, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//CUDA_TEST_P(Add_Array, Accuracy)
+class Add_Array_Accuracy extends Add_Array
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    TestBody(): void {
+        var mat1 = alvision.cvtest.randomMat(this.size, this.stype);
+        var mat2 = alvision.cvtest.randomMat(this.size, this.stype);
 
-    int stype;
-    int dtype;
-
-    virtual void SetUp()
-    {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
-
-        alvision.cuda::setDevice(devInfo.deviceID());
-
-        stype = CV_MAKE_TYPE(depth.first, 1);
-        dtype = CV_MAKE_TYPE(depth.second, 1);
-    }
-};
-
-CUDA_TEST_P(Add_Array_Mask, Accuracy)
-{
-    alvision.Mat mat1 = randomMat(size, stype);
-    alvision.Mat mat2 = randomMat(size, stype);
-    alvision.Mat mask = randomMat(size, CV_8UC1, 0, 2);
-
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::add(loadMat(mat1), loadMat(mat2), dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                var dst = new alvision.cuda.GpuMat();
+                alvision.cudaarithm.add(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            var dst = alvision.createMat(this.size, this.dtype, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.add(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst,new  alvision.cuda.GpuMat(), this.depth.second);
+
+            var dst_gold = new alvision.Mat (this.size, this.dtype, alvision.Scalar.all(0));
+            alvision.add(mat1, mat2, dst_gold, null, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::add(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, loadMat(mask, useRoi), depth.second);
-
-        alvision.Mat dst_gold(size, dtype, alvision.alvision.Scalar.all(0));
-        alvision.add(mat1, mat2, dst_gold, mask, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Add_Array_Mask, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+//alvision.cvtest.TEST('Add_Array', 'Accuracy', () => { var test = new Add_Array_Accuracy(); test.test(); });
+
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Accuracy', (case_name, test_name) => { return null; },new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.ALL_CHANNELS,
+    alvision.WHOLE_SUBMAT]));
+
+
+//TODO: implement...
+
+//PARAM_TEST_CASE(Add_Array_Mask, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Add_Array_Mask extends alvision.cvtest.CUDA_TEST
+{
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size 
+    protected depth: alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected useRoi: boolean;
+
+    protected stype: alvision.int;
+    protected dtype: alvision.int;
+
+    SetUp() : void
+    {
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.depth =    this.GET_PARAM<alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.useRoi =   this.GET_PARAM<boolean>(3);
+
+        alvision.cuda.setDevice(this.devInfo.deviceID());
+
+        this.stype = alvision.MatrixType.CV_MAKETYPE(this.depth.first, 1);
+        this.dtype = alvision.MatrixType.CV_MAKETYPE(this.depth.second, 1);
+    }
+};
+
+//CUDA_TEST_P(Add_Array_Mask, Accuracy)
+class Add_Array_Mask_Accuracy extends Add_Array_Mask
+{
+    TestBody() {
+        let  mat1 = alvision.randomMat(this.size, this.stype);
+        let  mat2 = alvision.randomMat(this.size, this.stype);
+        let  mask = alvision.randomMat(this.size,alvision.MatrixType. CV_8UC1, 0, 2);
+
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat();
+                alvision.cudaarithm.add(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
+        }
+        else {
+            let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.add(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.dtype, alvision.Scalar.all(0));
+            alvision.add(mat1, mat2, dst_gold, mask, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 0.0);
+        }
+    }
+}
+
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Add_Array_Mask', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Add_Scalar
 
-PARAM_TEST_CASE(Add_Scalar, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//PARAM_TEST_CASE(Add_Scalar, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Add_Scalar extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size 
+    protected depth: alvision.pair<alvision.MatrixType, alvision.MatrixType> 
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() 
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM<alvision.pair<alvision.MatrixType, alvision.MatrixType> >(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Add_Scalar, WithOutMask)
+//CUDA_TEST_P(Add_Scalar, WithOutMask)
+class Add_Scalar_WithOutMask extends Add_Scalar
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
+    TestBody() {
+        let mat =alvision. randomMat(this.size, this.depth.first);
+        let val =alvision. randomScalar(0, 255);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::add(loadMat(mat), val, dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat();
+                alvision.cudaarithm.add(alvision.loadMat(mat), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.add(alvision.loadMat(mat, this.useRoi), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
+            alvision.add(mat, val, dst_gold, null, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::add(loadMat(mat, useRoi), val, dst, alvision.cuda::GpuMat(), depth.second);
-
-        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
-        alvision.add(mat, val, dst_gold, alvision.noArray(), depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
     }
 }
 
-CUDA_TEST_P(Add_Scalar, WithMask)
+//CUDA_TEST_P(Add_Scalar, WithMask)
+class Add_Scalar_WithMask extends Add_Scalar
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
-    alvision.Mat mask = randomMat(size, CV_8UC1, 0.0, 2.0);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
+        let mask = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC1, 0.0, 2.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::add(loadMat(mat), val, dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat();
+                alvision.cudaarithm.add(alvision.loadMat(mat), val, dst,new  alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.add(alvision.loadMat(mat, this.useRoi), val, dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
+            alvision.add(mat, val, dst_gold, mask, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::add(loadMat(mat, useRoi), val, dst, loadMat(mask, useRoi), depth.second);
-
-        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
-        alvision.add(mat, val, dst_gold, mask, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Add_Scalar, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Add_Scalar', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Add_Scalar_First
 
-PARAM_TEST_CASE(Add_Scalar_First, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//PARAM_TEST_CASE(Add_Scalar_First, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Add_Scalar_First extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp()  :void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM < alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Add_Scalar_First, WithOutMask)
+//CUDA_TEST_P(Add_Scalar_First, WithOutMask)
+class Add_Scalar_First_WithOutMask extends Add_Scalar_First
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::add(val, loadMat(mat), dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.add(val, alvision.loadMat(mat), dst, new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.add(val, alvision.loadMat(mat, this.useRoi), dst, new alvision.cuda.GpuMat(), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
+            alvision.add(val, mat, dst_gold, null, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::add(val, loadMat(mat, useRoi), dst, alvision.cuda::GpuMat(), depth.second);
-
-        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
-        alvision.add(val, mat, dst_gold, alvision.noArray(), depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
     }
 }
 
-CUDA_TEST_P(Add_Scalar_First, WithMask)
+//CUDA_TEST_P(Add_Scalar_First, WithMask)
+class Add_Scalar_First_WithMask extends Add_Scalar_First
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
-    alvision.Mat mask = randomMat(size, CV_8UC1, 0.0, 2.0);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
+        let mask = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC1, 0.0, 2.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::add(val, loadMat(mat), dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.add(val, alvision.loadMat(mat), dst, new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.add(val, alvision.loadMat(mat, this.useRoi), dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
+            alvision.add(val, mat, dst_gold, mask,this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::add(val, loadMat(mat, useRoi), dst, loadMat(mask, useRoi), depth.second);
-
-        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
-        alvision.add(val, mat, dst_gold, mask, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Add_Scalar_First, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Add_Scalar_First', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Subtract_Array
 
-PARAM_TEST_CASE(Subtract_Array, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, Channels, UseRoi)
+//PARAM_TEST_CASE(Subtract_Array, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, Channels, this.useRoi)
+class Subtract_Array extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    int channels;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected channels : alvision.int;
+    protected useRoi : boolean;
 
-    int stype;
-    int dtype;
+    protected stype : alvision.int;
+    protected dtype : alvision.int;
 
-    virtual void SetUp()
+    SetUp()
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        channels = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM < alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.channels = this.GET_PARAM<alvision.int>(3);
+        this.useRoi =   this.GET_PARAM<boolean>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        stype = CV_MAKE_TYPE(depth.first, channels);
-        dtype = CV_MAKE_TYPE(depth.second, channels);
+        this.stype = alvision.MatrixType.CV_MAKETYPE(this.depth.first, this.channels);
+        this.dtype = alvision.MatrixType.CV_MAKETYPE(this.depth.second, this.channels);
     }
 };
 
-CUDA_TEST_P(Subtract_Array, Accuracy)
+//CUDA_TEST_P(Subtract_Array, Accuracy)
+class Subtract_Array_Accuracy extends Subtract_Array
 {
-    alvision.Mat mat1 = randomMat(size, stype);
-    alvision.Mat mat2 = randomMat(size, stype);
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, this.stype);
+        let mat2 = alvision.randomMat(this.size, this.stype);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::subtract(loadMat(mat1), loadMat(mat2), dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.subtract(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.subtract(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, new alvision.cuda.GpuMat(), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.dtype, alvision.Scalar.all(0));
+            alvision.subtract(mat1, mat2, dst_gold, null, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::subtract(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, alvision.cuda::GpuMat(), depth.second);
-
-        alvision.Mat dst_gold(size, dtype, alvision.alvision.Scalar.all(0));
-        alvision.subtract(mat1, mat2, dst_gold, alvision.noArray(), depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Subtract_Array, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    ALL_CHANNELS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Subtract_Array', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.ALL_CHANNELS,
+    alvision.WHOLE_SUBMAT]));
 
-PARAM_TEST_CASE(Subtract_Array_Mask, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//PARAM_TEST_CASE(Subtract_Array_Mask, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Subtract_Array_Mask extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected useRoi : boolean;
 
-    int stype;
-    int dtype;
+    protected stype : alvision.int;
+    protected dtype : alvision.int;
 
-    virtual void SetUp()
+SetUp()
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM < alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        stype = CV_MAKE_TYPE(depth.first, 1);
-        dtype = CV_MAKE_TYPE(depth.second, 1);
+        this.stype = alvision.MatrixType.CV_MAKETYPE(this.depth.first, 1);
+        this.dtype = alvision.MatrixType.CV_MAKETYPE(this.depth.second, 1);
     }
 };
 
-CUDA_TEST_P(Subtract_Array_Mask, Accuracy)
+//CUDA_TEST_P(Subtract_Array_Mask, Accuracy)
+class Subtract_Array_Mask_Accuracy extends Subtract_Array_Mask
 {
-    alvision.Mat mat1 = randomMat(size, stype);
-    alvision.Mat mat2 = randomMat(size, stype);
-    alvision.Mat mask = randomMat(size, CV_8UC1, 0.0, 2.0);
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, this.stype);
+        let mat2 = alvision.randomMat(this.size, this.stype);
+        let mask = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC1, 0.0, 2.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::subtract(loadMat(mat1), loadMat(mat2), dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.subtract(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.subtract(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.dtype, alvision.Scalar.all(0));
+            alvision.subtract(mat1, mat2, dst_gold, mask, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::subtract(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, loadMat(mask, useRoi), depth.second);
-
-        alvision.Mat dst_gold(size, dtype, alvision.alvision.Scalar.all(0));
-        alvision.subtract(mat1, mat2, dst_gold, mask, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Subtract_Array_Mask, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Subtract_Array_Mask', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Subtract_Scalar
 
-PARAM_TEST_CASE(Subtract_Scalar, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//PARAM_TEST_CASE(Subtract_Scalar, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Subtract_Scalar extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM < alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Subtract_Scalar, WithOutMask)
+//CUDA_TEST_P(Subtract_Scalar, WithOutMask)
+class Subtract_Scalar_WithOutMask extends Subtract_Scalar
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::subtract(loadMat(mat), val, dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.subtract(alvision.loadMat(mat), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.subtract(alvision.loadMat(mat, this.useRoi), val, dst,new alvision.cuda.GpuMat(), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
+            alvision.subtract(mat, val, dst_gold, null, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::subtract(loadMat(mat, useRoi), val, dst, alvision.cuda::GpuMat(), depth.second);
-
-        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
-        alvision.subtract(mat, val, dst_gold, alvision.noArray(), depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
     }
 }
 
-CUDA_TEST_P(Subtract_Scalar, WithMask)
+//CUDA_TEST_P(Subtract_Scalar, WithMask)
+class Subtract_Scalar_WithMask extends Subtract_Scalar
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
-    alvision.Mat mask = randomMat(size, CV_8UC1, 0.0, 2.0);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
+        let mask = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC1, 0.0, 2.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::subtract(loadMat(mat), val, dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.subtract(alvision.loadMat(mat), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.subtract(alvision.loadMat(mat, this.useRoi), val, dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
+            alvision.subtract(mat, val, dst_gold, mask, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::subtract(loadMat(mat, useRoi), val, dst, loadMat(mask, useRoi), depth.second);
-
-        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
-        alvision.subtract(mat, val, dst_gold, mask, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Subtract_Scalar, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Subtract_Scalar', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Subtract_Scalar_First
 
-PARAM_TEST_CASE(Subtract_Scalar_First, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//PARAM_TEST_CASE(Subtract_Scalar_First, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Subtract_Scalar_First extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM<alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Subtract_Scalar_First, WithOutMask)
+//CUDA_TEST_P(Subtract_Scalar_First, WithOutMask)
+class Subtract_Scalar_First_WithOutMask extends Subtract_Scalar_First
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::subtract(val, loadMat(mat), dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.subtract(val, alvision.loadMat(mat), dst,new  alvision.cuda.GpuMat(),this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.subtract(val,alvision.loadMat(mat, this.useRoi), dst, new alvision.cuda.GpuMat(), this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
+            alvision.subtract(val, mat, dst_gold, null, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::subtract(val, loadMat(mat, useRoi), dst, alvision.cuda::GpuMat(), depth.second);
-
-        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
-        alvision.subtract(val, mat, dst_gold, alvision.noArray(), depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
     }
 }
 
-CUDA_TEST_P(Subtract_Scalar_First, WithMask)
+//CUDA_TEST_P(Subtract_Scalar_First, WithMask)
+class Subtract_Scalar_First_WithMask extends Subtract_Scalar_First
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
-    alvision.Mat mask = randomMat(size, CV_8UC1, 0.0, 2.0);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
+        let mask = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC1, 0.0, 2.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::subtract(val, loadMat(mat), dst, alvision.cuda::GpuMat(), depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.subtract(val, alvision.loadMat(mat), dst,new alvision.cuda.GpuMat(), this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            dst.setTo(alvision.Scalar.all(0));
+            alvision.cudaarithm.subtract(val, alvision.loadMat(mat, this.useRoi), dst, alvision.loadMat(mask, this.useRoi),this.depth.second);
+
+            let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
+            alvision.subtract(val, mat, dst_gold, mask, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        dst.setTo(alvision.alvision.Scalar.all(0));
-        alvision.cuda::subtract(val, loadMat(mat, useRoi), dst, loadMat(mask, useRoi), depth.second);
-
-        alvision.Mat dst_gold(size, depth.second, alvision.alvision.Scalar.all(0));
-        alvision.subtract(val, mat, dst_gold, mask, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 0.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Subtract_Scalar_First, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Subtract_Scalar_First', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Multiply_Array
 
-PARAM_TEST_CASE(Multiply_Array, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, Channels, UseRoi)
+//PARAM_TEST_CASE(Multiply_Array, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, Channels, this.useRoi)
+class Multiply_Array extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    int channels;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected channels : alvision.int;
+    protected useRoi : boolean;
 
-    int stype;
-    int dtype;
+    protected stype : alvision.int;
+    protected dtype : alvision.int;
 
-    virtual void SetUp()
+    SetUp():void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        channels = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM<alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.channels = this.GET_PARAM<alvision.int>(3);
+        this.useRoi =   this.GET_PARAM<boolean>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        stype = CV_MAKE_TYPE(depth.first, channels);
-        dtype = CV_MAKE_TYPE(depth.second, channels);
+        this.stype = alvision.MatrixType.CV_MAKETYPE(this.depth.first, this.channels);
+        this.dtype = alvision.MatrixType.CV_MAKETYPE(this.depth.second, this.channels);
     }
 };
 
-CUDA_TEST_P(Multiply_Array, WithOutScale)
+//CUDA_TEST_P(Multiply_Array, WithOutScale)
+class Multiply_Array_WithOutScale extends Multiply_Array
 {
-    alvision.Mat mat1 = randomMat(size, stype);
-    alvision.Mat mat2 = randomMat(size, stype);
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, this.stype);
+        let mat2 = alvision.randomMat(this.size, this.stype);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::multiply(loadMat(mat1), loadMat(mat2), dst, 1, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.multiply(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, 1,this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
+            alvision.cudaarithm.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, 1,this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.multiply(mat1, mat2, dst_gold, 1, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-2 : 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        alvision.cuda::multiply(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, 1, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.multiply(mat1, mat2, dst_gold, 1, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-2 : 0.0);
     }
 }
 
-CUDA_TEST_P(Multiply_Array, WithScale)
+//CUDA_TEST_P(Multiply_Array, WithScale)
+class Multiply_Array_WithScale extends Multiply_Array
 {
-    alvision.Mat mat1 = randomMat(size, stype);
-    alvision.Mat mat2 = randomMat(size, stype);
-    double scale = randomDouble(0.0, 255.0);
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, this.stype);
+        let mat2 = alvision.randomMat(this.size, this.stype);
+        let scale = alvision.randomDouble(0.0, 255.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::multiply(loadMat(mat1), loadMat(mat2), dst, scale, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.multiply(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, scale,this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
+            alvision.cudaarithm.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, scale, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.multiply(mat1, mat2, dst_gold, scale, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 2.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        alvision.cuda::multiply(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, scale, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.multiply(mat1, mat2, dst_gold, scale, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, 2.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Multiply_Array, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    ALL_CHANNELS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Multiply_Array', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.ALL_CHANNELS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Multiply_Array_Special
 
-PARAM_TEST_CASE(Multiply_Array_Special, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
+//PARAM_TEST_CASE(Multiply_Array_Special, alvision.cuda.DeviceInfo, alvision.Size, this.useRoi)
+class Multiply_Array_Special extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        useRoi = GET_PARAM(2);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.useRoi =  this.GET_PARAM<boolean>(2);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Multiply_Array_Special, Case_8UC4x_32FC1)
+//CUDA_TEST_P(Multiply_Array_Special, Case_8UC4x_32FC1)
+class Multiply_Array_Special_Case_8UC4x_32FC1 extends Multiply_Array_Special
 {
-    alvision.Mat mat1 = randomMat(size, CV_8UC4);
-    alvision.Mat mat2 = randomMat(size, CV_32FC1);
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC4);
+        let mat2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
-    alvision.cuda::GpuMat dst = createMat(size, CV_8UC4, useRoi);
-    alvision.cuda::multiply(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst);
+        let dst = alvision.createMat(this.size, alvision.MatrixType.CV_8UC4, this.useRoi);
+        alvision.cudaarithm.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
 
-    alvision.Mat h_dst(dst);
+        let h_dst = new alvision.Mat (dst);
 
-    for (int y = 0; y < h_dst.rows; ++y)
-    {
-        const alvision.Vec4b* mat1_row = mat1.ptr<alvision.Vec4b>(y);
-        const float* mat2_row = mat2.ptr<float>(y);
-        const alvision.Vec4b* dst_row = h_dst.ptr<alvision.Vec4b>(y);
-
-        for (int x = 0; x < h_dst.cols; ++x)
+        for (let y = 0; y < h_dst.rows; ++y)
         {
-            alvision.Vec4b val1 = mat1_row[x];
-            float val2 = mat2_row[x];
-            alvision.Vec4b actual = dst_row[x];
+            const mat1_row = mat1.ptr<alvision.Vecb>("Vec4b",y);
+            const mat2_row = mat2.ptr<alvision.float>("float", y);
+            const dst_row = h_dst.ptr<alvision.Vecb>("Vec4b",y);
 
-            alvision.Vec4b gold;
+            for (let x = 0; x < h_dst.cols; ++x)
+            {
+                let val1 = mat1_row[x];
+                let val2 = mat2_row[x];
+                let actual = dst_row[x];
 
-            gold[0] = alvision.saturate_cast<uchar>(val1[0] * val2);
-            gold[1] = alvision.saturate_cast<uchar>(val1[1] * val2);
-            gold[2] = alvision.saturate_cast<uchar>(val1[2] * val2);
-            gold[3] = alvision.saturate_cast<uchar>(val1[3] * val2);
+                let gold = new alvision.Vecb();
 
-            ASSERT_LE(std::abs(gold[0] - actual[0]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
+                gold[0] = alvision.saturate_cast<alvision.uchar>(val1[0] * val2.valueOf(),"uchar");
+                gold[1] = alvision.saturate_cast<alvision.uchar>(val1[1] * val2.valueOf(),"uchar");
+                gold[2] = alvision.saturate_cast<alvision.uchar>(val1[2] * val2.valueOf(),"uchar");
+                gold[3] = alvision.saturate_cast<alvision.uchar>(val1[3] * val2.valueOf(),"uchar");
+
+                alvision.ASSERT_LE(Math.abs(gold[0] - actual[0]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+            }
         }
     }
 }
 
-CUDA_TEST_P(Multiply_Array_Special, Case_16SC4x_32FC1)
+//CUDA_TEST_P(Multiply_Array_Special, Case_16SC4x_32FC1)
+class Multiply_Array_Special_Case_16SC4x_32FC1 extends Multiply_Array_Special
 {
-    alvision.Mat mat1 = randomMat(size, CV_16SC4);
-    alvision.Mat mat2 = randomMat(size, CV_32FC1);
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, alvision.MatrixType.CV_16SC4);
+        let mat2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
-    alvision.cuda::GpuMat dst = createMat(size, CV_16SC4, useRoi);
-    alvision.cuda::multiply(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst);
+        let dst = alvision.createMat(this.size, alvision.MatrixType.CV_16SC4, this.useRoi);
+        alvision.cudaarithm.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
 
-    alvision.Mat h_dst(dst);
+        let h_dst = new alvision.Mat (dst);
 
-    for (int y = 0; y < h_dst.rows; ++y)
-    {
-        const alvision.Vec4s* mat1_row = mat1.ptr<alvision.Vec4s>(y);
-        const float* mat2_row = mat2.ptr<float>(y);
-        const alvision.Vec4s* dst_row = h_dst.ptr<alvision.Vec4s>(y);
-
-        for (int x = 0; x < h_dst.cols; ++x)
+        for (let y = 0; y < h_dst.rows; ++y)
         {
-            alvision.Vec4s val1 = mat1_row[x];
-            float val2 = mat2_row[x];
-            alvision.Vec4s actual = dst_row[x];
+            const mat1_row = mat1.ptr<alvision.Vecs>("Vec4s",y);
+            const mat2_row = mat2.ptr<alvision.float>("float", y);
+            const dst_row = h_dst.ptr<alvision.Vecs>("Vec4s",y);
 
-            alvision.Vec4s gold;
+            for (let x = 0; x < h_dst.cols; ++x)
+            {
+                let val1 = mat1_row[x];
+                let val2 = mat2_row[x];
+                let actual = dst_row[x];
 
-            gold[0] = alvision.saturate_cast<short>(val1[0] * val2);
-            gold[1] = alvision.saturate_cast<short>(val1[1] * val2);
-            gold[2] = alvision.saturate_cast<short>(val1[2] * val2);
-            gold[3] = alvision.saturate_cast<short>(val1[3] * val2);
+                let gold = new alvision.Vecs();
 
-            ASSERT_LE(std::abs(gold[0] - actual[0]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
+                gold[0] = alvision.saturate_cast<alvision.short>(val1[0] * val2.valueOf(),"short");
+                gold[1] = alvision.saturate_cast<alvision.short>(val1[1] * val2.valueOf(),"short");
+                gold[2] = alvision.saturate_cast<alvision.short>(val1[2] * val2.valueOf(),"short");
+                gold[3] = alvision.saturate_cast<alvision.short>(val1[3] * val2.valueOf(),"short");
+
+                alvision.ASSERT_LE(Math.abs(gold[0] - actual[0]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+            }
         }
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Multiply_Array_Special, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Multiply_Array_Special', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Multiply_Scalar
 
-PARAM_TEST_CASE(Multiply_Scalar, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//PARAM_TEST_CASE(Multiply_Scalar, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Multiply_Scalar extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM<alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Multiply_Scalar, WithOutScale)
-{
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
+///CUDA_TEST_P(Multiply_Scalar, WithOutScale)
+class Multiply_Scalar_WithOutScale extends Multiply_Scalar {
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::multiply(loadMat(mat), val, dst, 1, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.multiply(alvision.loadMat(mat), val, dst, 1, this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            alvision.cudaarithm.multiply(alvision.loadMat(mat, this.useRoi), val, dst, 1, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.multiply(mat, val, dst_gold, 1, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        alvision.cuda::multiply(loadMat(mat, useRoi), val, dst, 1, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.multiply(mat, val, dst_gold, 1, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
     }
 }
 
 
-CUDA_TEST_P(Multiply_Scalar, WithScale)
+//CUDA_TEST_P(Multiply_Scalar, WithScale)
+class Multiply_Scalar_WithScale extends Multiply_Scalar
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
-    double scale = randomDouble(0.0, 255.0);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
+        let scale = alvision.randomDouble(0.0, 255.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::multiply(loadMat(mat), val, dst, scale, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.multiply(alvision.loadMat(mat), val, dst, scale, this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            alvision.cudaarithm.multiply(alvision.loadMat(mat, this.useRoi), val, dst, scale, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.multiply(mat, val, dst_gold, scale, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        alvision.cuda::multiply(loadMat(mat, useRoi), val, dst, scale, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.multiply(mat, val, dst_gold, scale, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Multiply_Scalar, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Multiply_Scalar', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Multiply_Scalar_First
 
-PARAM_TEST_CASE(Multiply_Scalar_First, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//PARAM_TEST_CASE(Multiply_Scalar_First, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Multiply_Scalar_First extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size = this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM<alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.useRoi = this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Multiply_Scalar_First, WithOutScale)
-{
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
+//CUDA_TEST_P(Multiply_Scalar_First, WithOutScale)
+class Multiply_Scalar_First_WithOutScale extends Multiply_Scalar_First {
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::multiply(val, loadMat(mat), dst, 1, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.multiply(val, alvision.loadMat(mat), dst, 1, this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            alvision.cudaarithm.multiply(val, alvision.loadMat(mat, this.useRoi), dst, 1, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.multiply(val, mat, dst_gold, 1, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        alvision.cuda::multiply(val, loadMat(mat, useRoi), dst, 1, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.multiply(val, mat, dst_gold, 1, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
     }
 }
 
 
-CUDA_TEST_P(Multiply_Scalar_First, WithScale)
+//CUDA_TEST_P(Multiply_Scalar_First, WithScale)
+class Multiply_Scalar_First_WithScale extends Multiply_Scalar_First
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(0, 255);
-    double scale = randomDouble(0.0, 255.0);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(0, 255);
+        let scale = alvision.randomDouble(0.0, 255.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::multiply(val, loadMat(mat), dst, scale, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.multiply(val, alvision.loadMat(mat), dst, scale, this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            alvision.cudaarithm.multiply(val, alvision.loadMat(mat, this.useRoi), dst, scale, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.multiply(val, mat, dst_gold, scale, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        alvision.cuda::multiply(val, loadMat(mat, useRoi), dst, scale, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.multiply(val, mat, dst_gold, scale, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Multiply_Scalar_First, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Multiply_Scalar_First', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Divide_Array
 
-PARAM_TEST_CASE(Divide_Array, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, Channels, UseRoi)
+//PARAM_TEST_CASE(Divide_Array, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, Channels, this.useRoi)
+class Divide_Array extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    int channels;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected channels : alvision.int;
+    protected useRoi : boolean;
 
-    int stype;
-    int dtype;
+    protected stype : alvision.int;
+    protected dtype : alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        channels = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM<alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.channels = this.GET_PARAM<alvision.int>(3);
+        this.useRoi =   this.GET_PARAM<boolean>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        stype = CV_MAKE_TYPE(depth.first, channels);
-        dtype = CV_MAKE_TYPE(depth.second, channels);
+        this.stype = alvision.MatrixType.CV_MAKETYPE(this.depth.first, this.channels);
+        this.dtype = alvision.MatrixType.CV_MAKETYPE(this.depth.second, this.channels);
     }
 };
 
-CUDA_TEST_P(Divide_Array, WithOutScale)
+//CUDA_TEST_P(Divide_Array, WithOutScale)
+class Divide_Array_WithOutScale extends Divide_Array
 {
-    alvision.Mat mat1 = randomMat(size, stype);
-    alvision.Mat mat2 = randomMat(size, stype, 1.0, 255.0);
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, this.stype);
+        let mat2 = alvision.randomMat(this.size, this.stype, 1.0, 255.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::divide(loadMat(mat1), loadMat(mat2), dst, 1, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.divide(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, 1, this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
+            alvision.cudaarithm.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, 1, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.divide(mat1, mat2, dst_gold, 1, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 1.0);
         }
     }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        alvision.cuda::divide(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, 1, depth.second);
 
-        alvision.Mat dst_gold;
-        alvision.divide(mat1, mat2, dst_gold, 1, depth.second);
+}
 
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
+//CUDA_TEST_P(Divide_Array, WithScale)
+class Divide_Array_WithScale extends Divide_Array
+{
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, this.stype);
+        let mat2 = alvision.randomMat(this.size, this.stype, 1.0, 255.0);
+        let scale = alvision.randomDouble(0.0, 255.0);
+
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.divide(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, scale, this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
+        }
+        else {
+            let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
+            alvision.cudaarithm.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, scale, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.divide(mat1, mat2, dst_gold, scale, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-2 : 1.0);
+        }
     }
 }
 
-CUDA_TEST_P(Divide_Array, WithScale)
-{
-    alvision.Mat mat1 = randomMat(size, stype);
-    alvision.Mat mat2 = randomMat(size, stype, 1.0, 255.0);
-    double scale = randomDouble(0.0, 255.0);
-
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::divide(loadMat(mat1), loadMat(mat2), dst, scale, depth.second);
-        }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
-        }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, dtype, useRoi);
-        alvision.cuda::divide(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst, scale, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.divide(mat1, mat2, dst_gold, scale, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-2 : 1.0);
-    }
-}
-
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Divide_Array, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    ALL_CHANNELS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Divide_Array', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.ALL_CHANNELS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Divide_Array_Special
 
-PARAM_TEST_CASE(Divide_Array_Special, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
+//PARAM_TEST_CASE(Divide_Array_Special, alvision.cuda.DeviceInfo, alvision.Size, this.useRoi)
+class Divide_Array_Special extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        useRoi = GET_PARAM(2);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.useRoi =  this.GET_PARAM<boolean>(2);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Divide_Array_Special, Case_8UC4x_32FC1)
+//CUDA_TEST_P(Divide_Array_Special, Case_8UC4x_32FC1)
+class Divide_Array_Special_Case_8UC4x_32FC1 extends Divide_Array_Special
 {
-    alvision.Mat mat1 = randomMat(size, CV_8UC4);
-    alvision.Mat mat2 = randomMat(size, CV_32FC1, 1.0, 255.0);
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC4);
+        let mat2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1, 1.0, 255.0);
 
-    alvision.cuda::GpuMat dst = createMat(size, CV_8UC4, useRoi);
-    alvision.cuda::divide(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst);
+        let dst = alvision.createMat(this.size, alvision.MatrixType.CV_8UC4, this.useRoi);
+        alvision.cudaarithm.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
 
-    alvision.Mat h_dst(dst);
+        let h_dst = new alvision.Mat (dst);
 
-    for (int y = 0; y < h_dst.rows; ++y)
-    {
-        const alvision.Vec4b* mat1_row = mat1.ptr<alvision.Vec4b>(y);
-        const float* mat2_row = mat2.ptr<float>(y);
-        const alvision.Vec4b* dst_row = h_dst.ptr<alvision.Vec4b>(y);
-
-        for (int x = 0; x < h_dst.cols; ++x)
+        for (let y = 0; y < h_dst.rows; ++y)
         {
-            alvision.Vec4b val1 = mat1_row[x];
-            float val2 = mat2_row[x];
-            alvision.Vec4b actual = dst_row[x];
+            const mat1_row = mat1.ptr<alvision.Vecb>("Vec4b",y);
+            const mat2_row = mat2.ptr<alvision.float>("float", y);
+            const dst_row = h_dst.ptr<alvision.Vecb>("Vec4b",y);
 
-            alvision.Vec4b gold;
+            for (let x = 0; x < h_dst.cols; ++x)
+            {
+                let val1 = mat1_row[x];
+                let val2 = mat2_row[x];
+                let actual = dst_row[x];
 
-            gold[0] = alvision.saturate_cast<uchar>(val1[0] / val2);
-            gold[1] = alvision.saturate_cast<uchar>(val1[1] / val2);
-            gold[2] = alvision.saturate_cast<uchar>(val1[2] / val2);
-            gold[3] = alvision.saturate_cast<uchar>(val1[3] / val2);
+                let gold = new alvision.Vecb();
 
-            ASSERT_LE(std::abs(gold[0] - actual[0]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
+                gold[0] = alvision.saturate_cast<alvision.uchar>(val1[0] / val2.valueOf(),"uchar");
+                gold[1] = alvision.saturate_cast<alvision.uchar>(val1[1] / val2.valueOf(),"uchar");
+                gold[2] = alvision.saturate_cast<alvision.uchar>(val1[2] / val2.valueOf(),"uchar");
+                gold[3] = alvision.saturate_cast<alvision.uchar>(val1[3] / val2.valueOf(),"uchar");
+
+                alvision.ASSERT_LE(Math.abs(gold[0] - actual[0]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+            }
         }
     }
 }
 
-CUDA_TEST_P(Divide_Array_Special, Case_16SC4x_32FC1)
+//CUDA_TEST_P(Divide_Array_Special, Case_16SC4x_32FC1)
+class Divide_Array_Special_Case_16SC4x_32FC1 extends Divide_Array_Special
 {
-    alvision.Mat mat1 = randomMat(size, CV_16SC4);
-    alvision.Mat mat2 = randomMat(size, CV_32FC1, 1.0, 255.0);
+    TestBody() {
+        let mat1 = alvision.randomMat(this.size, alvision.MatrixType.CV_16SC4);
+        let mat2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1, 1.0, 255.0);
 
-    alvision.cuda::GpuMat dst = createMat(size, CV_16SC4, useRoi);
-    alvision.cuda::divide(loadMat(mat1, useRoi), loadMat(mat2, useRoi), dst);
+        let dst = alvision.createMat(this.size, alvision.MatrixType.CV_16SC4, this.useRoi);
+        alvision.cudaarithm.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
 
-    alvision.Mat h_dst(dst);
+        let h_dst = new alvision.Mat (dst);
 
-    for (int y = 0; y < h_dst.rows; ++y)
-    {
-        const alvision.Vec4s* mat1_row = mat1.ptr<alvision.Vec4s>(y);
-        const float* mat2_row = mat2.ptr<float>(y);
-        const alvision.Vec4s* dst_row = h_dst.ptr<alvision.Vec4s>(y);
-
-        for (int x = 0; x < h_dst.cols; ++x)
+        for (let y = 0; y < h_dst.rows; ++y)
         {
-            alvision.Vec4s val1 = mat1_row[x];
-            float val2 = mat2_row[x];
-            alvision.Vec4s actual = dst_row[x];
+            const mat1_row = mat1.ptr<alvision.Vecs>("Vec4s",y);
+            const mat2_row = mat2.ptr<alvision.float>("float", y);
+            const dst_row = h_dst.ptr<alvision.Vecs>("Vec4s",y);
 
-            alvision.Vec4s gold;
+            for (let x = 0; x < h_dst.cols; ++x)
+            {
+                let val1 = mat1_row[x];
+                let val2 = mat2_row[x];
+                let actual = dst_row[x];
 
-            gold[0] = alvision.saturate_cast<short>(val1[0] / val2);
-            gold[1] = alvision.saturate_cast<short>(val1[1] / val2);
-            gold[2] = alvision.saturate_cast<short>(val1[2] / val2);
-            gold[3] = alvision.saturate_cast<short>(val1[3] / val2);
+                let gold = new alvision.Vecs();
 
-            ASSERT_LE(std::abs(gold[0] - actual[0]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
-            ASSERT_LE(std::abs(gold[1] - actual[1]), 1.0);
+                gold[0] = alvision.saturate_cast<alvision.short>(val1[0] / val2.valueOf(),"short");
+                gold[1] = alvision.saturate_cast<alvision.short>(val1[1] / val2.valueOf(),"short");
+                gold[2] = alvision.saturate_cast<alvision.short>(val1[2] / val2.valueOf(),"short");
+                gold[3] = alvision.saturate_cast<alvision.short>(val1[3] / val2.valueOf(),"short");
+
+                alvision.ASSERT_LE(Math.abs(gold[0] - actual[0]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+                alvision.ASSERT_LE(Math.abs(gold[1] - actual[1]), 1.0);
+            }
         }
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Divide_Array_Special, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Divide_Array_Special', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Divide_Scalar
 
-PARAM_TEST_CASE(Divide_Scalar, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//PARAM_TEST_CASE(Divide_Scalar, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Divide_Scalar extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM < alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Divide_Scalar, WithOutScale)
+//CUDA_TEST_P(Divide_Scalar, WithOutScale)
+class Divide_Scalar_WithOutScale extends Divide_Scalar
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(1.0, 255.0);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(1.0, 255.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::divide(loadMat(mat), val, dst, 1, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.divide(alvision.loadMat(mat), val, dst, 1, this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            alvision.cudaarithm.divide(alvision.loadMat(mat, this.useRoi), val, dst, 1, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.divide(mat, val, dst_gold, 1, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        alvision.cuda::divide(loadMat(mat, useRoi), val, dst, 1, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.divide(mat, val, dst_gold, 1, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
     }
 }
 
-CUDA_TEST_P(Divide_Scalar, WithScale)
+//CUDA_TEST_P(Divide_Scalar, WithScale)
+class Divide_Scalar_WithScale extends Divide_Scalar
 {
-    alvision.Mat mat = randomMat(size, depth.first);
-    alvision.Scalar val = randomScalar(1.0, 255.0);
-    double scale = randomDouble(0.0, 255.0);
+    TestBody() {
+        let mat = alvision.randomMat(this.size, this.depth.first);
+        let val = alvision.randomScalar(1.0, 255.0);
+        let scale = alvision.randomDouble(0.0, 255.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::divide(loadMat(mat), val, dst, scale, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.divide(alvision.loadMat(mat), val, dst, scale, this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            alvision.cudaarithm.divide(alvision.loadMat(mat, this.useRoi), val, dst, scale, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.divide(mat, val, dst_gold, scale, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-2 : 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        alvision.cuda::divide(loadMat(mat, useRoi), val, dst, scale, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.divide(mat, val, dst_gold, scale, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-2 : 1.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Divide_Scalar, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Divide_Scalar', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Divide_Scalar_First
 
-PARAM_TEST_CASE(Divide_Scalar_First, alvision.cuda::DeviceInfo, alvision.Size, std::pair<MatDepth, MatDepth>, UseRoi)
+//PARAM_TEST_CASE(Divide_Scalar_First, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair<MatDepth, MatDepth>, this.useRoi)
+class Divide_Scalar_First extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    std::pair<MatDepth, MatDepth> depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected  depth : alvision.pair<alvision.MatrixType, alvision.MatrixType>;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth = this.GET_PARAM<alvision.pair<alvision.MatrixType, alvision.MatrixType>>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Divide_Scalar_First, Accuracy)
+//CUDA_TEST_P(Divide_Scalar_First, Accuracy)
+class Divide_Scalar_First_Accuracy extends Divide_Scalar_First
 {
-    double scale = randomDouble(0.0, 255.0);
-    alvision.Mat mat = randomMat(size, depth.first, 1.0, 255.0);
+    TestBody() {
+        let scale = alvision.randomDouble(0.0, 255.0);
+        let mat = alvision.randomMat(this.size, this.depth.first, 1.0, 255.0);
 
-    if ((depth.first == CV_64F || depth.second == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::divide(scale, loadMat(mat), dst, 1.0, depth.second);
+        if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.divide(new alvision.Scalar(scale), alvision.loadMat(mat), dst, 1.0, this.depth.second);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
+            alvision.cudaarithm.divide(new alvision.Scalar(scale), alvision.loadMat(mat, this.useRoi), dst, 1.0, this.depth.second);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.divide(scale, mat, dst_gold, this.depth.second);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth.first >= alvision.MatrixType.CV_32F || this.depth.second >= alvision.MatrixType.CV_32F ? 1e-4 : 1.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth.second, useRoi);
-        alvision.cuda::divide(scale, loadMat(mat, useRoi), dst, 1.0, depth.second);
-
-        alvision.Mat dst_gold;
-        alvision.divide(scale, mat, dst_gold, depth.second);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth.first >= CV_32F || depth.second >= CV_32F ? 1e-4 : 1.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Divide_Scalar_First, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DEPTH_PAIRS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Divide_Scalar_First', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DEPTH_PAIRS,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // AbsDiff
 
-PARAM_TEST_CASE(AbsDiff, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+//PARAM_TEST_CASE(AbsDiff, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, this.useRoi)
+class AbsDiff extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.depth =    this.GET_PARAM<alvision.int>(2);
+        this.useRoi =   this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(AbsDiff, Array)
-{
-    alvision.Mat src1 = randomMat(size, depth);
-    alvision.Mat src2 = randomMat(size, depth);
+//CUDA_TEST_P(AbsDiff, Array)
+class AbsDiff_Array extends AbsDiff {
+    TestBody() {
+        let src1 = alvision.randomMat(this.size, this.depth);
+        let src2 = alvision.randomMat(this.size, this.depth);
 
-    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::absdiff(loadMat(src1), loadMat(src2), dst);
+        if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.absdiff(alvision.loadMat(src1), alvision.loadMat(src2), dst);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+            alvision.cudaarithm.absdiff(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.absdiff(src1, src2, dst_gold);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-        alvision.cuda::absdiff(loadMat(src1, useRoi), loadMat(src2, useRoi), dst);
-
-        alvision.Mat dst_gold;
-        alvision.absdiff(src1, src2, dst_gold);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
     }
 }
 
-CUDA_TEST_P(AbsDiff, Scalar)
-{
-    alvision.Mat src = randomMat(size, depth);
-    alvision.Scalar val = randomScalar(0.0, 255.0);
+//CUDA_TEST_P(AbsDiff, Scalar)
+class AbsDiff_Scalar extends AbsDiff {
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth);
+        let val = alvision.randomScalar(0.0, 255.0);
 
-    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::absdiff(loadMat(src), val, dst);
+        if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.absdiff(alvision.loadMat(src), val, dst);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+            alvision.cudaarithm.absdiff(alvision.loadMat(src, this.useRoi), val, dst);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.absdiff(src, val, dst_gold);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth <= alvision.MatrixType.CV_32F ? 1.0 : 1e-5);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-        alvision.cuda::absdiff(loadMat(src, useRoi), val, dst);
-
-        alvision.Mat dst_gold;
-        alvision.absdiff(src, val, dst_gold);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth <= CV_32F ? 1.0 : 1e-5);
     }
 }
 
-CUDA_TEST_P(AbsDiff, Scalar_First)
+//CUDA_TEST_P(AbsDiff, Scalar_First)
+class AbsDiff_Scalar_First extends AbsDiff
 {
-    alvision.Mat src = randomMat(size, depth);
-    alvision.Scalar val = randomScalar(0.0, 255.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth);
+        let val = alvision.randomScalar(0.0, 255.0);
 
-    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::absdiff(val, loadMat(src), dst);
+        if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.absdiff(val, alvision.loadMat(src), dst);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+            alvision.cudaarithm.absdiff(val, alvision.loadMat(src, this.useRoi), dst);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.absdiff(val, src, dst_gold);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth <= alvision.MatrixType.CV_32F ? 1.0 : 1e-5);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-        alvision.cuda::absdiff(val, loadMat(src, useRoi), dst);
-
-        alvision.Mat dst_gold;
-        alvision.absdiff(val, src, dst_gold);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth <= CV_32F ? 1.0 : 1e-5);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, AbsDiff, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    ALL_DEPTH,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'AbsDiff', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.ALL_DEPTH,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Abs
 
-PARAM_TEST_CASE(Abs, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+//PARAM_TEST_CASE(Abs, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, this.useRoi)
+class Abs extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth =   this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Abs, Accuracy)
+//CUDA_TEST_P(Abs, Accuracy)
+class Abs_Accuracy extends Abs
 {
-    alvision.Mat src = randomMat(size, depth);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth);
 
-    alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-    alvision.cuda::abs(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+        alvision.cudaarithm.abs(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold = alvision.abs(src);
+        let dst_gold = alvision.MatExpr.abs(src);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Abs, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_16S), MatDepth(CV_32F)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Abs', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_16S,alvision.MatrixType.CV_32F],
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sqr
 
-PARAM_TEST_CASE(Sqr, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+//PARAM_TEST_CASE(Sqr, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, this.useRoi)
+class Sqr extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth =   this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Sqr, Accuracy)
+//CUDA_TEST_P(Sqr, Accuracy)
+class Sqr_Accuracy extends Sqr
 {
-    alvision.Mat src = randomMat(size, depth, 0, depth == CV_8U ? 16 : 255);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth, 0, this.depth == alvision.MatrixType.CV_8U ? 16 : 255);
 
-    alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-    alvision.cuda::sqr(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+        alvision.cudaarithm.sqr(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.multiply(src, src, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        alvision.multiply(src, src, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Sqr, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U),
-                    MatDepth(CV_16U),
-                    MatDepth(CV_16S),
-                    MatDepth(CV_32F)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Sqr', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+[alvision.MatrixType.CV_8U,
+alvision.MatrixType.CV_16U,
+alvision.MatrixType.CV_16S,
+alvision.MatrixType.CV_32F],
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Sqrt
 
-namespace
-{
-    template <typename T> void sqrtImpl(const alvision.Mat& src, alvision.Mat& dst)
+//namespace
+//{
+    //template <typename T> void sqrtImpl(const alvision.Mat& src, alvision.Mat& dst)
+function sqrtImpl<T>(Ttype : string, src: alvision.Mat, dst: alvision.Mat ) : void
     {
         dst.create(src.size(), src.type());
 
-        for (int y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows; ++y)
         {
-            for (int x = 0; x < src.cols; ++x)
-                dst.at<T>(y, x) = static_cast<T>(Math.sqrt(static_cast<float>(src.at<T>(y, x))));
+            for (let x = 0; x < src.cols; ++x)
+                dst.at<T>(Ttype, y, x).set(<any>(Math.sqrt(<any>(src.at<T>(Ttype, y, x).get()))));
         }
     }
 
-    void sqrtGold(const alvision.Mat& src, alvision.Mat& dst)
-    {
-        typedef void (*func_t)(const alvision.Mat& src, alvision.Mat& dst);
+function sqrtGold(src: alvision.Mat, dst: alvision.Mat): void {
+    //typedef void (*func_t)(const alvision.Mat& src, alvision.Mat& dst);
 
-        const func_t funcs[] =
-        {
-            sqrtImpl<uchar>, sqrtImpl<schar>, sqrtImpl<ushort>, sqrtImpl<short>,
-            sqrtImpl<int>, sqrtImpl<float>
-        };
+    const funcs =
+        [
+            (src: alvision.Mat, dst: alvision.Mat )=>{ sqrtImpl<alvision.uchar>("uchar", src, dst);}, 
+            (src: alvision.Mat, dst: alvision.Mat) => {sqrtImpl<alvision.schar>("schar", src, dst); },   
+            (src: alvision.Mat, dst: alvision.Mat )=>{ sqrtImpl<alvision.ushort >("ushort",src,dst);}, 
+            (src: alvision.Mat, dst: alvision.Mat )=>{ sqrtImpl<alvision.short > ("short",src,dst);},
+            (src: alvision.Mat, dst: alvision.Mat )=>{ sqrtImpl<alvision.int >   ("int",src,dst);}, 
+            (src: alvision.Mat, dst: alvision.Mat )=>{ sqrtImpl<alvision.float>    ("float",src,dst);}
+        ];
 
-        funcs[src.depth()](src, dst);
-    }
+    funcs[src.depth().valueOf()](src, dst);
 }
+//}
 
-PARAM_TEST_CASE(Sqrt, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+//PARAM_TEST_CASE(Sqrt, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, this.useRoi)
+class Sqrt extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth =   this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Sqrt, Accuracy)
+//CUDA_TEST_P(Sqrt, Accuracy)
+class Sqrt_Accuracy extends Sqrt
 {
-    alvision.Mat src = randomMat(size, depth);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth);
 
-    alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-    alvision.cuda::sqrt(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+        alvision.cudaarithm.sqrt(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    sqrtGold(src, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        sqrtGold(src, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, depth < CV_32F ? 1.0 : 1e-5);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth < alvision.MatrixType.CV_32F ? 1.0 : 1e-5);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Sqrt, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U),
-                    MatDepth(CV_16U),
-                    MatDepth(CV_16S),
-                    MatDepth(CV_32F)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Sqrt', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,
+    alvision.MatrixType.CV_16U,
+    alvision.MatrixType.CV_16S,
+    alvision.MatrixType.CV_32F],
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Log
 
-namespace
-{
-    template <typename T> void logImpl(const alvision.Mat& src, alvision.Mat& dst)
+//namespace
+//{
+    //template <typename T> void logImpl(const alvision.Mat& src, alvision.Mat& dst)
+function logImpl<T>(Ttype : string, src: alvision.Mat, dst: alvision.Mat ) : void
     {
         dst.create(src.size(), src.type());
 
-        for (int y = 0; y < src.rows; ++y)
+        for (var y = 0; y < src.rows; ++y)
         {
-            for (int x = 0; x < src.cols; ++x)
-                dst.at<T>(y, x) = static_cast<T>(Math.log(static_cast<float>(src.at<T>(y, x))));
+            for (var x = 0; x < src.cols; ++x)
+                dst.at<T>(Ttype, y, x).set(<any>(Math.log(<any>(src.at<T>(Ttype, y, x)))));
         }
     }
 
-    void logGold(const alvision.Mat& src, alvision.Mat& dst)
+function logGold(src: alvision.Mat, dst: alvision.Mat) : void
     {
-        typedef void (*func_t)(const alvision.Mat& src, alvision.Mat& dst);
+        //typedef void (*func_t)(const alvision.Mat& src, alvision.Mat& dst);
 
-        const func_t funcs[] =
-        {
-            logImpl<uchar>, logImpl<schar>, logImpl<ushort>, logImpl<short>,
-            logImpl<int>, logImpl<float>
-        };
+        const funcs =
+        [
+                (src: alvision.Mat, dst: alvision.Mat )=>{ logImpl<alvision.uchar>("uchar", src, dst);}, 
+                (src: alvision.Mat, dst: alvision.Mat) => { logImpl<alvision.schar>("schar", src, dst);}, 
+                (src: alvision.Mat, dst: alvision.Mat )=>{logImpl < alvision.ushort >("ushort",src,dst);}, 
+                (src: alvision.Mat, dst: alvision.Mat )=>{logImpl < alvision.short > ("short",src,dst);},
+                (src: alvision.Mat, dst: alvision.Mat )=>{logImpl < alvision.int >   ("int",src,dst);},   
+                (src: alvision.Mat, dst: alvision.Mat )=>{logImpl<alvision.float>    ("float",src,dst);}
+        ];
 
-        funcs[src.depth()](src, dst);
+        funcs[src.depth().valueOf()](src, dst);
     }
-}
+//}
 
-PARAM_TEST_CASE(Log, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+//PARAM_TEST_CASE(Log, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, this.useRoi)
+class Log extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth =   this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Log, Accuracy)
+//CUDA_TEST_P(Log, Accuracy)
+class Log_Accuracy extends Log
 {
-    alvision.Mat src = randomMat(size, depth, 1.0, 255.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth, 1.0, 255.0);
 
-    alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-    alvision.cuda::log(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+        alvision.cudaarithm.log(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    logGold(src, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        logGold(src, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, depth < CV_32F ? 1.0 : 1e-6);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth < alvision.MatrixType.CV_32F ? 1.0 : 1e-6);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Log, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U),
-                    MatDepth(CV_16U),
-                    MatDepth(CV_16S),
-                    MatDepth(CV_32F)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Log', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,
+    alvision.MatrixType.CV_16U,
+    alvision.MatrixType.CV_16S,
+    alvision.MatrixType.CV_32F],
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Exp
 
-namespace
-{
-    template <typename T> void expImpl(const alvision.Mat& src, alvision.Mat& dst)
+//namespace
+//{
+    //template <typename T> void expImpl(const alvision.Mat& src, alvision.Mat& dst)
+function expImpl<T>(Ttype, src: alvision.Mat, dst: alvision.Mat ): void 
     {
         dst.create(src.size(), src.type());
 
-        for (int y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows; ++y)
         {
-            for (int x = 0; x < src.cols; ++x)
-                dst.at<T>(y, x) = alvision.saturate_cast<T>(static_cast<int>(Math.exp(static_cast<float>(src.at<T>(y, x)))));
+            for (let x = 0; x < src.cols; ++x)
+                dst.at<T>(Ttype, y, x).set(alvision.saturate_cast<T>((Math.exp(<number><any>(src.at<T>(Ttype, y, x).get()))), Ttype));
         }
     }
-    void expImpl_float(const alvision.Mat& src, alvision.Mat& dst)
+function expImpl_float(src: alvision.Mat, dst: alvision.Mat ) : void
     {
         dst.create(src.size(), src.type());
 
-        for (int y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows; ++y)
         {
-            for (int x = 0; x < src.cols; ++x)
-                dst.at<float>(y, x) = Math.exp(static_cast<float>(src.at<float>(y, x)));
+            for (let x = 0; x < src.cols; ++x)
+                dst.at<alvision.float>("float", y, x).set(Math.exp(<number>(src.at<alvision.float>("float", y, x).get())));
         }
     }
 
-    void expGold(const alvision.Mat& src, alvision.Mat& dst)
-    {
-        typedef void (*func_t)(const alvision.Mat& src, alvision.Mat& dst);
+function expGold(src: alvision.Mat, dst: alvision.Mat): void {
+    //typedef void (*func_t)(const alvision.Mat& src, alvision.Mat& dst);
 
-        const func_t funcs[] =
-        {
-            expImpl<uchar>, expImpl<schar>, expImpl<ushort>, expImpl<short>,
-            expImpl<int>, expImpl_float
-        };
+    const funcs =
+        [
+            (src: alvision.Mat, dst: alvision.Mat) => { expImpl<alvision.uchar>("uchar", src, dst); },
+            (src: alvision.Mat, dst: alvision.Mat) => { expImpl<alvision.schar>("schar", src, dst); },
+            (src: alvision.Mat, dst: alvision.Mat) => { expImpl<alvision.ushort>("ushort", src, dst); },
+            (src: alvision.Mat, dst: alvision.Mat) => { expImpl<alvision.short>("short", src, dst); },
+            (src: alvision.Mat, dst: alvision.Mat) => { expImpl<alvision.int>("int", src, dst); },
+            (src: alvision.Mat, dst: alvision.Mat) => { expImpl_float(src, dst); }
+        ];
 
-        funcs[src.depth()](src, dst);
-    }
+    funcs[src.depth().valueOf()](src, dst);
 }
 
-PARAM_TEST_CASE(Exp, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+
+//PARAM_TEST_CASE(Exp, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, this.useRoi)
+class Exp extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth =   this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Exp, Accuracy)
+//CUDA_TEST_P(Exp, Accuracy)
+class Exp_Accuracy extends Exp
 {
-    alvision.Mat src = randomMat(size, depth, 0.0, 10.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth, 0.0, 10.0);
 
-    alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-    alvision.cuda::exp(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+        alvision.cudaarithm.exp(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    expGold(src, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        expGold(src, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, depth < CV_32F ? 1.0 : 1e-2);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth < alvision.MatrixType.CV_32F ? 1.0 : 1e-2);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Exp, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U),
-                    MatDepth(CV_16U),
-                    MatDepth(CV_16S),
-                    MatDepth(CV_32F)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Exp', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,
+    alvision.MatrixType.CV_16U,
+    alvision.MatrixType.CV_16S,
+    alvision.MatrixType.CV_32F],
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Pow
 
-PARAM_TEST_CASE(Pow, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+//PARAM_TEST_CASE(Pow, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, this.useRoi)
+class Pow extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth =   this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Pow, Accuracy)
+//CUDA_TEST_P(Pow, Accuracy)
+class Pow_Accuracy extends Pow
 {
-    alvision.Mat src = randomMat(size, depth, 0.0, 10.0);
-    double power = randomDouble(2.0, 4.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth, 0.0, 10.0);
+        let power = alvision.randomDouble(2.0, 4.0);
 
-    if (src.depth() < CV_32F)
-        power = static_cast<int>(power);
+        //if (src.depth() < alvision.MatrixType.CV_32F)
+        //    power = static_cast<int>(power);
 
-    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::pow(loadMat(src), power, dst);
+        if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.pow(alvision.loadMat(src), power, dst);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+            alvision.cudaarithm.pow(alvision.loadMat(src, this.useRoi), power, dst);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.pow(src, power, dst_gold);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth < alvision.MatrixType.CV_32F ? 0.0 : 1e-1);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-        alvision.cuda::pow(loadMat(src, useRoi), power, dst);
-
-        alvision.Mat dst_gold;
-        alvision.pow(src, power, dst_gold);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth < CV_32F ? 0.0 : 1e-1);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Pow, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    ALL_DEPTH,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Pow', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.ALL_DEPTH,
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Compare_Array
 
-CV_ENUM(CmpCode, alvision.CMP_EQ, alvision.CMP_GT, alvision.CMP_GE, alvision.CMP_LT, alvision.CMP_LE, alvision.CMP_NE)
-#define ALL_CMP_CODES testing::Values(CmpCode(alvision.CMP_EQ), CmpCode(alvision.CMP_NE), CmpCode(alvision.CMP_GT), CmpCode(alvision.CMP_GE), CmpCode(alvision.CMP_LT), CmpCode(alvision.CMP_LE))
+//CV_ENUM(CmpCode, alvision.CMP_EQ, alvision.CMP_GT, alvision.CMP_GE, alvision.CMP_LT, alvision.CMP_LE, alvision.CMP_NE)
+//#define ALL_CMP_CODES testing::Values(CmpCode(alvision.CMP_EQ), CmpCode(alvision.CMP_NE), CmpCode(alvision.CMP_GT), CmpCode(alvision.CMP_GE), CmpCode(alvision.CMP_LT), CmpCode(alvision.CMP_LE))
+const ALL_CMP_CODES = [alvision.CmpTypes.CMP_EQ, alvision.CmpTypes.CMP_NE, alvision.CmpTypes.CMP_GT, alvision.CmpTypes.CMP_GE, alvision.CmpTypes.CMP_LT, alvision.CmpTypes.CMP_LE];
 
-PARAM_TEST_CASE(Compare_Array, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, CmpCode, UseRoi)
+//PARAM_TEST_CASE(Compare_Array, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, CmpCode, this.useRoi)
+class Compare_Array extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    int cmp_code;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected cmp_code : alvision.CmpTypes;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        cmp_code = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.depth =    this.GET_PARAM<alvision.int>(2);
+        this.cmp_code = this.GET_PARAM<alvision.CmpTypes>(3);
+        this.useRoi =   this.GET_PARAM<boolean>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Compare_Array, Accuracy)
+//CUDA_TEST_P(Compare_Array, Accuracy)
+class Compare_Array_Accuracy extends Compare_Array
 {
-    alvision.Mat src1 = randomMat(size, depth);
-    alvision.Mat src2 = randomMat(size, depth);
+    TestBody() {
+        let src1 = alvision.randomMat(this.size, this.depth);
+        let src2 = alvision.randomMat(this.size, this.depth);
 
-    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::compare(loadMat(src1), loadMat(src2), dst, cmp_code);
+        if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.compare(alvision.loadMat(src1), alvision.loadMat(src2), dst, this.cmp_code);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size,alvision.MatrixType. CV_8UC1, this.useRoi);
+            alvision.cudaarithm.compare(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst, this.cmp_code);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.compare(src1, src2, dst_gold, this.cmp_code);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, CV_8UC1, useRoi);
-        alvision.cuda::compare(loadMat(src1, useRoi), loadMat(src2, useRoi), dst, cmp_code);
-
-        alvision.Mat dst_gold;
-        alvision.compare(src1, src2, dst_gold, cmp_code);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Compare_Array, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    ALL_DEPTH,
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Compare_Array', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.ALL_DEPTH,
     ALL_CMP_CODES,
-    WHOLE_SUBMAT));
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Compare_Scalar
 
-namespace
-{
-    template <template <typename> class Op, typename T>
-    void compareScalarImpl(const alvision.Mat& src, alvision.Scalar sc, alvision.Mat& dst)
+//namespace
+//{
+    //template <template <typename> class Op, typename T>
+function compareScalarImpl<T>(Ttype:string, src: alvision.Mat, sc: alvision.Scalar, dst: alvision.Mat, op: (val1 : T, val2:T)=>T ) : void
     {
-        Op<T> op;
+        //Op<T> op;
 
-        const int cn = src.channels();
+        const  cn = src.channels();
 
-        dst.create(src.size(), CV_MAKE_TYPE(CV_8U, cn));
+        dst.create(src.size(), alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U, cn));
 
-        for (int y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows; ++y)
         {
-            for (int x = 0; x < src.cols; ++x)
+            for (let x = 0; x < src.cols; ++x)
             {
-                for (int c = 0; c < cn; ++c)
+                for (let c = 0; c < cn; ++c)
                 {
-                    T src_val = src.at<T>(y, x * cn + c);
-                    T sc_val = alvision.saturate_cast<T>(sc.val[c]);
-                    dst.at<uchar>(y, x * cn + c) = static_cast<uchar>(static_cast<int>(op(src_val, sc_val)) * 255);
+                    let src_val = src.at<T>(Ttype, y, x * cn.valueOf() + c);
+                    let sc_val = alvision.saturate_cast<T>(sc.val[c],Ttype);
+                    dst.at<alvision.uchar>("uchar", y, x * cn.valueOf() + c).set(((<any>op(<any>src_val.get(), <any>sc_val)) * 255));
                 }
             }
         }
     }
 
-    void compareScalarGold(const alvision.Mat& src, alvision.Scalar sc, alvision.Mat& dst, int cmpop)
+function compareScalarGold(src: alvision.Mat, sc: alvision.Scalar, dst: alvision.Mat, cmpop: alvision.int ) : void
     {
-        typedef void (*func_t)(const alvision.Mat& src, alvision.Scalar sc, alvision.Mat& dst);
-        static const func_t funcs[7][6] =
-        {
-            {compareScalarImpl<std::equal_to, unsigned char> , compareScalarImpl<std::greater, unsigned char> , compareScalarImpl<std::greater_equal, unsigned char> , compareScalarImpl<std::less, unsigned char> , compareScalarImpl<std::less_equal, unsigned char> , compareScalarImpl<std::not_equal_to, unsigned char> },
-            {compareScalarImpl<std::equal_to, signed char>   , compareScalarImpl<std::greater, signed char>   , compareScalarImpl<std::greater_equal, signed char>   , compareScalarImpl<std::less, signed char>   , compareScalarImpl<std::less_equal, signed char>   , compareScalarImpl<std::not_equal_to, signed char>   },
-            {compareScalarImpl<std::equal_to, unsigned short>, compareScalarImpl<std::greater, unsigned short>, compareScalarImpl<std::greater_equal, unsigned short>, compareScalarImpl<std::less, unsigned short>, compareScalarImpl<std::less_equal, unsigned short>, compareScalarImpl<std::not_equal_to, unsigned short>},
-            {compareScalarImpl<std::equal_to, short>         , compareScalarImpl<std::greater, short>         , compareScalarImpl<std::greater_equal, short>         , compareScalarImpl<std::less, short>         , compareScalarImpl<std::less_equal, short>         , compareScalarImpl<std::not_equal_to, short>         },
-            {compareScalarImpl<std::equal_to, int>           , compareScalarImpl<std::greater, int>           , compareScalarImpl<std::greater_equal, int>           , compareScalarImpl<std::less, int>           , compareScalarImpl<std::less_equal, int>           , compareScalarImpl<std::not_equal_to, int>           },
-            {compareScalarImpl<std::equal_to, float>         , compareScalarImpl<std::greater, float>         , compareScalarImpl<std::greater_equal, float>         , compareScalarImpl<std::less, float>         , compareScalarImpl<std::less_equal, float>         , compareScalarImpl<std::not_equal_to, float>         },
-            {compareScalarImpl<std::equal_to, double>        , compareScalarImpl<std::greater, double>        , compareScalarImpl<std::greater_equal, double>        , compareScalarImpl<std::less, double>        , compareScalarImpl<std::less_equal, double>        , compareScalarImpl<std::not_equal_to, double>        }
-        };
+        //typedef void (*func_t)(const alvision.Mat& src, alvision.Scalar sc, alvision.Mat& dst);
+        const  funcs =
+        [
+            [(src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.uchar> ("uchar",src,sc,dst,(v1,v2)=>{return (v1 == v2) ? 1 : 0;});},             (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.uchar>         ("uchar", src,sc,dst,(v1,v2)=>{return (v1 > v2) ? 1 : 0;});},            (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.uchar>          ("uchar", src,sc,dst,(v1,v2)=>{return (v1 >= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.uchar>         ("uchar", src,sc,dst,(v1,v2)=>{return (v1 < v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.uchar>         ("uchar", src,sc,dst,(v1,v2)=>{return (v1 <= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.uchar>         ("uchar", src,sc,dst,(v1,v2)=>{return (v1 != v2) ? 1 : 0;});}          ],
+            [(src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.char>  ("char",src,sc,dst,(v1,v2)=>{return (v1 == v2) ? <any>1 : <any>0;});},    (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.char>          ("char",  src,sc,dst,(v1,v2)=>{return (v1 > v2) ? <any>1 : <any>0;});},  (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.char>           ("char",  src,sc,dst,(v1,v2)=>{return (v1 >= v2) ? <any>1 : <any>0;});}, (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.char>          ("char",  src,sc,dst,(v1,v2)=>{return (v1 < v2) ? <any>1 : <any>0;});}, (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.char>          ("char",  src,sc,dst,(v1,v2)=>{return (v1 <= v2) ? <any>1 : <any>0;});}, (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.char>          ("char",  src,sc,dst,(v1,v2)=>{return (v1 != v2) ? <any>1 : <any>0;});}],
+            [(src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.ushort>("ushort",src,sc,dst,(v1,v2)=>{return (v1 == v2) ? 1 : 0;});},            (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.ushort>        ("ushort",src,sc,dst,(v1,v2)=>{return (v1 > v2) ? 1 : 0;});},            (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.ushort>         ("ushort",src,sc,dst,(v1,v2)=>{return (v1 >= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.ushort>        ("ushort",src,sc,dst,(v1,v2)=>{return (v1 < v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.ushort>        ("ushort",src,sc,dst,(v1,v2)=>{return (v1 <= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.ushort>        ("ushort",src,sc,dst,(v1,v2)=>{return (v1 != v2) ? 1 : 0;});}          ],
+            [(src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.short> ("short",src,sc,dst,(v1,v2)=>{return (v1 == v2) ? 1 : 0;});},             (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.short>         ("short", src,sc,dst,(v1,v2)=>{return (v1 > v2) ? 1 : 0;});},            (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.short>          ("short", src,sc,dst,(v1,v2)=>{return (v1 >= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.short>         ("short", src,sc,dst,(v1,v2)=>{return (v1 < v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.short>         ("short", src,sc,dst,(v1,v2)=>{return (v1 <= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.short>         ("short", src,sc,dst,(v1,v2)=>{return (v1 != v2) ? 1 : 0;});}          ],
+            [(src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.int>   ("int",src,sc,dst,(v1,v2)=>{return (v1 == v2) ? 1 : 0;});},               (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.int>           ("int",   src,sc,dst,(v1,v2)=>{return (v1 > v2) ? 1 : 0;});},            (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.int>            ("int",   src,sc,dst,(v1,v2)=>{return (v1 >= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.int>           ("int",   src,sc,dst,(v1,v2)=>{return (v1 < v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.int>           ("int",   src,sc,dst,(v1,v2)=>{return (v1 <= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.int>           ("int",   src,sc,dst,(v1,v2)=>{return (v1 != v2) ? 1 : 0;});}          ],
+            [(src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.float> ("float",src,sc,dst,(v1,v2)=>{return (v1 == v2) ? 1 : 0;});},             (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.float>         ("float", src,sc,dst,(v1,v2)=>{return (v1 > v2) ? 1 : 0;});},            (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.float>          ("float", src,sc,dst,(v1,v2)=>{return (v1 >= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.float>         ("float", src,sc,dst,(v1,v2)=>{return (v1 < v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.float>         ("float", src,sc,dst,(v1,v2)=>{return (v1 <= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.float>         ("float", src,sc,dst,(v1,v2)=>{return (v1 != v2) ? 1 : 0;});}          ],
+            [(src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.double>("double",src,sc,dst,(v1,v2)=>{return (v1 == v2) ? 1 : 0;});},            (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.double>        ("double",src,sc,dst,(v1,v2)=>{return (v1 > v2) ? 1 : 0;});},            (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.double>         ("double",src,sc,dst,(v1,v2)=>{return (v1 >= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.double>        ("double",src,sc,dst,(v1,v2)=>{return (v1 < v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.double>        ("double",src,sc,dst,(v1,v2)=>{return (v1 <= v2) ? 1 : 0;});},           (src:alvision.Mat, sc:alvision.Scalar, dst:alvision.Mat)=>{compareScalarImpl<alvision.double>        ("double",src,sc,dst,(v1,v2)=>{return (v1 != v2) ? 1 : 0;});}          ]
+        ];
 
-        funcs[src.depth()][cmpop](src, sc, dst);
+        funcs[src.depth().valueOf()][cmpop.valueOf()](src, sc, dst);
     }
-}
+//}
 
-PARAM_TEST_CASE(Compare_Scalar, alvision.cuda::DeviceInfo, alvision.Size, MatType, CmpCode, UseRoi)
+//PARAM_TEST_CASE(Compare_Scalar, alvision.cuda.DeviceInfo, alvision.Size, MatType, CmpCode, this.useRoi)
+class Compare_Scalar extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    int cmp_code;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected cmp_code: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        cmp_code = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size = this.GET_PARAM<alvision.Size>(1);
+        this.type =     this.GET_PARAM<alvision.int>(2);
+        this.cmp_code = this.GET_PARAM<alvision.int>(3);
+        this.useRoi =   this.GET_PARAM<boolean>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Compare_Scalar, Accuracy)
+//CUDA_TEST_P(Compare_Scalar, Accuracy)
+class Compare_Scalar_Accuracy extends Compare_Scalar
 {
-    alvision.Mat src = randomMat(size, type);
-    alvision.Scalar sc = randomScalar(0.0, 255.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
+        let sc = alvision.randomScalar(0.0, 255.0);
 
-    if (src.depth() < CV_32F)
-    {
-        sc.val[0] = Math.round(sc.val[0]);
-        sc.val[1] = Math.round(sc.val[1]);
-        sc.val[2] = Math.round(sc.val[2]);
-        sc.val[3] = Math.round(sc.val[3]);
-    }
-
-    if (src.depth() == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::compare(loadMat(src), sc, dst, cmp_code);
+        if (src.depth() < alvision.MatrixType.CV_32F) {
+            sc.val[0] = Math.round(sc.val[0].valueOf());
+            sc.val[1] = Math.round(sc.val[1].valueOf());
+            sc.val[2] = Math.round(sc.val[2].valueOf());
+            sc.val[3] = Math.round(sc.val[3].valueOf());
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+
+        if (src.depth() == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.compare(alvision.loadMat(src), sc, dst, this.cmp_code);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, CV_MAKE_TYPE(CV_8U, src.channels()), useRoi);
+        else {
+            let dst = alvision.createMat(this.size, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U, src.channels()), this.useRoi);
 
-        alvision.cuda::compare(loadMat(src, useRoi), sc, dst, cmp_code);
+            alvision.cudaarithm.compare(alvision.loadMat(src, this.useRoi), sc, dst,this. cmp_code);
 
-        alvision.Mat dst_gold;
-        compareScalarGold(src, sc, dst_gold, cmp_code);
+            let dst_gold = new alvision.Mat ();
+            compareScalarGold(src, sc, dst_gold, this.cmp_code);
 
-        EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        }
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Compare_Scalar, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    TYPES(CV_8U, CV_64F, 1, 4),
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Compare_Scalar', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U, alvision.MatrixType.CV_64F, 1, 4],
     ALL_CMP_CODES,
-    WHOLE_SUBMAT));
+    alvision.WHOLE_SUBMAT]));
 
 //////////////////////////////////////////////////////////////////////////////
 // Bitwise_Array
 
-PARAM_TEST_CASE(Bitwise_Array, alvision.cuda::DeviceInfo, alvision.Size, MatType)
+//PARAM_TEST_CASE(Bitwise_Array, alvision.cuda.DeviceInfo, alvision.Size, MatType)
+class Bitwise_Array extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected type: alvision.int;
 
-    alvision.Mat src1;
-    alvision.Mat src2;
+    protected  src1 : alvision.Mat;
+    protected src2: alvision.Mat;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.type =    this.GET_PARAM<alvision.int>(2);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        src1 = randomMat(size, type, 0.0, std::numeric_limits<int>::max());
-        src2 = randomMat(size, type, 0.0, std::numeric_limits<int>::max());
+        this.src1 = alvision.randomMat(this.size, this.type, 0.0,alvision.INT_MAX );
+        this.src2 = alvision.randomMat(this.size, this.type, 0.0, alvision.INT_MAX);
     }
 };
 
-CUDA_TEST_P(Bitwise_Array, Not)
+//CUDA_TEST_P(Bitwise_Array, Not)
+class Bitwise_Array_Not extends Bitwise_Array
 {
-    alvision.cuda::GpuMat dst;
-    alvision.cuda::bitwise_not(loadMat(src1), dst);
+    TestBody() {
+        let dst = new alvision.cuda.GpuMat ();
+        alvision.cudaarithm.bitwise_not(alvision.loadMat(this.src1), dst);
 
-    alvision.Mat dst_gold = ~src1;
+        let dst_gold = alvision.MatExpr.op_BinaryNot(this.src1).toMat();
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-CUDA_TEST_P(Bitwise_Array, Or)
+//CUDA_TEST_P(Bitwise_Array, Or)
+class Bitwise_Array_Or extends Bitwise_Array
 {
-    alvision.cuda::GpuMat dst;
-    alvision.cuda::bitwise_or(loadMat(src1), loadMat(src2), dst);
+    TestBody() {
+        let dst = new alvision.cuda.GpuMat ();
+        alvision.cudaarithm.bitwise_or(alvision.loadMat(this.src1), alvision.loadMat(this.src2), dst);
 
-    alvision.Mat dst_gold = src1 | src2;
+        let dst_gold = alvision.MatExpr.op_Or(this.src1, this.src2).toMat();
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-CUDA_TEST_P(Bitwise_Array, And)
+//CUDA_TEST_P(Bitwise_Array, And)
+class Bitwise_Array_And extends Bitwise_Array
 {
-    alvision.cuda::GpuMat dst;
-    alvision.cuda::bitwise_and(loadMat(src1), loadMat(src2), dst);
+    TestBody() {
+        let dst = new alvision.cuda.GpuMat ();
+        alvision.cudaarithm.bitwise_and(alvision.loadMat(this.src1), alvision.loadMat(this.src2), dst);
 
-    alvision.Mat dst_gold = src1 & src2;
+        let dst_gold = alvision.MatExpr.op_And(this.src1, this.src2).toMat();
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-CUDA_TEST_P(Bitwise_Array, Xor)
+//CUDA_TEST_P(Bitwise_Array, Xor)
+class Bitwise_Array_Xor extends Bitwise_Array
 {
-    alvision.cuda::GpuMat dst;
-    alvision.cuda::bitwise_xor(loadMat(src1), loadMat(src2), dst);
+    TestBody() {
+        let dst = new alvision.cuda.GpuMat ();
+        alvision.cudaarithm.bitwise_xor(alvision.loadMat(this.src1), alvision.loadMat(this.src2), dst);
 
-    alvision.Mat dst_gold = src1 ^ src2;
+        let dst_gold = alvision.MatExpr.op_Xor(this.src1 , this.src2).toMat();
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Bitwise_Array, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    TYPES(CV_8U, CV_32S, 1, 4)));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Bitwise_Array', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U, alvision.MatrixType.CV_32S, 1, 4]
+    ]));
 
 //////////////////////////////////////////////////////////////////////////////
 // Bitwise_Scalar
 
-PARAM_TEST_CASE(Bitwise_Scalar, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, Channels)
+//PARAM_TEST_CASE(Bitwise_Scalar, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, Channels)
+class Bitwise_Scalar extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    int channels;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected channels : alvision.int;
 
-    alvision.Mat src;
-    alvision.Scalar val;
+    protected  src : alvision.Mat;
+    protected  val : alvision.Scalar;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        channels = GET_PARAM(3);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.depth =    this.GET_PARAM<alvision.int>(2);
+        this.channels = this.GET_PARAM<alvision.int>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        src = randomMat(size, CV_MAKE_TYPE(depth, channels));
-        alvision.Scalar_<int> ival = randomScalar(0.0, std::numeric_limits<int>::max());
-        val = ival;
+        this.src = alvision.randomMat(this.size, alvision.MatrixType.CV_MAKETYPE(this.depth, this.channels));
+        let ival = alvision.randomScalar(0.0, alvision.INT_MAX);
+        this.val = ival;
     }
 };
 
-CUDA_TEST_P(Bitwise_Scalar, Or)
+//CUDA_TEST_P(Bitwise_Scalar, Or)
+class Bitwise_Scalar_Or extends Bitwise_Scalar
 {
-    alvision.cuda::GpuMat dst;
-    alvision.cuda::bitwise_or(loadMat(src), val, dst);
+    TestBody() {
+        let dst = new alvision.cuda.GpuMat ();
+        alvision.cudaarithm.bitwise_or(alvision.loadMat(this.src), this.val, dst);
 
-    alvision.Mat dst_gold;
-    alvision.bitwise_or(src, val, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        alvision.bitwise_or(this.src, this.val, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-CUDA_TEST_P(Bitwise_Scalar, And)
+//CUDA_TEST_P(Bitwise_Scalar, And)
+class Bitwise_Scalar_And extends Bitwise_Scalar
 {
-    alvision.cuda::GpuMat dst;
-    alvision.cuda::bitwise_and(loadMat(src), val, dst);
+    TestBody() {
+        let dst = new alvision.cuda.GpuMat ();
+        alvision.cudaarithm.bitwise_and(alvision.loadMat(this.src), this.val, dst);
 
-    alvision.Mat dst_gold;
-    alvision.bitwise_and(src, val, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        alvision.bitwise_and(this.src, this.val, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-CUDA_TEST_P(Bitwise_Scalar, Xor)
+//CUDA_TEST_P(Bitwise_Scalar, Xor)
+class Bitwise_Scalar_Xor extends Bitwise_Scalar
 {
-    alvision.cuda::GpuMat dst;
-    alvision.cuda::bitwise_xor(loadMat(src), val, dst);
+    TestBody() {
+        let dst = new alvision.cuda.GpuMat ();
+        alvision.cudaarithm.bitwise_xor(alvision.loadMat(this.src), this.val, dst);
 
-    alvision.Mat dst_gold;
-    alvision.bitwise_xor(src, val, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        alvision.bitwise_xor(this.src, this.val, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Bitwise_Scalar, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U), MatDepth(CV_16U), MatDepth(CV_32S)),
-    IMAGE_CHANNELS));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Bitwise_Scalar', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,alvision.MatrixType.CV_16U,alvision.MatrixType.CV_32S],
+    alvision.IMAGE_CHANNELS
+    ]));
 
 //////////////////////////////////////////////////////////////////////////////
 // RShift
 
-namespace
-{
-    template <typename T> void rhiftImpl(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst)
+//namespace
+//{
+    //template <typename T> void rhiftImpl(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst)
+function rhiftImpl<T>(Ttype : string, src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) : void
     {
-        const int cn = src.channels();
+        const  cn = src.channels();
 
         dst.create(src.size(), src.type());
 
-        for (int y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows; ++y)
         {
-            for (int x = 0; x < src.cols; ++x)
+            for (let x = 0; x < src.cols; ++x)
             {
-                for (int c = 0; c < cn; ++c)
-                    dst.at<T>(y, x * cn + c) = src.at<T>(y, x * cn + c) >> val.val[c];
+                for (let c = 0; c < cn; ++c)
+                    dst.at<T>(Ttype, y, x * cn.valueOf() + c).set(<any> (<any>(src.at<T>(Ttype, y, x * cn.valueOf() + c).get()) >> val.val[c].valueOf()));
             }
         }
     }
 
-    void rhiftGold(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst)
-    {
-        typedef void (*func_t)(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst);
+function rhiftGold(src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat): void {
+    //typedef void (*func_t)(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst);
 
-        const func_t funcs[] =
-        {
-            rhiftImpl<uchar>, rhiftImpl<schar>, rhiftImpl<ushort>, rhiftImpl<short>, rhiftImpl<int>
-        };
+    const funcs =
+        [
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { rhiftImpl<alvision.uchar>("uchar", src, val, dst); },
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { rhiftImpl<alvision.schar>("schar", src, val, dst); },
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { rhiftImpl<alvision.ushort>("ushort", src, val, dst); },
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { rhiftImpl<alvision.short>("short", src, val, dst); },
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { rhiftImpl<alvision.int>("int", src, val, dst); }
+        ];
 
-        funcs[src.depth()](src, val, dst);
-    }
+    funcs[src.depth().valueOf()](src, val, dst);
 }
 
-PARAM_TEST_CASE(RShift, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, Channels, UseRoi)
+
+//PARAM_TEST_CASE(RShift, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, Channels, this.useRoi)
+class RShift extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    int channels;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected channels : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        channels = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.depth =    this.GET_PARAM<alvision.int>(2);
+        this.channels = this.GET_PARAM<alvision.int>(3);
+        this.useRoi =   this.GET_PARAM<boolean>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(RShift, Accuracy)
+//CUDA_TEST_P(RShift, Accuracy)
+class RShift_Accuracy extends RShift
 {
-    int type = CV_MAKE_TYPE(depth, channels);
-    alvision.Mat src = randomMat(size, type);
-    alvision.Scalar_<int> val = randomScalar(0.0, 8.0);
+    TestBody() {
+        let type = alvision.MatrixType.CV_MAKETYPE(this.depth, this.channels);
+        let src = alvision.randomMat(this.size, type);
+        let val = alvision.randomScalar(0.0, 8.0);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    alvision.cuda::rshift(loadMat(src, useRoi), val, dst);
+        let dst = alvision.createMat(this.size, type, this.useRoi);
+        alvision.cudaarithm.rshift(alvision.loadMat(src, this.useRoi), val, dst);
 
-    alvision.Mat dst_gold;
-    rhiftGold(src, val, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        rhiftGold(src, val, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
+    
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, RShift, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U),
-                    MatDepth(CV_8S),
-                    MatDepth(CV_16U),
-                    MatDepth(CV_16S),
-                    MatDepth(CV_32S)),
-    IMAGE_CHANNELS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'RShift', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,
+    alvision.MatrixType.CV_8S,
+    alvision.MatrixType.CV_16U,
+    alvision.MatrixType.CV_16S,
+    alvision.MatrixType.CV_32S],
+    alvision.IMAGE_CHANNELS,
+    alvision.WHOLE_SUBMAT
+    ]));
 
 //////////////////////////////////////////////////////////////////////////////
 // LShift
 
-namespace
-{
-    template <typename T> void lhiftImpl(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst)
+//namespace
+//{
+    //template <typename T> void lhiftImpl(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst)
+function lhiftImpl<T>(Ttype : string, src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat)
     {
-        const int cn = src.channels();
+        const cn = src.channels();
 
         dst.create(src.size(), src.type());
 
-        for (int y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows; ++y)
         {
-            for (int x = 0; x < src.cols; ++x)
+            for (let x = 0; x < src.cols; ++x)
             {
-                for (int c = 0; c < cn; ++c)
-                    dst.at<T>(y, x * cn + c) = src.at<T>(y, x * cn + c) << val.val[c];
+                for (let c = 0; c < cn; ++c)
+                    dst.at<T>(Ttype, y, x * cn.valueOf() + c).set(<any> (<any>(src.at<T>(Ttype, y, x * cn.valueOf() + c).get()) << val.val[c].valueOf()));
             }
         }
     }
 
-    void lhiftGold(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst)
-    {
-        typedef void (*func_t)(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst);
+function lhiftGold(src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat): void {
+    //typedef void (*func_t)(const alvision.Mat& src, alvision.Scalar_<int> val, alvision.Mat& dst);
 
-        const func_t funcs[] =
-        {
-            lhiftImpl<uchar>, lhiftImpl<schar>, lhiftImpl<ushort>, lhiftImpl<short>, lhiftImpl<int>
-        };
+    const funcs =
+        [
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { lhiftImpl<alvision.uchar>("uchar", src, val, dst); },
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { lhiftImpl<alvision.schar>("schar", src, val, dst); },
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { lhiftImpl<alvision.ushort>("ushort", src, val, dst); },
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { lhiftImpl<alvision.short>("short", src, val, dst); },
+            (src: alvision.Mat, val: alvision.Scalar_<alvision.int>, dst: alvision.Mat) => { lhiftImpl<alvision.int>("int", src, val, dst); }
+        ];
 
-        funcs[src.depth()](src, val, dst);
-    }
+    funcs[src.depth().valueOf()](src, val, dst);
 }
 
-PARAM_TEST_CASE(LShift, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, Channels, UseRoi)
+//PARAM_TEST_CASE(LShift, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, Channels, this.useRoi)
+class LShift extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    int channels;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected channels : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        channels = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.depth =    this.GET_PARAM<alvision.int>(2);
+        this.channels = this.GET_PARAM<alvision.int>(3);
+        this.useRoi =   this.GET_PARAM<boolean>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(LShift, Accuracy)
+//CUDA_TEST_P(LShift, Accuracy)
+class LShift_Accuracy extends LShift
 {
-    int type = CV_MAKE_TYPE(depth, channels);
-    alvision.Mat src = randomMat(size, type);
-    alvision.Scalar_<int> val = randomScalar(0.0, 8.0);
+    TestBody() {
+        let type = alvision.MatrixType.CV_MAKETYPE(this.depth, this.channels);
+        let src = alvision.randomMat(this.size, type);
+        let val = alvision.randomScalar(0.0, 8.0);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    alvision.cuda::lshift(loadMat(src, useRoi), val, dst);
+        let dst = alvision.createMat(this.size, type, this.useRoi);
+        alvision.cudaarithm.lshift(alvision.loadMat(src, this.useRoi), val, dst);
 
-    alvision.Mat dst_gold;
-    lhiftGold(src, val, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        lhiftGold(src, val, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, LShift, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U), MatDepth(CV_16U), MatDepth(CV_32S)),
-    IMAGE_CHANNELS,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'LShift', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,alvision.MatrixType.CV_16U,alvision.MatrixType.CV_32S],
+    alvision.IMAGE_CHANNELS,
+    alvision.WHOLE_SUBMAT
+]));
 
 //////////////////////////////////////////////////////////////////////////////
 // Min
 
-PARAM_TEST_CASE(Min, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+//PARAM_TEST_CASE(Min, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, this.useRoi)
+class Min extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth =   this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Min, Array)
+//CUDA_TEST_P(Min, Array)
+class Min_Array extends Min
 {
-    alvision.Mat src1 = randomMat(size, depth);
-    alvision.Mat src2 = randomMat(size, depth);
+    TestBody() {
+        let src1 = alvision.randomMat(this.size, this.depth);
+        let src2 = alvision.randomMat(this.size, this.depth);
 
-    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::min(loadMat(src1), loadMat(src2), dst);
+        if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.min(alvision.loadMat(src1), alvision.loadMat(src2), dst);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+            alvision.cudaarithm.min(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst);
+
+            let dst_gold = new alvision.Mat();
+            alvision.min(src1, src2, dst_gold);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-        alvision.cuda::min(loadMat(src1, useRoi), loadMat(src2, useRoi), dst);
-
-        alvision.Mat dst_gold = alvision.min(src1, src2);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
     }
 }
 
-CUDA_TEST_P(Min, Scalar)
+//CUDA_TEST_P(Min, Scalar)
+class Min_Scalar extends Min
 {
-    alvision.Mat src = randomMat(size, depth);
-    double val = randomDouble(0.0, 255.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth);
+        let val = alvision.randomDouble(0.0, 255.0);
 
-    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::min(loadMat(src), val, dst);
+        if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.min(alvision.loadMat(src), new alvision.Scalar( val), dst);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+            alvision.cudaarithm.min(alvision.loadMat(src, this.useRoi), new alvision.Scalar( val), dst);
+
+            let dst_gold = new alvision.Mat();
+            alvision.min(src, new alvision.Scalar(val),dst_gold);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth < alvision.MatrixType.CV_32F ? 1.0 : 1e-5);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-        alvision.cuda::min(loadMat(src, useRoi), val, dst);
-
-        alvision.Mat dst_gold = alvision.min(src, val);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth < CV_32F ? 1.0 : 1e-5);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Min, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    ALL_DEPTH,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Min', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.ALL_DEPTH,
+    alvision.WHOLE_SUBMAT]));
 
 //////////////////////////////////////////////////////////////////////////////
 // Max
 
-PARAM_TEST_CASE(Max, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+//PARAM_TEST_CASE(Max, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, this.useRoi)
+class Max extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth : alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth =   this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Max, Array)
+//CUDA_TEST_P(Max, Array)
+class Max_Array extends Max
 {
-    alvision.Mat src1 = randomMat(size, depth);
-    alvision.Mat src2 = randomMat(size, depth);
+    TestBody() {
+        let src1 = alvision.randomMat(this.size, this.depth);
+        let src2 = alvision.randomMat(this.size, this.depth);
 
-    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::max(loadMat(src1), loadMat(src2), dst);
+        if (this.depth ==alvision.MatrixType. CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.max(alvision.loadMat(src1), alvision.loadMat(src2), dst);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+            alvision.cudaarithm.max(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst);
+
+
+            let dst_gold = new alvision.Mat();
+                alvision.max(src1, src2,dst_gold);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-        alvision.cuda::max(loadMat(src1, useRoi), loadMat(src2, useRoi), dst);
-
-        alvision.Mat dst_gold = alvision.max(src1, src2);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
     }
 }
 
-CUDA_TEST_P(Max, Scalar)
+//CUDA_TEST_P(Max, Scalar)
+class Max_Scalar extends Max
 {
-    alvision.Mat src = randomMat(size, depth);
-    double val = randomDouble(0.0, 255.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.depth);
+        let val = alvision.randomDouble(0.0, 255.0);
 
-    if (depth == CV_64F && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::max(loadMat(src), val, dst);
+        if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.max(alvision.loadMat(src),new alvision.Scalar( val), dst);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.depth, this.useRoi);
+            alvision.cudaarithm.max(alvision.loadMat(src, this.useRoi),new alvision.Scalar( val), dst);
+
+            let dst_gold = new alvision.Mat();
+            alvision.max(src, new alvision.Scalar(val),dst_gold);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth < alvision.MatrixType.CV_32F ? 1.0 : 1e-5);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, depth, useRoi);
-        alvision.cuda::max(loadMat(src, useRoi), val, dst);
-
-        alvision.Mat dst_gold = alvision.max(src, val);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, depth < CV_32F ? 1.0 : 1e-5);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Max, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    ALL_DEPTH,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Max', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.ALL_DEPTH,
+    alvision.WHOLE_SUBMAT
+    ]));
 
 //////////////////////////////////////////////////////////////////////////////
 // AddWeighted
 
-PARAM_TEST_CASE(AddWeighted, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, MatDepth, MatDepth, UseRoi)
+//PARAM_TEST_CASE(AddWeighted, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, MatDepth, MatDepth, this.useRoi)
+class AddWeighted extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth1;
-    int depth2;
-    int dst_depth;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected depth1: alvision.int;
+    protected depth2: alvision.int;
+    protected dst_depth: alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth1 = GET_PARAM(2);
-        depth2 = GET_PARAM(3);
-        dst_depth = GET_PARAM(4);
-        useRoi = GET_PARAM(5);
+        this.devInfo =   this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =      this.GET_PARAM<alvision.Size>(1);
+        this.depth1 =    this.GET_PARAM<alvision.int>(2);
+        this.depth2 =    this.GET_PARAM<alvision.int>(3);
+        this.dst_depth = this.GET_PARAM<alvision.int>(4);
+        this.useRoi =    this.GET_PARAM<boolean>(5);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(AddWeighted, Accuracy)
+//CUDA_TEST_P(AddWeighted, Accuracy)
+class AddWeighted_Accuracy extends AddWeighted
 {
-    alvision.Mat src1 = randomMat(size, depth1);
-    alvision.Mat src2 = randomMat(size, depth2);
-    double alpha = randomDouble(-10.0, 10.0);
-    double beta = randomDouble(-10.0, 10.0);
-    double gamma = randomDouble(-10.0, 10.0);
+    TestBody() {
+        let src1 = alvision.randomMat(this.size, this.depth1);
+        let src2 = alvision.randomMat(this.size, this.depth2);
+        let alpha = alvision.randomDouble(-10.0, 10.0);
+        let beta = alvision.randomDouble(-10.0, 10.0);
+        let gamma = alvision.randomDouble(-10.0, 10.0);
 
-    if ((depth1 == CV_64F || depth2 == CV_64F || dst_depth == CV_64F) && !supportFeature(devInfo, alvision.cuda::NATIVE_DOUBLE))
-    {
-        try
-        {
-            alvision.cuda::GpuMat dst;
-            alvision.cuda::addWeighted(loadMat(src1), alpha, loadMat(src2), beta, gamma, dst, dst_depth);
+        if ((this.depth1 ==alvision.MatrixType. CV_64F || this.depth2 == alvision.MatrixType.CV_64F ||this. dst_depth == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
+            try {
+                let dst = new alvision.cuda.GpuMat ();
+                alvision.cudaarithm.addWeighted(alvision.loadMat(src1), alpha, alvision.loadMat(src2), beta, gamma, dst, this.dst_depth);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsUnsupportedFormat, e.code);
+        else {
+            let dst = alvision.createMat(this.size, this.dst_depth, this.useRoi);
+            alvision.cudaarithm.addWeighted(alvision.loadMat(src1, this.useRoi), alpha, alvision.loadMat(src2, this.useRoi), beta, gamma, dst, this.dst_depth);
+
+            let dst_gold = new alvision.Mat ();
+            alvision.addWeighted(src1, alpha, src2, beta, gamma, dst_gold, this.dst_depth);
+
+            alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.dst_depth < alvision.MatrixType.CV_32F ? 2.0 : 1e-3);
         }
-    }
-    else
-    {
-        alvision.cuda::GpuMat dst = createMat(size, dst_depth, useRoi);
-        alvision.cuda::addWeighted(loadMat(src1, useRoi), alpha, loadMat(src2, useRoi), beta, gamma, dst, dst_depth);
-
-        alvision.Mat dst_gold;
-        alvision.addWeighted(src1, alpha, src2, beta, gamma, dst_gold, dst_depth);
-
-        EXPECT_MAT_NEAR(dst_gold, dst, dst_depth < CV_32F ? 2.0 : 1e-3);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, AddWeighted, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    ALL_DEPTH,
-    ALL_DEPTH,
-    ALL_DEPTH,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'AddWeighted', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.ALL_DEPTH,
+    alvision.ALL_DEPTH,
+    alvision.ALL_DEPTH,
+    alvision.WHOLE_SUBMAT
+    ]));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // Threshold
 
-CV_ENUM(ThreshOp, alvision.THRESH_BINARY, alvision.THRESH_BINARY_INV, alvision.THRESH_TRUNC, alvision.THRESH_TOZERO, alvision.THRESH_TOZERO_INV)
-#define ALL_THRESH_OPS testing::Values(ThreshOp(alvision.THRESH_BINARY), ThreshOp(alvision.THRESH_BINARY_INV), ThreshOp(alvision.THRESH_TRUNC), ThreshOp(alvision.THRESH_TOZERO), ThreshOp(alvision.THRESH_TOZERO_INV))
+//CV_ENUM(ThreshOp, alvision.THRESH_BINARY, alvision.THRESH_BINARY_INV, alvision.THRESH_TRUNC, alvision.THRESH_TOZERO, alvision.THRESH_TOZERO_INV)
+//#define ALL_THRESH_OPS testing::Values(ThreshOp(alvision.THRESH_BINARY), ThreshOp(alvision.THRESH_BINARY_INV), ThreshOp(alvision.THRESH_TRUNC), ThreshOp(alvision.THRESH_TOZERO), ThreshOp(alvision.THRESH_TOZERO_INV))
 
-PARAM_TEST_CASE(Threshold, alvision.cuda::DeviceInfo, alvision.Size, MatType, ThreshOp, UseRoi)
+const ALL_THRESH_OPS = [alvision.ThresholdTypes.THRESH_BINARY, alvision.ThresholdTypes.THRESH_BINARY_INV, alvision.ThresholdTypes.THRESH_TRUNC, alvision.ThresholdTypes.THRESH_TOZERO, alvision.ThresholdTypes.THRESH_TOZERO_INV];
+
+//PARAM_TEST_CASE(Threshold, alvision.cuda.DeviceInfo, alvision.Size, MatType, ThreshOp, this.useRoi)
+class Threshold extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    int threshOp;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected type: alvision.int;
+    protected threshOp: alvision.int;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        threshOp = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.type =     this.GET_PARAM<alvision.int>(2);
+        this.threshOp = this.GET_PARAM<alvision.int>(3);
+        this.useRoi =   this.GET_PARAM<boolean>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Threshold, Accuracy)
+//CUDA_TEST_P(Threshold, Accuracy)
+class Threshold_Accuracy extends Threshold
 {
-    alvision.Mat src = randomMat(size, type);
-    double maxVal = randomDouble(20.0, 127.0);
-    double thresh = randomDouble(0.0, maxVal);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
+        let maxVal = alvision.randomDouble(20.0, 127.0);
+        let thresh = alvision.randomDouble(0.0, maxVal);
 
-    alvision.cuda::GpuMat dst = createMat(src.size(), src.type(), useRoi);
-    alvision.cuda::threshold(loadMat(src, useRoi), dst, thresh, maxVal, threshOp);
+        let dst = alvision.createMat(src.size(), src.type(), this.useRoi);
+        alvision.cudaarithm.threshold(alvision.loadMat(src, this.useRoi), dst, thresh, maxVal, this.threshOp);
 
-    alvision.Mat dst_gold;
-    alvision.threshold(src, dst_gold, thresh, maxVal, threshOp);
+        let dst_gold = new alvision.Mat ();
+        alvision.threshold(src, dst_gold, thresh, maxVal, this.threshOp);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Threshold, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_16SC1), MatType(CV_32FC1)),
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Threshold', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_16SC1,alvision.MatrixType.CV_32FC1],
     ALL_THRESH_OPS,
-    WHOLE_SUBMAT));
+    alvision.WHOLE_SUBMAT
+    ]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Magnitude
 
-PARAM_TEST_CASE(Magnitude, alvision.cuda::DeviceInfo, alvision.Size, UseRoi)
+//PARAM_TEST_CASE(Magnitude, alvision.cuda.DeviceInfo, alvision.Size, this.useRoi)
+class Magnitude extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        useRoi = GET_PARAM(2);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.useRoi =  this.GET_PARAM<boolean>(2);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Magnitude, NPP)
+//CUDA_TEST_P(Magnitude, NPP)
+class Magnitude_NPP extends Magnitude
 {
-    alvision.Mat src = randomMat(size, CV_32FC2);
+    TestBody() {
+        let src = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC2);
 
-    alvision.cuda::GpuMat dst = createMat(size, CV_32FC1, useRoi);
-    alvision.cuda::magnitude(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
+        alvision.cudaarithm.magnitude(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat arr[2];
-    alvision.split(src, arr);
-    alvision.Mat dst_gold;
-    alvision.magnitude(arr[0], arr[1], dst_gold);
+        let arr = new Array < alvision.Mat >(2);
+        alvision.split(src, arr);
+        let dst_gold = new alvision.Mat ();
+        alvision.magnitude(arr[0], arr[1], dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 1e-4);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-4);
+    }
 }
 
-CUDA_TEST_P(Magnitude, Sqr_NPP)
+//CUDA_TEST_P(Magnitude, Sqr_NPP)
+class Magnitude_Sqr_NPP extends Magnitude
 {
-    alvision.Mat src = randomMat(size, CV_32FC2);
+    TestBody() {
+        let src = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC2);
 
-    alvision.cuda::GpuMat dst = createMat(size, CV_32FC1, useRoi);
-    alvision.cuda::magnitudeSqr(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
+        alvision.cudaarithm.magnitudeSqr(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat arr[2];
-    alvision.split(src, arr);
-    alvision.Mat dst_gold;
-    alvision.magnitude(arr[0], arr[1], dst_gold);
-    alvision.multiply(dst_gold, dst_gold, dst_gold);
+        let arr = new Array<alvision.Mat> (2);
+        alvision.split(src, arr);
+        let dst_gold = new alvision.Mat ();
+        alvision.magnitude(arr[0], arr[1], dst_gold);
+        alvision.multiply(dst_gold, dst_gold, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 1e-1);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-1);
+    }
 }
 
-CUDA_TEST_P(Magnitude, Accuracy)
+//CUDA_TEST_P(Magnitude, Accuracy)
+class Magnitude_Accuracy extends Magnitude
 {
-    alvision.Mat x = randomMat(size, CV_32FC1);
-    alvision.Mat y = randomMat(size, CV_32FC1);
+    TestBody() {
+        let x = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
+        let y = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
-    alvision.cuda::GpuMat dst = createMat(size, CV_32FC1, useRoi);
-    alvision.cuda::magnitude(loadMat(x, useRoi), loadMat(y, useRoi), dst);
+        let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
+        alvision.cudaarithm.magnitude(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.magnitude(x, y, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        alvision.magnitude(x, y, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 1e-4);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-4);
+    }
 }
 
-CUDA_TEST_P(Magnitude, Sqr_Accuracy)
+//CUDA_TEST_P(Magnitude, Sqr_Accuracy)
+class Magnitude_Sqr_Accuracy extends Magnitude
 {
-    alvision.Mat x = randomMat(size, CV_32FC1);
-    alvision.Mat y = randomMat(size, CV_32FC1);
+    TestBody() {
+        let x = alvision.randomMat(this. size, alvision.MatrixType.CV_32FC1);
+        let y = alvision.randomMat(this. size, alvision.MatrixType.CV_32FC1);
 
-    alvision.cuda::GpuMat dst = createMat(size, CV_32FC1, useRoi);
-    alvision.cuda::magnitudeSqr(loadMat(x, useRoi), loadMat(y, useRoi), dst);
+        let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
+        alvision.cudaarithm.magnitudeSqr(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.magnitude(x, y, dst_gold);
-    alvision.multiply(dst_gold, dst_gold, dst_gold);
+        let dst_gold = new alvision.Mat ();
+        alvision.magnitude(x, y, dst_gold);
+        alvision.multiply(dst_gold, dst_gold, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 1e-1);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-1);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Magnitude, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Magnitude', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.WHOLE_SUBMAT
+    ]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // Phase
 
-namespace
-{
-    IMPLEMENT_PARAM_CLASS(AngleInDegrees, bool)
-}
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(AngleInDegrees, bool)
+//}
 
-PARAM_TEST_CASE(Phase, alvision.cuda::DeviceInfo, alvision.Size, AngleInDegrees, UseRoi)
+//PARAM_TEST_CASE(Phase, alvision.cuda.DeviceInfo, alvision.Size, AngleInDegrees, this.useRoi)
+class Phase extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    bool angleInDegrees;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected angleInDegrees : boolean;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        angleInDegrees = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size = this.GET_PARAM<alvision.Size>(1);
+        this.angleInDegrees = this.GET_PARAM<boolean>(2);
+        this.useRoi =         this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Phase, Accuracy)
+//CUDA_TEST_P(Phase, Accuracy)
+class Phase_Accuracy extends Phase
 {
-    alvision.Mat x = randomMat(size, CV_32FC1);
-    alvision.Mat y = randomMat(size, CV_32FC1);
+    TestBody() {
+        let x = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
+        let y = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
-    alvision.cuda::GpuMat dst = createMat(size, CV_32FC1, useRoi);
-    alvision.cuda::phase(loadMat(x, useRoi), loadMat(y, useRoi), dst, angleInDegrees);
+        let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
+        alvision.cudaarithm.phase(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), dst, this.angleInDegrees);
 
-    alvision.Mat dst_gold;
-    alvision.phase(x, y, dst_gold, angleInDegrees);
+        let dst_gold = new alvision.Mat ();
+        alvision.phase(x, y, dst_gold, this.angleInDegrees);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, angleInDegrees ? 1e-2 : 1e-3);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.angleInDegrees ? 1e-2 : 1e-3);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, Phase, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(AngleInDegrees(false), AngleInDegrees(true)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Phase', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [false,true],
+    alvision.WHOLE_SUBMAT
+    ]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // CartToPolar
 
-PARAM_TEST_CASE(CartToPolar, alvision.cuda::DeviceInfo, alvision.Size, AngleInDegrees, UseRoi)
+//PARAM_TEST_CASE(CartToPolar, alvision.cuda.DeviceInfo, alvision.Size, AngleInDegrees, this.useRoi)
+class CartToPolar extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    bool angleInDegrees;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected angleInDegrees : boolean;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        angleInDegrees = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo =          this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =             this.GET_PARAM<alvision.Size>(1);
+        this.angleInDegrees =   this.GET_PARAM<boolean>(2);
+        this.useRoi =           this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(CartToPolar, Accuracy)
+//CUDA_TEST_P(CartToPolar, Accuracy)
+class CartToPolar_Accuracy extends CartToPolar
 {
-    alvision.Mat x = randomMat(size, CV_32FC1);
-    alvision.Mat y = randomMat(size, CV_32FC1);
+    TestBody() {
+        let x = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
+        let y = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
-    alvision.cuda::GpuMat mag = createMat(size, CV_32FC1, useRoi);
-    alvision.cuda::GpuMat angle = createMat(size, CV_32FC1, useRoi);
-    alvision.cuda::cartToPolar(loadMat(x, useRoi), loadMat(y, useRoi), mag, angle, angleInDegrees);
+        let mag = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
+        let angle = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
+        alvision.cudaarithm.cartToPolar(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), mag, angle, this.angleInDegrees);
 
-    alvision.Mat mag_gold;
-    alvision.Mat angle_gold;
-    alvision.cartToPolar(x, y, mag_gold, angle_gold, angleInDegrees);
+        let mag_gold = new alvision.Mat();
+        let angle_gold = new alvision.Mat();
+        alvision.cartToPolar(x, y, mag_gold, angle_gold, this.angleInDegrees);
 
-    EXPECT_MAT_NEAR(mag_gold, mag, 1e-4);
-    EXPECT_MAT_NEAR(angle_gold, angle, angleInDegrees ? 1e-2 : 1e-3);
+        alvision.EXPECT_MAT_NEAR(mag_gold, mag, 1e-4);
+        alvision.EXPECT_MAT_NEAR(angle_gold, angle, this.angleInDegrees ? 1e-2 : 1e-3);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, CartToPolar, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(AngleInDegrees(false), AngleInDegrees(true)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'CartToPolar', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [false,true],
+    alvision.WHOLE_SUBMAT]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // polarToCart
 
-PARAM_TEST_CASE(PolarToCart, alvision.cuda::DeviceInfo, alvision.Size, AngleInDegrees, UseRoi)
+//PARAM_TEST_CASE(PolarToCart, alvision.cuda.DeviceInfo, alvision.Size, AngleInDegrees, this.useRoi)
+class PolarToCart extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    bool angleInDegrees;
-    bool useRoi;
+    protected devInfo : alvision.cuda.DeviceInfo;
+    protected size : alvision.Size;
+    protected angleInDegrees : boolean;
+    protected useRoi : boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        angleInDegrees = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size = this.GET_PARAM<alvision.Size>(1);
+        this.angleInDegrees =   this.GET_PARAM<boolean>(2);
+        this.useRoi =           this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(PolarToCart, Accuracy)
+//CUDA_TEST_P(PolarToCart, Accuracy)
+class PolarToCart_Accuracy extends PolarToCart
 {
-    alvision.Mat magnitude = randomMat(size, CV_32FC1);
-    alvision.Mat angle = randomMat(size, CV_32FC1);
+    TestBody() {
+        let magnitude = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
+        let angle = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
-    alvision.cuda::GpuMat x = createMat(size, CV_32FC1, useRoi);
-    alvision.cuda::GpuMat y = createMat(size, CV_32FC1, useRoi);
-    alvision.cuda::polarToCart(loadMat(magnitude, useRoi), loadMat(angle, useRoi), x, y, angleInDegrees);
+        let x = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
+        let y = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
+        alvision.cudaarithm.polarToCart(alvision.loadMat(magnitude, this.useRoi), alvision.loadMat(angle, this.useRoi), x, y,this. angleInDegrees);
 
-    alvision.Mat x_gold;
-    alvision.Mat y_gold;
-    alvision.polarToCart(magnitude, angle, x_gold, y_gold, angleInDegrees);
+        let x_gold = new alvision.Mat();
+        let y_gold = new alvision.Mat();
+        alvision.polarToCart(magnitude, angle, x_gold, y_gold, this.angleInDegrees);
 
-    EXPECT_MAT_NEAR(x_gold, x, 1e-4);
-    EXPECT_MAT_NEAR(y_gold, y, 1e-4);
+        alvision.EXPECT_MAT_NEAR(x_gold, x, 1e-4);
+        alvision.EXPECT_MAT_NEAR(y_gold, y, 1e-4);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Arithm, PolarToCart, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(AngleInDegrees(false), AngleInDegrees(true)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'PolarToCart', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [false,true],
+    alvision.WHOLE_SUBMAT]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

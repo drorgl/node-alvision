@@ -59,103 +59,119 @@ import fs = require('fs');
 //
 //using namespace cvtest;
 
-struct Async : testing::TestWithParam<alvision.cuda::DeviceInfo>
+class Async extends alvision.cvtest.CUDA_TEST// : testing::TestWithParam<alvision.cuda.DeviceInfo>
 {
-    alvision.cuda::HostMem src;
-    alvision.cuda::GpuMat d_src;
+    public src: alvision.cuda.HostMem;
+    public d_src: alvision.cuda.GpuMat;
 
-    alvision.cuda::HostMem dst;
-    alvision.cuda::GpuMat d_dst;
+    public dst: alvision.cuda.HostMem;
+    public d_dst: alvision.cuda.GpuMat;
 
-    virtual void SetUp()
-    {
-        alvision.cuda::DeviceInfo devInfo = GetParam();
-        alvision.cuda::setDevice(devInfo.deviceID());
+    public SetUp(): void {
+        var devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        alvision.cuda.setDevice(devInfo.deviceID());
 
-        src = alvision.cuda::HostMem(alvision.cuda::HostMem::PAGE_LOCKED);
+        this.src = new alvision.cuda.HostMem(alvision.cuda.HostMemAllocType.PAGE_LOCKED);
 
-        alvision.Mat m = randomMat(alvision.Size(128, 128), CV_8UC1);
-        m.copyTo(src);
+        var m = alvision.randomMat(new alvision.Size(128, 128), alvision.MatrixType.CV_8UC1);
+        m.copyTo(this.src);
     }
 };
 
-void checkMemSet(int status, void* userData)
+function checkMemSet(status: alvision.int, userData : Async) : void
 {
-    ASSERT_EQ(cudaSuccess, status);
+    //probably need to implement cuda basic apis for this test to work, cudaSuccess
+    //https://www.cs.cmu.edu/afs/cs/academic/class/15668-s11/www/cuda-doc/html/group__CUDART__TYPES_g3f51e3575c2178246db0a94a430e0038.html
 
-    Async* test = reinterpret_cast<Async*>(userData);
+    //alvision.ASSERT_EQ(cudaSuccess, status);
 
-    alvision.cuda::HostMem src = test.src;
-    alvision.cuda::HostMem dst = test.dst;
+    //Async* test = reinterpret_cast<Async*>(userData);
+    var test = userData;
 
-    alvision.Mat dst_gold = alvision.Mat::zeros(src.size(), src.type());
+    var src = test.src;
+    var dst = test.dst;
 
-    ASSERT_MAT_NEAR(dst_gold, dst, 0);
+    var dst_gold = alvision.Mat.zeros(src.size(), src.type());
+
+    alvision.ASSERT_MAT_NEAR(dst_gold, dst, 0);
 }
 
-alvision.cvtest.CUDA_TEST_P(Async, MemSet)
+//alvision.cvtest.CUDA_TEST_P(Async, MemSet)
+class Async_MemSet extends Async
 {
-    alvision.cuda::Stream stream;
+    public TestBody(): void {
+        var stream = new alvision.cuda.Stream ();
 
-    d_dst.upload(src);
+        this.d_dst.upload(this.src);
 
-    d_dst.setTo(alvision.alvision.Scalar.all(0), stream);
-    d_dst.download(dst, stream);
+        this.d_dst.setTo(alvision.Scalar.all(0), stream);
+        this.d_dst.download(this.dst, stream);
 
-    Async* test = this;
-    stream.enqueueHostCallback(checkMemSet, test);
+        var test = this;
+        stream.enqueueHostCallback(checkMemSet, test);
 
-    stream.waitForCompletion();
+        //TODO: async call, need to figure out how to do it in current design
+        stream.waitForCompletion(() => {
+        });
+    }
 }
 
-void checkConvert(int status, void* userData)
+function checkConvert(status : alvision.int , userData  : Async) : void
 {
-    ASSERT_EQ(cudaSuccess, status);
+    //TODO: Implement CUDA
+    //alvision.ASSERT_EQ(cudaSuccess, status);
 
-    Async* test = reinterpret_cast<Async*>(userData);
+    //Async* test = reinterpret_cast<Async*>(userData);
+    var test = userData;
 
-    alvision.cuda::HostMem src = test.src;
-    alvision.cuda::HostMem dst = test.dst;
+    var src = test.src;
+    var dst = test.dst;
 
-    alvision.Mat dst_gold;
-    src.createMatHeader().convertTo(dst_gold, CV_32S);
+    var dst_gold = new alvision.Mat();
+    src.createMatHeader().convertTo(dst_gold, alvision.MatrixType.CV_32S);
 
-    ASSERT_MAT_NEAR(dst_gold, dst, 0);
+    alvision.ASSERT_MAT_NEAR(dst_gold, dst, 0);
 }
 
-alvision.cvtest.CUDA_TEST_P(Async, Convert)
+//alvision.cvtest.CUDA_TEST_P(Async, Convert)
+class Async_Convert extends Async
 {
-    alvision.cuda::Stream stream;
+    public TestBody(): void {
+        var stream = new alvision.cuda.Stream ();
 
-    d_src.upload(src, stream);
-    d_src.convertTo(d_dst, CV_32S, stream);
-    d_dst.download(dst, stream);
+        this.d_src.upload(this.src, stream);
+        this.d_src.convertTo(this.d_dst, alvision.MatrixType.CV_32S, stream);
+        this.d_dst.download(this.dst, stream);
 
-    Async* test = this;
-    stream.enqueueHostCallback(checkConvert, test);
+        var test = this;
+        stream.enqueueHostCallback(checkConvert, test);
 
-    stream.waitForCompletion();
+        stream.waitForCompletion(() => {
+        });
+    }
 }
 
-alvision.cvtest.CUDA_TEST_P(Async, HostMemAllocator)
-{
-    alvision.cuda::Stream stream;
+//all allocators are not implemented
+//alvision.cvtest.CUDA_TEST_P(Async, HostMemAllocator)
+//class Async_HostMemAllocator
+//{
+//    alvision.cuda.Stream stream;
+//
+//    alvision.Mat h_dst;
+//    h_dst.allocator = alvision.cuda::HostMem::getAllocator();
+//
+//    d_src.upload(src, stream);
+//    d_src.convertTo(d_dst, alvision.MatrixType.CV_32S, stream);
+//    d_dst.download(h_dst, stream);
+//
+//    stream.waitForCompletion();
+//
+//    let dst_gold = new alvision.Mat ();
+//    src.createMatHeader().convertTo(dst_gold, alvision.MatrixType.CV_32S);
+//
+//    ASSERT_MAT_NEAR(dst_gold, h_dst, 0);
+//}
 
-    alvision.Mat h_dst;
-    h_dst.allocator = alvision.cuda::HostMem::getAllocator();
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Stream', 'Async', (case_name, test_name) => {return null },new alvision.cvtest.Combine([ alvision.ALL_DEVICES]));
 
-    d_src.upload(src, stream);
-    d_src.convertTo(d_dst, CV_32S, stream);
-    d_dst.download(h_dst, stream);
-
-    stream.waitForCompletion();
-
-    alvision.Mat dst_gold;
-    src.createMatHeader().convertTo(dst_gold, CV_32S);
-
-    ASSERT_MAT_NEAR(dst_gold, h_dst, 0);
-}
-
-INSTANTIATE_TEST_CASE_P(CUDA_Stream, Async, ALL_DEVICES);
-
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

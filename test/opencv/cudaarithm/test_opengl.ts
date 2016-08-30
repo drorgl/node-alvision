@@ -48,417 +48,506 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#if defined(HAVE_CUDA) && defined(HAVE_OPENGL)
-
-#include "opencv2/core/cuda.hpp"
-#include "opencv2/core/opengl.hpp"
-#include "opencv2/ts/cuda_test.hpp"
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#if defined(HAVE_CUDA) && defined(HAVE_OPENGL)
+//
+//#include "opencv2/core/cuda.hpp"
+//#include "opencv2/core/opengl.hpp"
+//#include "opencv2/ts/cuda_test.hpp"
+//
+//using namespace cvtest;
 
 /////////////////////////////////////////////
 // Buffer
 
-PARAM_TEST_CASE(Buffer, alvision.Size, MatType)
+//PARAM_TEST_CASE(Buffer, alvision.Size, MatType)
+class Buffer extends alvision.cvtest.CUDA_TEST
 {
-    static void SetUpTestCase()
+    SetUpTestCase() : void
     {
-        alvision.namedWindow("test", alvision.WINDOW_OPENGL);
+        alvision.namedWindow("test", alvision.WindowFlags.WINDOW_OPENGL);
     }
 
-    static void TearDownTestCase()
+    TearDownTestCase() : void
     {
         alvision.destroyAllWindows();
     }
 
-    alvision.Size size;
-    int type;
+    protected size: alvision.Size;
+    protected type: alvision.int;
 
-    virtual void SetUp()
+    SetUp(): void
     {
-        size = GET_PARAM(0);
-        type = GET_PARAM(1);
+        this.size = this.GET_PARAM<alvision.Size>(0);
+        this.type = this.GET_PARAM<alvision.int>(1);
     }
 };
 
-CUDA_TEST_P(Buffer, Constructor1)
+//CUDA_TEST_P(Buffer, Constructor1)
+class Buffer_Constructor1 extends Buffer
 {
-    alvision.ogl::Buffer buf(size.height, size.width, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+    TestBody() {
+        let buf = new alvision.ogl.Buffer(this.size.height, this.size.width, this.type, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    EXPECT_EQ(size.height, buf.rows());
-    EXPECT_EQ(size.width, buf.cols());
-    EXPECT_EQ(type, buf.type());
+        alvision.EXPECT_EQ(this.size.height, buf.rows());
+        alvision.EXPECT_EQ(this.size.width, buf.cols());
+        alvision.EXPECT_EQ(this.type, buf.type());
+    }
 }
 
-CUDA_TEST_P(Buffer, Constructor2)
+//CUDA_TEST_P(Buffer, Constructor2)
+class Buffer_Constructor2 extends Buffer
 {
-    alvision.ogl::Buffer buf(size, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+    TestBody() {
+        let buf = new alvision.ogl.Buffer (this.size, this.type, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    EXPECT_EQ(size.height, buf.rows());
-    EXPECT_EQ(size.width, buf.cols());
-    EXPECT_EQ(type, buf.type());
+        alvision.EXPECT_EQ(this.size.height, buf.rows());
+        alvision.EXPECT_EQ(this.size.width, buf.cols());
+        alvision.EXPECT_EQ(this.type, buf.type());
+    }
 }
 
-CUDA_TEST_P(Buffer, ConstructorFromMat)
+//CUDA_TEST_P(Buffer, ConstructorFromMat)
+class Buffer_ConstructorFromMat extends Buffer
 {
-    alvision.Mat gold = randomMat(size, type);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type);
 
-    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+        let buf = new alvision.ogl.Buffer(gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.Mat bufData;
-    buf.copyTo(bufData);
+        let bufData = new alvision.Mat ();
+        buf.copyTo(bufData);
 
-    EXPECT_MAT_NEAR(gold, bufData, 0);
+        alvision.EXPECT_MAT_NEAR(gold, bufData, 0);
+    }
 }
 
-CUDA_TEST_P(Buffer, ConstructorFromGpuMat)
+//CUDA_TEST_P(Buffer, ConstructorFromGpuMat)
+class Buffer_ConstructorFromGpuMat extends Buffer
 {
-    alvision.Mat gold = randomMat(size, type);
-    alvision.cuda::GpuMat d_gold(gold);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type);
+        let d_gold = new alvision.cuda.GpuMat (gold);
 
-    alvision.ogl::Buffer buf(d_gold, alvision.ogl::Buffer::ARRAY_BUFFER);
+        let buf = new alvision.ogl.Buffer(d_gold, alvision.ogl.BufferTarget.ARRAY_BUFFER);
 
-    alvision.Mat bufData;
-    buf.copyTo(bufData);
+        let bufData = new alvision.Mat();
+        buf.copyTo(bufData);
 
-    EXPECT_MAT_NEAR(gold, bufData, 0);
+        alvision.EXPECT_MAT_NEAR(gold, bufData, 0);
+    }
 }
 
-CUDA_TEST_P(Buffer, ConstructorFromBuffer)
+//CUDA_TEST_P(Buffer, ConstructorFromBuffer)
+class Buffer_ConstructorFromBuffer extends Buffer
 {
-    alvision.ogl::Buffer buf_gold(size, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+    TestBody() {
+        let buf_gold = new alvision.ogl.Buffer (this.size, this.type, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.ogl::Buffer buf(buf_gold);
+        let buf = new alvision.ogl.Buffer(buf_gold);
 
-    EXPECT_EQ(buf_gold.bufId(), buf.bufId());
-    EXPECT_EQ(buf_gold.rows(), buf.rows());
-    EXPECT_EQ(buf_gold.cols(), buf.cols());
-    EXPECT_EQ(buf_gold.type(), buf.type());
+        alvision.EXPECT_EQ(buf_gold.bufId(), buf.bufId());
+        alvision.EXPECT_EQ(buf_gold.rows(), buf.rows());
+        alvision.EXPECT_EQ(buf_gold.cols(), buf.cols());
+        alvision.EXPECT_EQ(buf_gold.type(), buf.type());
+    }
 }
 
-CUDA_TEST_P(Buffer, Create)
+//CUDA_TEST_P(Buffer, Create)
+class Buffer_Create extends Buffer
 {
-    alvision.ogl::Buffer buf;
-    buf.create(size.height, size.width, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+    TestBody() {
+        let buf = new alvision.ogl.Buffer();
+        buf.create(this.size.height, this.size.width, this.type, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    EXPECT_EQ(size.height, buf.rows());
-    EXPECT_EQ(size.width, buf.cols());
-    EXPECT_EQ(type, buf.type());
+        alvision.EXPECT_EQ(this.size.height, buf.rows());
+        alvision.EXPECT_EQ(this.size.width, buf.cols());
+        alvision.EXPECT_EQ(this.type, buf.type());
+    }
 }
 
-CUDA_TEST_P(Buffer, CopyFromMat)
+//CUDA_TEST_P(Buffer, CopyFromMat)
+class Buffer_CopyFromMat extends Buffer
 {
-    alvision.Mat gold = randomMat(size, type);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type);
 
-    alvision.ogl::Buffer buf;
-    buf.copyFrom(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+        let buf = new alvision.ogl.Buffer ();
+        buf.copyFrom(gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.Mat bufData;
-    buf.copyTo(bufData);
+        let bufData = new alvision.Mat();
+        buf.copyTo(bufData);
 
-    EXPECT_MAT_NEAR(gold, bufData, 0);
+        alvision.EXPECT_MAT_NEAR(gold, bufData, 0);
+    }
 }
 
-CUDA_TEST_P(Buffer, CopyFromGpuMat)
+//CUDA_TEST_P(Buffer, CopyFromGpuMat)
+class Buffer_CopyFromGpuMat extends Buffer
 {
-    alvision.Mat gold = randomMat(size, type);
-    alvision.cuda::GpuMat d_gold(gold);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type);
+        let d_gold = new alvision.cuda.GpuMat(gold);
 
-    alvision.ogl::Buffer buf;
-    buf.copyFrom(d_gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+        let buf = new alvision.ogl.Buffer();
+        buf.copyFrom(d_gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.Mat bufData;
-    buf.copyTo(bufData);
+        let bufData = new alvision.Mat();
+        buf.copyTo(bufData);
 
-    EXPECT_MAT_NEAR(gold, bufData, 0);
+        alvision.EXPECT_MAT_NEAR(gold, bufData, 0);
+    }
 }
 
-CUDA_TEST_P(Buffer, CopyFromBuffer)
-{
-    alvision.Mat gold = randomMat(size, type);
-    alvision.ogl::Buffer buf_gold(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+//CUDA_TEST_P(Buffer, CopyFromBuffer)
+    class Buffer_CopyFromBuffer extends Buffer
+    {
+        TestBody() {
+            let gold = alvision.randomMat(this.size, this.type);
+            let buf_gold = new alvision.ogl.Buffer(gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.ogl::Buffer buf;
-    buf.copyFrom(buf_gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+            let buf = new alvision.ogl.Buffer();
+            buf.copyFrom(buf_gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    EXPECT_NE(buf_gold.bufId(), buf.bufId());
+            alvision.EXPECT_NE(buf_gold.bufId(), buf.bufId());
 
-    alvision.Mat bufData;
-    buf.copyTo(bufData);
+            let bufData = new alvision.Mat();
+            buf.copyTo(bufData);
 
-    EXPECT_MAT_NEAR(gold, bufData, 0);
+            alvision.EXPECT_MAT_NEAR(gold, bufData, 0);
+        }
 }
 
-CUDA_TEST_P(Buffer, CopyToGpuMat)
-{
-    alvision.Mat gold = randomMat(size, type);
+//CUDA_TEST_P(Buffer, CopyToGpuMat)
+    class Buffer_CopyToGpuMat extends Buffer
+    {
+        TestBody() {
+            let gold = alvision.randomMat(this.size, this.type);
 
-    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+            let buf = new alvision.ogl.Buffer(gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.cuda::GpuMat dst;
-    buf.copyTo(dst);
+            let dst = new alvision.cuda.GpuMat();
+            buf.copyTo(dst);
 
-    EXPECT_MAT_NEAR(gold, dst, 0);
+            alvision.EXPECT_MAT_NEAR(gold, dst, 0);
+        }
 }
 
-CUDA_TEST_P(Buffer, CopyToBuffer)
-{
-    alvision.Mat gold = randomMat(size, type);
+//CUDA_TEST_P(Buffer, CopyToBuffer)
+    class Buffer_CopyToBuffer extends Buffer
+    {
+        TestBody() {
+            let gold = alvision.randomMat(this.size, this.type);
 
-    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+            let buf = new alvision.ogl.Buffer(gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.ogl::Buffer dst;
-    buf.copyTo(dst);
-    dst.setAutoRelease(true);
+            let dst = new alvision.ogl.Buffer ();
+            buf.copyTo(dst);
+            dst.setAutoRelease(true);
 
-    EXPECT_NE(buf.bufId(), dst.bufId());
+            alvision.EXPECT_NE(buf.bufId(), dst.bufId());
 
-    alvision.Mat bufData;
-    dst.copyTo(bufData);
+            let bufData = new alvision.Mat();
+            dst.copyTo(bufData);
 
-    EXPECT_MAT_NEAR(gold, bufData, 0);
+            alvision.EXPECT_MAT_NEAR(gold, bufData, 0);
+        }
 }
 
-CUDA_TEST_P(Buffer, Clone)
-{
-    alvision.Mat gold = randomMat(size, type);
+//CUDA_TEST_P(Buffer, Clone)
+    class Buffer_Clone extends Buffer
+    {
+        TestBody() {
+            let gold = alvision.randomMat(this.size, this.type);
 
-    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+            let buf = new alvision.ogl.Buffer(gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.ogl::Buffer dst = buf.clone(alvision.ogl::Buffer::ARRAY_BUFFER, true);
+            let dst = buf.clone(alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    EXPECT_NE(buf.bufId(), dst.bufId());
+            alvision.EXPECT_NE(buf.bufId(), dst.bufId());
 
-    alvision.Mat bufData;
-    dst.copyTo(bufData);
+            let bufData = new alvision.Mat();
+            dst.copyTo(bufData);
 
-    EXPECT_MAT_NEAR(gold, bufData, 0);
+            alvision.EXPECT_MAT_NEAR(gold, bufData, 0);
+        }
 }
 
-CUDA_TEST_P(Buffer, MapHostRead)
-{
-    alvision.Mat gold = randomMat(size, type);
+//CUDA_TEST_P(Buffer, MapHostRead)
+    class Buffer_MapHostRead extends Buffer {
+        TestBody() {
+            let gold = alvision.randomMat(this.size, this.type);
 
-    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+            let buf = new alvision.ogl.Buffer(gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.Mat dst = buf.mapHost(alvision.ogl::Buffer::READ_ONLY);
+            let dst = buf.mapHost(alvision.ogl.BufferAccess.READ_ONLY);
 
-    EXPECT_MAT_NEAR(gold, dst, 0);
+            alvision.EXPECT_MAT_NEAR(gold, dst, 0);
 
-    buf.unmapHost();
+            buf.unmapHost();
+        }
+    }
+
+
+//CUDA_TEST_P(Buffer, MapHostWrite)
+    class Buffer_MapHostWrite extends Buffer
+    {
+        TestBody() {
+            let gold = alvision.randomMat(this.size, this.type);
+
+            let buf = new alvision.ogl.Buffer(this.size, this.type, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
+
+            let dst = buf.mapHost(alvision.ogl.BufferAccess.WRITE_ONLY);
+            gold.copyTo(dst);
+            buf.unmapHost();
+            dst = null;//dst.release();
+
+            let bufData = new alvision.Mat();
+            buf.copyTo(bufData);
+
+            alvision.EXPECT_MAT_NEAR(gold, bufData, 0);
+        }
 }
 
-CUDA_TEST_P(Buffer, MapHostWrite)
-{
-    alvision.Mat gold = randomMat(size, type);
+//CUDA_TEST_P(Buffer, MapDevice)
+    class Buffer_MapDevice extends Buffer
+    {
+        TestBody() {
+            let gold = alvision.randomMat(this.size, this.type);
 
-    alvision.ogl::Buffer buf(size, type, alvision.ogl::Buffer::ARRAY_BUFFER, true);
+            let buf = new alvision.ogl.Buffer(gold, alvision.ogl.BufferTarget.ARRAY_BUFFER, true);
 
-    alvision.Mat dst = buf.mapHost(alvision.ogl::Buffer::WRITE_ONLY);
-    gold.copyTo(dst);
-    buf.unmapHost();
-    dst.release();
+            let dst = buf.mapDevice();
 
-    alvision.Mat bufData;
-    buf.copyTo(bufData);
+            alvision.EXPECT_MAT_NEAR(gold, dst, 0);
 
-    EXPECT_MAT_NEAR(gold, bufData, 0);
+            buf.unmapDevice();
+        }
 }
 
-CUDA_TEST_P(Buffer, MapDevice)
-{
-    alvision.Mat gold = randomMat(size, type);
-
-    alvision.ogl::Buffer buf(gold, alvision.ogl::Buffer::ARRAY_BUFFER, true);
-
-    alvision.cuda::GpuMat dst = buf.mapDevice();
-
-    EXPECT_MAT_NEAR(gold, dst, 0);
-
-    buf.unmapDevice();
-}
-
-INSTANTIATE_TEST_CASE_P(OpenGL, Buffer, testing::Combine(DIFFERENT_SIZES, ALL_TYPES));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('OpenGL', 'Buffer', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.DIFFERENT_SIZES,
+    alvision.ALL_TYPES
+    ]));
 
 /////////////////////////////////////////////
 // Texture2D
 
-PARAM_TEST_CASE(Texture2D, alvision.Size, MatType)
+//PARAM_TEST_CASE(Texture2D, alvision.Size, MatType)
+class Texture2D extends alvision.cvtest.CUDA_TEST
 {
-    static void SetUpTestCase()
+    SetUpTestCase() : void
     {
-        alvision.namedWindow("test", alvision.WINDOW_OPENGL);
+        alvision.namedWindow("test", alvision.WindowFlags.WINDOW_OPENGL);
     }
 
-    static void TearDownTestCase()
+    TearDownTestCase() : void
     {
         alvision.destroyAllWindows();
     }
 
-    alvision.Size size;
-    int type;
-    int depth;
-    int cn;
-    alvision.ogl::Texture2D::Format format;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected depth: alvision.int;
+    protected cn: alvision.int;
+    protected format: alvision.ogl.Texture2DFormat;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        size = GET_PARAM(0);
-        type = GET_PARAM(1);
+        this.size = this.GET_PARAM<alvision.Size>(0);
+        this.type = this.GET_PARAM<alvision.int>(1);
 
-        depth = CV_MAT_DEPTH(type);
-        cn = CV_MAT_CN(type);
-        format = cn == 1 ? alvision.ogl::Texture2D::DEPTH_COMPONENT : cn == 3 ? alvision.ogl::Texture2D::RGB : cn == 4 ? alvision.ogl::Texture2D::RGBA : alvision.ogl::Texture2D::NONE;
+        this.depth = alvision.MatrixType.CV_MAT_DEPTH(this.type);
+        this.cn = alvision.MatrixType.CV_MAT_CN(this.type);
+        this.format = this.cn == 1 ? alvision.ogl.Texture2DFormat.DEPTH_COMPONENT : this.cn == 3 ? alvision.ogl.Texture2DFormat.RGB : this.cn == 4 ? alvision.ogl.Texture2DFormat.RGBA : alvision.ogl.Texture2DFormat.NONE;
     }
 };
 
-CUDA_TEST_P(Texture2D, Constructor1)
+//CUDA_TEST_P(Texture2D, Constructor1)
+class Texture2D_Constructor1 extends Texture2D
 {
-    alvision.ogl::Texture2D tex(size.height, size.width, format, true);
+    TestBody() {
+        let tex = new alvision.ogl.Texture2D (this.size.height, this.size.width, this.format, true);
 
-    EXPECT_EQ(size.height, tex.rows());
-    EXPECT_EQ(size.width, tex.cols());
-    EXPECT_EQ(format, tex.format());
+        alvision.EXPECT_EQ(this.size.height, tex.rows());
+        alvision.EXPECT_EQ(this.size.width, tex.cols());
+        alvision.EXPECT_EQ(this.format, tex.format());
+    }
 }
 
-CUDA_TEST_P(Texture2D, Constructor2)
+//CUDA_TEST_P(Texture2D, Constructor2)
+class Texture2D_Constructor2 extends Texture2D
 {
-    alvision.ogl::Texture2D tex(size, format, true);
+    TestBody() {
+        let tex = new alvision.ogl.Texture2D (this.size, this.format, true);
 
-    EXPECT_EQ(size.height, tex.rows());
-    EXPECT_EQ(size.width, tex.cols());
-    EXPECT_EQ(format, tex.format());
+        alvision.EXPECT_EQ(this.size.height, tex.rows());
+        alvision.EXPECT_EQ(this.size.width, tex.cols());
+        alvision.EXPECT_EQ(this.format, tex.format());
+    }
 }
 
-CUDA_TEST_P(Texture2D, ConstructorFromMat)
+//CUDA_TEST_P(Texture2D, ConstructorFromMat)
+class Texture2D_ConstructorFromMat extends Texture2D
 {
-    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type, 0, this.depth == alvision.MatrixType.CV_8U ? 255 : 1);
 
-    alvision.ogl::Texture2D tex(gold, true);
+        let tex = new alvision.ogl.Texture2D (gold, true);
 
-    alvision.Mat texData;
-    tex.copyTo(texData, depth);
+        let texData = new alvision.Mat();
+        tex.copyTo(texData, this.depth);
 
-    EXPECT_MAT_NEAR(gold, texData, 1e-2);
+        alvision.EXPECT_MAT_NEAR(gold, texData, 1e-2);
+    }
 }
 
-CUDA_TEST_P(Texture2D, ConstructorFromGpuMat)
+//CUDA_TEST_P(Texture2D, ConstructorFromGpuMat)
+class Texture2D_ConstructorFromGpuMat extends Texture2D
 {
-    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
-    alvision.cuda::GpuMat d_gold(gold);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type, 0, this.depth == alvision.MatrixType.CV_8U ? 255 : 1);
+        let d_gold = new alvision.cuda.GpuMat(gold);
 
-    alvision.ogl::Texture2D tex(d_gold, true);
+        let tex = new alvision.ogl.Texture2D (d_gold, true);
 
-    alvision.Mat texData;
-    tex.copyTo(texData, depth);
+        let texData = new alvision.Mat();
+        tex.copyTo(texData, this.depth);
 
-    EXPECT_MAT_NEAR(gold, texData, 1e-2);
+        alvision.EXPECT_MAT_NEAR(gold, texData, 1e-2);
+    }
 }
 
-CUDA_TEST_P(Texture2D, ConstructorFromBuffer)
+//CUDA_TEST_P(Texture2D, ConstructorFromBuffer)
+class Texture2D_ConstructorFromBuffer extends Texture2D
 {
-    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
-    alvision.ogl::Buffer buf_gold(gold, alvision.ogl::Buffer::PIXEL_UNPACK_BUFFER, true);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type, 0, this.depth == alvision.MatrixType.CV_8U ? 255 : 1);
+        let buf_gold = new alvision.ogl.Buffer(gold, alvision.ogl.BufferTarget.PIXEL_UNPACK_BUFFER, true);
 
-    alvision.ogl::Texture2D tex(buf_gold, true);
+        let tex = new alvision.ogl.Texture2D (buf_gold, true);
 
-    alvision.Mat texData;
-    tex.copyTo(texData, depth);
+        let texData = new alvision.Mat();
+        tex.copyTo(texData, this.depth);
 
-    EXPECT_MAT_NEAR(gold, texData, 1e-2);
+        alvision.EXPECT_MAT_NEAR(gold, texData, 1e-2);
+    }
 }
 
-CUDA_TEST_P(Texture2D, ConstructorFromTexture2D)
+//CUDA_TEST_P(Texture2D, ConstructorFromTexture2D)
+class Texture2D_ConstructorFromTexture2D extends Texture2D
 {
-    alvision.ogl::Texture2D tex_gold(size, format, true);
-    alvision.ogl::Texture2D tex(tex_gold);
+    TestBody() {
+        let tex_gold = new alvision.ogl.Texture2D (this.size, this.format, true);
+        let tex = new alvision.ogl.Texture2D (tex_gold);
 
-    EXPECT_EQ(tex_gold.texId(), tex.texId());
-    EXPECT_EQ(tex_gold.rows(), tex.rows());
-    EXPECT_EQ(tex_gold.cols(), tex.cols());
-    EXPECT_EQ(tex_gold.format(), tex.format());
+        alvision.EXPECT_EQ(tex_gold.texId(), tex.texId());
+        alvision.EXPECT_EQ(tex_gold.rows(), tex.rows());
+        alvision.EXPECT_EQ(tex_gold.cols(), tex.cols());
+        alvision.EXPECT_EQ(tex_gold.format(), tex.format());
+    }
 }
 
-CUDA_TEST_P(Texture2D, Create)
+//CUDA_TEST_P(Texture2D, Create)
+class Texture2D_Create extends Texture2D
 {
-    alvision.ogl::Texture2D tex;
-    tex.create(size.height, size.width, format, true);
+    TestBody() {
+        let tex = new alvision.ogl.Texture2D();
+        tex.create(this.size.height, this.size.width, this.format, true);
 
-    EXPECT_EQ(size.height, tex.rows());
-    EXPECT_EQ(size.width, tex.cols());
-    EXPECT_EQ(format, tex.format());
+        alvision.EXPECT_EQ(this.size.height, tex.rows());
+        alvision.EXPECT_EQ(this.size.width, tex.cols());
+        alvision.EXPECT_EQ(this.format, tex.format());
+    }
 }
 
-CUDA_TEST_P(Texture2D, CopyFromMat)
+//CUDA_TEST_P(Texture2D, CopyFromMat)
+class Texture2D_CopyFromMat extends Texture2D
 {
-    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type, 0, this.depth == alvision.MatrixType.CV_8U ? 255 : 1);
 
-    alvision.ogl::Texture2D tex;
-    tex.copyFrom(gold, true);
+        let tex = new alvision.ogl.Texture2D();
+        tex.copyFrom(gold, true);
 
-    alvision.Mat texData;
-    tex.copyTo(texData, depth);
+        let texData = new alvision.Mat();
+        tex.copyTo(texData, this.depth);
 
-    EXPECT_MAT_NEAR(gold, texData, 1e-2);
+        alvision.EXPECT_MAT_NEAR(gold, texData, 1e-2);
+    }
 }
 
-CUDA_TEST_P(Texture2D, CopyFromGpuMat)
+//CUDA_TEST_P(Texture2D, CopyFromGpuMat)
+class Texture2D_CopyFromGpuMat extends Texture2D
 {
-    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
-    alvision.cuda::GpuMat d_gold(gold);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type, 0, this.depth == alvision.MatrixType.CV_8U ? 255 : 1);
+        let d_gold = new alvision.cuda.GpuMat(gold);
 
-    alvision.ogl::Texture2D tex;
-    tex.copyFrom(d_gold, true);
+        let tex = new alvision.ogl.Texture2D();
+        tex.copyFrom(d_gold, true);
 
-    alvision.Mat texData;
-    tex.copyTo(texData, depth);
+        let texData = new alvision.Mat();
+        tex.copyTo(texData, this.depth);
 
-    EXPECT_MAT_NEAR(gold, texData, 1e-2);
+        alvision.EXPECT_MAT_NEAR(gold, texData, 1e-2);
+    }
 }
 
-CUDA_TEST_P(Texture2D, CopyFromBuffer)
+//CUDA_TEST_P(Texture2D, CopyFromBuffer)
+class Texture2D_CopyFromBuffer extends Texture2D
 {
-    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
-    alvision.ogl::Buffer buf_gold(gold, alvision.ogl::Buffer::PIXEL_UNPACK_BUFFER, true);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type, 0, this.depth == alvision.MatrixType.CV_8U ? 255 : 1);
+        let buf_gold = new alvision.ogl.Buffer(gold, alvision.ogl.BufferTarget.PIXEL_UNPACK_BUFFER, true);
 
-    alvision.ogl::Texture2D tex;
-    tex.copyFrom(buf_gold, true);
+        let tex = new alvision.ogl.Texture2D();
+        tex.copyFrom(buf_gold, true);
 
-    alvision.Mat texData;
-    tex.copyTo(texData, depth);
+        let texData = new alvision.Mat();
+        tex.copyTo(texData, this.depth);
 
-    EXPECT_MAT_NEAR(gold, texData, 1e-2);
+        alvision.EXPECT_MAT_NEAR(gold, texData, 1e-2);
+    }
 }
 
-CUDA_TEST_P(Texture2D, CopyToGpuMat)
+//CUDA_TEST_P(Texture2D, CopyToGpuMat)
+class Texture2D_CopyToGpuMat extends Texture2D
 {
-    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type, 0, this.depth == alvision.MatrixType.CV_8U ? 255 : 1);
 
-    alvision.ogl::Texture2D tex(gold, true);
+        let tex = new alvision.ogl.Texture2D (gold, true);
 
-    alvision.cuda::GpuMat dst;
-    tex.copyTo(dst, depth);
+        let dst = new alvision.cuda.GpuMat();
+        tex.copyTo(dst, this.depth);
 
-    EXPECT_MAT_NEAR(gold, dst, 1e-2);
+        alvision.EXPECT_MAT_NEAR(gold, dst, 1e-2);
+    }
 }
 
-CUDA_TEST_P(Texture2D, CopyToBuffer)
+//CUDA_TEST_P(Texture2D, CopyToBuffer)
+class Texture2D_CopyToBuffer extends Texture2D
 {
-    alvision.Mat gold = randomMat(size, type, 0, depth == CV_8U ? 255 : 1);
+    TestBody() {
+        let gold = alvision.randomMat(this.size, this.type, 0, this.depth == alvision.MatrixType.CV_8U ? 255 : 1);
 
-    alvision.ogl::Texture2D tex(gold, true);
+        let tex = new alvision.ogl.Texture2D (gold, true);
 
-    alvision.ogl::Buffer dst;
-    tex.copyTo(dst, depth, true);
+        let dst = new alvision.ogl.Buffer ();
+        tex.copyTo(dst, this.depth, true);
 
-    alvision.Mat bufData;
-    dst.copyTo(bufData);
+        let bufData = new alvision.Mat();
+        dst.copyTo(bufData);
 
-    EXPECT_MAT_NEAR(gold, bufData, 1e-2);
+        alvision.EXPECT_MAT_NEAR(gold, bufData, 1e-2);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(OpenGL, Texture2D, testing::Combine(DIFFERENT_SIZES, testing::Values(CV_8UC1, CV_8UC3, CV_8UC4, CV_32FC1, CV_32FC3, CV_32FC4)));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('OpenGL', 'Texture2D', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1, alvision.MatrixType.CV_8UC3, alvision.MatrixType.CV_8UC4, alvision.MatrixType.CV_32FC1, alvision.MatrixType.CV_32FC3, alvision.MatrixType.CV_32FC4]
+]));
 
-#endif
+//#endif
