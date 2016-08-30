@@ -48,464 +48,476 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // FAST
 
-namespace
-{
-    IMPLEMENT_PARAM_CLASS(FAST_Threshold, int)
-    IMPLEMENT_PARAM_CLASS(FAST_NonmaxSuppression, bool)
-}
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(FAST_Threshold, int)
+//    IMPLEMENT_PARAM_CLASS(FAST_NonmaxSuppression, bool)
+//}
 
-PARAM_TEST_CASE(FAST, alvision.cuda::DeviceInfo, FAST_Threshold, FAST_NonmaxSuppression)
+//PARAM_TEST_CASE(FAST, alvision.cuda.DeviceInfo, FAST_Threshold, FAST_NonmaxSuppression)
+class FAST extends  alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    int threshold;
-    bool nonmaxSuppression;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected threshold: alvision.int;
+    protected nonmaxSuppression: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        threshold = GET_PARAM(1);
-        nonmaxSuppression = GET_PARAM(2);
+        this.devInfo =             this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.threshold =           this.GET_PARAM<alvision.int>(1);
+        this.nonmaxSuppression =   this.GET_PARAM<boolean>(2);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(FAST, Accuracy)
+//CUDA_TEST_P(FAST, Accuracy)
+class FAST_Accuracy extends FAST
 {
-    alvision.Mat image = readImage("features2d/aloe.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
-    ASSERT_FALSE(image.empty());
+    TestBody() {
+        let image = alvision.readImage("features2d/aloe.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+        alvision.ASSERT_FALSE(image.empty());
 
-    alvision.Ptr<alvision.cuda::FastFeatureDetector> fast = alvision.cuda::FastFeatureDetector::create(threshold, nonmaxSuppression);
+        let fast = alvision.cudafeatures2d.FastFeatureDetector.create(this.threshold, this.nonmaxSuppression);
 
-    if (!supportFeature(devInfo, alvision.cuda::GLOBAL_ATOMICS))
-    {
-        try
-        {
-            Array<alvision.KeyPoint> keypoints;
-            fast.detect(loadMat(image), keypoints);
+        if (!alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.GLOBAL_ATOMICS)) {
+            try {
+                let keypoints = new Array<alvision.KeyPoint>();
+                fast.detect(alvision.loadMat(image), (kp) => { keypoints = kp; });
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsNotImplemented, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
+        else {
+            let keypoints = new Array<alvision.KeyPoint>();
+            fast.detect(alvision.loadMat(image), (kp) => { keypoints = kp; });
+
+            let keypoints_gold = new Array<alvision.KeyPoint>();
+            alvision.FAST(image, (kp) => { keypoints_gold = kp; }, this.threshold, this.nonmaxSuppression);
+
+            alvision.ASSERT_KEYPOINTS_EQ(keypoints_gold, keypoints);
         }
-    }
-    else
-    {
-        Array<alvision.KeyPoint> keypoints;
-        fast.detect(loadMat(image), keypoints);
-
-        Array<alvision.KeyPoint> keypoints_gold;
-        alvision.FAST(image, keypoints_gold, threshold, nonmaxSuppression);
-
-        ASSERT_KEYPOINTS_EQ(keypoints_gold, keypoints);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Features2D, FAST, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(FAST_Threshold(25), FAST_Threshold(50)),
-    testing::Values(FAST_NonmaxSuppression(false), FAST_NonmaxSuppression(true))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Features2D', 'FAST', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [25,50],
+    [false,true]
+    ]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // ORB
 
-namespace
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(ORB_FeaturesCount, int)
+//    IMPLEMENT_PARAM_CLASS(ORB_ScaleFactor, float)
+//    IMPLEMENT_PARAM_CLASS(ORB_LevelsCount, int)
+//    IMPLEMENT_PARAM_CLASS(ORB_EdgeThreshold, int)
+//    IMPLEMENT_PARAM_CLASS(ORB_firstLevel, int)
+//    IMPLEMENT_PARAM_CLASS(ORB_WTA_K, int)
+//    IMPLEMENT_PARAM_CLASS(ORB_PatchSize, int)
+//    IMPLEMENT_PARAM_CLASS(ORB_BlurForDescriptor, bool)
+//}
+
+//CV_ENUM(ORB_ScoreType, alvision.ORB::HARRIS_SCORE, alvision.ORB::FAST_SCORE)
+
+//PARAM_TEST_CASE(ORB, alvision.cuda.DeviceInfo, ORB_FeaturesCount, ORB_ScaleFactor, ORB_LevelsCount, ORB_EdgeThreshold, ORB_firstLevel, ORB_WTA_K, ORB_ScoreType, ORB_PatchSize, ORB_BlurForDescriptor)
+class ORB extends alvision.cvtest.CUDA_TEST
 {
-    IMPLEMENT_PARAM_CLASS(ORB_FeaturesCount, int)
-    IMPLEMENT_PARAM_CLASS(ORB_ScaleFactor, float)
-    IMPLEMENT_PARAM_CLASS(ORB_LevelsCount, int)
-    IMPLEMENT_PARAM_CLASS(ORB_EdgeThreshold, int)
-    IMPLEMENT_PARAM_CLASS(ORB_firstLevel, int)
-    IMPLEMENT_PARAM_CLASS(ORB_WTA_K, int)
-    IMPLEMENT_PARAM_CLASS(ORB_PatchSize, int)
-    IMPLEMENT_PARAM_CLASS(ORB_BlurForDescriptor, bool)
-}
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected nFeatures: alvision.int;
+    protected scaleFactor: alvision.float;
+    protected nLevels: alvision.int;
+    protected edgeThreshold: alvision.int;
+    protected firstLevel: alvision.int;
+    protected WTA_K: alvision.int;
+    protected scoreType: alvision.int;
+    protected patchSize: alvision.int;
+    protected blurForDescriptor: boolean;
 
-CV_ENUM(ORB_ScoreType, alvision.ORB::HARRIS_SCORE, alvision.ORB::FAST_SCORE)
-
-PARAM_TEST_CASE(ORB, alvision.cuda::DeviceInfo, ORB_FeaturesCount, ORB_ScaleFactor, ORB_LevelsCount, ORB_EdgeThreshold, ORB_firstLevel, ORB_WTA_K, ORB_ScoreType, ORB_PatchSize, ORB_BlurForDescriptor)
-{
-    alvision.cuda::DeviceInfo devInfo;
-    int nFeatures;
-    float scaleFactor;
-    int nLevels;
-    int edgeThreshold;
-    int firstLevel;
-    int WTA_K;
-    int scoreType;
-    int patchSize;
-    bool blurForDescriptor;
-
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        nFeatures = GET_PARAM(1);
-        scaleFactor = GET_PARAM(2);
-        nLevels = GET_PARAM(3);
-        edgeThreshold = GET_PARAM(4);
-        firstLevel = GET_PARAM(5);
-        WTA_K = GET_PARAM(6);
-        scoreType = GET_PARAM(7);
-        patchSize = GET_PARAM(8);
-        blurForDescriptor = GET_PARAM(9);
+        this.devInfo =           this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.nFeatures =         this.GET_PARAM<alvision.int>(1);
+        this.scaleFactor =       this.GET_PARAM<alvision.float>(2);
+        this.nLevels =           this.GET_PARAM<alvision.int>(3);
+        this.edgeThreshold =     this.GET_PARAM<alvision.int>(4);
+        this.firstLevel =        this.GET_PARAM<alvision.int>(5);
+        this.WTA_K =             this.GET_PARAM<alvision.int>(6);
+        this.scoreType =         this.GET_PARAM<alvision.int>(7);
+        this.patchSize =         this.GET_PARAM<alvision.int>(8);
+        this.blurForDescriptor = this.GET_PARAM<boolean>(9);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(ORB, Accuracy)
+//CUDA_TEST_P(ORB, Accuracy)
+class ORB_Accuracy extends ORB
 {
-    alvision.Mat image = readImage("features2d/aloe.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
-    ASSERT_FALSE(image.empty());
+    TestBody() {
+        let image = alvision.readImage("features2d/aloe.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+        alvision.ASSERT_FALSE(image.empty());
 
-    alvision.Mat mask(image.size(), CV_8UC1, alvision.Scalar::all(1));
-    mask(alvision.Range(0, image.rows / 2), alvision.Range(0, image.cols / 2)).setTo(alvision.alvision.Scalar.all(0));
+        let mask = new alvision.Mat(image.size(), alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
+        mask.roi([new alvision.Range(0, image.rows.valueOf() / 2), new alvision.Range(0, image.cols.valueOf() / 2)]).setTo(alvision.Scalar.all(0));
 
-    alvision.Ptr<alvision.cuda::ORB> orb =
-            alvision.cuda::ORB::create(nFeatures, scaleFactor, nLevels, edgeThreshold, firstLevel,
-                                  WTA_K, scoreType, patchSize, 20, blurForDescriptor);
+        let orb =
+            alvision.cudafeatures2d.ORB.create(this.nFeatures, this.scaleFactor, this.nLevels, this.edgeThreshold,this. firstLevel,
+                this.WTA_K, this.scoreType, this.patchSize, 20,this. blurForDescriptor);
 
-    if (!supportFeature(devInfo, alvision.cuda::GLOBAL_ATOMICS))
-    {
-        try
-        {
-            Array<alvision.KeyPoint> keypoints;
-            alvision.cuda::GpuMat descriptors;
-            orb.detectAndComputeAsync(loadMat(image), loadMat(mask), keypoints, descriptors);
+        if (!alvision.supportFeature(this.devInfo,alvision.cuda.FeatureSet.GLOBAL_ATOMICS)) {
+            try {
+                let keypoints = new Array<alvision.KeyPoint>();
+                let descriptors = new alvision.cuda.GpuMat();
+                orb.detectAndComputeAsync(alvision.loadMat(image), alvision.loadMat(mask), keypoints, descriptors);
+            }
+            catch (e) {
+                alvision.ASSERT_EQ(alvision.cv.Error.Code.StsNotImplemented, e.code);
+            }
         }
-        catch(e)
-        {
-            ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
+        else {
+            let keypoints = new Array<alvision.KeyPoint>();
+            let descriptors = new alvision.cuda.GpuMat ();
+            orb.detectAndCompute(alvision.loadMat(image), alvision.loadMat(mask), (kp) => { keypoints = kp; }, descriptors);
+
+            let orb_gold = alvision.ORB.create(this.nFeatures, this.scaleFactor, this.nLevels, this.edgeThreshold, this.firstLevel, this.WTA_K, this.scoreType, this.patchSize);
+
+            let keypoints_gold = new Array<alvision.KeyPoint>();
+            let descriptors_gold = new alvision.Mat();
+            orb_gold.detectAndCompute(image, mask, (kp) => { keypoints_gold = kp; }, descriptors_gold);
+
+            let matcher = new alvision.BFMatcher (alvision.NormTypes.NORM_HAMMING);
+            let matches = new Array<alvision.DMatch>();
+            matcher.match(descriptors_gold, new alvision.Mat(descriptors), (m) => { matches = m; });
+
+            let matchedCount = alvision.cvtest.getMatchedPointsCount2(keypoints_gold, keypoints, matches);
+            let matchedRatio = (matchedCount.valueOf()) / keypoints.length;
+
+            alvision.EXPECT_GT(matchedRatio, 0.35);
         }
-    }
-    else
-    {
-        Array<alvision.KeyPoint> keypoints;
-        alvision.cuda::GpuMat descriptors;
-        orb.detectAndCompute(loadMat(image), loadMat(mask), keypoints, descriptors);
-
-        alvision.Ptr<alvision.ORB> orb_gold = alvision.ORB::create(nFeatures, scaleFactor, nLevels, edgeThreshold, firstLevel, WTA_K, scoreType, patchSize);
-
-        Array<alvision.KeyPoint> keypoints_gold;
-        alvision.Mat descriptors_gold;
-        orb_gold.detectAndCompute(image, mask, keypoints_gold, descriptors_gold);
-
-        alvision.BFMatcher matcher(alvision.NORM_HAMMING);
-        Array<alvision.DMatch> matches;
-        matcher.match(descriptors_gold, alvision.Mat(descriptors), matches);
-
-        int matchedCount = getMatchedPointsCount(keypoints_gold, keypoints, matches);
-        double matchedRatio = static_cast<double>(matchedCount) / keypoints.size();
-
-        EXPECT_GT(matchedRatio, 0.35);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Features2D, ORB,  testing::Combine(
-    ALL_DEVICES,
-    testing::Values(ORB_FeaturesCount(1000)),
-    testing::Values(ORB_ScaleFactor(1.2f)),
-    testing::Values(ORB_LevelsCount(4), ORB_LevelsCount(8)),
-    testing::Values(ORB_EdgeThreshold(31)),
-    testing::Values(ORB_firstLevel(0)),
-    testing::Values(ORB_WTA_K(2), ORB_WTA_K(3), ORB_WTA_K(4)),
-    testing::Values(ORB_ScoreType(alvision.ORB::HARRIS_SCORE)),
-    testing::Values(ORB_PatchSize(31), ORB_PatchSize(29)),
-    testing::Values(ORB_BlurForDescriptor(false), ORB_BlurForDescriptor(true))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Features2D', 'ORB', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [1000],
+    [1.2],
+    [4,8],
+    [31],
+    [0],
+    [2,3,4],
+    [alvision.ORBEnum.HARRIS_SCORE],
+    [31,29],
+    [false,true]
+    ]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // BruteForceMatcher
 
-namespace
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(DescriptorSize, int)
+//    IMPLEMENT_PARAM_CLASS(UseMask, bool)
+//}
+
+//PARAM_TEST_CASE(BruteForceMatcher, alvision.cuda.DeviceInfo, NormCode, DescriptorSize, UseMask)
+class BruteForceMatcher extends alvision.cvtest.CUDA_TEST
 {
-    IMPLEMENT_PARAM_CLASS(DescriptorSize, int)
-    IMPLEMENT_PARAM_CLASS(UseMask, bool)
-}
+    protected devInfo: alvision.cuda.DeviceInfo ;
+    protected normCode : alvision.int;
+    protected dim: alvision.int;
+    protected useMask: boolean;
 
-PARAM_TEST_CASE(BruteForceMatcher, alvision.cuda::DeviceInfo, NormCode, DescriptorSize, UseMask)
-{
-    alvision.cuda::DeviceInfo devInfo;
-    int normCode;
-    int dim;
-    bool useMask;
+    protected queryDescCount: alvision.int;
+    protected countFactor: alvision.int;
 
-    int queryDescCount;
-    int countFactor;
+    protected query: alvision.Mat;
+    protected train: alvision.Mat;
 
-    alvision.Mat query, train;
-
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        normCode = GET_PARAM(1);
-        dim = GET_PARAM(2);
-        useMask = GET_PARAM(3);
+        this.devInfo =      this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.normCode =     this.GET_PARAM<alvision.int>(1);
+        this.dim =          this.GET_PARAM<alvision.int>(2);
+        this.useMask =      this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        queryDescCount = 300; // must be even number because we split train data in some cases in two
-        countFactor = 4; // do not change it
+        this.queryDescCount = 300; // must be even number because we split train data in some cases in two
+        this.countFactor = 4; // do not change it
 
-        alvision.RNG& rng = alvision.cvtest.TS::ptr().get_rng();
+        let rng = alvision.cvtest.TS.ptr().get_rng();
 
-        alvision.Mat queryBuf, trainBuf;
+        let queryBuf = new alvision.Mat(), trainBuf = new alvision.Mat ();
 
         // Generate query descriptors randomly.
         // Descriptor vector elements are integer values.
-        queryBuf.create(queryDescCount, dim, CV_32SC1);
-        rng.fill(queryBuf, alvision.RNG::UNIFORM, alvision.alvision.Scalar.all(0), alvision.Scalar::all(3));
-        queryBuf.convertTo(queryBuf, CV_32FC1);
+        queryBuf.create(this.queryDescCount, this.dim, alvision.MatrixType.CV_32SC1);
+        rng.fill(queryBuf, alvision.DistType.UNIFORM, alvision.Scalar.all(0), alvision.Scalar.all(3));
+        queryBuf.convertTo(queryBuf, alvision.MatrixType.CV_32FC1);
 
         // Generate train decriptors as follows:
         // copy each query descriptor to train set countFactor times
         // and perturb some one element of the copied descriptors in
         // in ascending order. General boundaries of the perturbation
         // are (0.f, 1.f).
-        trainBuf.create(queryDescCount * countFactor, dim, CV_32FC1);
-        float step = 1.f / countFactor;
-        for (int qIdx = 0; qIdx < queryDescCount; qIdx++)
+        trainBuf.create(this.queryDescCount.valueOf() * this.countFactor.valueOf(), this.dim, alvision.MatrixType.CV_32FC1);
+        let step = 1. / this.countFactor.valueOf();
+        for (let qIdx = 0; qIdx < this.queryDescCount; qIdx++)
         {
-            alvision.Mat queryDescriptor = queryBuf.row(qIdx);
-            for (int c = 0; c < countFactor; c++)
+            let queryDescriptor = queryBuf.row(qIdx);
+            for (let c = 0; c < this.countFactor; c++)
             {
-                int tIdx = qIdx * countFactor + c;
-                alvision.Mat trainDescriptor = trainBuf.row(tIdx);
+                let tIdx = qIdx * this.countFactor.valueOf() + c;
+                let trainDescriptor = trainBuf.row(tIdx);
                 queryDescriptor.copyTo(trainDescriptor);
-                int elem = rng(dim);
-                float diff = rng.uniform(step * c, step * (c + 1));
-                trainDescriptor.at<float>(0, elem) += diff;
+                let elem = rng.unsigned(this.dim);
+                let diff = rng.uniform(step * c, step * (c + 1));
+                trainDescriptor.at<alvision.float>("float", 0, elem).set(trainDescriptor.at<alvision.float>("float", 0, elem).get().valueOf() + diff.valueOf());
             }
         }
 
-        queryBuf.convertTo(query, CV_32F);
-        trainBuf.convertTo(train, CV_32F);
+        queryBuf.convertTo(this.query, alvision.MatrixType.CV_32F);
+        trainBuf.convertTo(this.train, alvision.MatrixType.CV_32F);
     }
 };
 
-CUDA_TEST_P(BruteForceMatcher, Match_Single)
+//CUDA_TEST_P(BruteForceMatcher, Match_Single)
+class BruteForceMatcher_Match_Single extends BruteForceMatcher
 {
-    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
-            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
+    TestBody() {
+        let matcher =
+        alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
 
-    alvision.cuda::GpuMat mask;
-    if (useMask)
-    {
-        mask.create(query.rows, train.rows, CV_8UC1);
-        mask.setTo(alvision.Scalar::all(1));
-    }
+        let mask = new alvision.cuda.GpuMat();
+        if (this.useMask) {
+            mask.create(this.query.rows, this.train.rows, alvision.MatrixType.CV_8UC1);
+            mask.setTo(alvision.Scalar.all(1));
+        }
 
-    Array<alvision.DMatch> matches;
-    matcher.match(loadMat(query), loadMat(train), matches, mask);
+        let matches = new Array<alvision.DMatch>();
+        matcher.match(alvision.loadMat(this.query), alvision.loadMat(this.train), matches, mask);
 
-    ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
+        alvision.ASSERT_EQ((this.queryDescCount), matches.length);
 
-    int badCount = 0;
-    for (size_t i = 0; i < matches.size(); i++)
-    {
-        alvision.DMatch match = matches[i];
-        if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i * countFactor) || (match.imgIdx != 0))
+        let badCount = 0;
+        for (let i = 0; i < matches.length; i++)
+        {
+            let match = matches[i];
+            if ((match.queryIdx != i) || (match.trainIdx != i * this.countFactor.valueOf()) || (match.imgIdx != 0))
             badCount++;
-    }
+        }
 
-    ASSERT_EQ(0, badCount);
+        alvision.ASSERT_EQ(0, badCount);
+    }
 }
 
-CUDA_TEST_P(BruteForceMatcher, Match_Collection)
+//CUDA_TEST_P(BruteForceMatcher, Match_Collection)
+class BruteForceMatcher_Match_Collection extends BruteForceMatcher
 {
-    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
-            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
+    TestBody(){
+    let matcher =
+            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
 
-    alvision.cuda::GpuMat d_train(train);
+    let d_train = new alvision.cuda.GpuMat (this.train);
 
     // make add() twice to test such case
-    matcher.add(Array<alvision.cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
-    matcher.add(Array<alvision.cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows.valueOf() / 2)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows.valueOf() / 2, this.train.rows.valueOf())));
 
     // prepare masks (make first nearest match illegal)
-    Array<alvision.cuda::GpuMat> masks(2);
-    for (int mi = 0; mi < 2; mi++)
+    let masks = new Array<alvision.cuda.GpuMat> (2);
+    for (let mi = 0; mi < 2; mi++)
     {
-        masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows/2, CV_8UC1, alvision.Scalar::all(1));
-        for (int di = 0; di < queryDescCount/2; di++)
-            masks[mi].col(di * countFactor).setTo(alvision.alvision.Scalar.all(0));
+        masks[mi] = new alvision.cuda.GpuMat(this.query.rows, this.train.rows.valueOf()/2,alvision.MatrixType. CV_8UC1, alvision.Scalar.all(1));
+        for (let di = 0; di < this.queryDescCount.valueOf()/2; di++)
+            masks[mi].col(di * this.countFactor.valueOf()).setTo(alvision.Scalar.all(0));
     }
 
-    Array<alvision.DMatch> matches;
-    if (useMask)
-        matcher.match(alvision.cuda::GpuMat(query), matches, masks);
+    let matches = new Array<alvision.DMatch>();
+    if (this.useMask)
+        matcher.match(new alvision.cuda.GpuMat(this.query), matches, masks);
     else
-        matcher.match(alvision.cuda::GpuMat(query), matches);
+        matcher.match(new alvision.cuda.GpuMat(this.query), matches);
 
-    ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
+    alvision.ASSERT_EQ((this.queryDescCount), matches.length);
 
-    int badCount = 0;
-    int shift = useMask ? 1 : 0;
-    for (size_t i = 0; i < matches.size(); i++)
+    let badCount = 0;
+    let shift = this.useMask ? 1 : 0;
+    for (let i = 0; i < matches.length; i++)
     {
-        alvision.DMatch match = matches[i];
+        let match = matches[i];
 
-        if ((int)i < queryDescCount / 2)
+        if (i < this.queryDescCount.valueOf() / 2)
         {
-            bool validQueryIdx = (match.queryIdx == (int)i);
-            bool validTrainIdx = (match.trainIdx == (int)i * countFactor + shift);
-            bool validImgIdx = (match.imgIdx == 0);
+            let validQueryIdx = (match.queryIdx == i);
+            let validTrainIdx = (match.trainIdx == i * this.countFactor.valueOf() + shift);
+            let validImgIdx = (match.imgIdx == 0);
             if (!validQueryIdx || !validTrainIdx || !validImgIdx)
                 badCount++;
         }
         else
         {
-            bool validQueryIdx = (match.queryIdx == (int)i);
-            bool validTrainIdx = (match.trainIdx == ((int)i - queryDescCount / 2) * countFactor + shift);
-            bool validImgIdx = (match.imgIdx == 1);
+            let validQueryIdx = (match.queryIdx == i);
+            let validTrainIdx = (match.trainIdx == (i - this.queryDescCount.valueOf() / 2) * this.countFactor.valueOf() + shift);
+            let validImgIdx = (match.imgIdx == 1);
             if (!validQueryIdx || !validTrainIdx || !validImgIdx)
                 badCount++;
         }
     }
 
-    ASSERT_EQ(0, badCount);
+        alvision.ASSERT_EQ(0, badCount);
+}
 }
 
-CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Single)
+//CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Single)
+class BruteForceMatcher_KnnMatch_2_Single extends BruteForceMatcher
 {
-    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
-            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
+    TestBody(){
+    let  matcher =
+            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
 
-    const int knn = 2;
+    const knn = 2;
 
-    alvision.cuda::GpuMat mask;
-    if (useMask)
+    let mask = new alvision.cuda.GpuMat();
+    if (this.useMask)
     {
-        mask.create(query.rows, train.rows, CV_8UC1);
-        mask.setTo(alvision.Scalar::all(1));
+        mask.create(this.query.rows, this.train.rows, alvision.MatrixType.CV_8UC1);
+        mask.setTo(alvision.Scalar.all(1));
     }
 
-    Array< Array<alvision.DMatch> > matches;
-    matcher.knnMatch(loadMat(query), loadMat(train), matches, knn, mask);
+    let matches = new Array<Array<alvision.DMatch>>();
+    matcher.knnMatch(alvision.loadMat(this.query), alvision.loadMat(this.train), matches, knn, mask);
 
-    ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
+    alvision.ASSERT_EQ((this.queryDescCount), matches.length);
 
-    int badCount = 0;
-    for (size_t i = 0; i < matches.size(); i++)
+    let badCount = 0;
+    for (let i = 0; i < matches.length; i++)
     {
-        if ((int)matches[i].size() != knn)
+        if (matches[i].length != knn)
             badCount++;
         else
         {
-            int localBadCount = 0;
-            for (int k = 0; k < knn; k++)
+            let localBadCount = 0;
+            for (let k = 0; k < knn; k++)
             {
-                alvision.DMatch match = matches[i][k];
-                if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i * countFactor + k) || (match.imgIdx != 0))
+                let match = matches[i][k];
+                if ((match.queryIdx != i) || (match.trainIdx != i * this.countFactor.valueOf() + k) || (match.imgIdx != 0))
                     localBadCount++;
             }
             badCount += localBadCount > 0 ? 1 : 0;
         }
     }
 
-    ASSERT_EQ(0, badCount);
+        alvision.ASSERT_EQ(0, badCount);
+}
 }
 
-CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Single)
-{
-    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
-            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
+//CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Single)
+class BruteForceMatcher_KnnMatch_3_Single extends BruteForceMatcher {
+    TestBody() {
+        let matcher =
+            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
 
-    const int knn = 3;
+        const knn = 3;
 
-    alvision.cuda::GpuMat mask;
-    if (useMask)
-    {
-        mask.create(query.rows, train.rows, CV_8UC1);
-        mask.setTo(alvision.Scalar::all(1));
-    }
-
-    Array< Array<alvision.DMatch> > matches;
-    matcher.knnMatch(loadMat(query), loadMat(train), matches, knn, mask);
-
-    ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
-
-    int badCount = 0;
-    for (size_t i = 0; i < matches.size(); i++)
-    {
-        if ((int)matches[i].size() != knn)
-            badCount++;
-        else
-        {
-            int localBadCount = 0;
-            for (int k = 0; k < knn; k++)
-            {
-                alvision.DMatch match = matches[i][k];
-                if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i * countFactor + k) || (match.imgIdx != 0))
-                    localBadCount++;
-            }
-            badCount += localBadCount > 0 ? 1 : 0;
+        let mask = new alvision.cuda.GpuMat();
+        if (this.useMask) {
+            mask.create(this.query.rows, this.train.rows, alvision.MatrixType.CV_8UC1);
+            mask.setTo(alvision.Scalar.all(1));
         }
-    }
 
-    ASSERT_EQ(0, badCount);
+        let matches = new Array<Array<alvision.DMatch>>();
+        matcher.knnMatch(alvision.loadMat(this.query), alvision.loadMat(this.train), matches, knn, mask);
+
+        alvision.ASSERT_EQ((this.queryDescCount), matches.length);
+
+        let badCount = 0;
+        for (let i = 0; i < matches.length; i++) {
+            if (matches[i].length != knn)
+                badCount++;
+            else {
+                let localBadCount = 0;
+                for (let k = 0; k < knn; k++) {
+                    let match = matches[i][k];
+                    if ((match.queryIdx != i) || (match.trainIdx != i * this.countFactor.valueOf() + k) || (match.imgIdx != 0))
+                        localBadCount++;
+                }
+                badCount += localBadCount > 0 ? 1 : 0;
+            }
+        }
+
+        alvision.ASSERT_EQ(0, badCount);
+    }
 }
 
-CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Collection)
+//CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Collection)
+class BruteForceMatcher_KnnMatch_2_Collection extends BruteForceMatcher
 {
-    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
-            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
+    TestBody(){
+    let matcher =
+            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
 
-    const int knn = 2;
+    const knn = 2;
 
-    alvision.cuda::GpuMat d_train(train);
+    let d_train = new alvision.cuda.GpuMat (this.train);
 
     // make add() twice to test such case
-    matcher.add(Array<alvision.cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
-    matcher.add(Array<alvision.cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows.valueOf() / 2)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows.valueOf() / 2, this.train.rows)));
 
     // prepare masks (make first nearest match illegal)
-    Array<alvision.cuda::GpuMat> masks(2);
-    for (int mi = 0; mi < 2; mi++ )
+    let masks = new Array<alvision.cuda.GpuMat> (2);
+    for (let mi = 0; mi < 2; mi++ )
     {
-        masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, alvision.Scalar::all(1));
-        for (int di = 0; di < queryDescCount / 2; di++)
-            masks[mi].col(di * countFactor).setTo(alvision.alvision.Scalar.all(0));
+        masks[mi] = new alvision.cuda.GpuMat(this.query.rows, this.train.rows.valueOf() / 2, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
+        for (let di = 0; di < this.queryDescCount.valueOf() / 2; di++)
+            masks[mi].col(di * this.countFactor.valueOf()).setTo(alvision.Scalar.all(0));
     }
 
-    Array< Array<alvision.DMatch> > matches;
+    let matches = new Array<Array<alvision.DMatch>>();
 
-    if (useMask)
-        matcher.knnMatch(alvision.cuda::GpuMat(query), matches, knn, masks);
+    if (this.useMask)
+        matcher.knnMatch(new alvision.cuda.GpuMat(this.query), matches, knn, masks);
     else
-        matcher.knnMatch(alvision.cuda::GpuMat(query), matches, knn);
+        matcher.knnMatch(new alvision.cuda.GpuMat(this.query), matches, knn);
 
-    ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
+    alvision.ASSERT_EQ((this.queryDescCount), matches.length);
 
-    int badCount = 0;
-    int shift = useMask ? 1 : 0;
-    for (size_t i = 0; i < matches.size(); i++)
+    let badCount = 0;
+    let shift = this.useMask ? 1 : 0;
+    for (let i = 0; i < matches.length; i++)
     {
-        if ((int)matches[i].size() != knn)
+        if (matches[i].length != knn)
             badCount++;
         else
         {
-            int localBadCount = 0;
-            for (int k = 0; k < knn; k++)
+            let localBadCount = 0;
+            for (let k = 0; k < knn; k++)
             {
-                alvision.DMatch match = matches[i][k];
+                let match = matches[i][k];
                 {
-                    if ((int)i < queryDescCount / 2)
+                    if (i < this.queryDescCount.valueOf() / 2)
                     {
-                        if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i * countFactor + k + shift) || (match.imgIdx != 0) )
+                        if ((match.queryIdx != i) || (match.trainIdx != i * this.countFactor.valueOf() + k + shift) || (match.imgIdx != 0) )
                             localBadCount++;
                     }
                     else
                     {
-                        if ((match.queryIdx != (int)i) || (match.trainIdx != ((int)i - queryDescCount / 2) * countFactor + k + shift) || (match.imgIdx != 1) )
+                        if ((match.queryIdx != i) || (match.trainIdx != (i - this.queryDescCount.valueOf() / 2) * this.countFactor.valueOf() + k + shift) || (match.imgIdx != 1) )
                             localBadCount++;
                     }
                 }
@@ -514,61 +526,64 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_2_Collection)
         }
     }
 
-    ASSERT_EQ(0, badCount);
+        alvision.ASSERT_EQ(0, badCount);
+}
 }
 
-CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Collection)
+//CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Collection)
+class BruteForceMatcher_KnnMatch_3_Collection extends BruteForceMatcher
 {
-    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
-            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
+    TestBody(){
+    let matcher =
+            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
 
-    const int knn = 3;
+    const knn = 3;
 
-    alvision.cuda::GpuMat d_train(train);
+    let d_train = new alvision.cuda.GpuMat (this.train);
 
     // make add() twice to test such case
-    matcher.add(Array<alvision.cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
-    matcher.add(Array<alvision.cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows.valueOf() / 2)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows.valueOf() / 2, this.train.rows.valueOf())));
 
     // prepare masks (make first nearest match illegal)
-    Array<alvision.cuda::GpuMat> masks(2);
-    for (int mi = 0; mi < 2; mi++ )
+    let masks = new Array<alvision.cuda.GpuMat> (2);
+    for (let mi = 0; mi < 2; mi++ )
     {
-        masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, alvision.Scalar::all(1));
-        for (int di = 0; di < queryDescCount / 2; di++)
-            masks[mi].col(di * countFactor).setTo(alvision.alvision.Scalar.all(0));
+        masks[mi] = new alvision.cuda.GpuMat(this.query.rows, this.train.rows.valueOf() / 2, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
+        for (let di = 0; di < this.queryDescCount.valueOf() / 2; di++)
+            masks[mi].col(di * this.countFactor.valueOf()).setTo(alvision.Scalar.all(0));
     }
 
-    Array< Array<alvision.DMatch> > matches;
+    let matches = new Array<Array<alvision.DMatch>>();
 
-    if (useMask)
-        matcher.knnMatch(alvision.cuda::GpuMat(query), matches, knn, masks);
+    if (this.useMask)
+        matcher.knnMatch(new alvision.cuda.GpuMat(this.query), matches, knn, masks);
     else
-        matcher.knnMatch(alvision.cuda::GpuMat(query), matches, knn);
+        matcher.knnMatch(new alvision.cuda.GpuMat(this.query), matches, knn);
 
-    ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
+    alvision.ASSERT_EQ((this.queryDescCount), matches.length);
 
-    int badCount = 0;
-    int shift = useMask ? 1 : 0;
-    for (size_t i = 0; i < matches.size(); i++)
+    let badCount = 0;
+    let shift = this.useMask ? 1 : 0;
+    for(let i = 0; i < matches.length; i++)
     {
-        if ((int)matches[i].size() != knn)
+        if (matches[i].length != knn)
             badCount++;
         else
         {
-            int localBadCount = 0;
-            for (int k = 0; k < knn; k++)
+            let localBadCount = 0;
+            for (let k = 0; k < knn; k++)
             {
-                alvision.DMatch match = matches[i][k];
+                let match = matches[i][k];
                 {
-                    if ((int)i < queryDescCount / 2)
+                    if (i < this.queryDescCount.valueOf() / 2)
                     {
-                        if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i * countFactor + k + shift) || (match.imgIdx != 0) )
+                        if ((match.queryIdx != i) || (match.trainIdx != i * this.countFactor.valueOf() + k + shift) || (match.imgIdx != 0) )
                             localBadCount++;
                     }
                     else
                     {
-                        if ((match.queryIdx != (int)i) || (match.trainIdx != ((int)i - queryDescCount / 2) * countFactor + k + shift) || (match.imgIdx != 1) )
+                        if ((match.queryIdx != i) || (match.trainIdx != (i - this.queryDescCount.valueOf() / 2) * this.countFactor.valueOf() + k + shift) || (match.imgIdx != 1) )
                             localBadCount++;
                     }
                 }
@@ -577,127 +592,133 @@ CUDA_TEST_P(BruteForceMatcher, KnnMatch_3_Collection)
         }
     }
 
-    ASSERT_EQ(0, badCount);
+        alvision.ASSERT_EQ(0, badCount);
+}
 }
 
-CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Single)
+//CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Single)
+class BruteForceMatcher_RadiusMatch_Single extends BruteForceMatcher
 {
-    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
-            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
+    TestBody(){
+    let matcher =
+            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
 
-    const float radius = 1.f / countFactor;
+    const radius = 1./ this.countFactor.valueOf();
 
-    if (!supportFeature(devInfo, alvision.cuda::GLOBAL_ATOMICS))
+    if (!alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.GLOBAL_ATOMICS))
     {
         try
         {
-            Array< Array<alvision.DMatch> > matches;
-            matcher.radiusMatch(loadMat(query), loadMat(train), matches, radius);
+            let matches = new Array<Array<alvision.DMatch>>();
+            matcher.radiusMatch(alvision.loadMat(this.query), alvision.loadMat(this.train), matches, radius);
         }
         catch(e)
         {
-            ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
+            alvision.ASSERT_EQ(alvision.cv.Error.Code.StsNotImplemented, e.code);
         }
     }
     else
     {
-        alvision.cuda::GpuMat mask;
-        if (useMask)
+        let mask = new alvision.cuda.GpuMat();
+        if (this.useMask)
         {
-            mask.create(query.rows, train.rows, CV_8UC1);
-            mask.setTo(alvision.Scalar::all(1));
+            mask.create(this.query.rows, this.train.rows,alvision.MatrixType. CV_8UC1);
+            mask.setTo(alvision.Scalar.all(1));
         }
 
-        Array< Array<alvision.DMatch> > matches;
-        matcher.radiusMatch(loadMat(query), loadMat(train), matches, radius, mask);
+        let matches = new Array<Array<alvision.DMatch>>();
+        matcher.radiusMatch(alvision.loadMat(this.query), alvision.loadMat(this.train), matches, radius, mask);
 
-        ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
+        alvision.ASSERT_EQ((this.queryDescCount), matches.length);
 
-        int badCount = 0;
-        for (size_t i = 0; i < matches.size(); i++)
+        let badCount = 0;
+        for(let i = 0; i < matches.length; i++)
         {
-            if ((int)matches[i].size() != 1)
+            if (matches[i].length != 1)
                 badCount++;
             else
             {
-                alvision.DMatch match = matches[i][0];
-                if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i*countFactor) || (match.imgIdx != 0))
+                let match = matches[i][0];
+                if ((match.queryIdx != i) || (match.trainIdx != i*this.countFactor.valueOf()) || (match.imgIdx != 0))
                     badCount++;
             }
         }
 
-        ASSERT_EQ(0, badCount);
+        alvision.ASSERT_EQ(0, badCount);
     }
 }
+}
 
-CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Collection)
+//CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Collection)
+class BruteForceMatcher_RadiusMatch_Collection extends BruteForceMatcher
 {
-    alvision.Ptr<alvision.cuda::DescriptorMatcher> matcher =
-            alvision.cuda::DescriptorMatcher::createBFMatcher(normCode);
+    TestBody(){
+    let matcher =
+            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
 
-    const int n = 3;
-    const float radius = 1.f / countFactor * n;
+    const n = 3;
+    const radius = 1. / this.countFactor.valueOf() * n;
 
-    alvision.cuda::GpuMat d_train(train);
+    let d_train = new alvision.cuda.GpuMat (this.train);
 
     // make add() twice to test such case
-    matcher.add(Array<alvision.cuda::GpuMat>(1, d_train.rowRange(0, train.rows / 2)));
-    matcher.add(Array<alvision.cuda::GpuMat>(1, d_train.rowRange(train.rows / 2, train.rows)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows.valueOf() / 2)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows.valueOf() / 2, this.train.rows)));
 
     // prepare masks (make first nearest match illegal)
-    Array<alvision.cuda::GpuMat> masks(2);
-    for (int mi = 0; mi < 2; mi++)
+    let masks = new Array<alvision.cuda.GpuMat> (2);
+    for (let mi = 0; mi < 2; mi++)
     {
-        masks[mi] = alvision.cuda::GpuMat(query.rows, train.rows / 2, CV_8UC1, alvision.Scalar::all(1));
-        for (int di = 0; di < queryDescCount / 2; di++)
-            masks[mi].col(di * countFactor).setTo(alvision.alvision.Scalar.all(0));
+        masks[mi] =new alvision.cuda.GpuMat(this.query.rows, this.train.rows.valueOf() / 2, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
+        for (let di = 0; di < this.queryDescCount.valueOf() / 2; di++)
+            masks[mi].col(di * this.countFactor.valueOf()).setTo(alvision.Scalar.all(0));
     }
 
-    if (!supportFeature(devInfo, alvision.cuda::GLOBAL_ATOMICS))
+    if (!alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.GLOBAL_ATOMICS))
     {
         try
         {
-            Array< Array<alvision.DMatch> > matches;
-            matcher.radiusMatch(alvision.cuda::GpuMat(query), matches, radius, masks);
+            let matches = new Array<Array<alvision.DMatch>>();
+            matcher.radiusMatch(new alvision.cuda.GpuMat(this.query), matches, radius, masks);
         }
         catch(e)
         {
-            ASSERT_EQ(alvision.Error::StsNotImplemented, e.code);
+            alvision.ASSERT_EQ(alvision.cv.Error.Code.StsNotImplemented, e.code);
         }
     }
     else
     {
-        Array< Array<alvision.DMatch> > matches;
+        let matches = new Array<Array<alvision.DMatch>>();
 
-        if (useMask)
-            matcher.radiusMatch(alvision.cuda::GpuMat(query), matches, radius, masks);
+        if (this.useMask)
+            matcher.radiusMatch(new alvision.cuda.GpuMat(this.query), matches, radius, masks);
         else
-            matcher.radiusMatch(alvision.cuda::GpuMat(query), matches, radius);
+            matcher.radiusMatch(new alvision.cuda.GpuMat(this.query), matches, radius);
 
-        ASSERT_EQ(static_cast<size_t>(queryDescCount), matches.size());
+        alvision.ASSERT_EQ((this.queryDescCount), matches.length);
 
-        int badCount = 0;
-        int shift = useMask ? 1 : 0;
-        int needMatchCount = useMask ? n-1 : n;
-        for (size_t i = 0; i < matches.size(); i++)
+        let badCount = 0;
+        let shift = this.useMask ? 1 : 0;
+        let needMatchCount = this.useMask ? n-1 : n;
+        for(let i = 0; i < matches.length; i++)
         {
-            if ((int)matches[i].size() != needMatchCount)
+            if (matches[i].length != needMatchCount)
                 badCount++;
             else
             {
-                int localBadCount = 0;
-                for (int k = 0; k < needMatchCount; k++)
+                let localBadCount = 0;
+                for (let k = 0; k < needMatchCount; k++)
                 {
-                    alvision.DMatch match = matches[i][k];
+                    let match = matches[i][k];
                     {
-                        if ((int)i < queryDescCount / 2)
+                        if (i < this.queryDescCount.valueOf() / 2)
                         {
-                            if ((match.queryIdx != (int)i) || (match.trainIdx != (int)i * countFactor + k + shift) || (match.imgIdx != 0) )
+                            if ((match.queryIdx != i) || (match.trainIdx != i * this.countFactor.valueOf() + k + shift) || (match.imgIdx != 0) )
                                 localBadCount++;
                         }
                         else
                         {
-                            if ((match.queryIdx != (int)i) || (match.trainIdx != ((int)i - queryDescCount / 2) * countFactor + k + shift) || (match.imgIdx != 1) )
+                            if ((match.queryIdx != i) || (match.trainIdx != (i - this.queryDescCount.valueOf() / 2) * this.countFactor.valueOf() + k + shift) || (match.imgIdx != 1) )
                                 localBadCount++;
                         }
                     }
@@ -706,14 +727,16 @@ CUDA_TEST_P(BruteForceMatcher, RadiusMatch_Collection)
             }
         }
 
-        ASSERT_EQ(0, badCount);
+        alvision.ASSERT_EQ(0, badCount);
     }
 }
+}
 
-INSTANTIATE_TEST_CASE_P(CUDA_Features2D, BruteForceMatcher, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(NormCode(alvision.NORM_L1), NormCode(alvision.NORM_L2)),
-    testing::Values(DescriptorSize(57), DescriptorSize(64), DescriptorSize(83), DescriptorSize(128), DescriptorSize(179), DescriptorSize(256), DescriptorSize(304)),
-    testing::Values(UseMask(false), UseMask(true))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Features2D', 'BruteForceMatcher', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [alvision.NormTypes.NORM_L1,alvision.NormTypes.NORM_L2],
+    [57,64,83,128,179,256,304],
+    [false,true],
+    ]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA
