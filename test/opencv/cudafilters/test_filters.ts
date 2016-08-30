@@ -48,611 +48,661 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
-#ifdef HAVE_CUDA
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(KSize, alvision.Size)
+//    IMPLEMENT_PARAM_CLASS(Anchor, alvision.Point)
+//    IMPLEMENT_PARAM_CLASS(Deriv_X, int)
+//    IMPLEMENT_PARAM_CLASS(Deriv_Y, int)
+//    IMPLEMENT_PARAM_CLASS(Iterations, int)
 
-using namespace cvtest;
-
-namespace
-{
-    IMPLEMENT_PARAM_CLASS(KSize, alvision.Size)
-    IMPLEMENT_PARAM_CLASS(Anchor, alvision.Point)
-    IMPLEMENT_PARAM_CLASS(Deriv_X, int)
-    IMPLEMENT_PARAM_CLASS(Deriv_Y, int)
-    IMPLEMENT_PARAM_CLASS(Iterations, int)
-
-    alvision.Mat getInnerROI(alvision.InputArray m_, alvision.Size ksize)
+function getInnerROI(m_: alvision.InputArray, ksize: alvision.Size ): alvision.Mat 
     {
-        alvision.Mat m = getMat(m_);
-        alvision.Rect roi(ksize.width, ksize.height, m.cols - 2 * ksize.width, m.rows - 2 * ksize.height);
-        return m(roi);
+    //let m = getMat(m_);
+    let m = <alvision.Mat>m_;
+        let roi = new alvision.Rect (ksize.width, ksize.height, m.cols.valueOf() - 2 * ksize.width.valueOf(), m.rows.valueOf() - 2 * ksize.height.valueOf());
+        return m.roi(roi);
     }
 
-    alvision.Mat getInnerROI(alvision.InputArray m, int ksize)
-    {
-        return getInnerROI(m, alvision.Size(ksize, ksize));
-    }
-}
+//function getInnerROI(m: alvision.InputArray, ksize: alvision.int ): alvision.Mat
+//    {
+//        return getInnerROI(m,new alvision.Size(ksize, ksize));
+//    }
+//}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Blur
 
-PARAM_TEST_CASE(Blur, alvision.cuda::DeviceInfo, alvision.Size, MatType, KSize, Anchor, BorderType, UseRoi)
+//PARAM_TEST_CASE(Blur, alvision.cuda.DeviceInfo, alvision.Size, MatType, KSize, Anchor, BorderType, UseRoi)
+class Blur extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    alvision.Size ksize;
-    alvision.Point anchor;
-    int borderType;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected ksize: alvision.Size;
+    protected anchor: alvision.Point;
+    protected borderType: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        ksize = GET_PARAM(3);
-        anchor = GET_PARAM(4);
-        borderType = GET_PARAM(5);
-        useRoi = GET_PARAM(6);
+        this.devInfo =    this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =       this.GET_PARAM<alvision.Size>(1);
+        this.type = this.GET_PARAM<alvision.int>(2);
+        this.ksize = this.GET_PARAM<alvision.Size>(3);
+        this.anchor =     this.GET_PARAM<alvision.Point>(4);
+        this.borderType = this.GET_PARAM<alvision.int>(5);
+        this.useRoi =     this.GET_PARAM<boolean>(6);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Blur, Accuracy)
+//CUDA_TEST_P(Blur, Accuracy)
+class Blur_Accuracy extends Blur
 {
-    alvision.Mat src = randomMat(size, type);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
 
-    alvision.Ptr<alvision.cuda::Filter> blurFilter = alvision.cuda::createBoxFilter(src.type(), -1, ksize, anchor, borderType);
+        let blurFilter = alvision.cudafilters.createBoxFilter(src.type(), -1, this.ksize, this.anchor, this.borderType);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    blurFilter.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.type, this.useRoi);
+        blurFilter.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.blur(src, dst_gold, ksize, anchor, borderType);
+        let dst_gold = new alvision.Mat();
+        alvision.blur(src, dst_gold, this.ksize, this.anchor, this.borderType);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, Blur, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC4)),
-    testing::Values(KSize(alvision.Size(3, 3)), KSize(alvision.Size(5, 5)), KSize(alvision.Size(7, 7))),
-    testing::Values(Anchor(alvision.Point(-1, -1)), Anchor(alvision.Point(0, 0)), Anchor(alvision.Point(2, 2))),
-    testing::Values(BorderType(alvision.BORDER_REFLECT101), BorderType(alvision.BORDER_REPLICATE), BorderType(alvision.BORDER_CONSTANT), BorderType(alvision.BORDER_REFLECT)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'Blur', (case_name, test_name) => { return null; },new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC4],
+    [new alvision.Size(3, 3),new alvision.Size(5, 5),new alvision.Size(7, 7)],
+    [new alvision.Point(-1, -1), new alvision.Point(0, 0), new alvision.Point(2, 2)],
+    [alvision.BorderTypes.BORDER_REFLECT101, alvision.BorderTypes.BORDER_REPLICATE, alvision.BorderTypes.BORDER_CONSTANT, alvision.BorderTypes.BORDER_REFLECT],
+    alvision.WHOLE_SUBMAT
+    ]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Filter2D
 
-PARAM_TEST_CASE(Filter2D, alvision.cuda::DeviceInfo, alvision.Size, MatType, KSize, Anchor, BorderType, UseRoi)
+//PARAM_TEST_CASE(Filter2D, alvision.cuda.DeviceInfo, alvision.Size, MatType, KSize, Anchor, BorderType, UseRoi)
+class Filter2D extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    alvision.Size ksize;
-    alvision.Point anchor;
-    int borderType;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected ksize: alvision.Size;
+    protected anchor: alvision.Point;
+    protected borderType: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        ksize = GET_PARAM(3);
-        anchor = GET_PARAM(4);
-        borderType = GET_PARAM(5);
-        useRoi = GET_PARAM(6);
+        this.devInfo =    this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =       this.GET_PARAM<alvision.Size>(1);
+        this.type =       this.GET_PARAM<alvision.int>(2);
+        this.ksize =      this.GET_PARAM<alvision.Size>(3);
+        this.anchor =     this.GET_PARAM<alvision.Point>(4);
+        this.borderType = this.GET_PARAM<alvision.int>(5);
+        this.useRoi =     this.GET_PARAM<boolean>(6);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Filter2D, Accuracy)
+//CUDA_TEST_P(Filter2D, Accuracy)
+class Filter2D_Accuracy extends Filter2D
 {
-    alvision.Mat src = randomMat(size, type);
-    alvision.Mat kernel = randomMat(alvision.Size(ksize.width, ksize.height), CV_32FC1, 0.0, 1.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
+        let kernel = alvision.randomMat(new alvision.Size(this.ksize.width, this.ksize.height), alvision.MatrixType.CV_32FC1, 0.0, 1.0);
 
-    alvision.Ptr<alvision.cuda::Filter> filter2D = alvision.cuda::createLinearFilter(src.type(), -1, kernel, anchor, borderType);
+        let filter2D = alvision.cudafilters.createLinearFilter(src.type(), -1, kernel, this.anchor, this.borderType);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    filter2D.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size,this. type,this. useRoi);
+        filter2D.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.filter2D(src, dst_gold, -1, kernel, anchor, 0, borderType);
+        let dst_gold = new alvision.Mat();
+        alvision.filter2D(src, dst_gold, -1, kernel,this. anchor, 0, this.borderType);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, CV_MAT_DEPTH(type) == CV_32F ? 1e-1 : 1.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst,alvision.MatrixType. CV_MAT_DEPTH(this.type) == alvision.MatrixType.CV_32F ? 1e-1 : 1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, Filter2D, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC4), MatType(CV_16UC1), MatType(CV_16UC4), MatType(CV_32FC1), MatType(CV_32FC4)),
-    testing::Values(KSize(alvision.Size(3, 3)), KSize(alvision.Size(5, 5)), KSize(alvision.Size(7, 7)), KSize(alvision.Size(11, 11)), KSize(alvision.Size(13, 13)), KSize(alvision.Size(15, 15))),
-    testing::Values(Anchor(alvision.Point(-1, -1)), Anchor(alvision.Point(0, 0)), Anchor(alvision.Point(2, 2))),
-    testing::Values(BorderType(alvision.BORDER_REFLECT101), BorderType(alvision.BORDER_REPLICATE), BorderType(alvision.BORDER_CONSTANT), BorderType(alvision.BORDER_REFLECT)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'Filter2D', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC4,alvision.MatrixType.CV_16UC1,alvision.MatrixType.CV_16UC4,alvision.MatrixType.CV_32FC1,alvision.MatrixType.CV_32FC4],
+    [new alvision.Size(3, 3),new alvision.Size(5, 5),new alvision.Size(7, 7),new alvision.Size(11, 11),new alvision.Size(13, 13),new alvision.Size(15, 15)],
+    [new alvision.Point(-1, -1),new alvision.Point(0, 0),new alvision.Point(2, 2)],
+    [alvision.BorderTypes.BORDER_REFLECT101,alvision.BorderTypes.BORDER_REPLICATE,alvision.BorderTypes.BORDER_CONSTANT,alvision.BorderTypes.BORDER_REFLECT],
+    alvision.WHOLE_SUBMAT
+]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Laplacian
 
-PARAM_TEST_CASE(Laplacian, alvision.cuda::DeviceInfo, alvision.Size, MatType, KSize, UseRoi)
+//PARAM_TEST_CASE(Laplacian, alvision.cuda.DeviceInfo, alvision.Size, MatType, KSize, UseRoi)
+class Laplacian extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    alvision.Size ksize;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected ksize: alvision.Size;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        ksize = GET_PARAM(3);
-        useRoi = GET_PARAM(4);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.type =    this.GET_PARAM<alvision.int>(2);
+        this.ksize =   this.GET_PARAM<alvision.Size>(3);
+        this.useRoi =  this.GET_PARAM<boolean>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Laplacian, Accuracy)
+//CUDA_TEST_P(Laplacian, Accuracy)
+class Laplacian_Accuracy extends Laplacian
 {
-    alvision.Mat src = randomMat(size, type);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
 
-    alvision.Ptr<alvision.cuda::Filter> laplacian = alvision.cuda::createLaplacianFilter(src.type(), -1, ksize.width);
+        let laplacian = alvision.cudafilters.createLaplacianFilter(src.type(), -1, this.ksize.width);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    laplacian.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.type, this.useRoi);
+        laplacian.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.Laplacian(src, dst_gold, -1, ksize.width);
+        let dst_gold = new alvision.Mat();
+        alvision.Laplacian(src, dst_gold, -1, this.ksize.width);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < CV_32F ? 0.0 : 1e-3);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < alvision.MatrixType.CV_32F ? 0.0 : 1e-3);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, Laplacian, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC4), MatType(CV_32FC1)),
-    testing::Values(KSize(alvision.Size(1, 1)), KSize(alvision.Size(3, 3))),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'Laplacian', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC4,alvision.MatrixType.CV_32FC1],
+    [new alvision.Size(1, 1),new alvision.Size(3, 3)],
+    alvision.WHOLE_SUBMAT
+]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // SeparableLinearFilter
 
-PARAM_TEST_CASE(SeparableLinearFilter, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, Channels, KSize, Anchor, BorderType, UseRoi)
+//PARAM_TEST_CASE(SeparableLinearFilter, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, Channels, KSize, Anchor, BorderType, UseRoi)
+class SeparableLinearFilter extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    int cn;
-    alvision.Size ksize;
-    alvision.Point anchor;
-    int borderType;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected depth: alvision.int;
+    protected cn: alvision.int;
+    protected ksize: alvision.Size;
+    protected anchor: alvision.Point;
+    protected borderType: alvision.int;
+    protected useRoi: boolean;
 
-    int type;
+    protected type: alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        cn = GET_PARAM(3);
-        ksize = GET_PARAM(4);
-        anchor = GET_PARAM(5);
-        borderType = GET_PARAM(6);
-        useRoi = GET_PARAM(7);
+        this.devInfo =    this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =       this.GET_PARAM<alvision.Size>(1);
+        this.depth =      this.GET_PARAM<alvision.int>(2);
+        this.cn =         this.GET_PARAM<alvision.int>(3);
+        this.ksize =      this.GET_PARAM<alvision.Size>(4);
+        this.anchor =     this.GET_PARAM<alvision.Point>(5);
+        this.borderType = this.GET_PARAM<alvision.int>(6);
+        this.useRoi =     this.GET_PARAM<boolean>(7);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        type = CV_MAKE_TYPE(depth, cn);
+        this.type = alvision.MatrixType.CV_MAKETYPE(this.depth, this.cn);
     }
 };
 
-CUDA_TEST_P(SeparableLinearFilter, Accuracy)
+//CUDA_TEST_P(SeparableLinearFilter, Accuracy)
+class SeparableLinearFilter_Accuracy extends SeparableLinearFilter
 {
-    alvision.Mat src = randomMat(size, type);
-    alvision.Mat rowKernel = randomMat(Size(ksize.width, 1), CV_32FC1, 0.0, 1.0);
-    alvision.Mat columnKernel = randomMat(Size(ksize.height, 1), CV_32FC1, 0.0, 1.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size,this. type);
+        let rowKernel = alvision.randomMat(new alvision.Size(this.ksize.width, 1), alvision.MatrixType.CV_32FC1, 0.0, 1.0);
+        let columnKernel = alvision.randomMat(new alvision.Size(this.ksize.height, 1), alvision.MatrixType.CV_32FC1, 0.0, 1.0);
 
-    alvision.Ptr<alvision.cuda::Filter> filter = alvision.cuda::createSeparableLinearFilter(src.type(), -1, rowKernel, columnKernel, anchor, borderType);
+        let filter = alvision.cudafilters.createSeparableLinearFilter(src.type(), -1, rowKernel, columnKernel, this.anchor, this.borderType);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    filter.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.type, this.useRoi);
+        filter.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.sepFilter2D(src, dst_gold, -1, rowKernel, columnKernel, anchor, 0, borderType);
+        let dst_gold = new alvision.Mat();
+        alvision.sepFilter2D(src, dst_gold, -1, rowKernel, columnKernel,this. anchor, 0, this.borderType);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < CV_32F ? 1.0 : 1e-2);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < alvision.MatrixType.CV_32F ? 1.0 : 1e-2);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, SeparableLinearFilter, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U), MatDepth(CV_16U), MatDepth(CV_16S), MatDepth(CV_32F)),
-    IMAGE_CHANNELS,
-    testing::Values(KSize(alvision.Size(3, 3)),
-                    KSize(alvision.Size(7, 7)),
-                    KSize(alvision.Size(13, 13)),
-                    KSize(alvision.Size(15, 15)),
-                    KSize(alvision.Size(17, 17)),
-                    KSize(alvision.Size(23, 15)),
-                    KSize(alvision.Size(31, 3))),
-    testing::Values(Anchor(alvision.Point(-1, -1)), Anchor(alvision.Point(0, 0)), Anchor(alvision.Point(2, 2))),
-    testing::Values(BorderType(alvision.BORDER_REFLECT101),
-                    BorderType(alvision.BORDER_REPLICATE),
-                    BorderType(alvision.BORDER_CONSTANT),
-                    BorderType(alvision.BORDER_REFLECT)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'SeparableLinearFilter', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,alvision.MatrixType.CV_16U,alvision.MatrixType.CV_16S,alvision.MatrixType.CV_32F],
+    alvision.IMAGE_CHANNELS,
+    [new alvision.Size(3, 3),
+    new alvision.Size(7, 7),
+    new alvision.Size(13, 13),
+    new alvision.Size(15, 15),
+    new alvision.Size(17, 17),
+    new alvision.Size(23, 15),
+    new alvision.Size(31, 3)],
+    [new alvision.Point(-1, -1), new alvision.Point(0, 0),new alvision.Point(2, 2)],
+    [alvision.BorderTypes.BORDER_REFLECT101,
+    alvision.BorderTypes.BORDER_REPLICATE,
+    alvision.BorderTypes.BORDER_CONSTANT,
+    alvision.BorderTypes.BORDER_REFLECT],
+    alvision.WHOLE_SUBMAT
+]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Sobel
 
-PARAM_TEST_CASE(Sobel, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, Channels, KSize, Deriv_X, Deriv_Y, BorderType, UseRoi)
+//PARAM_TEST_CASE(Sobel, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, Channels, KSize, Deriv_X, Deriv_Y, BorderType, UseRoi)
+class Sobel extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    int cn;
-    alvision.Size ksize;
-    int dx;
-    int dy;
-    int borderType;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected depth: alvision.int;
+    protected cn: alvision.int;
+    protected ksize: alvision.Size;
+    protected dx: alvision.int;
+    protected dy: alvision.int;
+    protected borderType: alvision.int;
+    protected useRoi: boolean;
 
-    int type;
+    protected type: alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        cn = GET_PARAM(3);
-        ksize = GET_PARAM(4);
-        dx = GET_PARAM(5);
-        dy = GET_PARAM(6);
-        borderType = GET_PARAM(7);
-        useRoi = GET_PARAM(8);
+        this.devInfo =    this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =       this.GET_PARAM<alvision.Size>(1);
+        this.depth =      this.GET_PARAM<alvision.int>(2);
+        this.cn =         this.GET_PARAM<alvision.int>(3);
+        this.ksize =      this.GET_PARAM<alvision.Size>(4);
+        this.dx =         this.GET_PARAM<alvision.int>(5);
+        this.dy =         this.GET_PARAM<alvision.int>(6);
+        this.borderType = this.GET_PARAM<alvision.int>(7);
+        this.useRoi =     this.GET_PARAM<boolean>(8);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        type = CV_MAKE_TYPE(depth, cn);
+        this.type = alvision.MatrixType.CV_MAKETYPE(this.depth, this.cn);
     }
 };
 
-CUDA_TEST_P(Sobel, Accuracy)
+//CUDA_TEST_P(Sobel, Accuracy)
+class Sobel_Accuracy extends Sobel
 {
-    if (dx == 0 && dy == 0)
-        return;
+    TestBody() {
+        if (this.dx == 0 && this.dy == 0)
+            return;
 
-    alvision.Mat src = randomMat(size, type);
+        let src = alvision.randomMat(this.size, this.type);
 
-    alvision.Ptr<alvision.cuda::Filter> sobel = alvision.cuda::createSobelFilter(src.type(), -1, dx, dy, ksize.width, 1.0, borderType);
+        let sobel = alvision.cudafilters.createSobelFilter(src.type(), -1, this.dx, this.dy, this.ksize.width, 1.0, this.borderType);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    sobel.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.type, this.useRoi);
+        sobel.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.Sobel(src, dst_gold, -1, dx, dy, ksize.width, 1.0, 0.0, borderType);
+        let dst_gold = new alvision.Mat();
+        alvision.Sobel(src, dst_gold, -1, this.dx, this.dy, this.ksize.width, 1.0, 0.0, this.borderType);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < CV_32F ? 0.0 : 0.1);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < alvision.MatrixType.CV_32F ? 0.0 : 0.1);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, Sobel, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U), MatDepth(CV_16U), MatDepth(CV_16S), MatDepth(CV_32F)),
-    IMAGE_CHANNELS,
-    testing::Values(KSize(alvision.Size(3, 3)), KSize(alvision.Size(5, 5)), KSize(alvision.Size(7, 7))),
-    testing::Values(Deriv_X(0), Deriv_X(1), Deriv_X(2)),
-    testing::Values(Deriv_Y(0), Deriv_Y(1), Deriv_Y(2)),
-    testing::Values(BorderType(alvision.BORDER_REFLECT101),
-                    BorderType(alvision.BORDER_REPLICATE),
-                    BorderType(alvision.BORDER_CONSTANT),
-                    BorderType(alvision.BORDER_REFLECT)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'Sobel', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U, alvision.MatrixType.CV_16U, alvision.MatrixType.CV_16S, alvision.MatrixType.CV_32F],
+    alvision.IMAGE_CHANNELS,
+    [new alvision.Size(3, 3), new alvision.Size(5, 5), new alvision.Size(7, 7)],
+    [0,1,2],
+    [0,1,2],
+     [alvision.BorderTypes.BORDER_REFLECT101,
+     alvision.BorderTypes.BORDER_REPLICATE,
+     alvision.BorderTypes.BORDER_CONSTANT,
+     alvision.BorderTypes.BORDER_REFLECT],
+    alvision.WHOLE_SUBMAT
+]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Scharr
 
-PARAM_TEST_CASE(Scharr, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, Channels, Deriv_X, Deriv_Y, BorderType, UseRoi)
+//PARAM_TEST_CASE(Scharr, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, Channels, Deriv_X, Deriv_Y, BorderType, UseRoi)
+class Scharr extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    int cn;
-    int dx;
-    int dy;
-    int borderType;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size 
+    protected depth : alvision.int;
+    protected cn: alvision.int;
+    protected dx: alvision.int;
+    protected dy: alvision.int;
+    protected borderType: alvision.int;
+    protected useRoi : boolean;
 
-    int type;
+    protected type:alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        cn = GET_PARAM(3);
-        dx = GET_PARAM(4);
-        dy = GET_PARAM(5);
-        borderType = GET_PARAM(6);
-        useRoi = GET_PARAM(7);
+        this.devInfo =    this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =       this.GET_PARAM<alvision.Size>(1);
+        this.depth =      this.GET_PARAM<alvision.int>(2);
+        this.cn =         this.GET_PARAM<alvision.int>(3);
+        this.dx =         this.GET_PARAM<alvision.int>(4);
+        this.dy =         this.GET_PARAM<alvision.int>(5);
+        this.borderType = this.GET_PARAM<alvision.int>(6);
+        this.useRoi =     this.GET_PARAM<boolean>(7);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        type = CV_MAKE_TYPE(depth, cn);
+        this.type = alvision.MatrixType.CV_MAKETYPE(this.depth, this.cn);
     }
 };
 
-CUDA_TEST_P(Scharr, Accuracy)
+//CUDA_TEST_P(Scharr, Accuracy)
+class Scharr_Accuracy extends Scharr
 {
-    if (dx + dy != 1)
-        return;
+    TestBody() {
+        if (this.dx.valueOf() + this.dy.valueOf() != 1)
+            return;
 
-    alvision.Mat src = randomMat(size, type);
+        let src = alvision.randomMat(this.size, this.type);
 
-    alvision.Ptr<alvision.cuda::Filter> scharr = alvision.cuda::createScharrFilter(src.type(), -1, dx, dy, 1.0, borderType);
+        let scharr = alvision.cudafilters.createScharrFilter(src.type(), -1, this.dx, this.dy, 1.0, this.borderType);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    scharr.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size,this. type, this.useRoi);
+        scharr.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.Scharr(src, dst_gold, -1, dx, dy, 1.0, 0.0, borderType);
+        let dst_gold = new alvision.Mat();
+        alvision.Scharr(src, dst_gold, -1, this.dx, this.dy, 1.0, 0.0, this.borderType);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < CV_32F ? 0.0 : 0.1);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < alvision.MatrixType.CV_32F ? 0.0 : 0.1);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, Scharr, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U), MatDepth(CV_16U), MatDepth(CV_16S), MatDepth(CV_32F)),
-    IMAGE_CHANNELS,
-    testing::Values(Deriv_X(0), Deriv_X(1)),
-    testing::Values(Deriv_Y(0), Deriv_Y(1)),
-    testing::Values(BorderType(alvision.BORDER_REFLECT101),
-                    BorderType(alvision.BORDER_REPLICATE),
-                    BorderType(alvision.BORDER_CONSTANT),
-                    BorderType(alvision.BORDER_REFLECT)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'Scharr', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,alvision.MatrixType.CV_16U,alvision.MatrixType.CV_16S,alvision.MatrixType.CV_32F],
+    alvision.IMAGE_CHANNELS,
+    [0,1],
+    [0,1],
+    [ alvision.BorderTypes.BORDER_REFLECT101,
+     alvision.BorderTypes.BORDER_REPLICATE,
+     alvision.BorderTypes.BORDER_CONSTANT,
+     alvision.BorderTypes.BORDER_REFLECT],
+    alvision.WHOLE_SUBMAT
+    ]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // GaussianBlur
 
-PARAM_TEST_CASE(GaussianBlur, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, Channels, KSize, BorderType, UseRoi)
+//PARAM_TEST_CASE(GaussianBlur, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, Channels, KSize, BorderType, UseRoi)
+class GaussianBlur extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    int cn;
-    alvision.Size ksize;
-    int borderType;
-    bool useRoi;
+    protected  devInfo : alvision.cuda.DeviceInfo;
+    protected  size : alvision.Size;
+    protected depth : alvision.int;
+    protected cn: alvision.int;
+    protected ksize: alvision.Size;
+    protected borderType: alvision.int;
+    protected useRoi: boolean;
 
-    int type;
+    protected type: alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        cn = GET_PARAM(3);
-        ksize = GET_PARAM(4);
-        borderType = GET_PARAM(5);
-        useRoi = GET_PARAM(6);
+        this.devInfo =    this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =       this.GET_PARAM<alvision.Size>(1);
+        this.depth =      this.GET_PARAM<alvision.int>(2);
+        this.cn =         this.GET_PARAM<alvision.int>(3);
+        this.ksize =      this.GET_PARAM<alvision.Size>(4);
+        this.borderType = this.GET_PARAM<alvision.int>(5);
+        this.useRoi =     this.GET_PARAM<boolean>(6);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        type = CV_MAKE_TYPE(depth, cn);
+        this.type = alvision.MatrixType.CV_MAKETYPE(this.depth, this.cn);
     }
 };
 
-CUDA_TEST_P(GaussianBlur, Accuracy)
+//CUDA_TEST_P(GaussianBlur, Accuracy)
+class GaussianBlur_Accuracy extends GaussianBlur
 {
-    alvision.Mat src = randomMat(size, type);
-    double sigma1 = randomDouble(0.1, 1.0);
-    double sigma2 = randomDouble(0.1, 1.0);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
+        let sigma1 = alvision.randomDouble(0.1, 1.0);
+        let sigma2 = alvision.randomDouble(0.1, 1.0);
 
-    alvision.Ptr<alvision.cuda::Filter> gauss = alvision.cuda::createGaussianFilter(src.type(), -1, ksize, sigma1, sigma2, borderType);
+        let gauss = alvision.cudafilters.createGaussianFilter(src.type(), -1, this.ksize, sigma1, sigma2, this.borderType);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    gauss.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size,this. type,this. useRoi);
+        gauss.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.GaussianBlur(src, dst_gold, ksize, sigma1, sigma2, borderType);
+        let dst_gold = new alvision.Mat();
+        alvision.GaussianBlur(src, dst_gold,this. ksize, sigma1, sigma2, this.borderType);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < CV_32F ? 4.0 : 1e-4);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() < alvision.MatrixType.CV_32F ? 4.0 : 1e-4);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, GaussianBlur, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U), MatDepth(CV_16U), MatDepth(CV_16S), MatDepth(CV_32F)),
-    IMAGE_CHANNELS,
-    testing::Values(KSize(alvision.Size(3, 3)),
-                    KSize(alvision.Size(5, 5)),
-                    KSize(alvision.Size(7, 7)),
-                    KSize(alvision.Size(9, 9)),
-                    KSize(alvision.Size(11, 11)),
-                    KSize(alvision.Size(13, 13)),
-                    KSize(alvision.Size(15, 15)),
-                    KSize(alvision.Size(17, 17)),
-                    KSize(alvision.Size(19, 19)),
-                    KSize(alvision.Size(21, 21)),
-                    KSize(alvision.Size(23, 23)),
-                    KSize(alvision.Size(25, 25)),
-                    KSize(alvision.Size(27, 27)),
-                    KSize(alvision.Size(29, 29)),
-                    KSize(alvision.Size(31, 31))),
-    testing::Values(BorderType(alvision.BORDER_REFLECT101),
-                    BorderType(alvision.BORDER_REPLICATE),
-                    BorderType(alvision.BORDER_CONSTANT),
-                    BorderType(alvision.BORDER_REFLECT)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'GaussianBlur', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,alvision.MatrixType.CV_16U,alvision.MatrixType.CV_16S,alvision.MatrixType.CV_32F],
+    alvision.IMAGE_CHANNELS,
+    [new  alvision.Size(3, 3),
+     new alvision.Size(5, 5),
+     new alvision.Size(7, 7),
+     new alvision.Size(9, 9),
+     new alvision.Size(11, 11),
+     new alvision.Size(13, 13),
+     new alvision.Size(15, 15),
+     new alvision.Size(17, 17),
+     new alvision.Size(19, 19),
+     new alvision.Size(21, 21),
+     new alvision.Size(23, 23),
+     new alvision.Size(25, 25),
+     new alvision.Size(27, 27),
+     new alvision.Size(29, 29),
+     new alvision.Size(31, 31)],
+    [ alvision.BorderTypes.BORDER_REFLECT101,
+     alvision.BorderTypes.BORDER_REPLICATE,
+     alvision.BorderTypes.BORDER_CONSTANT,
+     alvision.BorderTypes.BORDER_REFLECT],
+    alvision.WHOLE_SUBMAT]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Erode
 
-PARAM_TEST_CASE(Erode, alvision.cuda::DeviceInfo, alvision.Size, MatType, Anchor, Iterations, UseRoi)
+//PARAM_TEST_CASE(Erode, alvision.cuda.DeviceInfo, alvision.Size, MatType, Anchor, Iterations, UseRoi)
+class Erode extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    alvision.Point anchor;
-    int iterations;
-    bool useRoi;
+    protected  devInfo : alvision.cuda.DeviceInfo;
+    protected  size : alvision.Size;
+    protected type: alvision.int;
+    protected anchor: alvision.Point;
+    protected iterations: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        anchor = GET_PARAM(3);
-        iterations = GET_PARAM(4);
-        useRoi = GET_PARAM(5);
+        this.devInfo =    this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =       this.GET_PARAM<alvision.Size>(1);
+        this.type =       this.GET_PARAM<alvision.int>(2);
+        this.anchor =     this.GET_PARAM<alvision.Point>(3);
+        this.iterations = this.GET_PARAM<alvision.int>(4);
+        this.useRoi =     this.GET_PARAM<boolean>(5);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Erode, Accuracy)
+//CUDA_TEST_P(Erode, Accuracy)
+class Erode_Accuracy extends Erode
 {
-    alvision.Mat src = randomMat(size, type);
-    alvision.Mat kernel = alvision.Mat::ones(3, 3, CV_8U);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
+        let kernel = alvision.Mat.ones(3, 3, alvision.MatrixType.CV_8U).toMat();
 
-    alvision.Ptr<alvision.cuda::Filter> erode = alvision.cuda::createMorphologyFilter(alvision.MORPH_ERODE, src.type(), kernel, anchor, iterations);
+        let erode = alvision.cudafilters.createMorphologyFilter(alvision.MorphTypes.MORPH_ERODE, src.type(), kernel, this.anchor, this.iterations);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    erode.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.type,this. useRoi);
+        erode.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.erode(src, dst_gold, kernel, anchor, iterations);
+        let dst_gold = new alvision.Mat();
+        alvision.erode(src, dst_gold, kernel, this.anchor,this. iterations);
 
-    alvision.Size ksize = alvision.Size(kernel.cols + iterations * (kernel.cols - 1), kernel.rows + iterations * (kernel.rows - 1));
+        let ksize = new alvision.Size(kernel.cols.valueOf() + this.iterations.valueOf() * (kernel.cols.valueOf() - 1), kernel.rows.valueOf() + this.iterations.valueOf() * (kernel.rows.valueOf() - 1));
 
-    EXPECT_MAT_NEAR(getInnerROI(dst_gold, ksize), getInnerROI(dst, ksize), 0.0);
+        alvision.EXPECT_MAT_NEAR(getInnerROI(dst_gold, ksize), getInnerROI(dst, ksize), 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, Erode, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC4)),
-    testing::Values(Anchor(alvision.Point(-1, -1)), Anchor(alvision.Point(0, 0)), Anchor(alvision.Point(2, 2))),
-    testing::Values(Iterations(1), Iterations(2), Iterations(3)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'Erode', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC4],
+    [new alvision.Point(-1, -1),new alvision.Point(0, 0),new alvision.Point(2, 2)],
+    [1,2,3],
+    alvision.WHOLE_SUBMAT]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // Dilate
 
-PARAM_TEST_CASE(Dilate, alvision.cuda::DeviceInfo, alvision.Size, MatType, Anchor, Iterations, UseRoi)
+//PARAM_TEST_CASE(Dilate, alvision.cuda.DeviceInfo, alvision.Size, MatType, Anchor, Iterations, UseRoi)
+class Dilate extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    alvision.Point anchor;
-    int iterations;
-    bool useRoi;
+    protected  devInfo : alvision.cuda.DeviceInfo;
+    protected  size : alvision.Size;
+    protected type: alvision.int;
+    protected anchor: alvision.Point;
+    protected iterations: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        anchor = GET_PARAM(3);
-        iterations = GET_PARAM(4);
-        useRoi = GET_PARAM(5);
+        this.devInfo =    this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =       this.GET_PARAM<alvision.Size>(1);
+        this.type =       this.GET_PARAM<alvision.int>(2);
+        this.anchor =     this.GET_PARAM<alvision.Point>(3);
+        this.iterations = this.GET_PARAM<alvision.int>(4);
+        this.useRoi =     this.GET_PARAM<boolean>(5);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Dilate, Accuracy)
+//CUDA_TEST_P(Dilate, Accuracy)
+class Dilate_Accuracy extends Dilate
 {
-    alvision.Mat src = randomMat(size, type);
-    alvision.Mat kernel = alvision.Mat::ones(3, 3, CV_8U);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
+        let kernel = alvision.Mat.ones(3, 3, alvision.MatrixType.CV_8U).toMat()
 
-    alvision.Ptr<alvision.cuda::Filter> dilate = alvision.cuda::createMorphologyFilter(alvision.MORPH_DILATE, src.type(), kernel, anchor, iterations);
+        let dilate = alvision.cudafilters.createMorphologyFilter(alvision.MorphTypes.MORPH_DILATE, src.type(), kernel, this.anchor, this.iterations);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    dilate.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size, this.type, this.useRoi);
+        dilate.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.dilate(src, dst_gold, kernel, anchor, iterations);
+        let dst_gold = new alvision.Mat();
+        alvision.dilate(src, dst_gold, kernel, this.anchor, this.iterations);
 
-    alvision.Size ksize = alvision.Size(kernel.cols + iterations * (kernel.cols - 1), kernel.rows + iterations * (kernel.rows - 1));
+        let ksize = new alvision.Size(kernel.cols.valueOf() + this.iterations.valueOf() * (kernel.cols.valueOf() - 1), kernel.rows.valueOf() + this.iterations.valueOf() * (kernel.rows.valueOf() - 1));
 
-    EXPECT_MAT_NEAR(getInnerROI(dst_gold, ksize), getInnerROI(dst, ksize), 0.0);
+        alvision.EXPECT_MAT_NEAR(getInnerROI(dst_gold, ksize), getInnerROI(dst, ksize), 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, Dilate, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC4)),
-    testing::Values(Anchor(alvision.Point(-1, -1)), Anchor(alvision.Point(0, 0)), Anchor(alvision.Point(2, 2))),
-    testing::Values(Iterations(1), Iterations(2), Iterations(3)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'Dilate', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC4],
+    [new alvision.Point(-1, -1), new alvision.Point(0, 0), new alvision.Point(2, 2)],
+    [1,2,3],
+    alvision.WHOLE_SUBMAT
+]));
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // MorphEx
 
-CV_ENUM(MorphOp, MORPH_OPEN, MORPH_CLOSE, MORPH_GRADIENT, MORPH_TOPHAT, MORPH_BLACKHAT)
+//CV_ENUM(MorphOp, MORPH_OPEN, MORPH_CLOSE, MORPH_GRADIENT, MORPH_TOPHAT, MORPH_BLACKHAT)
+const MorphOp = [alvision.MorphTypes.MORPH_OPEN, alvision.MorphTypes.MORPH_CLOSE, alvision.MorphTypes.MORPH_GRADIENT, alvision.MorphTypes.MORPH_TOPHAT, alvision.MorphTypes.MORPH_BLACKHAT];
 
-PARAM_TEST_CASE(MorphEx, alvision.cuda::DeviceInfo, alvision.Size, MatType, MorphOp, Anchor, Iterations, UseRoi)
+//PARAM_TEST_CASE(MorphEx, alvision.cuda.DeviceInfo, alvision.Size, MatType, MorphOp, Anchor, Iterations, UseRoi)
+class MorphEx extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    int morphOp;
-    alvision.Point anchor;
-    int iterations;
-    bool useRoi;
+    protected  devInfo : alvision.cuda.DeviceInfo;
+    protected  size : alvision.Size;
+    protected type: alvision.int;
+    protected morphOp: alvision.int;
+    protected anchor: alvision.Point;
+    protected iterations: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        morphOp = GET_PARAM(3);
-        anchor = GET_PARAM(4);
-        iterations = GET_PARAM(5);
-        useRoi = GET_PARAM(6);
+        this.devInfo =    this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =       this.GET_PARAM<alvision.Size>(1);
+        this.type =       this.GET_PARAM<alvision.int>(2);
+        this.morphOp =    this.GET_PARAM<alvision.int>(3);
+        this.anchor =     this.GET_PARAM<alvision.Point>(4);
+        this.iterations = this.GET_PARAM<alvision.int>(5);
+        this.useRoi =     this.GET_PARAM<boolean>(6);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(MorphEx, Accuracy)
+//CUDA_TEST_P(MorphEx, Accuracy)
+class MorphEx_Accuracy extends MorphEx
 {
-    alvision.Mat src = randomMat(size, type);
-    alvision.Mat kernel = alvision.Mat::ones(3, 3, CV_8U);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
+        let kernel = alvision.Mat.ones(3, 3, alvision.MatrixType.CV_8U).toMat();
 
-    alvision.Ptr<alvision.cuda::Filter> morph = alvision.cuda::createMorphologyFilter(morphOp, src.type(), kernel, anchor, iterations);
+        let morph = alvision.cudafilters.createMorphologyFilter(this.morphOp, src.type(), kernel, this.anchor, this.iterations);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    morph.apply(loadMat(src, useRoi), dst);
+        let dst = alvision.createMat(this.size,this. type, this.useRoi);
+        morph.apply(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.morphologyEx(src, dst_gold, morphOp, kernel, anchor, iterations);
+        let dst_gold = new alvision.Mat();
+        alvision.morphologyEx(src, dst_gold, this.morphOp, kernel, this.anchor, this.iterations);
 
-    alvision.Size border = alvision.Size(kernel.cols + (iterations + 1) * kernel.cols + 2, kernel.rows + (iterations + 1) * kernel.rows + 2);
+        let border = new alvision.Size(kernel.cols.valueOf() + (this.iterations.valueOf() + 1) * kernel.cols.valueOf() + 2, kernel.rows.valueOf() + (this.iterations.valueOf() + 1) * kernel.rows.valueOf() + 2);
 
-    EXPECT_MAT_NEAR(getInnerROI(dst_gold, border), getInnerROI(dst, border), 0.0);
+        alvision.EXPECT_MAT_NEAR(getInnerROI(dst_gold, border), getInnerROI(dst, border), 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Filters, MorphEx, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC4)),
-    MorphOp::all(),
-    testing::Values(Anchor(alvision.Point(-1, -1)), Anchor(alvision.Point(0, 0)), Anchor(alvision.Point(2, 2))),
-    testing::Values(Iterations(1), Iterations(2), Iterations(3)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Filters', 'MorphEx', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC4],
+    MorphOp,
+    [new alvision.Point(-1, -1),new alvision.Point(0, 0), new alvision.Point(2, 2)], 
+    [1,2,3],
+    alvision.WHOLE_SUBMAT
+    ]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA
