@@ -1445,14 +1445,14 @@ class MinMaxLocOp extends BaseElemWiseOp {
         var ndims = src[0].dims;
         var minidx = new Array<alvision.int>(ndims), maxidx = new Array<alvision.int>(ndims);
         var minval = 0, maxval = 0;
-        alvision.minMaxIdx(src[0], (minVal_, maxVal_, minIdx_, maxIdx_) => { minval = minVal_.valueOf(); maxval = maxVal_.valueOf(); minidx[0] = minIdx_; maxidx[0] = maxIdx_; }, mask);
+        alvision.minMaxIdx(src[0], (minVal_, maxVal_, minIdx_, maxIdx_) => { minval = minVal_.valueOf(); maxval = maxVal_.valueOf(); minidx = minIdx_; maxidx = maxIdx_; }, mask);
         this.saveOutput(minidx, maxidx, minval, maxval, dst);
     }
     reftop(src: Array<alvision.Mat>, dst: alvision.Mat, mask: alvision.Mat): void {
         var ndims = src[0].dims;
         var minidx = new Array<alvision.int>(ndims), maxidx = new Array<alvision.int>(ndims);
         var minval = 0, maxval = 0;
-        alvision.minMaxLoc(src[0], (minVal_, maxVal_, minIdx_, maxIdx_) => { minval = minVal_.valueOf(); maxval = maxVal_.valueOf(); minidx = [minIdx_.x, minIdx_.y]; maxidx = [maxIdx_.x, maxIdx_.y]; }, mask);
+        alvision.minMaxLoc(src[0], (minVal_, maxVal_, minIdx_, maxIdx_) => { minval = minVal_.valueOf(); maxval = maxVal_.valueOf(); minidx = [minIdx_[0].x, minIdx_[1].y]; maxidx = [maxIdx_[0].x, maxIdx_[1].y]; }, mask);
         this.saveOutput(minidx, maxidx, minval, maxval, dst);
     }
     getMaxErr(depth: alvision.int): alvision.double {

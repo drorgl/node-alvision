@@ -61,8 +61,8 @@ function mytest(solver: alvision.ConjGradSolver, ptr_F: alvision.MinProblemSolve
     console.log("etalon_x:\n\t" + etalon_x);
     var tol = 1e-2;
     alvision.ASSERT_TRUE(Math.abs(res.valueOf()-etalon_res.valueOf())<tol);
-    /*for(alvision.Mat_<double>::iterator it1=x.begin<double>(),it2=etalon_x.begin<double>();it1!=x.end<double>();it1++,it2++){
-        ASSERT_TRUE(std::abs((*it1)-(*it2))<tol);
+    /*for(alvision.Matd::iterator it1=x.begin<double>(),it2=etalon_x.begin<double>();it1!=x.end<double>();it1++,it2++){
+        ASSERT_TRUE(Math.abs((*it1)-(*it2))<tol);
     }*/
     
     console.log("--------------------------\n");

@@ -54,9 +54,9 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-function sign(a) {
-    return a > 0 ? 1 : a == 0 ? 0 : -1
-}
+//function sign(a) {
+//    return a > 0 ? 1 : a == 0 ? 0 : -1
+//}
                                
 const CORE_EIGEN_ERROR_COUNT = 1;
 const CORE_EIGEN_ERROR_SIZE  =2;
@@ -141,7 +141,7 @@ class Core_EigenTest extends alvision.cvtest.BaseTest
     protected ntests: alvision.int ;
 
     check_pair_count1(src: alvision.Mat, evalues: alvision.Mat, low_index: alvision.int = -1, high_index: alvision.int = -1): boolean {
-        var n = src.rows.valueOf(), s = sign(high_index);
+        var n = src.rows.valueOf(), s = alvision.sign(high_index);
         if (!((evalues.rows == n - Math.max(0, low_index.valueOf()) - (((n / 2.0) * (s * s - s)) + (1 + s - s * s) * (n - (high_index.valueOf() + 1)))) && (evalues.cols == 1))) {
             console.log("Checking sizes of eigen values matrix " + evalues + "...");
             console.log("Number of rows: " + evalues.rows + "   Number of cols: " + evalues.cols);
@@ -152,7 +152,7 @@ class Core_EigenTest extends alvision.cvtest.BaseTest
         return true;
     }
     check_pair_count2(src: alvision.Mat, evalues: alvision.Mat, evectors: alvision.Mat, low_index: alvision.int = -1, high_index: alvision.int = -1): boolean {
-        var n = src.rows.valueOf(), s = sign(high_index);
+        var n = src.rows.valueOf(), s = alvision.sign(high_index);
         var right_eigen_pair_count = n - Math.max(0, low_index.valueOf()) - (((n / 2.0) * (s * s - s)) + (1 + s - s * s) * (n - (high_index.valueOf() + 1)));
 
         if (!(evectors.rows == right_eigen_pair_count && evectors.cols == right_eigen_pair_count)) {

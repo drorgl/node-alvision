@@ -1,3 +1,5 @@
+//TODO: 2nd stage
+
 //import tape = require("tape");
 //import path = require("path");
 //import colors = require("colors");
@@ -11,43 +13,42 @@
 ////using namespace cv;
 ////using namespace std;
 
-//TEST(Core_OutputArrayCreate, _1997)
+//class local {
+//    static create(arr: alvision.OutputArray, submatSize: alvision.Size , type : alvision.int): void {
+//        let sizes = [ submatSize.width, submatSize.height ];
+//        arr.create(sizeof(sizes) / sizeof(sizes[0]), sizes, type);
+//    }
+//};
+
+//alvision.cvtest.TEST('Core_OutputArrayCreate', '_1997',()=>
 //{
-//    struct local {
-//        static void create(OutputArray arr, Size submatSize, int type)
-//        {
-//            int sizes[] = {submatSize.width, submatSize.height};
-//            arr.create(sizeof(sizes)/sizeof(sizes[0]), sizes, type);
-//        }
-//    };
+//    let mat = new alvision.Mat (new alvision.Size(512, 512),alvision.MatrixType. CV_8U);
+//    let submatSize = new alvision.Size(256, 256);
 
-//    Mat mat(Size(512, 512), CV_8U);
-//    Size submatSize = Size(256, 256);
+//    alvision.ASSERT_NO_THROW(()=>local.create( mat.roi(new alvision.Rect(new alvision.Point(), submatSize)), submatSize, mat.type() ));
+//});
 
-//    ASSERT_NO_THROW(local::create( mat(Rect(Point(), submatSize)), submatSize, mat.type() ));
-//}
+//alvision.cvtest.TEST('Core_SaturateCast', 'NegativeNotClipped', () => {
+//    let d = -1.0;
+//    let val = alvision.saturate_cast<alvision.uint>(d,"uint");
 
-//TEST(Core_SaturateCast, NegativeNotClipped)
+//    alvision.ASSERT_EQ(0xffffffff, val);
+//});
+
+////template<typename T, typename U>
+//function maxAbsDiff(t: alvision.InputArray, u: alvision.InputArray): alvision.double 
 //{
-//    double d = -1.0;
-//    unsigned int val = alvision.saturate_cast<unsigned int>(d);
+//    let d = new alvision.Matd();
+//    alvision.absdiff(t, u, d);
 
-//    ASSERT_EQ(0xffffffff, val);
-//}
+//  let ret: alvision.double;
 
-//template<typename T, typename U>
-//static double maxAbsDiff(const T &t, const U &u)
-//{
-//  Mat_<double> d;
-//  absdiff(t, u, d);
-//  double ret;
-//  minMaxLoc(d, NULL, &ret);
+//  alvision.minMaxLoc(d, (minVal_, maxVal_) => { ret = maxVal_; });
 //  return ret;
 //}
 
-//TEST(Core_OutputArrayAssign, _Matxd_Matd)
-//{
-//    Mat expected = (Mat_<double>(2,3) << 1, 2, 3, .1, .2, .3);
+//alvision.cvtest.TEST('Core_OutputArrayAssign', '_Matxd_Matd', () => {
+//    Mat expected = (Mat_<double>(2, 3) << 1, 2, 3, .1, .2, .3);
 //    Matx23d actualx;
 
 //    {
@@ -55,10 +56,10 @@
 //        oa.assign(expected);
 //    }
 
-//    Mat actual = (Mat) actualx;
+//    let actual = (Mat) actualx;
 
-//    EXPECT_LE(maxAbsDiff(expected, actual), 0.0);
-//}
+//    alvision.EXPECT_LE(maxAbsDiff(expected, actual), 0.0);
+//});
 
 //TEST(Core_OutputArrayAssign, _Matxd_Matf)
 //{

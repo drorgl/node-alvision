@@ -59,9 +59,9 @@ const CORE_COUNTNONZERO_ERROR_COUNT = 1;
 const MESSAGE_ERROR_COUNT = "Count non zero elements returned by OpenCV function is incorrect.";
 
 //#define sign(a) a > 0 ? 1 : a == 0 ? 0 : -1
-function sign(a: any) {
-    return a > 0 ? 1 : a == 0 ? 0 : -1;
-}
+//function sign(a: any) {
+//    return a > 0 ? 1 : a == 0 ? 0 : -1;
+//}
 
 const MAX_WIDTH = 100;
 const  MAX_HEIGHT = 100;
@@ -169,10 +169,10 @@ class CV_CountNonZeroTest extends alvision.cvtest.BaseTest
 
             switch (type) {
                 case alvision.MatrixType.CV_8U: {  if (!this.src.at<alvision.uchar>("uchar", i, j)) {   this.src.at<alvision.uchar>("uchar", i, j).set(alvision.theRNG().uchar()); n += (this.src.at<alvision.uchar>("uchar", i, j).get() > 0) ? 1 : 0; } break; }
-                case alvision.MatrixType.CV_8S: {  if (!this.src.at<alvision.char>("char", i, j)) {     this.src.at<alvision.char>("char", i, j).set(<any>(<number>alvision.theRNG().uchar() - 128)); n += Math.abs(sign(this.src.at<alvision.char>("char", i, j))); } break; }
+                case alvision.MatrixType.CV_8S: {  if (!this.src.at<alvision.char>("char", i, j)) {     this.src.at<alvision.char>("char", i, j).set(<any>(<number>alvision.theRNG().uchar() - 128)); n += Math.abs(alvision.sign(this.src.at<alvision.char>("char", i, j))); } break; }
                 case alvision.MatrixType.CV_16U: { if (!this.src.at<alvision.ushort>("ushort", i, j)) { this.src.at<alvision.ushort>("ushort", i, j).set(alvision.theRNG().ushort()); n += (this.src.at<alvision.ushort>("ushort", i, j).get() > 0) ? 1 : 0; } break; }
-                case alvision.MatrixType.CV_16S: { if (!this.src.at<alvision.short>("short", i, j)) {   this.src.at<alvision.short>("short", i, j).set(alvision.theRNG().short()); n += Math.abs(sign(this.src.at<alvision.short>("short", i, j))); } break; }
-                case alvision.MatrixType.CV_32S: { if (!this.src.at<alvision.int>("int", i, j)) {       this.src.at<alvision.int>("int", i, j).set(alvision.theRNG().int()); n += Math.abs(sign(this.src.at<alvision.int>("int", i, j))); } break; }
+                case alvision.MatrixType.CV_16S: { if (!this.src.at<alvision.short>("short", i, j)) {   this.src.at<alvision.short>("short", i, j).set(alvision.theRNG().short()); n += Math.abs(alvision.sign(this.src.at<alvision.short>("short", i, j))); } break; }
+                case alvision.MatrixType.CV_32S: { if (!this.src.at<alvision.int>("int", i, j)) {       this.src.at<alvision.int>("int", i, j).set(alvision.theRNG().int()); n += Math.abs(alvision.sign(this.src.at<alvision.int>("int", i, j))); } break; }
                 case alvision.MatrixType.CV_32F: { if (Math.abs(this.src.at<alvision.float>("float", i, j).get().valueOf()) <= this.eps_32) { this.src.at<alvision.float>("float", i, j).set(alvision.theRNG().float()); n += (Math.abs(this.src.at<alvision.float>("float", i, j).get().valueOf()) > this.eps_32) ? 1 : 0; } break; }
                 case alvision.MatrixType.CV_64F: { if (Math.abs(this.src.at<alvision.double>("double", i, j).get().valueOf()) <= this.eps_64) { this.src.at<alvision.double>("double", i, j).set(alvision.theRNG().double()); n += (Math.abs(this.src.at<alvision.double>("double", i, j).get().valueOf()) > this.eps_64) ? 1 : 0; } break; }
 
@@ -201,10 +201,10 @@ class CV_CountNonZeroTest extends alvision.cvtest.BaseTest
         for (var j = 0; j < this.src.cols; ++j)
         {
             if (this.current_type == alvision.MatrixType.CV_8U) result += (this.src.at<alvision.uchar>("uchar", i, j).get() > 0) ? 1 : 0;
-            else if (this.current_type == alvision.MatrixType.CV_8S) result += Math.abs(sign(this.src.at<alvision.char>("char", i, j).get()));
+            else if (this.current_type == alvision.MatrixType.CV_8S) result += Math.abs(alvision.sign(this.src.at<alvision.char>("char", i, j).get()));
             else if (this.current_type == alvision.MatrixType.CV_16U) result += (this.src.at<alvision.ushort>("ushort", i, j).get() > 0) ? 1 : 0;
-            else if (this.current_type == alvision.MatrixType.CV_16S) result += Math.abs(sign(this.src.at<alvision.short>("short", i, j).get()));
-            else if (this.current_type == alvision.MatrixType.CV_32S) result += Math.abs(sign(this.src.at<alvision.int>("int", i, j).get()));
+            else if (this.current_type == alvision.MatrixType.CV_16S) result += Math.abs(alvision.sign(this.src.at<alvision.short>("short", i, j).get()));
+            else if (this.current_type == alvision.MatrixType.CV_32S) result += Math.abs(alvision.sign(this.src.at<alvision.int>("int", i, j).get()));
             else if (this.current_type == alvision.MatrixType.CV_32F) result += (Math.abs(this.src.at<alvision.float>("float", i, j).get().valueOf()) > this.eps_32) ? 1 : 0;
             else result += (Math.abs(this.src.at<alvision.double>("double", i, j).get().valueOf()) > this.eps_64) ? 1 : 0;
         }

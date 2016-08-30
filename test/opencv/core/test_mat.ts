@@ -16,610 +16,886 @@ import fs = require('fs');
 
 class Core_ReduceTest  extends alvision.cvtest.BaseTest
 {
-public:
-    Core_ReduceTest() {}
-protected:
-    void run( int);
-    int checkOp( const Mat& src, int dstType, int opType, const Mat& opRes, int dim );
-    int checkCase( int srcType, int dstType, int dim, Size sz );
-    int checkDim( int dim, Size sz );
-    int checkSize( Size sz );
-};
+ run(iii : alvision.int) : void{
+     let code = alvision.cvtest.FailureCode.OK;//, tempCode;
 
-template<class Type>
-void testReduce( const Mat& src, Mat& sum, Mat& avg, Mat& max, Mat& min, int dim )
-{
-    assert( src.channels() == 1 );
-    if( dim == 0 ) // row
-    {
-        sum.create( 1, src.cols, CV_64FC1 );
-        max.create( 1, src.cols, CV_64FC1 );
-        min.create( 1, src.cols, CV_64FC1 );
-    }
-    else
-    {
-        sum.create( src.rows, 1, CV_64FC1 );
-        max.create( src.rows, 1, CV_64FC1 );
-        min.create( src.rows, 1, CV_64FC1 );
-    }
-    sum.setTo(Scalar(0));
-    max.setTo(Scalar(-DBL_MAX));
-    min.setTo(Scalar(DBL_MAX));
+    let tempCode = this.checkSize(new alvision.Size(1, 1));
+    code = tempCode != alvision.cvtest.FailureCode.OK ? <any>tempCode : code;
 
-    const Mat_<Type>& src_ = src;
-    Mat_<double>& sum_ = (Mat_<double>&)sum;
-    Mat_<double>& min_ = (Mat_<double>&)min;
-    Mat_<double>& max_ = (Mat_<double>&)max;
+    tempCode = this.checkSize(new alvision.Size(1, 100));
+    code = tempCode != alvision.cvtest.FailureCode.OK ? <any>tempCode : code;
 
-    if( dim == 0 )
-    {
-        for( int ri = 0; ri < src.rows; ri++ )
-        {
-            for( int ci = 0; ci < src.cols; ci++ )
-            {
-                sum_(0, ci) += src_(ri, ci);
-                max_(0, ci) = std::max( max_(0, ci), (double)src_(ri, ci) );
-                min_(0, ci) = Math.min( min_(0, ci), (double)src_(ri, ci) );
-            }
-        }
-    }
-    else
-    {
-        for( int ci = 0; ci < src.cols; ci++ )
-        {
-            for( int ri = 0; ri < src.rows; ri++ )
-            {
-                sum_(ri, 0) += src_(ri, ci);
-                max_(ri, 0) = std::max( max_(ri, 0), (double)src_(ri, ci) );
-                min_(ri, 0) = Math.min( min_(ri, 0), (double)src_(ri, ci) );
-            }
-        }
-    }
-    sum.convertTo( avg, CV_64FC1 );
-    avg = avg * (1.0 / (dim==0 ? (double)src.rows : (double)src.cols));
+    tempCode =this. checkSize(new alvision.Size(100, 1));
+    code = tempCode != alvision.cvtest.FailureCode.OK ? <any>tempCode : code;
+
+    tempCode = this. checkSize(new alvision.Size(1000, 500));
+    code = tempCode != alvision.cvtest.FailureCode.OK ? <any>tempCode : code;
+
+    this.ts.set_failed_test_info(code);
 }
-
-function getMatTypeStr(type: alvision.int , str : string) : void
-{
-    str = type == CV_8UC1 ? "CV_8UC1" :
-    type == CV_8SC1 ? "CV_8SC1" :
-    type == CV_16UC1 ? "CV_16UC1" :
-    type == CV_16SC1 ? "CV_16SC1" :
-    type == CV_32SC1 ? "CV_32SC1" :
-    type == CV_32FC1 ? "CV_32FC1" :
-    type == CV_64FC1 ? "CV_64FC1" : "unsupported matrix type";
-}
-
-int Core_ReduceTest::checkOp( const Mat& src, int dstType, int opType, const Mat& opRes, int dim )
-{
-    int srcType = src.type();
-    bool support = false;
-    if( opType == CV_REDUCE_SUM || opType == CV_REDUCE_AVG )
-    {
-        if( srcType == CV_8U && (dstType == CV_32S || dstType == CV_32F || dstType == CV_64F) )
+ checkOp(src: alvision.Mat, dstType: alvision.int, opType: alvision.int, opRes: alvision.Mat, dim: alvision.int ) : alvision.int{
+    let srcType = src.type();
+    let support = false;
+    if (opType == alvision.ReduceTypes.REDUCE_SUM|| opType == alvision.ReduceTypes.REDUCE_AVG) {
+        if (srcType == alvision.MatrixType.CV_8U && (dstType == alvision.MatrixType.CV_32S || dstType == alvision.MatrixType.CV_32F || dstType == alvision.MatrixType.CV_64F))
             support = true;
-        if( srcType == CV_16U && (dstType == CV_32F || dstType == CV_64F) )
+        if (srcType == alvision.MatrixType.CV_16U && (dstType == alvision.MatrixType.CV_32F || dstType == alvision.MatrixType.CV_64F))
             support = true;
-        if( srcType == CV_16S && (dstType == CV_32F || dstType == CV_64F) )
+        if (srcType == alvision.MatrixType.CV_16S && (dstType == alvision.MatrixType.CV_32F || dstType == alvision.MatrixType.CV_64F))
             support = true;
-        if( srcType == CV_32F && (dstType == CV_32F || dstType == CV_64F) )
+        if (srcType == alvision.MatrixType.CV_32F && (dstType == alvision.MatrixType.CV_32F || dstType == alvision.MatrixType.CV_64F))
             support = true;
-        if( srcType == CV_64F && dstType == CV_64F)
+        if (srcType == alvision.MatrixType.CV_64F && dstType == alvision.MatrixType.CV_64F)
             support = true;
     }
-    else if( opType == CV_REDUCE_MAX )
-    {
-        if( srcType == CV_8U && dstType == CV_8U )
+    else if (opType == alvision.ReduceTypes.REDUCE_MAX) {
+        if (srcType == alvision.MatrixType.CV_8U && dstType == alvision.MatrixType.CV_8U)
             support = true;
-        if( srcType == CV_32F && dstType == CV_32F )
+        if (srcType == alvision.MatrixType.CV_32F && dstType == alvision.MatrixType.CV_32F)
             support = true;
-        if( srcType == CV_64F && dstType == CV_64F )
-            support = true;
-    }
-    else if( opType == CV_REDUCE_MIN )
-    {
-        if( srcType == CV_8U && dstType == CV_8U)
-            support = true;
-        if( srcType == CV_32F && dstType == CV_32F)
-            support = true;
-        if( srcType == CV_64F && dstType == CV_64F)
+        if (srcType == alvision.MatrixType.CV_64F && dstType == alvision.MatrixType.CV_64F)
             support = true;
     }
-    if( !support )
+    else if (opType == alvision.ReduceTypes.REDUCE_MIN) {
+        if (srcType == alvision.MatrixType.CV_8U && dstType == alvision.MatrixType.CV_8U)
+            support = true;
+        if (srcType == alvision.MatrixType.CV_32F && dstType == alvision.MatrixType.CV_32F)
+            support = true;
+        if (srcType == alvision.MatrixType.CV_64F && dstType == alvision.MatrixType.CV_64F)
+            support = true;
+    }
+    if (!support)
         return alvision.cvtest.FailureCode.OK;
 
-    double eps = 0.0;
-    if ( opType == CV_REDUCE_SUM || opType == CV_REDUCE_AVG )
-    {
-        if ( dstType == CV_32F )
+    var eps = 0.0;
+    if (opType == alvision.ReduceTypes.REDUCE_SUM  || opType == alvision.ReduceTypes.REDUCE_AVG ) {
+        if (dstType == alvision.MatrixType.CV_32F)
             eps = 1.e-5;
-        else if( dstType == CV_64F )
+        else if (dstType == alvision.MatrixType.CV_64F)
             eps = 1.e-8;
-        else if ( dstType == CV_32S )
+        else if (dstType == alvision.MatrixType.CV_32S)
             eps = 0.6;
     }
 
-    assert( opRes.type() == CV_64FC1 );
-    Mat _dst, dst, diff;
-    reduce( src, _dst, dim, opType, dstType );
-    _dst.convertTo( dst, CV_64FC1 );
+    alvision.assert(()=>opRes.type() == alvision.MatrixType.CV_64FC1);
+    //Mat _dst, dst, diff;
+    let _dst = new alvision.Mat();
+    let dst = new alvision.Mat();
+    let diff = new alvision.Mat();
 
-    absdiff( opRes,dst,diff );
-    bool check = false;
-    if (dstType == CV_32F || dstType == CV_64F)
-        check = countNonZero(diff>eps*dst) > 0;
+    alvision.reduce(src, _dst, dim, opType, dstType);
+    _dst.convertTo(dst, alvision.MatrixType.CV_64FC1);
+
+    alvision.absdiff(opRes, dst, diff);
+    let check = false;
+    if (dstType == alvision.MatrixType.CV_32F || dstType == alvision.MatrixType.CV_64F)
+        check = alvision.countNonZero(alvision.MatExpr.op_GreaterThan(diff, alvision.MatExpr.op_Multiplication(eps, dst))) > 0;
     else
-        check = countNonZero(diff>eps) > 0;
-    if( check )
-    {
-        char msg[100];
-        const char* opTypeStr = opType == CV_REDUCE_SUM ? "CV_REDUCE_SUM" :
-        opType == CV_REDUCE_AVG ? "CV_REDUCE_AVG" :
-        opType == CV_REDUCE_MAX ? "CV_REDUCE_MAX" :
-        opType == CV_REDUCE_MIN ? "CV_REDUCE_MIN" : "unknown operation type";
-        string srcTypeStr, dstTypeStr;
-        getMatTypeStr( src.type(), srcTypeStr );
-        getMatTypeStr( dstType, dstTypeStr );
-        const char* dimStr = dim == 0 ? "ROWS" : "COLS";
+        check = alvision.countNonZero(alvision.MatExpr.op_GreaterThan( diff , eps)) > 0;
+    if (check) {
+        //char msg[100];
+        let msg = "";
+        const opTypeStr = opType == alvision.ReduceTypes.REDUCE_SUM ? "alvision.ReduceTypes.REDUCE_SUM" :
+            opType == alvision.ReduceTypes.REDUCE_AVG ? "alvision.ReduceTypes.REDUCE_AVG" :
+                opType == alvision.ReduceTypes.REDUCE_MAX ? "alvision.ReduceTypes.REDUCE_MAX" :
+                    opType == alvision.ReduceTypes.REDUCE_MIN ? "alvision.ReduceTypes.REDUCE_MIN" : "unknown operation type";
+        //string srcTypeStr, dstTypeStr;
+        let srcTypeStr = getMatTypeStr(src.type());
+        let dstTypeStr = getMatTypeStr(dstType);
+        const dimStr = dim == 0 ? "ROWS" : "COLS";
 
-        sprintf( msg, "bad accuracy with srcType = %s, dstType = %s, opType = %s, dim = %s",
-                srcTypeStr, dstTypeStr, opTypeStr, dimStr );
-        ts.printf( alvision.cvtest.TSConstants.LOG, msg );
+        msg += util.format( "bad accuracy with srcType = %s, dstType = %s, opType = %s, dim = %s",
+            srcTypeStr, dstTypeStr, opTypeStr, dimStr);
+        this.ts.printf(alvision.cvtest.TSConstants.LOG, msg);
         return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
     }
     return alvision.cvtest.FailureCode.OK;
 }
+ checkCase(srcType: alvision.int, dstType: alvision.int, dim: alvision.int, sz: alvision.Size ): alvision.int{
+     let code = alvision.cvtest.FailureCode.OK;//, tempCode;
 
-int Core_ReduceTest::checkCase( int srcType, int dstType, int dim, Size sz )
-{
-    int code = alvision.cvtest.FailureCode.OK, tempCode;
-    Mat src, sum, avg, max, min;
+     let src = new alvision.Mat();
+         let sum = new alvision.Mat();
+         let avg = new alvision.Mat();
+         let max = new alvision.Mat();
+         let min = new alvision.Mat();
 
-    src.create( sz, srcType );
-    randu( src, Scalar(0), Scalar(100) );
+    src.create(sz, srcType);
+    alvision.randu(src,new alvision. Scalar(0),new alvision. Scalar(100));
 
-    if( srcType == CV_8UC1 )
-        testReduce<uchar>( src, sum, avg, max, min, dim );
-    else if( srcType == CV_8SC1 )
-        testReduce<char>( src, sum, avg, max, min, dim );
-    else if( srcType == CV_16UC1 )
-        testReduce<unsigned short int>( src, sum, avg, max, min, dim );
-    else if( srcType == CV_16SC1 )
-        testReduce<short int>( src, sum, avg, max, min, dim );
-    else if( srcType == CV_32SC1 )
-        testReduce<int>( src, sum, avg, max, min, dim );
-    else if( srcType == CV_32FC1 )
-        testReduce<float>( src, sum, avg, max, min, dim );
-    else if( srcType == CV_64FC1 )
-        testReduce<double>( src, sum, avg, max, min, dim );
+    if (srcType == alvision.MatrixType.CV_8UC1)
+        testReduce<alvision.uchar>("uchar",src, sum, avg, max, min, dim);
+    else if (srcType == alvision.MatrixType.CV_8SC1)
+        testReduce<alvision.char>("char",src, sum, avg, max, min, dim);
+    else if (srcType == alvision.MatrixType.CV_16UC1)
+        testReduce<alvision.ushort>("ushort",src, sum, avg, max, min, dim);
+    else if (srcType == alvision.MatrixType.CV_16SC1)
+        testReduce<alvision.short>("short",src, sum, avg, max, min, dim);
+    else if (srcType == alvision.MatrixType.CV_32SC1)
+        testReduce<alvision.int>("int",src, sum, avg, max, min, dim);
+    else if (srcType == alvision.MatrixType.CV_32FC1)
+        testReduce<alvision.float>("float",src, sum, avg, max, min, dim);
+    else if (srcType == alvision.MatrixType.CV_64FC1)
+        testReduce<alvision.double>("double",src, sum, avg, max, min, dim);
     else
-        assert( 0 );
+        alvision.assert(() => false);//0);
 
     // 1. sum
-    tempCode = checkOp( src, dstType, CV_REDUCE_SUM, sum, dim );
+    let tempCode : any = this.checkOp(src, dstType, alvision.ReduceTypes.REDUCE_SUM, sum, dim);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // 2. avg
-    tempCode = checkOp( src, dstType, CV_REDUCE_AVG, avg, dim );
+    tempCode = this.checkOp(src, dstType, alvision.ReduceTypes.REDUCE_AVG, avg, dim);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // 3. max
-    tempCode = checkOp( src, dstType, CV_REDUCE_MAX, max, dim );
+    tempCode = this.checkOp(src, dstType, alvision.ReduceTypes.REDUCE_MAX, max, dim);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // 4. min
-    tempCode = checkOp( src, dstType, CV_REDUCE_MIN, min, dim );
+    tempCode = this.checkOp(src, dstType, alvision.ReduceTypes.REDUCE_MIN, min, dim);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     return code;
 }
-
-int Core_ReduceTest::checkDim( int dim, Size sz )
-{
-    int code = alvision.cvtest.FailureCode.OK, tempCode;
+ checkDim(dim: alvision.int, sz: alvision.Size ): alvision.int{
+    let code = alvision.cvtest.FailureCode.OK, tempCode;
 
     // CV_8UC1
-    tempCode = checkCase( CV_8UC1, CV_8UC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_8UC1, alvision.MatrixType.CV_8UC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
-    tempCode = checkCase( CV_8UC1, CV_32SC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_8UC1, alvision.MatrixType.CV_32SC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
-    tempCode = checkCase( CV_8UC1, CV_32FC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_8UC1, alvision.MatrixType.CV_32FC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
-    tempCode = checkCase( CV_8UC1, CV_64FC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_8UC1, alvision.MatrixType.CV_64FC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // CV_16UC1
-    tempCode = checkCase( CV_16UC1, CV_32FC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_16UC1, alvision.MatrixType.CV_32FC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
-    tempCode = checkCase( CV_16UC1, CV_64FC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_16UC1, alvision.MatrixType.CV_64FC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // CV_16SC1
-    tempCode = checkCase( CV_16SC1, CV_32FC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_16SC1, alvision.MatrixType.CV_32FC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
-    tempCode = checkCase( CV_16SC1, CV_64FC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_16SC1, alvision.MatrixType.CV_64FC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // CV_32FC1
-    tempCode = checkCase( CV_32FC1, CV_32FC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_32FC1, alvision.MatrixType.CV_32FC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
-    tempCode = checkCase( CV_32FC1, CV_64FC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_32FC1, alvision.MatrixType.CV_64FC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     // CV_64FC1
-    tempCode = checkCase( CV_64FC1, CV_64FC1, dim, sz );
+    tempCode = this.checkCase(alvision.MatrixType.CV_64FC1, alvision.MatrixType.CV_64FC1, dim, sz);
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     return code;
 }
+ checkSize(sz: alvision.Size): alvision.int{
+     let code = alvision.cvtest.FailureCode.OK, tempCode;
 
-int Core_ReduceTest::checkSize( Size sz )
-{
-    int code = alvision.cvtest.FailureCode.OK, tempCode;
-
-    tempCode = checkDim( 0, sz ); // rows
+    tempCode = this.checkDim(0, sz); // rows
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
-    tempCode = checkDim( 1, sz ); // cols
+    tempCode = this.checkDim(1, sz); // cols
     code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
 
     return code;
 }
+};
 
-void Core_ReduceTest::run( int )
+//template<class Type>
+function testReduce<T>(Ttype:string, src: alvision.Mat, sum: alvision.Mat, avg: alvision.Mat, max: alvision.Mat, min: alvision.Mat, dim: alvision.int ) : void
 {
-    int code = alvision.cvtest.FailureCode.OK, tempCode;
+    alvision.assert(()=> src.channels() == 1 );
+    if( dim == 0 ) // row
+    {
+        sum.create( 1, src.cols, alvision.MatrixType.CV_64FC1 );
+        max.create( 1, src.cols, alvision.MatrixType.CV_64FC1 );
+        min.create(1, src.cols, alvision.MatrixType.CV_64FC1 );
+    }
+    else
+    {
+        sum.create( src.rows, 1, alvision.MatrixType.CV_64FC1 );
+        max.create( src.rows, 1, alvision.MatrixType.CV_64FC1 );
+        min.create(src.rows, 1, alvision.MatrixType.CV_64FC1 );
+    }
+    sum.setTo(new alvision.Scalar(0));
+    max.setTo(new alvision.Scalar(-alvision.DBL_MAX));
+    min.setTo(new alvision.Scalar( alvision.DBL_MAX));
 
-    tempCode = checkSize( Size(1,1) );
-    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
+    //const Mat_<T>& src_ = src;
+    let sum_ = sum;
+    let min_ = min;
+    let max_ = max;
 
-    tempCode = checkSize( Size(1,100) );
-    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
+    if( dim == 0 )
+    {
+        for( let ri = 0; ri < src.rows; ri++ )
+        {
+            for( let ci = 0; ci < src.cols; ci++ )
+            {
+                sum_.at<alvision.float>("float", 0, ci).set(sum_.at<alvision.float>("float", 0, ci) + <any>src.at<T>(Ttype, ri, ci).get());
+                max_.at<alvision.float>("float", 0, ci).set(Math.max(max_.at<alvision.float>("float",0, ci).get().valueOf(), <any>src.at<T>(Ttype,ri, ci).get()));
+                min_.at<alvision.float>("float",0, ci).set( Math.min(min_.at<alvision.float>("float",0, ci).get().valueOf(), <any>src.at<T>(Ttype,ri, ci).get()));
+            }
+        }
+    }
+    else
+    {
+        for( let ci = 0; ci < src.cols; ci++ )
+        {
+            for (let ri = 0; ri < src.rows; ri++) {
+                sum_.at<alvision.float>("float", ri, 0).set(sum_.at<alvision.float>("float", ri, 0).get() + <any>src.at<T>(Ttype, ri, ci).get());
+                max_.at<alvision.float>("float", ri, 0).set(Math.max(max_.at<alvision.float>("float", ri, 0).get().valueOf(), <any>src.at<T>(Ttype, ri, ci).get()));
+                min_.at<alvision.float>("float", ri, 0).set(Math.min(min_.at<alvision.float>("float", ri, 0).get().valueOf(), <any>src.at<T>(Ttype, ri, ci).get()));
+            }
+        }
+    }
+    sum.convertTo(avg, alvision.MatrixType.CV_64FC1 );
+    avg = alvision.MatExpr.op_Multiplication(avg, (1.0 / (dim == 0 ? src.rows.valueOf() : src.cols.valueOf()))).toMat();
+}
 
-    tempCode = checkSize( Size(100,1) );
-    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
-
-    tempCode = checkSize( Size(1000,500) );
-    code = tempCode != alvision.cvtest.FailureCode.OK ? tempCode : code;
-
-    this.ts.set_failed_test_info( code );
+function getMatTypeStr(type: alvision.int): string {
+    return type == alvision.MatrixType.CV_8UC1 ? "CV_8UC1" :
+        type == alvision.MatrixType.CV_8SC1 ? "CV_8SC1" :
+            type == alvision.MatrixType.CV_16UC1 ? "CV_16UC1" :
+                type == alvision.MatrixType.CV_16SC1 ? "CV_16SC1" :
+                    type == alvision.MatrixType.CV_32SC1 ? "CV_32SC1" :
+                        type == alvision.MatrixType.CV_32FC1 ? "CV_32FC1" :
+                            type == alvision.MatrixType.CV_64FC1 ? "CV_64FC1" : "unsupported matrix type";
 }
 
 
-#define CHECK_C
+
+//#define CHECK_C
 
 class Core_PCATest  extends alvision.cvtest.BaseTest
 {
-public:
-    Core_PCATest() {}
-protected:
-    void run(int)
+    run(iii: alvision.int) : void
     {
-        const Size sz(200, 500);
+        const  sz = new alvision.Size(200, 500);
 
-        double diffPrjEps, diffBackPrjEps,
-        prjEps, backPrjEps,
-        evalEps, evecEps;
-        int maxComponents = 100;
-        double retainedVariance = 0.95;
-        Mat rPoints(sz, CV_32FC1), rTestPoints(sz, CV_32FC1);
+        //double diffPrjEps, diffBackPrjEps,
+        //prjEps, backPrjEps,
+        //evalEps, evecEps;
+        let maxComponents = 100;
+        let retainedVariance = 0.95;
+        var rPoints = new alvision.Mat(sz, alvision.MatrixType.CV_32FC1), rTestPoints = new alvision.Mat(sz, alvision.MatrixType.CV_32FC1);
         var rng = this.ts.get_rng();
 
-        rng.fill( rPoints, RNG::UNIFORM, Scalar::all(0.0), Scalar::all(1.0) );
-        rng.fill( rTestPoints, RNG::UNIFORM, Scalar::all(0.0), Scalar::all(1.0) );
+        rng.fill(rPoints, alvision.DistType.UNIFORM, alvision.Scalar.all(0.0), alvision.Scalar.all(1.0));
+        rng.fill(rTestPoints, alvision.DistType.UNIFORM, alvision.Scalar.all(0.0), alvision. Scalar.all(1.0));
 
-        PCA rPCA( rPoints, Mat(), CV_PCA_DATA_AS_ROW, maxComponents ), cPCA;
+        var rPCA = new alvision.PCA(rPoints, new alvision.Mat(), alvision.PCAFlags.DATA_AS_ROW, maxComponents);
+        let cPCA = new alvision.PCA();
 
         // 1. check C++ PCA & ROW
-        Mat rPrjTestPoints = rPCA.project( rTestPoints );
-        Mat rBackPrjTestPoints = rPCA.backProject( rPrjTestPoints );
+        let rPrjTestPoints = rPCA.project( rTestPoints );
+        let rBackPrjTestPoints = rPCA.backProject( rPrjTestPoints );
 
-        Mat avg(1, sz.width, CV_32FC1 );
-        reduce( rPoints, avg, 0, CV_REDUCE_AVG );
-        Mat Q = rPoints - repeat( avg, rPoints.rows, 1 ), Qt = Q.t(), eval, evec;
-        Q = Qt * Q;
-        Q = Q /(float)rPoints.rows;
+        let avg = new alvision.Mat(1, sz.width, alvision.MatrixType.CV_32FC1 );
+        alvision.reduce( rPoints, avg, 0, alvision.ReduceTypes.REDUCE_AVG );
+        var Q = alvision.MatExpr.op_Substraction(rPoints, alvision.repeat(avg, rPoints.rows, 1)).toMat(), Qt = Q.t();
+        
+        let evalm = new alvision.Mat();
+        let evecm = new alvision.Mat();
+        Q = alvision.MatExpr.op_Multiplication(Qt, Q).toMat();
+        Q = alvision.MatExpr.op_Division(Q, rPoints.rows).toMat();
 
-        eigen( Q, eval, evec );
+        alvision.eigen( Q, evalm, evecm );
         /*SVD svd(Q);
          evec = svd.vt;
          eval = svd.w;*/
 
-        Mat subEval( maxComponents, 1, eval.type(), eval.ptr() ),
-        subEvec( maxComponents, evec.cols, evec.type(), evec.ptr() );
+        let subEval = new alvision.Mat(maxComponents, 1, evalm.type(), evalm.ptr<alvision.uchar>("uchar"));
+        let subEvec = new alvision.Mat( maxComponents, evecm.cols, evecm.type(), evecm.ptr<alvision.uchar>("uchar") );
 
-    #ifdef CHECK_C
-        Mat prjTestPoints, backPrjTestPoints, cPoints = rPoints.t(), cTestPoints = rTestPoints.t();
-        CvMat _points, _testPoints, _avg, _eval, _evec, _prjTestPoints, _backPrjTestPoints;
-    #endif
+    //#ifdef CHECK_C
+    //    Mat prjTestPoints, backPrjTestPoints, cPoints = rPoints.t(), cTestPoints = rTestPoints.t();
+    //    CvMat _points, _testPoints, _avg, _eval, _evec, _prjTestPoints, _backPrjTestPoints;
+    //#endif
 
         // check eigen()
-        double eigenEps = 1e-6;
-        double err;
-        for(int i = 0; i < Q.rows; i++ )
+        let eigenEps = 1e-6;
+        let err;
+        for(let i = 0; i < Q.rows; i++ )
         {
-            Mat v = evec.row(i).t();
-            Mat Qv = Q * v;
+            let v = evecm.row(i).t();
+            let Qv = alvision.MatExpr.op_Multiplication(Q, v);
 
-            Mat lv = eval.at<float>(i,0) * v;
+            let lv = alvision.MatExpr.op_Multiplication(evalm.at<alvision.float>("float", i, 0).get(), v);
             err = alvision.cvtest.norm( Qv, lv,alvision.NormTypes. NORM_L2 );
             if( err > eigenEps )
             {
-                ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of eigen(); err = %f\n", err );
+                this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of eigen(); err = %f\n", err );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                 return;
             }
         }
         // check pca eigenvalues
-        evalEps = 1e-6, evecEps = 1e-3;
+        let evalEps = 1e-6, evecEps = 1e-3;
         err = alvision.cvtest.norm( rPCA.eigenvalues, subEval,alvision.NormTypes. NORM_L2 );
         if( err > evalEps )
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "pca.eigenvalues is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "pca.eigenvalues is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
         // check pca eigenvectors
-        for(int i = 0; i < subEvec.rows; i++)
+        for(let i = 0; i < subEvec.rows; i++)
         {
-            Mat r0 = rPCA.eigenvectors.row(i);
-            Mat r1 = subEvec.row(i);
-            err = alvision.cvtest.norm( r0, r1, CV_L2 );
+            var r0 = rPCA.eigenvectors.row(i);
+            var r1 = subEvec.row(i);
+            err = alvision.cvtest.norm(r0, r1, alvision.NormTypes.NORM_L2);
             if( err > evecEps )
             {
-                r1 *= -1;
-                double err2 = alvision.cvtest.norm(r0, r1, CV_L2);
+                r1 = alvision.MatExpr.op_Multiplication(r1, -1).toMat();
+                let err2 = alvision.cvtest.norm(r0, r1,alvision.NormTypes.NORM_L2);
                 if( err2 > evecEps )
                 {
-                    Mat tmp;
-                    absdiff(rPCA.eigenvectors, subEvec, tmp);
-                    double mval = 0; Point mloc;
-                    minMaxLoc(tmp, 0, &mval, 0, &mloc);
+                    let tmp = new alvision.Mat();
+                    alvision.absdiff(rPCA.eigenvectors, subEvec, tmp);
+                    var mval = 0;
+                    var mloc = new Array<alvision.Point>();
+                    alvision.minMaxLoc(tmp, (minVal_, maxVal_, minIdx_, maxIdx_) => { mval = maxVal_.valueOf(); mloc = maxIdx_; });
 
-                    ts.printf( alvision.cvtest.TSConstants.LOG, "pca.eigenvectors is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-                    ts.printf( alvision.cvtest.TSConstants.LOG, "max diff is %g at (i=%d, j=%d) (%g vs %g)\n",
-                               mval, mloc.y, mloc.x, rPCA.eigenvectors.at<float>(mloc.y, mloc.x),
-                               subEvec.at<float>(mloc.y, mloc.x));
+                    this.ts.printf( alvision.cvtest.TSConstants.LOG, "pca.eigenvectors is incorrect (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+                    this.ts.printf( alvision.cvtest.TSConstants.LOG, "max diff is %g at (i=%d, j=%d) (%g vs %g)\n",
+                               mval, mloc[0].y, mloc[0].x, rPCA.eigenvectors.at<alvision.float>("float",mloc[0].y, mloc[0].x),
+                               subEvec.at<alvision.float>("float", mloc[0].y, mloc[0].x));
                     this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                     return;
                 }
             }
         }
 
-        prjEps = 1.265, backPrjEps = 1.265;
-        for( int i = 0; i < rTestPoints.rows; i++ )
+        let prjEps = 1.265, backPrjEps = 1.265;
+        for( let i = 0; i < rTestPoints.rows; i++ )
         {
             // check pca project
-            Mat subEvec_t = subEvec.t();
-            Mat prj = rTestPoints.row(i) - avg; prj *= subEvec_t;
-            err = alvision.cvtest.norm(rPrjTestPoints.row(i), prj, CV_RELATIVE_L2);
+            let subEvec_t = subEvec.t();
+            let prj = alvision.MatExpr.op_Substraction(rTestPoints.row(i), avg).toMat(); prj = alvision.MatExpr.op_Multiplication(prj, subEvec_t).toMat();
+            err = alvision.cvtest.norm(rPrjTestPoints.row(i), prj, alvision.NormTypes.NORM_RELATIVE_L2);
             if( err > prjEps )
             {
-                ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+                this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                 return;
             }
             // check pca backProject
-            Mat backPrj = rPrjTestPoints.row(i) * subEvec + avg;
-            err = alvision.cvtest.norm( rBackPrjTestPoints.row(i), backPrj, CV_RELATIVE_L2 );
+            let backPrj = alvision.MatExpr.op_Multiplication( rPrjTestPoints.row(i) , subEvec).op_Addition( + avg).toMat()
+            err = alvision.cvtest.norm(rBackPrjTestPoints.row(i), backPrj, alvision.NormTypes.NORM_RELATIVE_L2);
             if( err > backPrjEps )
             {
-                ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+                this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
                 this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                 return;
             }
         }
 
         // 2. check C++ PCA & COL
-        cPCA( rPoints.t(), Mat(), CV_PCA_DATA_AS_COL, maxComponents );
-        diffPrjEps = 1, diffBackPrjEps = 1;
-        Mat ocvPrjTestPoints = cPCA.project(rTestPoints.t());
-        err = alvision.cvtest.norm(alvision.abs(ocvPrjTestPoints), alvision.abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
+        cPCA.pca( rPoints.t(), new alvision.Mat(),alvision.PCAFlags.DATA_AS_COL , maxComponents );
+        let diffPrjEps = 1, diffBackPrjEps = 1;
+        let ocvPrjTestPoints = cPCA.project(rTestPoints.t());
+        err = alvision.cvtest.norm(alvision.MatExpr.abs(ocvPrjTestPoints), alvision.MatExpr.abs(rPrjTestPoints.t()),alvision.NormTypes.NORM_RELATIVE_L2);
         if( err > diffPrjEps )
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); err = %f\n", err );
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (alvision.PCAFlags.DATA_AS_COL); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
-        err = alvision.cvtest.norm(cPCA.backProject(ocvPrjTestPoints), rBackPrjTestPoints.t(), CV_RELATIVE_L2 );
+        err = alvision.cvtest.norm(cPCA.backProject(ocvPrjTestPoints), rBackPrjTestPoints.t(), alvision.NormTypes.NORM_RELATIVE_L2 );
         if( err > diffBackPrjEps )
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); err = %f\n", err );
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (alvision.PCAFlags.DATA_AS_COL); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
 
         // 3. check C++ PCA w/retainedVariance
-        cPCA( rPoints.t(), Mat(), CV_PCA_DATA_AS_COL, retainedVariance );
+        cPCA.pca( rPoints.t(), new alvision.Mat(), alvision.PCAFlags.DATA_AS_COL, retainedVariance );
         diffPrjEps = 1, diffBackPrjEps = 1;
-        Mat rvPrjTestPoints = cPCA.project(rTestPoints.t());
+        let rvPrjTestPoints = cPCA.project(rTestPoints.t());
 
         if( cPCA.eigenvectors.rows > maxComponents)
-            err = alvision.cvtest.norm(alvision.abs(rvPrjTestPoints.rowRange(0,maxComponents)), alvision.abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
+            err = alvision.cvtest.norm(alvision.MatExpr.abs(rvPrjTestPoints.rowRange(0, maxComponents)), alvision.MatExpr.abs(rPrjTestPoints.t()), alvision.NormTypes.NORM_RELATIVE_L2 );
         else
-            err = alvision.cvtest.norm(alvision.abs(rvPrjTestPoints), alvision.abs(rPrjTestPoints.colRange(0,cPCA.eigenvectors.rows).t()), CV_RELATIVE_L2 );
+            err = alvision.cvtest.norm(alvision.MatExpr.abs(rvPrjTestPoints), alvision.MatExpr.abs(rPrjTestPoints.colRange(0, cPCA.eigenvectors.rows).t()), alvision.NormTypes.NORM_RELATIVE_L2 );
 
         if( err > diffPrjEps )
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of project() (alvision.PCAFlags.DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
-        err = alvision.cvtest.norm(cPCA.backProject(rvPrjTestPoints), rBackPrjTestPoints.t(), CV_RELATIVE_L2 );
+        err = alvision.cvtest.norm(cPCA.backProject(rvPrjTestPoints), rBackPrjTestPoints.t(), alvision.NormTypes.NORM_RELATIVE_L2 );
         if( err > diffBackPrjEps )
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (CV_PCA_DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of backProject() (alvision.PCAFlags.DATA_AS_COL); retainedVariance=0.95; err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
 
-    #ifdef CHECK_C
-        // 4. check C PCA & ROW
-        _points = rPoints;
-        _testPoints = rTestPoints;
-        _avg = avg;
-        _eval = eval;
-        _evec = evec;
-        prjTestPoints.create(rTestPoints.rows, maxComponents, rTestPoints.type() );
-        backPrjTestPoints.create(rPoints.size(), rPoints.type() );
-        _prjTestPoints = prjTestPoints;
-        _backPrjTestPoints = backPrjTestPoints;
-
-        cvCalcPCA( &_points, &_avg, &_eval, &_evec, CV_PCA_DATA_AS_ROW );
-        cvProjectPCA( &_testPoints, &_avg, &_evec, &_prjTestPoints );
-        cvBackProjectPCA( &_prjTestPoints, &_avg, &_evec, &_backPrjTestPoints );
-
-        err = alvision.cvtest.norm(prjTestPoints, rPrjTestPoints, CV_RELATIVE_L2);
-        if( err > diffPrjEps )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
-            return;
-        }
-        err = alvision.cvtest.norm(backPrjTestPoints, rBackPrjTestPoints, CV_RELATIVE_L2);
-        if( err > diffBackPrjEps )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
-            return;
-        }
-
-        // 5. check C PCA & COL
-        _points = cPoints;
-        _testPoints = cTestPoints;
-        avg = avg.t(); _avg = avg;
-        eval = eval.t(); _eval = eval;
-        evec = evec.t(); _evec = evec;
-        prjTestPoints = prjTestPoints.t(); _prjTestPoints = prjTestPoints;
-        backPrjTestPoints = backPrjTestPoints.t(); _backPrjTestPoints = backPrjTestPoints;
-
-        cvCalcPCA( &_points, &_avg, &_eval, &_evec, CV_PCA_DATA_AS_COL );
-        cvProjectPCA( &_testPoints, &_avg, &_evec, &_prjTestPoints );
-        cvBackProjectPCA( &_prjTestPoints, &_avg, &_evec, &_backPrjTestPoints );
-
-        err = alvision.cvtest.norm(alvision.abs(prjTestPoints), alvision.abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
-        if( err > diffPrjEps )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
-            return;
-        }
-        err = alvision.cvtest.norm(backPrjTestPoints, rBackPrjTestPoints.t(), CV_RELATIVE_L2);
-        if( err > diffBackPrjEps )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_COL); err = %f\n", err );
-            this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
-            return;
-        }
-    #endif
+    //#ifdef CHECK_C
+    //    // 4. check C PCA & ROW
+    //    _points = rPoints;
+    //    _testPoints = rTestPoints;
+    //    _avg = avg;
+    //    _eval = eval;
+    //    _evec = evec;
+    //    prjTestPoints.create(rTestPoints.rows, maxComponents, rTestPoints.type() );
+    //    backPrjTestPoints.create(rPoints.size(), rPoints.type() );
+    //    _prjTestPoints = prjTestPoints;
+    //    _backPrjTestPoints = backPrjTestPoints;
+    //
+    //    cvCalcPCA( &_points, &_avg, &_eval, &_evec, CV_PCA_DATA_AS_ROW );
+    //    cvProjectPCA( &_testPoints, &_avg, &_evec, &_prjTestPoints );
+    //    cvBackProjectPCA( &_prjTestPoints, &_avg, &_evec, &_backPrjTestPoints );
+    //
+    //    err = alvision.cvtest.norm(prjTestPoints, rPrjTestPoints, CV_RELATIVE_L2);
+    //    if( err > diffPrjEps )
+    //    {
+    //        ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+    //        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
+    //        return;
+    //    }
+    //    err = alvision.cvtest.norm(backPrjTestPoints, rBackPrjTestPoints, CV_RELATIVE_L2);
+    //    if( err > diffBackPrjEps )
+    //    {
+    //        ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvBackProjectPCA() (CV_PCA_DATA_AS_ROW); err = %f\n", err );
+    //        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
+    //        return;
+    //    }
+    //
+    //    // 5. check C PCA & COL
+    //    _points = cPoints;
+    //    _testPoints = cTestPoints;
+    //    avg = avg.t(); _avg = avg;
+    //    eval = eval.t(); _eval = eval;
+    //    evec = evec.t(); _evec = evec;
+    //    prjTestPoints = prjTestPoints.t(); _prjTestPoints = prjTestPoints;
+    //    backPrjTestPoints = backPrjTestPoints.t(); _backPrjTestPoints = backPrjTestPoints;
+    //
+    //    cvCalcPCA( &_points, &_avg, &_eval, &_evec, alvision.PCAFlags.DATA_AS_COL );
+    //    cvProjectPCA( &_testPoints, &_avg, &_evec, &_prjTestPoints );
+    //    cvBackProjectPCA( &_prjTestPoints, &_avg, &_evec, &_backPrjTestPoints );
+    //
+    //    err = alvision.cvtest.norm(alvision.MatExpr.abs(prjTestPoints), alvision.MatExpr.abs(rPrjTestPoints.t()), CV_RELATIVE_L2 );
+    //    if( err > diffPrjEps )
+    //    {
+    //        ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvProjectPCA() (alvision.PCAFlags.DATA_AS_COL); err = %f\n", err );
+    //        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
+    //        return;
+    //    }
+    //    err = alvision.cvtest.norm(backPrjTestPoints, rBackPrjTestPoints.t(), CV_RELATIVE_L2);
+    //    if( err > diffBackPrjEps )
+    //    {
+    //        ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of cvBackProjectPCA() (alvision.PCAFlags.DATA_AS_COL); err = %f\n", err );
+    //        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
+    //        return;
+    //    }
+    //#endif
         // Test read and write
-        FileStorage fs( "PCA_store.yml", FileStorage::WRITE );
+        let fs = new alvision.FileStorage( "PCA_store.yml", alvision.FileStorageMode.WRITE );
         rPCA.write( fs );
         fs.release();
 
-        PCA lPCA;
-        fs.open( "PCA_store.yml", FileStorage::READ );
+        let lPCA = new alvision.PCA();
+        fs.open( "PCA_store.yml", alvision.FileStorageMode.READ );
         lPCA.read( fs.root() );
-        err = alvision.cvtest.norm( rPCA.eigenvectors, lPCA.eigenvectors, CV_RELATIVE_L2 );
+        err = alvision.cvtest.norm(rPCA.eigenvectors, lPCA.eigenvectors, alvision.NormTypes.NORM_RELATIVE_L2 );
         if( err > 0 )
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         }
-        err = alvision.cvtest.norm( rPCA.eigenvalues, lPCA.eigenvalues, CV_RELATIVE_L2 );
+        err = alvision.cvtest.norm(rPCA.eigenvalues, lPCA.eigenvalues, alvision.NormTypes.NORM_RELATIVE_L2 );
         if( err > 0 )
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         }
-        err = alvision.cvtest.norm( rPCA.mean, lPCA.mean, CV_RELATIVE_L2 );
+        err = alvision.cvtest.norm(rPCA.mean, lPCA.mean, alvision.NormTypes.NORM_RELATIVE_L2 );
         if( err > 0 )
         {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
+            this.ts.printf( alvision.cvtest.TSConstants.LOG, "bad accuracy of write/load functions (YML); err = %f\n", err );
             this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
         }
     }
 };
 
-class Core_ArrayOpTest  extends alvision.cvtest.BaseTest
-{
-public:
-    Core_ArrayOpTest();
-    ~Core_ArrayOpTest();
-protected:
-    void run(int);
-};
+class Core_ArrayOpTest extends alvision.cvtest.BaseTest {
+    run(iii: alvision.int): void {
+        let errcount = 0;
 
+        // dense matrix operations
+        {
+            let sz3 = [5, 10, 15];
+            let A = new alvision.MatND(3, sz3, alvision.MatrixType.CV_32F), B = new alvision.MatND(3, sz3, alvision.MatrixType.CV_16SC4);
+            let matA = A, matB = B;
+            let rng = new alvision.RNG();
+            rng.fill(A, alvision.DistType.UNIFORM, alvision.Scalar.all(-10), alvision.Scalar.all(10));
+            rng.fill(B, alvision.DistType.UNIFORM, alvision.Scalar.all(-10), alvision.Scalar.all(10));
 
-Core_ArrayOpTest::Core_ArrayOpTest()
-{
-}
-Core_ArrayOpTest::~Core_ArrayOpTest() {}
+            let idx0 = [3, 4, 5], idx1 = [0, 9, 7];
+            let val0 = 130;
+            let val1 = new alvision.Scalar(-1000, 30, 3, 8);
+            idx0.forEach((i) => {
+                matA.at<alvision.float>("float", i).set(val0);
+            });
+        
+            //cvSetRealND(&matA, idx0, val0);
+            matA.at<alvision.float>("float", idx1[0], idx1[1], idx1[2]).set(-val0);
+            //cvSetReal3D(&matA, idx1[0], idx1[1], idx1[2], -val0);
+            idx0.forEach((i) => {
+                matB.at<alvision.short>("short", i).set(val1.val[0]);
+                matB.at<alvision.short>("short", i + 1).set(val1.val[1]);
+                matB.at<alvision.short>("short", i + 2).set(val1.val[2]);
+                matB.at<alvision.short>("short", i + 3).set(val1.val[3]);
+            });
+            //cvSetND(&matB, idx0, val1);
 
-function idx2string(const int* idx, int dims) : string
-{
-    char buf[256];
-    char* ptr = buf;
-    for( int k = 0; k < dims; k++ )
-    {
-        sprintf(ptr, "%4d ", idx[k]);
-        ptr += strlen(ptr);
+            matB.at<alvision.short>("short", idx1[0], idx1[1], idx1[2]).set(-val1.val[0]);
+            matB.at<alvision.short>("short", idx1[0], idx1[1], idx1[2 + 1]).set(-val1.val[1]);
+            matB.at<alvision.short>("short", idx1[0], idx1[1], idx1[2 + 2]).set(-val1.val[2]);
+            matB.at<alvision.short>("short", idx1[0], idx1[1], idx1[2 + 3]).set(-val1.val[3]);
+            //cvSet3D(&matB, idx1[0], idx1[1], idx1[2], -val1);
+            let matC = new alvision.MatND(matB);
+
+            if (A.at<alvision.float>("float", idx0[0], idx0[1], idx0[2]).get() != val0 ||
+                A.at<alvision.float>("float", idx1[0], idx1[1], idx1[2]).get() != -val0 ||
+                matA.at<alvision.float>("float", idx0[0], idx0[1], idx0[2]).get() != val0 ||
+                matA.at<alvision.float>("float", idx1[0]).get() != -val0 ||
+                //cvGetReal3D(&matA, idx0[0], idx0[1], idx0[2]) != val0 ||
+                //cvGetRealND(&matA, idx1) != -val0 ||
+
+                new alvision.Scalar(B.at<alvision.Vecs>("Vec4s", idx0[0], idx0[1], idx0[2]).get()) != val1 ||
+                new alvision.Scalar(B.at<alvision.Vecs>("Vec4s", idx1[0], idx1[1], idx1[2]).get()).val[0] != -val1 ||
+                new alvision.Scalar(matC.at<alvision.Vecs>("Vec4s", idx0[0], idx0[1], idx0[2]).get()) != val1 ||
+                new alvision.Scalar(matC.at<alvision.Vecs>("Vec4s", idx1[0]).get()).val[0] != -val1.val[0]) {
+                //new alvision.Scalar(cvGet3D(matC, idx0[0], idx0[1], idx0[2])) != val1 ||
+                //new alvision.Scalar(cvGetND(matC, idx1)) != -val1) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "one of cvSetReal3D, cvSetRealND, cvSet3D, cvSetND " +
+                    "or the corresponding *Get* functions is not correct\n");
+                errcount++;
+            }
+        }
+        // test alvision.Mat::forEach
+        {
+            const dims = [101, 107, 7];
+            //typedef alvision.Point3i Pixel;
+
+            let a = alvision.Mat.zeros(3, dims, alvision.MatrixType.CV_32SC3).toMat();
+            //InitializerFunctor < Pixel > initializer;
+            //a.ptr<alvision.Point3i>("Point3i").forEach<alvision.Point3i>(initializer);
+
+            let total = 0;
+            let error_reported = false;
+            for (let i0 = 0; i0 < dims[0]; ++i0) {
+                for (let i1 = 0; i1 < dims[1]; ++i1) {
+                    for (let i2 = 0; i2 < dims[2]; ++i2) {
+                        let pixel = a.at<alvision.Point3i>("Point3i", i0, i1, i2).get();
+                        if (pixel.x != i0 || pixel.y != i1 || pixel.z != i2) {
+                            if (!error_reported) {
+                                this.ts.printf(alvision.cvtest.TSConstants.LOG, "forEach is not correct.\n" +
+                                    "First error detected at (%d, %d, %d).\n", pixel.x, pixel.y, pixel.z);
+                                error_reported = true;
+                            }
+                            errcount++;
+                        }
+                        total += pixel.x.valueOf();
+                        total += pixel.y.valueOf();
+                        total += pixel.z.valueOf();
+                    }
+                }
+            }
+            let total2 = 0;
+            for (let i = 0; i < dims.length; ++i) {
+                total2 += ((dims[i] - 1) * dims[i] / 2) * dims[0] * dims[1] * dims[2] / dims[i];
+            }
+            if (total != total2) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "forEach is not correct because total is invalid.\n");
+                errcount++;
+            }
+        }
+
+        let rng = new alvision.RNG();
+
+        const MAX_DIM = 5, MAX_DIM_SZ = 10;
+        // sparse matrix operations
+        for (let si = 0; si < 10; si++) {
+            var depth = rng.unsigned().valueOf() % 2 == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+            var dims = (rng.unsigned().valueOf() % MAX_DIM) + 1;
+            //int i, k, size[MAX_DIM] = { 0}, idx[MAX_DIM] = { 0};
+            var size = alvision.NewArray(MAX_DIM, () => 0);
+            var idx = alvision.NewArray(MAX_DIM, () => 0);
+            var all_idxs = new Array<string>()
+            var all_vals = new Array<alvision.double>()
+            var all_vals2 = new Array<alvision.double>()
+            var min_sidx: string, max_sidx: string;
+            var sidx: string;
+
+            var min_val = 0, max_val = 0;
+
+            var p = 1;
+            for (let k = 0; k < dims; k++) {
+                size[k] = (rng.unsigned().valueOf() % MAX_DIM_SZ) + 1;
+                p *= size[k];
+            }
+            var M = new alvision.SparseMat(dims, size, depth);
+            var M0: { [id: string]: alvision.double; } = {};
+
+            var nz0 = rng.unsigned().valueOf() % Math.max(p / 5, 10);
+            nz0 = Math.min(Math.max(nz0, 1), p);
+            all_vals.length = (nz0);
+            all_vals2.length = (nz0);
+            var _all_vals = new alvision.Matd(all_vals), _all_vals2 = new alvision.Matd(all_vals2);
+            rng.fill(_all_vals, alvision.DistType.UNIFORM, new alvision.Scalar(-1000), new alvision.Scalar(1000));
+            if (depth == alvision.MatrixType.CV_32F) {
+                let _all_vals_f = new alvision.Mat();
+                _all_vals.convertTo(_all_vals_f, alvision.MatrixType.CV_32F);
+                _all_vals_f.convertTo(_all_vals, alvision.MatrixType.CV_64F);
+            }
+            _all_vals.convertTo(_all_vals2, _all_vals2.type(), 2);
+            if (depth == alvision.MatrixType.CV_32F) {
+                var _all_vals2_f = new alvision.Mat();
+                _all_vals2.convertTo(_all_vals2_f, alvision.MatrixType.CV_32F);
+                _all_vals2_f.convertTo(_all_vals2, alvision.MatrixType.CV_64F);
+            }
+
+            alvision.minMaxLoc(_all_vals, (minVal_, maxVal_, minIdx_, maxIdx_) => { min_val = minVal_.valueOf(); max_val = maxVal_.valueOf(); });
+            var _norm0 = alvision.cvtest.norm(_all_vals, alvision.NormTypes.NORM_INF);
+            var _norm1 = alvision.cvtest.norm(_all_vals, alvision.NormTypes.NORM_L1);
+            var _norm2 = alvision.cvtest.norm(_all_vals, alvision.NormTypes.NORM_L2);
+
+            for (let i = 0; i < nz0; i++) {
+                for (; ;) {
+                    for (let k = 0; k < dims; k++)
+                        idx[k] = rng.unsigned().valueOf() % size[k];
+                    sidx = idx2string(idx, dims);
+                    if (alvision.countkeys(M0, sidx) == 0)
+                        break;
+                }
+                all_idxs.push(sidx);
+                M0[sidx] = all_vals[i];
+                if (all_vals[i] == min_val)
+                    min_sidx = sidx;
+                if (all_vals[i] == max_val)
+                    max_sidx = sidx;
+                setValue(M, idx, all_vals[i], rng);
+                let v = getValue1(M, idx, rng);
+                if (v != all_vals[i]) {
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "%d. immediately after SparseMat[%s]=%.20g the current value is %.20g\n",
+                        i, sidx, all_vals[i], v);
+                    errcount++;
+                    break;
+                }
+            }
+
+            var M2 = new alvision.SparseMat(M);
+            let Md = new alvision.MatND();
+            M.copyTo(Md);
+            let M3 = new alvision.SparseMat(); new alvision.SparseMat(Md).convertTo(M3, Md.type(), 2);
+
+            let nz1 = M.nzcount(), nz2 = M3.nzcount();
+            let norm0 = alvision.norm(M, alvision.NormTypes.NORM_INF);
+            let norm1 = alvision.norm(M, alvision.NormTypes.NORM_L1);
+            let norm2 = alvision.norm(M, alvision.NormTypes.NORM_L2);
+            let eps = depth == alvision.MatrixType.CV_32F ? alvision.FLT_EPSILON * 100 : alvision.DBL_EPSILON * 1000;
+
+            if (nz1 != nz0 || nz2 != nz0) {
+                errcount++;
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "%d: The number of non-zero elements before/after converting to/from dense matrix is not correct: %d/%d (while it should be %d)\n",
+                    si, nz1, nz2, nz0);
+                break;
+            }
+
+            if (Math.abs(norm0.valueOf() - _norm0.valueOf()) > Math.abs(_norm0.valueOf()) * eps ||
+                Math.abs(norm1.valueOf() - _norm1.valueOf()) > Math.abs(_norm1.valueOf()) * eps ||
+                Math.abs(norm2.valueOf() - _norm2.valueOf()) > Math.abs(_norm2.valueOf()) * eps) {
+                errcount++;
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "%d: The norms are different: %.20g/%.20g/%.20g vs %.20g/%.20g/%.20g\n",
+                    si, norm0, norm1, norm2, _norm0, _norm1, _norm2);
+                break;
+            }
+
+            let n = rng.unsigned().valueOf() % Math.max(p / 5, 10);
+            n = Math.min(Math.max(n, 1), p) + nz0;
+
+            for (let i = 0; i < n; i++) {
+                let val1: alvision.double, val2: alvision.double, val3: alvision.double, val0: alvision.double;
+                if (i < nz0) {
+                    sidx = all_idxs[i];
+                    string2idx(sidx, idx, dims);
+                    val0 = all_vals[i];
+                }
+                else {
+                    for (let k = 0; k < dims; k++)
+                        idx[k] = rng.unsigned().valueOf() % size[k];
+                    sidx = idx2string(idx, dims);
+                    val0 = M0[sidx];
+                }
+                val1 = getValue1(M, idx, rng);
+                val2 = getValue2(M2, idx);
+                val3 = getValue1(M3, idx, rng);
+
+                if (val1 != val0 || val2 != val0 || Math.abs(val3.valueOf() - val0.valueOf() * 2) > Math.abs(val0.valueOf() * 2) * alvision.FLT_EPSILON) {
+                    errcount++;
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "SparseMat M[%s] = %g/%g/%g (while it should be %g)\n", sidx, val1, val2, val3, val0);
+                    break;
+                }
+            }
+
+            for (let i = 0; i < n; i++) {
+                //double val1, val2;
+                if (i < nz0) {
+                    sidx = all_idxs[i];
+                    string2idx(sidx, idx, dims);
+                }
+                else {
+                    for (let k = 0; k < dims; k++)
+                        idx[k] = rng.unsigned().valueOf() % size[k];
+                    sidx = idx2string(idx, dims);
+                }
+                eraseValue1(M, idx, rng);
+                eraseValue2(M2, idx);
+                let val1 = getValue1(M, idx, rng);
+                let val2 = getValue2(M2, idx);
+                if (val1 != 0 || val2 != 0) {
+                    errcount++;
+                    this.ts.printf(alvision.cvtest.TSConstants.LOG, "SparseMat: after deleting M[%s], it is =%g/%g (while it should be 0)\n", sidx, val1, val2);
+                    break;
+                }
+            }
+
+            let nz = M.nzcount();
+            if (nz != 0) {
+                errcount++;
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "The number of non-zero elements after removing all the elements = %d (while it should be 0)\n", nz);
+                break;
+            }
+
+            //int idx1[MAX_DIM], idx2[MAX_DIM];
+            var idx1 = new Array<alvision.int>(MAX_DIM);
+            var idx2 = new Array<alvision.int>(MAX_DIM);
+            var val1 = 0, val2 = 0;
+            M3 = new alvision.SparseMat(Md);
+            alvision.minMaxLoc(M3, (minVal_, maxVal_, minIdx_, maxIdx_) => { val1 = minVal_.valueOf(); val2 = maxVal_.valueOf(); idx1 = minIdx_; idx2 = maxIdx_ });
+            let s1 = idx2string(idx1, dims), s2 = idx2string(idx2, dims);
+            if (val1 != min_val || val2 != max_val || s1 != min_sidx || s2 != max_sidx) {
+                errcount++;
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "%d. Sparse: The value and positions of minimum/maximum elements are different from the reference values and positions:\n\t" +
+                    "(%g, %g, %s, %s) vs (%g, %g, %s, %s)\n", si, val1, val2, s1, s2,
+                    min_val, max_val, min_sidx, max_sidx);
+                break;
+            }
+
+            alvision.minMaxIdx(Md, (minVal_, maxVal_, minIdx_, maxIdx_) => { val1 = minVal_.valueOf(); val2 = maxVal_.valueOf(); idx1 = minIdx_; idx2 = maxIdx_; });
+            s1 = idx2string(idx1, dims), s2 = idx2string(idx2, dims);
+            if ((min_val < 0 && (val1 != min_val || s1 != min_sidx)) ||
+                (max_val > 0 && (val2 != max_val || s2 != max_sidx))) {
+                errcount++;
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "%d. Dense: The value and positions of minimum/maximum elements are different from the reference values and positions:\n\t" +
+                    "(%g, %g, %s, %s) vs (%g, %g, %s, %s)\n", si, val1, val2, s1, s2,
+                    min_val, max_val, min_sidx, max_sidx);
+                break;
+            }
+        }
+
+        this.ts.set_failed_test_info(errcount == 0 ? alvision.cvtest.FailureCode.OK : alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
     }
-    ptr[-1] = '\0';
-    return string(buf);
 }
 
-static const int* string2idx(const string& s, int* idx, int dims)
+
+
+
+
+function idx2string(idx: Array<alvision.int>, dims: alvision.int) : string
 {
-    const char* ptr = s;
-    for( int k = 0; k < dims; k++ )
+    //char buf[256];
+    //char* ptr = buf;
+    var buf = "";
+    for( let k = 0; k < dims; k++ )
     {
-        int n = 0;
-        sscanf(ptr, "%d%n", idx + k, &n);
-        ptr += n;
+        buf += util.format("%4d ", idx[k]);
+        //ptr += strlen(ptr);
+    }
+    //ptr[-1] = '\0';
+    return buf;// string(buf);
+}
+
+function string2idx(s: string, idx: Array<alvision.int>, dims: alvision.int ): Array<alvision.int>
+{
+    let sparts = s.split(' ').filter(function (el) { return el.length != 0 });
+    for (let k = 0; k < dims; k++) {
+        idx[k] = parseInt( sparts[k]);
     }
     return idx;
 }
 
-function getValue(SparseMat& M, const int* idx, RNG& rng) : alvision.double
+function getValue1(M: alvision.SparseMat, idx : Array<alvision.int>, rng: alvision.RNG) : alvision.double
 {
-    int d = M.dims();
-    size_t hv = 0, *phv = 0;
-    if( (unsigned)rng % 2 )
+    let d = M.dims();
+    //size_t hv = 0, *
+    var phv = 0;
+    if(rng.unsigned().valueOf() % 2 )
     {
-        hv = d == 2 ? M.hash(idx[0], idx[1]) :
+        let hv = d == 2 ? M.hash(idx[0], idx[1]) :
         d == 3 ? M.hash(idx[0], idx[1], idx[2]) : M.hash(idx);
-        phv = &hv;
+        phv = hv.valueOf();
     }
 
-    const uchar* ptr = d == 2 ? M.ptr(idx[0], idx[1], false, phv) :
-    d == 3 ? M.ptr(idx[0], idx[1], idx[2], false, phv) :
-    M.ptr(idx, false, phv);
-    return !ptr ? 0 : M.type() == CV_32F ? *(float*)ptr : M.type() == CV_64F ? *(double*)ptr : 0;
+    if (M.type() == alvision.MatrixType.CV_32F) {
+        let pf = d == 2 ? M.ptr<alvision.float>("float", idx[0], idx[1], false, phv) :
+            d == 3 ? M.ptr<alvision.float>("float", idx[0], idx[1], idx[2], false, phv) :
+                M.ptr<alvision.float>("float", idx, false, phv);
+        return pf.get();
+    } else if (M.type() == alvision.MatrixType.CV_64F) {
+        let pd = d == 2 ? M.ptr<alvision.double>("double", idx[0], idx[1], false, phv) :
+            d == 3 ? M.ptr<alvision.double>("double", idx[0], idx[1], idx[2], false, phv) :
+                M.ptr<alvision.double>("double", idx, false, phv);
+        return pd.get();
+    }
+    else {
+        throw new Error("not implemented");
+    }
+
 }
 
-function getValue(const CvSparseMat* M, const int* idx) : alvision.double
+function getValue2(M: alvision.SparseMat, idx: Array<alvision.int>) : alvision.double
 {
-    int type = 0;
-    const uchar* ptr = cvPtrND(M, idx, &type, 0);
-    return !ptr ? 0 : type == CV_32F ? *(float*)ptr : type == CV_64F ? *(double*)ptr : 0;
+    let type = 0;
+    if (M.type() == alvision.MatrixType.CV_32F) {
+        return M.ref<alvision.float>("float", idx).get();
+    } else if (M.type() == alvision.MatrixType.CV_64F) {
+        return M.ref<alvision.double>("double", idx).get();
+    }
+    else {
+        throw new Error("not implemented");
+    }
 }
 
-function eraseValue(SparseMat& M, const int* idx, RNG& rng) : void
+function eraseValue1(M: alvision.SparseMat, idx: Array<alvision.int>, rng: alvision.RNG) : void
 {
-    int d = M.dims();
-    size_t hv = 0, *phv = 0;
-    if( (unsigned)rng % 2 )
+    let d = M.dims();
+    //size_t hv = 0, *
+    let phv = 0;
+    if( rng.unsigned().valueOf() % 2 )
     {
-        hv = d == 2 ? M.hash(idx[0], idx[1]) :
+        let hv = d == 2 ? M.hash(idx[0], idx[1]) :
         d == 3 ? M.hash(idx[0], idx[1], idx[2]) : M.hash(idx);
-        phv = &hv;
+        phv = hv.valueOf();
     }
 
     if( d == 2 )
@@ -630,376 +906,115 @@ function eraseValue(SparseMat& M, const int* idx, RNG& rng) : void
         M.erase(idx, phv);
 }
 
-function  eraseValue(CvSparseMat* M, const int* idx) : void
+function eraseValue2(M: alvision.SparseMat, idx: Array<alvision.int>) : void
 {
-    cvClearND(M, idx);
+    M.erase(idx);
+    //cvClearND(M, idx);
 }
 
-function setValue(SparseMat& M, const int* idx, double value, RNG& rng) : void
+function setValue(M: alvision.SparseMat, idx: Array<alvision.int>, value: alvision.double, rng: alvision.RNG ) : void
 {
-    int d = M.dims();
-    size_t hv = 0, *phv = 0;
-    if( (unsigned)rng % 2 )
+    let d = M.dims();
+    //size_t hv = 0, *
+    let phv = 0;
+    if( rng.unsigned().valueOf() % 2 )
     {
-        hv = d == 2 ? M.hash(idx[0], idx[1]) :
+        let hv = d == 2 ? M.hash(idx[0], idx[1]) :
         d == 3 ? M.hash(idx[0], idx[1], idx[2]) : M.hash(idx);
-        phv = &hv;
+        phv = hv.valueOf();
     }
 
-    uchar* ptr = d == 2 ? M.ptr(idx[0], idx[1], true, phv) :
-    d == 3 ? M.ptr(idx[0], idx[1], idx[2], true, phv) :
-    M.ptr(idx, true, phv);
-    if( M.type() == CV_32F )
-        *(float*)ptr = (float)value;
-    else if( M.type() == CV_64F )
-        *(double*)ptr = value;
-    else
-        CV_Error(alvision.cv.Error.Code.StsUnsupportedFormat, "");
+    //let p = d == 2 ? M.ptr(idx[0], idx[1], true, phv) :
+    //    d == 3 ? M.ptr(idx[0], idx[1], idx[2], true, phv) :
+    //        M.ptr(idx, true, phv);
+
+
+    //uchar* ptr = d == 2 ? M.ptr(idx[0], idx[1], true, phv) :
+    //d == 3 ? M.ptr(idx[0], idx[1], idx[2], true, phv) :
+    //M.ptr(idx, true, phv);
+    //if (M.type() == alvision.MatrixType.CV_32F )
+    //    *(float*)ptr = (float)value;
+    //else if (M.type() == alvision.MatrixType.CV_64F )
+    //    *(double*)ptr = value;
+    //else
+    if (M.type() == alvision.MatrixType.CV_32F) {
+        M.ptr<alvision.float>("float", idx, true).set(value);
+    } else if (M.type() == alvision.MatrixType.CV_64F){
+        M.ptr<alvision.double>("double", idx, true).set(value);
+    }else{
+        alvision.CV_Error(alvision.cv.Error.Code.StsUnsupportedFormat, "");
+    }
 }
 
-template<typename Pixel>
-struct InitializerFunctor{
+//template<typename Pixel>
+class InitializerFunctor{
     /// Initializer for alvision.Mat::forEach test
-    void operator()(Pixel & pixel, const int * idx) const {
+    run(pixel: alvision.Point3i, idx: Array<alvision.int>): void  {
         pixel.x = idx[0];
         pixel.y = idx[1];
         pixel.z = idx[2];
     }
 };
 
-void Core_ArrayOpTest::run( int /* start_from */)
+
+//template <class ElemType>
+function calcDiffElemCountImpl<ElemType>(ElemTypename : string, mv: Array<alvision.Mat>, m: alvision.Mat ): alvision.int 
 {
-    int errcount = 0;
-
-    // dense matrix operations
+    let diffElemCount = 0;
+    const  mChannels = m.channels();
+    for(let y = 0; y < m.rows; y++)
     {
-        int sz3[] = {5, 10, 15};
-        MatND A(3, sz3, CV_32F), B(3, sz3, CV_16SC4);
-        CvMatND matA = A, matB = B;
-        RNG rng;
-        rng.fill(A, CV_RAND_UNI, Scalar::all(-10), Scalar::all(10));
-        rng.fill(B, CV_RAND_UNI, Scalar::all(-10), Scalar::all(10));
-
-        int idx0[] = {3,4,5}, idx1[] = {0, 9, 7};
-        float val0 = 130;
-        Scalar val1(-1000, 30, 3, 8);
-        cvSetRealND(&matA, idx0, val0);
-        cvSetReal3D(&matA, idx1[0], idx1[1], idx1[2], -val0);
-        cvSetND(&matB, idx0, val1);
-        cvSet3D(&matB, idx1[0], idx1[1], idx1[2], -val1);
-        Ptr<CvMatND> matC(cvCloneMatND(&matB));
-
-        if( A.at<float>(idx0[0], idx0[1], idx0[2]) != val0 ||
-           A.at<float>(idx1[0], idx1[1], idx1[2]) != -val0 ||
-           cvGetReal3D(&matA, idx0[0], idx0[1], idx0[2]) != val0 ||
-           cvGetRealND(&matA, idx1) != -val0 ||
-
-           Scalar(B.at<Vec4s>(idx0[0], idx0[1], idx0[2])) != val1 ||
-           Scalar(B.at<Vec4s>(idx1[0], idx1[1], idx1[2])) != -val1 ||
-           Scalar(cvGet3D(matC, idx0[0], idx0[1], idx0[2])) != val1 ||
-           Scalar(cvGetND(matC, idx1)) != -val1 )
+        for(let x = 0; x < m.cols; x++)
         {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "one of cvSetReal3D, cvSetRealND, cvSet3D, cvSetND "
-                       "or the corresponding *Get* functions is not correct\n");
-            errcount++;
-        }
-    }
-    // test alvision.Mat::forEach
-    {
-        const int dims[3] = { 101, 107, 7 };
-        typedef alvision.Point3i Pixel;
-
-        alvision.Mat a = alvision.Mat::zeros(3, dims, CV_32SC3);
-        InitializerFunctor<Pixel> initializer;
-
-        a.forEach<Pixel>(initializer);
-
-        uint64 total = 0;
-        bool error_reported = false;
-        for (int i0 = 0; i0 < dims[0]; ++i0) {
-            for (int i1 = 0; i1 < dims[1]; ++i1) {
-                for (int i2 = 0; i2 < dims[2]; ++i2) {
-                    Pixel& pixel = a.at<Pixel>(i0, i1, i2);
-                    if (pixel.x != i0 || pixel.y != i1 || pixel.z != i2) {
-                        if (!error_reported) {
-                            ts.printf(alvision.cvtest.TSConstants.LOG, "forEach is not correct.\n"
-                                "First error detected at (%d, %d, %d).\n", pixel.x, pixel.y, pixel.z);
-                            error_reported = true;
-                        }
-                        errcount++;
-                    }
-                    total += pixel.x;
-                    total += pixel.y;
-                    total += pixel.z;
-                }
-            }
-        }
-        uint64 total2 = 0;
-        for (size_t i = 0; i < sizeof(dims) / sizeof(dims[0]); ++i) {
-            total2 += ((dims[i] - 1) * dims[i] / 2) * dims[0] * dims[1] * dims[2] / dims[i];
-        }
-        if (total != total2) {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "forEach is not correct because total is invalid.\n");
-            errcount++;
-        }
-    }
-
-    RNG rng;
-    const int MAX_DIM = 5, MAX_DIM_SZ = 10;
-    // sparse matrix operations
-    for( int si = 0; si < 10; si++ )
-    {
-        int depth = (unsigned)rng % 2 == 0 ? CV_32F : CV_64F;
-        int dims = ((unsigned)rng % MAX_DIM) + 1;
-        int i, k, size[MAX_DIM]={0}, idx[MAX_DIM]={0};
-        Array<string> all_idxs;
-        Array<double> all_vals;
-        Array<double> all_vals2;
-        string sidx, min_sidx, max_sidx;
-        double min_val=0, max_val=0;
-
-        int p = 1;
-        for( k = 0; k < dims; k++ )
-        {
-            size[k] = ((unsigned)rng % MAX_DIM_SZ) + 1;
-            p *= size[k];
-        }
-        SparseMat M( dims, size, depth );
-        map<string, double> M0;
-
-        int nz0 = (unsigned)rng % max(p/5,10);
-        nz0 = min(max(nz0, 1), p);
-        all_vals.resize(nz0);
-        all_vals2.resize(nz0);
-        Mat_<double> _all_vals(all_vals), _all_vals2(all_vals2);
-        rng.fill(_all_vals, CV_RAND_UNI, Scalar(-1000), Scalar(1000));
-        if( depth == CV_32F )
-        {
-            Mat _all_vals_f;
-            _all_vals.convertTo(_all_vals_f, CV_32F);
-            _all_vals_f.convertTo(_all_vals, CV_64F);
-        }
-        _all_vals.convertTo(_all_vals2, _all_vals2.type(), 2);
-        if( depth == CV_32F )
-        {
-            Mat _all_vals2_f;
-            _all_vals2.convertTo(_all_vals2_f, CV_32F);
-            _all_vals2_f.convertTo(_all_vals2, CV_64F);
-        }
-
-        minMaxLoc(_all_vals, &min_val, &max_val);
-        double _norm0 = alvision.cvtest.norm(_all_vals, CV_C);
-        double _norm1 = alvision.cvtest.norm(_all_vals, CV_L1);
-        double _norm2 = alvision.cvtest.norm(_all_vals, CV_L2);
-
-        for( i = 0; i < nz0; i++ )
-        {
-            for(;;)
+            const mElem = m.at<ElemType>(ElemTypename, y,x*mChannels.valueOf());
+            var loc = 0;
+            for(let i = 0; i < mv.length; i++)
             {
-                for( k = 0; k < dims; k++ )
-                    idx[k] = (unsigned)rng % size[k];
-                sidx = idx2string(idx, dims);
-                if( M0.count(sidx) == 0 )
-                    break;
-            }
-            all_idxs.push(sidx);
-            M0[sidx] = all_vals[i];
-            if( all_vals[i] == min_val )
-                min_sidx = sidx;
-            if( all_vals[i] == max_val )
-                max_sidx = sidx;
-            setValue(M, idx, all_vals[i], rng);
-            double v = getValue(M, idx, rng);
-            if( v != all_vals[i] )
-            {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "%d. immediately after SparseMat[%s]=%.20g the current value is %.20g\n",
-                           i, sidx, all_vals[i], v);
-                errcount++;
-                break;
-            }
-        }
-
-        Ptr<CvSparseMat> M2(cvCreateSparseMat(M));
-        MatND Md;
-        M.copyTo(Md);
-        SparseMat M3; SparseMat(Md).convertTo(M3, Md.type(), 2);
-
-        int nz1 = (int)M.nzcount(), nz2 = (int)M3.nzcount();
-        double norm0 = norm(M, CV_C);
-        double norm1 = norm(M, CV_L1);
-        double norm2 = norm(M, CV_L2);
-        double eps = depth == CV_32F ? FLT_EPSILON*100 : DBL_EPSILON*1000;
-
-        if( nz1 != nz0 || nz2 != nz0)
-        {
-            errcount++;
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%d: The number of non-zero elements before/after converting to/from dense matrix is not correct: %d/%d (while it should be %d)\n",
-                       si, nz1, nz2, nz0 );
-            break;
-        }
-
-        if( fabs(norm0 - _norm0) > fabs(_norm0)*eps ||
-           fabs(norm1 - _norm1) > fabs(_norm1)*eps ||
-           fabs(norm2 - _norm2) > fabs(_norm2)*eps )
-        {
-            errcount++;
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%d: The norms are different: %.20g/%.20g/%.20g vs %.20g/%.20g/%.20g\n",
-                       si, norm0, norm1, norm2, _norm0, _norm1, _norm2 );
-            break;
-        }
-
-        int n = (unsigned)rng % max(p/5,10);
-        n = min(max(n, 1), p) + nz0;
-
-        for( i = 0; i < n; i++ )
-        {
-            double val1, val2, val3, val0;
-            if(i < nz0)
-            {
-                sidx = all_idxs[i];
-                string2idx(sidx, idx, dims);
-                val0 = all_vals[i];
-            }
-            else
-            {
-                for( k = 0; k < dims; k++ )
-                    idx[k] = (unsigned)rng % size[k];
-                sidx = idx2string(idx, dims);
-                val0 = M0[sidx];
-            }
-            val1 = getValue(M, idx, rng);
-            val2 = getValue(M2, idx);
-            val3 = getValue(M3, idx, rng);
-
-            if( val1 != val0 || val2 != val0 || fabs(val3 - val0*2) > fabs(val0*2)*FLT_EPSILON )
-            {
-                errcount++;
-                ts.printf(alvision.cvtest.TSConstants.LOG, "SparseMat M[%s] = %g/%g/%g (while it should be %g)\n", sidx, val1, val2, val3, val0 );
-                break;
-            }
-        }
-
-        for( i = 0; i < n; i++ )
-        {
-            double val1, val2;
-            if(i < nz0)
-            {
-                sidx = all_idxs[i];
-                string2idx(sidx, idx, dims);
-            }
-            else
-            {
-                for( k = 0; k < dims; k++ )
-                    idx[k] = (unsigned)rng % size[k];
-                sidx = idx2string(idx, dims);
-            }
-            eraseValue(M, idx, rng);
-            eraseValue(M2, idx);
-            val1 = getValue(M, idx, rng);
-            val2 = getValue(M2, idx);
-            if( val1 != 0 || val2 != 0 )
-            {
-                errcount++;
-                ts.printf(alvision.cvtest.TSConstants.LOG, "SparseMat: after deleting M[%s], it is =%g/%g (while it should be 0)\n", sidx, val1, val2 );
-                break;
-            }
-        }
-
-        int nz = (int)M.nzcount();
-        if( nz != 0 )
-        {
-            errcount++;
-            ts.printf(alvision.cvtest.TSConstants.LOG, "The number of non-zero elements after removing all the elements = %d (while it should be 0)\n", nz );
-            break;
-        }
-
-        int idx1[MAX_DIM], idx2[MAX_DIM];
-        double val1 = 0, val2 = 0;
-        M3 = SparseMat(Md);
-        minMaxLoc(M3, &val1, &val2, idx1, idx2);
-        string s1 = idx2string(idx1, dims), s2 = idx2string(idx2, dims);
-        if( val1 != min_val || val2 != max_val || s1 != min_sidx || s2 != max_sidx )
-        {
-            errcount++;
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%d. Sparse: The value and positions of minimum/maximum elements are different from the reference values and positions:\n\t"
-                       "(%g, %g, %s, %s) vs (%g, %g, %s, %s)\n", si, val1, val2, s1, s2,
-                       min_val, max_val, min_sidx, max_sidx);
-            break;
-        }
-
-        minMaxIdx(Md, &val1, &val2, idx1, idx2);
-        s1 = idx2string(idx1, dims), s2 = idx2string(idx2, dims);
-        if( (min_val < 0 && (val1 != min_val || s1 != min_sidx)) ||
-           (max_val > 0 && (val2 != max_val || s2 != max_sidx)) )
-        {
-            errcount++;
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%d. Dense: The value and positions of minimum/maximum elements are different from the reference values and positions:\n\t"
-                       "(%g, %g, %s, %s) vs (%g, %g, %s, %s)\n", si, val1, val2, s1, s2,
-                       min_val, max_val, min_sidx, max_sidx);
-            break;
-        }
-    }
-
-    this.ts.set_failed_test_info(errcount == 0 ? alvision.cvtest.FailureCode.OK : alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
-}
-
-
-template <class ElemType>
-int calcDiffElemCountImpl(const Array<Mat>& mv, const Mat& m)
-{
-    int diffElemCount = 0;
-    const int mChannels = m.channels();
-    for(int y = 0; y < m.rows; y++)
-    {
-        for(int x = 0; x < m.cols; x++)
-        {
-            const ElemType* mElem = &m.at<ElemType>(y,x*mChannels);
-            size_t loc = 0;
-            for(size_t i = 0; i < mv.size(); i++)
-            {
-                const size_t mvChannel = mv[i].channels();
-                const ElemType* mvElem = &mv[i].at<ElemType>(y,x*(int)mvChannel);
-                for(size_t li = 0; li < mvChannel; li++)
+                const mvChannel = mv[i].channels();
+                const mvElem = mv[i].at<ElemType>(ElemTypename, y,x*mvChannel.valueOf());
+                for(let li = 0; li < mvChannel; li++)
                     if(mElem[loc + li] != mvElem[li])
                         diffElemCount++;
-                loc += mvChannel;
+                loc += mvChannel.valueOf();
             }
-            CV_Assert(loc == (size_t)mChannels);
+            alvision.CV_Assert(()=>loc == mChannels);
         }
     }
     return diffElemCount;
 }
 
-static
-int calcDiffElemCount(const Array<Mat>& mv, const Mat& m)
+//static
+function calcDiffElemCount(mv: Array<alvision.Mat>, m: alvision.Mat ): alvision.int 
 {
-    int depth = m.depth();
+    var depth = m.depth();
     switch (depth)
     {
-    case CV_8U:
-        return calcDiffElemCountImpl<uchar>(mv, m);
-    case CV_8S:
-        return calcDiffElemCountImpl<char>(mv, m);
-    case CV_16U:
-        return calcDiffElemCountImpl<unsigned short>(mv, m);
-    case CV_16S:
-        return calcDiffElemCountImpl<short int>(mv, m);
-    case CV_32S:
-        return calcDiffElemCountImpl<int>(mv, m);
-    case CV_32F:
-        return calcDiffElemCountImpl<float>(mv, m);
-    case CV_64F:
-        return calcDiffElemCountImpl<double>(mv, m);
+        case alvision.MatrixType.CV_8U:
+        return calcDiffElemCountImpl<alvision.uchar>("uchar",mv, m);
+        case alvision.MatrixType.CV_8S:
+        return calcDiffElemCountImpl<alvision.char>("char",mv, m);
+        case alvision.MatrixType.CV_16U:
+        return calcDiffElemCountImpl<alvision.ushort>("ushort", mv, m);
+        case alvision.MatrixType.CV_16S:
+        return calcDiffElemCountImpl<alvision.short>("short", mv, m);
+        case alvision.MatrixType.CV_32S:
+        return calcDiffElemCountImpl<alvision.int>("int", mv, m);
+        case alvision.MatrixType.CV_32F:
+        return calcDiffElemCountImpl<alvision.float>("float", mv, m);
+        case alvision.MatrixType.CV_64F:
+        return calcDiffElemCountImpl<alvision.double>("double", mv, m);
     }
 
-    return INT_MAX;
+    return alvision.INT_MAX;
 }
 
 class Core_MergeSplitBaseTest  extends alvision.cvtest.BaseTest
 {
-    run_case(depth: alvision.int, channels: alvision.size_t, size: alvision.Size, rng: alvision.RNG ): alvision.int { }
+    run_case(depth: alvision.int, channels: alvision.size_t, size: alvision.Size, rng: alvision.RNG): alvision.int {
+        throw new Error("not implemented");
+    }
 
-    run(iii: int) : void
+    run(iii: alvision. int) : void
     {
         // m is Mat
         // mv is Array<Mat>
@@ -1011,7 +1026,7 @@ class Core_MergeSplitBaseTest  extends alvision.cvtest.BaseTest
         var mSize = new alvision.Size (rng.uniform(minMSize, maxMSize), rng.uniform(minMSize, maxMSize));
         var mvSize = rng.uniform(1, maxMvSize);
 
-        var res = alvision.cvtest.FailureCode.OK, curRes = res;
+        var res = alvision.cvtest.FailureCode.OK, curRes = <any>res;
         curRes = this.run_case(alvision.MatrixType.CV_8U, mvSize, mSize, rng);
         res = curRes != alvision.cvtest.FailureCode.OK ? curRes : res;
 
@@ -1043,46 +1058,46 @@ class Core_MergeTest extends Core_MergeSplitBaseTest
     {
         const maxMatChannels = 10;
 
-        Array<Mat> src(matCount);
+        var src = new Array<alvision.Mat>(matCount.valueOf());
         var channels = 0;
-        for(var i = 0; i < src.size(); i++)
+        for (let i = 0; i < src.length; i++)
         {
-            Mat m(size, CV_MAKETYPE(depth, rng.uniform(1,maxMatChannels)));
-            rng.fill(m, RNG::UNIFORM, 0, 100, true);
-            channels += m.channels();
+            let m = new alvision.Mat(size, alvision.MatrixType.CV_MAKETYPE(depth, rng.uniform(1,maxMatChannels)));
+            rng.fill(m, alvision.DistType.UNIFORM, 0, 100, true);
+            channels = channels +  m.channels().valueOf();
             src[i] = m;
         }
 
-        Mat dst;
-        merge(src, dst);
+        let dst = new alvision.Mat();
+        alvision.merge(src, dst);
 
         // check result
-        stringstream commonLog;
-        commonLog << "Depth " << depth << " :";
+        let commonLog = "";
+        commonLog  += "Depth " + depth + " :";
         if(dst.depth() != depth)
         {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%s incorrect depth of dst (%d instead of %d)\n",
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s incorrect depth of dst (%d instead of %d)\n",
                        commonLog, dst.depth(), depth);
             return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
         if(dst.size() != size)
         {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%s incorrect size of dst (%d x %d instead of %d x %d)\n",
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s incorrect size of dst (%d x %d instead of %d x %d)\n",
                        commonLog, dst.rows, dst.cols, size.height, size.width);
             return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
         if(dst.channels() != channels)
         {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect channels count of dst (%d instead of %d)\n",
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect channels count of dst (%d instead of %d)\n",
                        commonLog, dst.channels(), channels);
             return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
 
-        int diffElemCount = calcDiffElemCount(src, dst);
+        let diffElemCount = calcDiffElemCount(src, dst);
         if(diffElemCount > 0)
         {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
-                       commonLog, static_cast<float>(diffElemCount)/(channels*size.area()));
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
+                       commonLog,(diffElemCount.valueOf())/(channels*size.area().valueOf()));
             return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
 
@@ -1094,48 +1109,48 @@ class Core_SplitTest extends Core_MergeSplitBaseTest
 {
     run_case(depth: alvision.int, channels: alvision.size_t, size: alvision.Size, rng: alvision.RNG ) : alvision.int
     {
-        Mat src(size, CV_MAKETYPE(depth, (int)channels));
-        rng.fill(src, RNG::UNIFORM, 0, 100, true);
+        let src = new alvision.Mat(size, alvision.MatrixType.CV_MAKETYPE(depth, channels));
+        rng.fill(src, alvision.DistType.UNIFORM, 0, 100, true);
 
-        Array<Mat> dst;
-        split(src, dst);
+        let dst = new Array<alvision.Mat>();
+        alvision.split(src, dst);
 
         // check result
-        stringstream commonLog;
-        commonLog << "Depth " << depth << " :";
-        if(dst.size() != channels)
+        let commonLog = "";
+        commonLog += "Depth " + depth + " :";
+        if(dst.length != channels)
         {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%s incorrect count of matrices in dst (%d instead of %d)\n",
-                       commonLog, dst.size(), channels);
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s incorrect count of matrices in dst (%d instead of %d)\n",
+                       commonLog, dst.length, channels);
             return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
-        for(size_t i = 0; i < dst.size(); i++)
+        for (let i = 0; i < dst.length; i++)
         {
             if(dst[i].size() != size)
             {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "%s incorrect size of dst[%d] (%d x %d instead of %d x %d)\n",
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s incorrect size of dst[%d] (%d x %d instead of %d x %d)\n",
                            commonLog, i, dst[i].rows, dst[i].cols, size.height, size.width);
                 return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             }
             if(dst[i].depth() != depth)
             {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect depth of dst[%d] (%d instead of %d)\n",
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect depth of dst[%d] (%d instead of %d)\n",
                            commonLog, i, dst[i].depth(), depth);
                 return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             }
             if(dst[i].channels() != 1)
             {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect channels count of dst[%d] (%d instead of %d)\n",
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s: incorrect channels count of dst[%d] (%d instead of %d)\n",
                            commonLog, i, dst[i].channels(), 1);
                 return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
             }
         }
 
-        int diffElemCount = calcDiffElemCount(dst, src);
+        let diffElemCount = calcDiffElemCount(dst, src);
         if(diffElemCount > 0)
         {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
-                       commonLog, static_cast<float>(diffElemCount)/(channels*size.area()));
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s: there are incorrect elements in dst (part of them is %f)\n",
+                       commonLog, (diffElemCount.valueOf())/(channels.valueOf()*size.area().valueOf()));
             return alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
         }
 
@@ -1143,123 +1158,122 @@ class Core_SplitTest extends Core_MergeSplitBaseTest
     }
 };
 
-alvision.cvtest.TEST('Core_PCA', 'accuracy', () => { Core_PCATest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Reduce', 'accuracy', () => { Core_ReduceTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Array', 'basic_operations', () => { Core_ArrayOpTest test; test.safe_run(); });
+alvision.cvtest.TEST('Core_PCA', 'accuracy', () => { var test = new Core_PCATest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Reduce', 'accuracy', () => { var test = new Core_ReduceTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Array', 'basic_operations', () => { var test = new Core_ArrayOpTest(); test.safe_run(); });
 
-alvision.cvtest.TEST('Core_Merge', 'shape_operations', () => { Core_MergeTest test; test.safe_run(); });
-alvision.cvtest.TEST('Core_Split', 'shape_operations',()=> { Core_SplitTest test; test.safe_run(); });
+alvision.cvtest.TEST('Core_Merge', 'shape_operations', () => { var test = new Core_MergeTest(); test.safe_run(); });
+alvision.cvtest.TEST('Core_Split', 'shape_operations', () => { var test = new Core_SplitTest(); test.safe_run(); });
 
 
 alvision.cvtest.TEST('Core_IOArray', 'submat_assignment', () => {
-    Mat1f A = Mat1f::zeros(2, 2);
-    Mat1f B = Mat1f::ones(1, 3);
+    let A = new alvision.Matf(alvision.Matf.zeros(2, 2));
+    let B = new alvision.Matf(alvision.Matf.ones(1, 3));
 
-    EXPECT_THROW(B.colRange(0, 3).copyTo(A.row(0)), alvision.Exception);
+    alvision.EXPECT_THROW(()=>B.colRange(0, 3).copyTo(A.row(0)));
 
-    EXPECT_NO_THROW(B.colRange(0, 2).copyTo(A.row(0)));
+    alvision.EXPECT_NO_THROW(()=>B.colRange(0, 2).copyTo(A.row(0)));
 
-    EXPECT_EQ(1.0f, A(0, 0));
-    EXPECT_EQ(1.0f, A(0, 1));
+    alvision.EXPECT_EQ(1.0, A.Element(0, 0));
+    alvision.EXPECT_EQ(1.0, A.Element(0, 1));
 });
 
 function OutputArray_create1(m: alvision.OutputArray) : void{ m.create(1, 2,   alvision.MatrixType.CV_32S); }
 function OutputArray_create2( m : alvision.OutputArray) : void{ m.create(1, 3, alvision.MatrixType.CV_32F); }
 
 alvision.cvtest.TEST('Core_IOArray', 'submat_create', () => {
-    Mat1f A = Mat1f::zeros(2, 2);
+    let A = new alvision.Matf(alvision.Matf.zeros(2, 2));
 
-    EXPECT_THROW(OutputArray_create1(A.row(0)), alvision.Exception);
-    EXPECT_THROW(OutputArray_create2(A.row(0)), alvision.Exception);
+    alvision.EXPECT_THROW(()=>OutputArray_create1(A.row(0)));
+    alvision.EXPECT_THROW(()=>OutputArray_create2(A.row(0)));
 });
 
 alvision.cvtest.TEST('Core_Mat', 'reshape_1942',()=>
 {
-    alvision.Mat A = (alvision.Mat_<float>(2,3) << 3.4884074, 1.4159607, 0.78737736,  2.3456569, -0.88010466, 0.3009364);
-    int cn = 0;
-    ASSERT_NO_THROW(
-        alvision.Mat_<float> M = A.reshape(3);
-        cn = M.channels();
+    let A = (new alvision.Matf(2, 3, [3.4884074, 1.4159607, 0.78737736, 2.3456569, -0.88010466, 0.3009364]));
+    let cn = 0;
+    alvision.ASSERT_NO_THROW(() => {
+        let M = A.reshape(3);
+        cn = M.channels().valueOf();
+    }
     );
-    ASSERT_EQ(1, cn);
+    alvision.ASSERT_EQ(1, cn);
 });
 
 alvision.cvtest.TEST('Core_Mat', 'copyNx1ToVector', () => {
-    alvision.Mat_ < uchar > src(5, 1);
-    alvision.Mat_ < uchar > ref_dst8;
-    alvision.Mat_ < ushort > ref_dst16;
-    Array < uchar > dst8;
-    Array < ushort > dst16;
-
-    src << 1, 2, 3, 4, 5;
+    let src = new alvision.Matb(5, 1, [1, 2, 3, 4, 5]);
+    let ref_dst8 = new alvision.Matb();
+    let ref_dst16 = new alvision.Matw();
+    let dst8 = new Array<alvision.uchar>();
+    let dst16 = new Array<alvision.ushort>();
 
     src.copyTo(ref_dst8);
     src.copyTo(dst8);
 
-    ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(0, 0), ref_dst8, alvision.Mat_<uchar>(dst8));
+    alvision.cvtest.ASSERT_PRED_FORMAT2(new alvision.cvtest.MatComparator(0, 0).run(ref_dst8, new alvision.Matb(dst8)));
 
-    src.convertTo(ref_dst16, CV_16U);
-    src.convertTo(dst16, CV_16U);
+    src.convertTo(ref_dst16, alvision.MatrixType.CV_16U);
+    src.convertTo(dst16, alvision.MatrixType.CV_16U);
 
-    ASSERT_PRED_FORMAT2(alvision.cvtest.MatComparator(0, 0), ref_dst16, alvision.Mat_<ushort>(dst16));
+    alvision.cvtest.ASSERT_PRED_FORMAT2(new alvision.cvtest.MatComparator(0, 0).run(ref_dst16, new alvision.Matw(dst16)));
 });
 
 alvision.cvtest.TEST('Core_Matx', 'fromMat_', () => {
-    Mat_ < double > a = (Mat_<double>(2, 2) << 10, 11, 12, 13);
-    Matx22d b(a);
-    ASSERT_EQ(norm(a, b, NORM_INF), 0.);
+    let a = new alvision.Matd(2, 2, [10, 11, 12, 13]);
+    let b = (a);
+    alvision.ASSERT_EQ(alvision.norm(a, b,alvision.NormTypes. NORM_INF), 0.);
 });
 
 alvision.cvtest.TEST('Core_InputArray', 'empty', () => {
-    Array < Array < Point > > data;
-    ASSERT_TRUE(_InputArray(data).empty());
+    let data = new Array<Array<alvision.Point>>();
+    alvision.ASSERT_TRUE(data.length > 0);
 });
 
 alvision.cvtest.TEST('Core_CopyMask', 'bug1918', () => {
-    Mat_ < unsigned char> tmpSrc(100, 100);
-    tmpSrc = 124;
-    Mat_ < unsigned char> tmpMask(100, 100);
-    tmpMask = 255;
-    Mat_ < unsigned char> tmpDst(100, 100);
-    tmpDst = 2;
+    let tmpSrc = new alvision.Matb(100, 100);
+    tmpSrc.setTo(124);
+    let tmpMask = new alvision.Matb(100, 100);
+    tmpMask.setTo(255);
+    let  tmpDst = new alvision.Matb(100, 100);
+    tmpDst.setTo(2);
     tmpSrc.copyTo(tmpDst, tmpMask);
-    ASSERT_EQ(sum(tmpDst)[0], 124 * 100 * 100);
+    alvision.ASSERT_EQ(alvision.sum(tmpDst).val[0], 124 * 100 * 100);
 });
 
 alvision.cvtest.TEST('Core_SVD', 'orthogonality',()=>
 {
-    for( int i = 0; i < 2; i++ )
+    for( let i = 0; i < 2; i++ )
     {
-        int type = i == 0 ? CV_32F : CV_64F;
-        Mat mat_D(2, 2, type);
+    let type = i == 0 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_64F;
+    let mat_D = new alvision.Mat(2, 2, type);
         mat_D.setTo(88.);
-        Mat mat_U, mat_W;
-        SVD::compute(mat_D, mat_W, mat_U, noArray(), SVD::FULL_UV);
-        mat_U *= mat_U.t();
-        ASSERT_LT(norm(mat_U, Mat::eye(2, 2, type), NORM_INF), 1e-5);
+        let mat_U = new alvision.Mat(), mat_W = new alvision.Mat();
+        alvision.SVD.compute(mat_D, mat_W, mat_U, null,alvision.SVDFlags.FULL_UV);
+        mat_U = alvision.MatExpr.op_Multiplication(mat_U, mat_U.t()).toMat();
+        alvision.ASSERT_LT(alvision.norm(mat_U, alvision.Mat.eye(2, 2, type),alvision.NormTypes. NORM_INF), 1e-5);
     }
 });
 
 
 alvision.cvtest.TEST('Core_SparseMat', 'footprint',()=>
 {
-    int n = 1000000;
-    int sz[] = { n, n };
-    SparseMat m(2, sz, CV_64F);
+    let n = 1000000;
+    let sz = [n, n];
+    let m = new alvision.SparseMat(2, sz, alvision.MatrixType.CV_64F);
 
-    int nodeSize0 = (int)m.hdr.nodeSize;
-    double dataSize0 = ((double)m.hdr.pool.size() + (double)m.hdr.hashtab.size()*sizeof(size_t))*1e-6;
-    printf("before: node size=%d bytes, data size=%.0f Mbytes\n", nodeSize0, dataSize0);
+    let nodeSize0 = m.hdr.nodeSize;
+    let dataSize0 = (m.hdr.pool.length + m.hdr.hashtab.length * 1e-6);
+    console.log(util.format("before: node size=%d bytes, data size=%.0f Mbytes\n", nodeSize0, dataSize0));
 
-    for (int i = 0; i < n; i++)
+    for (let i = 0; i < n; i++)
     {
-        m.ref<double>(i, i) = 1;
+        m.ref<alvision.double>("double", i, i).set(1);
     }
 
-    double dataSize1 = ((double)m.hdr.pool.size() + (double)m.hdr.hashtab.size()*sizeof(size_t))*1e-6;
-    double threshold = (n*nodeSize0*1.6 + n*2.*sizeof(size_t))*1e-6;
-    printf("after: data size=%.0f Mbytes, threshold=%.0f MBytes\n", dataSize1, threshold);
+    let dataSize1 = (m.hdr.pool.length + m.hdr.hashtab.length*1e-6);
+    let threshold = (n*nodeSize0.valueOf() *1.6 + n*2.*1e-6);
+    console.log(util.format("after: data size=%.0f Mbytes, threshold=%.0f MBytes\n", dataSize1, threshold));
 
-    ASSERT_LE((int)m.hdr.nodeSize, 32);
-    ASSERT_LE(dataSize1, threshold);
+    alvision.ASSERT_LE(m.hdr.nodeSize, 32);
+    alvision.ASSERT_LE(dataSize1, threshold);
 });

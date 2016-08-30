@@ -75,7 +75,7 @@ class Core_RotatedRectConstructorTest extends alvision.cvtest.BaseTest
         var perp = new alvision.Vecf(-along[1], along[0]);
         var d =  rng.uniform(1.0, 5.0);
         if (alvision.cvtest.randInt(rng).valueOf() % 2 == 0 ) d = -d;
-        this.c = new alvision.Point2f((this.b.x.valueOf() + d.valueOf() * perp.Element(0).valueOf()), (this.b.y.valueOf() + d.valueOf() * perp.Element(1).valueOf()));
+        this.c = new alvision.Point2f((this.b.x.valueOf() + d.valueOf() * perp.at(0).get().valueOf()), (this.b.y.valueOf() + d.valueOf() * perp.at(1).get().valueOf()));
         return 1;
 }
 

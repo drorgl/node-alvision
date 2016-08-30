@@ -1,188 +1,195 @@
-import tape = require("tape");
-import path = require("path");
-import colors = require("colors");
-import async = require("async");
-import alvision = require("../../../tsbinding/alvision");
-import util = require('util');
-import fs = require('fs');
+//not implemented, external API
 
 
-#include "test_precomp.hpp"
-#include "opencv2/ts/ocl_test.hpp"
+//import tape = require("tape");
+//import path = require("path");
+//import colors = require("colors");
+//import async = require("async");
+//import alvision = require("../../../tsbinding/alvision");
+//import util = require('util');
+//import fs = require('fs');
 
-#ifdef HAVE_IPP_A
-#include "opencv2/core/ippasync.hpp"
 
-using namespace cv;
-using namespace std;
-using namespace cvtest;
+////#include "test_precomp.hpp"
+////#include "opencv2/ts/ocl_test.hpp"
+////
+////#ifdef HAVE_IPP_A
+////#include "opencv2/core/ippasync.hpp"
+////
+////using namespace cv;
+////using namespace std;
+////using namespace cvtest;
+////
+//namespace cvtest {
+//namespace ocl {
 
-namespace cvtest {
-namespace ocl {
 
-PARAM_TEST_CASE(IPPAsync, MatDepth, Channels, hppAccelType)
-{
-    int type;
-    int cn;
-    int depth;
-    hppAccelType accelType;
 
-    Mat matrix, result;
-    hppiMatrix * hppMat;
-    hppAccel accel;
-    hppiVirtualMatrix * virtMatrix;
-    hppStatus sts;
+//    //PARAM_TEST_CASE(IPPAsync, MatDepth, Channels, hppAccelType)
+//    class IPPAsync extends alvision.cvtest.TestWithParam
+//{
+//    protected  type : alvision.int;
+//    protected cn: alvision.int;
+//    protected depth: alvision.int;
+//    protected accelType: hppAccelType ;
 
-    virtual void SetUp()
-    {
-        type = CV_MAKE_TYPE(GET_PARAM(0), GET_PARAM(1));
-        depth = GET_PARAM(0);
-        cn = GET_PARAM(1);
-        accelType = GET_PARAM(2);
-    }
+//    protected matrix: alvision.Mat;
+//    protected result : alvision.Mat;
+//    protected hppiMatrix * hppMat;
+//    protected hppAccel accel;
+//    protected hppiVirtualMatrix * virtMatrix;
+//    protected hppStatus sts;
 
-    virtual void generateTestData()
-    {
-        Size matrix_Size = randomSize(2, 100);
-        const double upValue = 100;
+//    SetUp() : void
+//    {
+//        type = alvision.MatrixType.CV_MAKETYPE(GET_PARAM(0), GET_PARAM(1));
+//        depth = GET_PARAM(0);
+//        cn = GET_PARAM(1);
+//        accelType = GET_PARAM(2);
+//    }
 
-        matrix = randomMat(matrix_Size, type, -upValue, upValue);
-    }
+//    generateTestData() : void
+//    {
+//        Size matrix_Size = randomSize(2, 100);
+//        const double upValue = 100;
 
-    void Near(double threshold = 0.0)
-    {
-        EXPECT_MAT_NEAR(matrix, result, threshold);
-    }
-};
+//        matrix = alvision.randomMat(matrix_Size, type, -upValue, upValue);
+//    }
 
-TEST_P(IPPAsync, accuracy)
-{
-    sts = hppCreateInstance(accelType, 0, &accel);
-    if (sts!=HPP_STATUS_NO_ERROR) printf("hppStatus = %d\n",sts);
-    CV_Assert(sts==HPP_STATUS_NO_ERROR);
+//    Near(double threshold = 0.0) : void
+//    {
+//        alvision.EXPECT_MAT_NEAR(matrix, result, threshold);
+//    }
+//};
 
-    virtMatrix = hppiCreateVirtualMatrices(accel, 2);
+//TEST_P(IPPAsync, accuracy)
+//{
+//    sts = hppCreateInstance(accelType, 0, &accel);
+//    if (sts!=HPP_STATUS_NO_ERROR) console.log(util.format("hppStatus = %d\n",sts);
+//    alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
 
-    for (int j = 0; j < test_loop_times; j++)
-    {
-        generateTestData();
-        hppMat = hpp::getHpp(matrix,accel);
+//    virtMatrix = hppiCreateVirtualMatrices(accel, 2);
 
-        hppScalar a = 3;
+//    for (int j = 0; j < test_loop_times; j++)
+//    {
+//        generateTestData();
+//        hppMat = hpp::getHpp(matrix,accel);
 
-        sts = hppiAddC(accel, hppMat, a, 0, virtMatrix[0]);
-        CV_Assert(sts==HPP_STATUS_NO_ERROR);
-        sts = hppiSubC(accel, virtMatrix[0], a, 0, virtMatrix[1]);
-        CV_Assert(sts==HPP_STATUS_NO_ERROR);
+//        hppScalar a = 3;
 
-        sts = hppWait(accel, HPP_TIME_OUT_INFINITE);
-        CV_Assert(sts==HPP_STATUS_NO_ERROR);
+//        sts = hppiAddC(accel, hppMat, a, 0, virtMatrix[0]);
+//        alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
+//        sts = hppiSubC(accel, virtMatrix[0], a, 0, virtMatrix[1]);
+//        alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
 
-        result = hpp::getMat(virtMatrix[1], accel, cn);
+//        sts = hppWait(accel, HPP_TIME_OUT_INFINITE);
+//        alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
 
-        Near(5.0e-6);
+//        result = hpp::getMat(virtMatrix[1], accel, cn);
 
-        sts =  hppiFreeMatrix(hppMat);
-        CV_Assert(sts==HPP_STATUS_NO_ERROR);
-    }
+//        Near(5.0e-6);
 
-    sts = hppiDeleteVirtualMatrices(accel, virtMatrix);
-    CV_Assert(sts==HPP_STATUS_NO_ERROR);
-    sts = hppDeleteInstance(accel);
-    CV_Assert(sts==HPP_STATUS_NO_ERROR);
-}
+//        sts =  hppiFreeMatrix(hppMat);
+//        alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
+//    }
 
-PARAM_TEST_CASE(IPPAsyncShared, Channels, hppAccelType)
-{
-    int cn;
-    int type;
-    hppAccelType accelType;
+//    sts = hppiDeleteVirtualMatrices(accel, virtMatrix);
+//    alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
+//    sts = hppDeleteInstance(accel);
+//    alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
+//}
 
-    Mat matrix, result;
-    hppiMatrix* hppMat;
-    hppAccel accel;
-    hppiVirtualMatrix * virtMatrix;
-    hppStatus sts;
+//PARAM_TEST_CASE(IPPAsyncShared, Channels, hppAccelType)
+//{
+//    int cn;
+//    int type;
+//    hppAccelType accelType;
 
-    virtual void SetUp()
-    {
-        cn = GET_PARAM(0);
-        accelType = GET_PARAM(1);
-        type=CV_MAKE_TYPE(CV_8U, GET_PARAM(0));
-    }
+//    Mat matrix, result;
+//    hppiMatrix* hppMat;
+//    hppAccel accel;
+//    hppiVirtualMatrix * virtMatrix;
+//    hppStatus sts;
 
-    virtual void generateTestData()
-    {
-        Size matrix_Size = randomSize(2, 100);
-        hpp32u pitch, size;
-        const int upValue = 100;
+//    virtual void SetUp()
+//    {
+//        cn = GET_PARAM(0);
+//        accelType = GET_PARAM(1);
+//        type = alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U, GET_PARAM(0));
+//    }
 
-        sts = hppQueryMatrixAllocParams(accel, (hpp32u)(matrix_Size.width*cn), (hpp32u)matrix_Size.height, HPP_DATA_TYPE_8U, &pitch, &size);
+//    virtual void generateTestData()
+//    {
+//        Size matrix_Size = randomSize(2, 100);
+//        hpp32u pitch, size;
+//        const int upValue = 100;
 
-        if (pitch!=0 && size!=0)
-        {
-            uchar *pData = (uchar*)_aligned_malloc(size, 4096);
+//        sts = hppQueryMatrixAllocParams(accel, (hpp32u)(matrix_Size.width*cn), (hpp32u)matrix_Size.height, HPP_DATA_TYPE_8U, &pitch, &size);
 
-            for (int j=0; j<matrix_Size.height; j++)
-                for(int i=0; i<matrix_Size.width*cn; i++)
-                    pData[i+j*pitch] = rand()%upValue;
+//        if (pitch!=0 && size!=0)
+//        {
+//            uchar *pData = (uchar*)_aligned_malloc(size, 4096);
 
-            matrix = Mat(matrix_Size.height, matrix_Size.width, type, pData, pitch);
-        }
+//            for (int j=0; j<matrix_Size.height; j++)
+//                for(int i=0; i<matrix_Size.width*cn; i++)
+//                    pData[i+j*pitch] = rand()%upValue;
 
-        matrix = randomMat(matrix_Size, type, 0, upValue);
-    }
+//            matrix = Mat(matrix_Size.height, matrix_Size.width, type, pData, pitch);
+//        }
 
-    void Near(double threshold = 0.0)
-    {
-        EXPECT_MAT_NEAR(matrix, result, threshold);
-    }
-};
+//        matrix = alvision.randomMat(matrix_Size, type, 0, upValue);
+//    }
 
-TEST_P(IPPAsyncShared, accuracy)
-{
-    sts = hppCreateInstance(accelType, 0, &accel);
-    if (sts!=HPP_STATUS_NO_ERROR) printf("hppStatus = %d\n",sts);
-    CV_Assert(sts==HPP_STATUS_NO_ERROR);
+//    void Near(double threshold = 0.0)
+//    {
+//        alvision.EXPECT_MAT_NEAR(matrix, result, threshold);
+//    }
+//};
 
-    virtMatrix = hppiCreateVirtualMatrices(accel, 2);
+//TEST_P(IPPAsyncShared, accuracy)
+//{
+//    sts = hppCreateInstance(accelType, 0, &accel);
+//    if (sts!=HPP_STATUS_NO_ERROR) console.log(util.format("hppStatus = %d\n",sts);
+//    alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
 
-    for (int j = 0; j < test_loop_times; j++)
-    {
-        generateTestData();
-        hppMat = hpp::getHpp(matrix,accel);
+//    virtMatrix = hppiCreateVirtualMatrices(accel, 2);
 
-        hppScalar a = 3;
+//    for (int j = 0; j < test_loop_times; j++)
+//    {
+//        generateTestData();
+//        hppMat = hpp::getHpp(matrix,accel);
 
-        sts = hppiAddC(accel, hppMat, a, 0, virtMatrix[0]);
-        CV_Assert(sts==HPP_STATUS_NO_ERROR);
-        sts = hppiSubC(accel, virtMatrix[0], a, 0, virtMatrix[1]);
-        CV_Assert(sts==HPP_STATUS_NO_ERROR);
+//        hppScalar a = 3;
 
-        sts = hppWait(accel, HPP_TIME_OUT_INFINITE);
-        CV_Assert(sts==HPP_STATUS_NO_ERROR);
+//        sts = hppiAddC(accel, hppMat, a, 0, virtMatrix[0]);
+//        alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
+//        sts = hppiSubC(accel, virtMatrix[0], a, 0, virtMatrix[1]);
+//        alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
 
-        result = hpp::getMat(virtMatrix[1], accel, cn);
+//        sts = hppWait(accel, HPP_TIME_OUT_INFINITE);
+//        alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
 
-        Near(0);
+//        result = hpp::getMat(virtMatrix[1], accel, cn);
 
-        sts =  hppiFreeMatrix(hppMat);
-        CV_Assert(sts==HPP_STATUS_NO_ERROR);
-    }
+//        Near(0);
 
-    sts = hppiDeleteVirtualMatrices(accel, virtMatrix);
-    CV_Assert(sts==HPP_STATUS_NO_ERROR);
-    sts = hppDeleteInstance(accel);
-    CV_Assert(sts==HPP_STATUS_NO_ERROR);
-}
+//        sts =  hppiFreeMatrix(hppMat);
+//        alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
+//    }
 
-INSTANTIATE_TEST_CASE_P(IppATest, IPPAsyncShared, Combine(Values(1, 2, 3, 4),
-                                                    Values( HPP_ACCEL_TYPE_CPU, HPP_ACCEL_TYPE_GPU)));
+//    sts = hppiDeleteVirtualMatrices(accel, virtMatrix);
+//    alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
+//    sts = hppDeleteInstance(accel);
+//    alvision.CV_Assert(()=>sts==HPP_STATUS_NO_ERROR);
+//}
 
-INSTANTIATE_TEST_CASE_P(IppATest, IPPAsync, Combine(Values(CV_8U, CV_16U, CV_16S, CV_32F),
-                                                   Values(1, 2, 3, 4),
-                                                   Values( HPP_ACCEL_TYPE_CPU, HPP_ACCEL_TYPE_GPU)));
+//INSTANTIATE_TEST_CASE_P(IppATest, IPPAsyncShared, Combine(Values(1, 2, 3, 4),
+//                                                    Values( HPP_ACCEL_TYPE_CPU, HPP_ACCEL_TYPE_GPU)));
 
-}
-}
-#endif
+//INSTANTIATE_TEST_CASE_P(IppATest, IPPAsync, Combine(Values(alvision.MatrixType.CV_8U, alvision.MatrixType.CV_16U, alvision.MatrixType.CV_16S, alvision.MatrixType.CV_32F),
+//                                                   Values(1, 2, 3, 4),
+//                                                   Values( HPP_ACCEL_TYPE_CPU, HPP_ACCEL_TYPE_GPU)));
+
+//}
+//}
+//#endif
