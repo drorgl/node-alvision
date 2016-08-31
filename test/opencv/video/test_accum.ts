@@ -170,16 +170,18 @@ class CV_RunningAvgTest extends CV_AccumBaseTest
         var dst = this.test_mat[this.REF_INPUT_OUTPUT][0];
         var temp = new alvision.Mat();
         var mask = this.test_array[this.MASK][0] ? this.test_mat[this.MASK][0] : new alvision.Mat();
-        double a[1], b[1];
+
+        let a = new Array<alvision.double>(1);
+            let b = new Array<alvision.double>(1);
 
         var accdepth = this.test_mat[this.INPUT_OUTPUT][0].depth();
-        CvMat A = cvMat(1, 1, accdepth, a), B = cvMat(1, 1, accdepth, b);
+        var A = new alvision.Mat(1, 1, accdepth, a), B = new alvision.Mat(1, 1, accdepth, b);
 
-        cvSetReal1D( &A, 0, alpha);
-        cvSetReal1D( &B, 0, 1 - cvGetReal1D(&A, 0));
+        alvision.cvSetReal1D( A, 0, this.alpha);
+        alvision.cvSetReal1D( B, 0, 1 - alvision.cvGetReal1D(A, 0));
 
         alvision.cvtest.convert(src, temp, dst.type());
-        alvision.cvtest.add(src, cvGetReal1D(&A, 0), dst, cvGetReal1D(&B, 0), cvScalarAll(0.), temp, temp.depth());
+        alvision.cvtest.add(src, alvision.cvGetReal1D(A, 0), dst, alvision.cvGetReal1D(B, 0), alvision.Scalar.all(0.), temp, temp.depth());
         alvision.cvtest.copy(temp, dst, mask);
 
     }

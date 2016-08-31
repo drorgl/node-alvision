@@ -252,13 +252,13 @@ export interface MatxStatic<T> {
     //enum { depth = DataType<_Tp>::depth,
         depth: _st.int;
     //    rows = m,
-        rows: _st.int;
+        rows(): _st.int;
     //    cols = n,
-        cols: _st.int;
+        cols(): _st.int;
     //    channels = rows * cols,
         channels: _st.int;
     //    type = CV_MAKETYPE(depth, channels),
-        type: _st.int;
+        type(): _st.int;
     //    shortdim = (m < n ? m : n)
     //     };
 

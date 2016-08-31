@@ -119,8 +119,8 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
         polyline[3] = new alvision.Point(0, imgSize.height);
         //const Point* pts = &polyline[0];
         //int n = (int)polyline.size();
-        alvision.fillPoly(img, polyline, 1, alvision.Scalar.all(255));
-        //fillPoly( img, &pts, &n, 1, Scalar::all(255) );
+        alvision.fillPoly(img,[ polyline], alvision.Scalar.all(255));
+        //fillPoly( img, &pts, &n, 1, Scalar.all(255) );
 
         var p1 = new alvision.Point(1, 1);
         var p2 = new alvision.Point(3, 3);
@@ -132,7 +132,7 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
 
         p2 = new alvision.Point(3, imgSize.height.valueOf() + 1000);
         if (alvision.clipLine(new alvision.Rect(0, 0, imgSize.width, imgSize.height), p1, p2) && alvision.clipLine(imgSize, p1, p2))
-            alvision.circle(img, new alvision.Point(500, 300), 50, cvColorToScalar(255, CV_8UC3), 5, 8, 1); // draw
+            alvision.circle(img, new alvision.Point(500, 300), 50, alvision.Scalar.all(255), 5, 8, 1); // draw
 
         p1 = new alvision.Point(imgSize.width, 1), p2 = new alvision.Point(imgSize.width, 3);
         if (alvision.clipLine(new alvision.Rect(0, 0, imgSize.width, imgSize.height), p1, p2) && alvision.clipLine(imgSize, p1, p2))
@@ -148,12 +148,13 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
         alvision.ellipse2Poly(new alvision.Point(430, 180), new alvision.Size(100, 150), 30, 0, 150, 20, (pts) => { polyline = pts; });
         //pts = &polyline[0];
         //n = (int)polyline.size();
-        alvision.polylines(img, polyline, 1, false, new alvision.Scalar(0, 0, 150), 4, CV_AA);
+        alvision.polylines(img, polyline, 1, false, new alvision.Scalar(0, 0, 150), 4, alvision.LineTypes.LINE_AA);
         //n = 0;
     
-        for (Array<Point>::const_iterator it = polyline.begin(); n < (int)polyline.size() - 1; ++it, n++ )
+        //for (Array<Point>::const_iterator it = polyline.begin(); n < (int)polyline.size() - 1; ++it, n++ )
+        for (var i = 0; i < polyline.length - 1;i++)
         {
-            alvision.line(img, *it, *(it + 1), new alvision.Scalar(50, 250, 100));
+            alvision.line(img, polyline[i], polyline[i+1], new alvision.Scalar(50, 250, 100));
         }
 
         polyline = [];
@@ -174,9 +175,10 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
         polyline[5] = new alvision.Point(60, 20);
         polyline[6] = new alvision.Point(60, 60);
         polyline[7] = new alvision.Point(20, 60);
-        //const Point* ppts[] = {&polyline[0], &polyline[0]+4};
+        //var ppts = [polyline[0], polyline[0 + 4]];
+        var ppts = [[polyline[0], polyline[1], polyline[2], polyline[3] ], [polyline[4], polyline[5], polyline[6], polyline[7]]];
         //int pn[] = {4, 4};
-        alvision.fillPoly(img, ppts, pn, 2, new alvision.Scalar(100, 100, 0), 8, 0, new alvision.Point(500, 20));
+        alvision.fillPoly(img, ppts,  new alvision.Scalar(100, 100, 0), 8, 0, new alvision.Point(500, 20));
 
         alvision.rectangle(img, new alvision.Point(0, 300), new alvision.Point(50, 398), new alvision.Scalar(0, 0, 255));
 
@@ -185,68 +187,72 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
         var fontScale = 2;
         var textSize = alvision.getTextSize(text1, fontFace, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
         baseline += thickness;
-        var textOrg = new alvision.Point((img.cols.valueOf() - textSize.width.valueOf()) / 2, (img.rows.valueOf() + textSize.height.valueOf()) / 2);
-        alvision.rectangle(img, textOrg + new alvision.Point(0, baseline), textOrg + new alvision.Point(textSize.width, -textSize.height), new alvision.Scalar(0, 0, 255));
-        alvision.line(img, textOrg + new alvision.Point(0, thickness), textOrg + new alvision.Point(textSize.width, thickness), new alvision.Scalar(0, 0, 255));
-        alvision.putText(img, text1, textOrg, fontFace, fontScale, alvision.Scalar(150, 0, 150), thickness, 8);
+        var textOrg = new alvision.Point((img.cols().valueOf() - textSize.width.valueOf()) / 2, (img.rows().valueOf() + textSize.height.valueOf()) / 2);
+        alvision.rectangle(img, textOrg.op_Addition( new alvision.Point(0, baseline)), textOrg.op_Addition( new alvision.Point(textSize.width, -textSize.height)), new alvision.Scalar(0, 0, 255));
+        alvision.line(img, textOrg.op_Addition( new alvision.Point(0, thickness)), textOrg.op_Addition( new alvision.Point(textSize.width, thickness)), new alvision.Scalar(0, 0, 255));
+        alvision.putText(img, text1, textOrg, fontFace, fontScale, new alvision.Scalar(150, 0, 150), thickness, 8);
 
         var text2 = "abcdefghijklmnopqrstuvwxyz1234567890";
         var color = new alvision.Scalar(200, 0, 0);
         fontScale = 0.5, thickness = 1;
         var dist = 5;
 
-        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_SIMPLEX, fontScale, thickness, (bl) => { baseline = bl; });
-        textOrg = new alvision.Point(5, 5) + new alvision.Point(0, textSize.height + dist);
-        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_SIMPLEX, fontScale, color, thickness, CV_AA);
+        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_SIMPLEX, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = new alvision.Point(5, 5).op_Addition(new alvision.Point(0, textSize.height.valueOf() + dist));
+        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_SIMPLEX, fontScale, color, thickness, alvision.LineTypes.LINE_AA );
 
         fontScale = 1;
-        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_PLAIN, fontScale, thickness, (bl) => { baseline = bl; });
-        textOrg += new alvision.Point(0, textSize.height + dist);
-        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_PLAIN, fontScale, color, thickness, CV_AA);
+        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_PLAIN, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = textOrg.op_Addition(new alvision.Point(0, textSize.height.valueOf() + dist));
+        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_PLAIN, fontScale, color, thickness, alvision.LineTypes.LINE_AA);
 
         fontScale = 0.5;
-        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_DUPLEX, fontScale, thickness, (bl) => { baseline = bl; });
-        textOrg += new alvision.Point(0, textSize.height + dist);
-        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_DUPLEX, fontScale, color, thickness, CV_AA);
+        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_DUPLEX, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = textOrg.op_Addition( new alvision.Point(0, textSize.height.valueOf() + dist))
+        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_DUPLEX, fontScale, color, thickness, alvision.LineTypes.LINE_AA);
 
-        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_COMPLEX, fontScale, thickness, (bl) => { baseline = bl; });
-        textOrg += new alvision.Point(0, textSize.height + dist);
-        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_COMPLEX, fontScale, color, thickness, CV_AA);
+        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_COMPLEX, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = textOrg.op_Addition( new alvision.Point(0, textSize.height.valueOf() + dist))
+        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_COMPLEX, fontScale, color, thickness, alvision.LineTypes.LINE_AA);
 
-        textSize = alvision.getTextSize(text2, FONT_HERSHEY_TRIPLEX, fontScale, thickness, (bl) => { baseline = bl; });
-        textOrg += new alvision.Point(0, textSize.height + dist);
-        alvision.putText(img, text2, textOrg, FONT_HERSHEY_TRIPLEX, fontScale, color, thickness, CV_AA);
+        textSize = alvision.getTextSize(text2,alvision.HersheyFonts.FONT_HERSHEY_TRIPLEX, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = textOrg.op_Addition(new alvision.Point(0, textSize.height.valueOf() + dist));
+        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_TRIPLEX, fontScale, color, thickness, alvision.LineTypes.LINE_AA);
 
         fontScale = 1;
-        textSize = alvision.getTextSize(text2, FONT_HERSHEY_COMPLEX_SMALL, fontScale, thickness, (bl) => { baseline = bl; });
-        textOrg += new alvision.Point(0, 180) + Point(0, textSize.height + dist);
-        alvision.putText(img, text2, textOrg, FONT_HERSHEY_COMPLEX_SMALL, fontScale, color, thickness, CV_AA);
+        textSize = alvision.getTextSize(text2, alvision.HersheyFonts. FONT_HERSHEY_COMPLEX_SMALL, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = textOrg.op_Addition(new alvision.Point(0, 180)).op_Addition(new alvision.Point(0, textSize.height.valueOf() + dist));
+        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_COMPLEX_SMALL, fontScale, color, thickness, alvision.LineTypes.LINE_AA);
 
-        textSize = alvision.getTextSize(text2, FONT_HERSHEY_SCRIPT_SIMPLEX, fontScale, thickness, (bl) => { baseline = bl; });
-        textOrg += new alvision.Point(0, textSize.height + dist);
-        alvision.putText(img, text2, textOrg, FONT_HERSHEY_SCRIPT_SIMPLEX, fontScale, color, thickness, CV_AA);
+        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_SCRIPT_SIMPLEX, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = textOrg.op_Addition(new alvision.Point(0, textSize.height.valueOf() + dist));
+        alvision.putText(img, text2, textOrg, alvision.HersheyFonts.FONT_HERSHEY_SCRIPT_SIMPLEX, fontScale, color, thickness, alvision.LineTypes.LINE_AA);
 
-        textSize = alvision.getTextSize(text2, FONT_HERSHEY_SCRIPT_COMPLEX, fontScale, thickness, (bl) => { baseline = bl; });
-        textOrg += Point(0, textSize.height + dist);
-        alvision.putText(img, text2, textOrg, FONT_HERSHEY_SCRIPT_COMPLEX, fontScale, color, thickness, CV_AA);
+        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_HERSHEY_SCRIPT_COMPLEX, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = textOrg.op_Addition(new alvision.Point(0, textSize.height.valueOf() + dist));
+        alvision.putText(img, text2, textOrg, alvision.HersheyFonts. FONT_HERSHEY_SCRIPT_COMPLEX, fontScale, color, thickness, alvision.LineTypes.LINE_AA);
 
         dist = 15, fontScale = 0.5;
-        textSize = alvision.getTextSize(text2, FONT_ITALIC, fontScale, thickness, (bl) => { baseline = bl; });
-        textOrg += Point(0, textSize.height + dist);
-        alvision.putText(img, text2, textOrg, FONT_ITALIC, fontScale, color, thickness, CV_AA);
+        textSize = alvision.getTextSize(text2, alvision.HersheyFonts.FONT_ITALIC, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = textOrg.op_Addition(new alvision.Point(0, textSize.height.valueOf() + dist));
+        alvision.putText(img, text2, textOrg, alvision.HersheyFonts. FONT_ITALIC, fontScale, color, thickness, alvision.LineTypes.LINE_AA);
     }
 
     checkLineIterator(img: alvision.Mat): alvision.int {
-        LineIterator it(img, Point(0, 300), Point(1000, 300));
-        for (int i = 0; i < it.count; ++it, i++ )
-        {
-            Vec3b v = (Vec3b)(*(*it)) - img.at<Vec3b>(300, i);
-            float err = (float)alvision.cvtest.norm(v,alvision.NormTypes. NORM_L2);
+        var it = new alvision.LineIterator (img, new alvision.Point(0, 300), new alvision.Point(1000, 300));
+        //for (let i = 0; i < it.count; ++it, i++ )
+        var i = 0;
+        it.each((pos) => {
+            var v = img.at<alvision.Vecb>("Vec3b", pos.x, pos.y).get().op_Substraction(img.at<alvision.Vecb>("Vec3b", 300, i).get());
+            //Vec3b v = (Vec3b)(*(*it)) - img.at<Vec3b>(300, i);
+            i++;
+            var err = alvision.cvtest.norm(v, alvision.NormTypes.NORM_L2);
             if (err != 0) {
-                this.ts.printf(ts .LOG, "LineIterator works incorrect");
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "LineIterator works incorrect");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             }
-        }
+
+        });
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
         return 0;
     }
@@ -261,159 +267,187 @@ class CV_DrawingTest_C extends CV_DrawingTest {
 
 
     draw(_img: alvision.Mat): void {
-        CvSize imgSize = cvSize(600, 400);
-        _img.create(imgSize, CV_8UC3);
-        CvMat img = _img;
+        var imgSize = new alvision.Size(600, 400);
+        _img.create(imgSize,alvision.MatrixType. CV_8UC3);
+        var img = _img;
 
-        vector < CvPoint > polyline(4);
-        polyline[0] = cvPoint(0, 0);
-        polyline[1] = cvPoint(imgSize.width, 0);
-        polyline[2] = cvPoint(imgSize.width, imgSize.height);
-        polyline[3] = cvPoint(0, imgSize.height);
-        CvPoint * pts = &polyline[0];
-        int n = (int)polyline.size();
-        int actualSize = 0;
-        cvFillPoly( &img, &pts, &n, 1, cvScalar(255, 255, 255));
+        var polyline = new Array<alvision.Point>(4);
+        polyline[0] = new alvision.Point(0, 0);
+        polyline[1] = new alvision.Point(imgSize.width, 0);
+        polyline[2] = new alvision.Point(imgSize.width, imgSize.height);
+        polyline[3] = new alvision.Point(0, imgSize.height);
+        var pts = polyline[0];
+        var n = polyline.length;
+        var actualSize = 0;
+        alvision.fillPoly( img, pts,new alvision.Scalar(255, 255, 255));
 
-        CvPoint p1 = cvPoint(1, 1), p2 = cvPoint(3, 3);
-        if (cvClipLine(imgSize, &p1, &p2))
-            cvCircle( &img, cvPoint(300, 100), 40, cvScalar(0, 0, 255), 3); // draw
+        var p1 = new alvision.Point(1, 1), p2 = new alvision.Point(3, 3);
+        if (alvision.clipLine(imgSize, p1, p2))
+            alvision.circle ( img, new alvision.Point(300, 100), 40,new alvision.Scalar(0, 0, 255), 3); // draw
 
-        p1 = cvPoint(1, 1), p2 = cvPoint(3, imgSize.height + 1000);
-        if (cvClipLine(imgSize, &p1, &p2))
-            cvCircle( &img, cvPoint(500, 300), 50, cvScalar(255, 0, 0), 5, 8, 1); // draw
+        p1 = new alvision.Point(1, 1), p2 = new alvision.Point(3, imgSize.height.valueOf() + 1000);
+        if (alvision.clipLine(imgSize, p1, p2))
+            alvision.circle( img, new alvision.Point(500, 300), 50, new alvision.Scalar(255, 0, 0), 5, 8, 1); // draw
 
-        p1 = cvPoint(imgSize.width, 1), p2 = cvPoint(imgSize.width, 3);
-        if (cvClipLine(imgSize, &p1, &p2))
-            cvCircle( &img, cvPoint(390, 100), 10, cvScalar(0, 0, 255), 3); // not draw
+        p1 = new alvision.Point(imgSize.width, 1), p2 = new alvision.Point(imgSize.width, 3);
+        if (alvision.clipLine(imgSize, p1, p2))
+            alvision.circle( img,new  alvision.Point(390, 100), 10, new alvision.Scalar(0, 0, 255), 3); // not draw
 
-        p1 = Point(imgSize.width - 1, 1), p2 = Point(imgSize.width, 3);
-        if (cvClipLine(imgSize, &p1, &p2))
-            cvEllipse( &img, cvPoint(390, 100), cvSize(20, 30), 60, 0, 220.0, cvScalar(0, 200, 0), 4); //draw
+        p1 = new alvision.Point(imgSize.width.valueOf() - 1, 1), p2 = new alvision.Point(imgSize.width, 3);
+        if (alvision.clipLine(imgSize, p1, p2))
+            alvision.ellipse( img,new alvision.Point(390, 100), new alvision.Size(20, 30), 60, 0, 220.0,new  alvision.Scalar(0, 200, 0), 4); //draw
 
-        CvBox2D box;
-        box.center.x = 100;
-        box.center.y = 200;
-        box.size.width = 200;
-        box.size.height = 100;
-        box.angle = 160;
-        cvEllipseBox( &img, box, Scalar(200, 200, 255), 5);
+        var box = new alvision.RotatedRect(new alvision.Point2f(100, 200), new alvision.Size2f(200, 100), 160);
+        //CvBox2D box;
+        //box.center.x = 100;
+        //box.center.y = 200;
+        //box.size.width = 200;
+        //box.size.height = 100;
+        //box.angle = 160;
+        alvision.ellipse( img, box,new alvision. Scalar(200, 200, 255), 5);
 
-        polyline.resize(9);
-        pts = &polyline[0];
-        n = (int)polyline.size();
-        actualSize = cvEllipse2Poly(cvPoint(430, 180), cvSize(100, 150), 30, 0, 150, &polyline[0], 20);
-        CV_Assert(actualSize == n);
-        cvPolyLine( &img, &pts, &n, 1, false, cvScalar(0, 0, 150), 4, CV_AA);
+        polyline.length = 9;
+        pts = polyline[0];
+        n = polyline.length;
+        
+        /*actualSize = */alvision.ellipse2Poly(new alvision.Point(430, 180), new alvision.Size(100, 150), 30, 0, 150, 20, (pts) => { polyline = pts; });
+        //alvision.CV_Assert(()=>actualSize == n);
+        alvision.polylines( img, pts, 1, false, new alvision.Scalar(0, 0, 150), 4, alvision.LineTypes.LINE_AA);
         n = 0;
-        for (Array<CvPoint>::const_iterator it = polyline.begin(); n < (int)polyline.size() - 1; ++it, n++ )
+        //for (Array<alvision.Point>::const_iterator it = polyline.begin(); n < (int)polyline.size() - 1; ++it, n++ )
+        for (var it = 0; it < polyline.length - 1;it++)
         {
-            cvLine( &img, *it, *(it + 1), cvScalar(50, 250, 100));
+            alvision.line( img, polyline[it], polyline[it + 1], new alvision.Scalar(50, 250, 100));
         }
 
-        polyline.resize(19);
-        pts = &polyline[0];
-        n = (int)polyline.size();
-        actualSize = cvEllipse2Poly(cvPoint(500, 300), cvSize(50, 80), 0, 0, 180, &polyline[0], 10);
-        CV_Assert(actualSize == n);
-        cvPolyLine( &img, &pts, &n, 1, true, Scalar(100, 200, 100), 20);
-        cvFillConvexPoly( &img, pts, n, cvScalar(0, 80, 0));
+        polyline.length = (19);
+        pts = polyline[0];
+        n = polyline.length;
+        /*actualSize =*/ alvision.ellipse2Poly(new alvision.Point(500, 300), new alvision.Size(50, 80), 0, 0, 180, 10, (pts) => { polyline = pts; });
+        //alvision.CV_Assert(()=>actualSize == n);
+        alvision.polyLines( img, pts, 1, true, new alvision.Scalar(100, 200, 100), 20);
+        alvision.fillConvexPoly( img, pts, new alvision.Scalar(0, 80, 0));
 
-        polyline.resize(8);
+        polyline.length = (8);
         // external rectengular
-        polyline[0] = cvPoint(500, 20);
-        polyline[1] = cvPoint(580, 20);
-        polyline[2] = cvPoint(580, 100);
-        polyline[3] = cvPoint(500, 100);
+        polyline[0] = new alvision.Point(500, 20);
+        polyline[1] = new alvision.Point(580, 20);
+        polyline[2] = new alvision.Point(580, 100);
+        polyline[3] = new alvision.Point(500, 100);
         // internal rectangular
-        polyline[4] = cvPoint(520, 40);
-        polyline[5] = cvPoint(560, 40);
-        polyline[6] = cvPoint(560, 80);
-        polyline[7] = cvPoint(520, 80);
-        CvPoint * ppts[] = {&polyline[0], &polyline[0] + 4 };
-        int pn[] = { 4, 4};
-        cvFillPoly( &img, ppts, pn, 2, cvScalar(100, 100, 0), 8, 0);
+        polyline[4] = new alvision.Point(520, 40);
+        polyline[5] = new alvision.Point(560, 40);
+        polyline[6] = new alvision.Point(560, 80);
+        polyline[7] = new alvision.Point(520, 80);
+        var ppts = [[polyline[0], polyline[1], polyline[2], polyline[3]], [polyline[4], polyline[5], polyline[6], polyline[7] ]];
+        //var pn = [ 4, 4];
+        alvision.fillPoly( img, ppts, new alvision.Scalar(100, 100, 0), 8, 0);
 
-        cvRectangle( &img, cvPoint(0, 300), cvPoint(50, 398), cvScalar(0, 0, 255));
+        alvision.rectangle( img,new alvision.Point(0, 300),new alvision.Point(50, 398),new alvision.Scalar(0, 0, 255));
 
-        string text1 = "OpenCV";
-        CvFont font;
-        cvInitFont( &font, FONT_HERSHEY_SCRIPT_SIMPLEX, 2, 2, 0, 3);
-        int baseline = 0;
-        CvSize textSize;
-        cvGetTextSize(text1, &font, &textSize, &baseline);
-        baseline += font.thickness;
-        CvPoint textOrg = cvPoint((imgSize.width - textSize.width) / 2, (imgSize.height + textSize.height) / 2);
-        cvRectangle( &img, cvPoint(textOrg.x, textOrg.y + baseline),
-            cvPoint(textOrg.x + textSize.width, textOrg.y - textSize.height), cvScalar(0, 0, 255));
-        cvLine( &img, cvPoint(textOrg.x, textOrg.y + font.thickness),
-            cvPoint(textOrg.x + textSize.width, textOrg.y + font.thickness), cvScalar(0, 0, 255));
-        cvPutText( &img, text1, textOrg, &font, cvScalar(150, 0, 150));
+        var text1 = "OpenCV";
+        
+        var baseline = 0;
+        var fontThickness = 3;
+        var fontFace = alvision.HersheyFonts.FONT_HERSHEY_SCRIPT_SIMPLEX;
+        var textSize = new alvision.Size();
+        var textSize = alvision.getTextSize(text1, fontFace, 2, fontThickness, (bl) => { baseline = bl.valueOf(); })
 
-        int dist = 5;
-        string text2 = "abcdefghijklmnopqrstuvwxyz1234567890";
-        CvScalar color = cvScalar(200, 0, 0);
-        cvInitFont( &font, FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2, &font, &textSize, &baseline);
-        textOrg = cvPoint(5, 5 + textSize.height + dist);
-        cvPutText(&img, text2, textOrg, &font, color);
+        baseline += fontThickness;////font.thickness;
+        var textOrg =new alvision.Point((imgSize.width.valueOf() - textSize.width.valueOf()) / 2, (imgSize.height.valueOf() + textSize.height.valueOf()) / 2);
+        alvision.rectangle( img,new alvision.Point(textOrg.x.valueOf(), textOrg.y.valueOf() + baseline),
+            new alvision.Point(textOrg.x.valueOf() + textSize.width.valueOf(), textOrg.y.valueOf() - textSize.height.valueOf()), new alvision.Scalar(0, 0, 255));
+        alvision.line( img,new alvision.Point(textOrg.x, textOrg.y.valueOf() + fontThickness),
+            new alvision.Point(textOrg.x.valueOf() + textSize.width.valueOf(), textOrg.y.valueOf() + fontThickness), new alvision.Scalar(0, 0, 255));
+        alvision.putText( img, text1, textOrg, fontFace,1,new alvision.Scalar(150, 0, 150));
 
-        cvInitFont( &font, FONT_HERSHEY_PLAIN, 1, 1, 0, 1, CV_AA);
-        cvGetTextSize(text2, &font, &textSize, &baseline);
-        textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2, textOrg, &font, color);
+        var dist = 5;
+        var text2 = "abcdefghijklmnopqrstuvwxyz1234567890";
+        var color = new alvision.Scalar(200, 0, 0);
+        //cvInitFont( &font, alvision.HersheyFonts.FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, alvision.LineTypes.LINE_AA);
+        var fontFace = alvision.HersheyFonts.FONT_HERSHEY_SIMPLEX;
+        var fontScale = 0.5;
+        var fontThickness = 1;
+        var textSize = alvision.getTextSize(text2, fontFace, fontScale, fontThickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = new alvision.Point(5, 5 + textSize.height.valueOf() + dist);
+        alvision.putText(img, text2, textOrg, fontFace, fontScale, color);
 
-        cvInitFont( &font, FONT_HERSHEY_DUPLEX, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2, &font, &textSize, &baseline);
-        textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2, textOrg, &font, color);
+        var fontFace = alvision.HersheyFonts.FONT_HERSHEY_PLAIN;
+        var fontScale = 1;
+        var fontThickness = 1;
+        textSize = alvision.getTextSize(text2, fontFace, fontScale, fontThickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = new alvision.Point(textOrg.x, textOrg.y.valueOf() + textSize.height.valueOf() + dist);
+        alvision.putText(img, text2, textOrg,fontFace,fontScale, color);
 
-        cvInitFont( &font, FONT_HERSHEY_COMPLEX, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2, &font, &textSize, &baseline);
-        textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2, textOrg, &font, color);
+        //cvInitFont( &font, alvision.HersheyFonts.FONT_HERSHEY_DUPLEX, 0.5, 0.5, 0, 1, alvision.LineTypes.LINE_AA);
+        var fontFace = alvision.HersheyFonts.FONT_HERSHEY_DUPLEX;
+        var fontScale = 0.5;
+        var fontThickness = 1;
+        textSize = alvision.getTextSize(text2, fontFace, fontScale, fontThickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = new alvision.Point(textOrg.x, textOrg.y.valueOf() + textSize.height.valueOf() + dist);
+        alvision.putText(img, text2, textOrg,fontFace,fontScale,color);
 
-        cvInitFont( &font, FONT_HERSHEY_TRIPLEX, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2, &font, &textSize, &baseline);
-        textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2, textOrg, &font, color);
+        var fontFace = alvision.HersheyFonts.FONT_HERSHEY_COMPLEX;
+        var fontScale = 0.5;
+        var fontThickness = 1;
+        textSize = alvision.getTextSize(text2, fontFace, fontScale, fontThickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = new alvision.Point(textOrg.x, textOrg.y.valueOf() + textSize.height.valueOf() + dist);
+        alvision.putText(img, text2, textOrg,fontFace,fontScale, color);
 
-        cvInitFont( &font, FONT_HERSHEY_COMPLEX_SMALL, 1, 1, 0, 1, CV_AA);
-        cvGetTextSize(text2, &font, &textSize, &baseline);
-        textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist + 180);
-        cvPutText(&img, text2, textOrg, &font, color);
+        var fontFace = alvision.HersheyFonts.FONT_HERSHEY_TRIPLEX;
+        var fontScale = 0.5;
+        var fontThickness = 1;
+        textSize = alvision.getTextSize(text2, fontFace, fontScale, fontThickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = new alvision.Point(textOrg.x, textOrg.y.valueOf() + textSize.height.valueOf() + dist);
+        alvision.putText(img, text2, textOrg, fontFace, fontScale, color);
 
-        cvInitFont( &font, FONT_HERSHEY_SCRIPT_SIMPLEX, 1, 1, 0, 1, CV_AA);
-        cvGetTextSize(text2, &font, &textSize, &baseline);
-        textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2, textOrg, &font, color);
+        var fontFace = alvision.HersheyFonts.FONT_HERSHEY_COMPLEX_SMALL;
+        var fontScale = 1;
+        var fontThickness = 1;
+        textSize = alvision.getTextSize(text2, fontFace, fontScale, fontThickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = new alvision.Point(textOrg.x, textOrg.y.valueOf() + textSize.height.valueOf() + dist + 180);
+        alvision.putText(img, text2, textOrg, fontFace, fontScale, color);
 
-        cvInitFont( &font, FONT_HERSHEY_SCRIPT_COMPLEX, 1, 1, 0, 1, CV_AA);
-        cvGetTextSize(text2, &font, &textSize, &baseline);
-        textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2, textOrg, &font, color);
+        var fontFace = alvision.HersheyFonts.FONT_HERSHEY_SCRIPT_SIMPLEX;
+        var fontScale = 1;
+        var fontThickness = 1;
+        textSize = alvision.getTextSize(text2, fontFace, fontScale, fontThickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg =new  alvision.Point(textOrg.x, textOrg.y.valueOf() + textSize.height.valueOf() + dist);
+        alvision.putText(img, text2, textOrg, fontFace, fontScale, color);
+
+        var fontFace = alvision.HersheyFonts.FONT_HERSHEY_SCRIPT_COMPLEX;
+        var fontScale = 1;
+        var fontThickness = 1;
+        textSize = alvision.getTextSize(text2, fontFace, fontScale, fontThickness, (bl) => { baseline = bl.valueOf();});
+        textOrg = new alvision.Point(textOrg.x, textOrg.y.valueOf() + textSize.height.valueOf() + dist);
+        alvision.putText(img, text2, textOrg, fontFace, fontScale, color);
 
         dist = 15;
-        cvInitFont( &font, FONT_ITALIC, 0.5, 0.5, 0, 1, CV_AA);
-        cvGetTextSize(text2, &font, &textSize, &baseline);
-        textOrg = cvPoint(textOrg.x, textOrg.y + textSize.height + dist);
-        cvPutText(&img, text2, textOrg, &font, color);
+        var fontFace = alvision.HersheyFonts.FONT_ITALIC;
+        var fontScale = 0.5;
+        var fontThickness = 1;
+        textSize = alvision.getTextSize(text2, fontFace, fontScale, fontThickness, (bl) => { baseline = bl.valueOf(); });
+        textOrg = new alvision.Point(textOrg.x, textOrg.y.valueOf() + textSize.height.valueOf() + dist);
+        alvision.putText(img, text2, textOrg, fontFace, fontScale, color);
     }
 
     checkLineIterator(_img: alvision.Mat): alvision.int {
-        CvLineIterator it;
-        CvMat img = _img;
-        int count = cvInitLineIterator( &img, cvPoint(0, 300), cvPoint(1000, 300), &it);
-        for (int i = 0; i < count; i++ )
-        {
-            Vec3b v = (Vec3b)(*(it.ptr)) - _img.at<Vec3b>(300, i);
-            float err = (float)alvision.cvtest.norm(v,alvision.NormTypes. NORM_L2);
+        //CvLineIterator it;
+        //CvMat img = _img;
+        //int count = cvInitLineIterator( &img, alvision.Point(0, 300), alvision.Point(1000, 300), &it);
+        //for (var i = 0; i < count; i++ )
+        var it = new alvision.LineIterator(_img, new alvision.Point(0, 300), new alvision.Point(1000, 300));
+        var i = 0;
+        it.each((pos) => {
+            var v = _img.at<alvision.Vecb>("Vec3b", pos.x, pos.y).get().op_Substraction(_img.at<alvision.Vecb>("Vec3b", 300, i).get());
+            i++;
+            var err = alvision.cvtest.norm(v, alvision.NormTypes.NORM_L2);
             if (err != 0) {
-                this.ts.printf(ts .LOG, "CvLineIterator works incorrect");
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "CvLineIterator works incorrect");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             }
-            CV_NEXT_LINE_POINT(it);
-        }
+            //CV_NEXT_LINE_POINT(it);
+        });
         this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
         return 0;
     }
@@ -504,35 +538,37 @@ class CV_DrawingTest_UTF8 extends alvision.cvtest.BaseTest {
 
         var bigSize = new alvision.Size(0, 0);
         
-        for (Array<int>::const_iterator font = fonts.begin(); font != fonts.end(); ++font) {
-            for (int italic = 0; italic <= FONT_ITALIC; italic += FONT_ITALIC)
+        for (var font = 0; font < fonts.length;font++){
+            for (var italic = 0; italic <= alvision.HersheyFonts. FONT_ITALIC; italic += alvision.HersheyFonts.FONT_ITALIC)
             {
-                for (Array<string>::const_iterator line = lines.begin(); line != lines.end(); ++line) {
-                    const float fontScale = 1;
-                    const int thickness = 1;
-                    const Scalar color(20, 20, 20);
-                    int baseline = 0;
+                //for (Array<string>::const_iterator line = lines.begin(); line != lines.end(); ++line) {
+                lines.forEach((line) => {
+                    const fontScale = 1;
+                    const thickness = 1;
+                    const color = new alvision.Scalar(20, 20, 20);
+                    var baseline = 0;
 
-                    Size textSize = getTextSize(*line, *font | italic, fontScale, thickness, &baseline);
-                    Point textOrg(0, textSize.height + 2);
-                    Mat img(textSize + Size(0, baseline), CV_8UC3, Scalar(255, 255, 255));
-                    putText(img, *line, textOrg, *font | italic, fontScale, color, thickness, CV_AA);
+                    var textSize = alvision.getTextSize(line, font | italic, fontScale, thickness, (bl) => { baseline = bl.valueOf(); });
+                    var textOrg = new alvision.Point(0, textSize.height.valueOf() + 2);
+                    var img = new alvision.Mat(alvision.Size.op_Addition( textSize , new alvision.Size(0, baseline)), alvision.MatrixType.CV_8UC3, new alvision.Scalar(255, 255, 255));
+                    alvision.putText(img, line, textOrg, font | italic, fontScale, color, thickness, alvision.LineTypes.LINE_AA);
 
                     results.push(img);
-                    bigSize.width = max(bigSize.width, img.size().width);
-                    bigSize.height += img.size().height + 1;
-                }
+                    bigSize.width = Math.max(bigSize.width.valueOf(), img.size().width.valueOf());
+                    bigSize.height = bigSize.height.valueOf() + img.size().height.valueOf() + 1;
+                });
             }
         }
 
         var shift = 0;
         var  result = new alvision.Mat(bigSize, alvision.MatrixType.CV_8UC3,new alvision. Scalar(100, 100, 100));
-        for (Array<Mat>::const_iterator img = results.begin(); img != results.end(); ++img) {
+        //for (Array<Mat>::const_iterator img = results.begin(); img != results.end(); ++img) {
+        results.forEach((img) => {
             var roi = new alvision.Rect(new alvision.Point(0, shift), img.size());
-            var sub = new alvision.Mat(result, roi);
+            var sub = result.roi(roi);// new alvision.Mat(result, roi);
             img.copyTo(sub);
-            shift += img.size().height + 1;
-        }
+            shift += img.size().height.valueOf() + 1;
+        });
         alvision.imwrite("/tmp/all_fonts.png", result);
     }
 }

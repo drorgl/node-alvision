@@ -54,46 +54,49 @@ import fs = require('fs');
 //#include "opencv2/core.hpp"
 //#include "opencv2/imgproc.hpp"
 
-template <typename T> T readVal(const alvision.Mat& src, int y, int x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
-{
-    if (border_type == alvision.BORDER_CONSTANT)
-        return (y >= 0 && y < src.rows && x >= 0 && x < src.cols) ? src.at<T>(y, x * src.channels() + c) : alvision.saturate_cast<T>(borderVal.val[c]);
 
-    return src.at<T>(alvision.borderInterpolate(y, src.rows, border_type), alvision.borderInterpolate(x, src.cols, border_type) * src.channels() + c);
+export function readVal<T>(Ttype : string, src: alvision.Mat, y: alvision.int, x: alvision.int, c: alvision.int, border_type: alvision.int, borderVal: alvision.Scalar = new alvision.Scalar()) : T
+{
+    if (border_type == alvision.BorderTypes.BORDER_CONSTANT)
+        return (y >= 0 && y < src.rows() && x >= 0 && x < src.cols()) ? src.at<T>(Ttype, y.valueOf(), x.valueOf() * src.channels().valueOf() + c.valueOf()).get() : alvision.saturate_cast<T>(borderVal.val[c.valueOf()],Ttype);
+
+    return src.at<T>(Ttype, alvision.borderInterpolate(y, src.rows(), border_type), alvision.borderInterpolate(x, src.cols(), border_type).valueOf() * src.channels().valueOf() + c.valueOf()).get();
 }
 
-template <typename T> struct NearestInterpolator
-{
-    static T getValue(const alvision.Mat& src, float y, float x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
-    {
-        return readVal<T>(src, int(y), int(x), c, border_type, borderVal);
+export interface Interpolator {
+    getValue<T>(Ttype: string, src: alvision.Mat, y: alvision.float, x: alvision.float, c: alvision.int, border_type: alvision.int, borderVal?: alvision.Scalar): T;
+}
+
+//template < typename T>
+export class NearestInterpolator implements Interpolator {
+    public getValue<T>(Ttype: string, src: alvision.Mat, y: alvision.float, x: alvision.float, c: alvision.int, border_type: alvision.int, borderVal?: alvision.Scalar): T {
+        return readVal<T>(Ttype, src, y, x, c, border_type, borderVal);
     }
-};
+}
 
-template <typename T> struct LinearInterpolator
-{
-    static T getValue(const alvision.Mat& src, float y, float x, int c, int border_type, alvision.Scalar borderVal = alvision.Scalar())
-    {
-        int x1 = Math.floor(x);
-        int y1 = Math.floor(y);
-        int x2 = x1 + 1;
-        int y2 = y1 + 1;
+//template < typename T>
+export class LinearInterpolator implements Interpolator {
+    public getValue<T extends Number>(Ttype: string, src: alvision.Mat, y: alvision.float, x: alvision.float, c: alvision.int, border_type: alvision.int, borderVal?: alvision.Scalar): T {
+        var x1 = Math.floor(x.valueOf());
+        var y1 = Math.floor(y.valueOf());
+        var x2 = x1 + 1;
+        var y2 = y1 + 1;
 
-        float res = 0;
+        var res = 0;
 
-        res += readVal<T>(src, y1, x1, c, border_type, borderVal) * ((x2 - x) * (y2 - y));
-        res += readVal<T>(src, y1, x2, c, border_type, borderVal) * ((x - x1) * (y2 - y));
-        res += readVal<T>(src, y2, x1, c, border_type, borderVal) * ((x2 - x) * (y - y1));
-        res += readVal<T>(src, y2, x2, c, border_type, borderVal) * ((x - x1) * (y - y1));
+        res += readVal<T>(Ttype, src, y1, x1, c, border_type, borderVal).valueOf() * ((x2 - x.valueOf()) * (y2 - y.valueOf()));
+        res += readVal<T>(Ttype, src, y1, x2, c, border_type, borderVal).valueOf() * ((x.valueOf() - x1) * (y2 - y.valueOf()));
+        res += readVal<T>(Ttype, src, y2, x1, c, border_type, borderVal).valueOf() * ((x2 - x.valueOf()) * (y.valueOf() - y1));
+        res += readVal<T>(Ttype, src, y2, x2, c, border_type, borderVal).valueOf() * ((x.valueOf() - x1) * (y.valueOf() - y1));
 
-        return alvision.saturate_cast<T>(res);
+        return alvision.saturate_cast<T>(res, Ttype);
     }
-};
+}
 
-class CubicInterpolator<T>
+export class CubicInterpolator implements Interpolator
 {
     static bicubicCoeff(x_: alvision.float): alvision.float {
-        var x = Math.abs(x_);
+        var x = Math.abs(x_.valueOf());
         if (x <= 1.0) {
             return x * x * (1.5 * x - 2.5) + 1.0;
         }
@@ -106,13 +109,12 @@ class CubicInterpolator<T>
 
     }
 
-    static getValue<T>(src: alvision.Mat, y: alvision.float, x: alvision.float, c: alvision.int, border_type: alvision.int, borderVal?: alvision.Scalar  = new alvision.Scalar()) : T
-    {
-        const  xmin = Math.ceil(x - 2.0);
-        const  xmax = Math.floor(x + 2.0);
+    public getValue<T extends Number>(Ttype: string, src: alvision.Mat, y: alvision.float, x: alvision.float, c: alvision.int, border_type: alvision.int, borderVal?: alvision.Scalar): T {
+        const xmin = Math.ceil(x.valueOf() - 2.0);
+        const xmax = Math.floor(x.valueOf() + 2.0);
 
-        const ymin = Math.ceil(y - 2.0);
-        const ymax = Math.floor(y + 2.0);
+        const ymin = Math.ceil(y.valueOf() - 2.0);
+        const ymax = Math.floor(y.valueOf() + 2.0);
 
         var sum  = 0.0;
         var wsum = 0.0;
@@ -121,15 +123,15 @@ class CubicInterpolator<T>
         {
             for (var cx = xmin; cx <= xmax; cx += 1.0)
             {
-                const w = alvision.bicubicCoeff(x - cx) * alvision.bicubicCoeff(y - cy);
-                sum += w * readVal<T>(src, (int) floorf(cy), (int) floorf(cx), c, border_type, borderVal);
+                const w = CubicInterpolator.bicubicCoeff(x.valueOf() - cx).valueOf() * CubicInterpolator.bicubicCoeff(y.valueOf() - cy).valueOf();
+                sum += w * readVal<T>(Ttype, src, Math.floor(cy), Math.floor(cx), c, border_type, borderVal).valueOf();
                 wsum += w;
             }
         }
 
         var res = (!wsum)? 0 : sum / wsum;
 
-        return res;
+        return <any>res;
     }
 };
 

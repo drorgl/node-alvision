@@ -292,8 +292,8 @@ import * as _base from './Base';
 //            int flags;
 //
                 //! the number of rows and columns
-            rows: _st.int;
-            cols: _st.int;
+            rows(): _st.int;
+            cols(): _st.int;
 //
 //            //! a distance between successive rows in bytes; includes the gap if any
 //            size_t step;

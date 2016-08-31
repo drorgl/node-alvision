@@ -50,7 +50,19 @@ export enum IOArrayKind{
 export interface IOArray extends Array<any> {
     kind?(): IOArrayKind;
     getGpuMat?(): _cuda.cuda.GpuMat;
-    getMat?(idx?: int /*= -1*/): _mat.Mat;
+    getMat?(idx?: int /*= -1*/): _mat.Mat; 
+
+    //create?(sz: _types.Size, type: int, i?: int /*= -1*/, allowTransposed?: boolean /*= false*/, fixedDepthMask?: int /*= 0*/): void;
+    //create?(rows: int, cols: int, type: int, i?: int /*= -1*/, allowTransposed?: boolean /*= false*/, fixedDepthMask?: int /*= 0*/): void;
+    //create?(dims: int, size: Array<int>, type: int, i?: int /*= -1*/, allowTransposed?: boolean /*= false*/, fixedDepthMask?: int /*= 0*/): void;
+
+    create?(rows: int, cols: int, type: int): void;
+    create?(size: _types.Size, type: int): void;
+
+
+    type?(): int;
+    rows?(): int;
+    cols?(): int;
 }
 
 export interface InputArray extends IOArray {}
@@ -700,4 +712,71 @@ export function random_shuffle<T>(array: Array<T>): Array<T> {
         array[j] = temp;
     }
     return array;
+}
+
+export function countkeys(o: any, key?: string | number) {
+    if (key) {
+        return Object.keys(o).filter((v) => (<Object>o).hasOwnProperty(v) && o[v] == key).length;
+    } else {
+        return Object.keys(o).filter((v) => (<Object>o).hasOwnProperty(v)).length;
+    }
+}
+
+interface IDictionary<V> {
+    [key: string]: V;
+    [key: number]: V;
+}
+
+export class Dictionary<K,V> {
+    public items: IDictionary<V> = {};
+
+    public containsKey(key: string): boolean {
+        return this.items.hasOwnProperty(key);
+    }
+
+    public count(key?: K): number {
+        if (key) {
+            return Object.keys(this.items).filter((v) => (<Object>this.items).hasOwnProperty(v) && <any>this.items[v] == <any>key).length;
+        } else {
+            return Object.keys(this.items).filter((v) => (<Object>this.items).hasOwnProperty(v)).length;
+        }
+    }
+
+    public clear(): void {
+        this.items = {};
+    }
+
+    public add(key: K, value: V) {
+        this.items[<any>key] = value;
+    }
+
+    public remove(key: K): V {
+        var val = this.items[<any>key];
+        delete this.items[<any>key];
+        return val;
+    }
+
+    public keys(): K[] {
+        var keySet: K[] = [];
+
+        for (var prop in this.items) {
+            if (this.items.hasOwnProperty(prop)) {
+                keySet.push(prop);
+            }
+        }
+
+        return keySet;
+    }
+
+    public values(): V[] {
+        var values: V[] = [];
+
+        for (var prop in this.items) {
+            if (this.items.hasOwnProperty(prop)) {
+                values.push(this.items[prop]);
+            }
+        }
+
+        return values;
+    }
 }

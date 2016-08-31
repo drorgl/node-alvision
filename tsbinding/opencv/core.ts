@@ -931,7 +931,7 @@ export var normalize: Inormalize = alvision_module.normalize;
 
 
 export interface IminMaxLoc {
-    (src: _st.InputArray, cb: (minVal: _st.double,maxVal: _st.double,minLoc: _types.Point,maxLoc: _types.Point)=> void, mask? : _st.InputArray /* = noArray()*/) : void;
+    (src: _st.InputArray, cb: (minVal: _st.double,maxVal: _st.double,minLoc: Array<_types.Point>,maxLoc: Array<_types.Point>)=> void, mask? : _st.InputArray /* = noArray()*/) : void;
 
 }
 
@@ -969,7 +969,7 @@ export var minMaxLoc : IminMaxLoc = alvision_module.minMaxLoc;
 
 interface IminMaxIdx {
     (src: _st.InputArray, cb: (minVal: _st.double, maxVal: _st.double /* = 0*/,
-        minIdx: _st.int /* = 0*/, maxIdx: _st.int /*= 0*/) =>void, mask? : _st.InputArray /* = noArray()*/) : void;
+        minIdx: Array<_st.int> /* = 0*/, maxIdx: Array<_st.int> /*= 0*/) =>void, mask? : _st.InputArray /* = noArray()*/) : void;
 }
 
 export var minMaxIdx: IminMaxIdx = alvision_module.minMaxIdx;
@@ -992,7 +992,7 @@ export var minMaxIdx: IminMaxIdx = alvision_module.minMaxIdx;
 //}
 
 export interface IminMaxLoc {
-    (a: _mat.SparseMat, cb: (minVal: _st.double, maxVal: _st.double, minIdx: _st.int/* = 0*/, maxIdx: _st.int /* = 0*/)=> void) : void;
+    (a: _mat.SparseMat, cb: (minVal: _st.double, maxVal: _st.double, minIdx: Array<_st.int>/* = 0*/, maxIdx: Array<_st.int> /* = 0*/)=> void) : void;
 }
 
 export var minMaxLoc: IminMaxLoc = alvision_module.minMaxLoc;

@@ -47,85 +47,90 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
-
-////////////////////////////////////////////////////////////////////////////
-// Blend
-
-namespace
-{
-    template <typename T>
-    void blendLinearGold(const alvision.Mat& img1, const alvision.Mat& img2, const alvision.Mat& weights1, const alvision.Mat& weights2, alvision.Mat& result_gold)
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
+//
+//////////////////////////////////////////////////////////////////////////////
+//// Blend
+//
+//namespace
+//{
+    //template <typename T>
+function blendLinearGold<T>(Ttype:string, img1: alvision.Mat, img2: alvision.Mat, weights1: alvision.Mat, weights2: alvision.Mat, result_gold: alvision.Mat ): void 
     {
         result_gold.create(img1.size(), img1.type());
 
-        int cn = img1.channels();
+        let cn = img1.channels();
 
-        for (int y = 0; y < img1.rows; ++y)
+        for (let y = 0; y < img1.rows(); ++y)
         {
-            const float* weights1_row = weights1.ptr<float>(y);
-            const float* weights2_row = weights2.ptr<float>(y);
-            const T* img1_row = img1.ptr<T>(y);
-            const T* img2_row = img2.ptr<T>(y);
-            T* result_gold_row = result_gold.ptr<T>(y);
+            const  weights1_row = weights1.ptr<alvision.float>("float",y);
+            const  weights2_row = weights2.ptr<alvision.float>("float",y);
+            const img1_row = img1.ptr<T>(Ttype,y);
+            const img2_row = img2.ptr<T>(Ttype,y);
+            let  result_gold_row = result_gold.ptr<T>(Ttype, y);
 
-            for (int x = 0; x < img1.cols * cn; ++x)
+            for (let x = 0; x < img1.cols().valueOf() * cn.valueOf(); ++x)
             {
-                float w1 = weights1_row[x / cn];
-                float w2 = weights2_row[x / cn];
-                result_gold_row[x] = static_cast<T>((img1_row[x] * w1 + img2_row[x] * w2) / (w1 + w2 + 1e-5f));
+                let w1 = weights1_row[x / cn.valueOf()].valueOf();
+                let w2 = weights2_row[x / cn.valueOf()].valueOf();
+                result_gold_row[x] = <any> ((<any>img1_row[x] * w1 + <any>img2_row[x] * w2) / (w1 + w2 + 1e-5));
             }
         }
     }
-}
+//}
 
-PARAM_TEST_CASE(Blend, alvision.cuda::DeviceInfo, alvision.Size, MatType, UseRoi)
+//PARAM_TEST_CASE(Blend, alvision.cuda.DeviceInfo, alvision.Size, MatType, UseRoi)
+class Blend extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.type =    this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Blend, Accuracy)
+//CUDA_TEST_P(Blend, Accuracy)
+class Blend_Accuracy extends Blend
 {
-    int depth = CV_MAT_DEPTH(type);
+    TestBody() {
+        let depth = alvision.MatrixType.CV_MAT_DEPTH(this.type);
 
-    alvision.Mat img1 = randomMat(size, type, 0.0, depth == CV_8U ? 255.0 : 1.0);
-    alvision.Mat img2 = randomMat(size, type, 0.0, depth == CV_8U ? 255.0 : 1.0);
-    alvision.Mat weights1 = randomMat(size, CV_32F, 0, 1);
-    alvision.Mat weights2 = randomMat(size, CV_32F, 0, 1);
+        let img1 = alvision.randomMat(this.size, this.type, 0.0, depth == alvision.MatrixType.CV_8U ? 255.0 : 1.0);
+        let img2 = alvision.randomMat(this.size, this.type, 0.0, depth == alvision.MatrixType.CV_8U ? 255.0 : 1.0);
+        let weights1 = alvision.randomMat(this.size, alvision.MatrixType.CV_32F, 0, 1);
+        let weights2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32F, 0, 1);
 
-    alvision.cuda::Gpuvar result = new alvision.Mat();
-    alvision.cuda::blendLinear(loadMat(img1, useRoi), loadMat(img2, useRoi), loadMat(weights1, useRoi), loadMat(weights2, useRoi), result);
+        let result = new alvision.Mat();
+        alvision.cudaimgproc.blendLinear(alvision.loadMat(img1, this.useRoi), alvision.loadMat(img2, this.useRoi), alvision.loadMat(weights1, this.useRoi), alvision.loadMat(weights2, this.useRoi), result);
 
-    alvision.Mat result_gold;
-    if (depth == CV_8U)
-        blendLinearGold<uchar>(img1, img2, weights1, weights2, result_gold);
-    else
-        blendLinearGold<float>(img1, img2, weights1, weights2, result_gold);
+        let result_gold = new alvision.Mat();
+        if (depth == alvision.MatrixType.CV_8U)
+            blendLinearGold<alvision.uchar>("uchar",img1, img2, weights1, weights2, result_gold);
+        else
+            blendLinearGold<alvision.float>("float",img1, img2, weights1, weights2, result_gold);
 
-    EXPECT_MAT_NEAR(result_gold, result, CV_MAT_DEPTH(type) == CV_8U ? 1.0 : 1e-5);
+        alvision.EXPECT_MAT_NEAR(result_gold, result, alvision.MatrixType.CV_MAT_DEPTH(this.type) == alvision.MatrixType.CV_8U ? 1.0 : 1e-5);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, Blend, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'Blend', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC3,alvision.MatrixType.CV_8UC4,alvision.MatrixType.CV_32FC1,alvision.MatrixType.CV_32FC3,alvision.MatrixType.CV_32FC4],
+    alvision.WHOLE_SUBMAT
+    ]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

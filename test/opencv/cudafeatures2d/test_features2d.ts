@@ -172,7 +172,7 @@ class ORB_Accuracy extends ORB
         alvision.ASSERT_FALSE(image.empty());
 
         let mask = new alvision.Mat(image.size(), alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
-        mask.roi([new alvision.Range(0, image.rows.valueOf() / 2), new alvision.Range(0, image.cols.valueOf() / 2)]).setTo(alvision.Scalar.all(0));
+        mask.roi([new alvision.Range(0, image.rows().valueOf() / 2), new alvision.Range(0, image.cols().valueOf() / 2)]).setTo(alvision.Scalar.all(0));
 
         let orb =
             alvision.cudafeatures2d.ORB.create(this.nFeatures, this.scaleFactor, this.nLevels, this.edgeThreshold,this. firstLevel,
@@ -304,7 +304,7 @@ class BruteForceMatcher_Match_Single extends BruteForceMatcher
 
         let mask = new alvision.cuda.GpuMat();
         if (this.useMask) {
-            mask.create(this.query.rows, this.train.rows, alvision.MatrixType.CV_8UC1);
+            mask.create(this.query.rows(), this.train.rows(), alvision.MatrixType.CV_8UC1);
             mask.setTo(alvision.Scalar.all(1));
         }
 
@@ -335,14 +335,14 @@ class BruteForceMatcher_Match_Collection extends BruteForceMatcher
     let d_train = new alvision.cuda.GpuMat (this.train);
 
     // make add() twice to test such case
-    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows.valueOf() / 2)));
-    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows.valueOf() / 2, this.train.rows.valueOf())));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows().valueOf() / 2)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows().valueOf() / 2, this.train.rows().valueOf())));
 
     // prepare masks (make first nearest match illegal)
     let masks = new Array<alvision.cuda.GpuMat> (2);
     for (let mi = 0; mi < 2; mi++)
     {
-        masks[mi] = new alvision.cuda.GpuMat(this.query.rows, this.train.rows.valueOf()/2,alvision.MatrixType. CV_8UC1, alvision.Scalar.all(1));
+        masks[mi] = new alvision.cuda.GpuMat(this.query.rows(), this.train.rows().valueOf()/2,alvision.MatrixType. CV_8UC1, alvision.Scalar.all(1));
         for (let di = 0; di < this.queryDescCount.valueOf()/2; di++)
             masks[mi].col(di * this.countFactor.valueOf()).setTo(alvision.Scalar.all(0));
     }
@@ -395,7 +395,7 @@ class BruteForceMatcher_KnnMatch_2_Single extends BruteForceMatcher
     let mask = new alvision.cuda.GpuMat();
     if (this.useMask)
     {
-        mask.create(this.query.rows, this.train.rows, alvision.MatrixType.CV_8UC1);
+        mask.create(this.query.rows(), this.train.rows(), alvision.MatrixType.CV_8UC1);
         mask.setTo(alvision.Scalar.all(1));
     }
 
@@ -436,7 +436,7 @@ class BruteForceMatcher_KnnMatch_3_Single extends BruteForceMatcher {
 
         let mask = new alvision.cuda.GpuMat();
         if (this.useMask) {
-            mask.create(this.query.rows, this.train.rows, alvision.MatrixType.CV_8UC1);
+            mask.create(this.query.rows(), this.train.rows(), alvision.MatrixType.CV_8UC1);
             mask.setTo(alvision.Scalar.all(1));
         }
 
@@ -476,14 +476,14 @@ class BruteForceMatcher_KnnMatch_2_Collection extends BruteForceMatcher
     let d_train = new alvision.cuda.GpuMat (this.train);
 
     // make add() twice to test such case
-    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows.valueOf() / 2)));
-    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows.valueOf() / 2, this.train.rows)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows().valueOf() / 2)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows().valueOf() / 2, this.train.rows())));
 
     // prepare masks (make first nearest match illegal)
     let masks = new Array<alvision.cuda.GpuMat> (2);
     for (let mi = 0; mi < 2; mi++ )
     {
-        masks[mi] = new alvision.cuda.GpuMat(this.query.rows, this.train.rows.valueOf() / 2, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
+        masks[mi] = new alvision.cuda.GpuMat(this.query.rows(), this.train.rows().valueOf() / 2, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
         for (let di = 0; di < this.queryDescCount.valueOf() / 2; di++)
             masks[mi].col(di * this.countFactor.valueOf()).setTo(alvision.Scalar.all(0));
     }
@@ -542,14 +542,14 @@ class BruteForceMatcher_KnnMatch_3_Collection extends BruteForceMatcher
     let d_train = new alvision.cuda.GpuMat (this.train);
 
     // make add() twice to test such case
-    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows.valueOf() / 2)));
-    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows.valueOf() / 2, this.train.rows.valueOf())));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows().valueOf() / 2)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows().valueOf() / 2, this.train.rows().valueOf())));
 
     // prepare masks (make first nearest match illegal)
     let masks = new Array<alvision.cuda.GpuMat> (2);
     for (let mi = 0; mi < 2; mi++ )
     {
-        masks[mi] = new alvision.cuda.GpuMat(this.query.rows, this.train.rows.valueOf() / 2, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
+        masks[mi] = new alvision.cuda.GpuMat(this.query.rows(), this.train.rows().valueOf() / 2, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
         for (let di = 0; di < this.queryDescCount.valueOf() / 2; di++)
             masks[mi].col(di * this.countFactor.valueOf()).setTo(alvision.Scalar.all(0));
     }
@@ -622,7 +622,7 @@ class BruteForceMatcher_RadiusMatch_Single extends BruteForceMatcher
         let mask = new alvision.cuda.GpuMat();
         if (this.useMask)
         {
-            mask.create(this.query.rows, this.train.rows,alvision.MatrixType. CV_8UC1);
+            mask.create(this.query.rows(), this.train.rows(),alvision.MatrixType. CV_8UC1);
             mask.setTo(alvision.Scalar.all(1));
         }
 
@@ -662,14 +662,14 @@ class BruteForceMatcher_RadiusMatch_Collection extends BruteForceMatcher
     let d_train = new alvision.cuda.GpuMat (this.train);
 
     // make add() twice to test such case
-    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows.valueOf() / 2)));
-    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows.valueOf() / 2, this.train.rows)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(0, this.train.rows().valueOf() / 2)));
+    matcher.add(alvision.NewArray<alvision.cuda.GpuMat>(1,()=> d_train.rowRange(this.train.rows().valueOf() / 2, this.train.rows())));
 
     // prepare masks (make first nearest match illegal)
     let masks = new Array<alvision.cuda.GpuMat> (2);
     for (let mi = 0; mi < 2; mi++)
     {
-        masks[mi] =new alvision.cuda.GpuMat(this.query.rows, this.train.rows.valueOf() / 2, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
+        masks[mi] =new alvision.cuda.GpuMat(this.query.rows(), this.train.rows().valueOf() / 2, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(1));
         for (let di = 0; di < this.queryDescCount.valueOf() / 2; di++)
             masks[mi].col(di * this.countFactor.valueOf()).setTo(alvision.Scalar.all(0));
     }

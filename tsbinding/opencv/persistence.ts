@@ -699,6 +699,7 @@ export interface FileNode
     readDMatch(matches: Array<_types.DMatch>);
     readPoint2d(points: Array<_types.Point2d>);
     readPoint3d(points: Array<_types.Point3d>);
+    readArray<T>(Ttype: string): Array<T>;
 };
 
 

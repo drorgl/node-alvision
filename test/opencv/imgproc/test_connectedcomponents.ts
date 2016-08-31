@@ -70,9 +70,9 @@ class CV_ConnectedComponentsTest extends alvision.cvtest.BaseTest
         var labelImage = new alvision.Mat();
         var nLabels = alvision.connectedComponents(bw, labelImage, 8, alvision.MatrixType.CV_32S);
 
-        for (var r = 0; r < labelImage.rows; ++r){
-            for (var c = 0; c < labelImage.cols; ++c){
-                var l = labelImage.atGet<alvision.int>("int",r, c);
+        for (var r = 0; r < labelImage.rows(); ++r){
+            for (var c = 0; c < labelImage.cols(); ++c){
+                var l = labelImage.at<alvision.int>("int",r, c).get();
                 var pass = l >= 0 && l <= nLabels;
                 if (!pass) {
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);

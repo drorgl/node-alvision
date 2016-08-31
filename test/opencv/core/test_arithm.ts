@@ -888,11 +888,11 @@ function flip(src: alvision.Mat , dst: alvision.Mat, flipcode: alvision.int):voi
     dst.create(src.size(), src.type());
     //int i, j, k, 
     var esz = src.elemSize();
-    var width = src.cols.valueOf() * esz.valueOf();
+    var width = src.cols().valueOf() * esz.valueOf();
 
-    for(var i = 0; i < dst.rows; i++ )
+    for(var i = 0; i < dst.rows(); i++ )
     {
-        var sptr = src.ptr<alvision.uchar>("uchar",flipcode == 1 ? i : dst.rows.valueOf() - i - 1);
+        var sptr = src.ptr<alvision.uchar>("uchar",flipcode == 1 ? i : dst.rows().valueOf() - i - 1);
         var dptr = dst.ptr<alvision.uchar>("uchar",i);
         if (flipcode == 0)
             alvision.arrcopy(dptr, sptr, width);
@@ -913,14 +913,14 @@ function setIdentity(dst: alvision.Mat, s: alvision.Scalar) : void
     //double buf[4];
     var buf = new Array<alvision.double>();
     alvision.scalarToRawData(s, buf, dst.type(), 0);
-    var esz = dst.elemSize(), width = dst.cols.valueOf()*esz.valueOf();
+    var esz = dst.elemSize(), width = dst.cols().valueOf()*esz.valueOf();
 
-    for(var i = 0; i < dst.rows; i++ )
+    for(var i = 0; i < dst.rows(); i++ )
     {
         var dptr = dst.ptr<alvision.uchar>("uchar",i);
         //memset(dptr, 0, width);
         dptr.forEach((v, i, a) => a[i] = 0);
-        if( i < dst.cols )
+        if( i < dst.cols() )
             for(var k = 0; k < esz; k++ )
                 dptr[i*esz.valueOf() + k] = (/*(uchar*)*/buf)[k];
     }

@@ -47,74 +47,73 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-#include "opencv2/highgui.hpp"
-
-#include <vector>
-#include <string>
-using namespace std;
-using namespace cv;
-
-#undef RENDER_MSERS
-#define RENDER_MSERS 0
-
-#if defined RENDER_MSERS && RENDER_MSERS
-static void renderMSERs(const Mat& gray, Mat& img, const Array<Array<Point> >& msers)
+//#include "test_precomp.hpp"
+//#include "opencv2/highgui.hpp"
+//
+//#include <vector>
+//#include <string>
+//using namespace std;
+//using namespace cv;
+//
+//#undef RENDER_MSERS
+//#define RENDER_MSERS 0
+//
+//#if defined RENDER_MSERS && RENDER_MSERS
+function renderMSERs(gray: alvision.Mat, img: alvision.Mat, msers: Array<Array<alvision.Point>> ) : void
 {
-    cvtColor(gray, img, COLOR_GRAY2BGR);
-    RNG rng((uint64)1749583);
-    for( int i = 0; i < (int)msers.size(); i++ )
+    alvision.cvtColor(gray, img,alvision.ColorConversionCodes. COLOR_GRAY2BGR);
+    let rng = new alvision.RNG (1749583);
+    for(let i = 0; i < msers.length; i++ )
     {
-        uchar b = rng.uniform(0, 256);
-        uchar g = rng.uniform(0, 256);
-        uchar r = rng.uniform(0, 256);
-        Vec3b color(b, g, r);
+        let b = rng.uniform(0, 256);
+        let g = rng.uniform(0, 256);
+        let r = rng.uniform(0, 256);
+        let color = new alvision.Vecb(b, g, r);
 
-        const Point* pt = &msers[i][0];
-        size_t j, n = msers[i].size();
-        for( j = 0; j < n; j++ )
-            img.at<Vec3b>(pt[j]) = color;
+        const  pt = msers[i][0];
+        let n = msers[i].length;
+        for (let j = 0; j < n; j++)
+            img.at<alvision.Vecb>("Vec3b", pt[j]).set(color);
     }
 }
-#endif
+//#endif
 
-TEST(Features2d_MSER, cases)
-{
-    uchar buf[] =
-    {
-         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-         255, 255, 255, 255, 255,   0,   0,   0,   0, 255, 255, 255, 255, 255, 255, 255, 255, 255,   0,   0,   0,   0, 255, 255, 255, 255,
-         255, 255, 255, 255, 255,   0,   0,   0,   0,   0, 255, 255, 255, 255, 255, 255, 255, 255,   0,   0,   0,   0, 255, 255, 255, 255,
-         255, 255, 255, 255, 255,   0,   0,   0,   0,   0, 255, 255, 255, 255, 255, 255, 255, 255,   0,   0,   0,   0, 255, 255, 255, 255,
-         255, 255, 255, 255, 255,   0,   0,   0,   0, 255, 255, 255, 255, 255, 255, 255, 255, 255,   0,   0,   0,   0, 255, 255, 255, 255,
-         255, 255, 255, 255, 255, 255,   0,   0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,   0,   0, 255, 255, 255, 255, 255,
-         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-         255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
-    };
-    Mat big_image = imread(alvision.cvtest.TS.ptr().get_data_path() + "mser/puzzle.png", 0);
-    Mat small_image(14, 26, CV_8U, buf);
-    static const int thresharr[] = { 0, 70, 120, 180, 255 };
+//TEST(Features2d_MSER, cases)
+alvision.cvtest.TEST('Features2d_MSER', 'cases', () => {
+    let buf =
+        [
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+            255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
+        ];
+    let big_image = alvision.imread(alvision.cvtest.TS.ptr().get_data_path() + "mser/puzzle.png", 0);
+    let small_image = new alvision.Mat(14, 26, alvision.MatrixType.CV_8U, buf);
+    const thresharr = [0, 70, 120, 180, 255];
 
-    const int kDelta = 5;
-    Ptr<MSER> mserExtractor = MSER::create( kDelta );
-    Array<Array<Point> > msers;
-    Array<Rect> boxes;
+    const kDelta = 5;
+    let mserExtractor = alvision.MSER.create(kDelta);
+    let msers = new Array<Array<alvision.Point>>();
+    let boxes = new Array<alvision.Rect>();
 
-    RNG rng((uint64)123456);
+    let rng = new alvision.RNG(123456);
 
-    for( int i = 0; i < 100; i++ )
-    {
-        bool use_big_image = rng.uniform(0, 7) != 0;
-        bool invert = rng.uniform(0, 2) != 0;
-        bool binarize = use_big_image ? rng.uniform(0, 5) != 0 : false;
-        bool blur = rng.uniform(0, 2) != 0;
-        int thresh = thresharr[rng.uniform(0, 5)];
+    for (let i = 0; i < 100; i++) {
+        let use_big_image = rng.uniform(0, 7) != 0;
+        let invert = rng.uniform(0, 2) != 0;
+        let binarize = use_big_image ? rng.uniform(0, 5) != 0 : false;
+        let blur = rng.uniform(0, 2) != 0;
+        let thresh = thresharr[rng.uniform(0, 5).valueOf()];
 
         /*if( i == 0 )
         {
@@ -122,47 +121,46 @@ TEST(Features2d_MSER, cases)
             invert = binarize = blur = false;
         }*/
 
-        const Mat& src0 = use_big_image ? big_image : small_image;
-        Mat src = src0.clone();
+        const src0 = use_big_image ? big_image : small_image;
+        let src = src0.clone();
 
-        int kMinArea = use_big_image ? 256 : 10;
-        int kMaxArea = (int)src.total()/4;
+        let kMinArea = use_big_image ? 256 : 10;
+        let kMaxArea = src.total().valueOf() / 4;
 
         mserExtractor.setMinArea(kMinArea);
         mserExtractor.setMaxArea(kMaxArea);
 
-        if( invert )
-            bitwise_not(src, src);
-        if( binarize )
-            threshold(src, src, thresh, 255, THRESH_BINARY);
-        if( blur )
-            GaussianBlur(src, src, Size(5, 5), 1.5, 1.5);
+        if (invert)
+            alvision.bitwise_not(src, src);
+        if (binarize)
+            alvision.threshold(src, src, thresh, 255, alvision.ThresholdTypes.THRESH_BINARY);
+        if (blur)
+            alvision.GaussianBlur(src, src, new alvision.Size(5, 5), 1.5, 1.5);
 
-        int minRegs = use_big_image ? 7 : 2;
-        int maxRegs = use_big_image ? 1000 : 15;
-        if( binarize && (thresh == 0 || thresh == 255) )
+        let minRegs = use_big_image ? 7 : 2;
+        let maxRegs = use_big_image ? 1000 : 15;
+        if (binarize && (thresh == 0 || thresh == 255))
             minRegs = maxRegs = 0;
 
-        mserExtractor.detectRegions( src, msers, boxes );
-        int nmsers = (int)msers.size();
-        ASSERT_EQ(nmsers, (int)boxes.size());
+        mserExtractor.detectRegions(src, (msers_) => { msers = msers_; }, boxes);
+        let nmsers = msers.length;
+        alvision.ASSERT_EQ(nmsers, boxes.length);
 
-        if( maxRegs < nmsers || minRegs > nmsers )
-        {
-            printf("%d. minArea=%d, maxArea=%d, nmsers=%d, minRegs=%d, maxRegs=%d, "
-                   "image=%s, invert=%d, binarize=%d, thresh=%d, blur=%d\n",
-                   i, kMinArea, kMaxArea, nmsers, minRegs, maxRegs, use_big_image ? "big" : "small",
-                   (int)invert, (int)binarize, thresh, (int)blur);
-    #if defined RENDER_MSERS && RENDER_MSERS
-            Mat image;
-            imshow("source", src);
+        if (maxRegs < nmsers || minRegs > nmsers) {
+            console.log(util.format("%d. minArea=%d, maxArea=%d, nmsers=%d, minRegs=%d, maxRegs=%d, " +
+                "image=%s, invert=%d, binarize=%d, thresh=%d, blur=%d\n",
+                i, kMinArea, kMaxArea, nmsers, minRegs, maxRegs, use_big_image ? "big" : "small",
+                invert, binarize, thresh, blur));
+            //#if defined RENDER_MSERS && RENDER_MSERS
+            let image = new alvision.Mat();
+            alvision.imshow("source", src);
             renderMSERs(src, image, msers);
-            imshow("result", image);
-            waitKey();
-    #endif
+            alvision.imshow("result", image);
+            alvision.waitKey();
+            //#endif
         }
 
-        ASSERT_LE(minRegs, nmsers);
-        ASSERT_GE(maxRegs, nmsers);
+        alvision.ASSERT_LE(minRegs, nmsers);
+        alvision.ASSERT_GE(maxRegs, nmsers);
     }
-}
+});

@@ -55,11 +55,11 @@ import fs = require('fs');
 function mytest(solver: alvision.DownhillSolver, ptr_F: alvision.MinProblemSolverFunction, x: alvision.Mat, step: alvision.Mat ,
     etalon_x: alvision.Mat, etalon_res: alvision.double ) : void{
     solver.setFunction(ptr_F);
-    var ndim=Math.max(step.cols.valueOf(),step.rows.valueOf());
+    var ndim=Math.max(step.cols().valueOf(),step.rows().valueOf());
     solver.setInitStep(step);
     var settedStep = new alvision.Mat();
     solver.getInitStep(settedStep);
-    alvision.ASSERT_TRUE(settedStep.rows == 1 && settedStep.cols == ndim);
+    alvision.ASSERT_TRUE(settedStep.rows() == 1 && settedStep.cols() == ndim);
 
     var stepPtr = step.ptr<alvision.double>("double");
     var settedStepPtr = settedStep.ptr<alvision.double>("double");

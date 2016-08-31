@@ -55,6 +55,75 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
+//    string fourccToString(int fourcc);
+//
+class VideoFormat {
+    //constructor() { this.fourcc = -1; }
+    constructor(_ext?: string, _fourcc?: alvision.int) 
+    {
+        if (_ext == null) {
+            this.fourcc = -1;
+        } else {
+            this.ext = _ext;
+            this.fourcc = _fourcc;
+        }
+    }
+    empty(): boolean {
+        return this.ext == null;
+    }
+
+    public ext: string;
+    public fourcc: alvision.int;
+}
+
+function fourccToString(fourcc: alvision.int): string {
+    return util.format("%c%c%c%c", fourcc.valueOf() & 255, (fourcc.valueOf() >> 8) & 255, (fourcc.valueOf() >> 16) & 255, (fourcc.valueOf() >> 24) & 255);
+}
+
+const g_specific_fmt_list =
+    [
+        /*VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', '2', '5')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', '5', '0')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 'c', ' ')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 'h', '1')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 'h', 'd')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 's', 'd')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 's', 'l')),
+        VideoFormat("wmv", alvision.CV_FOURCC('H', '2', '6', '3')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', '4', 'S', '2')),
+        VideoFormat("avi", alvision.CV_FOURCC('M', 'J', 'P', 'G')),
+        VideoFormat("mp4", alvision.CV_FOURCC('M', 'P', '4', 'S')),
+        VideoFormat("mp4", alvision.CV_FOURCC('M', 'P', '4', 'V')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', 'P', '4', '3')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', 'P', 'G', '1')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', 'S', 'S', '1')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', 'S', 'S', '2')),*/
+        //#if !defined(_M_ARM)
+        new VideoFormat("wmv", alvision.CV_FOURCC('W', 'M', 'V', '1')),
+        new VideoFormat("wmv", alvision.CV_FOURCC('W', 'M', 'V', '2')),
+        //#endif
+        new VideoFormat("wmv", alvision.CV_FOURCC('W', 'M', 'V', '3')),
+        new VideoFormat("avi", alvision.CV_FOURCC('H', '2', '6', '4')),
+        //VideoFormat("wmv", alvision.CV_FOURCC('W', 'V', 'C', '1')),
+        new VideoFormat(),
+        //#else
+        new VideoFormat("avi", alvision.VideoWriter.fourcc('X', 'V', 'I', 'D')),
+        new VideoFormat("avi", alvision.VideoWriter.fourcc('M', 'P', 'E', 'G')),
+        new VideoFormat("avi", alvision.VideoWriter.fourcc('M', 'J', 'P', 'G')),
+        //VideoFormat("avi", VideoWriter::fourcc('I', 'Y', 'U', 'V')),
+        new VideoFormat("mkv", alvision.VideoWriter.fourcc('X', 'V', 'I', 'D')),
+        new VideoFormat("mkv", alvision.VideoWriter.fourcc('M', 'P', 'E', 'G')),
+        new VideoFormat("mkv", alvision.VideoWriter.fourcc('M', 'J', 'P', 'G')),
+        //#ifndef HAVE_GSTREAMER
+        new VideoFormat("mov", alvision.VideoWriter.fourcc('m', 'p', '4', 'v')),
+        //#endif
+        new VideoFormat()
+    ];
+
+//
+//const VideoFormat g_specific_fmt_list[];
+
+
 class CV_PositioningTest  extends alvision.cvtest.BaseTest
 {
 
@@ -68,17 +137,17 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
     {
         var mat = alvision.Mat.from(alvision.Mat.zeros(this.framesize, alvision.MatrixType.CV_8UC3));
 
-        mat = new alvision.Scalar(Math.abs(Math.cos(i.valueOf()*0.08)*255), Math.abs(Math.sin(i.valueOf()*0.05)*255), i);
+        mat = new alvision.Scalar(Math.abs(Math.cos(i.valueOf() * 0.08) * 255), Math.abs(Math.sin(i.valueOf() * 0.05) * 255), i).getMat();
         alvision.putText(mat, util.format("%03d", i),new alvision. Point(10, 350), 0, 10, new alvision.Scalar(128, 255, 255), 15);
         return mat;
     }
 
-    getFilename(fmt: alvision.cvtest.VideoFormat ) : string
+    getFilename(fmt: VideoFormat ) : string
     {
-        return alvision.tempfile((alvision.cvtest.fourccToString(fmt.fourcc) + "." + fmt.ext));
+        return alvision.tempfile((fourccToString(fmt.fourcc) + "." + fmt.ext));
     }
 
-    CreateTestVideo(fmt: alvision.cvtest.VideoFormat, framecount: alvision.int , filename : string): boolean
+    CreateTestVideo(fmt: VideoFormat, framecount: alvision.int , filename : string): boolean
     {
         var writer = new alvision.VideoWriter (filename, fmt.fourcc, 25, this.framesize, true);
         if( !writer.isOpened() )
@@ -87,7 +156,7 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
         for (var i = 0; i < framecount; ++i)
         {
             var img = this.drawFrame(i);
-            writer << img;
+            writer.write(img);
         }
         return true;
     }
@@ -98,13 +167,13 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
 
         for(var testcase = 0; ; testcase++ )
         {
-            var fmt = alvision.cvtest.g_specific_fmt_list[testcase];
+            var fmt = g_specific_fmt_list[testcase];
             if( fmt.empty() )
                 break;
             var filename = this.getFilename(fmt);
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nFile: %s\n", filename);
 
-            if( !CreateTestVideo(fmt, n_frames, filename) )
+            if( !this.CreateTestVideo(fmt, n_frames, filename) )
             {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot create video file");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
@@ -120,9 +189,9 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
                 return;
             }
 
-            int N0 = (int)cap.get(CAP_PROP_FRAME_COUNT);
-            cap.set(CAP_PROP_POS_FRAMES, 0);
-            int N = (int)cap.get(CAP_PROP_FRAME_COUNT);
+            let N0 = cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT);
+            cap.set(alvision.CAP_PROP.CAP_PROP_POS_FRAMES, 0);
+            let N = cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT);
 
             // See the same hack in CV_VideoIOTest::SpecificVideoTest for explanation.
             var allowed_extra_frames = 0;
@@ -140,17 +209,19 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
             {
                 var idx = alvision.theRNG().uniform(0, n_frames);
 
-                if( !cap.set(CAP_PROP_POS_FRAMES, idx) )
+                if( !cap.set(alvision.CAP_PROP.CAP_PROP_POS_FRAMES, idx) )
                 {
                     this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot seek to frame %d.\n", idx);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
 
-                int idx1 = (int)cap.get(CAP_PROP_POS_FRAMES);
+                let idx1 = cap.get(alvision.CAP_PROP.CAP_PROP_POS_FRAMES);
 
-                Mat img; cap >> img;
-                Mat img0 = drawFrame(idx);
+                let img = new alvision.Mat();
+                cap.read(img);
+
+                let img0 = this.drawFrame(idx);
 
                 if( idx != idx1 )
                 {

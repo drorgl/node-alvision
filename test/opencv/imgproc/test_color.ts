@@ -67,10 +67,10 @@ class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest {
         this.allow_16u = _allow_16u;
         this.allow_32f = _allow_32f;
         this.custom_inv_transform = _custom_inv_transform;
-        this.fwd_code = inv_code = -1;
+        this.fwd_code = this.inv_code = -1;
         this.element_wise_relative_error = false;
 
-        this.fwd_code_str = inv_code_str = 0;
+        this.fwd_code_str = this.inv_code_str = "";
 
         this.test_cpp = false;
         this.hue_range = 0;
@@ -90,52 +90,54 @@ class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest {
         this.convert_backward(this.test_mat[this.INPUT][0], this.test_mat[this.REF_OUTPUT][0],
             this.test_mat[this.REF_OUTPUT][1]);
         var depth = this.test_mat[this.REF_OUTPUT][0].depth();
-        if (depth == alvision.MatrixType.CV_8U && hue_range) {
-            for (var y = 0; y < this.test_mat[this.REF_OUTPUT][0].rows; y++ )
+        if (depth == alvision.MatrixType.CV_8U && this.hue_range) {
+            for (var y = 0; y < this.test_mat[this.REF_OUTPUT][0].rows(); y++ )
             {
-                uchar * h0 = this.test_mat[this.REF_OUTPUT][0].ptr(y);
-                uchar * h =  this.test_mat[this.OUTPUT][0].ptr(y);
-
-                for (var x = 0; x < this.test_mat[REF_OUTPUT][0].cols; x++ , h0 += 3, h += 3) {
-                    if (abs(*h - *h0) >= hue_range - 1 && (*h <= 1 || *h0 <= 1))
-                    *h = *h0 = 0;
+                var h0 = this.test_mat[this.REF_OUTPUT][0].ptr<alvision.uchar>("uchar",y);
+                var h =  this.test_mat[this.OUTPUT][0].ptr<alvision.uchar>("uchar",y);
+                var h0pos = 0;
+                var hpos = 0;
+                for (var x = 0; x < this.test_mat[this.REF_OUTPUT][0].cols(); x++ , h0pos += 3, hpos += 3) {
+                    if (Math.abs(<any>h[hpos] - <any>h0[h0pos]) >= this.hue_range.valueOf() - 1 && (h[hpos] <= 1 || h0[h0pos] <= 1))
+                    h[hpos] = h0[h0pos] = 0;
                 }
             }
         }
     }
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         var rng = this.ts.get_rng();
-        int depth, cn;
+        //int depth, cn;
+        var depth : number;
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
         if (this.allow_16u && this.allow_32f) {
-            depth = alvision.cvtest.randInt(rng) % 3;
+            depth = alvision.cvtest.randInt(rng).valueOf() % 3;
             depth = depth == 0 ? alvision.MatrixType.CV_8U : depth == 1 ? alvision.MatrixType.CV_16U : alvision.MatrixType.CV_32F;
         }
-        else if (allow_16u || allow_32f) {
-            depth = alvision.cvtest.randInt(rng) % 2;
-            depth = depth == 0 ? alvision.MatrixType.CV_8U : allow_16u ? alvision.MatrixType.CV_16U : alvision.MatrixType.CV_32F;
+        else if (this.allow_16u || this.allow_32f) {
+            depth = alvision.cvtest.randInt(rng).valueOf() % 2;
+            depth = depth == 0 ? alvision.MatrixType.CV_8U : this.allow_16u ? alvision.MatrixType.CV_16U : alvision.MatrixType.CV_32F;
         }
         else
             depth = alvision.MatrixType.CV_8U;
 
-        cn = (alvision.cvtest.randInt(rng) & 1) + 3;
-        blue_idx = alvision.cvtest.randInt(rng) & 1 ? 2 : 0;
+        var cn = (alvision.cvtest.randInt(rng).valueOf() & 1) + 3;
+        this.blue_idx = alvision.cvtest.randInt(rng).valueOf() & 1 ? 2 : 0;
 
         types[this.INPUT][0] = alvision.MatrixType.CV_MAKETYPE(depth, cn);
-        types[this.OUTPUT][0] = types[REF_OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(depth, 3);
-        if (test_array[OUTPUT].size() > 1)
-            types[OUTPUT][1] = types[REF_OUTPUT][1] = alvision.MatrixType.CV_MAKETYPE(depth, cn);
+        types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(depth, 3);
+        if (this.test_array[this.OUTPUT].length > 1)
+            types[this.OUTPUT][1] = types[this.REF_OUTPUT][1] = alvision.MatrixType.CV_MAKETYPE(depth, cn);
 
-        this.inplace = cn == 3 && alvision.cvtest.randInt(rng) % 2 != 0;
-        this.test_cpp = (alvision.cvtest.randInt(rng) & 256) == 0;
+        this.inplace = cn == 3 && alvision.cvtest.randInt(rng).valueOf() % 2 != 0;
+        this.test_cpp = (alvision.cvtest.randInt(rng).valueOf() & 256) == 0;
     }
-    get_minmax_bounds(int i, int j, int type, Scalar & low, Scalar & high): void {
+    get_minmax_bounds(i: alvision.int, j: alvision.int, type: alvision.int, low: alvision.Scalar, high: alvision.Scalar ): void {
         super.get_minmax_bounds(i, j, type, low, high);
-        if (i == INPUT) {
-            int depth = CV_MAT_DEPTH(type);
-            low = Scalar::all(0.);
-            high = Scalar::all(depth == alvision.MatrixType.CV_8U ? 256 : depth == alvision.MatrixType.CV_16U ? 65536 : 1.);
+        if (i == this.INPUT) {
+            var depth = alvision.MatrixType.CV_MAT_DEPTH(type);
+            low = alvision.Scalar.all(0.);
+            high = alvision.Scalar.all(depth == alvision.MatrixType.CV_8U ? 256 : depth == alvision.MatrixType.CV_16U ? 65536 : 1.);
         }
     }
 
@@ -145,71 +147,71 @@ class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest {
         const c16u = 1.5259021896696422e-005; // 1./65535
         var depth = src.depth();
         var cn = src.channels(), dst_cn = dst.channels();
-        var cols = src.cols, dst_cols_n = dst.cols * dst_cn;
-        Array < float > _src_buf(src.cols * 3);
-        Array < float > _dst_buf(dst.cols * 3);
-        float * src_buf = &_src_buf[0];
-        float * dst_buf = &_dst_buf[0];
-        int j;
+        var cols = src.cols(), dst_cols_n = dst.cols().valueOf() * dst_cn.valueOf();
+        var _src_buf = new Array<alvision.float>(src.cols().valueOf() * 3);
+        var _dst_buf = new Array<alvision.float>(dst.cols().valueOf() * 3);
+        var src_buf = _src_buf;
+        var dst_buf = _dst_buf;
+        //int j;
 
-        assert((cn == 3 || cn == 4) && (dst_cn == 3 || dst_cn == 1));
+        alvision.assert(()=>(cn == 3 || cn == 4) && (dst_cn == 3 || dst_cn == 1));
 
-        for (var i = 0; i < src.rows; i++) {
+        for (var i = 0; i < src.rows(); i++) {
             switch (depth) {
                 case alvision.MatrixType.CV_8U:
                     {
-                        const uchar* src_row = src.ptr(i);
-                        uchar * dst_row = dst.ptr(i);
+                        const src_row = src.ptr<alvision.uchar>("uchar",i);
+                        let dst_row = dst.ptr<alvision.uchar>("uchar",i);
 
-                        for (j = 0; j < cols; j++) {
-                            src_buf[j * 3] = src_row[j * cn + blue_idx] * c8u;
-                            src_buf[j * 3 + 1] = src_row[j * cn + 1] * c8u;
-                            src_buf[j * 3 + 2] = src_row[j * cn + (blue_idx ^ 2)] * c8u;
+                        for (let j = 0; j < cols; j++) {
+                            src_buf[j * 3] =     <any>src_row[j * cn.valueOf() + this.blue_idx.valueOf()] * c8u;
+                            src_buf[j * 3 + 1] = <any>src_row[j * cn.valueOf() + 1] * c8u;
+                            src_buf[j * 3 + 2] = <any>src_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)] * c8u;
                         }
 
-                        convert_row_bgr2abc_32f_c3(src_buf, dst_buf, cols);
+                        this.convert_row_bgr2abc_32f_c3(src_buf, dst_buf, cols);
 
-                        for (j = 0; j < dst_cols_n; j++) {
-                            int t = Math.round(dst_buf[j]);
-                            dst_row[j] = saturate_cast<uchar>(t);
+                        for (let j = 0; j < dst_cols_n; j++) {
+                            var t = Math.round(dst_buf[j].valueOf());
+                            dst_row[j] = alvision.saturate_cast<alvision.uchar>(t,"uchar");
                         }
                     }
                     break;
                 case alvision.MatrixType.CV_16U:
                     {
-                        const ushort* src_row = src.ptr<ushort>(i);
-                        ushort * dst_row = dst.ptr<ushort>(i);
+                        const src_row = src.ptr<alvision.ushort>("ushort",i);
+                        let dst_row = dst.ptr<alvision.ushort>("ushort",i);
 
-                        for (j = 0; j < cols; j++) {
-                            src_buf[j * 3] = src_row[j * cn + blue_idx] * c16u;
-                            src_buf[j * 3 + 1] = src_row[j * cn + 1] * c16u;
-                            src_buf[j * 3 + 2] = src_row[j * cn + (blue_idx ^ 2)] * c16u;
+                        for (let j = 0; j < cols; j++) {
+                            src_buf[j * 3] = src_row[j * cn.valueOf() + this.blue_idx.valueOf()].valueOf() * c16u;
+                            src_buf[j * 3 + 1] = src_row[j * cn.valueOf() + 1].valueOf() * c16u;
+                            src_buf[j * 3 + 2] = src_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)].valueOf() * c16u;
                         }
 
-                        convert_row_bgr2abc_32f_c3(src_buf, dst_buf, cols);
+                        this.convert_row_bgr2abc_32f_c3(src_buf, dst_buf, cols);
 
-                        for (j = 0; j < dst_cols_n; j++) {
-                            int t = Math.round(dst_buf[j]);
-                            dst_row[j] = saturate_cast<ushort>(t);
+                        for (let j = 0; j < dst_cols_n; j++) {
+                            let t = Math.round(dst_buf[j].valueOf());
+                            dst_row[j] = alvision.saturate_cast<alvision.ushort>(t,"ushort");
                         }
                     }
                     break;
                 case alvision.MatrixType.CV_32F:
                     {
-                        const float* src_row = src.ptr<float>(i);
-                        float * dst_row = dst.ptr<float>(i);
+                        const src_row = src.ptr<alvision.float>("float",i);
+                        let dst_row = dst.ptr<alvision.float>("float",i);
 
-                        for (j = 0; j < cols; j++) {
-                            src_buf[j * 3] = src_row[j * cn + blue_idx];
-                            src_buf[j * 3 + 1] = src_row[j * cn + 1];
-                            src_buf[j * 3 + 2] = src_row[j * cn + (blue_idx ^ 2)];
+                        for (let j = 0; j < cols; j++) {
+                            src_buf[j * 3] = src_row[j *     cn.valueOf() + this.blue_idx.valueOf()].valueOf();
+                            src_buf[j * 3 + 1] = src_row[j * cn.valueOf() + 1].valueOf();
+                            src_buf[j * 3 + 2] = src_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)].valueOf();
                         }
 
-                        convert_row_bgr2abc_32f_c3(src_buf, dst_row, cols);
+                        this.convert_row_bgr2abc_32f_c3(src_buf, dst_row, cols);
                     }
                     break;
                 default:
-                    assert(0);
+                    alvision.assert(() => false);
             }
         }
     }
@@ -218,96 +220,102 @@ class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest {
         if (this.custom_inv_transform) {
             var depth = src.depth();
             var src_cn = dst.channels(), cn = dst2.channels();
-            var cols_n = src.cols * src_cn, dst_cols = dst.cols;
-            Array < float > _src_buf(src.cols * 3);
-            Array < float > _dst_buf(dst.cols * 3);
-            float * src_buf = &_src_buf[0];
-            float * dst_buf = &_dst_buf[0];
-            int j;
+            var cols_n = src.cols().valueOf() * src_cn.valueOf(), dst_cols = dst.cols();
+            var _src_buf = new Array<alvision.float> (src.cols().valueOf() * 3);
+            var _dst_buf = new Array<alvision.float> (dst.cols().valueOf() * 3);
+            var src_buf = _src_buf;
+            var dst_buf = _dst_buf;
+            //int j;
 
-            assert(cn == 3 || cn == 4);
+            alvision.assert(()=>cn == 3 || cn == 4);
 
-            for (var i = 0; i < src.rows; i++) {
+            for (let i = 0; i < src.rows(); i++) {
                 switch (depth) {
                     case alvision.MatrixType.CV_8U:
                         {
-                            const uchar* src_row = dst.ptr(i);
-                            uchar * dst_row = dst2.ptr(i);
+                            const src_row = dst.ptr<alvision.uchar>("uchar",i);
+                            let dst_row = dst2.ptr<alvision.uchar>("uchar",i);
 
-                            for (j = 0; j < cols_n; j++)
-                                src_buf[j] = src_row[j];
+                            for (let j = 0; j < cols_n; j++)
+                                src_buf[j] = <any>src_row[j];
 
-                            convert_row_abc2bgr_32f_c3(src_buf, dst_buf, dst_cols);
+                            this.convert_row_abc2bgr_32f_c3(src_buf, dst_buf, dst_cols);
 
-                            for (j = 0; j < dst_cols; j++) {
-                                int b = Math.round(dst_buf[j * 3] * 255.);
-                                int g = Math.round(dst_buf[j * 3 + 1] * 255.);
-                                int r = Math.round(dst_buf[j * 3 + 2] * 255.);
-                                dst_row[j * cn + blue_idx] = saturate_cast<uchar>(b);
-                                dst_row[j * cn + 1] = saturate_cast<uchar>(g);
-                                dst_row[j * cn + (blue_idx ^ 2)] = saturate_cast<uchar>(r);
+                            for (let j = 0; j < dst_cols; j++) {
+                                var b = Math.round(dst_buf[j * 3].valueOf() * 255.);
+                                var g = Math.round(dst_buf[j * 3 + 1].valueOf() * 255.);
+                                var r = Math.round(dst_buf[j * 3 + 2].valueOf() * 255.);
+                                dst_row[j * cn.valueOf() + this.blue_idx.valueOf()] = alvision.saturate_cast<alvision.uchar>(b,"uchar");
+                                dst_row[j * cn.valueOf() + 1] = alvision.saturate_cast<alvision.uchar>(g,"uchar");
+                                dst_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)] = alvision.saturate_cast<alvision.uchar>(r,"uchar");
                                 if (cn == 4)
-                                    dst_row[j * cn + 3] = 255;
+                                    dst_row[j * cn.valueOf() + 3] = 255;
                             }
                         }
                         break;
                     case alvision.MatrixType.CV_16U:
                         {
-                            const ushort* src_row = dst.ptr<ushort>(i);
-                            ushort * dst_row = dst2.ptr<ushort>(i);
+                            const src_row = dst.ptr<alvision.ushort>("ushort",i);
+                            let dst_row = dst2.ptr<alvision.ushort>("ushort",i);
 
-                            for (j = 0; j < cols_n; j++)
+                            for (let j = 0; j < cols_n; j++)
                                 src_buf[j] = src_row[j];
 
-                            convert_row_abc2bgr_32f_c3(src_buf, dst_buf, dst_cols);
+                            this.convert_row_abc2bgr_32f_c3(src_buf, dst_buf, dst_cols);
 
-                            for (j = 0; j < dst_cols; j++) {
-                                int b = Math.round(dst_buf[j * 3] * 65535.);
-                                int g = Math.round(dst_buf[j * 3 + 1] * 65535.);
-                                int r = Math.round(dst_buf[j * 3 + 2] * 65535.);
-                                dst_row[j * cn + blue_idx] = saturate_cast<ushort>(b);
-                                dst_row[j * cn + 1] = saturate_cast<ushort>(g);
-                                dst_row[j * cn + (blue_idx ^ 2)] = saturate_cast<ushort>(r);
+                            for (let j = 0; j < dst_cols; j++) {
+                                var b = Math.round(dst_buf[j * 3].valueOf() * 65535.);
+                                var g = Math.round(dst_buf[j * 3 + 1].valueOf() * 65535.);
+                                var r = Math.round(dst_buf[j * 3 + 2].valueOf() * 65535.);
+                                dst_row[j * cn.valueOf() + this.blue_idx.valueOf()] = alvision.saturate_cast<alvision.ushort>(b,"ushort");
+                                dst_row[j * cn.valueOf() + 1] = alvision.saturate_cast<alvision.ushort>(g,"ushort");
+                                dst_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)] = alvision.saturate_cast<alvision.ushort>(r,"ushort");
                                 if (cn == 4)
-                                    dst_row[j * cn + 3] = 65535;
+                                    dst_row[j * cn.valueOf() + 3] = 65535;
                             }
                         }
                         break;
                     case alvision.MatrixType.CV_32F:
                         {
-                            const float* src_row = dst.ptr<float>(i);
-                            float * dst_row = dst2.ptr<float>(i);
+                            const src_row = dst.ptr<alvision.float>("float",i);
+                            let dst_row = dst2.ptr<alvision.float>("float",i);
 
-                            convert_row_abc2bgr_32f_c3(src_row, dst_buf, dst_cols);
+                            this.convert_row_abc2bgr_32f_c3(src_row, dst_buf, dst_cols);
 
-                            for (j = 0; j < dst_cols; j++) {
-                                float b = dst_buf[j * 3];
-                                float g = dst_buf[j * 3 + 1];
-                                float r = dst_buf[j * 3 + 2];
-                                dst_row[j * cn + blue_idx] = b;
-                                dst_row[j * cn + 1] = g;
-                                dst_row[j * cn + (blue_idx ^ 2)] = r;
+                            for (let j = 0; j < dst_cols; j++) {
+                                let b = dst_buf[j * 3];
+                                let g = dst_buf[j * 3 + 1];
+                                let r = dst_buf[j * 3 + 2];
+                                dst_row[j * cn.valueOf() + this.blue_idx.valueOf()] = b;
+                                dst_row[j * cn.valueOf() + 1] = g;
+                                dst_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)] = r;
                                 if (cn == 4)
-                                    dst_row[j * cn + 3] = 1.f;
+                                    dst_row[j * cn.valueOf() + 3] = 1.;
                             }
                         }
                         break;
                     default:
-                        assert(0);
+                        alvision.assert(() => false);
                 }
             }
         }
         else {
             //int j, k;
             var elem_size = src.elemSize(), elem_size1 = src.elemSize1();
-            var width_n = src.cols * elem_size;
+            var width_n = src.cols().valueOf() * elem_size.valueOf();
 
-            for (var i = 0; i < src.rows; i++) {
-                memcpy(dst2.ptr(i), src.ptr(i), width_n);
+            for (var i = 0; i < src.rows(); i++) {
+                let dptr = dst2.ptr<alvision.uchar>("uchar", i);
+                let sptr = src.ptr<alvision.uchar>("uchar", i);
+                for (let n = 0; n < width_n; n++) {
+                    dptr[n] = sptr[n];
+                }
+
+                //memcpy(dst2.ptr(i), src.ptr(i), width_n);
                 if (src.channels() == 4) {
                     // clear the alpha channel
-                    uchar * ptr = dst2.ptr(i) + elem_size1 * 3;
-                    for (var j = 0; j < width_n; j += elem_size) {
+                    let ptr = <any>dst2.ptr<alvision.uchar>("uchar",i) + elem_size1.valueOf() * 3;
+                    for (let j = 0; j < width_n; j += elem_size.valueOf()) {
                         for (var k = 0; k < elem_size1; k++)
                             ptr[j + k] = 0;
                     }
@@ -330,21 +338,21 @@ class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest {
 
     run_func(): void {
         var out0 = this.test_array[this.OUTPUT][0];
-        alvision.Mat _out0 = alvision.cvarrToMat(out0), _out1 = alvision.cvarrToMat(test_array[OUTPUT][1]);
+        var _out0 = out0, _out1 = this.test_array[this.OUTPUT][1];
 
         //if (!test_cpp)
         //    alvision.cvtColor(inplace ? out0 : test_array[INPUT][0], out0, fwd_code);
         //else
-        alvision.cvtColor(alvision.cvarrToMat(inplace ? out0 : test_array[INPUT][0]), _out0, fwd_code, _out0.channels());
+        alvision.cvtColor(this.inplace ? out0 : this.test_array[this.INPUT][0], _out0, <alvision.ColorConversionCodes>this.fwd_code, _out0.channels());
 
-        if (inplace) {
-            cvCopy(out0, test_array[OUTPUT][1]);
-            out0 = test_array[OUTPUT][1];
+        if (this.inplace) {
+            (<alvision.Mat>out0).copyTo(this.test_array[this.OUTPUT][1]);
+            out0 = this.test_array[this.OUTPUT][1];
         }
         //if (!test_cpp)
         //    cvCvtColor(out0, test_array[OUTPUT][1], inv_code);
         //else
-        alvision.cvtColor(alvision.cvarrToMat(out0), _out1, inv_code, _out1.channels());
+        alvision.cvtColor(out0, _out1, <alvision.ColorConversionCodes>this.inv_code, _out1.channels());
 
     }
 
@@ -375,47 +383,50 @@ class CV_ColorCvtBaseTest extends alvision.cvtest.ArrayTest {
 class CV_ColorGrayTest extends CV_ColorCvtBaseTest {
     constructor() {
         super(true, true, true);
-        INIT_FWD_INV_CODES(BGR2GRAY, GRAY2BGR);
+        //INIT_FWD_INV_CODES(BGR2GRAY, GRAY2BGR);
+        this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2GRAY;
+        this.inv_code = alvision.ColorConversionCodes.COLOR_GRAY2BGR;
+        this.fwd_code_str = "BGR2GRAY";
+        this.inv_code_str = "GRAY2BGR";
 
     }
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
-        var cn = CV_MAT_CN(types[this.INPUT][0]);
-        types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = types[this.INPUT][0] & CV_MAT_DEPTH_MASK;
+        var cn = alvision.MatrixType.CV_MAT_CN(types[this.INPUT][0]);
+        types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = types[this.INPUT][0].valueOf() & alvision.CV_MAT_DEPTH_MASK;
         this.inplace = false;
 
         if (cn == 3) {
-            if (blue_idx == 0)
-                this.fwd_code = CV_BGR2GRAY, inv_code = CV_GRAY2BGR;
+            if (this.blue_idx == 0)
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2GRAY, this.inv_code = alvision.ColorConversionCodes.COLOR_GRAY2BGR;
             else
-                this.fwd_code = CV_RGB2GRAY, inv_code = CV_GRAY2RGB;
+                this.fwd_code =alvision.ColorConversionCodes.COLOR_RGB2GRAY  , this.inv_code = alvision.ColorConversionCodes.COLOR_GRAY2BGR;
         }
         else {
-            if (blue_idx == 0)
-                this.fwd_code = CV_BGRA2GRAY, inv_code = CV_GRAY2BGRA;
+            if (this.blue_idx == 0)
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_BGRA2GRAY, this.inv_code = alvision.ColorConversionCodes.COLOR_GRAY2BGRA ;
             else
-                this.fwd_code = CV_RGBA2GRAY, inv_code = CV_GRAY2RGBA;
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_RGBA2GRAY, this.inv_code = alvision.ColorConversionCodes.COLOR_GRAY2BGRA;
         }
     }
     convert_row_bgr2abc_32f_c3(src_row: Array<alvision.float>, dst_row : Array<alvision.float>, n  : alvision.int ): void {
         var depth = this.test_mat[this.INPUT][0].depth();
-        var scale = depth == CV_8U ? 255 : depth == CV_16U ? 65535 : 1;
+        var scale = depth == alvision.MatrixType.CV_8U ? 255 : depth == alvision.MatrixType.CV_16U ? 65535 : 1;
         var cr = 0.299 * scale;
         var cg = 0.587 * scale;
         var cb = 0.114 * scale;
-        int j;
 
-        for (j = 0; j < n; j++)
-            dst_row[j] = (float)(src_row[j * 3] * cb + src_row[j * 3 + 1] * cg + src_row[j * 3 + 2] * cr);
+        for (let j = 0; j < n; j++)
+            dst_row[j] = (src_row[j * 3].valueOf() * cb + src_row[j * 3 + 1].valueOf() * cg + src_row[j * 3 + 2].valueOf() * cr);
     }
     convert_row_abc2bgr_32f_c3(src_row: Array<alvision.float>, dst_row : Array<alvision.float>, n  : alvision.int): void {
         var depth = this.test_mat[this.INPUT][0].depth();
-        var scale = depth == CV_8U ? (1. / 255) : depth == CV_16U ? 1. / 65535 : 1.;
+        var scale = depth == alvision.MatrixType.CV_8U ? (1. / 255) : depth == alvision.MatrixType.CV_16U ? 1. / 65535 : 1.;
         for (var j = 0; j < n; j++)
-            dst_row[j * 3] = dst_row[j * 3 + 1] = dst_row[j * 3 + 2] = src_row[j] * scale;
+            dst_row[j * 3] = dst_row[j * 3 + 1] = dst_row[j * 3 + 2] = src_row[j].valueOf() * scale;
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
-        var depth = this.test_mat[i][j].depth();
+        var depth = this.test_mat[i.valueOf()][j.valueOf()].depth();
         return depth == alvision.MatrixType.CV_8U ? 2 : depth == alvision.MatrixType.CV_16U ? 16 : 1e-5;
     }
 };
@@ -426,26 +437,30 @@ class CV_ColorGrayTest extends CV_ColorCvtBaseTest {
 class CV_ColorYCrCbTest extends CV_ColorCvtBaseTest {
     constructor() {
         super(true, true, true);
-        INIT_FWD_INV_CODES(BGR2YCrCb, YCrCb2BGR);
+        //INIT_FWD_INV_CODES(BGR2YCrCb, YCrCb2BGR);
+        this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2YCrCb;
+        this.inv_code = alvision.ColorConversionCodes.COLOR_YCrCb2BGR;
+        this.fwd_code_str = "BGR2YCrCb";
+        this.inv_code_str = "YCrCb2BGR";
     }
 
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
-        if (blue_idx == 0)
-            this.fwd_code = CV_BGR2YCrCb, inv_code = CV_YCrCb2BGR;
+        if (this.blue_idx == 0)
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2YCrCb, this.inv_code = alvision.ColorConversionCodes.COLOR_YCrCb2BGR;
         else
-            this.fwd_code = CV_RGB2YCrCb, inv_code = CV_YCrCb2RGB;
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_RGB2YCrCb, this.inv_code = alvision.ColorConversionCodes.COLOR_YCrCb2RGB;
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
-        var depth = test_mat[i][j].depth();
-        return depth == CV_8U ? 2 : depth == CV_16U ? 32 : 1e-3;
+        var depth = this.test_mat[i.valueOf()][j.valueOf()].depth();
+        return depth == alvision.MatrixType.CV_8U ? 2 : depth == alvision.MatrixType.CV_16U ? 32 : 1e-3;
 
     }
     convert_row_bgr2abc_32f_c3(src_row: Array<alvision.float>, dst_row: Array<alvision.float>, n: alvision.int): void {
         var depth = this.test_mat[this.INPUT][0].depth();
-        var scale = depth == CV_8U ? 255 : depth == CV_16U ? 65535 : 1;
-        var bias = depth == CV_8U ? 128 : depth == CV_16U ? 32768 : 0.5;
+        var scale = depth == alvision.MatrixType.CV_8U ? 255 : depth == alvision.MatrixType.CV_16U ? 65535 : 1;
+        var bias = depth == alvision.MatrixType.CV_8U ? 128 : depth == alvision.MatrixType.CV_16U ? 32768 : 0.5;
 
         var M = [
             0.299, 0.587, 0.114,
@@ -453,25 +468,25 @@ class CV_ColorYCrCbTest extends CV_ColorCvtBaseTest {
             -0.16864, -0.33107, 0.49970
         ];
         //int j;
-        for (var j = 0; j < 9; j++)
+        for (let j = 0; j < 9; j++)
             M[j] *= scale;
 
-        for (var j = 0; j < n * 3; j += 3) {
+        for (let j = 0; j < n.valueOf() * 3; j += 3) {
             var r = src_row[j + 2];
             var g = src_row[j + 1];
             var b = src_row[j];
-            var y = M[0] * r + M[1] * g + M[2] * b;
-            var cr = M[3] * r + M[4] * g + M[5] * b + bias;
-            var cb = M[6] * r + M[7] * g + M[8] * b + bias;
-            dst_row[j] = (float)y;
-            dst_row[j + 1] = (float)cr;
-            dst_row[j + 2] = (float)cb;
+            var y = M[0] *  r.valueOf() + M[1] * g.valueOf() + M[2] * b.valueOf();
+            var cr = M[3] * r.valueOf() + M[4] * g.valueOf() + M[5] * b.valueOf() + bias;
+            var cb = M[6] * r.valueOf() + M[7] * g.valueOf() + M[8] * b.valueOf() + bias;
+            dst_row[j] =     y;
+            dst_row[j + 1] = cr;
+            dst_row[j + 2] = cb;
         }
     }
     convert_row_abc2bgr_32f_c3(src_row: Array<alvision.float>, dst_row: Array<alvision.float>, n: alvision.int): void {
-        var depth = test_mat[INPUT][0].depth();
-        var bias = depth == CV_8U ? 128 : depth == CV_16U ? 32768 : 0.5;
-        var scale = depth == CV_8U ? 1. / 255 : depth == CV_16U ? 1. / 65535 : 1;
+        var depth = this.test_mat[this.INPUT][0].depth();
+        var bias = depth == alvision.MatrixType.CV_8U ? 128 : depth == alvision.MatrixType.CV_16U ? 32768 : 0.5;
+        var scale = depth == alvision.MatrixType.CV_8U ? 1. / 255 : depth == alvision.MatrixType.CV_16U ? 1. / 65535 : 1;
         var M = [
             1, 1.40252, 0,
             1, -0.71440, -0.34434,
@@ -480,16 +495,16 @@ class CV_ColorYCrCbTest extends CV_ColorCvtBaseTest {
         for (var j = 0; j < 9; j++)
             M[j] *= scale;
 
-        for (var j = 0; j < n * 3; j += 3) {
+        for (var j = 0; j < n.valueOf() * 3; j += 3) {
             var y = src_row[j];
-            var cr = src_row[j + 1] - bias;
-            var cb = src_row[j + 2] - bias;
-            var r = M[0] * y + M[1] * cr + M[2] * cb;
-            var g = M[3] * y + M[4] * cr + M[5] * cb;
-            var b = M[6] * y + M[7] * cr + M[8] * cb;
-            dst_row[j] = (float)b;
-            dst_row[j + 1] = (float)g;
-            dst_row[j + 2] = (float)r;
+            var cr = src_row[j + 1].valueOf() - bias;
+            var cb = src_row[j + 2].valueOf() - bias;
+            var r = M[0] * y.valueOf() + M[1] * cr + M[2] * cb;
+            var g = M[3] * y.valueOf() + M[4] * cr + M[5] * cb;
+            var b = M[6] * y.valueOf() + M[7] * cr + M[8] * cb;
+            dst_row[j] =     b;
+            dst_row[j + 1] = g;
+            dst_row[j + 2] = r;
         }
     }
 }
@@ -498,7 +513,12 @@ class CV_ColorYCrCbTest extends CV_ColorCvtBaseTest {
 class CV_ColorHSVTest extends CV_ColorCvtBaseTest {
     constructor() {
         super(true, true, false);
-        INIT_FWD_INV_CODES(BGR2HSV, HSV2BGR);
+        //INIT_FWD_INV_CODES(BGR2HSV, HSV2BGR);
+        this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2HSV;
+        this.inv_code = alvision.ColorConversionCodes.COLOR_HSV2BGR;
+        this.fwd_code_str = "BGR2HSV";
+        this.inv_code_str = "HSV2BGR";
+
         this.hue_range = 180;
 
     }
@@ -506,50 +526,50 @@ class CV_ColorHSVTest extends CV_ColorCvtBaseTest {
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
         var rng = this.ts.get_rng();
 
-        var full_hrange = (rng.next() & 256) != 0;
+        var full_hrange = (rng.next().valueOf() & 256) != 0;
         if (full_hrange) {
-            if (blue_idx == 0)
-                this.fwd_code = CV_BGR2HSV_FULL, inv_code = CV_HSV2BGR_FULL;
+            if (this.blue_idx == 0)
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2HSV_FULL, this.inv_code = alvision.ColorConversionCodes.COLOR_HSV2BGR_FULL;
             else
-                this.fwd_code = CV_RGB2HSV_FULL, inv_code = CV_HSV2RGB_FULL;
-            hue_range = 256;
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_RGB2HSV_FULL, this.inv_code = alvision.ColorConversionCodes.COLOR_HSV2RGB_FULL;
+            this.hue_range = 256;
         }
         else {
-            if (blue_idx == 0)
-                fwd_code = CV_BGR2HSV, inv_code = CV_HSV2BGR;
+            if (this.blue_idx == 0)
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2HSV, this.inv_code = alvision.ColorConversionCodes.COLOR_HSV2BGR;
             else
-                fwd_code = CV_RGB2HSV, inv_code = CV_HSV2RGB;
-            hue_range = 180;
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_RGB2HSV, this.inv_code = alvision.ColorConversionCodes.COLOR_HSV2RGB;
+            this.hue_range = 180;
         }
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
-        var depth = test_mat[i][j].depth();
-        return depth == CV_8U ? (j == 0 ? 4 : 16) : depth == CV_16U ? 32 : 1e-3;
+        var depth = this.test_mat[i.valueOf()][j.valueOf()].depth();
+        return depth == alvision.MatrixType.CV_8U ? (j == 0 ? 4 : 16) : depth == alvision.MatrixType.CV_16U ? 32 : 1e-3;
     }
     convert_row_bgr2abc_32f_c3(src_row: Array<alvision.float>, dst_row: Array<alvision.float>, n: alvision.int): void {
-        var depth = test_mat[INPUT][0].depth();
-        var h_scale = depth == CV_8U ? hue_range * 30.f/ 180 : 60.f;
-        var scale = depth == CV_8U ? 255.f : depth == CV_16U ? 65535.f : 1.f;
+        var depth = this.test_mat[this.INPUT][0].depth();
+        var h_scale = depth == alvision.MatrixType.CV_8U ? this.hue_range.valueOf() * 30./ 180 : 60.;
+        var scale = depth == alvision.MatrixType.CV_8U ? 255. : depth == alvision.MatrixType.CV_16U ? 65535. : 1.;
         //int j;
 
-        for (var j = 0; j < n * 3; j += 3) {
+        for (var j = 0; j < n.valueOf() * 3; j += 3) {
             var r = src_row[j + 2];
             var g = src_row[j + 1];
             var b = src_row[j];
-            var vmin = MIN(r, g);
-            var v = MAX(r, g);
+            var vmin = Math.min(r.valueOf(), g.valueOf());
+            var v = Math.max(r.valueOf(), g.valueOf());
             var s, h, diff;
-            vmin = MIN(vmin, b);
-            v = MAX(v, b);
+            vmin = Math.min(vmin, b.valueOf());
+            v = Math.max(v, b.valueOf());
             diff = v - vmin;
             if (diff == 0)
                 s = h = 0;
             else {
                 s = diff / (v + alvision.FLT_EPSILON);
-                diff = 1.f/ diff;
+                diff = 1./ diff;
 
-                h = r == v ? (g - b) * diff :
-                    g == v ? 2 + (b - r) * diff : 4 + (r - g) * diff;
+                h = r == v ? (g.valueOf() - b.valueOf()) * diff :
+                    g == v ? 2 + (b.valueOf() - r.valueOf()) * diff : 4 + (r.valueOf() - g.valueOf()) * diff;
 
                 if (h < 0)
                     h += 6;
@@ -563,15 +583,15 @@ class CV_ColorHSVTest extends CV_ColorCvtBaseTest {
 
     // taken from http://www.cs.rit.edu/~ncs/color/t_convert.html
     convert_row_abc2bgr_32f_c3(src_row: Array<alvision.float>, dst_row: Array<alvision.float>, n: alvision.int): void {
-        var depth = test_mat[INPUT][0].depth();
-        var h_scale = depth == CV_8U ? 180 / (hue_range * 30.f) : 1.f/ 60;
-        var scale = depth == CV_8U ? 1.f/ 255 : depth == CV_16U ? 1.f/ 65535 : 1;
+        var depth = this.test_mat[this.INPUT][0].depth();
+        var h_scale = depth == alvision.MatrixType.CV_8U ? 180 / (this.hue_range.valueOf() * 30.) : 1./ 60;
+        var scale = depth == alvision.MatrixType.CV_8U ? 1. / 255 : depth == alvision.MatrixType.CV_16U ? 1./ 65535 : 1;
         //int j;
 
-        for (var j = 0; j < n * 3; j += 3) {
-            var h = src_row[j] * h_scale;
-            var s = src_row[j + 1] * scale;
-            var v = src_row[j + 2] * scale;
+        for (let j = 0; j < n.valueOf() * 3; j += 3) {
+            var h = src_row[j].valueOf() * h_scale;
+            var s = src_row[j + 1].valueOf() * scale;
+            var v = src_row[j + 2].valueOf() * scale;
             var r = v, g = v, b = v;
 
             if (h < 0)
@@ -616,46 +636,51 @@ class CV_ColorHLSTest extends CV_ColorCvtBaseTest
 {
     constructor() {
         super(true, true, false);
-        INIT_FWD_INV_CODES(BGR2HLS, HLS2BGR);
+        //INIT_FWD_INV_CODES(BGR2HLS, HLS2BGR);
+        this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2HLS;
+        this.inv_code = alvision.ColorConversionCodes.COLOR_HLS2BGR;
+        this.fwd_code_str = "BGR2HLS";
+        this.inv_code_str = "HLS2BGR";
+
         this.hue_range = 180;
     }
 
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
-        if (blue_idx == 0)
-            this.fwd_code = CV_BGR2HLS, inv_code = CV_HLS2BGR;
+        if (this.blue_idx == 0)
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2HLS, this.inv_code = alvision.ColorConversionCodes.COLOR_HLS2BGR;
         else
-            this.fwd_code = CV_RGB2HLS, inv_code = CV_HLS2RGB;
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_RGB2HLS, this.inv_code = alvision.ColorConversionCodes.COLOR_HLS2RGB;
 
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
-        var depth = test_mat[i][j].depth();
-        return depth == CV_8U ? (j == 0 ? 4 : 16) : depth == CV_16U ? 32 : 1e-4;
+        var depth = this.test_mat[i.valueOf()][j.valueOf()].depth();
+        return depth == alvision.MatrixType.CV_8U ? (j == 0 ? 4 : 16) : depth == alvision.MatrixType.CV_16U ? 32 : 1e-4;
     }
     convert_row_bgr2abc_32f_c3(src_row: Array<alvision.float>, dst_row : Array<alvision.float>, n  : alvision.int ) : void {
-        var depth = test_mat[INPUT][0].depth();
-        var h_scale = depth == CV_8U ? 30.f : 60.f;
-        var scale = depth == CV_8U ? 255.f : depth == CV_16U ? 65535.f : 1.f;
+        var depth = this.test_mat[this.INPUT][0].depth();
+        var h_scale = depth == alvision.MatrixType.CV_8U ? 30. : 60.;
+        var scale = depth == alvision.MatrixType.CV_8U ? 255. : depth == alvision.MatrixType.CV_16U ? 65535. : 1.;
         //int j;
 
-        for (var j = 0; j < n * 3; j += 3) {
-            var r = src_row[j + 2];
-            var g = src_row[j + 1];
-            var b = src_row[j];
-            var vmin = MIN(r, g);
-            var v = MAX(r, g);
+        for (var j = 0; j < n.valueOf() * 3; j += 3) {
+            var r = src_row[j + 2].valueOf();
+            var g = src_row[j + 1].valueOf();
+            var b = src_row[j].valueOf();
+            var vmin = Math.min(r, g);
+            var v = Math.max(r, g);
             var s, h, l, diff;
-            vmin = MIN(vmin, b);
-            v = MAX(v, b);
+            vmin = Math.min(vmin, b);
+            v = Math.max(v, b);
             diff = v - vmin;
 
             if (diff == 0)
                 s = h = 0, l = v;
             else {
-                l = (v + vmin) * 0.5f;
-                s = l <= 0.5f ? diff / (v + vmin) : diff / (2 - v - vmin);
-                diff = 1.f/ diff;
+                l = (v + vmin) * 0.5;
+                s = l <= 0.5 ? diff / (v + vmin) : diff / (2 - v - vmin);
+                diff = 1./ diff;
 
                 h = r == v ? (g - b) * diff :
                     g == v ? 2 + (b - r) * diff : 4 + (r - g) * diff;
@@ -670,16 +695,16 @@ class CV_ColorHLSTest extends CV_ColorCvtBaseTest
         }
     }
     convert_row_abc2bgr_32f_c3(src_row: Array<alvision.float>, dst_row : Array<alvision.float>, n  : alvision.int ) : void{
-        var depth = test_mat[INPUT][0].depth();
-        var h_scale = depth == CV_8U ? 1.f/ 30 : 1.f/ 60;
-        var scale = depth == CV_8U ? 1.f/ 255 : depth == CV_16U ? 1.f/ 65535 : 1;
+        let depth = this.test_mat[this.INPUT][0].depth();
+        let h_scale = depth == alvision.MatrixType.CV_8U ? 1./ 30 : 1./ 60;
+        let scale = depth == alvision.MatrixType.CV_8U ? 1. / 255 : depth == alvision.MatrixType.CV_16U ? 1./ 65535 : 1;
         //int j;
 
-        for (var j = 0; j < n * 3; j += 3) {
-            var h = src_row[j] * h_scale;
-            var l = src_row[j + 1] * scale;
-            var s = src_row[j + 2] * scale;
-            var r = l, g = l, b = l;
+        for (let j = 0; j < n.valueOf() * 3; j += 3) {
+            let h = src_row[j].valueOf() * h_scale;
+            let l = src_row[j + 1].valueOf() * scale;
+            let s = src_row[j + 2].valueOf() * scale;
+            let r = l, g = l, b = l;
 
             if (h < 0)
                 h += 6;
@@ -687,7 +712,7 @@ class CV_ColorHLSTest extends CV_ColorCvtBaseTest
                 h -= 6;
 
             if (s != 0) {
-                var m2 = l <= 0.5f ? l * (1.f + s) : l + s - l * s;
+                var m2 = l <= 0.5 ? l * (1. + s) : l + s - l * s;
                 var m1 = 2 * l - m2;
                 var h1 = h + 2;
 
@@ -759,64 +784,68 @@ class CV_ColorXYZTest extends CV_ColorCvtBaseTest
 {
     constructor() {
         super(true, true, true);
-        INIT_FWD_INV_CODES(BGR2XYZ, XYZ2BGR);
+        //INIT_FWD_INV_CODES(BGR2XYZ, XYZ2BGR);
+        this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2XYZ;
+        this.inv_code = alvision.ColorConversionCodes.COLOR_XYZ2BGR;
+        this.fwd_code_str = "BGR2XYZ";
+        this.inv_code_str = "XYZ2BGR";
 
     }
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
-        if (blue_idx == 0)
-            this.fwd_code = CV_BGR2XYZ, inv_code = CV_XYZ2BGR;
+        if (this.blue_idx == 0)
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2XYZ, this.inv_code = alvision.ColorConversionCodes.COLOR_XYZ2BGR;
         else
-            this.fwd_code = CV_RGB2XYZ, inv_code = CV_XYZ2RGB;
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_RGB2XYZ, this.inv_code = alvision.ColorConversionCodes.COLOR_XYZ2RGB;
 
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
-        var depth = test_mat[i][j].depth();
-        return depth == CV_8U ? (j == 0 ? 2 : 8) : depth == CV_16U ? (j == 0 ? 64 : 128) : 1e-1;
+        var depth = this.test_mat[i.valueOf()][j.valueOf()].depth();
+        return depth == alvision.MatrixType.CV_8U ? (j == 0 ? 2 : 8) : depth == alvision.MatrixType.CV_16U ? (j == 0 ? 64 : 128) : 1e-1;
 
     }
     convert_row_bgr2abc_32f_c3(src_row: Array<alvision.float>, dst_row: Array<alvision.float>, n: alvision.int): void {
-        var depth = test_mat[INPUT][0].depth();
-        var scale = depth == CV_8U ? 255 : depth == CV_16U ? 65535 : 1;
+        var depth = this.test_mat[this.INPUT][0].depth();
+        var scale = depth == alvision.MatrixType.CV_8U ? 255 : depth == alvision.MatrixType.CV_16U ? 65535 : 1;
 
-        double M[9];
+        var M = new Array<alvision.double>(9);
         //int j;
         for (var j = 0; j < 9; j++)
             M[j] = RGB2XYZ[j] * scale;
 
-        for (j = 0; j < n * 3; j += 3) {
+        for (j = 0; j < n.valueOf() * 3; j += 3) {
             var r = src_row[j + 2];
             var g = src_row[j + 1];
             var b = src_row[j];
-            var x = M[0] * r + M[1] * g + M[2] * b;
-            var y = M[3] * r + M[4] * g + M[5] * b;
-            var z = M[6] * r + M[7] * g + M[8] * b;
-            dst_row[j] = (float)x;
-            dst_row[j + 1] = (float)y;
-            dst_row[j + 2] = (float)z;
+            var x = M[0].valueOf() * r.valueOf() + M[1].valueOf() * g.valueOf() + M[2].valueOf() * b.valueOf();
+            var y = M[3].valueOf() * r.valueOf() + M[4].valueOf() * g.valueOf() + M[5].valueOf() * b.valueOf();
+            var z = M[6].valueOf() * r.valueOf() + M[7].valueOf() * g.valueOf() + M[8].valueOf() * b.valueOf();
+            dst_row[j] =     x;
+            dst_row[j + 1] = y;
+            dst_row[j + 2] = z;
         }
 
     }
     convert_row_abc2bgr_32f_c3(src_row: Array<alvision.float>, dst_row : Array<alvision.float>, n  : alvision.int ) : void {
-        var depth = test_mat[INPUT][0].depth();
-        var scale = depth == CV_8U ? 1. / 255 : depth == CV_16U ? 1. / 65535 : 1;
+        var depth = this.test_mat[this.INPUT][0].depth();
+        var scale = depth == alvision.MatrixType.CV_8U ? 1. / 255 : depth == alvision.MatrixType.CV_16U ? 1. / 65535 : 1;
 
-        double M[9];
+        var M = new Array<alvision.double>(9);
         //int j;
-        for (var j = 0; j < 9; j++)
+        for (let j = 0; j < 9; j++)
             M[j] = XYZ2RGB[j] * scale;
 
-        for (var j = 0; j < n * 3; j += 3) {
-            var x = src_row[j];
-            var y = src_row[j + 1];
-            var z = src_row[j + 2];
-            var r = M[0] * x + M[1] * y + M[2] * z;
-            var g = M[3] * x + M[4] * y + M[5] * z;
-            var b = M[6] * x + M[7] * y + M[8] * z;
-            dst_row[j] = (float)b;
-            dst_row[j + 1] = (float)g;
-            dst_row[j + 2] = (float)r;
+        for(let j = 0; j < n.valueOf() * 3; j += 3) {
+            let x = src_row[j];
+            let y = src_row[j + 1];
+            let z = src_row[j + 2];
+            let r = M[0].valueOf() * x.valueOf() + M[1].valueOf() * y.valueOf() + M[2].valueOf() * z.valueOf();
+            let g = M[3].valueOf() * x.valueOf() + M[4].valueOf() * y.valueOf() + M[5].valueOf() * z.valueOf();
+            let b = M[6].valueOf() * x.valueOf() + M[7].valueOf() * y.valueOf() + M[8].valueOf() * z.valueOf();
+            dst_row[j] =     b;
+            dst_row[j + 1] = g;
+            dst_row[j + 2] = r;
         }
 
     }
@@ -828,44 +857,48 @@ class CV_ColorXYZTest extends CV_ColorCvtBaseTest
 class CV_ColorLabTest extends CV_ColorCvtBaseTest {
     constructor() {
         super(true, true, false);
-        INIT_FWD_INV_CODES(BGR2Lab, Lab2BGR);
+        //INIT_FWD_INV_CODES(BGR2Lab, Lab2BGR);
+        this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2Lab;
+        this.inv_code = alvision.ColorConversionCodes.COLOR_Lab2BGR;
+        this.fwd_code_str = "BGR2Lab";
+        this.inv_code_str = "Lab2BGR";
     }
 
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
-        if (blue_idx == 0)
-            this.fwd_code = CV_LBGR2Lab, inv_code = CV_Lab2LBGR;
+        if (this.blue_idx == 0)
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_LBGR2Lab, this.inv_code = alvision.ColorConversionCodes.COLOR_Lab2LBGR;
         else
-            this.fwd_code = CV_LRGB2Lab, inv_code = CV_Lab2LRGB;
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_LRGB2Lab, this.inv_code = alvision.ColorConversionCodes.COLOR_Lab2LRGB;
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
-        var depth = test_mat[i][j].depth();
-        return depth == CV_8U ? 16 : depth == CV_16U ? 32 : 1e-3;
+        var depth = this.test_mat[i.valueOf()][j.valueOf()].depth();
+        return depth == alvision.MatrixType.CV_8U ? 16 : depth == alvision.MatrixType.CV_16U ? 32 : 1e-3;
     }
     convert_row_bgr2abc_32f_c3(src_row: Array<alvision.float>, dst_row: Array<alvision.float>, n: alvision.int): void {
-        var depth = test_mat[INPUT][0].depth();
-        var Lscale = depth == CV_8U ? 255.f/ 100.f : depth == CV_16U ? 65535.f/ 100.f : 1.f;
-        var ab_bias = depth == CV_8U ? 128.f : depth == CV_16U ? 32768.f : 0.f;
-        float M[9];
+        var depth = this.test_mat[this.INPUT][0].depth();
+        var Lscale = depth == alvision.MatrixType.CV_8U ? 255./ 100. : depth == alvision.MatrixType.CV_16U ? 65535./ 100. : 1.;
+        var ab_bias = depth == alvision.MatrixType.CV_8U ? 128. : depth == alvision.MatrixType.CV_16U ? 32768. : 0.;
+        var M = new Array < alvision.float >(9);
 
-        for (var j = 0; j < 9; j++)
-            M[j] = (float)RGB2XYZ[j];
+        for (let j = 0; j < 9; j++)
+            M[j] = RGB2XYZ[j];
 
-        for (var x = 0; x < n * 3; x += 3) {
+        for (let x = 0; x < n.valueOf() * 3; x += 3) {
             var R = src_row[x + 2];
             var G = src_row[x + 1];
             var B = src_row[x];
 
-            var X = (R * M[0] + G * M[1] + B * M[2]) / Xn;
-            var Y = R * M[3] + G * M[4] + B * M[5];
-            var Z = (R * M[6] + G * M[7] + B * M[8]) / Zn;
-            var fX = X > 0.008856f ? pow(X, _1_3f) :
-            (7.787f * X + 16.f / 116.f);
-            var fZ = Z > 0.008856f ? pow(Z, _1_3f) :
-            (7.787f * Z + 16.f / 116.f);
+            var X = (R.valueOf() * M[0].valueOf() + G.valueOf() * M[1].valueOf() + B.valueOf() * M[2].valueOf()) / Xn;
+            var Y =  R.valueOf() * M[3].valueOf() + G.valueOf() * M[4].valueOf() + B.valueOf() * M[5].valueOf();
+            var Z = (R.valueOf() * M[6].valueOf() + G.valueOf() * M[7].valueOf() + B.valueOf() * M[8].valueOf()) / Zn;
+            var fX = X > 0.008856 ? Math.pow(X, _1_3f) :
+            (7.787 * X + 16. / 116.);
+            var fZ = Z > 0.008856 ? Math.pow(Z, _1_3f) :
+            (7.787 * Z + 16. / 116.);
 
-            var L = 0.0f, fY = 0.0f;
+            let L = 0.0, fY = 0.0;
             if (Y > 0.008856) {
                 fY = Math.pow(Y, _1_3f);
                 L = 116. * fY - 16.;
@@ -875,8 +908,8 @@ class CV_ColorLabTest extends CV_ColorCvtBaseTest {
                 L = 903.3 * Y;
             }
 
-            var a = 500. * (fX - fY);
-            var b = 200. * (fY - fZ);
+            let a = 500. * (fX - fY);
+            let b = 200. * (fY - fZ);
 
             dst_row[x] = L * Lscale;
             dst_row[x + 1] = a + ab_bias;
@@ -885,8 +918,8 @@ class CV_ColorLabTest extends CV_ColorCvtBaseTest {
     }
     convert_row_abc2bgr_32f_c3(src_row: Array<alvision.float>, dst_row: Array<alvision.float>, n: alvision.int): void {
         var depth = this.test_mat[this.INPUT][0].depth();
-        var Lscale = depth == CV_8U ? 100. / 255. : depth == CV_16U ? 100.f/ 65535.f : 1.f;
-        var ab_bias = depth == CV_8U ? 128. : depth == CV_16U ? 32768.f : 0.f;
+        var Lscale = depth == alvision.MatrixType.CV_8U ? 100. / 255. : depth == alvision.MatrixType.CV_16U ? 100./ 65535. : 1.;
+        var ab_bias = depth == alvision.MatrixType.CV_8U ? 128. : depth == alvision.MatrixType.CV_16U ? 32768. : 0.;
         var M = new Array<alvision.float>(9);
 
         for (var j = 0; j < 9; j++)
@@ -922,9 +955,9 @@ class CV_ColorLabTest extends CV_ColorCvtBaseTest {
             var X = FXZ[0] * Xn;
             var Z = FXZ[1] * Zn;
 
-            var R = M[0].valueOf() * X + M[1].valueOf() * Y + M[2] * Z;
-            var G = M[3].valueOf() * X + M[4].valueOf() * Y + M[5] * Z;
-            var B = M[6].valueOf() * X + M[7].valueOf() * Y + M[8] * Z;
+            var R = M[0].valueOf() * X + M[1].valueOf() * Y + M[2].valueOf() * Z;
+            var G = M[3].valueOf() * X + M[4].valueOf() * Y + M[5].valueOf() * Z;
+            var B = M[6].valueOf() * X + M[7].valueOf() * Y + M[8].valueOf() * Z;
 
             dst_row[x] = B;
             dst_row[x + 1] = G;
@@ -944,51 +977,55 @@ const _1_3f = _1_3;
 class CV_ColorLuvTest extends CV_ColorCvtBaseTest {
     constructor() {
         super(true, true, false);
-        INIT_FWD_INV_CODES(BGR2Luv, Luv2BGR);
+        //INIT_FWD_INV_CODES(BGR2Luv, Luv2BGR);
+        this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2Luv;
+        this.inv_code = alvision.ColorConversionCodes.COLOR_Luv2BGR;
+        this.fwd_code_str = "BGR2Luv";
+        this.inv_code_str = "Luv2BGR";
     }
 
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
-        if (blue_idx == 0)
-            this.fwd_code = CV_LBGR2Luv, inv_code = CV_Luv2LBGR;
+        if (this.blue_idx == 0)
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_LBGR2Luv, this.inv_code = alvision.ColorConversionCodes.COLOR_Luv2LBGR;
         else
-            this.fwd_code = CV_LRGB2Luv, inv_code = CV_Luv2LRGB;
+            this.fwd_code = alvision.ColorConversionCodes.COLOR_LRGB2Luv, this.inv_code = alvision.ColorConversionCodes.COLOR_Luv2LRGB;
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
-        var depth = test_mat[i][j].depth();
-        return depth == CV_8U ? 48 : depth == CV_16U ? 32 : 5e-2;
+        var depth = this.test_mat[i.valueOf()][j.valueOf()].depth();
+        return depth == alvision.MatrixType.CV_8U ? 48 : depth == alvision.MatrixType.CV_16U ? 32 : 5e-2;
     }
     convert_row_bgr2abc_32f_c3(src_row: Array<alvision.float>, dst_row: Array<alvision.float>, n: alvision.int): void {
         var depth = this.test_mat[this.INPUT][0].depth();
-        var Lscale = depth == CV_8U ? 255. / 100. : depth == CV_16U ? 65535. / 100. : 1.;
+        var Lscale = depth == alvision.MatrixType.CV_8U ? 255. / 100. : depth == alvision.MatrixType.CV_16U ? 65535. / 100. : 1.;
         //int j;
 
-        float M[9];
+        var M = new Array < alvision.float>(9);
         var un = 4. * Xn / (Xn + 15. * 1. + 3 * Zn);
         var vn = 9. * 1. / (Xn + 15. * 1. + 3 * Zn);
         var u_scale = 1., u_bias = 0.;
         var v_scale = 1., v_bias = 0.;
 
-        for (j = 0; j < 9; j++)
+        for (let j = 0; j < 9; j++)
             M[j] = RGB2XYZ[j];
 
-        if (depth == CV_8U) {
-            u_scale = 0.720338983f;
-            u_bias = 96.5254237f;
-            v_scale = 0.973282442f;
-            v_bias = 136.2595419f;
+        if (depth == alvision.MatrixType.CV_8U) {
+            u_scale = 0.720338983;
+            u_bias = 96.5254237;
+            v_scale = 0.973282442;
+            v_bias = 136.2595419;
         }
 
-        for (var j = 0; j < n * 3; j += 3) {
-            var r = src_row[j + 2];
-            var g = src_row[j + 1];
-            var b = src_row[j];
+        for (let j = 0; j < n.valueOf() * 3; j += 3) {
+            let r = src_row[j + 2];
+            let g = src_row[j + 1];
+            let b = src_row[j];
 
-            var X = r * M[0] + g * M[1] + b * M[2];
-            var Y = r * M[3] + g * M[4] + b * M[5];
-            var Z = r * M[6] + g * M[7] + b * M[8];
-            var d = X + 15 * Y + 3 * Z, L, u, v;
+            let X = r.valueOf() * M[0].valueOf() + g.valueOf() * M[1].valueOf() + b.valueOf() * M[2].valueOf();
+            let Y = r.valueOf() * M[3].valueOf() + g.valueOf() * M[4].valueOf() + b.valueOf() * M[5].valueOf();
+            let Z = r.valueOf() * M[6].valueOf() + g.valueOf() * M[7].valueOf() + b.valueOf() * M[8].valueOf();
+            let d = X + 15 * Y + 3 * Z, L, u, v;
 
             if (d == 0)
                 L = u = v = 0;
@@ -1009,29 +1046,29 @@ class CV_ColorLuvTest extends CV_ColorCvtBaseTest {
     }
     convert_row_abc2bgr_32f_c3(src_row: Array<alvision.float>, dst_row: Array<alvision.float>, n: alvision.int): void {
 
-        var depth = test_mat[INPUT][0].depth();
-        var Lscale = depth == CV_8U ? 100.f/ 255.f : depth == CV_16U ? 100.f/ 65535.f : 1.f;
+        var depth = this.test_mat[this.INPUT][0].depth();
+        var Lscale = depth == alvision.MatrixType.CV_8U ? 100./ 255. : depth == alvision.MatrixType.CV_16U ? 100./ 65535. : 1.;
         //int j;
-        float M[9];
+        var M = new Array < alvision.float>(9);
         var un = 4. * Xn / (Xn + 15. * 1. + 3 * Zn);
         var vn = 9. * 1. / (Xn + 15. * 1. + 3 * Zn);
         var u_scale = 1., u_bias = 0.;
         var v_scale = 1., v_bias = 0.;
 
         for (var j = 0; j < 9; j++)
-            M[j] = (float)XYZ2RGB[j];
+            M[j] = XYZ2RGB[j];
 
-        if (depth == CV_8U) {
-            u_scale = 1.f/ 0.720338983f;
-            u_bias = 96.5254237f;
-            v_scale = 1.f/ 0.973282442f;
-            v_bias = 136.2595419f;
+            if (depth == alvision.MatrixType.CV_8U) {
+            u_scale = 1./ 0.720338983;
+            u_bias = 96.5254237;
+            v_scale = 1./ 0.973282442;
+            v_bias = 136.2595419;
         }
 
-        for (var j = 0; j < n * 3; j += 3) {
-            var L = src_row[j] * Lscale;
-            var u = (src_row[j + 1] - u_bias) * u_scale;
-            var v = (src_row[j + 2] - v_bias) * v_scale;
+        for (var j = 0; j < n.valueOf() * 3; j += 3) {
+            var L = src_row[j].valueOf() * Lscale;
+            var u = (src_row[j + 1].valueOf() - u_bias) * u_scale;
+            var v = (src_row[j + 2].valueOf() - v_bias) * v_scale;
             var X, Y, Z;
 
             if (L >= 8) {
@@ -1041,7 +1078,7 @@ class CV_ColorLuvTest extends CV_ColorCvtBaseTest {
             else {
                 Y = L * (1. / 903.3);
                 if (L == 0)
-                    L = 0.001f;
+                    L = 0.001;
             }
 
             u = u / (13 * L) + un;
@@ -1050,9 +1087,9 @@ class CV_ColorLuvTest extends CV_ColorCvtBaseTest {
             X = -9 * Y * u / ((u - 4) * v - u * v);
             Z = (9 * Y - 15 * v * Y - v * X) / (3 * v);
 
-            var r = M[0] * X + M[1] * Y + M[2] * Z;
-            var g = M[3] * X + M[4] * Y + M[5] * Z;
-            var b = M[6] * X + M[7] * Y + M[8] * Z;
+            var r = M[0].valueOf() * X + M[1].valueOf() * Y + M[2].valueOf() * Z;
+            var g = M[3].valueOf() * X + M[4].valueOf() * Y + M[5].valueOf() * Z;
+            var b = M[6].valueOf() * X + M[7].valueOf() * Y + M[8].valueOf() * Z;
 
             dst_row[j] = b;
             dst_row[j + 1] = g;
@@ -1074,41 +1111,41 @@ class CV_ColorRGBTest extends CV_ColorCvtBaseTest
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
         var rng = this.ts.get_rng();
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
-        var cn = CV_MAT_CN(types[INPUT][0]);
+        var cn = alvision.MatrixType. CV_MAT_CN(types[this.INPUT][0]);
 
-        dst_bits = 24;
+        this.dst_bits = 24;
 
-        if (alvision.cvtest.randInt(rng) % 3 == 0) {
-            types[INPUT][0] = types[OUTPUT][1] = types[REF_OUTPUT][1] = CV_MAKETYPE(CV_8U, cn);
-            types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(CV_8U, 2);
-            if (alvision.cvtest.randInt(rng) & 1) {
-                if (blue_idx == 0)
-                    fwd_code = CV_BGR2BGR565, inv_code = CV_BGR5652BGR;
+        if (alvision.cvtest.randInt(rng).valueOf() % 3 == 0) {
+            types[this.INPUT][0] =  types[this.OUTPUT][1] = types[this.REF_OUTPUT][1] = alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U, cn);
+            types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U, 2);
+            if (alvision.cvtest.randInt(rng).valueOf() & 1) {
+                if (this.blue_idx == 0)
+                    this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2BGR565, this.inv_code = alvision.ColorConversionCodes.COLOR_BGR5652BGR;
                 else
-                    fwd_code = CV_RGB2BGR565, inv_code = CV_BGR5652RGB;
-                dst_bits = 16;
+                    this.fwd_code = alvision.ColorConversionCodes.COLOR_RGB2BGR565, this.inv_code = alvision.ColorConversionCodes.COLOR_BGR5652RGB;
+                this.dst_bits = 16;
             }
             else {
-                if (blue_idx == 0)
-                    fwd_code = CV_BGR2BGR555, inv_code = CV_BGR5552BGR;
+                if (this.blue_idx == 0)
+                    this.fwd_code = alvision.ColorConversionCodes.COLOR_BGR2BGR555, this.inv_code = alvision.ColorConversionCodes.COLOR_BGR5552BGR;
                 else
-                    fwd_code = CV_RGB2BGR555, inv_code = CV_BGR5552RGB;
-                dst_bits = 15;
+                    this.fwd_code = alvision.ColorConversionCodes.COLOR_RGB2BGR555, this.inv_code = alvision.ColorConversionCodes.COLOR_BGR5552RGB;
+                this.dst_bits = 15;
             }
         }
         else {
             if (cn == 3) {
-                fwd_code = CV_RGB2BGR, inv_code = CV_BGR2RGB;
-                blue_idx = 2;
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_RGB2BGR, this.inv_code = alvision.ColorConversionCodes.COLOR_BGR2RGB;
+                this.blue_idx = 2;
             }
-            else if (blue_idx == 0)
-                fwd_code = CV_BGRA2BGR, inv_code = CV_BGR2BGRA;
+            else if (this.blue_idx == 0)
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_BGRA2BGR, this.inv_code = alvision.ColorConversionCodes.COLOR_BGR2BGRA;
             else
-                fwd_code = CV_RGBA2BGR, inv_code = CV_BGR2RGBA;
+                this.fwd_code = alvision.ColorConversionCodes.COLOR_RGBA2BGR, this.inv_code = alvision.ColorConversionCodes.COLOR_BGR2RGBA;
         }
 
-        if (CV_MAT_CN(types[INPUT][0]) != CV_MAT_CN(types[OUTPUT][0]))
-            inplace = false;
+        if (alvision.MatrixType.CV_MAT_CN(types[this.INPUT][0]) != alvision.MatrixType.CV_MAT_CN(types[this.OUTPUT][0]))
+            this.inplace = false;
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
         return 0;
@@ -1118,65 +1155,67 @@ class CV_ColorRGBTest extends CV_ColorCvtBaseTest
         /*#if defined _DEBUG || defined DEBUG
             int dst_cn = CV_MAT_CN(dst.type);
         #endif*/
-        int i, j, cols = src.cols;
-        var g_rshift = dst_bits == 16 ? 2 : 3;
-        var r_lshift = dst_bits == 16 ? 11 : 10;
+        //int i, j,
+            let cols = src.cols();
+        var g_rshift = this.dst_bits == 16 ? 2 : 3;
+        var r_lshift = this.dst_bits == 16 ? 11 : 10;
 
-        //assert( (cn == 3 || cn == 4) && (dst_cn == 3 || (dst_cn == 2 && depth == CV_8U)) );
+        //assert( (cn == 3 || cn == 4) && (dst_cn == 3 || (dst_cn == 2 && depth == alvision.MatrixType.CV_8U)) );
 
-        for (var i = 0; i < src.rows; i++) {
+        for (var i = 0; i < src.rows(); i++) {
             switch (depth) {
-                case CV_8U:
+                case alvision.MatrixType.CV_8U:
                     {
-                        const uchar* src_row = src.ptr(i);
-                        uchar * dst_row = dst.ptr(i);
+                        const  src_row = src.ptr<alvision.uchar>("uchar",i);
+                        let dst_row = dst.ptr<alvision.uchar>("uchar",i);
 
-                        if (dst_bits == 24) {
-                            for (j = 0; j < cols; j++) {
-                                uchar b = src_row[j * cn + blue_idx];
-                                uchar g = src_row[j * cn + 1];
-                                uchar r = src_row[j * cn + (blue_idx ^ 2)];
+                        if (this.dst_bits == 24) {
+                            for (let j = 0; j < cols; j++) {
+                                var b = src_row[j * cn.valueOf() + this.blue_idx.valueOf()];
+                                var g = src_row[j * cn.valueOf() + 1];
+                                var r = src_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)];
                                 dst_row[j * 3] = b;
                                 dst_row[j * 3 + 1] = g;
                                 dst_row[j * 3 + 2] = r;
                             }
                         }
                         else {
-                            for (j = 0; j < cols; j++) {
-                                int b = src_row[j * cn + blue_idx] >> 3;
-                                int g = src_row[j * cn + 1] >> g_rshift;
-                                int r = src_row[j * cn + (blue_idx ^ 2)] >> 3;
-                                ((ushort *)dst_row)[j] = (ushort)(b | (g << 5) | (r << r_lshift));
+                            for (let j = 0; j < cols; j++) {
+                                let b = <any>src_row[j * cn.valueOf() + this.blue_idx.valueOf()] >> 3;
+                                let g = <any>src_row[j * cn.valueOf() + 1] >> g_rshift;
+                                let r = <any>src_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)] >> 3;
+                                let usdst_row = dst.ptr<alvision.ushort>("ushort", i);
+                                usdst_row[j] = (b | (g << 5) | (r << r_lshift));
                                 if (cn == 4 && src_row[j * 4 + 3])
-                                    ((ushort *)dst_row)[j] |= 1 << (r_lshift + 5);
+                                    usdst_row[j] = usdst_row[j].valueOf() | 1 << (r_lshift + 5);
                             }
                         }
                     }
                     break;
-                case CV_16U:
+                case alvision.MatrixType.CV_16U:
                     {
-                        const ushort* src_row = src.ptr<ushort>(i);
-                        ushort * dst_row = dst.ptr<ushort>(i);
+                        const  src_row = src.ptr<alvision.ushort>("ushort",i);
+                        let dst_row = dst.ptr<alvision.ushort>("ushort",i);
 
-                        for (j = 0; j < cols; j++) {
-                            ushort b = src_row[j * cn + blue_idx];
-                            ushort g = src_row[j * cn + 1];
-                            ushort r = src_row[j * cn + (blue_idx ^ 2)];
+                        for (let j = 0; j < cols; j++) {
+                            let b = src_row[j * cn.valueOf() + this.blue_idx.valueOf()];
+                            let g = src_row[j * cn.valueOf() + 1];
+                            let r = src_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)];
                             dst_row[j * 3] = b;
                             dst_row[j * 3 + 1] = g;
                             dst_row[j * 3 + 2] = r;
                         }
                     }
                     break;
-                case CV_32F:
+                case alvision.MatrixType.CV_32F:
                     {
-                        const float* src_row = src.ptr<float>(i);
-                        float * dst_row = dst.ptr<float>(i);
+                        const src_row = src.ptr<alvision.float>("float",i);
+                        let dst_row =   dst.ptr<alvision.float>("float",i);
 
-                        for (j = 0; j < cols; j++) {
-                            float b = src_row[j * cn + blue_idx];
-                            float g = src_row[j * cn + 1];
-                            float r = src_row[j * cn + (blue_idx ^ 2)];
+                        for (let j = 0; j < cols; j++) {
+                            let b = src_row[j * cn.valueOf() + this.blue_idx.valueOf()];
+                            let g = src_row[j * cn.valueOf() + 1];
+                            let r = src_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)];
                             dst_row[j * 3] = b;
                             dst_row[j * 3 + 1] = g;
                             dst_row[j * 3 + 2] = r;
@@ -1184,7 +1223,7 @@ class CV_ColorRGBTest extends CV_ColorCvtBaseTest
                     }
                     break;
                 default:
-                    assert(0);
+                    alvision.assert(()=>false);
             }
         }
     }
@@ -1193,92 +1232,94 @@ class CV_ColorRGBTest extends CV_ColorCvtBaseTest
         /*#if defined _DEBUG || defined DEBUG
             int src_cn = CV_MAT_CN(src.type);
         #endif*/
-        int i, j, cols = src.cols;
-        var g_lshift = dst_bits == 16 ? 2 : 3;
-        var r_rshift = dst_bits == 16 ? 11 : 10;
+        //int  j,
+            let cols = src.cols();
+        let g_lshift = this.dst_bits == 16 ? 2 : 3;
+        let r_rshift = this.dst_bits == 16 ? 11 : 10;
 
         //assert( (cn == 3 || cn == 4) && (src_cn == 3 || (src_cn == 2 && depth == CV_8U)) );
 
-        for (i = 0; i < src.rows; i++) {
+        for (var i = 0; i < src.rows(); i++) {
             switch (depth) {
-                case CV_8U:
+                case alvision.MatrixType.CV_8U:
                     {
-                        const uchar* src_row = src.ptr(i);
-                        uchar * dst_row = dst.ptr(i);
+                        const src_row = src.ptr<alvision.uchar>("uchar",i);
+                        let dst_row = dst.ptr<alvision.uchar>("uchar",i);
 
-                        if (dst_bits == 24) {
-                            for (j = 0; j < cols; j++) {
-                                uchar b = src_row[j * 3];
-                                uchar g = src_row[j * 3 + 1];
-                                uchar r = src_row[j * 3 + 2];
+                        if (this.dst_bits == 24) {
+                            for (let j = 0; j < cols; j++) {
+                                let b = src_row[j * 3];
+                                let g = src_row[j * 3 + 1];
+                                let r = src_row[j * 3 + 2];
 
-                                dst_row[j * cn + blue_idx] = b;
-                                dst_row[j * cn + 1] = g;
-                                dst_row[j * cn + (blue_idx ^ 2)] = r;
+                                dst_row[j * cn.valueOf() + this.blue_idx.valueOf()] = b;
+                                dst_row[j * cn.valueOf() + 1] = g;
+                                dst_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)] = r;
 
                                 if (cn == 4)
-                                    dst_row[j * cn + 3] = 255;
+                                    dst_row[j * cn.valueOf() + 3] = 255;
                             }
                         }
                         else {
-                            for (j = 0; j < cols; j++) {
-                                ushort val = ((ushort *)src_row)[j];
-                                uchar b = (uchar)(val << 3);
-                                uchar g = (uchar)((val >> 5) << g_lshift);
-                                uchar r = (uchar)((val >> r_rshift) << 3);
+                            for (let j = 0; j < cols; j++) {
+                                let ussrc_row = src.ptr<alvision.ushort>("ushort", i);
+                                let val = ussrc_row[j].valueOf();
+                                let b = (val << 3);
+                                let g = ((val >> 5) << g_lshift);
+                                let r = ((val >> r_rshift) << 3);
 
-                                dst_row[j * cn + blue_idx] = b;
-                                dst_row[j * cn + 1] = g;
-                                dst_row[j * cn + (blue_idx ^ 2)] = r;
+                                dst_row[j * cn.valueOf() + this.blue_idx.valueOf()] = b;
+                                dst_row[j * cn.valueOf() + 1] = g;
+                                dst_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)] = r;
 
                                 if (cn == 4) {
-                                    uchar alpha = r_rshift == 11 || (val & 0x8000) != 0 ? 255 : 0;
-                                    dst_row[j * cn + 3] = alpha;
+                                    let alpha = r_rshift == 11 || (val & 0x8000) != 0 ? 255 : 0;
+                                    dst_row[j * cn.valueOf() + 3] = alpha;
                                 }
                             }
                         }
                     }
                     break;
-                case CV_16U:
+                case alvision.MatrixType.CV_16U:
                     {
-                        const ushort* src_row = src.ptr<ushort>(i);
-                        ushort * dst_row = dst.ptr<ushort>(i);
+                        const src_row = src.ptr<alvision.ushort>("ushort",i);
+                        let dst_row = dst.ptr<alvision.ushort>("ushort",i);
 
-                        for (j = 0; j < cols; j++) {
-                            ushort b = src_row[j * 3];
-                            ushort g = src_row[j * 3 + 1];
-                            ushort r = src_row[j * 3 + 2];
+                        for (let j = 0; j < cols; j++) {
+                            let b = src_row[j * 3];
+                            let g = src_row[j * 3 + 1];
+                            let r = src_row[j * 3 + 2];
 
-                            dst_row[j * cn + blue_idx] = b;
-                            dst_row[j * cn + 1] = g;
-                            dst_row[j * cn + (blue_idx ^ 2)] = r;
+                            dst_row[j * cn.valueOf() + this.blue_idx.valueOf()] = b;
+                            dst_row[j * cn.valueOf() + 1] = g;
+                            dst_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)] = r;
 
                             if (cn == 4)
-                                dst_row[j * cn + 3] = 65535;
+                                dst_row[j * cn.valueOf() + 3] = 65535;
                         }
                     }
                     break;
-                case CV_32F:
+                case alvision.MatrixType.CV_32F:
                     {
-                        const float* src_row = src.ptr<float>(i);
-                        float * dst_row = dst.ptr<float>(i);
+                        const src_row = src.ptr<alvision.float>("float",i);
+                        let dst_row = dst.ptr<alvision.float>("float",i);
 
-                        for (j = 0; j < cols; j++) {
-                            float b = src_row[j * 3];
-                            float g = src_row[j * 3 + 1];
-                            float r = src_row[j * 3 + 2];
+                        for (let j = 0; j < cols; j++) {
+                            let b = src_row[j * 3];
+                            let g = src_row[j * 3 + 1];
+                            let r = src_row[j * 3 + 2];
 
-                            dst_row[j * cn + blue_idx] = b;
-                            dst_row[j * cn + 1] = g;
-                            dst_row[j * cn + (blue_idx ^ 2)] = r;
+                            dst_row[j * cn.valueOf() + this.blue_idx.valueOf()] = b;
+                            dst_row[j * cn.valueOf() + 1] = g;
+                            dst_row[j * cn.valueOf() + (this.blue_idx.valueOf() ^ 2)] = r;
 
                             if (cn == 4)
-                                dst_row[j * cn + 3] = 1.f;
+                                dst_row[j * cn.valueOf() + 3] = 1.;
                         }
                     }
                     break;
                 default:
-                    assert(0);
+                    alvision.assert(() => false);
             }
         }
     }
@@ -1293,12 +1334,12 @@ class CV_ColorBayerTest extends CV_ColorCvtBaseTest
 {
     constructor() {
         super(false, false, true);
-        this.test_array[OUTPUT].pop_back();
-        this.test_array[REF_OUTPUT].pop_back();
+        this.test_array[this.OUTPUT].length = 0;
+        this.test_array[this.REF_OUTPUT].length = 0;
 
         this.fwd_code_str = "BayerBG2BGR";
         this.inv_code_str = "";
-        this.fwd_code = CV_BayerBG2BGR;
+        this.fwd_code = alvision.ColorConversionCodes.COLOR_BayerBG2BGR;
         this.inv_code = -1;
 
     }
@@ -1307,81 +1348,83 @@ class CV_ColorBayerTest extends CV_ColorCvtBaseTest
         var rng = this.ts.get_rng();
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
-        types[INPUT][0] = CV_MAT_DEPTH(types[INPUT][0]);
-        types[OUTPUT][0] = types[REF_OUTPUT][0] = CV_MAKETYPE(CV_MAT_DEPTH(types[INPUT][0]), 3);
-        inplace = false;
+        types[this.INPUT][0] =alvision.MatrixType. CV_MAT_DEPTH(types[this.INPUT][0]);
+        types[this.OUTPUT][0] = types[this.REF_OUTPUT][0] = alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_MAT_DEPTH(types[this.INPUT][0]), 3);
+        this.inplace = false;
 
-        fwd_code = alvision.cvtest.randInt(rng) % 4 + CV_BayerBG2BGR;
+        this.fwd_code = alvision.cvtest.randInt(rng).valueOf() % 4 + alvision.ColorConversionCodes.COLOR_BayerBG2BGR;
     }
     get_success_error_level(test_case_idx: alvision.int, i: alvision.int, j: alvision.int): alvision.double {
 
         return 1;
     }
     run_func(): void {
-        if (!test_cpp)
-            cvCvtColor(test_array[INPUT][0], test_array[OUTPUT][0], fwd_code);
+        if (!this.test_cpp)
+            alvision.cvtColor(this.test_array[this.INPUT][0], this.test_array[this.OUTPUT][0], this.fwd_code);
         else {
-            alvision.Mat _out = alvision.cvarrToMat(test_array[OUTPUT][0]);
-            alvision.cvtColor(alvision.cvarrToMat(test_array[INPUT][0]), _out, fwd_code, _out.channels());
+            var _out = this.test_array[this.OUTPUT][0];
+            alvision.cvtColor(this.test_array[this.INPUT][0], _out, this.fwd_code, _out.channels());
         }
 
     }
     prepare_to_validation(test_case_idx: alvision.int): void {
-        const Mat& src = test_mat[INPUT][0];
-        Mat & dst = test_mat[REF_OUTPUT][0];
-        int depth = src.depth();
-        if (depth == CV_8U)
-            bayer2BGR_<uchar>(src, dst, fwd_code);
-        else if (depth == CV_16U)
-            bayer2BGR_<ushort>(src, dst, fwd_code);
+        const  src = this.test_mat[this.INPUT][0];
+        var dst = this.test_mat[this.REF_OUTPUT][0];
+        var depth = src.depth();
+        if (depth == alvision.MatrixType.CV_8U)
+            bayer2BGR_<alvision.uchar>("uchar",src, dst, this.fwd_code);
+        else if (depth == alvision.MatrixType.CV_16U)
+            bayer2BGR_<alvision.ushort>("ushort", src, dst, this.fwd_code);
         else
-            CV_Error(alvision.cv.Error.Code.StsUnsupportedFormat, "");
+            alvision.CV_Error(alvision.cv.Error.Code.StsUnsupportedFormat, "");
     }
 };
 
 
 
 //template<typename T>
-function bayer2BGR_<T>(src: alvision.Mat, dst: alvision.Mat, code: alvision.int ) : void
+function bayer2BGR_<T>(Ttype : string, src: alvision.Mat, dst: alvision.Mat, code: alvision.int ) : void
 {
-    int i, j, cols = src.cols - 2;
-    int bi = 0;
-    int step = (int)(src.step/sizeof(T));
+    //int i, j,
+        var cols = src.cols().valueOf() - 2;
+    let bi = 0;
+    let step = (src.step);///sizeof(T));
 
-    if( code == CV_BayerRG2BGR || code == CV_BayerGR2BGR )
+    if (code == alvision.ColorConversionCodes.COLOR_BayerRG2BGR || code == alvision.ColorConversionCodes.COLOR_BayerGR2BGR )
         bi ^= 2;
 
-    for( i = 1; i < src.rows - 1; i++ )
+    for(let i = 1; i < src.rows().valueOf() - 1; i++ )
     {
-        const T* ptr = src.ptr<T>(i) + 1;
-        T* dst_row = dst.ptr<T>(i) + 3;
-        int save_code = code;
+        const ptr = src.ptr<T>(Ttype, i).slice(+ 1);
+        var dst_row = dst.ptr<T>(Ttype, i).slice(+ 3);
+        var save_code = code;
         if( cols <= 0 )
         {
-            dst_row[-3] = dst_row[-2] = dst_row[-1] = 0;
-            dst_row[cols*3] = dst_row[cols*3+1] = dst_row[cols*3+2] = 0;
+            dst_row[-3] = dst_row[-2] = dst_row[-1] = <any>0;
+            dst_row[cols*3] = dst_row[cols*3+1] = dst_row[cols*3+2] = <any>0;
             continue;
         }
 
-        for( j = 0; j < cols; j++ )
+        for(let j = 0; j < cols; j++ )
         {
-            int b, g, r;
-            if( !(code & 1) )
+            //int b, g, r;
+            var b, g, r;
+            if( !(code.valueOf() & 1) )
             {
                 b = ptr[j];
-                g = (ptr[j-1] + ptr[j+1] + ptr[j-step] + ptr[j+step])>>2;
-                r = (ptr[j-step-1] + ptr[j-step+1] + ptr[j+step-1] + ptr[j+step+1]) >> 2;
+                g = (<any>ptr[j-1] + ptr[j+1] + ptr[j-step] + ptr[j+step])>>2;
+                r = (<any>ptr[j-step-1] + ptr[j-step+1] + ptr[j+step-1] + ptr[j+step+1]) >> 2;
             }
             else
             {
-                b = (ptr[j-1] + ptr[j+1]) >> 1;
+                b = (<any>ptr[j-1] + ptr[j+1]) >> 1;
                 g = ptr[j];
-                r = (ptr[j-step] + ptr[j+step]) >> 1;
+                r = (<any>ptr[j-step] + ptr[j+step]) >> 1;
             }
-            code ^= 1;
-            dst_row[j*3 + bi] = (T)b;
-            dst_row[j*3 + 1] = (T)g;
-            dst_row[j*3 + (bi^2)] = (T)r;
+            code =code.valueOf() ^ 1;
+            dst_row[j*3 + bi] = b;
+            dst_row[j*3 + 1] = g;
+            dst_row[j*3 + (bi^2)] = r;
         }
 
         dst_row[-3] = dst_row[0];
@@ -1391,22 +1434,24 @@ function bayer2BGR_<T>(src: alvision.Mat, dst: alvision.Mat, code: alvision.int 
         dst_row[cols*3+1] = dst_row[cols*3-2];
         dst_row[cols*3+2] = dst_row[cols*3-1];
 
-        code = save_code ^ 1;
+        code = save_code.valueOf() ^ 1;
         bi ^= 2;
     }
 
-    if( src.rows <= 2 )
+    if( src.rows() <= 2 )
     {
-        memset( dst.ptr(), 0, (cols+2)*3*sizeof(T) );
-        memset( dst.ptr(dst.rows-1), 0, (cols+2)*3*sizeof(T) );
+        dst.ptr<T>(Ttype).slice(0, (cols + 2) * 3).forEach((v, i, a) => a[i] = <any>0);
+        //memset( dst.ptr(), 0, (cols+2)*3*sizeof(T) );
+        dst.ptr<T>(Ttype).slice(dst.rows().valueOf() - 1).slice(0, (cols + 2) * 3).forEach((v, i, a) => a[i] = <any>0);
+        //memset( dst.ptr(dst.rows-1), 0, (cols+2)*3*sizeof(T) );
     }
     else
     {
-        T* top_row = dst.ptr<T>();
-        T* bottom_row = dst.ptr<T>(dst.rows-1);
-        int dstep = (int)(dst.step/sizeof(T));
+        let top_row = dst.ptr<T>(Ttype);
+        let bottom_row = dst.ptr<T>(Ttype, dst.rows().valueOf()-1);
+        let dstep = (dst.step);///sizeof(T));
 
-        for( j = 0; j < (cols+2)*3; j++ )
+        for( let j = 0; j < (cols+2)*3; j++ )
         {
             top_row[j] = top_row[j + dstep];
             bottom_row[j] = bottom_row[j - dstep];
@@ -1418,187 +1463,190 @@ function bayer2BGR_<T>(src: alvision.Mat, dst: alvision.Mat, code: alvision.int 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-alvision.cvtest.TEST('Imgproc_ColorGray', 'accuracy', () => { CV_ColorGrayTest test; test.safe_run(); });
-alvision.cvtest.TEST('Imgproc_ColorYCrCb', 'accuracy', () => { CV_ColorYCrCbTest test; test.safe_run(); });
-alvision.cvtest.TEST('Imgproc_ColorHSV', 'accuracy', () => { CV_ColorHSVTest test; test.safe_run(); });
-alvision.cvtest.TEST('Imgproc_ColorHLS', 'accuracy', () => { CV_ColorHLSTest test; test.safe_run(); });
-alvision.cvtest.TEST('Imgproc_ColorXYZ', 'accuracy',()=> { CV_ColorXYZTest test; test.safe_run(); });
-alvision.cvtest.TEST('Imgproc_ColorLab', 'accuracy',()=> { CV_ColorLabTest test; test.safe_run(); });
-alvision.cvtest.TEST('Imgproc_ColorLuv', 'accuracy',()=> { CV_ColorLuvTest test; test.safe_run(); });
-alvision.cvtest.TEST('Imgproc_ColorRGB', 'accuracy', () => { CV_ColorRGBTest test; test.safe_run(); });
-alvision.cvtest.TEST('Imgproc_ColorBayer', 'accuracy', () => { CV_ColorBayerTest test; test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_ColorGray', 'accuracy', () => { var test = new CV_ColorGrayTest(); test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_ColorYCrCb', 'accuracy', () => { var test = new CV_ColorYCrCbTest (); test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_ColorHSV', 'accuracy', () => { var test = new CV_ColorHSVTest (); test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_ColorHLS', 'accuracy', () => { var test = new CV_ColorHLSTest (); test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_ColorXYZ', 'accuracy', () => { var test = new CV_ColorXYZTest(); test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_ColorLab', 'accuracy', () => { var test = new CV_ColorLabTest (); test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_ColorLuv', 'accuracy', () => { var test = new CV_ColorLuvTest(); test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_ColorRGB', 'accuracy', () => { var test = new CV_ColorRGBTest(); test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_ColorBayer', 'accuracy', () => { var test = new CV_ColorBayerTest(); test.safe_run(); });
 
 alvision.cvtest.TEST('Imgproc_ColorBayer', 'regression', () => {
     var ts = alvision.cvtest.TS.ptr();
 
-    var given = alvision.imread(this.ts.get_data_path() + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
-    var gold =  alvision.imread(this.ts.get_data_path() + "/cvtcolor/bayer_gold.png", IMREAD_UNCHANGED);
+    var given = alvision.imread(this.ts.get_data_path() + "/cvtcolor/bayer_input.png",alvision.ImreadModes. IMREAD_GRAYSCALE);
+    var gold = alvision.imread(this.ts.get_data_path() + "/cvtcolor/bayer_gold.png", alvision.ImreadModes. IMREAD_UNCHANGED);
     var result = new alvision.Mat();
 
-    CV_Assert(!given.empty() && !gold.empty());
+    alvision.CV_Assert(()=>!given.empty() && !gold.empty());
 
-    cvtColor(given, result, CV_BayerBG2GRAY);
+    alvision.cvtColor(given, result, alvision.ColorConversionCodes.COLOR_BayerBG2GRAY);
 
-    EXPECT_EQ(gold.type(), result.type());
-    EXPECT_EQ(gold.cols, result.cols);
-    EXPECT_EQ(gold.rows, result.rows);
+    alvision.EXPECT_EQ(gold.type(), result.type());
+    alvision.EXPECT_EQ(gold.cols, result.cols);
+    alvision.EXPECT_EQ(gold.rows, result.rows);
 
-    Mat diff;
-    absdiff(gold, result, diff);
+    var diff = new alvision.Mat();
+    alvision.absdiff(gold, result, diff);
 
-    EXPECT_EQ(0, countNonZero(diff.reshape(1) > 1));
+    alvision.EXPECT_EQ(0,alvision. countNonZero(alvision.MatExpr.op_GreaterThan( diff.reshape(1) , 1)));
 });
 
 alvision.cvtest.TEST('Imgproc_ColorBayerVNG', 'regression', () => {
     var ts = alvision.cvtest.TS.ptr();
 
-    Mat given = imread(this.ts.get_data_path() + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
-    string goldfname = this.ts.get_data_path() + "/cvtcolor/bayerVNG_gold.png";
-    Mat gold = imread(goldfname, IMREAD_UNCHANGED);
+    var given = alvision.imread(this.ts.get_data_path() + "/cvtcolor/bayer_input.png", alvision.ImreadModes. IMREAD_GRAYSCALE);
+    var goldfname = this.ts.get_data_path() + "/cvtcolor/bayerVNG_gold.png";
+    var gold = alvision.imread(goldfname, alvision.ImreadModes. IMREAD_UNCHANGED);
     var result = new alvision.Mat();
 
-    CV_Assert(!given.empty());
+    alvision.CV_Assert(()=>!given.empty());
 
-    cvtColor(given, result, CV_BayerBG2BGR_VNG, 3);
+    alvision.cvtColor(given, result, alvision.ColorConversionCodes.COLOR_BayerBG2BGR_VNG, 3);
 
     if (gold.empty())
-        imwrite(goldfname, result);
+        alvision.imwrite(goldfname, result);
     else {
-        EXPECT_EQ(gold.type(), result.type());
-        EXPECT_EQ(gold.cols, result.cols);
-        EXPECT_EQ(gold.rows, result.rows);
+        alvision.EXPECT_EQ(gold.type(), result.type());
+        alvision.EXPECT_EQ(gold.cols, result.cols);
+        alvision.EXPECT_EQ(gold.rows, result.rows);
 
-        Mat diff;
-        absdiff(gold, result, diff);
+        var diff = new alvision.Mat();
+        alvision.absdiff(gold, result, diff);
 
-        EXPECT_EQ(0, countNonZero(diff.reshape(1) > 1));
+        alvision.EXPECT_EQ(0,alvision. countNonZero(alvision.MatExpr.op_GreaterThan( diff.reshape(1) , 1).toMat()));
     }
 });
 
 // creating Bayer pattern
 //template <typename T, int depth>
-function calculateBayerPattern<T>(src: alvision.Mat, bayer: alvision.Mat,  pattern : string, depth : alvision.int) : void
+function calculateBayerPattern<T>(Ttype: string, src: alvision.Mat, bayer: alvision.Mat,  pattern : string, depth : alvision.int) : void
 {
-    Size ssize = src.size();
-    const int scn = 1;
-    bayer.create(ssize, CV_MAKETYPE(depth, scn));
+    var ssize = src.size();
+    const  scn = 1;
+    bayer.create(ssize, alvision.MatrixType.CV_MAKETYPE(depth, scn));
 
-    if (!strcmp(pattern, "bg"))
+    if (pattern == "bg")
     {
-        for (int y = 0; y < ssize.height; ++y)
-            for (int x = 0; x < ssize.width; ++x)
+        for (let y = 0; y < ssize.height; ++y)
+            for (let x = 0; x < ssize.width; ++x)
             {
                 if ((x + y) % 2)
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[1]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[1]));
                 else if (x % 2)
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[0]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[0]));
                 else
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[2]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[2]));
             }
     }
-    else if (!strcmp(pattern, "gb"))
+    else if (pattern == "gb")
     {
-        for (int y = 0; y < ssize.height; ++y)
-            for (int x = 0; x < ssize.width; ++x)
+        for (let y = 0; y < ssize.height; ++y)
+            for (let x = 0; x < ssize.width; ++x)
             {
                 if ((x + y) % 2 == 0)
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[1]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[1]));
                 else if (x % 2 == 0)
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[0]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[0]));
                 else
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[2]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[2]));
             }
     }
-    else if (!strcmp(pattern, "rg"))
+    else if (pattern ==  "rg")
     {
-        for (int y = 0; y < ssize.height; ++y)
-            for (int x = 0; x < ssize.width; ++x)
+        for (let y = 0; y < ssize.height; ++y)
+            for (let x = 0; x < ssize.width; ++x)
             {
                 if ((x + y) % 2)
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[1]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[1]));
                 else if (x % 2 == 0)
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[0]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[0]));
                 else
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[2]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[2]));
             }
     }
     else
     {
-        for (int y = 0; y < ssize.height; ++y)
-            for (int x = 0; x < ssize.width; ++x)
+        for (let y = 0; y < ssize.height; ++y)
+            for (let x = 0; x < ssize.width; ++x)
             {
                 if ((x + y) % 2 == 0)
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[1]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[1]));
                 else if (x % 2)
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[0]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[0]));
                 else
-                    bayer.at<T>(y, x) = static_cast<T>(src.at<Vec3b>(y, x)[2]);
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[2]));
             }
     }
 }
 
 alvision.cvtest.TEST('Imgproc_ColorBayerVNG_Strict', 'regression',()=>
 {
-    alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
-    const char pattern[][3] = { "bg", "gb", "rg", "gr" };
-    const std::string image_name = "lena.png";
-    const std::string parent_path = this.ts.get_data_path() + "/cvtcolor_strict/";
+    var ts = alvision.cvtest.TS.ptr();
+    const pattern = ["bg", "gb", "rg", "gr"];
+    const image_name = "lena.png";
+    const parent_path = this.ts.get_data_path() + "/cvtcolor_strict/";
 
-    Mat src, dst, bayer, reference;
-    std::string full_path = parent_path + image_name;
-    src = imread(full_path, IMREAD_UNCHANGED);
+    //Mat src, dst, bayer, reference;
+    var bayer = new alvision.Mat();
+    var dst = new alvision.Mat();
+    var reference = new alvision.Mat();
+    var full_path = parent_path + image_name;
+    var src = alvision.imread(full_path, alvision.ImreadModes. IMREAD_UNCHANGED);
 
     if ( src.empty() )
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISSING_TEST_DATA);
-        ts.printf(alvision.cvtest.TS::SUMMARY, "No input image\n");
+        ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA);
+        ts.printf(alvision.cvtest.TSConstants.SUMMARY, "No input image\n");
         ts.set_gtest_status();
         return;
     }
 
-    for (int i = 0; i < 4; ++i)
+    for (let i = 0; i < 4; ++i)
     {
-        calculateBayerPattern<uchar, CV_8U>(src, bayer, pattern[i]);
-        CV_Assert(!bayer.empty() && bayer.type() == CV_8UC1);
+        calculateBayerPattern<alvision.uchar>("uchar", src, bayer, pattern[i], alvision.MatrixType.CV_8U);
+    alvision.CV_Assert(()=>!bayer.empty() && bayer.type() == alvision.MatrixType.CV_8UC1);
 
         // calculating a dst image
-        cvtColor(bayer, dst, CV_BayerBG2BGR_VNG + i);
+        alvision.cvtColor(bayer, dst, alvision.ColorConversionCodes.COLOR_BayerBG2BGR_VNG + i);
 
         // reading a reference image
         full_path = parent_path + pattern[i] + image_name;
-        reference = imread(full_path, IMREAD_UNCHANGED);
+        let reference = alvision.imread(full_path, alvision.ImreadModes. IMREAD_UNCHANGED);
         if ( reference.empty() )
         {
-            imwrite(full_path, dst);
+            alvision.imwrite(full_path, dst);
             continue;
         }
 
         if (reference.depth() != dst.depth() || reference.channels() != dst.channels() ||
             reference.size() != dst.size())
         {
-            std::cout << reference(Rect(0, 0, 5, 5)) << std::endl << std::endl << std::endl;
+            console.log(reference.roi(new alvision.Rect(0, 0, 5, 5)));
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
-            ts.printf(alvision.cvtest.TS::SUMMARY, "\nReference channels: %d\n"
+            ts.printf(alvision.cvtest.TSConstants.SUMMARY, "\nReference channels: %d\n" + 
                 "Actual channels: %d\n", reference.channels(), dst.channels());
-            ts.printf(alvision.cvtest.TS::SUMMARY, "\nReference depth: %d\n"
+            ts.printf(alvision.cvtest.TSConstants.SUMMARY, "\nReference depth: %d\n" + 
                 "Actual depth: %d\n", reference.depth(), dst.depth());
-            ts.printf(alvision.cvtest.TS::SUMMARY, "\nReference rows: %d\n"
+            ts.printf(alvision.cvtest.TSConstants.SUMMARY, "\nReference rows: %d\n" + 
                 "Actual rows: %d\n", reference.rows, dst.rows);
-            ts.printf(alvision.cvtest.TS::SUMMARY, "\nReference cols: %d\n"
+            ts.printf(alvision.cvtest.TSConstants.SUMMARY, "\nReference cols: %d\n" + 
                 "Actual cols: %d\n", reference.cols, dst.cols);
             ts.set_gtest_status();
 
             return;
         }
 
-        Mat diff;
-        absdiff(reference, dst, diff);
+        var diff = new alvision.Mat();
+        alvision.absdiff(reference, dst, diff);
 
-        int nonZero = countNonZero(diff.reshape(1) > 1);
+        let nonZero = alvision.countNonZero(alvision.MatExpr.op_GreaterThan( diff.reshape(1) , 1).toMat());
         if (nonZero != 0)
         {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-            ts.printf(alvision.cvtest.TS::SUMMARY, "\nCount non zero in absdiff: %d\n", nonZero);
+            ts.printf(alvision.cvtest.TSConstants.SUMMARY, "\nCount non zero in absdiff: %d\n", nonZero);
             ts.set_gtest_status();
             return;
         }
@@ -1607,60 +1655,60 @@ alvision.cvtest.TEST('Imgproc_ColorBayerVNG_Strict', 'regression',()=>
 
 function getTestMatrix(src : alvision.Mat) : void
 {
-    Size ssize(1000, 1000);
-    src.create(ssize, CV_32FC3);
-    int szm = ssize.width - 1;
-    float pi2 = 2 * 3.1415f;
+    var ssize = new alvision.Size(1000, 1000);
+    src.create(ssize, alvision.MatrixType.CV_32FC3);
+    var szm = ssize.width.valueOf() - 1;
+    var pi2 = 2 * 3.1415;
     // Generate a pretty test image
-    for (int i = 0; i < ssize.height; i++)
+    for (var i = 0; i < ssize.height; i++)
     {
-        for (int j = 0; j < ssize.width; j++)
+        for (let j = 0; j < ssize.width; j++)
         {
-            float b = (1 + cos((szm - i) * (szm - j) * pi2 / (10 * float(szm)))) / 2;
-            float g = (1 + cos((szm - i) * j * pi2 / (10 * float(szm)))) / 2;
-            float r = (1 + sin(i * j * pi2 / (10 * float(szm)))) / 2;
+            let b = (1 + Math.cos((szm - i) * (szm - j) * pi2 / (10 * szm))) / 2;
+            let g = (1 + Math.cos((szm - i) * j * pi2 / (10 * szm))) / 2;
+            let r = (1 + Math.sin(i * j * pi2 / (10 * szm))) / 2;
 
             // The following lines aren't necessary, but just to prove that
             // the BGR values all lie in [0,1]...
             if (b < 0) b = 0; else if (b > 1) b = 1;
             if (g < 0) g = 0; else if (g > 1) g = 1;
             if (r < 0) r = 0; else if (r > 1) r = 1;
-            src.at<alvision.Vec3f>(i, j) = alvision.Vec3f(b, g, r);
+            src.at<alvision.Vecf>("Vec3f", i, j).set(new alvision.Vecf(b, g, r));
         }
     }
 }
 
-function validateResult( Mat& reference,  Mat& actual,  Mat& src = Mat(), int mode = -1) : void
+function validateResult(reference: alvision.Mat, actual: alvision.Mat, src: alvision.Mat = new alvision.Mat(), mode: alvision.int = -1) : void
 {
-    alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
-    Size ssize = reference.size();
+    var ts = alvision.cvtest.TS.ptr();
+    var ssize = reference.size();
 
-    int cn = reference.channels();
-    ssize.width *= cn;
-    bool next = true;
+    var cn = reference.channels();
+    ssize.width = ssize.width.valueOf() * cn.valueOf();
+    var next = true;
 
-    for (int y = 0; y < ssize.height && next; ++y)
+    for (let y = 0; y < ssize.height && next; ++y)
     {
-        const float* rD = reference.ptr<float>(y);
-        const float* D = actual.ptr<float>(y);
-        for (int x = 0; x < ssize.width && next; ++x)
-            if (fabs(rD[x] - D[x]) > 0.0001f)
+        const rD = reference.ptr<alvision.float>("float",y);
+        const D =     actual.ptr<alvision.float>("float",y);
+        for (let x = 0; x < ssize.width && next; ++x)
+            if (Math.abs(rD[x].valueOf() - D[x].valueOf()) > 0.0001)
             {
                 next = false;
-                ts.printf(alvision.cvtest.TS::SUMMARY, "Error in: (%d, %d)\n", x / cn,  y);
-                ts.printf(alvision.cvtest.TS::SUMMARY, "Reference value: %f\n", rD[x]);
-                ts.printf(alvision.cvtest.TS::SUMMARY, "Actual value: %f\n", D[x]);
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Error in: (%d, %d)\n", x / cn.valueOf(),  y);
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Reference value: %f\n", rD[x]);
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Actual value: %f\n", D[x]);
                 if (!src.empty())
-                    ts.printf(alvision.cvtest.TS::SUMMARY, "Src value: %f\n", src.ptr<float>(y)[x]);
-                ts.printf(alvision.cvtest.TS::SUMMARY, "Size: (%d, %d)\n", reference.rows, reference.cols);
+                    ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Src value: %f\n", src.ptr<alvision.float>("float", y)[x]);
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Size: (%d, %d)\n", reference.rows, reference.cols);
 
                 if (mode >= 0)
                 {
-                    alvision.Mat lab;
+                    var lab = new alvision.Mat();
                     alvision.cvtColor(src, lab, mode);
-                    std::cout << "lab: " << lab(alvision.Rect(y, x / cn, 1, 1)) << std::endl;
+                    console.log("lab: ", lab.roi(new alvision.Rect(y, x / cn.valueOf(), 1, 1)));
                 }
-                std::cout << "src: " << src(alvision.Rect(y, x / cn, 1, 1)) << std::endl;
+                console.log("src: ", src.roi(new alvision.Rect(y, x / cn.valueOf(), 1, 1)));
 
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 ts.set_gtest_status();
@@ -1669,152 +1717,166 @@ function validateResult( Mat& reference,  Mat& actual,  Mat& src = Mat(), int mo
 }
 
 alvision.cvtest.TEST('Imgproc_ColorLab_Full', 'accuracy', () => {
-    Mat src;
+    var src = new alvision.Mat();
     getTestMatrix(src);
-    Size ssize = src.size();
-    CV_Assert(ssize.width == ssize.height);
+    var ssize = src.size();
+    alvision.CV_Assert(()=>ssize.width == ssize.height);
 
-    RNG & rng = alvision.cvtest.TS::ptr().get_rng();
-    int blueInd = rng.uniform(0., 1.) > 0.5 ? 0 : 2;
-    bool srgb = rng.uniform(0., 1.) > 0.5;
+    var rng = alvision.cvtest.TS.ptr().get_rng();
+    var blueInd = rng.uniform(0., 1.) > 0.5 ? 0 : 2;
+    var srgb = rng.uniform(0., 1.) > 0.5;
 
     // Convert test image to LAB
-    alvision.Mat lab;
-    int forward_code = blueInd ? srgb ? CV_BGR2Lab : CV_LBGR2Lab : srgb ? CV_RGB2Lab : CV_LRGB2Lab;
-    int inverse_code = blueInd ? srgb ? CV_Lab2BGR : CV_Lab2LBGR : srgb ? CV_Lab2RGB : CV_Lab2LRGB;
+    var lab = new alvision.Mat();
+    var forward_code = blueInd ? srgb ? alvision.ColorConversionCodes.COLOR_BGR2Lab : alvision.ColorConversionCodes.COLOR_LBGR2Lab : srgb ? alvision.ColorConversionCodes.COLOR_LRGB2Lab:alvision.ColorConversionCodes.COLOR_LRGB2Lab;
+    var inverse_code = blueInd ? srgb ? alvision.ColorConversionCodes.COLOR_Lab2BGR: alvision.ColorConversionCodes.COLOR_Lab2LBGR: srgb ?alvision.ColorConversionCodes.COLOR_Lab2RGB:alvision.ColorConversionCodes.COLOR_Lab2LRGB;
     alvision.cvtColor(src, lab, forward_code);
     // Convert LAB image back to BGR(RGB)
-    alvision.Mat recons;
+    var recons = new alvision.Mat();
     alvision.cvtColor(lab, recons, inverse_code);
 
     validateResult(src, recons, src, forward_code);
 });
 
-function test_Bayer2RGB_EdgeAware_8u( Mat& src, Mat& dst, int code) : void
+function test_Bayer2RGB_EdgeAware_8u(src: alvision.Mat, dst: alvision.Mat, code: alvision.int ) : void
 {
     if (dst.empty())
-        dst.create(src.size(), CV_MAKETYPE(src.depth(), 3));
-    Size size = src.size();
-    size.width -= 1;
-    size.height -= 1;
+        dst.create(src.size(),alvision.MatrixType.CV_MAKETYPE(src.depth(), 3));
+    let size = src.size();
+    size.width = size.width.valueOf() - 1;
+    size.height = size.height.valueOf() - 1;
 
-    int dcn = dst.channels();
-    CV_Assert(dcn == 3);
+    let dcn = dst.channels();
+    alvision.CV_Assert(()=>dcn == 3);
 
-    int step = (int)src.step;
-    const uchar* S = src.ptr<uchar>(1) + 1;
-    uchar* D = dst.ptr<uchar>(1) + dcn;
+    let step = src.step;
+    let S = src.ptr<alvision.uchar>("uchar", 1);
+    let Sloc = +1;
+    let D = dst.ptr<alvision.uchar>("uchar", 1);
+    let Dloc = dcn;
 
-    int start_with_green = code == CV_BayerGB2BGR_EA || code == CV_BayerGR2BGR_EA ? 1 : 0;
-    int blue = code == CV_BayerGB2BGR_EA || code == CV_BayerBG2BGR_EA ? 1 : 0;
+    let start_with_green = code == alvision.ColorConversionCodes.COLOR_BayerGB2BGR_EA || code == alvision.ColorConversionCodes.COLOR_BayerGR2BGR_EA ? 1 : 0;
+    let blue = code == alvision.ColorConversionCodes.COLOR_BayerGB2BGR_EA || code == alvision.ColorConversionCodes.COLOR_BayerBG2BGR_EA ? 1 : 0;
 
-    for (int y = 1; y < size.height; ++y)
+    for (let y = 1; y < size.height; ++y)
     {
-        S = src.ptr<uchar>(y) + 1;
-        D = dst.ptr<uchar>(y) + dcn;
+        let S = src.ptr<alvision.uchar>("uchar", y);
+        let Sloc = 1;
+        let D = dst.ptr<alvision.uchar>("uchar", y);
+        let Dloc = dcn.valueOf();
 
-        if (start_with_green)
-        {
-            for (int x = 1; x < size.width; x += 2, S += 2, D += 2*dcn)
-            {
+
+        if (start_with_green) {
+            for (let x = 1; x < size.width; x += 2, Sloc += 2, Dloc += 2 * dcn.valueOf()) {
                 // red
-                D[0] = (S[-1] + S[1]) / 2;
-                D[1] = S[0];
-                D[2] = (S[-step] + S[step]) / 2;
-                if (!blue)
-                    std::swap(D[0], D[2]);
+                D[Dloc + 0] = (<any>S[Sloc - 1] + <any>S[Sloc + 1]) / 2;
+                D[Dloc + 1] = S[Sloc + 0];
+                D[Dloc + 2] = (<any>S[Sloc - step] + S[Sloc + step]) / 2;
+                if (!blue) {
+                    let dtmp = D[Dloc + 0]; D[Dloc + 0] = D[Dloc + 2]; D[Dloc + 2] = dtmp;//std::swap(D[0], D[2]);
+                }
             }
 
-            S = src.ptr<uchar>(y) + 2;
-            D = dst.ptr<uchar>(y) + 2*dcn;
-
-            for (int x = 2; x < size.width; x += 2, S += 2, D += 2*dcn)
             {
-                // red
-                D[0] = S[0];
-                D[1] = (std::abs(S[-1] - S[1]) > std::abs(S[step] - S[-step]) ? (S[step] + S[-step] + 1) : (S[-1] + S[1] + 1)) / 2;
-                D[2] = ((S[-step-1] + S[-step+1] + S[step-1] + S[step+1] + 2) / 4);
-                if (!blue)
-                    std::swap(D[0], D[2]);
+                S = src.ptr<alvision.uchar>("uchar", y);
+                let Sloc = + 2;
+                D = dst.ptr<alvision.uchar>("uchar", y);
+                let Dloc = + 2 * dcn.valueOf();
+
+                for (let x = 2; x < size.width; x += 2, Sloc += 2, Dloc += 2 * dcn.valueOf()) {
+                    // red
+                    D[Dloc + 0] = S[Sloc + 0];
+                    D[Dloc + 1] = (Math.abs(<any>S[Sloc - 1] - <any>S[Sloc + 1]) > Math.abs(<any>S[Sloc + step] - <any>S[Sloc - step]) ? (<any>S[Sloc + step] + <any>S[Sloc - step] + 1) : (<any>S[Sloc - 1] + <any>S[Sloc + 1] + 1)) / 2;
+                    D[Dloc + 2] = ((<any>S[Sloc - step - 1] + <any>S[Sloc - step + 1] + S[Sloc + step - 1] + S[Sloc + step + 1] + 2) / 4);
+                    if (!blue) {
+                        let dtmp = D[Dloc + 0]; D[Dloc + 0] = D[Dloc + 2]; D[Dloc + 2] = dtmp;//std::swap(D[0], D[2]);
+                    }
+                }
             }
         }
-        else
-        {
-            for (int x = 1; x < size.width; x += 2, S += 2, D += 2*dcn)
-            {
-                D[0] = S[0];
-                D[1] = (std::abs(S[-1] - S[1]) > std::abs(S[step] - S[-step]) ? (S[step] + S[-step] + 1) : (S[-1] + S[1] + 1)) / 2;
-                D[2] = ((S[-step-1] + S[-step+1] + S[step-1] + S[step+1] + 2) / 4);
-                if (!blue)
-                    std::swap(D[0], D[2]);
+        else {
+
+            for (let x = 1; x < size.width; x += 2, Sloc += 2, Dloc += 2 * dcn.valueOf()) {
+                D[Dloc + 0] = S[Sloc + 0];
+                D[Dloc + 1] = (Math.abs(<any>S[Sloc - 1] - <any>S[Sloc + 1]) > Math.abs(<any>S[Sloc + step] - <any>S[Sloc - step]) ? (<any>S[Sloc + step] + S[Sloc - step] + 1) : (<any>S[Sloc - 1] + S[Sloc + 1] + 1)) / 2;
+                D[Dloc + 2] = ((<any>S[Sloc - step - 1] + S[Sloc - step + 1] + S[Sloc + step - 1] + S[Sloc + step + 1] + 2) / 4);
+                if (!blue) {
+                    let dtmp = D[Dloc + 0]; D[Dloc + 0] = D[Dloc + 2]; D[Dloc + 2] = dtmp;//std::swap(D[0], D[2]);
+                }
             }
 
-            S = src.ptr<uchar>(y) + 2;
-            D = dst.ptr<uchar>(y) + 2*dcn;
-
-            for (int x = 2; x < size.width; x += 2, S += 2, D += 2*dcn)
             {
-                D[0] = (S[-1] + S[1] + 1) / 2;
-                D[1] = S[0];
-                D[2] = (S[-step] + S[step] + 1) / 2;
-                if (!blue)
-                    std::swap(D[0], D[2]);
+                let S = src.ptr<alvision.uchar>("uchar", y);
+                let Sloc = +2;
+                let D = dst.ptr<alvision.uchar>("uchar", y);
+                let Dloc = + 2 * dcn.valueOf();
+
+                for (let x = 2; x < size.width; x += 2, Sloc += 2, Dloc += 2 * dcn.valueOf()) {
+                    D[Dloc + 0] = (<any>S[Sloc - 1] + S[Sloc + 1] + 1) / 2;
+                    D[Dloc + 1] = S[Sloc + 0];
+                    D[Dloc + 2] = (<any>S[Sloc - step] + S[Sloc + step] + 1) / 2;
+                    if (!blue) {
+                        let dtmp = D[Dloc + 0]; D[Dloc + 0] = D[Dloc + 2]; D[Dloc + 2] = dtmp;//std::swap(D[0], D[2]);
+                    }
+
+                }
             }
         }
-
-        D = dst.ptr<uchar>(y + 1) - dcn;
-        for (int i = 0; i < dcn; ++i)
         {
-            D[i] = D[-dcn + i];
-            D[-static_cast<int>(dst.step)+dcn+i] = D[-static_cast<int>(dst.step)+(dcn<<1)+i];
+            let D = dst.ptr<alvision.uchar>("uchar", y + 1);
+            let Dloc = - dcn;
+            for (let i = 0; i < dcn; ++i) {
+                D[Dloc + i] = D[Dloc -dcn.valueOf() + i];
+                D[Dloc -(dst.step) + dcn.valueOf() + i] = D[Dloc -(dst.step) + (dcn.valueOf() << 1) + i];
+            }
         }
 
         start_with_green ^= 1;
         blue ^= 1;
     }
 
-    ++size.width;
-    uchar* firstRow = dst.ptr(), *lastRow = dst.ptr(size.height);
-    size.width *= dcn;
-    for (int x = 0; x < size.width; ++x)
+    size.width = size.width.valueOf() + 1;
+    var firstRow = dst.ptr<alvision.uchar>("uchar"), lastRow = dst.ptr<alvision.uchar>("uchar",size.height);
+    size.width = size.width.valueOf() * dcn.valueOf();
+    for (let x = 0; x < size.width; ++x)
     {
         firstRow[x] = firstRow[dst.step + x];
-        lastRow[x] = lastRow[-static_cast<int>(dst.step)+x];
+        lastRow[x] = lastRow[-(dst.step)+x];
     }
 }
 
 //template <typename T>
-function checkData<T>(actual: alvision.Mat, reference: alvision.Mat, ts: alvision.cvtest.TS, type : string,
+function checkData<T>(Ttype: string, actual: alvision.Mat, reference: alvision.Mat, ts: alvision.cvtest.TS, type : string,
     next : boolean, bayer_type : string) : void
 {
-    EXPECT_EQ(actual.size(), reference.size());
-    EXPECT_EQ(actual.channels(), reference.channels());
-    EXPECT_EQ(actual.depth(), reference.depth());
+    alvision.EXPECT_EQ(actual.size(), reference.size());
+    alvision.EXPECT_EQ(actual.channels(), reference.channels());
+    alvision.EXPECT_EQ(actual.depth(), reference.depth());
 
-    Size size = reference.size();
-    int dcn = reference.channels();
-    size.width *= dcn;
+    let size = reference.size();
+    let dcn = reference.channels();
+    size.width = size.width.valueOf() * dcn.valueOf();
 
-    for (int y = 0; y < size.height && next; ++y)
+    for (let y = 0; y < size.height && next; ++y)
     {
-        const T* A = actual.ptr<T>(y);
-        const T* R = reference.ptr<T>(y);
+        const  A = actual.ptr<T>(Ttype, y);
+        const  R = reference.ptr<T>(Ttype, y);
 
-        for (int x = 0; x < size.width && next; ++x)
-            if (std::abs(A[x] - R[x]) > 1)
+        for (let x = 0; x < size.width && next; ++x)
+            if (Math.abs(<any>A[x] - <any>R[x]) > 1)
             {
-                #define SUM alvision.cvtest.TS::SUMMARY
-                ts.printf(SUM, "\nReference value: %d\n", static_cast<int>(R[x]));
-                ts.printf(SUM, "Actual value: %d\n", static_cast<int>(A[x]));
-                ts.printf(SUM, "(y, x): (%d, %d)\n", y, x / reference.channels());
-                ts.printf(SUM, "Channel pos: %d\n", x % reference.channels());
-                ts.printf(SUM, "Pattern: %s\n", type);
-                ts.printf(SUM, "Bayer image type: %s", bayer_type);
-                #undef SUM
+                //#define SUM alvision.cvtest.TSConstants.SUMMARY
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "\nReference value: %d\n", (R[x]));
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Actual value: %d\n", (A[x]));
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "(y, x): (%d, %d)\n", y, x / reference.channels().valueOf());
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Channel pos: %d\n", x % reference.channels().valueOf());
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Pattern: %s\n", type);
+                ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Bayer image type: %s", bayer_type);
+                //#undef SUM
 
-                Mat diff;
-                absdiff(actual, reference, diff);
-                EXPECT_EQ(countNonZero(diff.reshape(1) > 1), 0);
+                var diff = new alvision.Mat();
+                alvision.absdiff(actual, reference, diff);
+                alvision.EXPECT_EQ(alvision.countNonZero(alvision.MatExpr.op_GreaterThan( diff.reshape(1) , 1)), 0);
 
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 ts.set_gtest_status();
@@ -1826,18 +1888,18 @@ function checkData<T>(actual: alvision.Mat, reference: alvision.Mat, ts: alvisio
 
 alvision.cvtest.TEST('ImgProc_BayerEdgeAwareDemosaicing', 'accuracy',()=>
 {
-    alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
-    const std::string image_name = "lena.png";
-    const std::string parent_path = this.ts.get_data_path() + "/cvtcolor_strict/";
+    var ts = alvision.cvtest.TS.ptr();
+    const image_name = "lena.png";
+    const parent_path = this.ts.get_data_path() + "/cvtcolor_strict/";
 
-    Mat src, bayer;
-    std::string full_path = parent_path + image_name;
-    src = imread(full_path, IMREAD_UNCHANGED);
+    var bayer = new alvision.Mat();
+    let full_path = parent_path + image_name;
+    var src = alvision.imread(full_path, alvision.ImreadModes. IMREAD_UNCHANGED);
 
     if (src.empty())
     {
-        this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_MISSING_TEST_DATA);
-        ts.printf(alvision.cvtest.TS::SUMMARY, "No input image\n");
+        ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA);
+        ts.printf(alvision.cvtest.TSConstants.SUMMARY, "No input image\n");
         ts.set_gtest_status();
         return;
     }
@@ -1849,31 +1911,31 @@ alvision.cvtest.TEST('ImgProc_BayerEdgeAwareDemosaicing', 'accuracy',()=>
     COLOR_BayerGR2BGR_EA = 130,
     */
 
-    bool next = true;
-    const char* types[] = { "bg", "gb", "rg", "gr" };
-    for (int i = 0; i < 4 && next; ++i)
+    var next = true;
+    const  types = [ "bg", "gb", "rg", "gr" ];
+    for (let i = 0; i < 4 && next; ++i)
     {
-        calculateBayerPattern<uchar, CV_8U>(src, bayer, types[i]);
-        Mat reference;
-        test_Bayer2RGB_EdgeAware_8u(bayer, reference, CV_BayerBG2BGR_EA + i);
+        calculateBayerPattern<alvision.uchar>("uchar", src, bayer, types[i], alvision.MatrixType.CV_8U);
+        var reference = new alvision.Mat();
+        test_Bayer2RGB_EdgeAware_8u(bayer, reference, alvision.ColorConversionCodes.COLOR_BayerBG2BGR_EA + i);
 
-        for (int t = 0; t <= 1; ++t)
+        for (let t = 0; t <= 1; ++t)
         {
             if (t == 1)
-                calculateBayerPattern<unsigned short int, CV_16U>(src, bayer, types[i]);
+                calculateBayerPattern<alvision.ushort>("ushort", src, bayer, types[i], alvision.MatrixType.CV_16U);
 
-            CV_Assert(!bayer.empty() && (bayer.type() == CV_8UC1 || bayer.type() == CV_16UC1));
+            alvision.CV_Assert(()=>!bayer.empty() && (bayer.type() == alvision.MatrixType.CV_8UC1 || bayer.type() == alvision.MatrixType. CV_16UC1));
 
-            Mat actual;
-            alvision.demosaicing(bayer, actual, CV_BayerBG2BGR_EA + i);
+            var actual = new alvision.Mat();
+            alvision.demosaicing(bayer, actual, alvision.ColorConversionCodes.COLOR_BayerBG2BGR_EA + i);
 
             if (t == 0)
-                checkData<unsigned char>(actual, reference, ts, types[i], next, "CV_8U");
+                checkData<alvision.uchar>("uchar", actual, reference, ts, types[i], next, "CV_8U");
             else
             {
-                Mat tmp;
-                reference.convertTo(tmp, CV_16U);
-                checkData<unsigned short int>(actual, tmp, ts, types[i], next, "CV_16U");
+                var tmp = new alvision.Mat();
+                reference.convertTo(tmp,alvision.MatrixType. CV_16U);
+                checkData<alvision.ushort>("ushort", actual, tmp, ts, types[i], next, "CV_16U");
             }
         }
     }
@@ -1881,50 +1943,50 @@ alvision.cvtest.TEST('ImgProc_BayerEdgeAwareDemosaicing', 'accuracy',()=>
 
 alvision.cvtest.TEST('ImgProc_Bayer2RGBA', 'accuracy',()=>
 {
-    alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
-    Mat raw = imread(this.ts.get_data_path() + "/cvtcolor/bayer_input.png", IMREAD_GRAYSCALE);
-    Mat rgb, reference;
+    var ts = alvision.cvtest.TS.ptr();
+    var raw = alvision.imread(this.ts.get_data_path() + "/cvtcolor/bayer_input.png",alvision.ImreadModes. IMREAD_GRAYSCALE);
+    var rgb = new alvision.Mat(), reference = new alvision.Mat();
 
-    CV_Assert(raw.channels() == 1);
-    CV_Assert(raw.depth() == CV_8U);
-    CV_Assert(!raw.empty());
+    alvision.CV_Assert(()=>raw.channels() == 1);
+    alvision.CV_Assert(()=>raw.depth() == alvision.MatrixType.CV_8U);
+    alvision.CV_Assert(()=>!raw.empty());
 
-    for (int code = CV_BayerBG2BGR; code <= CV_BayerGR2BGR; ++code)
+    for (var code = alvision.ColorConversionCodes.COLOR_BayerBG2BGR; code <= alvision.ColorConversionCodes.COLOR_BayerGR2BGR; ++code)
     {
-        cvtColor(raw, rgb, code);
-        cvtColor(rgb, reference, CV_BGR2BGRA);
+        alvision.cvtColor(raw, rgb, code);
+        alvision.cvtColor(rgb, reference,alvision.ColorConversionCodes.COLOR_BGR2BGRA);
 
-        Mat actual;
-        cvtColor(raw, actual, code, 4);
+        var actual = new alvision.Mat();
+        alvision.cvtColor(raw, actual, code, 4);
 
-        EXPECT_EQ(reference.size(), actual.size());
-        EXPECT_EQ(reference.depth(), actual.depth());
-        EXPECT_EQ(reference.channels(), actual.channels());
+        alvision.EXPECT_EQ(reference.size(), actual.size());
+        alvision.EXPECT_EQ(reference.depth(), actual.depth());
+        alvision.EXPECT_EQ(reference.channels(), actual.channels());
 
-        Size ssize = raw.size();
-        int cn = reference.channels();
-        ssize.width *= cn;
-        bool next = true;
-        for (int y = 0; y < ssize.height && next; ++y)
+        var ssize = raw.size();
+        var cn = reference.channels();
+        ssize.width =ssize.width.valueOf() * cn.valueOf();
+        var next = true;
+        for (let y = 0; y < ssize.height && next; ++y)
         {
-            const uchar* rD = reference.ptr<uchar>(y);
-            const uchar* D = actual.ptr<uchar>(y);
-            for (int x = 0; x < ssize.width && next; ++x)
-                if (abs(rD[x] - D[x]) >= 1)
+            const rD = reference.ptr<alvision.uchar>("uchar", y);
+            const D =     actual.ptr<alvision.uchar>("uchar", y);
+            for (let x = 0; x < ssize.width && next; ++x)
+                if (Math.abs(<any>rD[x] - <any>D[x]) >= 1)
                 {
                     next = false;
-                    ts.printf(alvision.cvtest.TS::SUMMARY, "Error in: (%d, %d)\n", x / cn,  y);
-                    ts.printf(alvision.cvtest.TS::SUMMARY, "Reference value: %d\n", rD[x]);
-                    ts.printf(alvision.cvtest.TS::SUMMARY, "Actual value: %d\n", D[x]);
-                    ts.printf(alvision.cvtest.TS::SUMMARY, "Src value: %d\n", raw.ptr<uchar>(y)[x]);
-                    ts.printf(alvision.cvtest.TS::SUMMARY, "Size: (%d, %d)\n", reference.rows, reference.cols);
+                    this.ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Error in: (%d, %d)\n", x / cn.valueOf(),  y);
+                    this.ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Reference value: %d\n", rD[x]);
+                    this.ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Actual value: %d\n", D[x]);
+                    this.ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Src value: %d\n", raw.ptr<alvision.uchar>("uchar", y)[x]);
+                    this.ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Size: (%d, %d)\n", reference.rows, reference.cols);
 
-                    Mat diff;
-                    absdiff(actual, reference, diff);
-                    EXPECT_EQ(countNonZero(diff.reshape(1) > 1), 0);
+                    var diff = new alvision.Mat();
+                    alvision.absdiff(actual, reference, diff);
+                    alvision.EXPECT_EQ(alvision.countNonZero(alvision.MatExpr.op_GreaterThan( diff.reshape(1) , 1)), 0);
 
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-                    ts.set_gtest_status();
+                    this.ts.set_gtest_status();
                 }
         }
     }

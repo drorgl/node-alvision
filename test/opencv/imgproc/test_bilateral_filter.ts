@@ -249,7 +249,7 @@ namespace cvtest {
                                 var val: alvision.float = sptr[j + space_ofs[k]];
                                 var alpha: alvision.float = Math.abs(val.valueOf() - val0.valueOf()) * scale_index;
                                 //float val = sptr[j + space_ofs[k]];
-                                //float alpha = (float)(std::abs(val - val0) * scale_index);
+                                //float alpha = (float)(Math.abs(val - val0) * scale_index);
                                 var idx: alvision.int = Math.floor(alpha.valueOf());
                                 //int idx = Math.floor(alpha);
                                 
@@ -278,28 +278,29 @@ namespace cvtest {
 
 
                             for (k = 0; k < maxk; k++) {
+                                (() => {
+                                    var sptr_k = stepArray.slice((radius * cn.valueOf()) + j + space_ofs[k]);
+                                    //const float* sptr_k = sptr + j + space_ofs[k];
 
-                                var sptr_k = stepArray.slice((radius * cn.valueOf()) + j + space_ofs[k]);
-                                //const float* sptr_k = sptr + j + space_ofs[k];
 
+                                    var b: alvision.float = sptr_k[0];
+                                    var g: alvision.float = sptr_k[1];
+                                    var r: alvision.float = sptr_k[2];
 
-                                var b: alvision.float = sptr_k[0];
-                                var g: alvision.float = sptr_k[1];
-                                var r: alvision.float = sptr_k[2];
+                                    var alpha: alvision.float = ((Math.abs(b.valueOf() - b0.valueOf())
+                                        + Math.abs(g.valueOf() - g0.valueOf())
+                                        + Math.abs(r.valueOf() - r0.valueOf()))
+                                        * scale_index);
 
-                                var alpha: alvision.float = ((Math.abs(b.valueOf() - b0.valueOf())
-                                    + Math.abs(g.valueOf() - g0.valueOf())
-                                    + Math.abs(r.valueOf() - r0.valueOf()))
-                                    * scale_index);
-
-                                var idx: alvision.int = Math.floor(alpha.valueOf());
-                                alpha = alpha.valueOf() - idx.valueOf();
-                                var w : alvision.float   = space_weight[k].valueOf() * (expLUT[idx.valueOf()].valueOf() + alpha.valueOf() * (expLUT[idx.valueOf() + 1].valueOf() - expLUT[idx.valueOf()].valueOf()));
-                                sum_b = sum_b.valueOf() + b.valueOf() * w.valueOf();
-                                sum_g = sum_g.valueOf() + g.valueOf() * w.valueOf();
-                                sum_r = sum_r.valueOf() + r.valueOf() * w.valueOf();
-                                wsum = wsum.valueOf()   + w.valueOf();
-                            }1
+                                    var idx: alvision.int = Math.floor(alpha.valueOf());
+                                    alpha = alpha.valueOf() - idx.valueOf();
+                                    var w: alvision.float = space_weight[k].valueOf() * (expLUT[idx.valueOf()].valueOf() + alpha.valueOf() * (expLUT[idx.valueOf() + 1].valueOf() - expLUT[idx.valueOf()].valueOf()));
+                                    sum_b = sum_b.valueOf() + b.valueOf() * w.valueOf();
+                                    sum_g = sum_g.valueOf() + g.valueOf() * w.valueOf();
+                                    sum_r = sum_r.valueOf() + r.valueOf() * w.valueOf();
+                                    wsum = wsum.valueOf() + w.valueOf();
+                                })();
+                            }
                             wsum = 1.0/  wsum.valueOf();
                             b0 = sum_b.valueOf() * wsum.valueOf();
                             g0 = sum_g.valueOf() * wsum.valueOf();

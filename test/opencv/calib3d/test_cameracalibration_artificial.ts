@@ -410,8 +410,8 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
             var fx = 300 + (20 * rng.double().valueOf() - 10);
             var fy = 300 + (20 * rng.double().valueOf() - 10);
 
-            var cx = bg.cols.valueOf()/2 + (40 * rng.double().valueOf() - 20);
-            var cy = bg.rows.valueOf()/2 + (40 * rng.double().valueOf() - 20);
+            var cx = bg.cols().valueOf()/2 + (40 * rng.double().valueOf() - 20);
+            var cy = bg.rows().valueOf()/2 + (40 * rng.double().valueOf() - 20);
 
             var camMat = new alvision.Matd(3, 3, [fx, 0., cx, 0, fy, cy, 0., 0., 1.]);
             //camMat << fx, 0., cx, 0, fy, cy, 0., 0., 1.;

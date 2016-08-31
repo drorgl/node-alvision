@@ -55,7 +55,7 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 
-static const numerical_precision = 100.;
+const numerical_precision = 100.;
 
 alvision.cvtest.TEST('Photo_NPR_EdgePreserveSmoothing_RecursiveFilter', 'regression', () => {
     var folder = alvision.cvtest.TS.ptr().get_data_path() + "npr/";

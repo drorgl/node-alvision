@@ -314,7 +314,7 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         bad_caller.objPts = bad_objPts_c5;
 
         var rng = alvision.theRNG();
-        for (var i = 0; i < bad_objPts_cpp5.rows; ++i) {
+        for (var i = 0; i < bad_objPts_cpp5.rows(); ++i) {
             var zptr = bad_objPts_cpp5.at<alvision.Point3f>("Poin3f", 0, i);
             var zPoint = zptr.get();
             zPoint.z = zPoint.z.valueOf() + (rng.float().valueOf() - 0.5);

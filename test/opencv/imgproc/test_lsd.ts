@@ -1,4 +1,3 @@
-
 import tape = require("tape");
 import path = require("path");
 import colors = require("colors");
@@ -14,59 +13,59 @@ import fs = require('fs');
 //using namespace cv;
 //using namespace std;
 //
-//const Size img_size(640, 480);
-//const int LSD_TEST_SEED = 0x134679;
-//const int EPOCHS = 20;
+const img_size = new alvision.Size (640, 480);
+const  LSD_TEST_SEED = 0x134679;
+const  EPOCHS = 20;
 
-class LSDBase extends testing::Test {
+class LSDBase {//extends testing::Test {
 
-    protected test_image : alvision.Mat;
-    protected lines: Array<alvision.Vecf>;
-    protected rng: alvision.RNG;
-    protected passedtests: alvision.int;
+    public test_image : alvision.Mat;
+    public lines: Array<alvision.Vecf>;
+    public rng: alvision.RNG;
+    public passedtests: alvision.int;
 
     GenerateWhiteNoise(image: alvision.Mat): void {
-        image = Mat(img_size, CV_8UC1);
-        rng.fill(image, RNG::UNIFORM, 0, 256);
+        image = new alvision.Mat(img_size, alvision.MatrixType.CV_8UC1);
+        this.rng.fill(image,alvision.DistType.UNIFORM, 0, 256);
     }
     GenerateConstColor(image: alvision.Mat): void {
-        image = Mat(img_size, CV_8UC1, Scalar::all(rng.uniform(0, 256)));
+        image = new alvision.Mat(img_size, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(this.rng.uniform(0, 256)));
     }
     GenerateLines(image: alvision.Mat, numLines: alvision.uint64): void {
-        image = Mat(img_size, CV_8UC1, Scalar::all(rng.uniform(0, 128)));
+        image = new alvision.Mat(img_size, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(this.rng.uniform(0, 128)));
 
-        for (unsigned int i = 0; i < numLines; ++i)
+        for (var i = 0; i < numLines; ++i)
         {
-            int y = rng.uniform(10, img_size.width - 10);
-            Point p1(y, 10);
-            Point p2(y, img_size.height - 10);
-            line(image, p1, p2, Scalar(255), 3);
+            var y = this.rng.uniform(10, img_size.width.valueOf() - 10);
+            var p1 = new alvision.Point (y, 10);
+            var p2 = new alvision.Point (y, img_size.height.valueOf() - 10);
+            alvision.line(image, p1, p2, new alvision.Scalar(255), 3);
         }
     }
     GenerateRotatedRect(image: alvision.Mat): void {
-        image = Mat::zeros(img_size, CV_8UC1);
+        image.setTo(alvision.Mat.zeros(img_size, alvision.MatrixType.CV_8UC1));
 
-        Point center(rng.uniform(img_size.width / 4, img_size.width * 3 / 4),
-            rng.uniform(img_size.height / 4, img_size.height * 3 / 4));
-        Size rect_size(rng.uniform(img_size.width / 8, img_size.width / 6),
-            rng.uniform(img_size.height / 8, img_size.height / 6));
-        float angle = rng.uniform(0.f, 360.f);
+        var center = new alvision.Point(this.rng.uniform(img_size.width.valueOf() / 4, img_size.width.valueOf() * 3 / 4),
+            this.rng.uniform(img_size.height.valueOf() / 4, img_size.height.valueOf() * 3 / 4));
+        var rect_size = new alvision.Size (this.rng.uniform(img_size.width.valueOf() / 8, img_size.width.valueOf() / 6),
+            this.rng.uniform(img_size.height.valueOf() / 8, img_size.height.valueOf() / 6));
+        var angle = this.rng.uniform(0., 360.);
 
-        Point2f vertices[4];
+        var vertices = new Array<alvision.Point2f>(4);
 
-        RotatedRect rRect = RotatedRect(center, rect_size, angle);
+        var rRect = new alvision.RotatedRect(center, rect_size, angle);
 
         rRect.points(vertices);
-        for (int i = 0; i < 4; i++)
+        for (var i = 0; i < 4; i++)
         {
-            line(image, vertices[i], vertices[(i + 1) % 4], Scalar(255), 3);
+            alvision.line(image, vertices[i], vertices[(i + 1) % 4],new alvision. Scalar(255), 3);
         }
     }
     SetUp(): void {
-        lines.clear();
-        test_image = Mat();
-        rng = RNG(LSD_TEST_SEED);
-        passedtests = 0;
+        this.lines.length = 0;
+        this.test_image = new alvision.Mat();
+        this.rng = new alvision.RNG(LSD_TEST_SEED);
+        this.passedtests = 0;
     }
 };
 
@@ -85,161 +84,169 @@ class Imgproc_LSD_NONE extends LSDBase
 
 
 
-TEST_F(Imgproc_LSD_ADV, whiteNoise)
+alvision.cvtest.TEST_F('Imgproc_LSD_ADV', 'whiteNoise',()=>
 {
-    for (int i = 0; i < EPOCHS; ++i)
+    var test = new Imgproc_LSD_ADV();
+    for (var i = 0; i < EPOCHS; ++i)
     {
-        GenerateWhiteNoise(test_image);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_ADV);
-        detector.detect(test_image, lines);
+        test.GenerateWhiteNoise(test.test_image);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes. LSD_REFINE_ADV);
+        detector.detect(test.test_image, test.lines);
 
-        if(40u >= lines.size()) ++passedtests;
+        if (40 >= test.lines.length)
+            test.passedtests = test.passedtests.valueOf() + 1;
     }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
 
-TEST_F(Imgproc_LSD_ADV, constColor)
+alvision.cvtest.TEST_F('Imgproc_LSD_ADV', 'constColor',()=>
 {
-    for (int i = 0; i < EPOCHS; ++i)
+    var test = new Imgproc_LSD_ADV();
+    for (var i = 0; i < EPOCHS; ++i)
     {
-        GenerateConstColor(test_image);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_ADV);
-        detector.detect(test_image, lines);
+        test.GenerateConstColor(test.test_image);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes. LSD_REFINE_ADV);
+        detector.detect(test.test_image, test.lines);
 
-        if(0u == lines.size()) ++passedtests;
+        if (0 == test.lines.length)
+            test.passedtests = test.passedtests.valueOf() + 1;
     }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
 
-TEST_F(Imgproc_LSD_ADV, lines)
+alvision.cvtest.TEST_F('Imgproc_LSD_ADV', 'lines', () => {
+    var test = new Imgproc_LSD_ADV();
+    for (var i = 0; i < EPOCHS; ++i) {
+        const numOfLines = 1;
+        test.GenerateLines(test.test_image, numOfLines);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_ADV);
+        detector.detect(test.test_image, test.lines);
+
+        if (numOfLines * 2 == test.lines.length) test.passedtests = test.passedtests.valueOf() + 1;  // * 2 because of Gibbs effect
+    }
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
+
+alvision.cvtest.TEST_F('Imgproc_LSD_ADV', 'rotatedRect', () => {
+        var test = new Imgproc_LSD_ADV();
+        for (var i = 0; i < EPOCHS; ++i) {
+            test.GenerateRotatedRect(test.test_image);
+            var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_ADV);
+            detector.detect(test.test_image, test.lines);
+
+            if (2 <= test.lines.length) test.passedtests = test.passedtests.valueOf() + 1;
+        }
+        alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+    });
+
+alvision.cvtest.TEST_F('Imgproc_LSD_STD', 'whiteNoise', () => {
+    var test = new Imgproc_LSD_STD();
+    for (var i = 0; i < EPOCHS; ++i) {
+        test.GenerateWhiteNoise(test.test_image);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_STD);
+        detector.detect(test.test_image, test.lines);
+
+        if (50 >= test.lines.length) test.passedtests = test.passedtests.valueOf() + 1;
+    }
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
+
+alvision.cvtest.TEST_F('Imgproc_LSD_STD', 'constColor', () => {
+    var test = new Imgproc_LSD_STD();
+    for (var i = 0; i < EPOCHS; ++i) {
+        test.GenerateConstColor(test.test_image);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_STD);
+        detector.detect(test.test_image, test.lines);
+
+        if (0 == test.lines.length) test.passedtests = test.passedtests.valueOf() + 1;
+    }
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
+
+alvision.cvtest.TEST_F('Imgproc_LSD_STD', 'lines',()=>
 {
-    for (int i = 0; i < EPOCHS; ++i)
+    var test = new Imgproc_LSD_STD();
+    for (var i = 0; i < EPOCHS; ++i)
     {
-        const unsigned int numOfLines = 1;
-        GenerateLines(test_image, numOfLines);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_ADV);
-        detector.detect(test_image, lines);
+        const numOfLines = 1;
+        test.GenerateLines(test.test_image, numOfLines);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_STD);
+        detector.detect(test.test_image, test.lines);
 
-        if(numOfLines * 2 == lines.size()) ++passedtests;  // * 2 because of Gibbs effect
+        if (numOfLines * 2 == test.lines.length) test.passedtests = test.passedtests.valueOf() + 1; // * 2 because of Gibbs effect
     }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
 
-TEST_F(Imgproc_LSD_ADV, rotatedRect)
+alvision.cvtest.TEST_F('Imgproc_LSD_STD', 'rotatedRect',()=>
 {
-    for (int i = 0; i < EPOCHS; ++i)
+    var test = new Imgproc_LSD_STD();
+    for (var i = 0; i < EPOCHS; ++i)
     {
-        GenerateRotatedRect(test_image);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_ADV);
-        detector.detect(test_image, lines);
+        test.GenerateRotatedRect(test.test_image);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_STD);
+        detector.detect(test.test_image, test.lines);
 
-        if(2u <= lines.size())  ++passedtests;
+        if (4 <= test.lines.length) test.passedtests = test.passedtests.valueOf() + 1;
     }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
 
-TEST_F(Imgproc_LSD_STD, whiteNoise)
+alvision.cvtest.TEST_F('Imgproc_LSD_NONE', 'whiteNoise',()=>
 {
-    for (int i = 0; i < EPOCHS; ++i)
+    var test = new Imgproc_LSD_NONE();
+    for (var i = 0; i < EPOCHS; ++i)
     {
-        GenerateWhiteNoise(test_image);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector.detect(test_image, lines);
+        test.GenerateWhiteNoise(test.test_image);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_STD);
+        detector.detect(test.test_image, test.lines);
 
-        if(50u >= lines.size()) ++passedtests;
+        if (50 >= test.lines.length) test.passedtests = test.passedtests.valueOf() + 1;
     }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
 
-TEST_F(Imgproc_LSD_STD, constColor)
+alvision.cvtest.TEST_F('Imgproc_LSD_NONE', 'constColor',()=>
 {
-    for (int i = 0; i < EPOCHS; ++i)
+    var test = new Imgproc_LSD_NONE();
+    for (var i = 0; i < EPOCHS; ++i)
     {
-        GenerateConstColor(test_image);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector.detect(test_image, lines);
+        test.GenerateConstColor(test.test_image);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_NONE);
+        detector.detect(test.test_image,test. lines);
 
-        if(0u == lines.size()) ++passedtests;
+        if (0 == test.lines.length) test.passedtests = test.passedtests.valueOf() + 1;
     }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
 
-TEST_F(Imgproc_LSD_STD, lines)
+alvision.cvtest.TEST_F('Imgproc_LSD_NONE', 'lines',()=>
 {
-    for (int i = 0; i < EPOCHS; ++i)
+    var test = new Imgproc_LSD_NONE();
+    for (var i = 0; i < EPOCHS; ++i)
     {
-        const unsigned int numOfLines = 1;
-        GenerateLines(test_image, numOfLines);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector.detect(test_image, lines);
+        const numOfLines = 1;
+        test.GenerateLines(test.test_image, numOfLines);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_NONE);
+        detector.detect(test.test_image, test.lines);
 
-        if(numOfLines * 2 == lines.size()) ++passedtests;  // * 2 because of Gibbs effect
+        if (numOfLines * 2 == test.lines.length)
+            test.passedtests = test.passedtests.valueOf() + 1;// * 2 because of Gibbs effect
     }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});
 
-TEST_F(Imgproc_LSD_STD, rotatedRect)
+alvision.cvtest.TEST_F('Imgproc_LSD_NONE', 'rotatedRect',()=>
 {
-    for (int i = 0; i < EPOCHS; ++i)
+    var test = new Imgproc_LSD_NONE();
+    for (var i = 0; i < EPOCHS; ++i)
     {
-        GenerateRotatedRect(test_image);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector.detect(test_image, lines);
+        test.GenerateRotatedRect(test.test_image);
+        var detector = alvision.createLineSegmentDetector(alvision.LineSegmentDetectorModes.LSD_REFINE_NONE);
+        detector.detect(test.test_image, test.lines);
 
-        if(4u <= lines.size()) ++passedtests;
+        if (8 <= test.lines.length)
+            test.passedtests = test.passedtests.valueOf() + 1;
     }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
-
-TEST_F(Imgproc_LSD_NONE, whiteNoise)
-{
-    for (int i = 0; i < EPOCHS; ++i)
-    {
-        GenerateWhiteNoise(test_image);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_STD);
-        detector.detect(test_image, lines);
-
-        if(50u >= lines.size()) ++passedtests;
-    }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
-
-TEST_F(Imgproc_LSD_NONE, constColor)
-{
-    for (int i = 0; i < EPOCHS; ++i)
-    {
-        GenerateConstColor(test_image);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_NONE);
-        detector.detect(test_image, lines);
-
-        if(0u == lines.size()) ++passedtests;
-    }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
-
-TEST_F(Imgproc_LSD_NONE, lines)
-{
-    for (int i = 0; i < EPOCHS; ++i)
-    {
-        const unsigned int numOfLines = 1;
-        GenerateLines(test_image, numOfLines);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_NONE);
-        detector.detect(test_image, lines);
-
-        if(numOfLines * 2 == lines.size()) ++passedtests;  // * 2 because of Gibbs effect
-    }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
-
-TEST_F(Imgproc_LSD_NONE, rotatedRect)
-{
-    for (int i = 0; i < EPOCHS; ++i)
-    {
-        GenerateRotatedRect(test_image);
-        Ptr<LineSegmentDetector> detector = createLineSegmentDetector(LSD_REFINE_NONE);
-        detector.detect(test_image, lines);
-
-        if(8u <= lines.size()) ++passedtests;
-    }
-    ASSERT_EQ(EPOCHS, passedtests);
-}
+    alvision.ASSERT_EQ(EPOCHS, test.passedtests);
+});

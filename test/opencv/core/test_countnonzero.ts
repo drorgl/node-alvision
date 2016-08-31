@@ -197,8 +197,8 @@ class CV_CountNonZeroTest extends alvision.cvtest.BaseTest
     private get_count_non_zero(): alvision.int{
         var result = 0;
 
-        for (var i = 0; i < this.src.rows; ++i)
-        for (var j = 0; j < this.src.cols; ++j)
+        for (var i = 0; i < this.src.rows(); ++i)
+        for (var j = 0; j < this.src.cols(); ++j)
         {
             if (this.current_type == alvision.MatrixType.CV_8U) result += (this.src.at<alvision.uchar>("uchar", i, j).get() > 0) ? 1 : 0;
             else if (this.current_type == alvision.MatrixType.CV_8S) result += Math.abs(alvision.sign(this.src.at<alvision.char>("char", i, j).get()));

@@ -73,7 +73,7 @@ class CV_EMDTest extends alvision.cvtest.BaseTest
     var w2 = [ 30, 20, 70, 30, 60 ];
     var _w1= new alvision.Mat(4, 1, alvision.MatrixType.CV_32F, w1);
     var _w2 = new alvision.Mat(5, 1,alvision.MatrixType. CV_32F, w2);
-    var _cost = new alvision.Mat(_w1.rows, _w2.rows, alvision.MatrixType.CV_32F, cost);
+    var _cost = new alvision.Mat(_w1.rows(), _w2.rows(), alvision.MatrixType.CV_32F, cost);
 
     var emd = alvision.EMD(_w1, _w2, -1, _cost);
     if(Math.abs( emd.valueOf() - emd0) > success_error_level * emd0) {

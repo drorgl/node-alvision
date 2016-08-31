@@ -1,3 +1,4 @@
+
 /*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -162,7 +163,7 @@ alvision.cvtest.TEST('Photo_White', 'issue_2646', () => {
     var filtered = new alvision.Mat();
    alvision.fastNlMeansDenoising(img, filtered);
 
-    var nonWhitePixelsCount = (int)img.total() - alvision.countNonZero(filtered == img);
+    var nonWhitePixelsCount = img.total().valueOf() - alvision.countNonZero(alvision.MatExpr.op_Equals( filtered , img)).valueOf();
 
     alvision.ASSERT_EQ(0, nonWhitePixelsCount);
 });
@@ -171,8 +172,9 @@ alvision.cvtest.TEST('Photo_Denoising', 'speed', () => {
     var imgname = alvision.cvtest.TS.ptr().get_data_path() + "shared/5MP.png";
     var src = alvision.imread(imgname, 0), dst = new alvision.Mat();;
 
-    double t = (double)getTickCount();
+    
+    let t = alvision.cvGetTickCount();
     alvision.fastNlMeansDenoising(src, dst, 5, 7, 21);
-    t = (double)getTickCount() - t;
-    printf("execution time: %gms\n", t * 1000. / getTickFrequency());
+    t = alvision.cvGetTickCount() - t;
+    console.log(util.format("execution time: %gms\n", t * 1000. / alvision.cvGetTickFrequency()));
 });

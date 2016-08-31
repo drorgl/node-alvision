@@ -55,7 +55,7 @@ import fs = require('fs');
 
 class CV_KalmanTest extends alvision. cvtest.BaseTest
 {
-    run(iii: int): void {
+    run(iii: alvision.int): void {
         var code = alvision.cvtest.FailureCode.OK;
         const  Dim = 7;
         const  Steps = 100;
@@ -64,51 +64,74 @@ class CV_KalmanTest extends alvision. cvtest.BaseTest
 
         const EPSILON = 1.000;
         var rng = this.ts.get_rng();
-        CvKalman * Kalm;
+        //CvKalman * Kalm;
+        var Kalm: alvision.KalmanFilter;
+        
 
-        CvMat * Sample = cvCreateMat(Dim, 1, CV_32F);
-        CvMat * Temp = cvCreateMat(Dim, 1, CV_32F);
+        var Sample = new alvision.Mat(Dim, 1, alvision.MatrixType.CV_32F);
 
-        Kalm = cvCreateKalman(Dim, Dim);
-        CvMat Dyn = cvMat(Dim, Dim, CV_32F, Kalm .DynamMatr);
-        CvMat Mes = cvMat(Dim, Dim, CV_32F, Kalm .MeasurementMatr);
-        CvMat PNC = cvMat(Dim, Dim, CV_32F, Kalm .PNCovariance);
-        CvMat MNC = cvMat(Dim, Dim, CV_32F, Kalm .MNCovariance);
-        CvMat PriErr = cvMat(Dim, Dim, CV_32F, Kalm .PriorErrorCovariance);
-        CvMat PostErr = cvMat(Dim, Dim, CV_32F, Kalm .PosterErrorCovariance);
-        CvMat PriState = cvMat(Dim, 1, CV_32F, Kalm .PriorState);
-        CvMat PostState = cvMat(Dim, 1, CV_32F, Kalm .PosterState);
-        cvSetIdentity(&PNC);
-        cvSetIdentity(&PriErr);
-        cvSetIdentity(&PostErr);
-        cvSetZero(&MNC);
-        cvSetZero(&PriState);
-        cvSetZero(&PostState);
-        cvSetIdentity(&Mes);
-        cvSetIdentity(&Dyn);
-        Mat _Sample = cvarrToMat(Sample);
-        alvision.cvtest.randUni(rng, _Sample, cvScalarAll(-max_init), cvScalarAll(max_init));
-        cvKalmanCorrect(Kalm, Sample);
+        var Temp = new alvision.Mat(Dim, 1, alvision.MatrixType.CV_32F);
+
+        Kalm = new alvision.KalmanFilter(Dim, Dim);
+        //Kalm = cvCreateKalman(Dim, Dim);
+        
+        //CvMat Dyn = cvMat(Dim, Dim, alvision.MatrixType.CV_32F, Kalm .DynamMatr);
+        //CvMat Mes = cvMat(Dim, Dim, alvision.MatrixType.CV_32F, Kalm .MeasurementMatr);
+        //CvMat PNC = cvMat(Dim, Dim, alvision.MatrixType.CV_32F, Kalm .PNCovariance);
+        //CvMat MNC = cvMat(Dim, Dim, alvision.MatrixType.CV_32F, Kalm .MNCovariance);
+        //CvMat PriErr = cvMat(Dim, Dim,  alvision.MatrixType.CV_32F, Kalm .PriorErrorCovariance);
+        //CvMat PostErr = cvMat(Dim, Dim, alvision.MatrixType.CV_32F, Kalm .PosterErrorCovariance);
+        //CvMat PriState = cvMat(Dim, 1,  alvision.MatrixType.CV_32F, Kalm .PriorState);
+        //CvMat PostState = cvMat(Dim, 1, alvision.MatrixType.CV_32F, Kalm .PosterState);
+        alvision.setIdentity(Kalm.processNoiseCov);
+        alvision.setIdentity(Kalm.errorCovPre);
+        alvision.setIdentity(Kalm.errorCovPost);
+
+        Kalm.measurementNoiseCov.setTo(new alvision.Scalar(0));
+        //cvSetZero(&MNC);
+        Kalm.statePost.setTo(new alvision.Scalar(0));
+        //cvSetZero(&PriState);
+        Kalm.statePre.setTo(new alvision.Scalar(0));
+        //cvSetZero(&PostState);
+
+
+        alvision.setIdentity(Kalm.measurementMatrix);
+        alvision.setIdentity(Kalm.transitionMatrix);
+        //Mat _Sample = cvarrToMat(Sample);
+        alvision.cvtest.randUni(rng, Sample, alvision.Scalar.all(-max_init), alvision.Scalar.all(max_init));
+        Kalm.correct(Sample);
+        //cvKalmanCorrect(Kalm, Sample);
+
+            
+        var DynData = Kalm.transitionMatrix.ptr<alvision.float>("float");
+        var SampleData = Sample.ptr<alvision.float>("float");
+        var TempData = Temp.ptr<alvision.float>("float");
+
         for (var i = 0; i < Steps; i++) {
-            cvKalmanPredict(Kalm);
+            //cvKalmanPredict(Kalm);
+            Kalm.predict();
             for (var j = 0; j < Dim; j++) {
-                float t = 0;
+                var t = 0;
                 for (var k= 0; k < Dim; k++)
                 {
-                    t += Dyn.data.fl[j * Dim + k] * Sample .data.fl[k];
+                    
+                    t += DynData[j * Dim + k].valueOf() * SampleData[k].valueOf();
                 }
-                Temp .data.fl[j]= (float)(t + (alvision.cvtest.randReal(rng) * 2 - 1) * max_noise);
+                TempData[j]= (t + (alvision.cvtest.randReal(rng).valueOf() * 2 - 1) * max_noise);
             }
-            cvCopy(Temp, Sample);
-            cvKalmanCorrect(Kalm, Temp);
+            Temp.copyTo(Sample);
+            //cvCopy(Temp, Sample);
+            Kalm.correct(Temp);
+            //cvKalmanCorrect(Kalm, Temp);
         }
 
-        Mat _state_post = cvarrToMat(Kalm .state_post);
-        code = alvision.cvtest.cmpEps2(ts, _Sample, _state_post, EPSILON, false, "The final estimated state");
+        
+        //Mat _state_post = cvarrToMat(Kalm .state_post);
+        code = alvision.cvtest.cmpEps2(this.ts, Sample, Kalm.statePost, EPSILON, false, "The final estimated state");
 
-        cvReleaseMat(&Sample);
-        cvReleaseMat(&Temp);
-        cvReleaseKalman(&Kalm);
+        //cvReleaseMat(&Sample);
+        //cvReleaseMat(&Temp);
+        //cvReleaseKalman(&Kalm);
 
         if (code < 0)
             this.ts.set_failed_test_info(code);

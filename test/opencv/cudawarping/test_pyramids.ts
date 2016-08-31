@@ -47,90 +47,100 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
-
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
+//
 ////////////////////////////////////////////////////////
 // pyrDown
 
-PARAM_TEST_CASE(PyrDown, alvision.cuda::DeviceInfo, alvision.Size, MatType, UseRoi)
+//PARAM_TEST_CASE(PyrDown, alvision.cuda.DeviceInfo, alvision.Size, MatType, UseRoi)
+class PyrDown extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    public SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo =  this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =     this.GET_PARAM<alvision.Size>(1);
+        this.type =     this.GET_PARAM<alvision.int>(2);
+        this.useRoi =   this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(PyrDown, Accuracy)
+//CUDA_TEST_P(PyrDown, Accuracy)
+class PyrDown_Accuracy extends PyrDown
 {
-    alvision.Mat src = randomMat(size, type);
+    public TestBody(): void {
+        var src = alvision.randomMat(this.size, this.type);
 
-    alvision.cuda::GpuMat dst = createMat(alvision.Size((size.width + 1) / 2, (size.height + 1) / 2), type, useRoi);
-    alvision.cuda::pyrDown(loadMat(src, useRoi), dst);
+        var dst = alvision.createMat(new alvision.Size((this.size.width.valueOf() + 1) / 2, (this.size.height.valueOf() + 1) / 2), this.type, this.useRoi);
+        alvision.cudawarping.pyrDown(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.pyrDown(src, dst_gold);
+        var dst_gold = new alvision.Mat();
+        alvision.pyrDown(src, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-4 : 1.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == alvision.MatrixType.CV_32F ? 1e-4 : 1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Warping, PyrDown, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_16UC1), MatType(CV_16UC3), MatType(CV_16UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Warping', 'PyrDown', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC3,alvision.MatrixType.CV_8UC4,alvision.MatrixType.CV_16UC1,alvision.MatrixType.CV_16UC3,alvision.MatrixType.CV_16UC4,alvision.MatrixType.CV_32FC1,alvision.MatrixType.CV_32FC3,alvision.MatrixType.CV_32FC4],
+    alvision.WHOLE_SUBMAT
+    ]));
 
 ////////////////////////////////////////////////////////
 // pyrUp
 
-PARAM_TEST_CASE(PyrUp, alvision.cuda::DeviceInfo, alvision.Size, MatType, UseRoi)
+//PARAM_TEST_CASE(PyrUp, alvision.cuda.DeviceInfo, alvision.Size, MatType, UseRoi)
+class PyrUp extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    public SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.type =    this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(PyrUp, Accuracy)
+//CUDA_TEST_P(PyrUp, Accuracy)
+class PyrUp_Accuracy extends PyrUp
 {
-    alvision.Mat src = randomMat(size, type);
+    public TestBody(): void {
+        var src = alvision.randomMat(this.size, this.type);
 
-    alvision.cuda::GpuMat dst = createMat(alvision.Size(size.width * 2, size.height * 2), type, useRoi);
-    alvision.cuda::pyrUp(loadMat(src, useRoi), dst);
+        var dst = alvision.createMat(new alvision.Size(this.size.width.valueOf() * 2, this.size.height.valueOf() * 2), this.type,this. useRoi);
+        alvision.cudawarping.pyrUp(alvision.loadMat(src, this.useRoi), dst);
 
-    alvision.Mat dst_gold;
-    alvision.pyrUp(src, dst_gold);
+        var dst_gold = new alvision.Mat();
+        alvision.pyrUp(src, dst_gold);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-4 : 1.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == alvision.MatrixType.CV_32F ? 1e-4 : 1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Warping, PyrUp, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_16UC1), MatType(CV_16UC3), MatType(CV_16UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Warping', 'PyrUp', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC3,alvision.MatrixType.CV_8UC4,alvision.MatrixType.CV_16UC1,alvision.MatrixType.CV_16UC3,alvision.MatrixType.CV_16UC4,alvision.MatrixType.CV_32FC1,alvision.MatrixType.CV_32FC3,alvision.MatrixType.CV_32FC4],
+    alvision.WHOLE_SUBMAT
+    ]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

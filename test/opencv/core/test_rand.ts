@@ -112,7 +112,7 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
                 (() => {
                     //const data = arr[0].ptr<alvision.uchar>("uchar");
                     var H = hist[c].ptr<alvision.int>("int");
-                    var HSZ = hist[c].cols;
+                    var HSZ = hist[c].cols();
                     var minVal = dist_type == alvision.DistType.UNIFORM ? A[c] : A[c] - B[c] * 4;
                     var maxVal = dist_type == alvision.DistType.UNIFORM ? B[c] : A[c] + B[c] * 4;
                     var scale = HSZ.valueOf() / (maxVal - minVal);
@@ -222,7 +222,7 @@ class Core_RandTest  extends alvision.cvtest.BaseTest
         var hist0 = new alvision.Mat(hist.size(), alvision.MatrixType.CV_32F);
         const  H = hist.ptr<alvision.int>("int");
         var  H0 = hist0.ptr<alvision.float>("float");
-        var hsz = hist.cols.valueOf();
+        var hsz = hist.cols().valueOf();
 
         var sum = 0;
         for (var i = 0; i < hsz; i++)
@@ -292,8 +292,8 @@ class Core_RandRangeTest  extends alvision.cvtest.BaseTest
         var n0 = 0, n255 = 0, nx = 0;
         var nfmin = 0, nfmax = 0, nfx = 0;
 
-        for( var i = 0; i < a.rows; i++ )
-            for( var j = 0; j < a.cols; j++ )
+        for( var i = 0; i < a.rows(); i++ )
+            for( var j = 0; j < a.cols(); j++ )
             {
                 var v = a.at<alvision.uchar>("uchar",i,j).get();
                 var vf = af.at<alvision.float>("float",i,j).get();

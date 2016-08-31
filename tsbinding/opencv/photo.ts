@@ -619,46 +619,46 @@ export var createTonemapMantiuk: IcreateTonemapMantiuk = alvision_module.createT
     interface AlignMTB extends AlignExposures
     {
         //public:
-        //CV_WRAP virtual void process(InputArrayOfArrays src, std::vector<Mat>& dst,
-        //    InputArray times, InputArray response) = 0;
-        //
-        ///** @brief Short version of process, that doesn't take extra arguments.
-        //
-        //@param src vector of input images
-        //@param dst vector of aligned images
-        // */
-        //CV_WRAP virtual void process(InputArrayOfArrays src, std::vector<Mat>& dst) = 0;
-        //
-        ///** @brief Calculates shift between two images, i. e. how to shift the second image to correspond it with the
-        //first.
-        //
-        //@param img0 first image
-        //@param img1 second image
-        // */
-        //CV_WRAP virtual Point calculateShift(InputArray img0, InputArray img1) = 0;
-        ///** @brief Helper function, that shift Mat filling new regions with zeros.
-        //
-        //@param src input image
-        //@param dst result image
-        //@param shift shift value
-        // */
-        //CV_WRAP virtual void shiftMat(InputArray src, OutputArray dst, const Point shift) = 0;
-        ///** @brief Computes median threshold and exclude bitmaps of given image.
-        //
-        //@param img input image
-        //@param tb median threshold bitmap
-        //@param eb exclude bitmap
-        // */
-        //CV_WRAP virtual void computeBitmaps(InputArray img, OutputArray tb, OutputArray eb) = 0;
-        //
-        //CV_WRAP virtual int getMaxBits() const = 0;
-        //CV_WRAP virtual void setMaxBits(int max_bits) = 0;
-        //
-        //CV_WRAP virtual int getExcludeRange() const = 0;
-        //CV_WRAP virtual void setExcludeRange(int exclude_range) = 0;
-        //
-        //CV_WRAP virtual bool getCut() const = 0;
-        //CV_WRAP virtual void setCut(bool value) = 0;
+        process(src: _st.InputArrayOfArrays, dst: Array<_mat.Mat> ,
+            times: _st.InputArray, response: _st.InputArray ) : void ;
+        
+        /** @brief Short version of process, that doesn't take extra arguments.
+        
+        @param src vector of input images
+        @param dst vector of aligned images
+         */
+        process(src: _st.InputArrayOfArrays, dst: Array<_mat.Mat>): void;
+        
+        /** @brief Calculates shift between two images, i. e. how to shift the second image to correspond it with the
+        first.
+        
+        @param img0 first image
+        @param img1 second image
+         */
+        calculateShift(img0: _st.InputArray, img1: _st.InputArray ): _types.Point;
+        /** @brief Helper function, that shift Mat filling new regions with zeros.
+        
+        @param src input image
+        @param dst result image
+        @param shift shift value
+         */
+        shiftMat(src: _st.InputArray, dst: _st.OutputArray, shift: _types.Point ): void;
+        /** @brief Computes median threshold and exclude bitmaps of given image.
+        
+        @param img input image
+        @param tb median threshold bitmap
+        @param eb exclude bitmap
+         */
+        computeBitmaps(img: _st.InputArray, tb: _st.OutputArray, eb: _st.OutputArray ): void;
+        
+        getMaxBits(): _st.int;
+        setMaxBits(max_bits: _st.int ): void;
+        
+        getExcludeRange(): _st.int;
+        setExcludeRange(exclude_range: _st.int ): void;
+        
+        getCut(): boolean;
+        setCut(value: boolean): void;
     };
 
     /** @brief Creates AlignMTB object

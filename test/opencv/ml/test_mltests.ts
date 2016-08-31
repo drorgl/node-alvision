@@ -47,94 +47,100 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
+import {MLERROR, CV_BIG_INT, CV_NBAYES, CV_KNEAREST, CV_SVM, CV_EM, CV_ANN, CV_DTREE, CV_BOOST, CV_RTREES, CV_ERTREES  } from "./test_precomp";
+
 
 //#include "test_precomp.hpp"
 //
 //using namespace cv;
 //using namespace std;
 
-CV_AMLTest::CV_AMLTest( const char* _modelName ) : CV_MLBaseTest( _modelName )
+import {CV_MLBaseTest} from "./test_mltests2";
+
+
+class CV_AMLTest extends CV_MLBaseTest
 {
-    validationFN = "avalidation.xml";
-}
-
-int CV_AMLTest::run_test_case( int testCaseIdx )
-{
-    int code = alvision.cvtest.FailureCode.OK;
-    code = prepare_test_case( testCaseIdx );
-
-    if (code == alvision.cvtest.FailureCode.OK)
-    {
-        //#define GET_STAT
-#ifdef GET_STAT
-        const char* data_name = ((CvFileNode*)cvGetSeqElem( dataSetNames, testCaseIdx )).data.str.ptr;
-        printf("%s, %s      ", name, data_name);
-        const int icount = 100;
-        float res[icount];
-        for (int k = 0; k < icount; k++)
-        {
-#endif
-            data.shuffleTrainTest();
-            code = train( testCaseIdx );
-#ifdef GET_STAT
-            float case_result = get_error();
-
-            res[k] = case_result;
-        }
-        float mean = 0, sigma = 0;
-        for (int k = 0; k < icount; k++)
-        {
-            mean += res[k];
-        }
-        mean = mean /icount;
-        for (int k = 0; k < icount; k++)
-        {
-            sigma += (res[k] - mean)*(res[k] - mean);
-        }
-        sigma = sqrt(sigma/icount);
-        printf("%f, %f\n", mean, sigma);
-#endif
+    constructor(_modelName: string) {
+        super(_modelName);
+        this.validationFN = "avalidation.xml";
     }
-    return code;
-}
 
-int CV_AMLTest::validate_test_results( int testCaseIdx )
-{
-    int iters;
-    float mean, sigma;
-    // read validation params
-    FileNode resultNode =
-        validationFS.getFirstTopLevelNode()["validation"][modelName][dataSetNames[testCaseIdx]]["result"];
-    resultNode["iter_count"] >> iters;
-    if ( iters > 0)
-    {
-        resultNode["mean"] >> mean;
-        resultNode["sigma"] >> sigma;
-        model.save(format("/Users/vp/tmp/dtree/testcase_%02d.cur.yml", testCaseIdx));
-        float curErr = get_test_error( testCaseIdx );
-        const int coeff = 4;
-        ts.printf( alvision.cvtest.TSConstants.LOG, "Test case = %d; test error = %f; mean error = %f (diff=%f), %d*sigma = %f\n",
-                                testCaseIdx, curErr, mean, abs( curErr - mean), coeff, coeff*sigma );
-        if ( abs( curErr - mean) > coeff*sigma )
-        {
-            ts.printf( alvision.cvtest.TSConstants.LOG, "abs(%f - %f) > %f - OUT OF RANGE!\n", curErr, mean, coeff*sigma, coeff );
-            return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+    run_test_case(testCaseIdx: alvision.int): alvision.int {
+        let code: alvision.cvtest.FailureCode | alvision.int= alvision.cvtest.FailureCode.OK;
+        code = this.prepare_test_case(testCaseIdx);
+
+        if (code == alvision.cvtest.FailureCode.OK) {
+            //#define GET_STAT
+            //#ifdef GET_STAT
+            //const data_name = ((CvFileNode *)cvGetSeqElem(this.dataSetNames, testCaseIdx)).data.str.ptr;
+            const data_name = this.dataSetNames[testCaseIdx.valueOf()];
+            console.log(util.format("%s, %s      ", name, data_name));
+            const icount = 100;
+            let res = new Array(icount);
+            for (let k = 0; k < icount; k++)
+            {
+                //#endif
+                this.data.shuffleTrainTest();
+                code = this.train(testCaseIdx);
+                //#ifdef GET_STAT
+
+                //TODO: get_error (?!)
+                //let case_result = this.get_error();
+
+                //res[k] = case_result;
+            }
+            let  mean = 0, sigma = 0;
+            for (let k = 0; k < icount; k++)
+            {
+                mean += res[k];
+            }
+            mean = mean / icount;
+            for (let  k = 0; k < icount; k++)
+            {
+                sigma += (res[k] - mean) * (res[k] - mean);
+            }
+            sigma = Math.sqrt(sigma / icount);
+            console.log(util.format("%f, %f\n", mean, sigma));
+            //#endif
         }
-        else
-            ts.printf( alvision.cvtest.TSConstants.LOG, ".\n" );
-
+        return code;
     }
-    else
-    {
-        ts.printf( alvision.cvtest.TSConstants.LOG, "validation info is not suitable" );
-        return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
-    }
-    return alvision.cvtest.FailureCode.OK;
-}
 
-TEST(ML_DTree, regression) { CV_AMLTest test( CV_DTREE ); test.safe_run(); }
-TEST(ML_Boost, regression) { CV_AMLTest test( CV_BOOST ); test.safe_run(); }
-TEST(ML_RTrees, regression) { CV_AMLTest test( CV_RTREES ); test.safe_run(); }
-TEST(DISABLED_ML_ERTrees, regression) { CV_AMLTest test( CV_ERTREES ); test.safe_run(); }
+    validate_test_results(testCaseIdx: alvision.int): alvision.int {
+        //int iters;
+        //float mean, sigma;
+        // read validation params
+        let resultNode =
+            this.validationFS.getFirstTopLevelNode().nodes["validation"].nodes[this.modelName].nodes[this.dataSetNames[testCaseIdx.valueOf()]].nodes["result"];
+        let iters = resultNode.nodes["iter_count"].readInt();
+        if (iters > 0) {
+            let mean = resultNode.nodes["mean"].float();
+            let sigma = resultNode.nodes["sigma"].float();
+            this.model.save(util.format("/Users/vp/tmp/dtree/testcase_%02d.cur.yml", testCaseIdx));
+            let curErr = this.get_test_error(testCaseIdx);
+            const coeff = 4;
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "Test case = %d; test error = %f; mean error = %f (diff=%f), %d*sigma = %f\n",
+                testCaseIdx, curErr, mean, Math.abs(curErr.valueOf() - mean.valueOf()), coeff, coeff * sigma.valueOf());
+            if (Math.abs(curErr.valueOf() - mean.valueOf()) > coeff * sigma.valueOf()) {
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "abs(%f - %f) > %f - OUT OF RANGE!\n", curErr, mean, coeff * sigma.valueOf(), coeff);
+                return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
+            }
+            else
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, ".\n");
+
+        }
+        else {
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "validation info is not suitable");
+            return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
+        }
+        return alvision.cvtest.FailureCode.OK;
+    }
+};
+
+
+alvision.cvtest.TEST('ML_DTree', 'regression', () => { let test = new CV_AMLTest(CV_DTREE); test.safe_run(); });
+alvision.cvtest.TEST('ML_Boost', 'regression', () => { let test = new CV_AMLTest (CV_BOOST); test.safe_run(); });
+alvision.cvtest.TEST('ML_RTrees', 'regression', () => { let test = new CV_AMLTest(CV_RTREES); test.safe_run(); });
+alvision.cvtest.TEST('DISABLED_ML_ERTrees', 'regression', () => { let test = new CV_AMLTest(CV_ERTREES); test.safe_run(); });
 
 /* End of file. */

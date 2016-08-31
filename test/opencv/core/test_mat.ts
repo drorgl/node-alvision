@@ -220,15 +220,15 @@ function testReduce<T>(Ttype:string, src: alvision.Mat, sum: alvision.Mat, avg: 
     alvision.assert(()=> src.channels() == 1 );
     if( dim == 0 ) // row
     {
-        sum.create( 1, src.cols, alvision.MatrixType.CV_64FC1 );
-        max.create( 1, src.cols, alvision.MatrixType.CV_64FC1 );
-        min.create(1, src.cols, alvision.MatrixType.CV_64FC1 );
+        sum.create( 1, src.cols(), alvision.MatrixType.CV_64FC1 );
+        max.create( 1, src.cols(), alvision.MatrixType.CV_64FC1 );
+        min.create(1, src.cols(), alvision.MatrixType.CV_64FC1 );
     }
     else
     {
-        sum.create( src.rows, 1, alvision.MatrixType.CV_64FC1 );
-        max.create( src.rows, 1, alvision.MatrixType.CV_64FC1 );
-        min.create(src.rows, 1, alvision.MatrixType.CV_64FC1 );
+        sum.create( src.rows(), 1, alvision.MatrixType.CV_64FC1 );
+        max.create( src.rows(), 1, alvision.MatrixType.CV_64FC1 );
+        min.create(src.rows(), 1, alvision.MatrixType.CV_64FC1 );
     }
     sum.setTo(new alvision.Scalar(0));
     max.setTo(new alvision.Scalar(-alvision.DBL_MAX));
@@ -241,9 +241,9 @@ function testReduce<T>(Ttype:string, src: alvision.Mat, sum: alvision.Mat, avg: 
 
     if( dim == 0 )
     {
-        for( let ri = 0; ri < src.rows; ri++ )
+        for( let ri = 0; ri < src.rows(); ri++ )
         {
-            for( let ci = 0; ci < src.cols; ci++ )
+            for( let ci = 0; ci < src.cols(); ci++ )
             {
                 sum_.at<alvision.float>("float", 0, ci).set(sum_.at<alvision.float>("float", 0, ci) + <any>src.at<T>(Ttype, ri, ci).get());
                 max_.at<alvision.float>("float", 0, ci).set(Math.max(max_.at<alvision.float>("float",0, ci).get().valueOf(), <any>src.at<T>(Ttype,ri, ci).get()));
@@ -253,9 +253,9 @@ function testReduce<T>(Ttype:string, src: alvision.Mat, sum: alvision.Mat, avg: 
     }
     else
     {
-        for( let ci = 0; ci < src.cols; ci++ )
+        for( let ci = 0; ci < src.cols(); ci++ )
         {
-            for (let ri = 0; ri < src.rows; ri++) {
+            for (let ri = 0; ri < src.rows(); ri++) {
                 sum_.at<alvision.float>("float", ri, 0).set(sum_.at<alvision.float>("float", ri, 0).get() + <any>src.at<T>(Ttype, ri, ci).get());
                 max_.at<alvision.float>("float", ri, 0).set(Math.max(max_.at<alvision.float>("float", ri, 0).get().valueOf(), <any>src.at<T>(Ttype, ri, ci).get()));
                 min_.at<alvision.float>("float", ri, 0).set(Math.min(min_.at<alvision.float>("float", ri, 0).get().valueOf(), <any>src.at<T>(Ttype, ri, ci).get()));
@@ -263,7 +263,7 @@ function testReduce<T>(Ttype:string, src: alvision.Mat, sum: alvision.Mat, avg: 
         }
     }
     sum.convertTo(avg, alvision.MatrixType.CV_64FC1 );
-    avg = alvision.MatExpr.op_Multiplication(avg, (1.0 / (dim == 0 ? src.rows.valueOf() : src.cols.valueOf()))).toMat();
+    avg = alvision.MatExpr.op_Multiplication(avg, (1.0 / (dim == 0 ? src.rows().valueOf() : src.cols().valueOf()))).toMat();
 }
 
 function getMatTypeStr(type: alvision.int): string {
@@ -306,12 +306,12 @@ class Core_PCATest  extends alvision.cvtest.BaseTest
 
         let avg = new alvision.Mat(1, sz.width, alvision.MatrixType.CV_32FC1 );
         alvision.reduce( rPoints, avg, 0, alvision.ReduceTypes.REDUCE_AVG );
-        var Q = alvision.MatExpr.op_Substraction(rPoints, alvision.repeat(avg, rPoints.rows, 1)).toMat(), Qt = Q.t();
+        var Q = alvision.MatExpr.op_Substraction(rPoints, alvision.repeat(avg, rPoints.rows(), 1)).toMat(), Qt = Q.t();
         
         let evalm = new alvision.Mat();
         let evecm = new alvision.Mat();
         Q = alvision.MatExpr.op_Multiplication(Qt, Q).toMat();
-        Q = alvision.MatExpr.op_Division(Q, rPoints.rows).toMat();
+        Q = alvision.MatExpr.op_Division(Q, rPoints.rows()).toMat();
 
         alvision.eigen( Q, evalm, evecm );
         /*SVD svd(Q);
@@ -319,7 +319,7 @@ class Core_PCATest  extends alvision.cvtest.BaseTest
          eval = svd.w;*/
 
         let subEval = new alvision.Mat(maxComponents, 1, evalm.type(), evalm.ptr<alvision.uchar>("uchar"));
-        let subEvec = new alvision.Mat( maxComponents, evecm.cols, evecm.type(), evecm.ptr<alvision.uchar>("uchar") );
+        let subEvec = new alvision.Mat( maxComponents, evecm.cols(), evecm.type(), evecm.ptr<alvision.uchar>("uchar") );
 
     //#ifdef CHECK_C
     //    Mat prjTestPoints, backPrjTestPoints, cPoints = rPoints.t(), cTestPoints = rTestPoints.t();
@@ -329,7 +329,7 @@ class Core_PCATest  extends alvision.cvtest.BaseTest
         // check eigen()
         let eigenEps = 1e-6;
         let err;
-        for(let i = 0; i < Q.rows; i++ )
+        for(let i = 0; i < Q.rows(); i++ )
         {
             let v = evecm.row(i).t();
             let Qv = alvision.MatExpr.op_Multiplication(Q, v);
@@ -353,7 +353,7 @@ class Core_PCATest  extends alvision.cvtest.BaseTest
             return;
         }
         // check pca eigenvectors
-        for(let i = 0; i < subEvec.rows; i++)
+        for(let i = 0; i < subEvec.rows(); i++)
         {
             var r0 = rPCA.eigenvectors.row(i);
             var r1 = subEvec.row(i);
@@ -381,7 +381,7 @@ class Core_PCATest  extends alvision.cvtest.BaseTest
         }
 
         let prjEps = 1.265, backPrjEps = 1.265;
-        for( let i = 0; i < rTestPoints.rows; i++ )
+        for( let i = 0; i < rTestPoints.rows(); i++ )
         {
             // check pca project
             let subEvec_t = subEvec.t();
@@ -428,10 +428,10 @@ class Core_PCATest  extends alvision.cvtest.BaseTest
         diffPrjEps = 1, diffBackPrjEps = 1;
         let rvPrjTestPoints = cPCA.project(rTestPoints.t());
 
-        if( cPCA.eigenvectors.rows > maxComponents)
+        if( cPCA.eigenvectors.rows() > maxComponents)
             err = alvision.cvtest.norm(alvision.MatExpr.abs(rvPrjTestPoints.rowRange(0, maxComponents)), alvision.MatExpr.abs(rPrjTestPoints.t()), alvision.NormTypes.NORM_RELATIVE_L2 );
         else
-            err = alvision.cvtest.norm(alvision.MatExpr.abs(rvPrjTestPoints), alvision.MatExpr.abs(rPrjTestPoints.colRange(0, cPCA.eigenvectors.rows).t()), alvision.NormTypes.NORM_RELATIVE_L2 );
+            err = alvision.cvtest.norm(alvision.MatExpr.abs(rvPrjTestPoints), alvision.MatExpr.abs(rPrjTestPoints.colRange(0, cPCA.eigenvectors.rows()).t()), alvision.NormTypes.NORM_RELATIVE_L2 );
 
         if( err > diffPrjEps )
         {
@@ -962,9 +962,9 @@ function calcDiffElemCountImpl<ElemType>(ElemTypename : string, mv: Array<alvisi
 {
     let diffElemCount = 0;
     const  mChannels = m.channels();
-    for(let y = 0; y < m.rows; y++)
+    for(let y = 0; y < m.rows(); y++)
     {
-        for(let x = 0; x < m.cols; x++)
+        for(let x = 0; x < m.cols(); x++)
         {
             const mElem = m.at<ElemType>(ElemTypename, y,x*mChannels.valueOf());
             var loc = 0;

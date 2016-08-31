@@ -208,7 +208,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //
 //    virtual void operator() (const Range& range) const
 //    {
-//        for (int i = range.start; i != range.end; ++i)
+//        for (let i = range.start; i != range.end; ++i)
 //        {
 //            std::ostringstream stream;
 //            stream << i << ".avi";
@@ -244,7 +244,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //
 //    static void GenerateFrame(Mat& frame, unsigned int i)
 //    {
-//        frame = Scalar::all(i % 255);
+//        frame = Scalar.all(i % 255);
 //
 //        std::string text = to_string(i);
 //        putText(frame, text, Point(50, Center.y), FONT_HERSHEY_SIMPLEX, 5.0, ObjectColor, 5, CV_AA);
@@ -294,7 +294,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //
 //    virtual void operator() (const Range& range) const
 //    {
-//        for (int i = range.start; i != range.end; ++i)
+//        for (let i = range.start; i != range.end; ++i)
 //        {
 //            readers.operator[](i) = new VideoCapture(files.operator[](i));
 //            CV_Assert(readers.operator[](i).isOpened());
@@ -333,15 +333,15 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //
 //                WriteVideo_Invoker::GenerateFrame(reference, i);
 //
-//                EXPECT_EQ(reference.cols, actual.cols);
-//                EXPECT_EQ(reference.rows, actual.rows);
-//                EXPECT_EQ(reference.depth(), actual.depth());
-//                EXPECT_EQ(reference.channels(), actual.channels());
+//                alvision.EXPECT_EQ(reference.cols, actual.cols);
+//                alvision.EXPECT_EQ(reference.rows, actual.rows);
+//                alvision.EXPECT_EQ(reference.depth(), actual.depth());
+//                alvision.EXPECT_EQ(reference.channels(), actual.channels());
 //
 //                double psnr = alvision.cvtest.PSNR(actual, reference);
 //                if (psnr < eps)
 //                {
-//    #define SUM alvision.cvtest.TS::SUMMARY
+//    #define SUM alvision.cvtest.TSConstants.SUMMARY
 //                    ts.printf(SUM, "\nPSNR: %lf\n", psnr);
 //                    ts.printf(SUM, "Video #: %d\n", range.start);
 //                    ts.printf(SUM, "Frame #: %d\n", i);
@@ -352,7 +352,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //                    Mat diff;
 //                    absdiff(actual, reference, diff);
 //
-//                    EXPECT_EQ(countNonZero(diff.reshape(1) > 1), 0);
+//                    alvision.EXPECT_EQ(countNonZero(diff.reshape(1) > 1), 0);
 //
 //                    next = false;
 //                }
@@ -372,7 +372,7 @@ alvision.cvtest.TEST('Videoio_Video', 'ffmpeg_image', () => { var test = new CV_
 //alvision.cvtest.TEST('Videoio_Video_parallel_writers_and_readers', 'accuracy',()=>
 //{
 //    const unsigned int threadsCount = 4;
-//    alvision.cvtest.TS* ts = alvision.cvtest.TS::ptr();
+//    var ts = alvision.cvtest.TS.ptr();
 //
 //    // creating VideoWriters
 //    Array<VideoWriter*> writers(threadsCount);

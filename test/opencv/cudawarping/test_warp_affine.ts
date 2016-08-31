@@ -48,241 +48,255 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
+import * as _interpolation from './interpolation';
 
-#ifdef HAVE_CUDA
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
+//
+//namespace
+//{
+function createTransfomMatrix(srcSize: alvision.Size, angle: alvision.double): alvision.Mat {
+    var M = new alvision.Mat(2, 3, alvision.MatrixType.CV_64FC1);
 
-using namespace cvtest;
+    M.at<alvision.double>("double", 0, 0).set(Math.cos(angle.valueOf())); M.at<alvision.double>("double", 0, 1).set(-Math.sin(angle.valueOf())); M.at<alvision.double>("double", 0, 2).set(srcSize.width.valueOf() / 2);
+    M.at<alvision.double>("double", 1, 0).set(Math.sin(angle.valueOf())); M.at<alvision.double>("double", 1, 1).set(Math.cos(angle.valueOf())); M.at<alvision.double>("double", 1, 2).set(0.0);
 
-namespace
-{
-    alvision.Mat createTransfomMatrix(alvision.Size srcSize, double angle)
-    {
-        alvision.Mat M(2, 3, CV_64FC1);
-
-        M.at<double>(0, 0) = std::cos(angle); M.at<double>(0, 1) = -std::sin(angle); M.at<double>(0, 2) = srcSize.width / 2;
-        M.at<double>(1, 0) = std::sin(angle); M.at<double>(1, 1) =  std::cos(angle); M.at<double>(1, 2) = 0.0;
-
-        return M;
-    }
+    return M;
 }
+
 
 ///////////////////////////////////////////////////////////////////
 // Test buildWarpAffineMaps
 
-PARAM_TEST_CASE(BuildWarpAffineMaps, alvision.cuda::DeviceInfo, alvision.Size, Inverse)
+//PARAM_TEST_CASE(BuildWarpAffineMaps, alvision.cuda.DeviceInfo, alvision.Size, Inverse)
+class BuildWarpAffineMaps extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    bool inverse;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected inverse: boolean;
 
-    virtual void SetUp()
+    public SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        inverse = GET_PARAM(2);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size = this.GET_PARAM<alvision.Size>(1);
+        this.inverse = this.GET_PARAM<boolean>(2);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(BuildWarpAffineMaps, Accuracy)
+//CUDA_TEST_P(BuildWarpAffineMaps, Accuracy)
+class BuildWarpAffineMaps_Accuracy extends BuildWarpAffineMaps
 {
-    alvision.Mat M = createTransfomMatrix(size, Math.PI / 4);
-    alvision.Mat src = randomMat(randomSize(200, 400), CV_8UC1);
+    public TestBody(): void {
+        var M = createTransfomMatrix(this.size, Math.PI / 4);
+        var src = alvision.randomMat(alvision.randomSize(200, 400), alvision.MatrixType.CV_8UC1);
 
-    alvision.cuda::GpuMat xmap, ymap;
-    alvision.cuda::buildWarpAffineMaps(M, inverse, size, xmap, ymap);
+        var xmap = new alvision.cuda.GpuMat();
+        var ymap = new alvision.cuda.GpuMat();
+        alvision.cudawarping.buildWarpAffineMaps(M, this.inverse, this.size, xmap, ymap);
 
-    int interpolation = alvision.INTER_NEAREST;
-    int borderMode = alvision.BORDER_CONSTANT;
-    int flags = interpolation;
-    if (inverse)
-        flags |= alvision.WARP_INVERSE_MAP;
+        var interpolation = alvision.InterpolationFlags.INTER_NEAREST;
+        var borderMode = alvision.BorderTypes.BORDER_CONSTANT;
+        var flags = interpolation;
+        if (this.inverse)
+            flags |= alvision.InterpolationFlags.WARP_INVERSE_MAP;
 
-    alvision.Mat dst;
-    alvision.remap(src, dst, alvision.Mat(xmap), alvision.Mat(ymap), interpolation, borderMode);
+        var dst = new alvision.Mat();
+        alvision.remap(src, dst,new alvision.Mat(xmap), new alvision.Mat(ymap), interpolation, borderMode);
 
-    alvision.Mat dst_gold;
-    alvision.warpAffine(src, dst_gold, M, size, flags, borderMode);
+        var dst_gold = new alvision.Mat();
+        alvision.warpAffine(src, dst_gold, M, this.size, flags, borderMode);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Warping, BuildWarpAffineMaps, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    DIRECT_INVERSE));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Warping', 'BuildWarpAffineMaps', (test_case, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    alvision.DIRECT_INVERSE
+    ]));
 
 ///////////////////////////////////////////////////////////////////
 // Gold implementation
 
-namespace
-{
-    template <typename T, template <typename> class Interpolator> void warpAffineImpl(const alvision.Mat& src, const alvision.Mat& M, alvision.Size dsize, alvision.Mat& dst, int borderType, alvision.Scalar borderVal)
-    {
-        const int cn = src.channels();
+//namespace
+//{
+//template < typename T, template < typename > class Interpolator> 
+//class Interpolators {
+    function warpAffineImpl<T>(Ttype : string, interpolator : _interpolation.Interpolator,src: alvision.Mat, M: alvision.Mat, dsize: alvision.Size, dst: alvision.Mat, borderType: alvision.int, borderVal: alvision.Scalar): void {
+        const cn = src.channels();
 
         dst.create(dsize, src.type());
 
-        for (int y = 0; y < dsize.height; ++y)
-        {
-            for (int x = 0; x < dsize.width; ++x)
-            {
-                float xcoo = static_cast<float>(M.at<double>(0, 0) * x + M.at<double>(0, 1) * y + M.at<double>(0, 2));
-                float ycoo = static_cast<float>(M.at<double>(1, 0) * x + M.at<double>(1, 1) * y + M.at<double>(1, 2));
+        for (var y = 0; y < dsize.height; ++y) {
+            for (var x = 0; x < dsize.width; ++x) {
+                var xcoo = (M.at<alvision.double>("double", 0, 0).get().valueOf() * x + M.at<alvision.double>("double", 0, 1).get().valueOf() * y + M.at<alvision.double>("double", 0, 2).get().valueOf());
+                var ycoo = (M.at<alvision.double>("double", 1, 0).get().valueOf() * x + M.at<alvision.double>("double", 1, 1).get().valueOf() * y + M.at<alvision.double>("double", 1, 2).get().valueOf());
 
-                for (int c = 0; c < cn; ++c)
-                    dst.at<T>(y, x * cn + c) = Interpolator<T>::getValue(src, ycoo, xcoo, c, borderType, borderVal);
+                for (var c = 0; c < cn; ++c)
+                    dst.at<T>(Ttype, y, x * cn.valueOf() + c).set(interpolator.getValue<T>(Ttype, src, ycoo, xcoo, c, borderType, borderVal));
             }
         }
     }
 
-    void warpAffineGold(const alvision.Mat& src, const alvision.Mat& M, bool inverse, alvision.Size dsize, alvision.Mat& dst, int interpolation, int borderType, alvision.Scalar borderVal)
-    {
-        typedef void (*func_t)(const alvision.Mat& src, const alvision.Mat& M, alvision.Size dsize, alvision.Mat& dst, int borderType, alvision.Scalar borderVal);
+    function warpAffineGold(src: alvision.Mat, M: alvision.Mat, inverse: boolean, dsize: alvision.Size, dst: alvision.Mat, interpolation: alvision.int, borderType: alvision.int, borderVal: alvision.Scalar): void {
+        //typedef void (*func_t)(const alvision.Mat& src, const alvision.Mat& M, alvision.Size dsize, alvision.Mat& dst, int borderType, alvision.Scalar borderVal);
 
-        static const func_t nearest_funcs[] =
-        {
-            warpAffineImpl<unsigned char, NearestInterpolator>,
-            warpAffineImpl<signed char, NearestInterpolator>,
-            warpAffineImpl<unsigned short, NearestInterpolator>,
-            warpAffineImpl<short, NearestInterpolator>,
-            warpAffineImpl<int, NearestInterpolator>,
-            warpAffineImpl<float, NearestInterpolator>
-        };
+         const nearest_funcs =
+           [
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.uchar >("uchar",new _interpolation. NearestInterpolator(),src,M,dsize, dst,borderType,borderVal)},
+                (src: alvision.Mat, M: alvision.Mat, dsize: alvision.Size, dst: alvision.Mat, borderType: alvision.int, borderVal: alvision.Scalar) =>      {warpAffineImpl<alvision.schar >("schar",new _interpolation. NearestInterpolator(),src,M,dsize, dst,borderType,borderVal)},
+                (src: alvision.Mat, M: alvision.Mat, dsize: alvision.Size, dst: alvision.Mat, borderType: alvision.int, borderVal: alvision.Scalar) =>      {warpAffineImpl<alvision.ushort>("ushort",new _interpolation. NearestInterpolator(),src,M,dsize, dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.short >("short",new _interpolation. NearestInterpolator(),src,M,dsize, dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.int   >("int",new _interpolation. NearestInterpolator(),src,M,dsize, dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.float >("float",new _interpolation. NearestInterpolator(),src,M,dsize, dst,borderType,borderVal)}
+        ];
 
-        static const func_t linear_funcs[] =
-        {
-            warpAffineImpl<unsigned char, LinearInterpolator>,
-            warpAffineImpl<signed char, LinearInterpolator>,
-            warpAffineImpl<unsigned short, LinearInterpolator>,
-            warpAffineImpl<short, LinearInterpolator>,
-            warpAffineImpl<int, LinearInterpolator>,
-            warpAffineImpl<float, LinearInterpolator>
-        };
+         const linear_funcs =
+            [
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.uchar >("uchar",new _interpolation. LinearInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.schar >("schar",new _interpolation. LinearInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.ushort>("ushort",new _interpolation. LinearInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.short >("short",new _interpolation. LinearInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.int   >("int",new _interpolation. LinearInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.float >("float",new _interpolation. LinearInterpolator(),src,M,dsize,dst,borderType,borderVal)}
+        ];
 
-        static const func_t cubic_funcs[] =
-        {
-            warpAffineImpl<unsigned char, CubicInterpolator>,
-            warpAffineImpl<signed char, CubicInterpolator>,
-            warpAffineImpl<unsigned short, CubicInterpolator>,
-            warpAffineImpl<short, CubicInterpolator>,
-            warpAffineImpl<int, CubicInterpolator>,
-            warpAffineImpl<float, CubicInterpolator>
-        };
+         const cubic_funcs =
+            [
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.uchar >("uchar",new _interpolation.CubicInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.schar >("schar",new _interpolation.CubicInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.ushort>("ushort",new _interpolation.CubicInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.short >("short",new _interpolation.CubicInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.int   >("int",new _interpolation.CubicInterpolator(),src,M,dsize,dst,borderType,borderVal)},
+                (src : alvision.Mat, M : alvision.Mat, dsize : alvision.Size, dst : alvision.Mat, borderType : alvision.int, borderVal : alvision.Scalar)=> {warpAffineImpl<alvision.float >("float",new _interpolation.CubicInterpolator(),src,M,dsize,dst,borderType,borderVal)}
+        ];
 
-        static const func_t* funcs[] = {nearest_funcs, linear_funcs, cubic_funcs};
+                    const funcs = [nearest_funcs, linear_funcs, cubic_funcs];
 
         if (inverse)
-            funcs[interpolation][src.depth()](src, M, dsize, dst, borderType, borderVal);
-        else
-        {
-            alvision.Mat iM;
+            funcs[interpolation.valueOf()][src.depth().valueOf()](src, M, dsize, dst, borderType, borderVal);
+        else {
+            var iM = new alvision.Mat();
             alvision.invertAffineTransform(M, iM);
-            funcs[interpolation][src.depth()](src, iM, dsize, dst, borderType, borderVal);
+            funcs[interpolation.valueOf()][src.depth().valueOf()](src, iM, dsize, dst, borderType, borderVal);
         }
     }
-}
+//}
 
 ///////////////////////////////////////////////////////////////////
 // Test
 
-PARAM_TEST_CASE(WarpAffine, alvision.cuda::DeviceInfo, alvision.Size, MatType, Inverse, Interpolation, BorderType, UseRoi)
+//        PARAM_TEST_CASE(WarpAffine, alvision.cuda.DeviceInfo, alvision.Size, MatType, Inverse, Interpolation, BorderType, UseRoi)
+class WarpAffine extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    bool inverse;
-    int interpolation;
-    int borderType;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected inverse: boolean;
+    protected interpolation: alvision.int;
+    protected borderType: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    public SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        inverse = GET_PARAM(3);
-        interpolation = GET_PARAM(4);
-        borderType = GET_PARAM(5);
-        useRoi = GET_PARAM(6);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size = this.GET_PARAM<alvision.Size>(1);
+        this.type =             this.GET_PARAM<alvision.int>(2);
+        this.inverse =          this.GET_PARAM<boolean>(3);
+        this.interpolation =    this.GET_PARAM<alvision.int>(4);
+        this.borderType =       this.GET_PARAM<alvision.int>(5);
+        this.useRoi =           this.GET_PARAM<boolean>(6);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(WarpAffine, Accuracy)
+//CUDA_TEST_P(WarpAffine, Accuracy)
+class WarpAffine_Accuracy extends WarpAffine
 {
-    alvision.Mat src = randomMat(size, type);
-    alvision.Mat M = createTransfomMatrix(size, Math.PI / 3);
-    int flags = interpolation;
-    if (inverse)
-        flags |= alvision.WARP_INVERSE_MAP;
-    alvision.Scalar val = randomScalar(0.0, 255.0);
+    public TestBody(): void {
+        var src = alvision.randomMat(this.size, this.type);
+        var M = createTransfomMatrix(this.size, Math.PI / 3);
+        var flags = this.interpolation.valueOf();
+        if (this.inverse)
+            flags |= alvision.InterpolationFlags.WARP_INVERSE_MAP;
+        var val = alvision.randomScalar(0.0, 255.0);
 
-    alvision.cuda::GpuMat dst = createMat(size, type, useRoi);
-    alvision.cuda::warpAffine(loadMat(src, useRoi), dst, M, size, flags, borderType, val);
+        var dst = alvision.createMat(this.size, this.type, this.useRoi);
+        alvision.cudawarping.warpAffine(alvision.loadMat(src, this.useRoi), dst, M, this.size, flags, this.borderType, val);
 
-    alvision.Mat dst_gold;
-    warpAffineGold(src, M, inverse, size, dst_gold, interpolation, borderType, val);
+        var dst_gold = new alvision.Mat();
+        warpAffineGold(src, M, this.inverse, this.size, dst_gold, this.interpolation, this.borderType, val);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-1 : 1.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == alvision.MatrixType.CV_32F ? 1e-1 : 1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Warping, WarpAffine, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_16UC1), MatType(CV_16UC3), MatType(CV_16UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
-    DIRECT_INVERSE,
-    testing::Values(Interpolation(alvision.INTER_NEAREST), Interpolation(alvision.INTER_LINEAR), Interpolation(alvision.INTER_CUBIC)),
-    testing::Values(BorderType(alvision.BORDER_REFLECT101), BorderType(alvision.BORDER_REPLICATE), BorderType(alvision.BORDER_REFLECT), BorderType(alvision.BORDER_WRAP)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Warping', 'WarpAffine', (test_case, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC3,alvision.MatrixType.CV_8UC4,alvision.MatrixType.CV_16UC1,alvision.MatrixType.CV_16UC3,alvision.MatrixType.CV_16UC4,alvision.MatrixType.CV_32FC1,alvision.MatrixType.CV_32FC3,alvision.MatrixType.CV_32FC4],
+    alvision.DIRECT_INVERSE,
+    [alvision.InterpolationFlags.INTER_NEAREST, alvision.InterpolationFlags.INTER_LINEAR, alvision.InterpolationFlags.INTER_CUBIC],
+    [alvision.BorderTypes.BORDER_REFLECT101, alvision.BorderTypes.BORDER_REPLICATE, alvision.BorderTypes.BORDER_REFLECT, alvision.BorderTypes.BORDER_WRAP],
+    alvision.WHOLE_SUBMAT
+    ]));
 
 ///////////////////////////////////////////////////////////////////
 // Test NPP
 
-PARAM_TEST_CASE(WarpAffineNPP, alvision.cuda::DeviceInfo, MatType, Inverse, Interpolation)
+//PARAM_TEST_CASE(WarpAffineNPP, alvision.cuda.DeviceInfo, MatType, Inverse, Interpolation)
+class WarpAffineNPP extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    int type;
-    bool inverse;
-    int interpolation;
 
-    virtual void SetUp()
-    {
-        devInfo = GET_PARAM(0);
-        type = GET_PARAM(1);
-        inverse = GET_PARAM(2);
-        interpolation = GET_PARAM(3);
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected type: alvision.int;
+    protected inverse: boolean;
+    protected interpolation: alvision.int;
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+    public SetUp(): void {
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.type = this.GET_PARAM<alvision.int>(1);
+        this.inverse = this.GET_PARAM<boolean>(2);
+        this.interpolation = this.GET_PARAM<alvision.int>(3);
+
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
-};
-
-CUDA_TEST_P(WarpAffineNPP, Accuracy)
-{
-    alvision.Mat src = readImageType("stereobp/aloe-L.png", type);
-    ASSERT_FALSE(src.empty());
-
-    alvision.Mat M = createTransfomMatrix(src.size(), Math.PI / 4);
-    int flags = interpolation;
-    if (inverse)
-        flags |= alvision.WARP_INVERSE_MAP;
-
-    alvision.cuda::GpuMat dst;
-    alvision.cuda::warpAffine(loadMat(src), dst, M, src.size(), flags);
-
-    alvision.Mat dst_gold;
-    warpAffineGold(src, M, inverse, src.size(), dst_gold, interpolation, alvision.BORDER_CONSTANT, alvision.alvision.Scalar.all(0));
-
-    EXPECT_MAT_SIMILAR(dst_gold, dst, 2e-2);
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Warping, WarpAffineNPP, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
-    DIRECT_INVERSE,
-    testing::Values(Interpolation(alvision.INTER_NEAREST), Interpolation(alvision.INTER_LINEAR), Interpolation(alvision.INTER_CUBIC))));
+//CUDA_TEST_P(WarpAffineNPP, Accuracy)
+class WarpAffineNPP_Accuracy extends WarpAffineNPP
+{
+    public TestBody(): void {
+        var src = alvision.readImageType("stereobp/aloe-L.png", this.type);
+        alvision.ASSERT_FALSE(src.empty());
 
-#endif // HAVE_CUDA
+        var M = createTransfomMatrix(src.size(), Math.PI / 4);
+        var flags = this.interpolation.valueOf();
+        if (this.inverse)
+            flags |= alvision.InterpolationFlags.WARP_INVERSE_MAP;
+
+        var dst = new alvision.cuda.GpuMat();
+        alvision.cudawarping.warpAffine(alvision.loadMat(src), dst, M, src.size(), flags);
+
+        var dst_gold = new alvision.Mat();
+        warpAffineGold(src, M, this.inverse, src.size(), dst_gold, this.interpolation, alvision.BorderTypes.BORDER_CONSTANT, alvision.Scalar.all(0));
+
+        alvision.EXPECT_MAT_SIMILAR(dst_gold, dst.getMat(), 2e-2);
+    }
+}
+
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Warping', 'WarpAffineNPP', (test_case, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC3,alvision.MatrixType.CV_8UC4,alvision.MatrixType.CV_32FC1,alvision.MatrixType.CV_32FC3,alvision.MatrixType.CV_32FC4],
+    alvision.DIRECT_INVERSE,
+    [alvision.InterpolationFlags.INTER_NEAREST,alvision.InterpolationFlags.INTER_LINEAR,alvision.InterpolationFlags.INTER_CUBIC]
+    ]));
+
+//#endif // HAVE_CUDA

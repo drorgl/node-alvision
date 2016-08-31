@@ -86,8 +86,8 @@ class CV_CannyTest extends alvision.cvtest.ArrayTest
         this.threshold1 = alvision.cvtest.randReal(rng).valueOf() * thresh_range.valueOf();
         this.threshold2 = alvision.cvtest.randReal(rng).valueOf() * thresh_range.valueOf() * 0.3;
 
-        if (alvision.cvtest.randInt(rng).valueOf() % 2 )
-        CV_SWAP(threshold1, threshold2, thresh_range);
+        if (alvision.cvtest.randInt(rng).valueOf() % 2)
+            thresh_range = this.threshold1; this.threshold1 = this.threshold2; this.threshold2 = thresh_range;//  CV_SWAP(threshold1, threshold2, thresh_range);
 
         this.use_true_gradient = alvision.cvtest.randInt(rng).valueOf() % 2 != 0;
         this.test_cpp = (alvision.cvtest.randInt(rng).valueOf() & 256) == 0;
@@ -109,23 +109,23 @@ class CV_CannyTest extends alvision.cvtest.ArrayTest
     }
     run_func(): void {
         if (!this.test_cpp)
-            alvision.cvCanny(test_array[INPUT][0], test_array[OUTPUT][0], threshold1, threshold2,
-                aperture_size + (use_true_gradient ? CV_CANNY_L2_GRADIENT : 0));
+            alvision.Canny(this.test_array[this.INPUT][0], this.test_array[this.OUTPUT][0], this.threshold1, this.threshold2,
+                this.aperture_size.valueOf() + (this.use_true_gradient ? alvision.CV_CANNY_L2_GRADIENT : 0));
         else {
-            alvision.Mat _out = alvision.cvarrToMat(test_array[OUTPUT][0]);
-            alvision.Canny(alvision.cvarrToMat(test_array[INPUT][0]), _out, threshold1, threshold2,
-                aperture_size + (use_true_gradient ? CV_CANNY_L2_GRADIENT : 0));
+            var _out = this.test_array[this.OUTPUT][0];
+            alvision.Canny(this.test_array[this.INPUT][0], _out, this.threshold1, this.threshold2,
+                this.aperture_size.valueOf() + (this.use_true_gradient ? alvision.CV_CANNY_L2_GRADIENT : 0));
         }
     }
 
     prepare_to_validation(int): void {
         var src = this.test_mat[this.INPUT][0], dst = this.test_mat[this.REF_OUTPUT][0];
-        test_Canny(src, dst, threshold1, threshold2, aperture_size, use_true_gradient);
+        test_Canny(src, dst, this.threshold1, this.threshold2, this.aperture_size, this.use_true_gradient);
     }
 
 
     validate_test_results( test_case_idx : alvision.int ) : alvision.int {
-        var code = alvision.cvtest.FailureCode.OK,
+        var code = alvision.cvtest.FailureCode.OK;
         var nz0;
         this.prepare_to_validation(test_case_idx);
 
@@ -139,8 +139,8 @@ class CV_CannyTest extends alvision.cvtest.ArrayTest
             return code;
         }
 
-        nz0 = Math.round(alvision.cvtest.norm(test_mat[REF_OUTPUT][0], CV_L1) / 255);
-        err = (err / 255 / MAX(nz0, 100)) * 100;
+        nz0 = Math.round(alvision.cvtest.norm(this.test_mat[this.REF_OUTPUT][0], alvision.NormTypes.NORM_L1).valueOf() / 255);
+        err = (err.valueOf() / 255 / Math.max(nz0, 100)) * 100;
         if (err > 1) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Too high percentage of non-matching edge pixels = %g%%\n", err);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
@@ -166,19 +166,19 @@ class CV_CannyTest extends alvision.cvtest.ArrayTest
 
 function cannyFollow(x : alvision.int, y : alvision.int, lowThreshold : alvision.float, mag : alvision.Mat, dst : alvision.Mat): void
 {
-    static const int ofs[][2] = {{1,0},{1,-1},{0,-1},{-1,-1},{-1,0},{-1,1},{0,1},{1,1}};
-    int i;
+    const ofs = [[1,0],[1,-1],[0,-1],[-1,-1],[-1,0],[-1,1],[0,1],[1,1]];
+    //int i;
 
-    dst.at<uchar>(y, x) = (uchar)255;
+    dst.at<alvision.uchar>("uchar", y, x).set(255);
 
-    for( i = 0; i < 8; i++ )
+    for(var i = 0; i < 8; i++ )
     {
-        int x1 = x + ofs[i][0];
-        int y1 = y + ofs[i][1];
-        if( (unsigned)x1 < (unsigned)mag.cols &&
-            (unsigned)y1 < (unsigned)mag.rows &&
-            mag.at<float>(y1, x1) > lowThreshold &&
-            !dst.at<uchar>(y1, x1) )
+        var x1 = x.valueOf() + ofs[i][0];
+        var y1 = y.valueOf() + ofs[i][1];
+        if( x1 < mag.cols() &&
+            y1 < mag.rows() &&
+            mag.at<alvision.float>("float",y1, x1).get() > lowThreshold &&
+            !dst.at<alvision.uchar>("uchar",y1, x1).get() )
             cannyFollow( x1, y1, lowThreshold, mag, dst );
     }
 }
@@ -186,54 +186,60 @@ function cannyFollow(x : alvision.int, y : alvision.int, lowThreshold : alvision
 
 
 function test_Canny(  src : alvision.Mat, dst : alvision.Mat,
-        double threshold1, double threshold2,
-        int aperture_size, bool use_true_gradient ) : void
+    threshold1: alvision.double, threshold2: alvision.double ,
+    aperture_size: alvision.int , use_true_gradient  : boolean) : void
 {
-    int m = aperture_size;
-    Point anchor(m/2, m/2);
-    const double tan_pi_8 = tan(Math.PI/8.);
-    const double tan_3pi_8 = tan(Math.PI*3/8);
-    float lowThreshold = (float)MIN(threshold1, threshold2);
-    float highThreshold = (float)MAX(threshold1, threshold2);
+    var m = aperture_size.valueOf();
+    var anchor = new alvision.Point (m/2, m/2);
+    const tan_pi_8 =  Math.tan(Math.PI/8.);
+    const tan_3pi_8 = Math.tan(Math.PI*3/8);
+    var lowThreshold =  Math.min(threshold1.valueOf(), threshold2.valueOf());
+    var highThreshold = Math.max(threshold1.valueOf(), threshold2.valueOf());
 
-    int x, y, width = src.cols, height = src.rows;
+    //int x, y, 
+    var width = src.cols(), height = src.rows();
 
-    Mat dxkernel = alvision.cvtest.calcSobelKernel2D( 1, 0, m, 0 );
-    Mat dykernel = alvision.cvtest.calcSobelKernel2D( 0, 1, m, 0 );
-    Mat dx, dy, mag(height, width, CV_32F);
-    alvision.cvtest.filter2D(src, dx, CV_16S, dxkernel, anchor, 0, BORDER_REPLICATE);
-    alvision.cvtest.filter2D(src, dy, CV_16S, dykernel, anchor, 0, BORDER_REPLICATE);
+    var dxkernel = alvision.cvtest.calcSobelKernel2D( 1, 0, m, 0 );
+    var dykernel = alvision.cvtest.calcSobelKernel2D( 0, 1, m, 0 );
+    //Mat 
+    var dx = new alvision.Mat();
+    var dy = new alvision.Mat();
+    var mag = new alvision.Mat(height, width, alvision.MatrixType.CV_32F);
+    alvision.cvtest.filter2D(src, dx, alvision.MatrixType.CV_16S, dxkernel, anchor, 0, alvision.BorderTypes. BORDER_REPLICATE);
+    alvision.cvtest.filter2D(src, dy, alvision.MatrixType.CV_16S, dykernel, anchor, 0,alvision.BorderTypes. BORDER_REPLICATE);
 
     // calc gradient magnitude
-    for( y = 0; y < height; y++ )
+    for(var y = 0; y < height; y++ )
     {
-        for( x = 0; x < width; x++ )
+        for(var x = 0; x < width; x++ )
         {
-            int dxval = dx.at<short>(y, x), dyval = dy.at<short>(y, x);
-            mag.at<float>(y, x) = use_true_gradient ?
-                (float)sqrt((double)(dxval*dxval + dyval*dyval)) :
-                (float)(fabs((double)dxval) + fabs((double)dyval));
+            (() => {
+                var dxval = dx.at<alvision.short>("ushort", y, x).get().valueOf(), dyval = dy.at<alvision.short>("short", y, x).get().valueOf();
+                mag.at<alvision.float>("float", y, x).set(use_true_gradient ?
+                    Math.sqrt((dxval * dxval + dyval * dyval)) :
+                    (Math.abs(dxval) + Math.abs(dyval)));
+            })();
         }
     }
 
     // calc gradient direction, do nonmaxima suppression
-    for( y = 0; y < height; y++ )
+    for(var y = 0; y < height; y++ )
     {
-        for( x = 0; x < width; x++ )
+        for(var x = 0; x < width; x++ )
         {
 
-            float a = mag.at<float>(y, x), b = 0, c = 0;
-            int y1 = 0, y2 = 0, x1 = 0, x2 = 0;
+            var a = mag.at<alvision.float>("float", y, x).get(), b = 0, c = 0;
+            var y1 = 0, y2 = 0, x1 = 0, x2 = 0;
 
             if( a <= lowThreshold )
                 continue;
 
-            int dxval = dx.at<short>(y, x);
-            int dyval = dy.at<short>(y, x);
+            var dxval = dx.at<alvision.short>("short",y, x).get();
+            var dyval = dy.at<alvision.short>("short",y, x).get();
 
-            double tg = dxval ? (double)dyval/dxval : DBL_MAX*CV_SIGN(dyval);
+            var tg = dxval ? dyval.valueOf()/dxval.valueOf() : alvision.DBL_MAX*alvision.sign(dyval);
 
-            if( fabs(tg) < tan_pi_8 )
+            if( Math.abs(tg) < tan_pi_8 )
             {
                 y1 = y2 = y; x1 = x + 1; x2 = x - 1;
             }
@@ -247,30 +253,30 @@ function test_Canny(  src : alvision.Mat, dst : alvision.Mat,
             }
             else
             {
-                assert( fabs(tg) > tan_3pi_8 );
+                alvision.assert(()=> Math.abs(tg) > tan_3pi_8 );
                 x1 = x2 = x; y1 = y + 1; y2 = y - 1;
             }
 
-            if( (unsigned)y1 < (unsigned)height && (unsigned)x1 < (unsigned)width )
-                b = (float)fabs(mag.at<float>(y1, x1));
+            if(y1 < height && x1 < width )
+                b = Math.abs(mag.at<alvision.float>("float", y1, x1).get().valueOf());
 
-            if( (unsigned)y2 < (unsigned)height && (unsigned)x2 < (unsigned)width )
-                c = (float)fabs(mag.at<float>(y2, x2));
+            if(y2 < height && x2 < width )
+                c = Math.abs(mag.at<alvision.float>("float",y2, x2).get().valueOf());
 
-            if( (a > b || (a == b && ((x1 == x+1 && y1 == y) || (x1 == x && y1 == y+1)))) && a > c )
+            if ((a > b || (a == b && ((x1 == x + 1 && y1 == y) || (x1 == x && y1 == y + 1)))) && a > c)
                 ;
             else
-                mag.at<float>(y, x) = -a;
+                mag.at<alvision.float>("float", y, x).set(-a);
         }
     }
 
-    dst = alvision.Scalar.all(0);
+    dst.setTo(alvision.Scalar.all(0));
 
     // hysteresis threshold
     for( y = 0; y < height; y++ )
     {
         for( x = 0; x < width; x++ )
-            if( mag.at<float>(y, x) > highThreshold && !dst.at<uchar>(y, x) )
+            if( mag.at<alvision.float>("float", y, x).get() > highThreshold && !dst.at<alvision.uchar>("uchar", y, x).get() )
                 cannyFollow( x, y, lowThreshold, mag, dst );
     }
 }

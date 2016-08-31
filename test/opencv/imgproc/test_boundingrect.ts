@@ -51,9 +51,9 @@ import fs = require('fs');
 //#include "test_precomp.hpp"
 //#include <time.h>
 //
-//#define IMGPROC_BOUNDINGRECT_ERROR_DIFF 1
+const IMGPROC_BOUNDINGRECT_ERROR_DIFF = 1;
 //
-//#define MESSAGE_ERROR_DIFF "Bounding rectangle found by boundingRect function is incorrect."
+const MESSAGE_ERROR_DIFF = "Bounding rectangle found by boundingRect function is incorrect.";
 //
 //using namespace cv;
 //using namespace std;
@@ -61,34 +61,59 @@ import fs = require('fs');
 class CV_BoundingRectTest extends alvision.cvtest.ArrayTest {
     run(iii: alvision.int): void {
         var src_veci = new Array<alvision.Point>() ;
-        if (!this.checking_function_work(src_veci, 0)) return;
+        if (!this.checking_function_work("Point",src_veci, 0)) return;
         var src_vecf = new Array<alvision.Point2f>();
-        this.checking_function_work(src_vecf, 1);
+        this.checking_function_work("Point2f",src_vecf, 1);
 
     }
 
-    generate_src_points<T>(src: Array<alvision.Point_<T>>, n: alvision.int): void {
+    generate_src_points<T>(Ttype : string, src: Array<alvision.Point_<T>>, n: alvision.int): void {
         src.length = 0;
-        for (var i = 0; i < n; ++i)
-        src.push(new alvision.Point_<T>(alvision.randu<T>(), alvision.randu<T>()));
+        for (var i = 0; i < n; ++i) {
+            switch (Ttype) {
+                case "Point":
+                    src.push(<any>new alvision.Point(alvision.theRNG().int(), alvision.theRNG().int()));
+                    break;
+                case "Point2f":
+                    src.push(<any>new alvision.Point2f(alvision.theRNG().float(), alvision.theRNG().float()));
+                    break;
+                default:
+                    throw new Error("Not Implemented");
+            }
+        }
+        //src.push(new alvision.Point_<T>(alvision.randu<T>(), alvision.randu<T>()));
     }
-    get_bounding_rect<T>(src: Array<alvision.Point_<T>>): alvision.Rect {
+    get_bounding_rect<T>(Ttype:string, src: Array<alvision.Point_<T>>): alvision.Rect {
         var n = src.length;//(int)src.size();
-        var min_w = std::numeric_limits<T>::max(), max_w = std::numeric_limits<T>::min();
+        var min_w = 0, max_w = 0;
+        switch (Ttype) {
+            case "Point":
+                min_w = alvision.INT_MAX;
+                max_w = alvision.INT_MIN;
+                break;
+            case "Point2f":
+                min_w = alvision.FLT_MAX;
+                max_w = alvision.FLT_MIN;
+                break;
+            default:
+                throw new Error("Not Implemented");
+        }
+
+        //var min_w = std::numeric_limits<T>::max(), max_w = std::numeric_limits<T>::min();
         var min_h = min_w, max_h = max_w;
 
         for (var i = 0; i < n; ++i)
         {
-            min_w = Math.min(src.atGet(i).x, min_w);
-            max_w = Math.max(src.atGet(i).x, max_w);
-            min_h = Math.min(src.atGet(i).y, min_h);
-            max_h = Math.max(src.atGet(i).y, max_h);
+            min_w = Math.min(<any>src[i].x, min_w);
+            max_w = Math.max(<any>src[i].x, max_w);
+            min_h = Math.min(<any>src[i].y, min_h);
+            max_h = Math.max(<any>src[i].y, max_h);
         }
 
         return new alvision.Rect(min_w, min_h, max_w- min_w + 1, max_h- min_h + 1);
 
     }
-    checking_function_work<T>(src: Array<alvision.Point_<T>>, type: alvision.int): boolean {
+    checking_function_work<T>(Ttype : string, src: Array<alvision.Point_<T>>, type: alvision.int): boolean {
         const  MAX_COUNT_OF_POINTS = 1000;
         const  N = 10000;
 
@@ -97,11 +122,11 @@ class CV_BoundingRectTest extends alvision.cvtest.ArrayTest {
 
             var rng = this.ts.get_rng();
 
-            var n = rng.next() % MAX_COUNT_OF_POINTS + 1;
+            var n = rng.next().valueOf() % MAX_COUNT_OF_POINTS + 1;
 
-            this.generate_src_points(src, n);
+            this.generate_src_points(Ttype, src, n);
 
-            var right = this.get_bounding_rect<T>(src);
+            var right = this.get_bounding_rect<T>(Ttype, src);
 
             var rect = [ alvision.boundingRect(src), alvision.boundingRect(new alvision.Mat(src)) ];
 

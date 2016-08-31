@@ -48,170 +48,187 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
+import * as _interpolation from './interpolation';
 
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 ///////////////////////////////////////////////////////////////////
 // Gold implementation
 
-namespace
-{
-    template <typename T, template <typename> class Interpolator>
-    void resizeImpl(const alvision.Mat& src, alvision.Mat& dst, double fx, double fy)
-    {
-        const int cn = src.channels();
+//namespace
+//{
+//template < typename T, template < typename >
 
-        alvision.Size dsize(alvision.saturate_cast<int>(src.cols * fx), alvision.saturate_cast<int>(src.rows * fy));
+
+function resizeImpl<T>(Ttype : string, Interpolator : _interpolation.Interpolator, src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double ): void 
+    {
+        const cn = src.channels();
+
+        var dsize = new alvision.Size (alvision.saturate_cast<alvision.int>(src.cols().valueOf() * fx.valueOf(),"int"), alvision.saturate_cast<alvision.int>(src.rows().valueOf() * fy.valueOf(),"int"));
 
         dst.create(dsize, src.type());
 
-        float ifx = static_cast<float>(1.0 / fx);
-        float ify = static_cast<float>(1.0 / fy);
+        var ifx = (1.0 / fx.valueOf());
+        var ify = (1.0 / fy.valueOf());
 
-        for (int y = 0; y < dsize.height; ++y)
+        for (var y = 0; y < dsize.height; ++y)
         {
-            for (int x = 0; x < dsize.width; ++x)
+            for (var x = 0; x < dsize.width; ++x)
             {
-                for (int c = 0; c < cn; ++c)
-                    dst.at<T>(y, x * cn + c) = Interpolator<T>::getValue(src, y * ify, x * ifx, c, alvision.BORDER_REPLICATE);
+                for (var c = 0; c < cn; ++c)
+                    dst.at<T>(Ttype, y, x * cn.valueOf() + c).set(Interpolator.getValue<T>(Ttype, src, y * ify, x * ifx, c, alvision.BorderTypes.BORDER_REPLICATE));
             }
         }
-    }
-
-    void resizeGold(const alvision.Mat& src, alvision.Mat& dst, double fx, double fy, int interpolation)
-    {
-        typedef void (*func_t)(const alvision.Mat& src, alvision.Mat& dst, double fx, double fy);
-
-        static const func_t nearest_funcs[] =
-        {
-            resizeImpl<unsigned char, NearestInterpolator>,
-            resizeImpl<signed char, NearestInterpolator>,
-            resizeImpl<unsigned short, NearestInterpolator>,
-            resizeImpl<short, NearestInterpolator>,
-            resizeImpl<int, NearestInterpolator>,
-            resizeImpl<float, NearestInterpolator>
-        };
-
-
-        static const func_t linear_funcs[] =
-        {
-            resizeImpl<unsigned char, LinearInterpolator>,
-            resizeImpl<signed char, LinearInterpolator>,
-            resizeImpl<unsigned short, LinearInterpolator>,
-            resizeImpl<short, LinearInterpolator>,
-            resizeImpl<int, LinearInterpolator>,
-            resizeImpl<float, LinearInterpolator>
-        };
-
-        static const func_t cubic_funcs[] =
-        {
-            resizeImpl<unsigned char, CubicInterpolator>,
-            resizeImpl<signed char, CubicInterpolator>,
-            resizeImpl<unsigned short, CubicInterpolator>,
-            resizeImpl<short, CubicInterpolator>,
-            resizeImpl<int, CubicInterpolator>,
-            resizeImpl<float, CubicInterpolator>
-        };
-
-        static const func_t* funcs[] = {nearest_funcs, linear_funcs, cubic_funcs};
-
-        funcs[interpolation][src.depth()](src, dst, fx, fy);
-    }
 }
+
+interface func_t {
+    (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double ): void;
+}
+
+    function resizeGold(src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double, interpolation: alvision.int ) : void
+    {
+        //typedef void (*func_t)(const alvision.Mat& src, alvision.Mat& dst, double fx, double fy);
+
+        const nearest_funcs =
+        [
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.uchar >("uchar",new _interpolation. NearestInterpolator(),src,dst,fx,fy) },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.schar >("schar",new _interpolation. NearestInterpolator(),src,dst,fx,fy) },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.ushort>("ushort",new _interpolation. NearestInterpolator(),src,dst,fx,fy) },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.short >("short",new _interpolation. NearestInterpolator(),src,dst,fx,fy) },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.int   >("int",new _interpolation. NearestInterpolator(),src,dst,fx,fy) },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.float >("float",new _interpolation. NearestInterpolator(),src,dst,fx,fy) }
+        ];
+
+
+         const linear_funcs =
+        [
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.uchar  >("uchar",new _interpolation.LinearInterpolator(),src,dst,fx,fy) },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.schar  >("schar",new _interpolation.LinearInterpolator(),src,dst,fx,fy)   },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.ushort >("ushort",new _interpolation.LinearInterpolator(),src,dst,fx,fy)},
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.short  >("short",new _interpolation.LinearInterpolator(),src,dst,fx,fy)         },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.int    >("int",new _interpolation.LinearInterpolator(),src,dst,fx,fy)           },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.float  >("float",new _interpolation.LinearInterpolator(),src,dst,fx,fy)         },
+        ];
+
+         const cubic_funcs =
+        [
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.uchar >("uchar",new _interpolation.CubicInterpolator(), src,dst,fx,fy) },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.schar >("schar",new _interpolation.CubicInterpolator(), src,dst,fx,fy)   },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.ushort>("ushort",new _interpolation.CubicInterpolator(), src,dst,fx,fy)},
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.short >("short",new _interpolation.CubicInterpolator(), src,dst,fx,fy)         },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.int   >("int",new _interpolation.CubicInterpolator(), src,dst,fx,fy)           },
+            (src: alvision.Mat, dst: alvision.Mat, fx: alvision.double, fy: alvision.double )=>{resizeImpl<alvision.float >("float",new _interpolation.CubicInterpolator(), src,dst,fx,fy)         }
+        ];
+
+        const funcs = [nearest_funcs, linear_funcs, cubic_funcs];
+
+        funcs[interpolation.valueOf()][src.depth().valueOf()](src, dst, fx, fy);
+    }
+
 
 ///////////////////////////////////////////////////////////////////
 // Test
 
-PARAM_TEST_CASE(Resize, alvision.cuda::DeviceInfo, alvision.Size, MatType, double, Interpolation, UseRoi)
+//PARAM_TEST_CASE(Resize, alvision.cuda.DeviceInfo, alvision.Size, MatType, double, Interpolation, UseRoi)
+class Resize extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    double coeff;
-    int interpolation;
-    int type;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected coeff: alvision.double;
+    protected interpolation: alvision.int;
+    protected type: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        coeff = GET_PARAM(3);
-        interpolation = GET_PARAM(4);
-        useRoi = GET_PARAM(5);
+        this.devInfo =          this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =             this.GET_PARAM<alvision.Size>(1);
+        this.type =             this.GET_PARAM<alvision.int>(2);
+        this.coeff =            this.GET_PARAM<alvision.double>(3);
+        this.interpolation =    this.GET_PARAM<alvision.int>(4);
+        this.useRoi =           this.GET_PARAM<boolean>(5);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Resize, Accuracy)
+//CUDA_TEST_P(Resize, Accuracy)
+class Resize_Accuracy extends Resize
 {
-    alvision.Mat src = randomMat(size, type);
+    public TestBody(): void {
+        var src = alvision.randomMat(this.size,this. type);
 
-    alvision.cuda::GpuMat dst = createMat(alvision.Size(alvision.saturate_cast<int>(src.cols * coeff), alvision.saturate_cast<int>(src.rows * coeff)), type, useRoi);
-    alvision.cuda::resize(loadMat(src, useRoi), dst, alvision.Size(), coeff, coeff, interpolation);
+        var dst = alvision.createMat(new alvision.Size(alvision.saturate_cast<alvision.int>(src.cols().valueOf() * this.coeff.valueOf(),"int"), alvision.saturate_cast<alvision.int>(src.rows().valueOf() * this.coeff.valueOf(),"int")), this.type, this.useRoi);
+        alvision.cudawarping.resize(alvision.loadMat(src, this.useRoi), dst,new alvision.Size(), this.coeff, this.coeff, this.interpolation);
 
-    alvision.Mat dst_gold;
-    resizeGold(src, dst_gold, coeff, coeff, interpolation);
+        var dst_gold = new alvision.Mat();
+        resizeGold(src, dst_gold, this.coeff, this.coeff, this.interpolation);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-2 : 1.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == alvision.MatrixType.CV_32F ? 1e-2 : 1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Warping, Resize, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_16UC1), MatType(CV_16UC3), MatType(CV_16UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
-    testing::Values(0.3, 0.5, 1.5, 2.0),
-    testing::Values(Interpolation(alvision.INTER_NEAREST), Interpolation(alvision.INTER_LINEAR), Interpolation(alvision.INTER_CUBIC)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Warping', 'Resize', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC3,alvision.MatrixType.CV_8UC4,alvision.MatrixType.CV_16UC1,alvision.MatrixType.CV_16UC3,alvision.MatrixType.CV_16UC4,alvision.MatrixType.CV_32FC1,alvision.MatrixType.CV_32FC3,alvision.MatrixType.CV_32FC4],
+    [0.3, 0.5, 1.5, 2.0],
+    [alvision.InterpolationFlags.INTER_NEAREST,alvision.InterpolationFlags.INTER_LINEAR,alvision.InterpolationFlags.INTER_CUBIC],
+    alvision.WHOLE_SUBMAT
+]));
 
 /////////////////
 
-PARAM_TEST_CASE(ResizeSameAsHost, alvision.cuda::DeviceInfo, alvision.Size, MatType, double, Interpolation, UseRoi)
+//PARAM_TEST_CASE(ResizeSameAsHost, alvision.cuda.DeviceInfo, alvision.Size, MatType, double, Interpolation, UseRoi)
+class ResizeSameAsHost extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    double coeff;
-    int interpolation;
-    int type;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected coeff: alvision.double;
+    protected interpolation: alvision.int;
+    protected type: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    public SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
-        coeff = GET_PARAM(3);
-        interpolation = GET_PARAM(4);
-        useRoi = GET_PARAM(5);
+        this.devInfo =          this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =             this.GET_PARAM<alvision.Size>(1);
+        this.type =             this.GET_PARAM<alvision.int>(2);
+        this.coeff =            this.GET_PARAM<alvision.double>(3);
+        this.interpolation = this.GET_PARAM<alvision.int>(4);
+        this.useRoi =           this.GET_PARAM<boolean>(5);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
 // downscaling only: used for classifiers
-CUDA_TEST_P(ResizeSameAsHost, Accuracy)
-{
-    alvision.Mat src = randomMat(size, type);
+//CUDA_TEST_P(ResizeSameAsHost, Accuracy)
+class ResizeSameAsHost_Accuracy extends ResizeSameAsHost {
+    public TestBody(): void {
+ var src = alvision.randomMat(this.size, this.type);
 
-    alvision.cuda::GpuMat dst = createMat(alvision.Size(alvision.saturate_cast<int>(src.cols * coeff), alvision.saturate_cast<int>(src.rows * coeff)), type, useRoi);
-    alvision.cuda::resize(loadMat(src, useRoi), dst, alvision.Size(), coeff, coeff, interpolation);
+        var dst = alvision.createMat(new alvision.Size(alvision.saturate_cast<alvision.int>(src.cols().valueOf() *this. coeff.valueOf(),"int"), alvision.saturate_cast<alvision.int>(src.rows().valueOf() * this.coeff.valueOf(),"int")), this.type, this.useRoi);
+        alvision.cudawarping.resize(alvision.loadMat(src,this. useRoi), dst, new alvision.Size(),this. coeff,this. coeff,this. interpolation);
 
-    alvision.Mat dst_gold;
-    alvision.resize(src, dst_gold, alvision.Size(), coeff, coeff, interpolation);
+        var dst_gold = new alvision.Mat();
+        alvision.resize(src, dst_gold, new alvision.Size(), this.coeff, this.coeff, this.interpolation);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-2 : 1.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == alvision.MatrixType.CV_32F ? 1e-2 : 1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Warping, ResizeSameAsHost, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_8UC4), MatType(CV_16UC1), MatType(CV_16UC3), MatType(CV_16UC4), MatType(CV_32FC1), MatType(CV_32FC3), MatType(CV_32FC4)),
-    testing::Values(0.3, 0.5),
-    testing::Values(Interpolation(alvision.INTER_NEAREST), Interpolation(alvision.INTER_AREA)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Warping', 'ResizeSameAsHost', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC3,alvision.MatrixType.CV_8UC4,alvision.MatrixType.CV_16UC1,alvision.MatrixType.CV_16UC3,alvision.MatrixType.CV_16UC4,alvision.MatrixType.CV_32FC1,alvision.MatrixType.CV_32FC3,alvision.MatrixType.CV_32FC4],
+    [0.3, 0.5],
+    [alvision.InterpolationFlags.INTER_NEAREST,alvision.InterpolationFlags.INTER_AREA],
+    alvision.WHOLE_SUBMAT
+    ]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

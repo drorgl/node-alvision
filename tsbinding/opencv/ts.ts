@@ -680,7 +680,7 @@ export namespace cvtest {
             if (a.total() == 1) {
                 this.ts.printf(TSConstants.LOG, "%s\n", msg);
             }
-            else if (a.dims == 2 && (a.rows == 1 || a.cols == 1)) {
+            else if (a.dims == 2 && (a.rows() == 1 || a.cols() == 1)) {
                 this.ts.printf(TSConstants.LOG, "%s at element %d\n", msg, idx[0].valueOf() + idx[1].valueOf());
             }
             else {
@@ -865,10 +865,10 @@ export namespace cvtest {
         if (!loc)
             retval += m;
         else {
-            var depth = m.depth(), cn = m.channels(), width = m.cols.valueOf() * cn.valueOf();
-            for (var i = 0; i < m.rows; i++) {
+            var depth = m.depth(), cn = m.channels(), width = m.cols().valueOf() * cn.valueOf();
+            for (var i = 0; i < m.rows(); i++) {
                 retval += writeElems(GetMatPtr(m, i), width, depth);//, i == (*loc)[0] ? (*loc)[1] : -1);
-                retval += (i < m.rows.valueOf() - 1 ? ";\n" : "");
+                retval += (i < m.rows().valueOf() - 1 ? ";\n" : "");
             }
         }
         return retval;

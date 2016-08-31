@@ -97,12 +97,13 @@ class CV_AgastTest extends alvision.cvtest.BaseTest
 
           
 
-        var kps1 = new alvision.Mat(1, (int)(keypoints1.length * sizeof(KeyPoint)), CV_8U, &keypoints1[0]);
-        var kps2 = new alvision.Mat(1, (int)(keypoints2.length * sizeof(KeyPoint)), CV_8U, &keypoints2[0]);
+            //TODO: how to define a mat of keypoints?...
+        var kps1 = new alvision.Mat(1, (keypoints1.length * alvision.KeyPoint.sizeof().valueOf()), alvision.MatrixType.CV_8U, keypoints1);
+        var kps2 = new alvision.Mat(1, (keypoints2.length * alvision.KeyPoint.sizeof().valueOf()), alvision.MatrixType.CV_8U, keypoints2);
 
         var fs = new alvision.FileStorage(xml, alvision.FileStorageMode.READ);
 
-        //FileStorage fs(xml, FileStorage::READ);
+        //FileStorage fs(xml, alvision.FileStorageMode.READ);
         if (!fs.isOpened()) {
             fs.open(xml, alvision.FileStorageMode.WRITE);
             if (!fs.isOpened()) {
@@ -110,8 +111,8 @@ class CV_AgastTest extends alvision.cvtest.BaseTest
                 return;
             }
 
-            fs << "exp_kps1" << kps1;
-            fs << "exp_kps2" << kps2;
+            fs.write("exp_kps1", kps1);
+            fs.write("exp_kps2", kps2);
             fs.release();
             fs.open(xml, alvision.FileStorageMode.READ);
             if (!fs.isOpened()) {
@@ -124,8 +125,8 @@ class CV_AgastTest extends alvision.cvtest.BaseTest
         //Mat exp_kps1, exp_kps2;
 
 
-        read(fs["exp_kps1"], exp_kps1, Mat());
-        read(fs["exp_kps2"], exp_kps2, Mat());
+        exp_kps1 = fs.nodes["exp_kps1"].readMat(new alvision.Mat());
+        exp_kps2 = fs.nodes["exp_kps2"].readMat(new alvision.Mat());
         fs.release();
 
         if (exp_kps1.size != kps1.size || 0 != alvision.cvtest.norm(exp_kps1, kps1,alvision.NormTypes. NORM_L2) ||

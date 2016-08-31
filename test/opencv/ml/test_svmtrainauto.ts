@@ -66,9 +66,9 @@ class CV_SVMTrainAutoTest extends alvision.cvtest.BaseTest {
         for (var i = 0; i < datasize; ++i)
         {
             var response = rng.uniform(0, 2);  // Random from {0, 1}.
-            samples.at<float>(i, 0) = rng.uniform(0., 0.5).valueOf() + response.valueOf() * 0.5;
-            samples.at<float>(i, 1) = rng.uniform(0., 0.5).valueOf() + response.valueOf() * 0.5;
-            responses.at<int>(i, 0) = response;
+            samples.at<alvision.float>("float", i, 0).set(rng.uniform(0., 0.5).valueOf() + response.valueOf() * 0.5);
+            samples.at<alvision.float>("float",i, 1) .set( rng.uniform(0., 0.5).valueOf() + response.valueOf() * 0.5);
+            responses.at<alvision.int>("int", i, 0).set(response);
         }
 
         var data = alvision.ml.TrainData.create(samples,alvision.ml.SampleTypes.ROW_SAMPLE, responses);

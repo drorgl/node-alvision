@@ -56,225 +56,266 @@ import fs = require('fs');
 
 //#define DUMP
 
-struct HOG : testing::TestWithParam<alvision.cuda::DeviceInfo>
+const DUMP = true;
+
+class HOG extends alvision.cvtest.CUDA_TEST //: testing::TestWithParam<alvision.cuda.DeviceInfo>
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Ptr<alvision.cuda::HOG> hog;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected hog: alvision.cudaobjdetect.HOG;
 
-#ifdef DUMP
-    std::ofstream f;
-#else
-    std::ifstream f;
-#endif
+//if (DUMP)
+//    std::ofstream fo;
+    protected fo: number;
+//else
+//    std::ifstream f;
+    protected f: number;
 
-    int wins_per_img_x;
-    int wins_per_img_y;
-    int blocks_per_win_x;
-    int blocks_per_win_y;
-    int block_hist_size;
 
-    virtual void SetUp()
+    protected wins_per_img_x: alvision.int;
+    protected wins_per_img_y: alvision.int;
+    protected blocks_per_win_x: alvision.int;
+    protected blocks_per_win_y: alvision.int;
+    protected block_hist_size: alvision.int;
+
+    SetUp() : void
     {
-        devInfo = GetParam();
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        hog = alvision.cuda::HOG::create();
+        this.hog = alvision.cudaobjdetect.HOG.create();
     }
 
-#ifdef DUMP
-    void dump(const Array<alvision.Point>& locations)
-    {
-        int nlocations = locations.size();
-        f.write((char*)&nlocations, sizeof(nlocations));
+//#ifdef DUMP
+    dump(locations: Array<alvision.Point>): void {
+        var nlocations = locations.length;
 
-        for (int i = 0; i < locations.size(); ++i)
-            f.write((char*)&locations[i], sizeof(locations[i]));
+        let buf = new Buffer(4);
+        buf.writeInt32BE(nlocations,0);
+        
+        for (var i = 0; i < locations.length; ++i) {
+            buf = Buffer.concat([buf, locations[i].toBuffer()]);
+        }
+
+        fs.writeSync(this.f, buf, 0, buf.length, 0);
     }
-#else
-    void compare(const Array<alvision.Point>& locations)
+//#else
+    compare(locations: Array<alvision.Point> ) : void
     {
         // skip block_hists check
-        int rows, cols;
-        f.read((char*)&rows, sizeof(rows));
-        f.read((char*)&cols, sizeof(cols));
-        for (int i = 0; i < rows; ++i)
+        //int rows, cols;
+        let fsloc = 0;
+
+        let buf = new Buffer(8);
+        fsloc += fs.readSync(this.f, buf, 0, buf.length, fsloc);
+        
+        
+
+        let rows = buf.readInt32BE(0);
+        let cols = buf.readInt32BE(4);
+
+        //f.read((char*)&rows, sizeof(rows));
+        //f.read((char*)&cols, sizeof(cols));
+        for (let i = 0; i < rows; ++i)
         {
-            for (int j = 0; j < cols; ++j)
+            for (let j = 0; j < cols; ++j)
             {
-                float val;
-                f.read((char*)&val, sizeof(val));
+                buf = new Buffer(4);
+                fsloc += fs.readSync(this.f, buf, 0, buf.length, fsloc);
+                let val = buf.readFloatBE(0);
             }
         }
 
-        int nlocations;
-        f.read((char*)&nlocations, sizeof(nlocations));
-        ASSERT_EQ(nlocations, static_cast<int>(locations.size()));
+        buf = new Buffer(4);
+        fsloc += fs.readSync(this.f, buf, 0, buf.length, fsloc);
 
-        for (int i = 0; i < nlocations; ++i)
+        let nlocations = buf.readInt32BE(0);
+
+        alvision.ASSERT_EQ(()=>nlocations, (locations.length));
+
+        buf = new Buffer(4);
+        fsloc += fs.readSync(this.f, buf, 0, buf.length, fsloc);
+
+        var pointSize = (new alvision.Point()).toBuffer().length;
+
+        for (var i = 0; i < nlocations; ++i)
         {
-            alvision.Point location;
-            f.read((char*)&location, sizeof(location));
-            ASSERT_EQ(location, locations[i]);
+            buf = new Buffer(pointSize);
+            fsloc += fs.readSync(this.f, buf, 0, buf.length, fsloc);
+            let location = new alvision.Point(buf);
+            alvision.ASSERT_EQ(location, locations[i]);
         }
     }
-#endif
+//#endif
 
-    void testDetect(const alvision.Mat& img)
+    testDetect(img: alvision.Mat ) : void
     {
-        hog.setGammaCorrection(false);
-        hog.setSVMDetector(hog.getDefaultPeopleDetector());
+        this.hog.setGammaCorrection(false);
+        this.hog.setSVMDetector(this.hog.getDefaultPeopleDetector());
 
-        Array<alvision.Point> locations;
+        var locations = new Array<alvision.Point>();
 
         // Test detect
-        hog.detect(loadMat(img), locations);
+        this.hog.detect(alvision.loadMat(img), locations);
 
-#ifdef DUMP
-        dump(locations);
-#else
-        compare(locations);
-#endif
+        
+if (DUMP)
+        this.dump(locations);
+else
+        this.compare(locations);
+
 
         // Test detect on smaller image
-        alvision.Mat img2;
-        alvision.resize(img, img2, alvision.Size(img.cols / 2, img.rows / 2));
-        hog.detect(loadMat(img2), locations);
+        var img2 = new alvision.Mat();
+        alvision.resize(img, img2, new alvision.Size(img.cols().valueOf() / 2, img.rows().valueOf() / 2));
+        this.hog.detect(alvision.loadMat(img2), locations);
 
-#ifdef DUMP
-        dump(locations);
-#else
-        compare(locations);
-#endif
+if (DUMP)
+        this.dump(locations);
+else
+        this.compare(locations);
+//#endif
 
         // Test detect on greater image
-        alvision.resize(img, img2, alvision.Size(img.cols * 2, img.rows * 2));
-        hog.detect(loadMat(img2), locations);
+        alvision.resize(img, img2, new alvision.Size(img.cols().valueOf() * 2, img.rows().valueOf() * 2));
+        this.hog.detect(alvision.loadMat(img2), locations);
 
-#ifdef DUMP
-        dump(locations);
-#else
-        compare(locations);
-#endif
+if (DUMP)
+        this.dump(locations);
+//#else
+        this.compare(locations);
+//#endif
     }
 };
 
 // desabled while resize does not fixed
-CUDA_TEST_P(HOG, DISABLED_Detect)
+//CUDA_TEST_P(HOG, DISABLED_Detect)
+class HOG_DISABLED_Detect extends HOG
 {
-    alvision.Mat img_rgb = readImage("hog/road.png");
-    ASSERT_FALSE(img_rgb.empty());
+    public TestBody(): void {
+        var img_rgb = alvision.readImage("hog/road.png");
+        alvision.ASSERT_FALSE(img_rgb.empty());
 
-    f.open((std::alvision.cvtest.TS.ptr().get_data_path() + "hog/expected_output.bin"), std::ios_base::binary);
-    ASSERT_TRUE(f.is_open());
 
-    // Test on color image
-    alvision.Mat img;
-    alvision.cvtColor(img_rgb, img, alvision.COLOR_BGR2BGRA);
-    testDetect(img);
+        this.f = fs.openSync(alvision.cvtest.TS.ptr().get_data_path() + "hog/expected_output.bin", "r");
+        //alvision.ASSERT_TRUE(fs.statSync( f.is_open());
 
-    // Test on gray image
-    alvision.cvtColor(img_rgb, img, alvision.COLOR_BGR2GRAY);
-    testDetect(img);
-}
+        // Test on color image
+        var img = new alvision.Mat();
+        alvision.cvtColor(img_rgb, img, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
+        this.testDetect(img);
 
-CUDA_TEST_P(HOG, GetDescriptors)
-{
-    // Load image (e.g. train data, composed from windows)
-    alvision.Mat img_rgb = readImage("hog/train_data.png");
-    ASSERT_FALSE(img_rgb.empty());
-
-    // Convert to C4
-    alvision.Mat img;
-    alvision.cvtColor(img_rgb, img, alvision.COLOR_BGR2BGRA);
-
-    alvision.cuda::GpuMat d_img(img);
-
-    // Convert train images into feature vectors (train table)
-    alvision.cuda::GpuMat descriptors, descriptors_by_cols;
-
-    hog.setWinStride(Size(64, 128));
-
-    hog.setDescriptorFormat(alvision.cuda::HOG::DESCR_FORMAT_ROW_BY_ROW);
-    hog.compute(d_img, descriptors);
-
-    hog.setDescriptorFormat(alvision.cuda::HOG::DESCR_FORMAT_COL_BY_COL);
-    hog.compute(d_img, descriptors_by_cols);
-
-    // Check size of the result train table
-    wins_per_img_x = 3;
-    wins_per_img_y = 2;
-    blocks_per_win_x = 7;
-    blocks_per_win_y = 15;
-    block_hist_size = 36;
-    alvision.Size descr_size_expected = alvision.Size(blocks_per_win_x * blocks_per_win_y * block_hist_size,
-                                            wins_per_img_x * wins_per_img_y);
-    ASSERT_EQ(descr_size_expected, descriptors.size());
-
-    // Check both formats of output descriptors are handled correctly
-    alvision.Mat dr(descriptors);
-    alvision.Mat dc(descriptors_by_cols);
-    for (int i = 0; i < wins_per_img_x * wins_per_img_y; ++i)
-    {
-        const float* l = dr.rowRange(i, i + 1).ptr<float>();
-        const float* r = dc.rowRange(i, i + 1).ptr<float>();
-        for (int y = 0; y < blocks_per_win_y; ++y)
-            for (int x = 0; x < blocks_per_win_x; ++x)
-                for (int k = 0; k < block_hist_size; ++k)
-                    ASSERT_EQ(l[(y * blocks_per_win_x + x) * block_hist_size + k],
-                              r[(x * blocks_per_win_y + y) * block_hist_size + k]);
+        // Test on gray image
+        alvision.cvtColor(img_rgb, img, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
+        this.testDetect(img);
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ObjDetect, HOG, ALL_DEVICES);
+//CUDA_TEST_P(HOG, GetDescriptors)
+class HOG_GetDescriptors extends HOG
+{
+    public TestBody(): void {
+        // Load image (e.g. train data, composed from windows)
+        var img_rgb = alvision.readImage("hog/train_data.png");
+        alvision.ASSERT_FALSE(img_rgb.empty());
+
+        // Convert to C4
+        var img = new alvision.Mat();
+        alvision.cvtColor(img_rgb, img, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
+
+        var d_img = new alvision.cuda.GpuMat (img);
+
+        // Convert train images into feature vectors (train table)
+        var descriptors = new alvision.cuda.GpuMat(), descriptors_by_cols = new alvision.cuda.GpuMat ();
+
+        this.hog.setWinStride(new alvision.Size(64, 128));
+
+        this.hog.setDescriptorFormat(alvision.cudaobjdetect.DescriptorStorage.DESCR_FORMAT_ROW_BY_ROW);
+        this.hog.compute(d_img, descriptors);
+
+        this.hog.setDescriptorFormat(alvision.cudaobjdetect.DescriptorStorage.DESCR_FORMAT_COL_BY_COL);
+        this.hog.compute(d_img, descriptors_by_cols);
+
+        // Check size of the result train table
+        this.wins_per_img_x = 3;
+        this.wins_per_img_y = 2;
+        this.blocks_per_win_x = 7;
+        this.blocks_per_win_y = 15;
+        this.block_hist_size = 36;
+        var descr_size_expected = new alvision.Size(this.blocks_per_win_x.valueOf() * this.blocks_per_win_y.valueOf() * this.block_hist_size.valueOf(),
+            this.wins_per_img_x.valueOf() * this.wins_per_img_y.valueOf());
+        alvision.ASSERT_EQ(descr_size_expected, descriptors.size());
+
+        // Check both formats of output descriptors are handled correctly
+        var dr = new alvision.Mat(descriptors);
+        var dc = new alvision.Mat(descriptors_by_cols);
+        for (var i = 0; i < this.wins_per_img_x.valueOf() * this.wins_per_img_y.valueOf(); ++i)
+        {
+            const  l = dr.rowRange(i, i + 1).ptr<alvision.float>("float");
+            const  r = dc.rowRange(i, i + 1).ptr<alvision.float>("float");
+            for (var y = 0; y < this.blocks_per_win_y; ++y)
+            for (var x = 0; x < this.blocks_per_win_x; ++x)
+            for (var k = 0; k < this.block_hist_size ; ++k)
+            alvision.ASSERT_EQ(l[(y * this.blocks_per_win_x.valueOf() + x) * this.block_hist_size.valueOf() + k],
+                r[(x * this.blocks_per_win_y.valueOf() + y) * this.block_hist_size.valueOf() + k]);
+        }
+    }
+}
+
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ObjDetect', 'HOG', (case_name, test_name) => { return null; },new alvision.cvtest.Combine([ alvision.ALL_DEVICES]));
 
 //============== caltech hog tests =====================//
 
-struct CalTech extends ::testing::TestWithParam<std::tr1::tuple<alvision.cuda::DeviceInfo, std::string> >
+class CalTech extends alvision.cvtest.CUDA_TEST// extends ::testing::TestWithParam<std::tr1::tuple<alvision.cuda.DeviceInfo, std::string> >
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Mat img;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected img: alvision.Mat;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        alvision.cuda::setDevice(devInfo.deviceID());
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        img = readImage(GET_PARAM(1), alvision.ImreadModes.IMREAD_GRAYSCALE);
-        ASSERT_FALSE(img.empty());
+        this.img = alvision.readImage(this.GET_PARAM<string>(1), alvision.ImreadModes.IMREAD_GRAYSCALE);
+        alvision.ASSERT_FALSE(this.img.empty());
     }
 };
 
-CUDA_TEST_P(CalTech, HOG)
+//CUDA_TEST_P(CalTech, HOG)
+class CalTech_HOG extends CalTech
 {
-    alvision.cuda::GpuMat d_img(img);
-    alvision.Mat markedImage(img.clone());
+    public TestBody(): void {
+        var d_img = new alvision.cuda.GpuMat (this.img);
+        var markedImage = new alvision.Mat (this.img.clone());
 
-    alvision.Ptr<alvision.cuda::HOG> d_hog = alvision.cuda::HOG::create();
-    d_hog.setSVMDetector(d_hog.getDefaultPeopleDetector());
-    d_hog.setNumLevels(d_hog.getNumLevels() + 32);
+        var d_hog = alvision.cudaobjdetect.HOG.create();
+        d_hog.setSVMDetector(d_hog.getDefaultPeopleDetector());
+        d_hog.setNumLevels(d_hog.getNumLevels().valueOf() + 32);
 
-    Array<alvision.Rect> found_locations;
-    d_hog.detectMultiScale(d_img, found_locations);
+        var found_locations = new Array<alvision.Rect>();
+        d_hog.detectMultiScale(d_img, found_locations);
 
-#if defined (LOG_CASCADE_STATISTIC)
-    for (int i = 0; i < (int)found_locations.size(); i++)
-    {
-        alvision.Rect r = found_locations[i];
+       // #if defined (LOG_CASCADE_STATISTIC)
+    for (var i = 0; i < found_locations.length; i++)
+        {
+            var r = found_locations[i];
 
-        std::cout << r.x << " " << r.y  << " " << r.width << " " << r.height << std::endl;
-        alvision.rectangle(markedImage, r , CV_RGB(255, 0, 0));
+            console.log(r.x, " ", r.y, " ", r.width, " ", r.height);
+            alvision.rectangle(markedImage, r, new alvision.Scalar(255, 0, 0));
+        }
+
+        alvision.imshow("Res", markedImage);
+        alvision.waitKey();
+     //   #endif
     }
-
-    alvision.imshow("Res", markedImage);
-    alvision.waitKey();
-#endif
 }
 
-INSTANTIATE_TEST_CASE_P(detect, CalTech, testing::Combine(ALL_DEVICES,
-    ::testing::Values<std::string>("caltech/image_00000009_0.png", "caltech/image_00000032_0.png",
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('detect', 'CalTech', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    ["caltech/image_00000009_0.png", "caltech/image_00000032_0.png",
         "caltech/image_00000165_0.png", "caltech/image_00000261_0.png", "caltech/image_00000469_0.png",
-        "caltech/image_00000527_0.png", "caltech/image_00000574_0.png")));
+        "caltech/image_00000527_0.png", "caltech/image_00000574_0.png"]
+]));
 
 
 
@@ -282,92 +323,105 @@ INSTANTIATE_TEST_CASE_P(detect, CalTech, testing::Combine(ALL_DEVICES,
 //////////////////////////////////////////////////////////////////////////////////////////
 /// LBP classifier
 
-PARAM_TEST_CASE(LBP_Read_classifier, alvision.cuda::DeviceInfo, int)
+//PARAM_TEST_CASE(LBP_Read_classifier, alvision.cuda.DeviceInfo, int)
+class LBP_Read_classifier extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
+    protected devInfo: alvision.cuda.DeviceInfo;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        alvision.cuda::setDevice(devInfo.deviceID());
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(LBP_Read_classifier, Accuracy)
+//CUDA_TEST_P(LBP_Read_classifier, Accuracy)
+class LBP_Read_classifier_Accuracy extends LBP_Read_classifier
 {
-    std::string classifierXmlPath = std::alvision.cvtest.TS.ptr().get_data_path() + "lbpcascade/lbpcascade_frontalface.xml";
+    public TestBody(): void {
+        var classifierXmlPath = alvision.cvtest.TS.ptr().get_data_path() + "lbpcascade/lbpcascade_frontalface.xml";
 
-    alvision.Ptr<alvision.cuda::CascadeClassifier> d_cascade;
+        var  d_cascade;
 
-    ASSERT_NO_THROW(
-        d_cascade = alvision.cuda::CascadeClassifier::create(classifierXmlPath);
-    );
+        alvision.ASSERT_NO_THROW(() => {
+            d_cascade = alvision.cudaobjdetect.CascadeClassifier.create(classifierXmlPath);
+        });
 
-    ASSERT_FALSE(d_cascade.empty());
+        alvision.ASSERT_FALSE(d_cascade.empty());
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ObjDetect, LBP_Read_classifier,
-                        testing::Combine(ALL_DEVICES, testing::Values<int>(0)));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ObjDetect', 'LBP_Read_classifier', (case_name, test_name) => { return null; },
+    new alvision.cvtest.Combine([
+        alvision.ALL_DEVICES,
+        [0]
+    ]));
 
 
-PARAM_TEST_CASE(LBP_classify, alvision.cuda::DeviceInfo, int)
+//PARAM_TEST_CASE(LBP_classify, alvision.cuda.DeviceInfo, int)
+class LBP_classify extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
+    protected devInfo: alvision.cuda.DeviceInfo;
 
-    virtual void SetUp()
+    SetUp(): void
     {
-        devInfo = GET_PARAM(0);
-        alvision.cuda::setDevice(devInfo.deviceID());
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(LBP_classify, Accuracy)
+//CUDA_TEST_P(LBP_classify, Accuracy)
+class LBP_classify_Accuracy extends LBP_classify
 {
-    std::string classifierXmlPath = std::alvision.cvtest.TS.ptr().get_data_path() + "lbpcascade/lbpcascade_frontalface.xml";
-    std::string imagePath = std::alvision.cvtest.TS.ptr().get_data_path() + "lbpcascade/er.png";
+    public TestBody(): void {
+        var classifierXmlPath = alvision.cvtest.TS.ptr().get_data_path() + "lbpcascade/lbpcascade_frontalface.xml";
+        var imagePath = alvision.cvtest.TS.ptr().get_data_path() + "lbpcascade/er.png";
 
-    alvision.CascadeClassifier cpuClassifier(classifierXmlPath);
-    ASSERT_FALSE(cpuClassifier.empty());
+        var cpuClassifier = new alvision.CascadeClassifier (classifierXmlPath);
+        alvision.ASSERT_FALSE(cpuClassifier.empty());
 
-    alvision.Mat image = alvision.imread(imagePath);
-    image = image.colRange(0, image.cols/2);
-    alvision.Mat grey;
-    cvtColor(image, grey, alvision.COLOR_BGR2GRAY);
-    ASSERT_FALSE(image.empty());
+        var image = alvision.imread(imagePath);
+        image = image.colRange(0, image.cols().valueOf() / 2);
+        var grey = new alvision.Mat();
+        alvision.cvtColor(image, grey, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
+        alvision.ASSERT_FALSE(image.empty());
 
-    Array<alvision.Rect> rects;
-    cpuClassifier.detectMultiScale(grey, rects);
-    alvision.Mat markedImage = image.clone();
+        var rects = new Array<alvision.Rect>();
+        cpuClassifier.detectMultiScale(grey, (r) => { rects = r; });
+        var markedImage = image.clone();
 
-    Array<alvision.Rect>::iterator it = rects.begin();
-    for (; it != rects.end(); ++it)
-        alvision.rectangle(markedImage, *it, alvision.Scalar(255, 0, 0));
+        for (var i = 0; i < rects.length;i++)
+            alvision.rectangle(markedImage,rects[i],new alvision.Scalar(255, 0, 0));
 
-    alvision.Ptr<alvision.cuda::CascadeClassifier> gpuClassifier =
-            alvision.cuda::CascadeClassifier::create(classifierXmlPath);
+        var gpuClassifier =
+        alvision.cudaobjdetect.CascadeClassifier.create(classifierXmlPath);
 
-    alvision.cuda::GpuMat tested(grey);
-    alvision.cuda::GpuMat gpu_rects_buf;
-    gpuClassifier.detectMultiScale(tested, gpu_rects_buf);
+        var tested = new alvision.cuda.GpuMat (grey);
+        var gpu_rects_buf = new alvision.cuda.GpuMat();
+        gpuClassifier.detectMultiScale(tested, gpu_rects_buf);
 
-    Array<alvision.Rect> gpu_rects;
-    gpuClassifier.convert(gpu_rects_buf, gpu_rects);
+        var gpu_rects = new Array<alvision.Rect>();
+        gpuClassifier.convert(gpu_rects_buf, gpu_rects);
 
-#if defined (LOG_CASCADE_STATISTIC)
-    for (size_t i = 0; i < gpu_rects.size(); i++)
-    {
-        alvision.Rect r = gpu_rects[i];
+       // #if defined (LOG_CASCADE_STATISTIC)
+    for (var i = 0; i < gpu_rects.length; i++)
+        {
+            var r = gpu_rects[i];
 
-        std::cout << r.x << " " << r.y  << " " << r.width << " " << r.height << std::endl;
-        alvision.rectangle(markedImage, r , CV_RGB(255, 0, 0));
+            console.log(r.x, " ", r.y, " ", r.width, " ", r.height);
+            alvision.rectangle(markedImage, r, new alvision.Scalar(255, 0, 0));
+        }
+
+        alvision.imshow("Res", markedImage);
+        alvision.waitKey();
+     //   #endif
     }
-
-    alvision.imshow("Res", markedImage);
-    alvision.waitKey();
-#endif
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ObjDetect, LBP_classify,
-                        testing::Combine(ALL_DEVICES, testing::Values<int>(0)));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ObjDetect', 'LBP_classify', (case_name, test_name) => { return null; },
+    new alvision.cvtest.Combine([
+        alvision.ALL_DEVICES,
+        [0]
+        ]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

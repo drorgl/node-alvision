@@ -43,7 +43,7 @@ const CV_DXT_MUL_CONJ = 8;
     function DFT_1D(_src: alvision.Mat, _dst: alvision.Mat, flags: alvision.int, _wave: alvision.Mat = new alvision.Mat()): void {
         _dst.create(_src.size(), _src.type());
         //int i, j, k,
-            var n = _dst.cols.valueOf() + _dst.rows.valueOf() - 1;
+            var n = _dst.cols().valueOf() + _dst.rows().valueOf() - 1;
         var wave = _wave;
         var scale = (flags.valueOf() & alvision.DftFlags.DFT_SCALE) ? 1. / n : 1.;
         var esz = _src.elemSize();
@@ -51,7 +51,7 @@ const CV_DXT_MUL_CONJ = 8;
         //const uchar* src0 = _src.ptr();
         //uchar * dst0 = _dst.ptr();
 
-        alvision.CV_Assert(()=>_src.cols.valueOf() + _src.rows.valueOf() - 1 == n);
+        alvision.CV_Assert(()=>_src.cols().valueOf() + _src.rows().valueOf() - 1 == n);
 
         if (wave.empty())
             wave = initDFTWave(n, (flags.valueOf() & alvision.DftFlags.DFT_INVERSE) != 0);
@@ -115,22 +115,22 @@ const CV_DXT_MUL_CONJ = 8;
         const cn = 2;
         //int i;
         dst.create(src.size(), src.type());
-        var tmp = new alvision.Mat(src.cols, src.rows, src.type());
-        var wave = initDFTWave(dst.cols, (flags.valueOf() & alvision.DftFlags. DFT_INVERSE) != 0);
+        var tmp = new alvision.Mat(src.cols(), src.rows(), src.type());
+        var wave = initDFTWave(dst.cols(), (flags.valueOf() & alvision.DftFlags. DFT_INVERSE) != 0);
 
         // 1. row-wise transform
-        for (var i = 0; i < dst.rows; i++) {
-            var srci = src.row(i).reshape(cn, src.cols), dsti = tmp.col(i);
+        for (var i = 0; i < dst.rows(); i++) {
+            var srci = src.row(i).reshape(cn, src.cols()), dsti = tmp.col(i);
             DFT_1D(srci, dsti, flags, wave);
         }
 
         if ((flags.valueOf() & alvision.DftFlags.DFT_ROWS) == 0) {
-            if (dst.cols != dst.rows)
-                wave = initDFTWave(dst.rows, (flags.valueOf() & alvision.DftFlags. DFT_INVERSE) != 0);
+            if (dst.cols() != dst.rows())
+                wave = initDFTWave(dst.rows(), (flags.valueOf() & alvision.DftFlags. DFT_INVERSE) != 0);
 
             // 2. column-wise transform
-            for (i = 0; i < dst.cols; i++) {
-                var srci = tmp.row(i).reshape(cn, tmp.cols), dsti = dst.col(i);
+            for (i = 0; i < dst.cols(); i++) {
+                var srci = tmp.row(i).reshape(cn, tmp.cols()), dsti = dst.col(i);
                 DFT_1D(srci, dsti, flags, wave);
             }
         }
@@ -162,12 +162,12 @@ const CV_DXT_MUL_CONJ = 8;
     function DCT_1D(_src: alvision.Mat, _dst: alvision.Mat, flags: alvision.int, _wave: alvision.Mat = new alvision.Mat()): void {
         _dst.create(_src.size(), _src.type());
         //int i, j,
-            var n = _dst.cols.valueOf() + _dst.rows.valueOf() - 1;
+            var n = _dst.cols().valueOf() + _dst.rows().valueOf() - 1;
         var wave = _wave;
         var srcstep = 1, dststep = 1;
         //double * w;
 
-        alvision.CV_Assert(()=>_src.cols.valueOf() + _src.rows.valueOf() - 1 == n);
+        alvision.CV_Assert(()=>_src.cols().valueOf() + _src.rows().valueOf() - 1 == n);
 
         if (wave.empty())
             wave = initDCTWave(n, (flags.valueOf() & alvision.DftFlags. DFT_INVERSE) != 0);
@@ -227,23 +227,23 @@ const CV_DXT_MUL_CONJ = 8;
         const  cn = 1;
         //int i;
         dst.create(src.size(), src.type());
-        var tmp = new alvision.Mat(dst.cols, dst.rows, dst.type());
-        var wave = initDCTWave(dst.cols, (flags.valueOf() & alvision.DftFlags. DCT_INVERSE) != 0);
+        var tmp = new alvision.Mat(dst.cols(), dst.rows(), dst.type());
+        var wave = initDCTWave(dst.cols(), (flags.valueOf() & alvision.DftFlags. DCT_INVERSE) != 0);
 
         // 1. row-wise transform
-        for (var i = 0; i < dst.rows; i++) {
-            var srci = src.row(i).reshape(cn, src.cols);
+        for (var i = 0; i < dst.rows(); i++) {
+            var srci = src.row(i).reshape(cn, src.cols());
             var dsti = tmp.col(i);
             DCT_1D(srci, dsti, flags, wave);
         }
 
         if ((flags.valueOf() & alvision.DftFlags.DCT_ROWS) == 0) {
             if (dst.cols != dst.rows)
-                wave = initDCTWave(dst.rows, (flags.valueOf() &alvision.DftFlags. DCT_INVERSE) != 0);
+                wave = initDCTWave(dst.rows(), (flags.valueOf() &alvision.DftFlags. DCT_INVERSE) != 0);
 
             // 2. column-wise transform
-            for (i = 0; i < dst.cols; i++) {
-                var srci = tmp.row(i).reshape(cn, tmp.cols);
+            for (i = 0; i < dst.cols(); i++) {
+                var srci = tmp.row(i).reshape(cn, tmp.cols());
                 var dsti = dst.col(i);
                 DCT_1D(srci, dsti, flags, wave);
             }
@@ -254,9 +254,9 @@ const CV_DXT_MUL_CONJ = 8;
 
 
     function convertFromCCS(_src0: alvision.Mat, _src1: alvision.Mat, _dst: alvision.Mat, flags: alvision.int): void {
-        if (_dst.rows > 1 && (_dst.cols > 1 || (flags.valueOf() & alvision.DftFlags.DFT_ROWS))) {
+        if (_dst.rows() > 1 && (_dst.cols() > 1 || (flags.valueOf() & alvision.DftFlags.DFT_ROWS))) {
             //int i,
-                var count = _dst.rows, len = _dst.cols;
+                var count = _dst.rows(), len = _dst.cols();
             var is2d = (flags.valueOf() &alvision.DftFlags. DFT_ROWS) == 0;
             var src0row = new alvision.Mat();
             var src1row = new alvision.Mat();
@@ -274,7 +274,7 @@ const CV_DXT_MUL_CONJ = 8;
                 dstrow = _dst.col(0);
                 convertFromCCS(src0row, src0row, dstrow, 0);
                 if ((len.valueOf() & 1) == 0) {
-                    src0row = _src0.col(_src0.cols.valueOf() - 1);
+                    src0row = _src0.col(_src0.cols().valueOf() - 1);
                     dstrow = _dst.col(len.valueOf() / 2);
                     convertFromCCS(src0row, src0row, dstrow, 0);
                 }
@@ -282,7 +282,7 @@ const CV_DXT_MUL_CONJ = 8;
         }
         else {
             //int i,
-                var n = _dst.cols.valueOf() + _dst.rows.valueOf() - 1, n2 = (n + 1) >> 1;
+                var n = _dst.cols().valueOf() + _dst.rows().valueOf() - 1, n2 = (n + 1) >> 1;
             var cn = _src0.channels().valueOf();
             var srcstep = cn, dststep = 1;
 
@@ -364,10 +364,10 @@ const CV_DXT_MUL_CONJ = 8;
 
     function fixCCS(mat: alvision.Mat, cols: alvision.int, flags: alvision.int): void {
         //int i,
-        var rows = mat.rows;
+        var rows = mat.rows();
         var rows2 = (flags.valueOf() & alvision.DftFlags. DFT_ROWS) ? rows: rows.valueOf() / 2 + 1, cols2 = cols.valueOf() / 2 + 1;
 
-        alvision.CV_Assert(()=>cols2 == mat.cols);
+        alvision.CV_Assert(()=>cols2 == mat.cols());
 
         if (mat.type() == alvision.MatrixType.CV_32FC2) {
             for (var i = 0; i < rows2; i++) {
@@ -415,14 +415,14 @@ const CV_DXT_MUL_CONJ = 8;
     //#pragma optimize("", off)
     //#endif
     function mulComplex(src1: alvision.Mat, src2: alvision.Mat, dst: alvision.Mat, flags: alvision.int): void {
-        dst.create(src1.rows, src1.cols, src1.type());
+        dst.create(src1.rows(), src1.cols(), src1.type());
         //int i, j,
-            var depth = src1.depth(), cols = src1.cols.valueOf() * 2;
+            var depth = src1.depth(), cols = src1.cols().valueOf() * 2;
 
         alvision.CV_Assert(()=>src1.size == src2.size && src1.type() == src2.type() &&
             (src1.type() == alvision.MatrixType.CV_32FC2 || src1.type() == alvision.MatrixType.CV_64FC2));
 
-        for (var i = 0; i < dst.rows; i++) {
+        for (var i = 0; i < dst.rows(); i++) {
             if (depth == alvision.MatrixType.CV_32F) {
                 const a = src1.ptr<alvision.float>("float", i);
                 const b = src2.ptr<alvision.float>("float",i);
@@ -603,7 +603,7 @@ class CxCore_DXTBaseTest extends alvision.cvtest.ArrayTest
             var out_type = this.test_mat[this.OUTPUT][0].type();
 
             if (alvision.MatrixType.CV_MAT_CN(in_type) == 2 && alvision.MatrixType.CV_MAT_CN(out_type) == 1)
-                fixCCS(this.test_mat[this.INPUT][0], this.test_mat[this.OUTPUT][0].cols, this.flags);
+                fixCCS(this.test_mat[this.INPUT][0], this.test_mat[this.OUTPUT][0].cols(), this.flags);
 
             if (this.inplace)
                 alvision.cvtest.copy(this.test_mat[this.INPUT][test_case_idx.valueOf() & (this.spectrum_mode ? 1 : 0)],
@@ -673,7 +673,7 @@ class CxCore_DFTTest extends CxCore_DXTBaseTest
             }
         }
 
-        if (src.rows == 1 || (src.cols == 1 && !(this.flags.valueOf() & alvision.DftFlags.DFT_ROWS)))
+        if (src.rows() == 1 || (src.cols() == 1 && !(this.flags.valueOf() & alvision.DftFlags.DFT_ROWS)))
             DFT_1D( tmp_src, tmp_dst, this.flags);
         else
             DFT_2D( tmp_src, tmp_dst, this.flags);
@@ -704,7 +704,7 @@ class CxCore_DCTTest extends CxCore_DXTBaseTest
         const  src = this.test_mat[this.INPUT][0];
         var dst = this.test_mat[this.REF_OUTPUT][0];
 
-        if (src.rows == 1 || (src.cols == 1 && !(this.flags.valueOf() & alvision.DftFlags.DFT_ROWS)))
+        if (src.rows() == 1 || (src.cols() == 1 && !(this.flags.valueOf() & alvision.DftFlags.DFT_ROWS)))
             DCT_1D(src, dst, this.flags);
         else
             DCT_2D(src, dst, this.flags);

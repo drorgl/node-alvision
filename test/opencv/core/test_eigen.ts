@@ -117,8 +117,8 @@ class Core_EigenTest extends alvision.cvtest.BaseTest
 
             var src = new alvision.Mat(src_size, src_size, type);
 
-            for (var j = 0; j < src.rows; ++j)
-                for (var k = j; k < src.cols; ++k)
+            for (var j = 0; j < src.rows(); ++j)
+                for (var k = j; k < src.cols(); ++k)
                     if (type == alvision.MatrixType.CV_32FC1) {
                         src.at<alvision.float>("float", k, j).set(src.at<alvision.float>("float", j, k).set(alvision.theRNG().float()));//alvision.randu<float>()));
                     }
@@ -141,8 +141,8 @@ class Core_EigenTest extends alvision.cvtest.BaseTest
     protected ntests: alvision.int ;
 
     check_pair_count1(src: alvision.Mat, evalues: alvision.Mat, low_index: alvision.int = -1, high_index: alvision.int = -1): boolean {
-        var n = src.rows.valueOf(), s = alvision.sign(high_index);
-        if (!((evalues.rows == n - Math.max(0, low_index.valueOf()) - (((n / 2.0) * (s * s - s)) + (1 + s - s * s) * (n - (high_index.valueOf() + 1)))) && (evalues.cols == 1))) {
+        var n = src.rows().valueOf(), s = alvision.sign(high_index);
+        if (!((evalues.rows() == n - Math.max(0, low_index.valueOf()) - (((n / 2.0) * (s * s - s)) + (1 + s - s * s) * (n - (high_index.valueOf() + 1)))) && (evalues.cols() == 1))) {
             console.log("Checking sizes of eigen values matrix " + evalues + "...");
             console.log("Number of rows: " + evalues.rows + "   Number of cols: " + evalues.cols);
             console.log("Size of src symmetric matrix: " + src.rows + " * " + src.cols);
@@ -152,10 +152,10 @@ class Core_EigenTest extends alvision.cvtest.BaseTest
         return true;
     }
     check_pair_count2(src: alvision.Mat, evalues: alvision.Mat, evectors: alvision.Mat, low_index: alvision.int = -1, high_index: alvision.int = -1): boolean {
-        var n = src.rows.valueOf(), s = alvision.sign(high_index);
+        var n = src.rows().valueOf(), s = alvision.sign(high_index);
         var right_eigen_pair_count = n - Math.max(0, low_index.valueOf()) - (((n / 2.0) * (s * s - s)) + (1 + s - s * s) * (n - (high_index.valueOf() + 1)));
 
-        if (!(evectors.rows == right_eigen_pair_count && evectors.cols == right_eigen_pair_count)) {
+        if (!(evectors.rows() == right_eigen_pair_count && evectors.cols() == right_eigen_pair_count)) {
             console.log("Checking sizes of eigen vectors matrix " + evectors + "...");
             console.log("Number of rows: " + evectors.rows + "   Number of cols: " + evectors.cols);
             console.log("Size of src symmetric matrix: " + src.rows + " * " + src.cols);
@@ -163,7 +163,7 @@ class Core_EigenTest extends alvision.cvtest.BaseTest
             return false;
         }
 
-        if (!(evalues.rows == right_eigen_pair_count && evalues.cols == 1)) {
+        if (!(evalues.rows() == right_eigen_pair_count && evalues.cols() == 1)) {
             console.log("Checking sizes of eigen values matrix " + evalues + "...");
             console.log("Number of rows: " + evalues.rows + "   Number of cols: " + evalues.cols);
             console.log("Size of src symmetric matrix: " + src.rows + " * " + src.cols);
@@ -212,7 +212,7 @@ class Core_EigenTest extends alvision.cvtest.BaseTest
         var UUt = new alvision.Mat();
         alvision.mulTransposed(U, UUt, false);
 
-        var E = alvision.Mat.eye(U.rows, U.cols, type).toMat();
+        var E = alvision.Mat.eye(U.rows(), U.cols(), type).toMat();
 
         for (var i = 0; i < COUNT_NORM_TYPES; ++i) {
             var diff = alvision.cvtest.norm(UUt, E, NORM_TYPE[i]);
@@ -245,18 +245,18 @@ class Core_EigenTest extends alvision.cvtest.BaseTest
 
         var eigen_vectors_t = new alvision.Mat (); alvision.transpose(eigen_vectors, eigen_vectors_t);
 
-        var src_evec = new alvision.Mat (src.rows, src.cols, type);
+        var src_evec = new alvision.Mat (src.rows(), src.cols(), type);
         src_evec = alvision.MatExpr.op_Multiplication( src ,eigen_vectors_t).toMat();
 
-        var eval_evec = new alvision.Mat (src.rows, src.cols, type);
+        var eval_evec = new alvision.Mat (src.rows(), src.cols(), type);
 
         switch (type) {
             case alvision.MatrixType.CV_32FC1:
                 {
-                    for (var i = 0; i < src.cols; ++i)
+                    for (var i = 0; i < src.cols(); ++i)
                     {
                         var tmp =alvision.MatExpr.op_Multiplication( eigen_values.at<alvision.float>("float",i, 0).get() , eigen_vectors_t.col(i)).toMat();
-                        for (var j = 0; j < src.rows; ++j) {
+                        for (var j = 0; j < src.rows(); ++j) {
                             eval_evec.at<alvision.float>("float",j, i).set(tmp.at<alvision.float>("float",j, 0).get());
                         }
                     }
@@ -266,9 +266,9 @@ class Core_EigenTest extends alvision.cvtest.BaseTest
 
             case alvision.MatrixType.CV_64FC1:
                 {
-                    for (var i = 0; i < src.cols; ++i) {
+                    for (var i = 0; i < src.cols(); ++i) {
                         var tmp = alvision.MatExpr.op_Multiplication( eigen_values.at < alvision.double>("double", i, 0).get() , eigen_vectors_t.col(i)).toMat();
-                        for (var j = 0; j < src.rows; ++j) {
+                        for (var j = 0; j < src.rows(); ++j) {
                             eval_evec.at<alvision.double>("double", j, i).set( tmp.at<alvision.double>("double",j, 0).get());
                         }
                     }

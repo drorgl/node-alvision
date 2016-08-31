@@ -1,62 +1,63 @@
+//TODO: pending
 
-import tape = require("tape");
-import path = require("path");
-import colors = require("colors");
-import async = require("async");
-import alvision = require("../../../tsbinding/alvision");
-import util = require('util');
-import fs = require('fs');
+//import tape = require("tape");
+//import path = require("path");
+//import colors = require("colors");
+//import async = require("async");
+//import alvision = require("../../../tsbinding/alvision");
+//import util = require('util');
+//import fs = require('fs');
 
-//#include "test_precomp.hpp"
-//
-//using namespace cv;
-//using namespace std;
+////#include "test_precomp.hpp"
+////
+////using namespace cv;
+////using namespace std;
 
-function tutorial2() : void
-{
-    /// Create a window
-    var myWindow = new alvision.viz.Viz3d ("Coordinate Frame");
+//function tutorial2() : void
+//{
+//    /// Create a window
+//    var myWindow = new alvision.viz.Viz3d ("Coordinate Frame");
 
-    /// Add coordinate axes
-    myWindow.showWidget("Coordinate Widget", viz::WCoordinateSystem());
+//    /// Add coordinate axes
+//    myWindow.showWidget("Coordinate Widget", viz::WCoordinateSystem());
 
-    /// Add line to represent (1,1,1) axis
-    viz::WLine axis(Point3f(-1.0, -1.0, -1.0), Point3d(1.0, 1.0, 1.0));
-    axis.setRenderingProperty(viz::LINE_WIDTH, 4.0);
-    myWindow.showWidget("Line Widget", axis);
+//    /// Add line to represent (1,1,1) axis
+//    viz::WLine axis(Point3f(-1.0, -1.0, -1.0), Point3d(1.0, 1.0, 1.0));
+//    axis.setRenderingProperty(viz::LINE_WIDTH, 4.0);
+//    myWindow.showWidget("Line Widget", axis);
 
-    /// Construct a cube widget
-    viz::WCube cube_widget(Point3d(0.5, 0.5, 0.0), Point3d(0.0, 0.0, -0.5), true, viz::Color::blue());
-    cube_widget.setRenderingProperty(viz::LINE_WIDTH, 4.0);
+//    /// Construct a cube widget
+//    viz::WCube cube_widget(Point3d(0.5, 0.5, 0.0), Point3d(0.0, 0.0, -0.5), true, viz::Color::blue());
+//    cube_widget.setRenderingProperty(viz::LINE_WIDTH, 4.0);
 
-    /// Display widget (update if already displayed)
-    myWindow.showWidget("Cube Widget", cube_widget);
+//    /// Display widget (update if already displayed)
+//    myWindow.showWidget("Cube Widget", cube_widget);
 
-    /// Rodrigues vector
-    Vec3d rot_vec = Vec3d::all(0);
-    double translation_phase = 0.0, translation = 0.0;
-    while(!myWindow.wasStopped())
-    {
-        /* Rotation using rodrigues */
-        /// Rotate around (1,1,1)
-        rot_vec[0] += Math.PI * 0.01;
-        rot_vec[1] += Math.PI * 0.01;
-        rot_vec[2] += Math.PI * 0.01;
+//    /// Rodrigues vector
+//    Vec3d rot_vec = Vec3d::all(0);
+//    double translation_phase = 0.0, translation = 0.0;
+//    while(!myWindow.wasStopped())
+//    {
+//        /* Rotation using rodrigues */
+//        /// Rotate around (1,1,1)
+//        rot_vec[0] += Math.PI * 0.01;
+//        rot_vec[1] += Math.PI * 0.01;
+//        rot_vec[2] += Math.PI * 0.01;
 
-        /// Shift on (1,1,1)
-        translation_phase += Math.PI * 0.01;
-        translation = sin(translation_phase);
+//        /// Shift on (1,1,1)
+//        translation_phase += Math.PI * 0.01;
+//        translation = sin(translation_phase);
 
-        /// Construct pose
-        Affine3d pose(rot_vec, Vec3d(translation, translation, translation));
+//        /// Construct pose
+//        Affine3d pose(rot_vec, Vec3d(translation, translation, translation));
 
-        myWindow.setWidgetPose("Cube Widget", pose);
+//        myWindow.setWidgetPose("Cube Widget", pose);
 
-        myWindow.spinOnce(1, true);
-    }
-}
+//        myWindow.spinOnce(1, true);
+//    }
+//}
 
 
-alvision.cvtest.TEST('Viz', 'DISABLED_tutorial2_pose_of_widget', () => {
-    tutorial2();
-});
+//alvision.cvtest.TEST('Viz', 'DISABLED_tutorial2_pose_of_widget', () => {
+//    tutorial2();
+//});

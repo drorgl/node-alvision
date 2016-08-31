@@ -788,13 +788,13 @@ class Multiply_Array_Special_Case_8UC4x_32FC1 extends Multiply_Array_Special
 
         let h_dst = new alvision.Mat (dst);
 
-        for (let y = 0; y < h_dst.rows; ++y)
+        for (let y = 0; y < h_dst.rows(); ++y)
         {
             const mat1_row = mat1.ptr<alvision.Vecb>("Vec4b",y);
             const mat2_row = mat2.ptr<alvision.float>("float", y);
             const dst_row = h_dst.ptr<alvision.Vecb>("Vec4b",y);
 
-            for (let x = 0; x < h_dst.cols; ++x)
+            for (let x = 0; x < h_dst.cols(); ++x)
             {
                 let val1 = mat1_row[x];
                 let val2 = mat2_row[x];
@@ -828,13 +828,13 @@ class Multiply_Array_Special_Case_16SC4x_32FC1 extends Multiply_Array_Special
 
         let h_dst = new alvision.Mat (dst);
 
-        for (let y = 0; y < h_dst.rows; ++y)
+        for (let y = 0; y < h_dst.rows(); ++y)
         {
             const mat1_row = mat1.ptr<alvision.Vecs>("Vec4s",y);
             const mat2_row = mat2.ptr<alvision.float>("float", y);
             const dst_row = h_dst.ptr<alvision.Vecs>("Vec4s",y);
 
-            for (let x = 0; x < h_dst.cols; ++x)
+            for (let x = 0; x < h_dst.cols(); ++x)
             {
                 let val1 = mat1_row[x];
                 let val2 = mat2_row[x];
@@ -1158,13 +1158,13 @@ class Divide_Array_Special_Case_8UC4x_32FC1 extends Divide_Array_Special
 
         let h_dst = new alvision.Mat (dst);
 
-        for (let y = 0; y < h_dst.rows; ++y)
+        for (let y = 0; y < h_dst.rows(); ++y)
         {
             const mat1_row = mat1.ptr<alvision.Vecb>("Vec4b",y);
             const mat2_row = mat2.ptr<alvision.float>("float", y);
             const dst_row = h_dst.ptr<alvision.Vecb>("Vec4b",y);
 
-            for (let x = 0; x < h_dst.cols; ++x)
+            for (let x = 0; x < h_dst.cols(); ++x)
             {
                 let val1 = mat1_row[x];
                 let val2 = mat2_row[x];
@@ -1198,13 +1198,13 @@ class Divide_Array_Special_Case_16SC4x_32FC1 extends Divide_Array_Special
 
         let h_dst = new alvision.Mat (dst);
 
-        for (let y = 0; y < h_dst.rows; ++y)
+        for (let y = 0; y < h_dst.rows(); ++y)
         {
             const mat1_row = mat1.ptr<alvision.Vecs>("Vec4s",y);
             const mat2_row = mat2.ptr<alvision.float>("float", y);
             const dst_row = h_dst.ptr<alvision.Vecs>("Vec4s",y);
 
-            for (let x = 0; x < h_dst.cols; ++x)
+            for (let x = 0; x < h_dst.cols(); ++x)
             {
                 let val1 = mat1_row[x];
                 let val2 = mat2_row[x];
@@ -1582,9 +1582,9 @@ function sqrtImpl<T>(Ttype : string, src: alvision.Mat, dst: alvision.Mat ) : vo
     {
         dst.create(src.size(), src.type());
 
-        for (let y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows(); ++y)
         {
-            for (let x = 0; x < src.cols; ++x)
+            for (let x = 0; x < src.cols(); ++x)
                 dst.at<T>(Ttype, y, x).set(<any>(Math.sqrt(<any>(src.at<T>(Ttype, y, x).get()))));
         }
     }
@@ -1660,9 +1660,9 @@ function logImpl<T>(Ttype : string, src: alvision.Mat, dst: alvision.Mat ) : voi
     {
         dst.create(src.size(), src.type());
 
-        for (var y = 0; y < src.rows; ++y)
+        for (var y = 0; y < src.rows(); ++y)
         {
-            for (var x = 0; x < src.cols; ++x)
+            for (var x = 0; x < src.cols(); ++x)
                 dst.at<T>(Ttype, y, x).set(<any>(Math.log(<any>(src.at<T>(Ttype, y, x)))));
         }
     }
@@ -1739,9 +1739,9 @@ function expImpl<T>(Ttype, src: alvision.Mat, dst: alvision.Mat ): void
     {
         dst.create(src.size(), src.type());
 
-        for (let y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows(); ++y)
         {
-            for (let x = 0; x < src.cols; ++x)
+            for (let x = 0; x < src.cols(); ++x)
                 dst.at<T>(Ttype, y, x).set(alvision.saturate_cast<T>((Math.exp(<number><any>(src.at<T>(Ttype, y, x).get()))), Ttype));
         }
     }
@@ -1749,9 +1749,9 @@ function expImpl_float(src: alvision.Mat, dst: alvision.Mat ) : void
     {
         dst.create(src.size(), src.type());
 
-        for (let y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows(); ++y)
         {
-            for (let x = 0; x < src.cols; ++x)
+            for (let x = 0; x < src.cols(); ++x)
                 dst.at<alvision.float>("float", y, x).set(Math.exp(<number>(src.at<alvision.float>("float", y, x).get())));
         }
     }
@@ -1953,9 +1953,9 @@ function compareScalarImpl<T>(Ttype:string, src: alvision.Mat, sc: alvision.Scal
 
         dst.create(src.size(), alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U, cn));
 
-        for (let y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows(); ++y)
         {
-            for (let x = 0; x < src.cols; ++x)
+            for (let x = 0; x < src.cols(); ++x)
             {
                 for (let c = 0; c < cn; ++c)
                 {
@@ -2223,9 +2223,9 @@ function rhiftImpl<T>(Ttype : string, src: alvision.Mat, val: alvision.Scalar_<a
 
         dst.create(src.size(), src.type());
 
-        for (let y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows(); ++y)
         {
-            for (let x = 0; x < src.cols; ++x)
+            for (let x = 0; x < src.cols(); ++x)
             {
                 for (let c = 0; c < cn; ++c)
                     dst.at<T>(Ttype, y, x * cn.valueOf() + c).set(<any> (<any>(src.at<T>(Ttype, y, x * cn.valueOf() + c).get()) >> val.val[c].valueOf()));
@@ -2313,9 +2313,9 @@ function lhiftImpl<T>(Ttype : string, src: alvision.Mat, val: alvision.Scalar_<a
 
         dst.create(src.size(), src.type());
 
-        for (let y = 0; y < src.rows; ++y)
+        for (let y = 0; y < src.rows(); ++y)
         {
-            for (let x = 0; x < src.cols; ++x)
+            for (let x = 0; x < src.cols(); ++x)
             {
                 for (let c = 0; c < cn; ++c)
                     dst.at<T>(Ttype, y, x * cn.valueOf() + c).set(<any> (<any>(src.at<T>(Ttype, y, x * cn.valueOf() + c).get()) << val.val[c].valueOf()));

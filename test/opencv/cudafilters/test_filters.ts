@@ -66,7 +66,7 @@ function getInnerROI(m_: alvision.InputArray, ksize: alvision.Size ): alvision.M
     {
     //let m = getMat(m_);
     let m = <alvision.Mat>m_;
-        let roi = new alvision.Rect (ksize.width, ksize.height, m.cols.valueOf() - 2 * ksize.width.valueOf(), m.rows.valueOf() - 2 * ksize.height.valueOf());
+        let roi = new alvision.Rect (ksize.width, ksize.height, m.cols().valueOf() - 2 * ksize.width.valueOf(), m.rows().valueOf() - 2 * ksize.height.valueOf());
         return m.roi(roi);
     }
 
@@ -573,7 +573,7 @@ class Erode_Accuracy extends Erode
         let dst_gold = new alvision.Mat();
         alvision.erode(src, dst_gold, kernel, this.anchor,this. iterations);
 
-        let ksize = new alvision.Size(kernel.cols.valueOf() + this.iterations.valueOf() * (kernel.cols.valueOf() - 1), kernel.rows.valueOf() + this.iterations.valueOf() * (kernel.rows.valueOf() - 1));
+        let ksize = new alvision.Size(kernel.cols().valueOf() + this.iterations.valueOf() * (kernel.cols().valueOf() - 1), kernel.rows().valueOf() + this.iterations.valueOf() * (kernel.rows().valueOf() - 1));
 
         alvision.EXPECT_MAT_NEAR(getInnerROI(dst_gold, ksize), getInnerROI(dst, ksize), 0.0);
     }
@@ -628,7 +628,7 @@ class Dilate_Accuracy extends Dilate
         let dst_gold = new alvision.Mat();
         alvision.dilate(src, dst_gold, kernel, this.anchor, this.iterations);
 
-        let ksize = new alvision.Size(kernel.cols.valueOf() + this.iterations.valueOf() * (kernel.cols.valueOf() - 1), kernel.rows.valueOf() + this.iterations.valueOf() * (kernel.rows.valueOf() - 1));
+        let ksize = new alvision.Size(kernel.cols().valueOf() + this.iterations.valueOf() * (kernel.cols().valueOf() - 1), kernel.rows().valueOf() + this.iterations.valueOf() * (kernel.rows().valueOf() - 1));
 
         alvision.EXPECT_MAT_NEAR(getInnerROI(dst_gold, ksize), getInnerROI(dst, ksize), 0.0);
     }
@@ -689,7 +689,7 @@ class MorphEx_Accuracy extends MorphEx
         let dst_gold = new alvision.Mat();
         alvision.morphologyEx(src, dst_gold, this.morphOp, kernel, this.anchor, this.iterations);
 
-        let border = new alvision.Size(kernel.cols.valueOf() + (this.iterations.valueOf() + 1) * kernel.cols.valueOf() + 2, kernel.rows.valueOf() + (this.iterations.valueOf() + 1) * kernel.rows.valueOf() + 2);
+        let border = new alvision.Size(kernel.cols().valueOf() + (this.iterations.valueOf() + 1) * kernel.cols().valueOf() + 2, kernel.rows().valueOf() + (this.iterations.valueOf() + 1) * kernel.rows().valueOf() + 2);
 
         alvision.EXPECT_MAT_NEAR(getInnerROI(dst_gold, border), getInnerROI(dst, border), 0.0);
     }

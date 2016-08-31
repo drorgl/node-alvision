@@ -57,49 +57,54 @@ import fs = require('fs');
 ////////////////////////////////////////////////////////
 // BilateralFilter
 
-PARAM_TEST_CASE(BilateralFilter, alvision.cuda::DeviceInfo, alvision.Size, MatType)
+
+//PARAM_TEST_CASE(BilateralFilter, alvision.cuda.DeviceInfo, alvision.Size, MatType)
+class BilateralFilter extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int type;
-    int kernel_size;
-    float sigma_color;
-    float sigma_spatial;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected type: alvision.int;
+    protected kernel_size: alvision.int;
+    protected sigma_color: alvision.float;
+    protected sigma_spatial: alvision.float;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        type = GET_PARAM(2);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.type =    this.GET_PARAM<alvision.int>(2);
 
-        kernel_size = 5;
-        sigma_color = 10.f;
-        sigma_spatial = 3.5f;
+        this.kernel_size = 5;
+        this.sigma_color = 10.;
+        this.sigma_spatial = 3.5;
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(BilateralFilter, Accuracy)
+//CUDA_TEST_P(BilateralFilter, Accuracy)
+class BilateralFilter_Accuracy extends BilateralFilter
 {
-    alvision.Mat src = randomMat(size, type);
+    TestBody() {
+        let src = alvision.randomMat(this.size, this.type);
 
-    src.convertTo(src, type);
-    alvision.cuda::GpuMat dst;
+        src.convertTo(src, this.type);
+        let dst = new alvision.cuda.GpuMat();
 
-    alvision.cuda::bilateralFilter(loadMat(src), dst, kernel_size, sigma_color, sigma_spatial);
+        alvision.cudaimgproc.bilateralFilter(alvision.loadMat(src), dst, this.kernel_size, this.sigma_color, this.sigma_spatial);
 
-    alvision.Mat dst_gold;
-    alvision.bilateralFilter(src, dst_gold, kernel_size, sigma_color, sigma_spatial);
+        let dst_gold = new alvision.Mat();
+        alvision.bilateralFilter(src, dst_gold, this.kernel_size, this.sigma_color, this.sigma_spatial);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == CV_32F ? 1e-3 : 1.0);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, src.depth() == alvision.MatrixType.CV_32F ? 1e-3 : 1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, BilateralFilter, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(alvision.Size(128, 128), alvision.Size(113, 113), alvision.Size(639, 481)),
-    testing::Values(MatType(CV_8UC1), MatType(CV_8UC3), MatType(CV_32FC1), MatType(CV_32FC3))
-    ));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'BilateralFilter', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [new alvision.Size(128, 128), new alvision.Size(113, 113), new alvision.Size(639, 481)],
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_8UC3,alvision.MatrixType.CV_32FC1,alvision.MatrixType.CV_32FC3]
+    ]));
 
 
 //#endif // HAVE_CUDA

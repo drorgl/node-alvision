@@ -48,173 +48,188 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 //////////////////////////////////////////////////////////////////////////
 // StereoBM
 
-struct StereoBM : testing::TestWithParam<alvision.cuda::DeviceInfo>
+class StereoBM extends alvision.cvtest.CUDA_TEST// : testing::TestWithParam<alvision.cuda.DeviceInfo>
 {
-    alvision.cuda::DeviceInfo devInfo;
+    protected devInfo: alvision.cuda.DeviceInfo;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GetParam();
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(StereoBM, Regression)
+//CUDA_TEST_P(StereoBM, Regression)
+class StereoBM_Regression extends StereoBM
 {
-    alvision.Mat left_image  = readImage("stereobm/aloe-L.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
-    alvision.Mat right_image = readImage("stereobm/aloe-R.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
-    alvision.Mat disp_gold   = readImage("stereobm/aloe-disp.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+    public TestBody(): void {
+        var left_image = alvision.readImage("stereobm/aloe-L.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+        var right_image = alvision.readImage("stereobm/aloe-R.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+        var disp_gold = alvision.readImage("stereobm/aloe-disp.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
 
-    ASSERT_FALSE(left_image.empty());
-    ASSERT_FALSE(right_image.empty());
-    ASSERT_FALSE(disp_gold.empty());
+        alvision.ASSERT_FALSE(left_image.empty());
+        alvision.ASSERT_FALSE(right_image.empty());
+        alvision.ASSERT_FALSE(disp_gold.empty());
 
-    alvision.Ptr<alvision.StereoBM> bm = alvision.cuda::createStereoBM(128, 19);
-    alvision.cuda::GpuMat disp;
+        var bm = alvision.cudastereo.createStereoBM(128, 19);
+        var disp = new alvision.cuda.GpuMat();
 
-    bm.compute(loadMat(left_image), loadMat(right_image), disp);
+        bm.compute(alvision.loadMat(left_image), alvision.loadMat(right_image), disp);
 
-    EXPECT_MAT_NEAR(disp_gold, disp, 0.0);
+        alvision.EXPECT_MAT_NEAR(disp_gold, disp, 0.0);
+
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Stereo, StereoBM, ALL_DEVICES);
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Stereo', 'StereoBM', (test_case, test_name) => { return null; }, new alvision.cvtest.Combine([ alvision.ALL_DEVICES]));
 
 //////////////////////////////////////////////////////////////////////////
 // StereoBeliefPropagation
 
-struct StereoBeliefPropagation : testing::TestWithParam<alvision.cuda::DeviceInfo>
+class StereoBeliefPropagation extends alvision.cvtest.CUDA_TEST //: testing::TestWithParam<alvision.cuda.DeviceInfo>
 {
-    alvision.cuda::DeviceInfo devInfo;
+    protected devInfo: alvision.cuda.DeviceInfo;
 
-    virtual void SetUp()
+    public SetUp(): void
     {
-        devInfo = GetParam();
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);// GetParam();
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(StereoBeliefPropagation, Regression)
+//CUDA_TEST_P(StereoBeliefPropagation, Regression)
+class StereoBeliefPropagation_Regression extends StereoBeliefPropagation
 {
-    alvision.Mat left_image  = readImage("stereobp/aloe-L.png");
-    alvision.Mat right_image = readImage("stereobp/aloe-R.png");
-    alvision.Mat disp_gold   = readImage("stereobp/aloe-disp.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+    public TestBody(): void {
+        var left_image = alvision.readImage("stereobp/aloe-L.png");
+        var right_image = alvision.readImage("stereobp/aloe-R.png");
+        var disp_gold = alvision.readImage("stereobp/aloe-disp.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
 
-    ASSERT_FALSE(left_image.empty());
-    ASSERT_FALSE(right_image.empty());
-    ASSERT_FALSE(disp_gold.empty());
+        alvision.ASSERT_FALSE(left_image.empty());
+        alvision.ASSERT_FALSE(right_image.empty());
+        alvision.ASSERT_FALSE(disp_gold.empty());
 
-    alvision.Ptr<alvision.cuda::StereoBeliefPropagation> bp = alvision.cuda::createStereoBeliefPropagation(64, 8, 2, CV_16S);
-    bp.setMaxDataTerm(25.0);
-    bp.setDataWeight(0.1);
-    bp.setMaxDiscTerm(15.0);
-    bp.setDiscSingleJump(1.0);
+        var bp = alvision.cudastereo.createStereoBeliefPropagation(64, 8, 2, alvision.MatrixType.CV_16S);
+        bp.setMaxDataTerm(25.0);
+        bp.setDataWeight(0.1);
+        bp.setMaxDiscTerm(15.0);
+        bp.setDiscSingleJump(1.0);
 
-    alvision.cuda::GpuMat disp;
+        var disp = new alvision.cuda.GpuMat();
 
-    bp.compute(loadMat(left_image), loadMat(right_image), disp);
+        bp.compute(alvision.loadMat(left_image), alvision.loadMat(right_image), disp);
 
-    alvision.Mat h_disp(disp);
-    h_disp.convertTo(h_disp, disp_gold.depth());
+        var h_disp = new alvision.Mat (disp);
+        h_disp.convertTo(h_disp, disp_gold.depth());
 
-    EXPECT_MAT_NEAR(disp_gold, h_disp, 0.0);
+        alvision.EXPECT_MAT_NEAR(disp_gold, h_disp, 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Stereo, StereoBeliefPropagation, ALL_DEVICES);
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Stereo', 'StereoBeliefPropagation', (case_name, test_name) => { return null; },new alvision.cvtest.Combine([ alvision.ALL_DEVICES]));
 
 //////////////////////////////////////////////////////////////////////////
 // StereoConstantSpaceBP
 
-struct StereoConstantSpaceBP : testing::TestWithParam<alvision.cuda::DeviceInfo>
+class StereoConstantSpaceBP extends alvision.cvtest.CUDA_TEST// : testing::TestWithParam<alvision.cuda.DeviceInfo>
 {
-    alvision.cuda::DeviceInfo devInfo;
+    protected devInfo: alvision.cuda.DeviceInfo;
 
-    virtual void SetUp()
+    public SetUp(): void
     {
-        devInfo = GetParam();
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);// GetParam();
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(StereoConstantSpaceBP, Regression)
+//CUDA_TEST_P(StereoConstantSpaceBP, Regression)
+class StereoConstantSpaceBP_Regression extends StereoConstantSpaceBP
 {
-    alvision.Mat left_image  = readImage("csstereobp/aloe-L.png");
-    alvision.Mat right_image = readImage("csstereobp/aloe-R.png");
+    public TestBody(): void {
+        var left_image  = alvision.readImage("csstereobp/aloe-L.png");
+        var right_image = alvision.readImage("csstereobp/aloe-R.png");
 
-    alvision.Mat disp_gold;
+        var disp_gold = new alvision.Mat();
 
-    if (supportFeature(devInfo, alvision.cuda::FEATURE_SET_COMPUTE_20))
-        disp_gold = readImage("csstereobp/aloe-disp.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
-    else
-        disp_gold = readImage("csstereobp/aloe-disp_CC1X.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+        if (alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.FEATURE_SET_COMPUTE_20))
+            disp_gold = alvision.readImage("csstereobp/aloe-disp.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+        else
+            disp_gold = alvision.readImage("csstereobp/aloe-disp_CC1X.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
 
-    ASSERT_FALSE(left_image.empty());
-    ASSERT_FALSE(right_image.empty());
-    ASSERT_FALSE(disp_gold.empty());
+        alvision.ASSERT_FALSE(left_image.empty());
+        alvision.ASSERT_FALSE(right_image.empty());
+        alvision.ASSERT_FALSE(disp_gold.empty());
 
-    alvision.Ptr<alvision.cuda::StereoConstantSpaceBP> csbp = alvision.cuda::createStereoConstantSpaceBP(128, 16, 4, 4);
-    alvision.cuda::GpuMat disp;
+        var csbp = alvision.cudastereo.createStereoConstantSpaceBP(128, 16, 4, 4);
+        var disp = new alvision.cuda.GpuMat();
 
-    csbp.compute(loadMat(left_image), loadMat(right_image), disp);
+        csbp.compute(alvision.loadMat(left_image), alvision.loadMat(right_image), disp);
 
-    alvision.Mat h_disp(disp);
-    h_disp.convertTo(h_disp, disp_gold.depth());
+        var h_disp = new alvision.Mat (disp);
+        h_disp.convertTo(h_disp, disp_gold.depth());
 
-    EXPECT_MAT_NEAR(disp_gold, h_disp, 1.0);
+        alvision.EXPECT_MAT_NEAR(disp_gold, h_disp, 1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Stereo, StereoConstantSpaceBP, ALL_DEVICES);
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Stereo', 'StereoConstantSpaceBP', (case_name, test_name) => { return null; },new alvision.cvtest.Combine([ alvision.ALL_DEVICES]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // reprojectImageTo3D
 
-PARAM_TEST_CASE(ReprojectImageTo3D, alvision.cuda::DeviceInfo, alvision.Size, MatDepth, UseRoi)
+//PARAM_TEST_CASE(ReprojectImageTo3D, alvision.cuda.DeviceInfo, alvision.Size, MatDepth, UseRoi)
+class ReprojectImageTo3D extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    int depth;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected depth: alvision.int;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    public SetUp(): void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        depth = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =    this.GET_PARAM<alvision.Size>(1);
+        this.depth =   this.GET_PARAM<alvision.int>(2);
+        this.useRoi =  this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(ReprojectImageTo3D, Accuracy)
+//CUDA_TEST_P(ReprojectImageTo3D, Accuracy)
+class ReprojectImageTo3D_Accuracy extends ReprojectImageTo3D
 {
-    alvision.Mat disp = randomMat(size, depth, 5.0, 30.0);
-    alvision.Mat Q = randomMat(alvision.Size(4, 4), CV_32FC1, 0.1, 1.0);
+    public TestBody(): void {
+        var disp = alvision.randomMat(this.size, this.depth, 5.0, 30.0);
+        var Q = alvision.randomMat(new alvision.Size(4, 4), alvision.MatrixType.CV_32FC1, 0.1, 1.0);
 
-    alvision.cuda::GpuMat dst;
-    alvision.cuda::reprojectImageTo3D(loadMat(disp, useRoi), dst, Q, 3);
+        var dst = new alvision.cuda.GpuMat();
+        alvision.cudastereo.reprojectImageTo3D(alvision.loadMat(disp, this.useRoi), dst, Q, 3);
 
-    alvision.Mat dst_gold;
-    alvision.reprojectImageTo3D(disp, dst_gold, Q, false);
+        var dst_gold = new alvision.Mat();
+        alvision.reprojectImageTo3D(disp, dst_gold, Q, false);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_Stereo, ReprojectImageTo3D, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(MatDepth(CV_8U), MatDepth(CV_16S)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Stereo', 'ReprojectImageTo3D', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [alvision.MatrixType.CV_8U,alvision.MatrixType.CV_16S],
+    alvision.WHOLE_SUBMAT
+]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

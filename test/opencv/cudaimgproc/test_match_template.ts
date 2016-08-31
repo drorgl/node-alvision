@@ -48,300 +48,327 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplate8U
 
-CV_ENUM(TemplateMethod, alvision.TM_SQDIFF, alvision.TM_SQDIFF_NORMED, alvision.TM_CCORR, alvision.TM_CCORR_NORMED, alvision.TM_CCOEFF, alvision.TM_CCOEFF_NORMED)
-#define ALL_TEMPLATE_METHODS testing::Values(TemplateMethod(alvision.TM_SQDIFF), TemplateMethod(alvision.TM_SQDIFF_NORMED), TemplateMethod(alvision.TM_CCORR), TemplateMethod(alvision.TM_CCORR_NORMED), TemplateMethod(alvision.TM_CCOEFF), TemplateMethod(alvision.TM_CCOEFF_NORMED))
+//CV_ENUM(TemplateMethod, alvision.TM_SQDIFF, alvision.TM_SQDIFF_NORMED, alvision.TM_CCORR, alvision.TM_CCORR_NORMED, alvision.TM_CCOEFF, alvision.TM_CCOEFF_NORMED)
+//#define ALL_TEMPLATE_METHODS testing::Values(TemplateMethod(alvision.TM_SQDIFF), TemplateMethod(alvision.TM_SQDIFF_NORMED), TemplateMethod(alvision.TM_CCORR), TemplateMethod(alvision.TM_CCORR_NORMED), TemplateMethod(alvision.TM_CCOEFF), TemplateMethod(alvision.TM_CCOEFF_NORMED))
+const ALL_TEMPLATE_METHODS = [alvision.TemplateMatchModes.TM_SQDIFF,alvision.TemplateMatchModes.TM_SQDIFF_NORMED,alvision.TemplateMatchModes.TM_CCORR,alvision.TemplateMatchModes.TM_CCORR_NORMED,alvision.TemplateMatchModes.TM_CCOEFF,alvision.TemplateMatchModes.TM_CCOEFF_NORMED];
 
-namespace
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(TemplateSize, alvision.Size);
+//}
+
+//PARAM_TEST_CASE(MatchTemplate8U, alvision.cuda.DeviceInfo, alvision.Size, TemplateSize, Channels, TemplateMethod)
+class MatchTemplate8U extends alvision.cvtest.CUDA_TEST
 {
-    IMPLEMENT_PARAM_CLASS(TemplateSize, alvision.Size);
-}
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size 
+    protected templ_size: alvision.Size;
+    protected cn: alvision.int;
+    protected method: alvision.int;
 
-PARAM_TEST_CASE(MatchTemplate8U, alvision.cuda::DeviceInfo, alvision.Size, TemplateSize, Channels, TemplateMethod)
-{
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    alvision.Size templ_size;
-    int cn;
-    int method;
-
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        templ_size = GET_PARAM(2);
-        cn = GET_PARAM(3);
-        method = GET_PARAM(4);
+        this.devInfo =      this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =         this.GET_PARAM<alvision.Size>(1);
+        this.templ_size =   this.GET_PARAM<alvision.Size>(2);
+        this.cn =           this.GET_PARAM<alvision.int>(3);
+        this.method =       this.GET_PARAM<alvision.int>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(MatchTemplate8U, Accuracy)
+//CUDA_TEST_P(MatchTemplate8U, Accuracy)
+class MatchTemplate8U_Accuracy extends MatchTemplate8U
 {
-    alvision.Mat image = randomMat(size, CV_MAKETYPE(CV_8U, cn));
-    alvision.Mat templ = randomMat(templ_size, CV_MAKETYPE(CV_8U, cn));
+    TestBody() {
+        let image = alvision.randomMat(this.size, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U,this. cn));
+        let templ = alvision.randomMat(this.templ_size, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U,this. cn));
 
-    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), method);
+        let alg = alvision.cudaimgproc.createTemplateMatching(image.type(), this.method);
 
-    alvision.cuda::GpuMat dst;
-    alg.match(loadMat(image), loadMat(templ), dst);
+        let dst = new alvision.cuda.GpuMat();
+        alg.match(alvision.loadMat(image), alvision.loadMat(templ), dst);
 
-    alvision.Mat dst_gold;
-    alvision.matchTemplate(image, templ, dst_gold, method);
+        let dst_gold = new alvision.Mat();
+        alvision.matchTemplate(image, templ, dst_gold, this.method);
 
-    alvision.Mat h_dst(dst);
-    ASSERT_EQ(dst_gold.size(), h_dst.size());
-    ASSERT_EQ(dst_gold.type(), h_dst.type());
-    for (int y = 0; y < h_dst.rows; ++y)
-    {
-        for (int x = 0; x < h_dst.cols; ++x)
-        {
-            float gold_val = dst_gold.at<float>(y, x);
-            float actual_val = dst_gold.at<float>(y, x);
-            ASSERT_FLOAT_EQ(gold_val, actual_val) << y << ", " << x;
+        let h_dst = new alvision.Mat(dst);
+        alvision.ASSERT_EQ(dst_gold.size(), h_dst.size());
+        alvision.ASSERT_EQ(dst_gold.type(), h_dst.type());
+        for (let y = 0; y < h_dst.rows(); ++y) {
+            for (let x = 0; x < h_dst.cols(); ++x) {
+                let gold_val = dst_gold.at<alvision.float>("float",y, x);
+                let actual_val = dst_gold.at<alvision.float>("float", y, x);
+                alvision.ASSERT_EQ(gold_val, actual_val, y + ", " + x);
+            }
         }
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MatchTemplate8U, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(TemplateSize(alvision.Size(5, 5)), TemplateSize(alvision.Size(16, 16)), TemplateSize(alvision.Size(30, 30))),
-    testing::Values(Channels(1), Channels(3), Channels(4)),
-    ALL_TEMPLATE_METHODS));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'MatchTemplate8U', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [new alvision.Size(5, 5),new alvision.Size(16, 16),new alvision.Size(30, 30)],
+    [1,3,4],
+    ALL_TEMPLATE_METHODS
+    ]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplate32F
 
-PARAM_TEST_CASE(MatchTemplate32F, alvision.cuda::DeviceInfo, alvision.Size, TemplateSize, Channels, TemplateMethod)
+//PARAM_TEST_CASE(MatchTemplate32F, alvision.cuda.DeviceInfo, alvision.Size, TemplateSize, Channels, TemplateMethod)
+class MatchTemplate32F extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    alvision.Size size;
-    alvision.Size templ_size;
-    int cn;
-    int method;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected size: alvision.Size;
+    protected templ_size: alvision.Size;
+    protected cn: alvision.int;
+    protected method: alvision.int;
 
-    int n, m, h, w;
+    protected n: alvision.int;
+    protected m: alvision.int;
+    protected h: alvision.int;
+    protected w: alvision.int;
 
-    virtual void SetUp()
+    SetUp(): void
     {
-        devInfo = GET_PARAM(0);
-        size = GET_PARAM(1);
-        templ_size = GET_PARAM(2);
-        cn = GET_PARAM(3);
-        method = GET_PARAM(4);
+        this.devInfo =      this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.size =         this.GET_PARAM<alvision.Size>(1);
+        this.templ_size =   this.GET_PARAM<alvision.Size>(2);
+        this.cn =           this.GET_PARAM<alvision.int>(3);
+        this.method =       this.GET_PARAM<alvision.int>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(MatchTemplate32F, Regression)
+//CUDA_TEST_P(MatchTemplate32F, Regression)
+class MatchTemplate32F_Regression extends MatchTemplate32F
 {
-    alvision.Mat image = randomMat(size, CV_MAKETYPE(CV_32F, cn));
-    alvision.Mat templ = randomMat(templ_size, CV_MAKETYPE(CV_32F, cn));
+    TestBody() {
+        let image = alvision.randomMat(this.size, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_32F,this. cn));
+        let templ = alvision.randomMat(this.templ_size,alvision.MatrixType. CV_MAKETYPE(alvision.MatrixType.CV_32F, this.cn));
 
-    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), method);
+        let alg = alvision.cudaimgproc.createTemplateMatching(image.type(), this.method);
 
-    alvision.cuda::GpuMat dst;
-    alg.match(loadMat(image), loadMat(templ), dst);
+        let dst = new alvision.cuda.GpuMat();
+        alg.match(alvision.loadMat(image), alvision.loadMat(templ), dst);
 
-    alvision.Mat dst_gold;
-    alvision.matchTemplate(image, templ, dst_gold, method);
+        let dst_gold = new alvision.Mat();
+        alvision.matchTemplate(image, templ, dst_gold, this.method);
 
-    alvision.Mat h_dst(dst);
-    ASSERT_EQ(dst_gold.size(), h_dst.size());
-    ASSERT_EQ(dst_gold.type(), h_dst.type());
-    for (int y = 0; y < h_dst.rows; ++y)
-    {
-        for (int x = 0; x < h_dst.cols; ++x)
-        {
-            float gold_val = dst_gold.at<float>(y, x);
-            float actual_val = dst_gold.at<float>(y, x);
-            ASSERT_FLOAT_EQ(gold_val, actual_val) << y << ", " << x;
+        let h_dst = new alvision.Mat(dst);
+        alvision.ASSERT_EQ(dst_gold.size(), h_dst.size());
+        alvision.ASSERT_EQ(dst_gold.type(), h_dst.type());
+        for (let y = 0; y < h_dst.rows(); ++y) {
+            for (let x = 0; x < h_dst.cols(); ++x) {
+                let gold_val = dst_gold.at<alvision.float>("float", y, x);
+                let actual_val = dst_gold.at<alvision.float>("float", y, x);
+                alvision.ASSERT_EQ(gold_val, actual_val, y + ", " + x);
+            }
         }
     }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MatchTemplate32F, testing::Combine(
-    ALL_DEVICES,
-    DIFFERENT_SIZES,
-    testing::Values(TemplateSize(alvision.Size(5, 5)), TemplateSize(alvision.Size(16, 16)), TemplateSize(alvision.Size(30, 30))),
-    testing::Values(Channels(1), Channels(3), Channels(4)),
-    testing::Values(TemplateMethod(alvision.TM_SQDIFF), TemplateMethod(alvision.TM_CCORR))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'MatchTemplate32F', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    alvision.DIFFERENT_SIZES,
+    [new alvision.Size(5, 5),new alvision.Size(16, 16), new alvision.Size(30, 30)], 
+    [1, 3, 4],
+    [alvision.TemplateMatchModes.TM_SQDIFF, alvision.TemplateMatchModes.TM_CCORR]
+    ]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplateBlackSource
 
-PARAM_TEST_CASE(MatchTemplateBlackSource, alvision.cuda::DeviceInfo, TemplateMethod)
+//PARAM_TEST_CASE(MatchTemplateBlackSource, alvision.cuda.DeviceInfo, TemplateMethod)
+class MatchTemplateBlackSource extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    int method;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected method: alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        method = GET_PARAM(1);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.method =  this.GET_PARAM<alvision.int>(1);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(MatchTemplateBlackSource, Accuracy)
-{
-    alvision.Mat image = readImage("matchtemplate/black.png");
-    ASSERT_FALSE(image.empty());
+//CUDA_TEST_P(MatchTemplateBlackSource, Accuracy)
+class MatchTemplateBlackSource_Accuracy extends MatchTemplateBlackSource {
+    TestBody() {
+        let image = alvision.readImage("matchtemplate/black.png");
+        alvision.ASSERT_FALSE(image.empty());
 
-    alvision.Mat pattern = readImage("matchtemplate/cat.png");
-    ASSERT_FALSE(pattern.empty());
+        let pattern = alvision.readImage("matchtemplate/cat.png");
+        alvision.ASSERT_FALSE(pattern.empty());
 
-    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), method);
+        let alg = alvision.cudaimgproc.createTemplateMatching(image.type(), this.method);
 
-    alvision.cuda::GpuMat d_dst;
-    alg.match(loadMat(image), loadMat(pattern), d_dst);
+        let d_dst = new alvision.cuda.GpuMat();
+        alg.match(alvision.loadMat(image), alvision.loadMat(pattern), d_dst);
 
-    alvision.Mat dst(d_dst);
+        let dst = new alvision.Mat (d_dst);
 
-    double maxValue;
-    alvision.Point maxLoc;
-    alvision.minMaxLoc(dst, NULL, &maxValue, NULL, &maxLoc);
+        let maxValue: alvision.double;
+        let maxLoc = new alvision.Point();
+        alvision.minMaxLoc(dst, (minVal_, maxVal_, minIdx_, maxIdx_) => { maxValue = maxVal_; maxLoc = maxIdx_[0]; });
 
-    alvision.Point maxLocGold = alvision.Point(284, 12);
+        let maxLocGold = new alvision.Point(284, 12);
 
-    ASSERT_EQ(maxLocGold, maxLoc);
+        alvision.ASSERT_EQ(maxLocGold, maxLoc);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MatchTemplateBlackSource, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(TemplateMethod(alvision.TM_CCOEFF_NORMED), TemplateMethod(alvision.TM_CCORR_NORMED))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'MatchTemplateBlackSource', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [alvision.TemplateMatchModes.TM_CCOEFF_NORMED,alvision.TemplateMatchModes.TM_CCORR_NORMED]
+    ]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplate_CCOEF_NORMED
 
-PARAM_TEST_CASE(MatchTemplate_CCOEF_NORMED, alvision.cuda::DeviceInfo, std::pair<std::string, std::string>)
+//PARAM_TEST_CASE(MatchTemplate_CCOEF_NORMED, alvision.cuda.DeviceInfo, alvision.pair<string, string>)
+class MatchTemplate_CCOEF_NORMED extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    std::string imageName;
-    std::string patternName;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected imageName: string;
+    protected patternName: string;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        imageName = GET_PARAM(1).first;
-        patternName = GET_PARAM(1).second;
+        this.devInfo =      this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.imageName =    this.GET_PARAM<alvision.pair<string,string>>(1).first;
+        this.patternName =  this.GET_PARAM<alvision.pair<string,string>>(1).second;
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(MatchTemplate_CCOEF_NORMED, Accuracy)
+//CUDA_TEST_P(MatchTemplate_CCOEF_NORMED, Accuracy)
+class MatchTemplate_CCOEF_NORMED_Accuracy extends MatchTemplate_CCOEF_NORMED
 {
-    alvision.Mat image = readImage(imageName);
-    ASSERT_FALSE(image.empty());
+    TestBody() {
+        let image = alvision.readImage(this.imageName);
+        alvision.ASSERT_FALSE(image.empty());
 
-    alvision.Mat pattern = readImage(patternName);
-    ASSERT_FALSE(pattern.empty());
+        let pattern = alvision.readImage(this.patternName);
+        alvision.ASSERT_FALSE(pattern.empty());
 
-    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(image.type(), alvision.TM_CCOEFF_NORMED);
+        let alg = alvision.cudaimgproc.createTemplateMatching(image.type(), alvision.TemplateMatchModes.TM_CCOEFF_NORMED);
 
-    alvision.cuda::GpuMat d_dst;
-    alg.match(loadMat(image), loadMat(pattern), d_dst);
+        let d_dst = new alvision.cuda.GpuMat();
+        alg.match(alvision.loadMat(image), alvision.loadMat(pattern), d_dst);
 
-    alvision.Mat dst(d_dst);
+        let dst = new alvision.Mat (d_dst);
 
-    alvision.Point minLoc, maxLoc;
-    double minVal, maxVal;
-    alvision.minMaxLoc(dst, &minVal, &maxVal, &minLoc, &maxLoc);
+        let minLoc = new alvision.Point(), maxLoc = new alvision.Point();
+        let minVal: alvision.double, maxVal: alvision.double ;
+        alvision.minMaxLoc(dst, (minVal_, maxVal_, minIdx_, maxIdx_) => { minVal = minVal_; maxVal = maxVal_; minLoc = minIdx_[0]; maxLoc = maxIdx_[0]; });
 
-    alvision.Mat dstGold;
-    alvision.matchTemplate(image, pattern, dstGold, alvision.TM_CCOEFF_NORMED);
+        let dstGold = new alvision.Mat();
+        alvision.matchTemplate(image, pattern, dstGold, alvision.TemplateMatchModes.TM_CCOEFF_NORMED);
 
-    double minValGold, maxValGold;
-    alvision.Point minLocGold, maxLocGold;
-    alvision.minMaxLoc(dstGold, &minValGold, &maxValGold, &minLocGold, &maxLocGold);
+        let minValGold: alvision.double, maxValGold: alvision.double ;
+        let minLocGold = new alvision.Point(), maxLocGold = new alvision.Point ();
+        alvision.minMaxLoc(dstGold, (minVal_, maxVal_, minIdx_, maxIdx_) => { minValGold = minVal_; maxValGold = maxVal_; minLocGold = minIdx_[0]; maxLocGold = maxIdx_[0]; });
 
-    ASSERT_EQ(minLocGold, minLoc);
-    ASSERT_EQ(maxLocGold, maxLoc);
-    ASSERT_LE(maxVal, 1.0);
-    ASSERT_GE(minVal, -1.0);
+        alvision.ASSERT_EQ(minLocGold, minLoc);
+        alvision.ASSERT_EQ(maxLocGold, maxLoc);
+        alvision.ASSERT_LE(maxVal, 1.0);
+        alvision.ASSERT_GE(minVal, -1.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MatchTemplate_CCOEF_NORMED, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(std::make_pair(std::string("matchtemplate/source-0.png"), std::string("matchtemplate/target-0.png")))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'MatchTemplate_CCOEF_NORMED', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [new alvision.pair("matchtemplate/source-0.png","matchtemplate/target-0.png")]
+    ]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // MatchTemplate_CanFindBigTemplate
 
-struct MatchTemplate_CanFindBigTemplate : testing::TestWithParam<alvision.cuda::DeviceInfo>
+class MatchTemplate_CanFindBigTemplate extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
+    protected devInfo: alvision.cuda.DeviceInfo;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GetParam();
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(MatchTemplate_CanFindBigTemplate, SQDIFF_NORMED)
+//CUDA_TEST_P(MatchTemplate_CanFindBigTemplate, SQDIFF_NORMED)
+class MatchTemplate_CanFindBigTemplate_SQDIFF_NORMED extends MatchTemplate_CanFindBigTemplate
 {
-    alvision.Mat scene = readImage("matchtemplate/scene.png");
-    ASSERT_FALSE(scene.empty());
+    TestBody() {
+        let scene = alvision.readImage("matchtemplate/scene.png");
+        alvision.ASSERT_FALSE(scene.empty());
 
-    alvision.Mat templ = readImage("matchtemplate/template.png");
-    ASSERT_FALSE(templ.empty());
+        let templ = alvision.readImage("matchtemplate/template.png");
+        alvision.ASSERT_FALSE(templ.empty());
 
-    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(scene.type(), alvision.TM_SQDIFF_NORMED);
+        let alg = alvision.cudaimgproc.createTemplateMatching(scene.type(), alvision.TemplateMatchModes.TM_SQDIFF_NORMED);
 
-    alvision.cuda::GpuMat d_result;
-    alg.match(loadMat(scene), loadMat(templ), d_result);
+        let d_result = new alvision.cuda.GpuMat();
+        alg.match(alvision.loadMat(scene), alvision.loadMat(templ), d_result);
 
-    alvision.Mat result(d_result);
+        let result = new alvision.Mat (d_result);
 
-    double minVal;
-    alvision.Point minLoc;
-    alvision.minMaxLoc(result, &minVal, 0, &minLoc, 0);
+        let minVal: alvision.double;
+        let minLoc = new alvision.Point();
+        alvision.minMaxLoc(result, (minVal_, maxVal_, minIdx_, maxIdx_) => { minVal = minVal_[0]; minLoc = minIdx_[0]; });
 
-    ASSERT_GE(minVal, 0);
-    ASSERT_LT(minVal, 1e-3);
-    ASSERT_EQ(344, minLoc.x);
-    ASSERT_EQ(0, minLoc.y);
+        alvision.ASSERT_GE(minVal, 0);
+        alvision.ASSERT_LT(minVal, 1e-3);
+        alvision.ASSERT_EQ(344, minLoc.x);
+        alvision.ASSERT_EQ(0, minLoc.y);
+    }
 }
 
-CUDA_TEST_P(MatchTemplate_CanFindBigTemplate, SQDIFF)
+//CUDA_TEST_P(MatchTemplate_CanFindBigTemplate, SQDIFF)
+class MatchTemplate_CanFindBigTemplate_SQDIFF extends MatchTemplate_CanFindBigTemplate
 {
-    alvision.Mat scene = readImage("matchtemplate/scene.png");
-    ASSERT_FALSE(scene.empty());
+    TestBody() {
+        let scene = alvision.readImage("matchtemplate/scene.png");
+        alvision.ASSERT_FALSE(scene.empty());
 
-    alvision.Mat templ = readImage("matchtemplate/template.png");
-    ASSERT_FALSE(templ.empty());
+        let templ = alvision.readImage("matchtemplate/template.png");
+        alvision.ASSERT_FALSE(templ.empty());
 
-    alvision.Ptr<alvision.cuda::TemplateMatching> alg = alvision.cuda::createTemplateMatching(scene.type(), alvision.TM_SQDIFF);
+        let alg = alvision.cudaimgproc.createTemplateMatching(scene.type(), alvision.TemplateMatchModes.TM_SQDIFF);
 
-    alvision.cuda::GpuMat d_result;
-    alg.match(loadMat(scene), loadMat(templ), d_result);
+        let d_result = new alvision.cuda.GpuMat();
+        alg.match(alvision.loadMat(scene), alvision.loadMat(templ), d_result);
 
-    alvision.Mat result(d_result);
+        let result = new alvision.Mat (d_result);
 
-    double minVal;
-    alvision.Point minLoc;
-    alvision.minMaxLoc(result, &minVal, 0, &minLoc, 0);
+        let minVal: alvision.double ;
+        let minLoc = new alvision.Point();
+        alvision.minMaxLoc(result, (minVal_, maxVal_, minIdx_, maxIdx_) => { minVal = minVal_[0]; minLoc = minIdx_[0]; });
 
-    ASSERT_GE(minVal, 0);
-    ASSERT_EQ(344, minLoc.x);
-    ASSERT_EQ(0, minLoc.y);
+        alvision.ASSERT_GE(minVal, 0);
+        alvision.ASSERT_EQ(344, minLoc.x);
+        alvision.ASSERT_EQ(0, minLoc.y);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MatchTemplate_CanFindBigTemplate, ALL_DEVICES);
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'MatchTemplate_CanFindBigTemplate', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES
+]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

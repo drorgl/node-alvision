@@ -1,3 +1,4 @@
+
 /*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -65,9 +66,9 @@ import fs = require('fs');
 // Brute Force Non local means
 
 alvision.cvtest.TEST('CUDA_BruteForceNonLocalMeans', 'Regression', () => {
-   // using alvision.cuda::GpuMat;
+   // using alvision.cuda.GpuMat;
 
-    var bgr = readImage("../gpu/denoising/lena_noised_gaussian_sigma=20_multi_0.png", alvision.ImreadModes.IMREAD_COLOR);
+    var bgr = alvision.readImage("../gpu/denoising/lena_noised_gaussian_sigma=20_multi_0.png", alvision.ImreadModes.IMREAD_COLOR);
     alvision.ASSERT_FALSE(bgr.empty());
     alvision.resize(bgr, bgr, new alvision.Size(256, 256));
 
@@ -75,11 +76,11 @@ alvision.cvtest.TEST('CUDA_BruteForceNonLocalMeans', 'Regression', () => {
     alvision.cvtColor(bgr, gray, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
 
     //GpuMat dbgr, dgray;
-    var dbgr = new alvision.GpuMat();
-    var dgray = new alvision.GpuMat();
+    var dbgr = new alvision.cuda.GpuMat();
+    var dgray = new alvision.cuda.GpuMat();
 
-    alvision.nonLocalMeans(new alvision.GpuMat(bgr), dbgr, 20);
-    alvision.nonLocalMeans(new alvision.GpuMat(gray), dgray, 20);
+    alvision.cudaphoto.nonLocalMeans(new alvision.cuda.GpuMat(bgr), dbgr, 20);
+    alvision.cudaphoto.nonLocalMeans(new alvision.cuda.GpuMat(gray), dgray, 20);
 
 //    //#if 0
 //    alvision.dumpImage("../gpu/denoising/nlm_denoised_lena_bgr.png",  new alvision.Mat(dbgr));
@@ -100,7 +101,7 @@ alvision.cvtest.TEST('CUDA_BruteForceNonLocalMeans', 'Regression', () => {
 // Fast Force Non local means
 
 alvision.cvtest.TEST('CUDA_FastNonLocalMeans', 'Regression', () => {
-    //using alvision.cuda::GpuMat;
+    //using alvision.cuda.GpuMat;
 
     var bgr = alvision.readImage("../gpu/denoising/lena_noised_gaussian_sigma=20_multi_0.png", alvision.ImreadModes.IMREAD_COLOR);
     alvision.ASSERT_FALSE(bgr.empty());
@@ -109,12 +110,12 @@ alvision.cvtest.TEST('CUDA_FastNonLocalMeans', 'Regression', () => {
     alvision.cvtColor(bgr, gray, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
 
     //GpuMat dbgr, dgray;
-    var dbgr = new alvision.GpuMat();
-    var dgray = new alvision.GpuMat();
+    var dbgr = new alvision.cuda.GpuMat();
+    var dgray = new alvision.cuda.GpuMat();
 
 
-    alvision.fastNlMeansDenoising(       new alvision.GpuMat(gray), dgray, 20);
-    alvision.fastNlMeansDenoisingColored(new alvision.GpuMat(bgr), dbgr, 20, 10);
+    alvision.fastNlMeansDenoising(       new alvision.cuda.GpuMat(gray), dgray, 20);
+    alvision.fastNlMeansDenoisingColored(new alvision.cuda.GpuMat(bgr), dbgr, 20, 10);
 
 //    //#if 0
 //    alvision.dumpImage("../gpu/denoising/fnlm_denoised_lena_bgr.png",  new alvision.Mat(dbgr));

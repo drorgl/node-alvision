@@ -48,110 +48,120 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // CornerHarris
 
-namespace
-{
-    IMPLEMENT_PARAM_CLASS(BlockSize, int);
-    IMPLEMENT_PARAM_CLASS(ApertureSize, int);
-}
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(BlockSize, int);
+//    IMPLEMENT_PARAM_CLASS(ApertureSize, int);
+//}
 
-PARAM_TEST_CASE(CornerHarris, alvision.cuda::DeviceInfo, MatType, BorderType, BlockSize, ApertureSize)
+//PARAM_TEST_CASE(CornerHarris, alvision.cuda.DeviceInfo, MatType, BorderType, BlockSize, ApertureSize)
+class CornerHarris extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    int type;
-    int borderType;
-    int blockSize;
-    int apertureSize;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected type: alvision.int;
+    protected borderType: alvision.int;
+    protected blockSize: alvision.int;
+    protected apertureSize: alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        type = GET_PARAM(1);
-        borderType = GET_PARAM(2);
-        blockSize = GET_PARAM(3);
-        apertureSize = GET_PARAM(4);
+        this.devInfo =      this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.type =         this.GET_PARAM<alvision.int>(1);
+        this.borderType =   this.GET_PARAM<alvision.int>(2);
+        this.blockSize =    this.GET_PARAM<alvision.int>(3);
+        this.apertureSize = this.GET_PARAM<alvision.int>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(CornerHarris, Accuracy)
+//CUDA_TEST_P(CornerHarris, Accuracy)
+class CornerHarris_Accuracy extends CornerHarris
 {
-    alvision.Mat src = readImageType("stereobm/aloe-L.png", type);
-    ASSERT_FALSE(src.empty());
+    TestBody() {
+        let src = alvision.readImageType("stereobm/aloe-L.png", this.type);
+        alvision.ASSERT_FALSE(src.empty());
 
-    double k = randomDouble(0.1, 0.9);
+        let k = alvision.randomDouble(0.1, 0.9);
 
-    alvision.Ptr<alvision.cuda::CornernessCriteria> harris = alvision.cuda::createHarrisCorner(src.type(), blockSize, apertureSize, k, borderType);
+        let harris = alvision.cudaimgproc.createHarrisCorner(src.type(), this.blockSize, this.apertureSize, k, this.borderType);
 
-    alvision.cuda::GpuMat dst;
-    harris.compute(loadMat(src), dst);
+        let dst = new alvision.cuda.GpuMat();
+        harris.compute(alvision.loadMat(src), dst);
 
-    alvision.Mat dst_gold;
-    alvision.cornerHarris(src, dst_gold, blockSize, apertureSize, k, borderType);
+        let dst_gold = new alvision.Mat();
+        alvision.cornerHarris(src, dst_gold, this.blockSize, this.apertureSize, k, this.borderType);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.02);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.02);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, CornerHarris, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_32FC1)),
-    testing::Values(BorderType(alvision.BORDER_REFLECT101), BorderType(alvision.BORDER_REPLICATE), BorderType(alvision.BORDER_REFLECT)),
-    testing::Values(BlockSize(3), BlockSize(5), BlockSize(7)),
-    testing::Values(ApertureSize(0), ApertureSize(3), ApertureSize(5), ApertureSize(7))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'CornerHarris', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_32FC1],
+    [alvision.BorderTypes.BORDER_REFLECT101,alvision.BorderTypes.BORDER_REPLICATE,alvision.BorderTypes.BORDER_REFLECT],
+    [3,5,7],
+    [0,3,5,7]
+    ]));
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 // cornerMinEigen
 
-PARAM_TEST_CASE(CornerMinEigen, alvision.cuda::DeviceInfo, MatType, BorderType, BlockSize, ApertureSize)
+//PARAM_TEST_CASE(CornerMinEigen, alvision.cuda.DeviceInfo, MatType, BorderType, BlockSize, ApertureSize)
+class CornerMinEigen extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    int type;
-    int borderType;
-    int blockSize;
-    int apertureSize;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected type: alvision.int;
+    protected borderType: alvision.int;
+    protected blockSize: alvision.int;
+    protected apertureSize: alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        type = GET_PARAM(1);
-        borderType = GET_PARAM(2);
-        blockSize = GET_PARAM(3);
-        apertureSize = GET_PARAM(4);
+        this.devInfo =          this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.type =             this.GET_PARAM<alvision.int>(1);
+        this.borderType =       this.GET_PARAM<alvision.int>(2);
+        this.blockSize =        this.GET_PARAM<alvision.int>(3);
+        this.apertureSize =     this.GET_PARAM<alvision.int>(4);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(CornerMinEigen, Accuracy)
+//CUDA_TEST_P(CornerMinEigen, Accuracy)
+class CornerMinEigen_Accuracy extends CornerMinEigen
 {
-    alvision.Mat src = readImageType("stereobm/aloe-L.png", type);
-    ASSERT_FALSE(src.empty());
+    TestBody() {
+        let src = alvision.readImageType("stereobm/aloe-L.png", this.type);
+        alvision.ASSERT_FALSE(src.empty());
 
-    alvision.Ptr<alvision.cuda::CornernessCriteria> minEigenVal = alvision.cuda::createMinEigenValCorner(src.type(), blockSize, apertureSize, borderType);
+        let minEigenVal = alvision.cudaimgproc.createMinEigenValCorner(src.type(), this.blockSize, this.apertureSize, this.borderType);
 
-    alvision.cuda::GpuMat dst;
-    minEigenVal.compute(loadMat(src), dst);
+        let dst = new alvision.cuda.GpuMat();
+        minEigenVal.compute(alvision.loadMat(src), dst);
 
-    alvision.Mat dst_gold;
-    alvision.cornerMinEigenVal(src, dst_gold, blockSize, apertureSize, borderType);
+        let dst_gold = new alvision.Mat();
+        alvision.cornerMinEigenVal(src, dst_gold, this.blockSize, this.apertureSize, this.borderType);
 
-    EXPECT_MAT_NEAR(dst_gold, dst, 0.02);
+        alvision.EXPECT_MAT_NEAR(dst_gold, dst, 0.02);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, CornerMinEigen, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(MatType(CV_8UC1), MatType(CV_32FC1)),
-    testing::Values(BorderType(alvision.BORDER_REFLECT101), BorderType(alvision.BORDER_REPLICATE), BorderType(alvision.BORDER_REFLECT)),
-    testing::Values(BlockSize(3), BlockSize(5), BlockSize(7)),
-    testing::Values(ApertureSize(0), ApertureSize(3), ApertureSize(5), ApertureSize(7))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'CornerMinEigen', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [alvision.MatrixType.CV_8UC1,alvision.MatrixType.CV_32FC1],
+    [alvision.BorderTypes.BORDER_REFLECT101,alvision.BorderTypes.BORDER_REPLICATE,alvision.BorderTypes.BORDER_REFLECT],
+    [3,5,7],
+    [0,3,5,7]
+    ]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

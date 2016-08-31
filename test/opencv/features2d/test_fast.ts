@@ -48,98 +48,84 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-using namespace std;
-using namespace cv;
+//#include "test_precomp.hpp"
+//
+//using namespace std;
+//using namespace cv;
 
 class CV_FastTest  extends alvision.cvtest.BaseTest
 {
-public:
-    CV_FastTest();
-    ~CV_FastTest();
-protected:
-    void run(int);
+    
+    run(iii: alvision.int): void {
+        for (var type= 0; type <= 2; ++type) {
+            var image1 = alvision.imread(this.ts.get_data_path() + "inpaint/orig.png");
+            var image2 = alvision.imread(this.ts.get_data_path() + "cameracalibration/chess9.png");
+            var xml = this.ts.get_data_path() + util.format("fast/result%d.xml", type);
+
+            if (image1.empty() || image2.empty()) {
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+                return;
+            }
+
+            var gray1 = new alvision.Mat, gray2 = new alvision.Mat();
+            alvision.cvtColor(image1, gray1,alvision.ColorConversionCodes. COLOR_BGR2GRAY);
+            alvision.cvtColor(image2, gray2,alvision.ColorConversionCodes. COLOR_BGR2GRAY);
+
+            var keypoints1 = new Array<alvision.KeyPoint>();
+            var keypoints2 = new Array<alvision.KeyPoint>();
+            alvision.FAST(gray1,(kp)=>{ keypoints1 = kp;}, 30, true, type);
+            alvision.FAST(gray2,(kp)=>{ keypoints2 = kp;}, (type > 0 ? 30 : 20), true, type);
+
+            for (var i = 0; i < keypoints1.length; ++i)
+            {
+                const kp = keypoints1[i];
+                alvision.circle(image1, kp.pt, Math.round(kp.size.valueOf() / 2), new alvision.Scalar(255, 0, 0));
+            }
+
+            for (var i = 0; i < keypoints2.length; ++i)
+            {
+                const kp = keypoints2[i];
+                alvision.circle(image2, kp.pt, Math.round(kp.size.valueOf() / 2), new alvision.Scalar(255, 0, 0));
+            }
+
+            var kps1 = new alvision.Mat(1, (keypoints1.length *alvision.KeyPoint.sizeof().valueOf()), alvision.MatrixType.CV_8U, keypoints1);
+            var kps2 = new alvision.Mat(1, (keypoints2.length * alvision.KeyPoint.sizeof().valueOf()), alvision.MatrixType.CV_8U, keypoints2);
+
+            var fs = new alvision.FileStorage(xml, alvision.FileStorageMode.READ);
+            if (!fs.isOpened()) {
+                fs.open(xml, alvision.FileStorageMode.WRITE);
+                if (!fs.isOpened()) {
+                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+                    return;
+                }
+                fs.write("exp_kps1", kps1);
+                fs.write("exp_kps2" , kps2);
+                fs.release();
+                fs.open(xml, alvision.FileStorageMode.READ);
+                if (!fs.isOpened()) {
+                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
+                    return;
+                }
+            }
+
+            var exp_kps1 = new alvision.Mat(), exp_kps2 = new alvision.Mat();
+            exp_kps1 = fs.nodes["exp_kps1"].readMat(new alvision.Mat());
+            exp_kps2 = fs.nodes["exp_kps2"].readMat(new alvision.Mat());
+            fs.release();
+
+            if (exp_kps1.size != kps1.size || 0 != alvision.cvtest.norm(exp_kps1, kps1, alvision.NormTypes.NORM_L2) ||
+                exp_kps2.size != kps2.size || 0 != alvision.cvtest.norm(exp_kps2, kps2, alvision.NormTypes.NORM_L2)) {
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
+                return;
+            }
+
+            /*alvision.namedWindow("Img1"); alvision.imshow("Img1", image1);
+            alvision.namedWindow("Img2"); alvision.imshow("Img2", image2);
+            alvision.waitKey(0);*/
+        }
+
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
+    }
 };
 
-CV_FastTest::CV_FastTest() {}
-CV_FastTest::~CV_FastTest() {}
-
-void CV_FastTest::run( int )
-{
-  for(int type=0; type <= 2; ++type) {
-    Mat image1 = imread(this.ts.get_data_path() + "inpaint/orig.png");
-    Mat image2 = imread(this.ts.get_data_path() + "cameracalibration/chess9.png");
-    string xml = this.ts.get_data_path() + format("fast/result%d.xml", type);
-
-    if (image1.empty() || image2.empty())
-    {
-        this.ts.set_failed_test_info( alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA );
-        return;
-    }
-
-    Mat gray1, gray2;
-    cvtColor(image1, gray1, COLOR_BGR2GRAY);
-    cvtColor(image2, gray2, COLOR_BGR2GRAY);
-
-    Array<KeyPoint> keypoints1;
-    Array<KeyPoint> keypoints2;
-    FAST(gray1, keypoints1, 30, true, type);
-    FAST(gray2, keypoints2, (type > 0 ? 30 : 20), true, type);
-
-    for(size_t i = 0; i < keypoints1.size(); ++i)
-    {
-        const KeyPoint& kp = keypoints1[i];
-        alvision.circle(image1, kp.pt, Math.round(kp.size/2), Scalar(255, 0, 0));
-    }
-
-    for(size_t i = 0; i < keypoints2.size(); ++i)
-    {
-        const KeyPoint& kp = keypoints2[i];
-        alvision.circle(image2, kp.pt, Math.round(kp.size/2), Scalar(255, 0, 0));
-    }
-
-    Mat kps1(1, (int)(keypoints1.size() * sizeof(KeyPoint)), CV_8U, &keypoints1[0]);
-    Mat kps2(1, (int)(keypoints2.size() * sizeof(KeyPoint)), CV_8U, &keypoints2[0]);
-
-    FileStorage fs(xml, FileStorage::READ);
-    if (!fs.isOpened())
-    {
-        fs.open(xml, FileStorage::WRITE);
-        if (!fs.isOpened())
-        {
-            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
-            return;
-        }
-        fs << "exp_kps1" << kps1;
-        fs << "exp_kps2" << kps2;
-        fs.release();
-        fs.open(xml, FileStorage::READ);
-        if (!fs.isOpened())
-        {
-            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
-            return;
-        }
-    }
-
-    Mat exp_kps1, exp_kps2;
-    read( fs["exp_kps1"], exp_kps1, Mat() );
-    read( fs["exp_kps2"], exp_kps2, Mat() );
-    fs.release();
-
-     if ( exp_kps1.size != kps1.size || 0 != alvision.cvtest.norm(exp_kps1, kps1,alvision.NormTypes. NORM_L2) ||
-          exp_kps2.size != kps2.size || 0 != alvision.cvtest.norm(exp_kps2, kps2,alvision.NormTypes. NORM_L2))
-    {
-        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
-        return;
-    }
-
-    /*alvision.namedWindow("Img1"); alvision.imshow("Img1", image1);
-    alvision.namedWindow("Img2"); alvision.imshow("Img2", image2);
-    alvision.waitKey(0);*/
-  }
-
-  this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
-}
-
-TEST(Features2d_FAST, regression) { CV_FastTest test; test.safe_run(); }
+alvision.cvtest.TEST('Features2d_FAST', 'regression', () => { var test = new CV_FastTest(); test.safe_run(); });

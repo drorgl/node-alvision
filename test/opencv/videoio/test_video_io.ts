@@ -57,50 +57,70 @@ import fs = require('fs');
 
 //namespace cvtest {
 
-    function fourccToString(fourcc: alvision.int): string {
-        return util.format("%c%c%c%c", fourcc.valueOf() & 255, (fourcc.valueOf() >> 8) & 255, (fourcc.valueOf() >> 16) & 255, (fourcc.valueOf() >> 24) & 255);
+class VideoFormat {
+    //constructor() { this.fourcc = -1; }
+    constructor(_ext?: string, _fourcc?: alvision.int) {
+        if (_ext == null) {
+            this.fourcc = -1;
+        } else {
+            this.ext = _ext;
+            this.fourcc = _fourcc;
+        }
+    }
+    empty(): boolean {
+        return this.ext == null;
     }
 
+    public ext: string;
+    public fourcc: alvision.int;
+}
+
+function fourccToString(fourcc: alvision.int): string {
+    return util.format("%c%c%c%c", fourcc.valueOf() & 255, (fourcc.valueOf() >> 8) & 255, (fourcc.valueOf() >> 16) & 255, (fourcc.valueOf() >> 24) & 255);
+}
+
+const g_specific_fmt_list =
+    [
+        /*VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', '2', '5')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', '5', '0')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 'c', ' ')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 'h', '1')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 'h', 'd')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 's', 'd')),
+        VideoFormat("wmv", alvision.CV_FOURCC('d', 'v', 's', 'l')),
+        VideoFormat("wmv", alvision.CV_FOURCC('H', '2', '6', '3')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', '4', 'S', '2')),
+        VideoFormat("avi", alvision.CV_FOURCC('M', 'J', 'P', 'G')),
+        VideoFormat("mp4", alvision.CV_FOURCC('M', 'P', '4', 'S')),
+        VideoFormat("mp4", alvision.CV_FOURCC('M', 'P', '4', 'V')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', 'P', '4', '3')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', 'P', 'G', '1')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', 'S', 'S', '1')),
+        VideoFormat("wmv", alvision.CV_FOURCC('M', 'S', 'S', '2')),*/
+        //#if !defined(_M_ARM)
+        new VideoFormat("wmv", alvision.CV_FOURCC('W', 'M', 'V', '1')),
+        new VideoFormat("wmv", alvision.CV_FOURCC('W', 'M', 'V', '2')),
+        //#endif
+        new VideoFormat("wmv", alvision.CV_FOURCC('W', 'M', 'V', '3')),
+        new VideoFormat("avi", alvision.CV_FOURCC('H', '2', '6', '4')),
+        //VideoFormat("wmv", alvision.CV_FOURCC('W', 'V', 'C', '1')),
+        new VideoFormat(),
+        //#else
+        new VideoFormat("avi", alvision.VideoWriter.fourcc('X', 'V', 'I', 'D')),
+        new VideoFormat("avi", alvision.VideoWriter.fourcc('M', 'P', 'E', 'G')),
+        new VideoFormat("avi", alvision.VideoWriter.fourcc('M', 'J', 'P', 'G')),
+        //VideoFormat("avi", VideoWriter::fourcc('I', 'Y', 'U', 'V')),
+        new VideoFormat("mkv", alvision.VideoWriter.fourcc('X', 'V', 'I', 'D')),
+        new VideoFormat("mkv", alvision.VideoWriter.fourcc('M', 'P', 'E', 'G')),
+        new VideoFormat("mkv", alvision.VideoWriter.fourcc('M', 'J', 'P', 'G')),
+        //#ifndef HAVE_GSTREAMER
+        new VideoFormat("mov", alvision.VideoWriter.fourcc('m', 'p', '4', 'v')),
+        //#endif
+        new VideoFormat()
+    ];
+
     //#ifdef HAVE_MSMF
-    const g_specific_fmt_list =
-        [
-            /*VideoFormat("wmv", CV_FOURCC_MACRO('d', 'v', '2', '5')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('d', 'v', '5', '0')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('d', 'v', 'c', ' ')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('d', 'v', 'h', '1')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('d', 'v', 'h', 'd')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('d', 'v', 's', 'd')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('d', 'v', 's', 'l')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('H', '2', '6', '3')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('M', '4', 'S', '2')),
-            VideoFormat("avi", CV_FOURCC_MACRO('M', 'J', 'P', 'G')),
-            VideoFormat("mp4", CV_FOURCC_MACRO('M', 'P', '4', 'S')),
-            VideoFormat("mp4", CV_FOURCC_MACRO('M', 'P', '4', 'V')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('M', 'P', '4', '3')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('M', 'P', 'G', '1')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('M', 'S', 'S', '1')),
-            VideoFormat("wmv", CV_FOURCC_MACRO('M', 'S', 'S', '2')),*/
-            //#if !defined(_M_ARM)
-            alvision.VideoFormat("wmv", CV_FOURCC_MACRO('W', 'M', 'V', '1')),
-            alvision.VideoFormat("wmv", CV_FOURCC_MACRO('W', 'M', 'V', '2')),
-            //#endif
-            alvision.VideoFormat("wmv", CV_FOURCC_MACRO('W', 'M', 'V', '3')),
-            alvision.VideoFormat("avi", CV_FOURCC_MACRO('H', '2', '6', '4')),
-            //VideoFormat("wmv", CV_FOURCC_MACRO('W', 'V', 'C', '1')),
-            alvision.VideoFormat(),
-//#else
-            alvision.VideoFormat("avi", alvision.VideoWriter.fourcc('X', 'V', 'I', 'D')),
-            alvision.VideoFormat("avi", alvision.VideoWriter.fourcc('M', 'P', 'E', 'G')),
-            alvision.VideoFormat("avi", alvision.VideoWriter.fourcc('M', 'J', 'P', 'G')),
-            //VideoFormat("avi", VideoWriter::fourcc('I', 'Y', 'U', 'V')),
-            alvision.VideoFormat("mkv", alvision.VideoWriter.fourcc('X', 'V', 'I', 'D')),
-            alvision.VideoFormat("mkv", alvision.VideoWriter.fourcc('M', 'P', 'E', 'G')),
-            alvision.VideoFormat("mkv", alvision.VideoWriter.fourcc('M', 'J', 'P', 'G')),
-            //#ifndef HAVE_GSTREAMER
-            alvision.VideoFormat("mov", alvision.VideoWriter.fourcc('m', 'p', '4', 'v')),
-            //#endif
-            alvision.VideoFormat()
-];
+   
 //#endif
 
 //}
@@ -150,7 +170,7 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
             var loaded = alvision.imread(full_name);
             if (loaded.empty()) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Reading failed at fmt=%s\n", ext);
-                this.ts.set_failed_test_info(this.ts.FAIL_MISMATCH);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH );
                 continue;
             }
 
@@ -158,34 +178,42 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
             var psnr = alvision.cvtest.PSNR(loaded, image);
             if (psnr < thresDbell) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Reading image from file: too big difference (=%g) with fmt=%s\n", psnr, ext);
-                this.ts.set_failed_test_info(this.ts.FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
                 continue;
             }
 
-            vector < uchar > from_file;
+            //vector < uchar > from_file;
+            
 
-            FILE * f = fopen(full_name, "rb");
-            fseek(f, 0, SEEK_END);
-            long len = ftell(f);
-            from_file.resize((size_t)len);
-            fseek(f, 0, SEEK_SET);
-            from_file.resize(fread(&from_file[0], 1, from_file.size(), f));
-            fclose(f);
+            //FILE * f = fopen(full_name, "rb");
+            let f = fs.openSync(full_name, "rb");
+            let len = fs.statSync(full_name).size;
+            //fseek(f, 0, SEEK_END);
+            //long len = ftell(f);
+            //from_file.resize((size_t)len);
+            let from_file = new Buffer(len);
+            
+            //fseek(f, 0, SEEK_SET);
+            fs.readSync(f, from_file, 0, len, 0);
+            //from_file.resize(fread(&from_file[0], 1, from_file.size(), f));
+            //fclose(f);
+            fs.closeSync(f);
 
-            vector < uchar > buf;
+            //vector < uchar > buf;
+            let buf = new Buffer(0);
             alvision.imencode("." + exts[i], image, buf);
 
             if (buf != from_file) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Encoding failed with fmt=%s\n", ext);
-                this.ts.set_failed_test_info(this.ts.FAIL_MISMATCH);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
                 continue;
             }
 
-            var buf_loaded = alvision.imdecode(Mat(buf), 1);
+            var buf_loaded = alvision.imdecode(new alvision.Mat(buf), 1);
 
             if (buf_loaded.empty()) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Decoding failed with fmt=%s\n", ext);
-                this.ts.set_failed_test_info(this.ts.FAIL_MISMATCH);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
                 continue;
             }
 
@@ -193,78 +221,90 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
 
             if (psnr < thresDbell) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Decoding image from memory: too small PSNR (=%gdb) with fmt=%s\n", psnr, ext);
-                this.ts.set_failed_test_info(ts.FAIL_MISMATCH);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
                 continue;
             }
 
         }
 
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "end test function : ImagesTest \n");
-        this.ts.set_failed_test_info(ts.OK);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
 
     }
-    VideoTest(dir: string, fmt: alvision.VideoFormat): void {
+    VideoTest(dir: string, fmt: VideoFormat): void {
         var src_file = dir + "../cv/shared/video_for_test.avi";
         var tmp_name = alvision.tempfile((fourccToString(fmt.fourcc) + "." + fmt.ext));
 
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "reading video : %s and converting it to %s\n", src_file, tmp_name);
 
-        CvCapture * cap = cvCaptureFromFile(src_file);
+        let cap = new alvision.VideoCapture(src_file);
+
+        //CvCapture * cap = cvCaptureFromFile(src_file);
 
         if (!cap) {
-            this.ts.set_failed_test_info(ts.FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return;
         }
 
-        CvVideoWriter * writer = 0;
-        vector < Mat > frames;
+        //CvVideoWriter * writer = 0;
+        let writer = new alvision.VideoWriter();
+
+        let frames = new Array<alvision.Mat>();
 
         for (; ;) {
-            IplImage * img = cvQueryFrame(cap);
+            let img: alvision.Mat = null;
+            if (cap.grab()) {
+                cap.retrieve(img);
+            }
+            //IplImage * img = cvQueryFrame(cap);
 
             if (!img)
                 break;
 
-            frames.push(alvision.cvarrToMat(img, true));
+            frames.push(img);
 
-            if (writer == NULL) {
-                writer = cvCreateVideoWriter(tmp_name, fmt.fourcc, 24, cvGetSize(img));
-                if (writer == NULL) {
+            if (writer == null) {
+                writer = new alvision.VideoWriter(tmp_name, fmt.fourcc, 24,new alvision.Size( img.size().width, img.size().height));
+                if (writer == null) {
                     this.ts.printf(alvision.cvtest.TSConstants.LOG, "can't create writer (with fourcc : %s)\n",
-                        alvision.cvtest.fourccToString(fmt.fourcc));
-                    cvReleaseCapture( &cap);
-                    this.ts.set_failed_test_info(ts.FAIL_MISMATCH);
+                        fourccToString(fmt.fourcc));
+                    cap.release();
+                    cap = null;
+                    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
                     return;
                 }
             }
 
-            cvWriteFrame(writer, img);
+            writer.write(img);
         }
 
-        cvReleaseVideoWriter( &writer);
-        cvReleaseCapture( &cap);
+        writer.release();
+        cap.release();
 
-        CvCapture * saved = cvCaptureFromFile(tmp_name);
+        let saved = new alvision.VideoCapture(tmp_name);
         if (!saved) {
-            this.ts.set_failed_test_info(ts.FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return;
         }
 
         const thresDbell = 20;
 
         for (var i = 0; ; i++) {
-            IplImage * ipl1 = cvQueryFrame(saved);
+            let ipl1: alvision.Mat = null;
+            if (cap.grab()) {
+                cap.retrieve(ipl1);
+            }
 
             if (!ipl1)
                 break;
 
-            Mat img = frames[i];
-            Mat img1 = alvision.cvarrToMat(ipl1);
+            let img = frames[i];
+            let img1 = ipl1; 
 
             var psnr = alvision.cvtest.PSNR(img1, img);
             if (psnr < thresDbell) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Too low frame %d psnr = %gdb\n", i, psnr);
-                this.ts.set_failed_test_info(ts.FAIL_MISMATCH);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
 
                 //imwrite("original.png", img);
                 //imwrite("after_test.png", img1);
@@ -276,7 +316,7 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
             }
         }
 
-        cvReleaseCapture( &saved);
+        saved.release();
 
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "end test function : ImagesVideo \n");
     }
@@ -284,18 +324,21 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
         const IMAGE_COUNT = 10;
 
         for (var i = 0; i < IMAGE_COUNT; ++i) {
-            stringstream s; s << i;
+            //stringstream s; s << i;
+            let s = i.toString();
+
             var file_path = dir + "../python/images/QCIF_0" + s + ".bmp";
             var image = alvision.imread(file_path);
 
             if (image.empty()) {
-                this.ts.set_failed_test_info(ts.FAIL_MISSING_TEST_DATA);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA);
                 return;
             }
 
-            alvision.resize(image, image, Size(968, 757), 0.0, 0.0, INTER_CUBIC);
+            alvision.resize(image, image, new alvision.Size(968, 757), 0.0, 0.0,alvision.InterpolationFlags. INTER_CUBIC);
 
-            stringstream s_digit; s_digit << i;
+            //stringstream s_digit; s_digit << i;
+            let s_digit = i.toString();
 
             var full_name = alvision.tempfile((s_digit + ".bmp"));
             this.ts.printf(alvision.cvtest.TSConstants.LOG, " full_name : %s\n", full_name);
@@ -305,42 +348,41 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
             var loaded = alvision.imread(full_name);
             if (loaded.empty()) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Reading failed at fmt=bmp\n");
-                this.ts.set_failed_test_info(alvision.cvtest.FailedCode.FAIL_MISMATCH);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
                 continue;
             }
 
-            const var thresDbell = 20;
+            const thresDbell = 20;
             var psnr = alvision.cvtest.PSNR(loaded, image);
             if (psnr < thresDbell) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Reading image from file: too big difference (=%g) with fmt=bmp\n", psnr);
-                this.ts.set_failed_test_info(ts.FAIL_BAD_ACCURACY);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 continue;
             }
 
-            vector < uchar > from_file;
+            //vector < uchar > from_file;
+            
 
-            FILE * f = fopen(full_name, "rb");
-            fseek(f, 0, SEEK_END);
-            long len = ftell(f);
-            from_file.resize((size_t)len);
-            fseek(f, 0, SEEK_SET);
-            from_file.resize(fread(&from_file[0], 1, from_file.size(), f));
-            fclose(f);
+            let f = fs.openSync(full_name, "rb");
+            let len = fs.statSync(full_name).size;
+            let from_file = new Buffer(len);
+            fs.readSync(f, from_file, 0, len, 0);
+            fs.closeSync(f);
 
-            vector < uchar > buf;
-            imencode(".bmp", image, buf);
+            let buf = new Buffer(0);
+            alvision.imencode(".bmp", image, buf);
 
             if (buf != from_file) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Encoding failed with fmt=bmp\n");
-                this.ts.set_failed_test_info(ts.FAIL_MISMATCH);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
                 continue;
             }
 
-            var buf_loaded = alvision.imdecode(Mat(buf), 1);
+            var buf_loaded = alvision.imdecode(new alvision.Mat(buf), 1);
 
             if (buf_loaded.empty()) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Decoding failed with fmt=bmp\n");
-                this.ts.set_failed_test_info(ts.FAIL_MISMATCH);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
                 continue;
             }
 
@@ -348,19 +390,19 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
 
             if (psnr < thresDbell) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Decoding image from memory: too small PSNR (=%gdb) with fmt=bmp\n", psnr);
-                this.ts.set_failed_test_info(ts.FAIL_MISMATCH);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
                 continue;
             }
         }
 
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "end test function : SpecificImageTest \n");
-        this.ts.set_failed_test_info(ts.OK);
+        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
     }
-    SpecificVideoTest(dir: string, fmt: alvision.cvtest.VideoFormat): void {
+    SpecificVideoTest(dir: string, fmt: VideoFormat): void {
         var ext = fmt.ext;
         var fourcc = fmt.fourcc;
 
-        var fourcc_str = alvision.cvtest.fourccToString(fourcc);
+        var fourcc_str = fourccToString(fourcc);
         const video_file = alvision.tempfile((fourcc_str + "." + ext));
 
         var frame_size = new alvision.Size(968 & -2, 757 & -2);
@@ -371,12 +413,12 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
             var writer2 = new alvision.VideoWriter(video_file, fourcc, 25, frame_size, true);
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Creating a video in %s...\n", video_file);
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Cannot create VideoWriter object with codec %s.\n", fourcc_str);
-            this.ts.set_failed_test_info(ts.FAIL_MISMATCH);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISMATCH);
             return;
         }
 
         const IMAGE_COUNT = 30;
-        vector < Mat > images;
+        let images = new Array<alvision.Mat>();
 
         for (var i = 0; i < IMAGE_COUNT; ++i) {
             var file_path = util.format("%s../python/images/QCIF_%02d.bmp", dir, i);
@@ -390,22 +432,22 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
                 break;
             }
 
-            for (var k = 0; k < img.rows; ++k)
-                for (var l = 0; l < img.cols; ++l)
-                    if (img.at<Vec3b>(k, l) == Vec3b::all(0))
-            img.at<Vec3b>(k, l) = Vec3b(0, 255, 0);
-                else img.at<Vec3b>(k, l) = Vec3b(0, 0, 255);
+            for (var k = 0; k < img.rows(); ++k)
+                for (var l = 0; l < img.cols(); ++l)
+                    if (img.at<alvision.Vecb>("Vec3b",k, l).get() == alvision.Vecb.all(0))
+                        img.at<alvision.Vecb>("Vec3b", k, l).set(new alvision.Vecb(0, 255, 0));
+                else img.at<alvision.Vecb>("Vec3b",k, l).set( new alvision.Vecb(0, 0, 255));
 
-            resize(img, img, frame_size, 0.0, 0.0, INTER_CUBIC);
+            alvision.resize(img, img, frame_size, 0.0, 0.0,alvision.InterpolationFlags. INTER_CUBIC);
 
             images.push(img);
-            writer << img;
+            writer.write(img);
         }
 
         writer.release();
         var cap = new alvision.VideoCapture(video_file);
 
-        var FRAME_COUNT = (size_t)cap.get(CAP_PROP_FRAME_COUNT);
+        var FRAME_COUNT = cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT);
 
         var allowed_extra_frames = 0;
 
@@ -435,25 +477,25 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Required frame count: %d; Returned frame count: %d\n", IMAGE_COUNT, FRAME_COUNT);
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: Incorrect frame count in the video.\n");
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Continue checking...\n");
-            this.ts.set_failed_test_info(ts.FAIL_BAD_ACCURACY);
+            this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY );
             return;
         }
 
         for (var i = 0; i < IMAGE_COUNT - allowed_frame_frop; i++) {
-            Mat frame; cap >> frame;
+            let frame = new alvision.Mat(); cap.read(frame);
             if (frame.empty()) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nVideo file directory: %s\n", ".");
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "File name: video_%s.%s\n", fourcc_str, ext);
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Video codec: %s\n", fourcc_str);
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Error: cannot read the next frame with index %d.\n", i + 1);
-                this.ts.set_failed_test_info(ts.FAIL_MISSING_TEST_DATA);
+                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA);
                 break;
             }
 
             var img = images[i];
 
             const thresDbell = 40;
-            Var psnr = alvision.cvtest.PSNR(img, frame);
+            let psnr = alvision.cvtest.PSNR(img, frame);
 
             if (psnr > thresDbell) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nReading frame from the file video_%s.%s...\n", fourcc_str, ext);

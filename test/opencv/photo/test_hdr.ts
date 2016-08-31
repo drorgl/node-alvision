@@ -1,3 +1,4 @@
+
  /*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -63,38 +64,58 @@ function loadImage(path : string): alvision.Mat
 function checkEqual(img0 : alvision.Mat, img1 : alvision.Mat, threshold : alvision.double , name : string): void
 {
     var max = 1.0;
-    alvision.minMaxLoc(alvision.Mat.from(alvision.MatExpr.abs(alvision.MatExpr.op_Substraction(img0, img1))), (minVal, maxVal, minIdx, maxIdx) => { max = maxVal });
+    alvision.minMaxLoc(alvision.Mat.from(alvision.MatExpr.abs(alvision.MatExpr.op_Substraction(img0, img1))), (minVal, maxVal, minIdx, maxIdx) => { max = maxVal.valueOf() });
     alvision.ASSERT_FALSE(max > threshold, "max=" + max + " threshold=" + threshold + " method=" + name);
 }
 
 //static Array < float > DEFAULT_VECTOR;
 var DEFAULT_VECTOR = new Array<alvision.float>();
 
-function loadExposureSeq(path: string, images: Array<alvision.Mat>, times?: Array<alvision.float>  = DEFAULT_VECTOR): void
+function loadExposureSeq(path: string, images: Array<alvision.Mat>, times: Array<alvision.float>  = DEFAULT_VECTOR): void
 {
-    ifstream list_file((path + "list.txt"));
-    ASSERT_TRUE(list_file.is_open());
-    string name;
-    float val;
-    while(list_file >> name >> val) {
-        Mat img = imread(path + name);
-        ASSERT_FALSE(img.empty()) << "Could not load input image " << path + name;
+    //ifstream list_file((path + "list.txt"));
+    //alvision.ASSERT_TRUE(list_file.is_open());
+    //string name;
+    //float val;
+    //while(list_file >> name >> val) {
+    //    let img = alvision.imread(path + name);
+    //    alvision.ASSERT_FALSE(img.empty(), "Could not load input image " + path + name);
+    //    images.push(img);
+    //    times.push(1 / val);
+    //}
+    //list_file.close();
+    let list_file = path + "list.txt";
+    let lsfile = fs.readFileSync(list_file, "utf8")
+    //todo: possible bug
+    let lsarr = lsfile.split(" ");
+    for (var i = 0; i < lsarr.length; i += 2) {
+             let img = alvision.imread(path + lsarr[i]);
+        alvision.ASSERT_FALSE(img.empty(), "Could not load input image " + path + name);
         images.push(img);
-        times.push(1 / val);
+        times.push(1 / parseFloat(lsarr[i + 1]));
     }
-    list_file.close();
 }
 
 function loadResponseCSV(path: string, response: alvision.Mat): void {
-    response = alvision.Mat(256, 1, alvision.MatrixType.CV_32FC3); //DROR: might not work
-    ifstream resp_file(path);
-    for (int i = 0; i < 256; i++) {
-        for (int c = 0; c < 3; c++) {
-            resp_file >> response.at<Vec3f>(i)[c];
-            resp_file.ignore(1);
+    response = new alvision.Mat(256, 1, alvision.MatrixType.CV_32FC3); //DROR: might not work
+    //ifstream resp_file(path);
+    
+    var fileBinaryContents = fs.readFileSync('data.csv');
+    let fileContents = fileBinaryContents.toString().replace(/[\r\n]/g, "\n").replace(/\n\n/g, "\n");
+    var lines = fileContents.split('\n');
+
+    for (var i = 0; i < lines.length && i < 256; i++) {
+
+        let vec = response.at<alvision.Vecf>("Vec3f", i);
+        let records = lines[i].toString().split(',');
+
+        let vecObj = vec.get();
+        for (let c = 0; c < 3; c++) {
+            vecObj.val[c] = parseFloat(records[c]);
         }
+        vec.set(vecObj);
     }
-    resp_file.close();
+
 }
 
 alvision.cvtest.TEST('Photo_Tonemap', 'regression', () => {
@@ -148,17 +169,17 @@ alvision.cvtest.TEST('Photo_AlignMTB', 'regression',()=>
 
     var max_bits = 5;
     var max_shift = 32;
-    srand(static_cast<unsigned>(time(0)));
+    //srand(static_cast<unsigned>(time(0)));
     var errors = 0;
 
     var align = alvision.createAlignMTB(max_bits);
 
     for(var i = 0; i < TESTS_COUNT; i++) {
-        var shift = new alvision.Point(rand() % max_shift, rand() % max_shift);
+        var shift = new alvision.Point(Math.random() % max_shift, Math.random() % max_shift);
         var res = new alvision.Mat();
         align.shiftMat(img, res, shift);
         var calc = align.calculateShift(img, res);
-        errors += (calc != -shift);
+        errors += (calc.op_NotEquals( shift.op_Multiplication(-1))) ? 1 : 0;
     }
     alvision.ASSERT_TRUE(errors < 5, errors+ " errors");
 });
@@ -250,9 +271,9 @@ alvision.cvtest.TEST('Photo_CalibrateDebevec', 'regression', () => {
 
     calibrate.process(images, response, times);
     var diff = alvision.Mat.from(alvision.MatExpr.abs(alvision.MatExpr.op_Substraction(response, expected)));
-    diff = diff.mul(1.0 / response);
+    diff = diff.mul(alvision.MatExpr.op_Division( 1.0 , response)).toMat()
     var max: alvision.double;
-    alvision.minMaxLoc(diff, null, &max);
+    alvision.minMaxLoc(diff, (minVal_, maxVal_, minIdx_, maxIdx_) => { max = maxVal_; });
     alvision.ASSERT_FALSE(max > 0.1);
 });
 

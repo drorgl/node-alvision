@@ -65,20 +65,20 @@ class CV_ECC_BaseTest  extends alvision.cvtest.BaseTest
     }
 
     computeRMS(mat1: alvision.Mat, mat2: alvision.Mat): alvision.double {
-        alvision.CV_Assert(mat1.rows == mat2.rows);
-        alvision.CV_Assert(mat1.cols == mat2.cols);
+        alvision.CV_Assert(()=>mat1.rows == mat2.rows);
+        alvision.CV_Assert(()=>mat1.cols == mat2.cols);
 
         var errorMat = new alvision.Mat();
         alvision.subtract(mat1, mat2, errorMat);
 
-        return alvision.sqrt(errorMat.dot(errorMat) / (mat1.rows * mat1.cols));
+        return Math.sqrt(errorMat.dot(errorMat).valueOf() / (mat1.rows().valueOf() * mat1.cols().valueOf()));
     }
     isMapCorrect(mat: alvision.Mat): boolean {
         var tr = true;
-        for (var i = 0; i < map.rows; i++)
-        for (var j= 0; j < map.cols; j++){
-            var mapVal = map.atGet<alvision.float>("float",i, j);
-            tr = tr & (!cvIsNaN(mapVal) && (fabs(mapVal) < 1e9));
+        for (var i = 0; i < mat.rows(); i++)
+            for (var j = 0; j < mat.cols(); j++){
+                var mapVal = mat.at<alvision.float>("float",i, j).get();
+            tr = tr && (!isNaN(mapVal.valueOf()) && (Math.abs(mapVal.valueOf()) < 1e9));
         }
 
         return tr;
@@ -95,7 +95,7 @@ class CV_ECC_BaseTest  extends alvision.cvtest.BaseTest
 
 class CV_ECC_Test_Translation extends CV_ECC_BaseTest
 {
-    run(iii: alvision.int): void {
+    run(from: alvision.int): void {
         if (!this.testTranslation(from))
             return;
 
@@ -118,23 +118,22 @@ class CV_ECC_Test_Translation extends CV_ECC_BaseTest
 
         var progress : alvision.int = 0;
 
-        for (var k= from; k < this.ntests; k++){
+        for (var k= from.valueOf(); k < this.ntests; k++){
 
             this.ts.update_context(this, k, true);
             progress = this.update_progress(progress, k, this.ntests, 0);
 
-            var translationGround = new alvision.Mat (new alvision.Mat_<float>(2, 3) << 1, 0, (rng.uniform(10.f, 20.f)),
-                0, 1, (rng.uniform(10.f, 20.f)));
+            var translationGround = new alvision.Mat (new alvision.Matf(2, 3,[ 1, 0, (rng.uniform(10., 20.)),0, 1, (rng.uniform(10., 20.))]));
 
             var warpedImage = new alvision.Mat();
 
             alvision.warpAffine(testImg, warpedImage, translationGround,
-                new alvision.Size(200, 200), INTER_LINEAR + WARP_INVERSE_MAP);
+                new alvision.Size(200, 200),alvision.InterpolationFlags. INTER_LINEAR +alvision.InterpolationFlags. WARP_INVERSE_MAP);
 
-            var mapTranslation = new alvision.Mat (Mat_<float>(2, 3) << 1, 0, 0, 0, 1, 0);
+            var mapTranslation = new alvision.Mat (new alvision.Matf(2, 3,[ 1, 0, 0, 0, 1, 0]));
 
             alvision.findTransformECC(warpedImage, testImg, mapTranslation, 0,
-                TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, ECC_iterations, ECC_epsilon));
+                new alvision.TermCriteria(alvision.TermCriteriaType.COUNT + alvision.TermCriteriaType.EPS,this. ECC_iterations,this. ECC_epsilon));
 
             if (!this.isMapCorrect(mapTranslation)) {
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
@@ -155,7 +154,7 @@ class CV_ECC_Test_Translation extends CV_ECC_BaseTest
 
 class CV_ECC_Test_Euclidean extends CV_ECC_BaseTest
 {
-    run(iii: alvision.int): void {
+    run(from: alvision.int): void {
         if (!this.testEuclidean(from))
             return;
 
@@ -177,24 +176,24 @@ class CV_ECC_Test_Euclidean extends CV_ECC_BaseTest
         var rng = this.ts.get_rng();
 
         var progress: alvision.int  = 0;
-        for (var k= from; k < this.ntests; k++){
+        for (var k= from.valueOf(); k < this.ntests; k++){
             this.ts.update_context(this, k, true);
             progress = this.update_progress(progress, k, this.ntests, 0);
 
-            var angle = Math.PI / 30 + Math.PI * rng.uniform((double) - 2.f, (double)2.f) / 180;
+            var angle = Math.PI / 30 + Math.PI * rng.uniform( - 2., 2.).valueOf() / 180;
 
-            var euclideanGround = new alvision.Mat (Mat_<float>(2, 3) << Math.cos(angle), -Math.sin(angle), (rng.uniform(10.f, 20.f)),
-                Math.sin(angle), Math.cos(angle), (rng.uniform(10.f, 20.f)));
+            var euclideanGround = new alvision.Mat(new alvision.Matf(2, 3, [Math.cos(angle), -Math.sin(angle), (rng.uniform(10., 20.)),
+                Math.sin(angle), Math.cos(angle), (rng.uniform(10., 20.))]));
 
             var warpedImage = new alvision.Mat();
 
             alvision.warpAffine(testImg, warpedImage, euclideanGround,
-                new alvision.Size(200, 200), INTER_LINEAR + WARP_INVERSE_MAP);
+                new alvision.Size(200, 200),alvision.InterpolationFlags. INTER_LINEAR +alvision.InterpolationFlags. WARP_INVERSE_MAP);
 
-            var mapEuclidean = new alvision.Mat (Mat_<float>(2, 3) << 1, 0, 0, 0, 1, 0);
+            var mapEuclidean = new alvision.Mat (new alvision.Matf(2, 3,[ 1, 0, 0, 0, 1, 0]));
 
             alvision.findTransformECC(warpedImage, testImg, mapEuclidean, 1,
-                TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, ECC_iterations, ECC_epsilon));
+                new alvision.TermCriteria(alvision.TermCriteriaType.COUNT+ alvision.TermCriteriaType.EPS, this.ECC_iterations,this. ECC_epsilon));
 
             if (!this.isMapCorrect(mapEuclidean)) {
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
@@ -238,35 +237,35 @@ class CV_ECC_Test_Affine extends CV_ECC_BaseTest
     var rng = this.ts.get_rng();
 
     var progress: alvision.int  = 0;
-    for (var k= from; k < this.ntests; k++){
+    for (var k= from.valueOf(); k < this.ntests; k++){
         this.ts.update_context(this, k, true);
         progress = this.update_progress(progress, k, this.ntests, 0);
 
 
-        var affineGround = new alvision.Mat (Mat_<float>(2, 3) << (1 - rng.uniform(-0.05f, 0.05f)),
-            (rng.uniform(-0.03f, 0.03f)), (rng.uniform(10.f, 20.f)),
-            (rng.uniform(-0.03f, 0.03f)), (1 - rng.uniform(-0.05f, 0.05f)),
-            (rng.uniform(10.f, 20.f)));
+        var affineGround = new alvision.Mat(new alvision.Matf(2, 3,[ (1 - rng.uniform(-0.05, 0.05).valueOf()),
+            (rng.uniform(-0.03, 0.03)), (rng.uniform(10., 20.)),
+            (rng.uniform(-0.03, 0.03)), (1 - rng.uniform(-0.05, 0.05).valueOf()),
+            (rng.uniform(10., 20.))]));
 
-        Mat warpedImage;
+        let warpedImage = new alvision.Mat();
 
-        warpAffine(testImg, warpedImage, affineGround,
-            Size(200, 200), INTER_LINEAR + WARP_INVERSE_MAP);
+        alvision.warpAffine(testImg, warpedImage, affineGround,
+            new alvision.Size(200, 200), alvision.InterpolationFlags.INTER_LINEAR + alvision.InterpolationFlags.WARP_INVERSE_MAP);
 
-        Mat mapAffine = (Mat_<float>(2, 3) << 1, 0, 0, 0, 1, 0);
+        let mapAffine = new alvision.Mat (new alvision.Matf(2, 3,[ 1, 0, 0, 0, 1, 0]));
 
-        findTransformECC(warpedImage, testImg, mapAffine, 2,
-            TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, ECC_iterations, ECC_epsilon));
+        alvision.findTransformECC(warpedImage, testImg, mapAffine, 2,
+            new alvision.TermCriteria(alvision.TermCriteriaType.COUNT + alvision.TermCriteriaType.EPS, this.ECC_iterations,this. ECC_epsilon));
 
-        if (!isMapCorrect(mapAffine)) {
+        if (!this.isMapCorrect(mapAffine)) {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             return false;
         }
 
-        if (computeRMS(mapAffine, affineGround) > MAX_RMS_ECC) {
+        if (this.computeRMS(mapAffine, affineGround) > this.MAX_RMS_ECC) {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "RMS = %f",
-                computeRMS(mapAffine, affineGround));
+                this.computeRMS(mapAffine, affineGround));
             return false;
         }
 
@@ -300,34 +299,34 @@ class CV_ECC_Test_Homography extends CV_ECC_BaseTest
         var rng = this.ts.get_rng();
 
         var progress: alvision.int  = 0;
-        for (var k= from; k < this.ntests; k++){
+        for (var k= from.valueOf(); k < this.ntests; k++){
             this.ts.update_context(this, k, true);
             progress = this.update_progress(progress, k, this.ntests, 0);
 
-            var homoGround = new alvision.Mat (Mat_<float>(3, 3) << (1 - rng.uniform(-0.05f, 0.05f)),
-                (rng.uniform(-0.03f, 0.03f)), (rng.uniform(10.f, 20.f)),
-                (rng.uniform(-0.03f, 0.03f)), (1 - rng.uniform(-0.05f, 0.05f)), (rng.uniform(10.f, 20.f)),
-                (rng.uniform(0.0001f, 0.0003f)), (rng.uniform(0.0001f, 0.0003f)), 1.f);
+            var homoGround = new alvision.Mat (new alvision.Matf(3, 3,[ (1 - rng.uniform(-0.05, 0.05).valueOf()),
+                (rng.uniform(-0.03, 0.03)), (rng.uniform(10., 20.)),
+                (rng.uniform(-0.03, 0.03)), (1 - rng.uniform(-0.05, 0.05).valueOf()), (rng.uniform(10., 20.)),
+                (rng.uniform(0.0001, 0.0003)), (rng.uniform(0.0001, 0.0003)), 1.]));
 
             var warpedImage = new alvision.Mat();
 
             alvision.warpPerspective(testImg, warpedImage, homoGround,
-                new alvision.Size(200, 200), INTER_LINEAR + WARP_INVERSE_MAP);
+                new alvision.Size(200, 200), alvision.InterpolationFlags.INTER_LINEAR + alvision.InterpolationFlags.WARP_INVERSE_MAP);
 
-            var mapHomography = alvision.Mat.eye(3, 3,alvision.MatrixType. CV_32F);
+            var mapHomography = alvision.Mat.eye(3, 3,alvision.MatrixType. CV_32F).toMat();
 
             alvision.findTransformECC(warpedImage, testImg, mapHomography, 3,
-                TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, ECC_iterations, ECC_epsilon));
+                new alvision.TermCriteria(alvision.TermCriteriaType.COUNT + alvision.TermCriteriaType.EPS, this.ECC_iterations,this. ECC_epsilon));
 
             if (!this.isMapCorrect(mapHomography)) {
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                 return false;
             }
 
-            if (computeRMS(mapHomography, homoGround) > MAX_RMS_ECC) {
+            if (this.computeRMS(mapHomography, homoGround) > this.MAX_RMS_ECC) {
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "RMS = %f",
-                    computeRMS(mapHomography, homoGround));
+                    this.computeRMS(mapHomography, homoGround));
                 return false;
             }
 

@@ -59,14 +59,14 @@ import fs = require('fs');
 alvision.cvtest.TEST('SurfFeaturesFinder', 'CanFindInROIs', ()=>
 {
     //Ptr<detail::FeaturesFinder> finder = makePtr<detail::SurfFeaturesFinder>();
-    var finder = new alvision.detail.SurfFeaturesFinder();
+    var finder = new alvision.detail_matchers.SurfFeaturesFinder();
     var img  = alvision.imread(alvision.cvtest.TS.ptr().get_data_path() + "cv/shared/lena.png");
 
     //vector < Rect > rois;
     var rois = new Array<alvision.Rect>();
-    rois.push(new alvision.Rect(0, 0, img.cols.valueOf() / 2, img.rows.valueOf() / 2));
-    rois.push(new alvision.Rect(img.cols.valueOf() / 2, img.rows.valueOf() / 2, img.cols.valueOf() - img.cols.valueOf() / 2, img.rows.valueOf() - img.rows.valueOf() / 2));
-    var roi_features = new alvision.detail.ImageFeatures();
+    rois.push(new alvision.Rect(0, 0, img.cols().valueOf() / 2, img.rows().valueOf() / 2));
+    rois.push(new alvision.Rect(img.cols().valueOf() / 2, img.rows().valueOf() / 2, img.cols().valueOf() - img.cols().valueOf() / 2, img.rows().valueOf() - img.rows().valueOf() / 2));
+    var roi_features = new alvision.detail_matchers.ImageFeatures();
     //detail::ImageFeatures roi_features;
     finder.run(img, roi_features, rois);
     //(*finder)(img, roi_features, rois);

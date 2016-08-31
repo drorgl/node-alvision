@@ -492,7 +492,7 @@ alvision.cvtest.TEST('Imgcodecs_ImreadVSCvtColor', 'regression', () => {
     var gray_by_codec = alvision.imread(imgName, 0);
     var gray_by_cvt = new alvision.Mat();
 
-    alvision.cvtColor(original_image, gray_by_cvt, alvision.ColorConversionCodes.COLOR_BGR2GRAY/* CV_BGR2GRAY*/);
+    alvision.cvtColor(original_image, gray_by_cvt, alvision.ColorConversionCodes.COLOR_BGR2GRAY/* alvision.ColorConversionCodes.COLOR_BGR2GRAY*/);
 
     var diff = new alvision.Mat();
     alvision.absdiff(gray_by_codec, gray_by_cvt, diff);
@@ -501,9 +501,9 @@ alvision.cvtest.TEST('Imgcodecs_ImreadVSCvtColor', 'regression', () => {
     var actual_maxval : alvision.double;
     var actual_minval : alvision.double;
     alvision.minMaxLoc(diff, (minVal, maxVal, minIdx, maxIdx) => { actual_minval = minVal; actual_maxval = maxVal;});
-    //printf("actual avg = %g, actual maxdiff = %g, npixels = %d\n", actual_avg_diff, actual_maxval, (int)diff.total());
+    //console.log(util.format("actual avg = %g, actual maxdiff = %g, npixels = %d\n", actual_avg_diff, actual_maxval, (int)diff.total());
 
-    alvision.EXPECT_LT(actual_avg_diff.val(0).valueOf(), MAX_MEAN_DIFF);
+    alvision.EXPECT_LT(actual_avg_diff.val[0].valueOf(), MAX_MEAN_DIFF);
     alvision.EXPECT_LT(actual_maxval.valueOf(), MAX_ABS_DIFF);
 });
 
@@ -610,7 +610,7 @@ alvision.cvtest.TEST('Imgcodecs_Jpeg', 'encode_empty', () => {
 
 alvision.cvtest.TEST('Imgcodecs_Jpeg', 'encode_decode_progressive_jpeg', () => {
     var ts = alvision.cvtest.TS.ptr();
-    //alvision.cvtest.TS & ts = *alvision.cvtest.TS::ptr();
+    //alvision.cvtest.TS & ts = *alvision.cvtest.TS.ptr();
     var input = ts.get_data_path() + "../cv/shared/lena.png";
     var img = alvision.imread(input);
     alvision.ASSERT_FALSE(img.empty());
@@ -628,7 +628,7 @@ alvision.cvtest.TEST('Imgcodecs_Jpeg', 'encode_decode_progressive_jpeg', () => {
 
     alvision.EXPECT_EQ(0, alvision.cvtest.norm(img_jpg_progressive, img_jpg_normal,alvision.NormTypes. NORM_INF));
 
-    remove(output_progressive);
+    alvision.remove(output_progressive);
 });
 
 alvision.cvtest.TEST('Imgcodecs_Jpeg', 'encode_decode_optimize_jpeg', () => {
@@ -650,7 +650,7 @@ alvision.cvtest.TEST('Imgcodecs_Jpeg', 'encode_decode_optimize_jpeg', () => {
 
     alvision.EXPECT_EQ(0, alvision.cvtest.norm(img_jpg_optimized, img_jpg_normal,alvision.NormTypes. NORM_INF));
 
-    remove(output_optimized);
+    alvision.remove(output_optimized);
 });
 
 alvision.cvtest.TEST('Imgcodecs_Jpeg', 'encode_decode_rst_jpeg', () => {
@@ -672,7 +672,7 @@ alvision.cvtest.TEST('Imgcodecs_Jpeg', 'encode_decode_rst_jpeg', () => {
 
     alvision.EXPECT_EQ(0, alvision.cvtest.norm(img_jpg_rst, img_jpg_normal,alvision.NormTypes.NORM_INF));
 
-    remove(output_rst);
+    alvision.remove(output_rst);
 });
 
 //#endif
@@ -699,11 +699,11 @@ alvision.cvtest.TEST('Imgcodecs_Tiff', 'decode_tile16384x16384',()=>{
     var file4 = alvision.tempfile(".tiff");
 
     var params = new Array<alvision.IimwriteParameter>();
-    params.push({ flag: alvision.tiff.TIFFTAG_ROWSPERSTRIP,value : big.rows});
+    params.push({ flag: alvision.tiff.TIFFTAG_ROWSPERSTRIP,value : big.rows()});
 
     
     alvision.imwrite(file4, big, params);
-    alvision.imwrite(file3, big.colRange(0, big.cols.valueOf() - 1), params);
+    alvision.imwrite(file3, big.colRange(0, big.cols().valueOf() - 1), params);
     big = null;
 
     try {
@@ -715,8 +715,8 @@ alvision.cvtest.TEST('Imgcodecs_Tiff', 'decode_tile16384x16384',()=>{
             // have no enough memory
         }
 
-    remove(file3);
-    remove(file4);
+    alvision.remove(file3);
+    alvision.remove(file4);
 });
 
 alvision.cvtest.TEST('Imgcodecs_Tiff', 'write_read_16bit_big_little_endian', () => {
@@ -766,7 +766,7 @@ for (var i = 0; i < 2; i++)
     alvision.EXPECT_EQ(0xDEAD, img.data().readUInt16BE(0));//.at<ushort>(0, 0));
     alvision.EXPECT_EQ(0xBEEF, img.data().readUInt16BE(1));//.at<ushort>(0, 1));
 
-    remove(filename);
+    alvision.remove(filename);
 }
 });
 
@@ -948,7 +948,7 @@ alvision.cvtest.TEST('Imgcodecs_WebP', 'encode_decode_lossy_webp',()=>{
 
         alvision.EXPECT_NO_THROW(()=>alvision.imwrite(output, img, params));
         var img_webp = alvision.imread(output);
-        remove(output);
+        alvision.remove(output);
         alvision.EXPECT_FALSE(img_webp == null);
         alvision.EXPECT_EQ(3, img_webp.channels());
         alvision.EXPECT_EQ(512, img_webp.cols);
@@ -973,7 +973,7 @@ alvision.cvtest.TEST('Imgcodecs_WebP', 'encode_decode_with_alpha_webp', () => {
 
     alvision.EXPECT_NO_THROW(()=>alvision.imwrite(output, img));
     var img_webp = alvision.imread(output);
-    remove(output);
+    alvision.remove(output);
     alvision.EXPECT_FALSE(img_webp.empty());
     alvision.EXPECT_EQ(4, img_webp.channels());
     alvision.EXPECT_EQ(512, img_webp.cols);

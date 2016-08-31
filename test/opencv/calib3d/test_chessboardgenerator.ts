@@ -124,10 +124,10 @@ export class ChessBoardGenerator {
             /* can remake with better perf */
             alvision.projectPoints(new alvision.Mat(pts3d), this.rvec, this.tvec, camMat, distCoeffs, pts2d);
 
-            var inrect1 = pts2d[0].x < bg.cols && pts2d[0].y < bg.rows && pts2d[0].x > 0 && pts2d[0].y > 0;
-            var inrect2 = pts2d[1].x < bg.cols && pts2d[1].y < bg.rows && pts2d[1].x > 0 && pts2d[1].y > 0;
-            var inrect3 = pts2d[2].x < bg.cols && pts2d[2].y < bg.rows && pts2d[2].x > 0 && pts2d[2].y > 0;
-            var inrect4 = pts2d[3].x < bg.cols && pts2d[3].y < bg.rows && pts2d[3].x > 0 && pts2d[3].y > 0;
+            var inrect1 = pts2d[0].x < bg.cols() && pts2d[0].y < bg.rows() && pts2d[0].x > 0 && pts2d[0].y > 0;
+            var inrect2 = pts2d[1].x < bg.cols() && pts2d[1].y < bg.rows() && pts2d[1].x > 0 && pts2d[1].y > 0;
+            var inrect3 = pts2d[2].x < bg.cols() && pts2d[2].y < bg.rows() && pts2d[2].x > 0 && pts2d[2].y > 0;
+            var inrect4 = pts2d[3].x < bg.cols() && pts2d[3].y < bg.rows() && pts2d[3].x > 0 && pts2d[3].y > 0;
 
             if (inrect1 && inrect2 && inrect3 && inrect4)
                 break;
@@ -191,10 +191,10 @@ export class ChessBoardGenerator {
             /* can remake with better perf */
             alvision.projectPoints(new alvision.Mat(pts3d), this.rvec, this.tvec, camMat, distCoeffs, pts2d);
 
-            var inrect1 = pts2d[0].x < bg.cols && pts2d[0].y < bg.rows && pts2d[0].x > 0 && pts2d[0].y > 0;
-            var inrect2 = pts2d[1].x < bg.cols && pts2d[1].y < bg.rows && pts2d[1].x > 0 && pts2d[1].y > 0;
-            var inrect3 = pts2d[2].x < bg.cols && pts2d[2].y < bg.rows && pts2d[2].x > 0 && pts2d[2].y > 0;
-            var inrect4 = pts2d[3].x < bg.cols && pts2d[3].y < bg.rows && pts2d[3].x > 0 && pts2d[3].y > 0;
+            var inrect1 = pts2d[0].x < bg.cols() && pts2d[0].y < bg.rows() && pts2d[0].x > 0 && pts2d[0].y > 0;
+            var inrect2 = pts2d[1].x < bg.cols() && pts2d[1].y < bg.rows() && pts2d[1].x > 0 && pts2d[1].y > 0;
+            var inrect3 = pts2d[2].x < bg.cols() && pts2d[2].y < bg.rows() && pts2d[2].x > 0 && pts2d[2].y > 0;
+            var inrect4 = pts2d[3].x < bg.cols() && pts2d[3].y < bg.rows() && pts2d[3].x > 0 && pts2d[3].y > 0;
 
             if (inrect1 && inrect2 && inrect3 && inrect4)
                 break;

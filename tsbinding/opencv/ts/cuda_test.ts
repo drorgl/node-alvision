@@ -188,7 +188,7 @@ export var ALL_DEVICES = DeviceManager.instance().values();
 //    // Additional assertion
 
 //    CV_EXPORTS void minMaxLocGold(const cv::Mat& src, double* minVal_, double* maxVal_ = 0, cv::Point* minLoc_ = 0, cv::Point* maxLoc_ = 0, const cv::Mat& mask = cv::Mat());
-function minMaxLocGold(src: _mat.Mat, cb:(minVal_: _st.double, maxVal_: _st.double, minLoc_: _types.Point, maxLoc_: _types.Point) => void, mask?: _mat.Mat): void {
+function minMaxLocGold(src: _mat.Mat, cb:(minVal_: _st.double, maxVal_: _st.double, minLoc_: Array<_types.Point>, maxLoc_: Array<_types.Point>) => void, mask?: _mat.Mat): void {
     if (src.depth() != _cvdef.MatrixType.CV_8S) {
         _core.minMaxLoc(src, (minVal_, maxVal_, minLoc_, maxLoc_) => { cb(minVal_, maxVal_, minLoc_, maxLoc_); }, mask);
         return;
@@ -201,11 +201,11 @@ function minMaxLocGold(src: _mat.Mat, cb:(minVal_: _st.double, maxVal_: _st.doub
     var maxVal = -_st.DBL_MAX;// std::numeric_limits<double>::max();
     var maxLoc = new _types.Point(-1, -1);
 
-    for (var y = 0; y < src.rows; ++y) {
+    for (var y = 0; y < src.rows(); ++y) {
         const src_row = src.ptr<_st.schar>("schar", y);
         const mask_row = mask.empty() ? null : mask.ptr<_st.uchar>("uchar", y);
 
-        for (var x = 0; x < src.cols; ++x) {
+        for (var x = 0; x < src.cols(); ++x) {
             if (!mask_row || mask_row[x]) {
                 var val = src_row[x];
 
@@ -314,7 +314,7 @@ function assertMatNear(expr1: string, expr2: string, eps_expr: string, m1_: _st.
 
     var maxVal = 0.0;
     var maxLoc = new _types.Point();
-    minMaxLocGold(diff, (minVal_, maxVal_, minLoc_, maxLoc_) => { maxVal = maxVal_.valueOf(); maxLoc = maxLoc_; });
+    minMaxLocGold(diff, (minVal_, maxVal_, minLoc_, maxLoc_) => { maxVal = maxVal_.valueOf(); maxLoc = maxLoc_[0]; });
 
     if (maxVal > eps) {
         throw new Error("The max difference between matrices \"" + expr1 + "\" and \"" + expr2

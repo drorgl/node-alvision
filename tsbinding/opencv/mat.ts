@@ -955,6 +955,8 @@ including std::sort().
         //explicit Mat(const cuda::GpuMat& m);
         new (m: _cuda.cuda.GpuMat): Mat;
 
+        new (buf: Buffer): Mat;
+
     //! destructor - calls release()
     //~Mat();
 
@@ -1946,8 +1948,8 @@ export interface Mat extends _st.IOArray
     dims: _st.int;
     //! the number of rows and columns or (-1, -1) when the matrix has more than 2 dimensions
     //int rows, cols;
-    rows: _st.int;
-    cols: _st.int;
+    rows(): _st.int;
+    cols(): _st.int;
     //! pointer to the data
     //uchar * data;
     data() : Buffer;
@@ -2592,6 +2594,8 @@ export interface SparseMatStatic {
     to sparse representation.
     */
     new (m: Mat): SparseMat;
+
+    new (sm: SparseMat): SparseMat;
   
 //! the destructor
 //~SparseMat();
@@ -2710,7 +2714,7 @@ export interface SparseMat
     //! computes the element hash value (3D case)
     hash(i0: _st.int, i1: _st.int, i2: _st.int ): _st.size_t;
     //! computes the element hash value (nD case)
-    //hash(const int* idx): size_t 
+    hash(idx: Array<_st.int>): _st.size_t 
 //
 //    //!@{
 //    /*!
@@ -2739,25 +2743,30 @@ export interface SparseMat
 //    uchar * ptr(const int* idx, bool createMissing, size_t* hashval=0);
     ptr<T>(type: string, idx : Array<_st.int>, createMissing: boolean, hashval?: _st.size_t /* = 0*/): TrackedElement<T>;
 
-//    //!@}
-//
-//    //!@{
-//    /*!
-//     return read-write reference to the specified sparse matrix element.
-//
-//     `ref<_Tp>(i0,...[,hashval])` is equivalent to `*(_Tp*)ptr(i0,...,true[,hashval])`.
-//     The methods always return a valid reference.
-//     If the element did not exist, it is created and initialiazed with 0.
-//    */
-//    //! returns reference to the specified element (1D case)
-//    template < typename _Tp> _Tp & ref(int i0, size_t * hashval=0);
-//    //! returns reference to the specified element (2D case)
-//    template < typename _Tp> _Tp & ref(int i0, int i1, size_t * hashval=0);
-//    //! returns reference to the specified element (3D case)
-//    template < typename _Tp> _Tp & ref(int i0, int i1, int i2, size_t * hashval=0);
-//    //! returns reference to the specified element (nD case)
-//    template < typename _Tp> _Tp & ref(const int* idx, size_t* hashval=0);
-//    //!@}
+    //!@}
+
+    //!@{
+    /*!
+     return read-write reference to the specified sparse matrix element.
+
+     `ref<_Tp>(i0,...[,hashval])` is equivalent to `*(_Tp*)ptr(i0,...,true[,hashval])`.
+     The methods always return a valid reference.
+     If the element did not exist, it is created and initialiazed with 0.
+    */
+    //! returns reference to the specified element (1D case)
+
+    ref<T>(type: string, i0: _st.int /*, size_t * hashval=0*/) : TrackedElement< T>;
+    //template < typename _Tp> _Tp & ref(int i0, size_t * hashval=0);
+    //! returns reference to the specified element (2D case)
+    ref<T>(type: string, i0: _st.int, i1: _st.int /*, size_t * hashval=0*/) : TrackedElement<T>;
+    //template < typename _Tp> _Tp & ref(int i0, int i1, size_t * hashval=0);
+    //! returns reference to the specified element (3D case)
+    ref<T>(type: string, i0: _st.int, i1: _st.int, i2: _st.int /*, size_t * hashval=0*/) : TrackedElement<T>;
+    //template < typename _Tp> _Tp & ref(int i0, int i1, int i2, size_t * hashval=0);
+    //! returns reference to the specified element (nD case)
+    ref<T>(type: string, idx: Array<_st.int>/*, size_t* hashval=0*/): TrackedElement<T>;
+    //template < typename _Tp> _Tp & ref(const int* idx, size_t* hashval=0);
+    //!@}
 //
 //    //!@{
 //    /*!
@@ -2844,7 +2853,7 @@ export interface SparseMat
 //    void resizeHashTab(size_t newsize);
 //
 //    int flags;
-//    Hdr * hdr;
+    hdr: SparseHdr;
 };
 
 

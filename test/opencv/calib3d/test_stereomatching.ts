@@ -110,7 +110,7 @@ function checkTypeAndSizeOfDisp(dispMap: alvision.Mat, sz: alvision.Size ) : voi
         alvision.CV_Error( alvision.cv.Error.Code.StsBadArg, "dispMap is empty" );
     if (dispMap.type() != alvision.MatrixType.CV_32FC1 )
         alvision.CV_Error( alvision.cv.Error.Code.StsBadArg, "dispMap must have CV_32FC1 type" );
-    if( sz && (dispMap.rows != sz.height || dispMap.cols != sz.width) )
+    if( sz && (dispMap.rows() != sz.height || dispMap.cols() != sz.width) )
         alvision.CV_Error( alvision.cv.Error.Code.StsBadArg, "dispMap has incorrect size" );
 }
 
@@ -120,7 +120,7 @@ function checkTypeAndSizeOfMask(mask: alvision.Mat, sz: alvision.Size ) : void
         alvision.CV_Error( alvision.cv.Error.Code.StsBadArg, "mask is empty" );
     if (mask.type() != alvision.MatrixType.CV_8UC1 )
         alvision.CV_Error( alvision.cv.Error.Code.StsBadArg, "mask must have CV_8UC1 type" );
-    if( mask.rows != sz.height || mask.cols != sz.width )
+    if( mask.rows() != sz.height || mask.cols() != sz.width )
         alvision.CV_Error( alvision.cv.Error.Code.StsBadArg, "mask has incorrect size" );
 }
 
@@ -176,9 +176,9 @@ function computeOcclusionBasedMasks(leftDisp: alvision.Mat, _rightDisp: alvision
            alvision.CV_Error( alvision.cv.Error.Code.StsBadArg, "rightUnknDispMask must be empty if _rightDisp is empty" );
         rightDisp.create(leftDisp.size(),alvision.MatrixType. CV_32FC1);
         rightDisp.setTo(alvision.Scalar.all(0) );
-        for( var leftY = 0; leftY < leftDisp.rows; leftY++ )
+        for( var leftY = 0; leftY < leftDisp.rows(); leftY++ )
         {
-            for( var leftX = 0; leftX < leftDisp.cols; leftX++ )
+            for( var leftX = 0; leftX < leftDisp.cols(); leftX++ )
             {
                 if( !leftUnknDispMask.empty() && leftUnknDispMask.at<alvision.uchar>("uchar", leftY,leftX).get() )
                     continue;
@@ -202,9 +202,9 @@ function computeOcclusionBasedMasks(leftDisp: alvision.Mat, _rightDisp: alvision
         nonOccludedMask.create(leftDisp.size(), alvision.MatrixType.CV_8UC1);
         nonOccludedMask.setTo(alvision.Scalar.all(0) );
     }
-    for( var leftY = 0; leftY < leftDisp.rows; leftY++ )
+    for( var leftY = 0; leftY < leftDisp.rows(); leftY++ )
     {
-        for( var leftX = 0; leftX < leftDisp.cols; leftX++ )
+        for( var leftX = 0; leftX < leftDisp.cols(); leftX++ )
         {
             if( !leftUnknDispMask.empty() && leftUnknDispMask.at<alvision.uchar>("uchar", leftY,leftX).get() )
                 continue;

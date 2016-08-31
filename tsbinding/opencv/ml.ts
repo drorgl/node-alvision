@@ -89,7 +89,7 @@ export namespace ml {
     //! @{
 
     /** @brief Variable types */
-    enum VariableTypes {
+    export enum VariableTypes {
         VAR_NUMERICAL = 0, //!< same as VAR_ORDERED
         VAR_ORDERED = 0, //!< ordered variables
         VAR_CATEGORICAL = 1  //!< categorical variables
@@ -212,7 +212,7 @@ export namespace ml {
         //    static inline float missingValue() { return FLT_MAX; }
         //    virtual ~TrainData();
         //
-          getLayout() : _st.int;
+        getLayout(): SampleTypes;
           getNTrainSamples() : _st.int;
           getNTestSamples() : _st.int;
           getNSamples() : _st.int;

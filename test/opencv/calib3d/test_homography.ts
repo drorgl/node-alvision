@@ -404,21 +404,21 @@ class CV_HomographyTest extends alvision.cvtest.ArrayTest {
     private max_2diff: alvision.float;
 
     check_matrix_size(H: alvision.Mat): boolean {
-        return (H.rows == 3) && (H.cols == 3);
+        return (H.rows() == 3) && (H.cols() == 3);
     }
     check_matrix_diff(original: alvision.Mat, found: alvision.Mat, norm_type: alvision.int, diff: alvision.double): boolean {
         diff = alvision.cvtest.norm(original, found, <alvision.NormTypes>norm_type);
         return diff <= this.max_diff;
     }
     check_ransac_mask_1(src: alvision.Mat, mask: alvision.Mat): alvision.int {
-        if (!(mask.cols == 1) && (mask.rows == src.cols)) return 1;
-        if (alvision.countNonZero(mask) < mask.rows) return 2;
-        for (var i = 0; i < mask.rows; ++i) if (mask.at<alvision.uchar>("uchar", i, 0).get() > 1) return 3;
+        if (!(mask.cols() == 1) && (mask.rows() == src.cols())) return 1;
+        if (alvision.countNonZero(mask) < mask.rows()) return 2;
+        for (var i = 0; i < mask.rows(); ++i) if (mask.at<alvision.uchar>("uchar", i, 0).get() > 1) return 3;
         return 0;
     }
     check_ransac_mask_2(original_mask: alvision.Mat, found_mask: alvision.Mat): alvision.int {
-        if (!(found_mask.cols == 1) && (found_mask.rows == original_mask.rows)) return 1;
-        for (var i = 0; i < found_mask.rows; ++i) if (found_mask.at<alvision.uchar>("uchar", i, 0).get() > 1) return 2;
+        if (!(found_mask.cols() == 1) && (found_mask.rows() == original_mask.rows())) return 1;
+        for (var i = 0; i < found_mask.rows(); ++i) if (found_mask.at<alvision.uchar>("uchar", i, 0).get() > 1) return 2;
         return 0;
     }
 

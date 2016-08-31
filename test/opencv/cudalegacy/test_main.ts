@@ -1,3 +1,5 @@
+//do not implement, legacy
+
 ///*M///////////////////////////////////////////////////////////////////////////////////////
 ////
 ////  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -133,7 +135,7 @@
 
 //int main()
 //{
-//    printf("OpenCV was built without CUDA support\n");
+//    console.log(util.format("OpenCV was built without CUDA support\n");
 //    return 0;
 //}
 

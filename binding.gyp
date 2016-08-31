@@ -115,9 +115,24 @@
 		
 		,'tsbinding/opencv/core.ts'
 		,'tsbinding/opencv/core/opengl.ts'
+		,'tsbinding/opencv/core/optim.ts'
+		
 		
 		,'tsbinding/opencv/cuda.ts'
-		,'tsbinding/opencv/cudaimgproc.ts'
+		,'tsbinding/opencv/cudacodec/cudacodec.ts'
+		,'tsbinding/opencv/cudaimgproc/cudaimgproc.ts'
+		,'tsbinding/opencv/cudaarithm/cudaarithm.ts'
+		,'tsbinding/opencv/cudabgsegm/cudabgsegm.ts'
+		,'tsbinding/opencv/cudaoptflow/cudaoptflow.ts'
+		,'tsbinding/opencv/cudaobjdetect/cudaobjdetect.ts'
+		,'tsbinding/opencv/cudawarping/cudawarping.ts'
+		,'tsbinding/opencv/cudastereo/cudastereo.ts'
+		,'tsbinding/opencv/cudafeatures2d/cudafeatures2d.ts'
+		,'tsbinding/opencv/cudafilters/cudafilters.ts'
+		
+		,'tsbinding/opencv/array.ts'
+		
+		,'tsbinding/opencv/objdetect.ts'
 		
 		,'tsbinding/opencv/cvdef.ts'
 		,'tsbinding/opencv/features2d.ts'
@@ -137,6 +152,8 @@
 		,'tsbinding/opencv/videoio.ts'
 		
 		,'tsbinding/opencv/superres.ts'
+		,'tsbinding/opencv/superres/optical_flow.ts'
+		,'tsbinding/opencv/superres/input_array_utility.ts'
 		
 		,'tsbinding/opencv/shape/emdL1.ts'
 		,'tsbinding/opencv/shape/hist_cost.ts'
@@ -151,7 +168,13 @@
 		,'tsbinding/opencv/tiff.ts'
 		
 		,'tsbinding/opencv/ts.ts'
-		#,'tsbinding/opencv/ts/cuda_test.ts'
+		,'tsbinding/opencv/ts/cuda_test.ts'
+		,'tsbinding/opencv/ts/ts_perf.ts'
+		
+		
+		,'tsbinding/opencv/video/background_segm.ts'
+		,'tsbinding/opencv/video/tracking.ts'
+		#,'tsbinding/opencv/video/tracking_c.ts'
 		
 		,'tsbinding/opencv/types.ts'
 		
@@ -166,6 +189,7 @@
 		
 		,'tsbinding/opencv/calib3d.ts'
 		,'tsbinding/opencv/calib3d/circlesgrid.ts'
+		,'tsbinding/opencv/calib3d/fisheye.ts'
 		
 		,'tsbinding/opencv/stitching.ts'
 		,'tsbinding/opencv/stitching/warpers.ts'

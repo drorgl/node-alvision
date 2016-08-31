@@ -55,8 +55,10 @@ import fs = require('fs');
 //template <typename T, typename compute>
 class ShapeBaseTest<T, compute> extends alvision.cvtest.BaseTest {
     //typedef Point_<T> PointType;
-    constructor(_NSN: alvision.int, _NP: alvision.int, _CURRENT_MAX_ACCUR: alvision.float){
+    constructor(Ttype: string, _NSN: alvision.int, _NP: alvision.int, _CURRENT_MAX_ACCUR: alvision.float, cmp: ICompute<compute>){
         super();
+        this.Ttype = Ttype;
+        this.cmp = cmp;
         this.NSN = (_NSN);
         this.NP = (_NP);
         this.CURRENT_MAX_ACCUR = (_CURRENT_MAX_ACCUR);
@@ -97,8 +99,17 @@ class ShapeBaseTest<T, compute> extends alvision.cvtest.BaseTest {
         {
             for (var p= 0; p < _contoursQuery[border].length; p++)
             {
-                contoursQuery.push(new alvision.Point_<T>(<T>_contoursQuery[border][p].x,
-                    <T>_contoursQuery[border][p].y));
+                switch (this.Ttype) {
+                    case "float":
+                        contoursQuery.push(<any> new alvision.Point2f(_contoursQuery[border][p].x, _contoursQuery[border][p].y));
+                        break;
+                    case "int":
+                        contoursQuery.push(<any>new alvision.Point2i(_contoursQuery[border][p].x, _contoursQuery[border][p].y));
+                        break;
+                    default:
+                        throw new Error("not implemented");
+                }
+                
             }
         }
 
@@ -109,7 +120,7 @@ class ShapeBaseTest<T, compute> extends alvision.cvtest.BaseTest {
         }
 
         // Uniformly sampling
-        random_shuffle(contoursQuery.begin(), contoursQuery.end());
+        alvision.random_shuffle(contoursQuery);
         var nStart= this.NP;
         var cont = new Array<alvision.Point_<T>>(); 
         for (var i= 0; i < nStart; i++)
@@ -131,32 +142,35 @@ class ShapeBaseTest<T, compute> extends alvision.cvtest.BaseTest {
 
 
         // reading query and computing its properties
-        for (Array<string>::const_iterator a = filenames.begin(); a != filenames.end(); ++a) {
+        //for (Array<string>::const_iterator a = filenames.begin(); a != filenames.end(); ++a) {
+        for (let aIndex = 0; aIndex < this.filenames.length; aIndex++){
+            let a = this.filenames[aIndex];
             // read current image
-            int aIndex = (int)(a - filenames.begin());
-            Mat currentQuery = imread(*a, IMREAD_GRAYSCALE);
-            Mat flippedHQuery, flippedVQuery;
-            flip(currentQuery, flippedHQuery, 0);
-            flip(currentQuery, flippedVQuery, 1);
+            //int aIndex = (int)(a - filenames.begin());
+            let currentQuery = alvision.imread(a, alvision.ImreadModes. IMREAD_GRAYSCALE);
+            let flippedHQuery = new alvision.Mat(), flippedVQuery = new alvision.Mat();
+            alvision.flip(currentQuery, flippedHQuery, 0);
+            alvision.flip(currentQuery, flippedVQuery, 1);
             // compute border of the query and its flipped versions
-            contoursQuery1 = convertContourType(currentQuery);
-            contoursQuery2 = convertContourType(flippedHQuery);
-            contoursQuery3 = convertContourType(flippedVQuery);
+            contoursQuery1 = this.convertContourType(currentQuery);
+            contoursQuery2 = this.convertContourType(flippedHQuery);
+            contoursQuery3 = this.convertContourType(flippedVQuery);
             // compare with all the rest of the images: testing
-            for (Array<string>::const_iterator b = filenames.begin(); b != filenames.end(); ++b) {
-                int bIndex = (int)(b - filenames.begin());
-                float distance = 0;
+            //for (Array<string>::const_iterator b = filenames.begin(); b != filenames.end(); ++b) {
+            for (let bIndex = 0; bIndex = this.filenames.length;bIndex ++){
+                let b = this.filenames[bIndex];
+                let distance = 0;
                 // skip self-comparisson
                 if (a != b) {
                     // read testing image
-                    Mat currentTest = imread(*b, IMREAD_GRAYSCALE);
+                    let currentTest = alvision.imread(b, alvision.ImreadModes. IMREAD_GRAYSCALE);
                     // compute border of the testing
-                    contoursTesting = convertContourType(currentTest);
+                    contoursTesting = this.convertContourType(currentTest);
                     // compute shape distance
-                    distance = cmp(contoursQuery1, contoursQuery2,
-                        contoursQuery3, contoursTesting);
+                    distance = this.cmp.run(<any>contoursQuery1, <any>contoursQuery2,
+                        <any>contoursQuery3, <any>contoursTesting).valueOf();
                 }
-                distanceMat.at<float>(aIndex, bIndex) = distance;
+                this.distanceMat.at<alvision.float>("float", aIndex, bIndex).set(distance);
             }
         }
     }
@@ -166,7 +180,7 @@ class ShapeBaseTest<T, compute> extends alvision.cvtest.BaseTest {
 
         var corrects= 0;
         var divi= 0;
-        for (var row= 0; row < this.distanceMat.rows; row++)
+        for (var row= 0; row < this.distanceMat.rows(); row++)
         {
             if (row % this.NSN.valueOf() == 0) //another group
             {
@@ -175,9 +189,9 @@ class ShapeBaseTest<T, compute> extends alvision.cvtest.BaseTest {
             for (var col= divi - this.NSN.valueOf(); col < divi; col++)
             {
                 var nsmall= 0;
-                for (var i= 0; i < this.distanceMat.cols; i++)
+                for (var i= 0; i < this.distanceMat.cols(); i++)
                 {
-                    if (this.distanceMat.atGet<alvision.float>("float",row, col) > distanceMat.atGet<alvision.float>("float",row, i)) {
+                    if (this.distanceMat.at<alvision.float>("float",row, col).get() > this.distanceMat.at<alvision.float>("float",row, i).get()) {
                         nsmall++;
                     }
                 }
@@ -186,28 +200,33 @@ class ShapeBaseTest<T, compute> extends alvision.cvtest.BaseTest {
                 }
             }
         }
-        var porc = 100 * corrects / (this.NSN.valueOf() * this.distanceMat.rows.valueOf());
-        std::cout << "Test result: " << porc << "%" << std::endl;
+        var porc = 100 * corrects / (this.NSN.valueOf() * this.distanceMat.rows().valueOf());
+        console.log("Test result: ", porc, "%");
         if (porc >= this.CURRENT_MAX_ACCUR)
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.OK);
         else
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
     }
 
-
+    protected Ttype: string;
     protected NSN: alvision.int;
     protected NP: alvision.int;
     protected CURRENT_MAX_ACCUR: alvision.float;
     protected filenames: Array<string>
     protected distanceMat: alvision.Mat;
-    protected cmp: compute;
+    protected cmp: ICompute<compute>;
 }
 
 //------------------------------------------------------------------------
 //                       Test Shape_SCD.regression
 //------------------------------------------------------------------------
 
-class computeShapeDistance_Chi
+interface ICompute<T> {
+    run(query1: Array<T>, query2: Array<T>,
+        query3: Array<T>, testq:  Array<T>): alvision.float
+}
+
+class computeShapeDistance_Chi implements ICompute<alvision.Point2f>
 {
     mysc: alvision.ShapeContextDistanceExtractor ;
     constructor()
@@ -235,7 +254,7 @@ alvision.cvtest.TEST('Shape_SCD', 'regression', () => {
     const NSN_val= 5;//10;//20; //number of shapes per class
     const NP_val= 120; //number of points simplifying the contour
     const CURRENT_MAX_ACCUR_val= 95; //99% and 100% reached in several tests, 95 is fixed as minimum boundary
-    var test = new ShapeBaseTest<alvision.float, computeShapeDistance_Chi>(NSN_val, NP_val, CURRENT_MAX_ACCUR_val);
+    var test = new ShapeBaseTest<alvision.float, alvision.Point2f>("float", NSN_val, NP_val, CURRENT_MAX_ACCUR_val, new computeShapeDistance_Chi());
     test.safe_run();
 });
 
@@ -243,7 +262,7 @@ alvision.cvtest.TEST('Shape_SCD', 'regression', () => {
 //                       Test ShapeEMD_SCD.regression
 //------------------------------------------------------------------------
 
-class computeShapeDistance_EMD
+class computeShapeDistance_EMD implements ICompute<alvision.Point2f>
 {
     mysc: alvision.ShapeContextDistanceExtractor;
     constructor()
@@ -270,7 +289,7 @@ alvision.cvtest.TEST('ShapeEMD_SCD', 'regression', () => {
     const  NSN_val= 5;//10;//20; //number of shapes per class
     const  NP_val= 100; //number of points simplifying the contour
     const CURRENT_MAX_ACCUR_val= 95; //98% and 99% reached in several tests, 95 is fixed as minimum boundary
-    var test = new ShapeBaseTest<alvision.float, computeShapeDistance_EMD> (NSN_val, NP_val, CURRENT_MAX_ACCUR_val);
+    var test = new ShapeBaseTest<alvision.float, alvision.Point2f>("float", NSN_val, NP_val, CURRENT_MAX_ACCUR_val, new computeShapeDistance_EMD());
     test.safe_run();
 });
 
@@ -278,7 +297,7 @@ alvision.cvtest.TEST('ShapeEMD_SCD', 'regression', () => {
 //                       Test Hauss.regression
 //------------------------------------------------------------------------
 
-class computeShapeDistance_Haussdorf
+class computeShapeDistance_Haussdorf implements ICompute<alvision.Point>
 {
     haus: alvision.HausdorffDistanceExtractor;
     constructor()
@@ -298,6 +317,6 @@ alvision.cvtest.TEST('Hauss', 'regression', () => {
     const NSN_val= 5;//10;//20; //number of shapes per class
     const NP_val = 180; //number of points simplifying the contour
     const CURRENT_MAX_ACCUR_val= 85; //90% and 91% reached in several tests, 85 is fixed as minimum boundary
-    var test = new ShapeBaseTest<alvision.int, computeShapeDistance_Haussdorf>(NSN_val, NP_val, CURRENT_MAX_ACCUR_val);
+    var test = new ShapeBaseTest<alvision.int, alvision.Point>("int", NSN_val, NP_val, CURRENT_MAX_ACCUR_val, new computeShapeDistance_Haussdorf());
     test.safe_run();
 });

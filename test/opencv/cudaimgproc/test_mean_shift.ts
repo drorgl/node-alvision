@@ -48,135 +48,148 @@ import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
 import fs = require('fs');
 
-#include "test_precomp.hpp"
-
-#ifdef HAVE_CUDA
-
-using namespace cvtest;
+//#include "test_precomp.hpp"
+//
+//#ifdef HAVE_CUDA
+//
+//using namespace cvtest;
 
 ////////////////////////////////////////////////////////////////////////////////
 // MeanShift
 
-struct MeanShift : testing::TestWithParam<alvision.cuda::DeviceInfo>
+class MeanShift extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
+    protected devInfo: alvision.cuda.DeviceInfo;
 
-    alvision.Mat img;
+    protected img: alvision.Mat;
 
-    int spatialRad;
-    int colorRad;
+    protected spatialRad: alvision.int;
+    protected colorRad: alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GetParam();
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        img = readImageType("meanshift/cones.png", CV_8UC4);
-        ASSERT_FALSE(img.empty());
+        this.img = alvision.readImageType("meanshift/cones.png",alvision.MatrixType.CV_8UC4);
+        alvision.ASSERT_FALSE(this.img.empty());
 
-        spatialRad = 30;
-        colorRad = 30;
+        this.spatialRad = 30;
+        this.colorRad = 30;
     }
 };
 
-CUDA_TEST_P(MeanShift, Filtering)
+//CUDA_TEST_P(MeanShift, Filtering)
+class MeanShift_Filtering extends MeanShift
 {
-    alvision.Mat img_template;
-    if (supportFeature(devInfo, alvision.cuda::FEATURE_SET_COMPUTE_20))
-        img_template = readImage("meanshift/con_result.png");
-    else
-        img_template = readImage("meanshift/con_result_CC1X.png");
-    ASSERT_FALSE(img_template.empty());
+    TestBody() {
+        let img_template = new alvision.Mat();
+        if (alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.FEATURE_SET_COMPUTE_20))
+            img_template = alvision.readImage("meanshift/con_result.png");
+        else
+            img_template = alvision.readImage("meanshift/con_result_CC1X.png");
+        alvision.ASSERT_FALSE(img_template.empty());
 
-    alvision.cuda::GpuMat d_dst;
-    alvision.cuda::meanShiftFiltering(loadMat(img), d_dst, spatialRad, colorRad);
+        let d_dst = new alvision.cuda.GpuMat();
+        alvision.cudaimgproc.meanShiftFiltering(alvision.loadMat(this.img), d_dst, this.spatialRad,this. colorRad);
 
-    ASSERT_EQ(CV_8UC4, d_dst.type());
+        alvision.ASSERT_EQ(alvision.MatrixType.CV_8UC4, d_dst.type());
 
-    alvision.Mat dst(d_dst);
+        let dst = new alvision.Mat (d_dst);
 
-    alvision.var result = new alvision.Mat();
-    alvision.cvtColor(dst, result, alvision.COLOR_BGRA2BGR);
+        let result = new alvision.Mat();
+        alvision.cvtColor(dst, result, alvision.ColorConversionCodes.COLOR_BGRA2BGR);
 
-    EXPECT_MAT_NEAR(img_template, result, 0.0);
+        alvision.EXPECT_MAT_NEAR(img_template, result, 0.0);
+    }
 }
 
-CUDA_TEST_P(MeanShift, Proc)
+//CUDA_TEST_P(MeanShift, Proc)
+class MeanShift_Proc extends MeanShift
 {
-    alvision.FileStorage fs;
-    if (supportFeature(devInfo, alvision.cuda::FEATURE_SET_COMPUTE_20))
-        fs.open(std::alvision.cvtest.TS.ptr().get_data_path() + "meanshift/spmap.yaml", alvision.FileStorage::READ);
-    else
-        fs.open(std::alvision.cvtest.TS.ptr().get_data_path() + "meanshift/spmap_CC1X.yaml", alvision.FileStorage::READ);
-    ASSERT_TRUE(fs.isOpened());
+    TestBody(){
+        let fs = new alvision.FileStorage();
+        if (alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.FEATURE_SET_COMPUTE_20))
+            fs.open(alvision.cvtest.TS.ptr().get_data_path() + "meanshift/spmap.yaml", alvision.FileStorageMode.READ);
+        else
+            fs.open(alvision.cvtest.TS.ptr().get_data_path() + "meanshift/spmap_CC1X.yaml", alvision.FileStorageMode.READ);
+        alvision.ASSERT_TRUE(fs.isOpened());
 
-    alvision.Mat spmap_template;
-    fs["spmap"] >> spmap_template;
-    ASSERT_FALSE(spmap_template.empty());
+        let spmap_template = new alvision.Mat();
+        fs.nodes["spmap"].readMat(spmap_template);
+        alvision.ASSERT_FALSE(spmap_template.empty());
 
-    alvision.cuda::GpuMat rmap_filtered;
-    alvision.cuda::meanShiftFiltering(loadMat(img), rmap_filtered, spatialRad, colorRad);
+        let rmap_filtered = new alvision.cuda.GpuMat();
+        alvision.cudaimgproc.meanShiftFiltering(alvision.loadMat(this.img), rmap_filtered, this.spatialRad, this.colorRad);
 
-    alvision.cuda::GpuMat rmap;
-    alvision.cuda::GpuMat spmap;
-    alvision.cuda::meanShiftProc(loadMat(img), rmap, spmap, spatialRad, colorRad);
+        let rmap = new alvision.cuda.GpuMat();
+        let spmap = new alvision.cuda.GpuMat();
+        alvision.cudaimgproc.meanShiftProc(alvision.loadMat(this.img), rmap, spmap, this.spatialRad, this.colorRad);
 
-    ASSERT_EQ(CV_8UC4, rmap.type());
+        alvision.ASSERT_EQ(alvision.MatrixType.CV_8UC4, rmap.type());
 
-    EXPECT_MAT_NEAR(rmap_filtered, rmap, 0.0);
-    EXPECT_MAT_NEAR(spmap_template, spmap, 0.0);
+        alvision.EXPECT_MAT_NEAR(rmap_filtered, rmap, 0.0);
+        alvision.EXPECT_MAT_NEAR(spmap_template, spmap, 0.0);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MeanShift, ALL_DEVICES);
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'MeanShift', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES
+]));
 
 ////////////////////////////////////////////////////////////////////////////////
 // MeanShiftSegmentation
 
-namespace
-{
-    IMPLEMENT_PARAM_CLASS(MinSize, int);
-}
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(MinSize, int);
+//}
 
-PARAM_TEST_CASE(MeanShiftSegmentation, alvision.cuda::DeviceInfo, MinSize)
+//PARAM_TEST_CASE(MeanShiftSegmentation, alvision.cuda.DeviceInfo, MinSize)
+class MeanShiftSegmentation extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    int minsize;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected minsize: alvision.int;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        minsize = GET_PARAM(1);
+        this.devInfo = this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.minsize = this.GET_PARAM<alvision.int>(1);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(MeanShiftSegmentation, Regression)
+//CUDA_TEST_P(MeanShiftSegmentation, Regression)
+class MeanShiftSegmentation_Regression extends MeanShiftSegmentation
 {
-    alvision.Mat img = readImageType("meanshift/cones.png", CV_8UC4);
-    ASSERT_FALSE(img.empty());
+    TestBody() {
+        let img = alvision.readImageType("meanshift/cones.png",alvision.MatrixType. CV_8UC4);
+        alvision.ASSERT_FALSE(img.empty());
 
-    std::ostringstream path;
-    path << "meanshift/cones_segmented_sp10_sr10_minsize" << minsize;
-    if (supportFeature(devInfo, alvision.cuda::FEATURE_SET_COMPUTE_20))
-        path << ".png";
-    else
-        path << "_CC1X.png";
-    alvision.Mat dst_gold = readImage(path);
-    ASSERT_FALSE(dst_gold.empty());
+        let path = "";
+        path += "meanshift/cones_segmented_sp10_sr10_minsize" + this.minsize;
+        if (alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.FEATURE_SET_COMPUTE_20))
+            path += ".png";
+        else
+            path += "_CC1X.png";
+        let dst_gold = alvision.readImage(path);
+        alvision.ASSERT_FALSE(dst_gold.empty());
 
-    alvision.Mat dst;
-    alvision.cuda::meanShiftSegmentation(loadMat(img), dst, 10, 10, minsize);
+        let dst = new alvision.Mat();
+        alvision.cudaimgproc.meanShiftSegmentation(alvision.loadMat(img), dst, 10, 10, this.minsize);
 
-    alvision.Mat dst_rgb;
-    alvision.cvtColor(dst, dst_rgb, alvision.COLOR_BGRA2BGR);
+        let dst_rgb = new alvision.Mat();
+        alvision.cvtColor(dst, dst_rgb, alvision.ColorConversionCodes.COLOR_BGRA2BGR);
 
-    EXPECT_MAT_SIMILAR(dst_gold, dst_rgb, 1e-3);
+        alvision.EXPECT_MAT_SIMILAR(dst_gold, dst_rgb, 1e-3);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, MeanShiftSegmentation, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(MinSize(0), MinSize(4), MinSize(20), MinSize(84), MinSize(340), MinSize(1364))));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'MeanShiftSegmentation', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [0,4,20,84,340,1364]
+    ]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

@@ -57,53 +57,58 @@ import fs = require('fs');
 ////////////////////////////////////////////////////////
 // Canny
 
-namespace
-{
-    IMPLEMENT_PARAM_CLASS(AppertureSize, int)
-    IMPLEMENT_PARAM_CLASS(L2gradient, bool)
-}
+//namespace
+//{
+//    IMPLEMENT_PARAM_CLASS(AppertureSize, int)
+//    IMPLEMENT_PARAM_CLASS(L2gradient, bool)
+//}
 
-PARAM_TEST_CASE(Canny, alvision.cuda::DeviceInfo, AppertureSize, L2gradient, UseRoi)
+//PARAM_TEST_CASE(Canny, alvision.cuda.DeviceInfo, AppertureSize, L2gradient, UseRoi)
+class Canny extends alvision.cvtest.CUDA_TEST
 {
-    alvision.cuda::DeviceInfo devInfo;
-    int apperture_size;
-    bool useL2gradient;
-    bool useRoi;
+    protected devInfo: alvision.cuda.DeviceInfo;
+    protected apperture_size: alvision.int;
+    protected useL2gradient: boolean;
+    protected useRoi: boolean;
 
-    virtual void SetUp()
+    SetUp() : void
     {
-        devInfo = GET_PARAM(0);
-        apperture_size = GET_PARAM(1);
-        useL2gradient = GET_PARAM(2);
-        useRoi = GET_PARAM(3);
+        this.devInfo =          this.GET_PARAM<alvision.cuda.DeviceInfo>(0);
+        this.apperture_size =   this.GET_PARAM<alvision.int>(1);
+        this.useL2gradient =    this.GET_PARAM<boolean>(2);
+        this.useRoi =           this.GET_PARAM<boolean>(3);
 
-        alvision.cuda::setDevice(devInfo.deviceID());
+        alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 };
 
-CUDA_TEST_P(Canny, Accuracy)
+//CUDA_TEST_P(Canny, Accuracy)
+class Canny_Accuracy extends Canny
 {
-    alvision.Mat img = readImage("stereobm/aloe-L.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
-    ASSERT_FALSE(img.empty());
+    TestBody() {
+        let img = alvision.readImage("stereobm/aloe-L.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
+        alvision.ASSERT_FALSE(img.empty());
 
-    double low_thresh = 50.0;
-    double high_thresh = 100.0;
+        let low_thresh = 50.0;
+        let high_thresh = 100.0;
 
-    alvision.Ptr<alvision.cuda::CannyEdgeDetector> canny = alvision.cuda::createCannyEdgeDetector(low_thresh, high_thresh, apperture_size, useL2gradient);
+        let canny = alvision.cudaimgproc.createCannyEdgeDetector(low_thresh, high_thresh, this.apperture_size, this.useL2gradient);
 
-    alvision.cuda::GpuMat edges;
-    canny.detect(loadMat(img, useRoi), edges);
+        let edges = new alvision.cuda.GpuMat();
+        canny.detect(alvision.loadMat(img, this.useRoi), edges);
 
-    alvision.Mat edges_gold;
-    alvision.Canny(img, edges_gold, low_thresh, high_thresh, apperture_size, useL2gradient);
+        let edges_gold = new alvision.Mat();
+        alvision.Canny(img, edges_gold, low_thresh, high_thresh, this.apperture_size, this.useL2gradient);
 
-    EXPECT_MAT_SIMILAR(edges_gold, edges, 2e-2);
+        alvision.EXPECT_MAT_SIMILAR(edges_gold, edges.getMat(), 2e-2);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(CUDA_ImgProc, Canny, testing::Combine(
-    ALL_DEVICES,
-    testing::Values(AppertureSize(3), AppertureSize(5)),
-    testing::Values(L2gradient(false), L2gradient(true)),
-    WHOLE_SUBMAT));
+alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'Canny', (case_name, test_name) => { return null; }, new alvision.cvtest.Combine([
+    alvision.ALL_DEVICES,
+    [3,5],
+    [false,true],
+    alvision.WHOLE_SUBMAT
+]));
 
-#endif // HAVE_CUDA
+//#endif // HAVE_CUDA

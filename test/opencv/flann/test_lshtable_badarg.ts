@@ -70,7 +70,8 @@ class CV_LshTableBadArgTest extends alvision.cvtest.BadArgTest {
     //protected:
     
     
-
+    run_func(): void {
+    }
     
 
 
@@ -91,7 +92,7 @@ class CV_LshTableBadArgTest extends alvision.cvtest.BadArgTest {
         caller.key_size = 0;
         errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "key_size is zero", caller.run).valueOf();
 
-        caller.key_size = static_cast<int>(sizeof(size_t) * CHAR_BIT);
+        caller.key_size = 0;// static_cast<int>(sizeof(size_t) * CHAR_BIT);
         errors += this.run_test_case(alvision.cv.Error.Code.StsBadArg, "key_size is too big", caller.run).valueOf();
 
         caller.key_size = caller.key_size.valueOf() + alvision.cvtest.randInt(rng).valueOf() % 100;

@@ -58,31 +58,33 @@ class CV_TrackBaseTest  extends alvision.cvtest.BaseTest
 {
     constructor() {
         super();
-        this.img = 0;
+        this.img = null;
         this.test_case_count = 100;
         this.min_log_size = 5;
         this.max_log_size = 8;
     }
     
     clear(): void {
-        cvReleaseMat( &img);
+        //cvReleaseMat( &img);
+        this.img = null;
         super.clear();
     }
 
-    read_params(fs: alvision.CvFileStorage): alvision.int {
+    read_params(fs: alvision.FileStorage): alvision.int {
         var code = super.read_params(fs);
         if (code < 0)
             return code;
 
-        this.test_case_count = cvReadInt(find_param(fs, "test_case_count"), this.test_case_count);
-        this.min_log_size = cvReadInt(find_param(fs, "min_log_size"), this.min_log_size);
-        this.max_log_size = cvReadInt(find_param(fs, "max_log_size"), this.max_log_size);
+        this.test_case_count = alvision.cvReadInt(this.find_param(fs, "test_case_count"), this.test_case_count);
+        this.min_log_size = alvision.cvReadInt(this.find_param(fs, "min_log_size"), this.min_log_size);
+        this.max_log_size = alvision.cvReadInt(this.find_param(fs, "max_log_size"), this.max_log_size);
 
         this.min_log_size = alvision.cvtest.clipInt(this.min_log_size, 1, 10);
         this.max_log_size = alvision.cvtest.clipInt(this.max_log_size, 1, 10);
         if (this.min_log_size > this.max_log_size) {
-            int t;
-            CV_SWAP(min_log_size, max_log_size, t);
+            //int t;
+            let t = this.min_log_size; this.min_log_size = this.max_log_size; this.max_log_size = t;
+            //CV_SWAP(min_log_size, max_log_size, t);
         }
 
         return 0;
@@ -92,77 +94,79 @@ class CV_TrackBaseTest  extends alvision.cvtest.BaseTest
     prepare_test_case(test_case_idx: alvision.int): alvision.int {
         var rng = this.ts.get_rng();
         super.prepare_test_case(test_case_idx);
-        var m: alvision.float;
 
         this.clear();
 
-        this.box0.size.width = Math.exp((alvision.cvtest.randReal(rng).valueOf() * (this.max_log_size - this.min_log_size) + this.min_log_size) * Math.LOG2E);
-        this.box0.size.height = Math.exp((alvision.cvtest.randReal(rng) * (max_log_size - min_log_size) + min_log_size) * Math.LOG2E);
-        this.box0.angle = (alvision.cvtest.randReal(rng) * 180.);
+        this.box0.size.width = Math.exp((alvision.cvtest.randReal(rng).valueOf() * (this.max_log_size.valueOf() - this.min_log_size.valueOf()) + this.min_log_size.valueOf()) * Math.LOG2E);
+        this.box0.size.height = Math.exp((alvision.cvtest.randReal(rng).valueOf() * (this.max_log_size.valueOf() - this.min_log_size.valueOf()) + this.min_log_size.valueOf()) * Math.LOG2E);
+        this.box0.angle = (alvision.cvtest.randReal(rng).valueOf() * 180.);
 
-        if (box0.size.width > box0.size.height) {
-            float t;
-            CV_SWAP(box0.size.width, box0.size.height, t);
+        if (this.box0.size.width > this.box0.size.height) {
+            let t = this.box0.size.width; this.box0.size.width = this.box0.size.height; this.box0.size.height = t;
         }
 
-        m = MAX(box0.size.width, box0.size.height);
-        img_size.width = Math.round(alvision.cvtest.randReal(rng) * m * 0.5 + m + 1);
-        img_size.height = Math.round(alvision.cvtest.randReal(rng) * m * 0.5 + m + 1);
-        img_type = alvision.cvtest.randInt(rng) % 2 ? CV_32F : CV_8U;
-        img_type = CV_8U;
+        let m = Math.max(this.box0.size.width.valueOf(), this.box0.size.height.valueOf());
+        this.img_size.width = Math.round(alvision.cvtest.randReal(rng).valueOf() * m * 0.5 + m + 1);
+        this.img_size.height = Math.round(alvision.cvtest.randReal(rng).valueOf() * m * 0.5 + m + 1);
+        this.img_type = alvision.cvtest.randInt(rng).valueOf() % 2 ? alvision.MatrixType.CV_32F : alvision.MatrixType.CV_8U;
+        this.img_type = alvision.MatrixType.CV_8U;
 
-        box0.center.x = (float)(img_size.width * 0.5 + (alvision.cvtest.randReal(rng) - 0.5) * (img_size.width - m));
-        box0.center.y = (float)(img_size.height * 0.5 + (alvision.cvtest.randReal(rng) - 0.5) * (img_size.height - m));
+        this.box0.center.x = (this.img_size.width .valueOf() * 0.5 + (alvision.cvtest.randReal(rng).valueOf() - 0.5) * (this.img_size.width .valueOf() - m));
+        this.box0.center.y = (this.img_size.height.valueOf() * 0.5 + (alvision.cvtest.randReal(rng).valueOf() - 0.5) * (this.img_size.height.valueOf() - m));
 
-        criteria = cvTermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 10, 0.1);
+        this.criteria = new alvision.TermCriteria(alvision.TermCriteriaType.EPS+ alvision.TermCriteriaType.MAX_ITER, 10, 0.1);
 
-        generate_object();
+        this.generate_object();
 
         return 1;
     }
     validate_test_results(test_case_idx: alvision.int): alvision.int {
         return 0;
     }
-     generate_object() : void{
-    //int x, y;
-    var cx = box0.center.x;
-    var cy = box0.center.y;
-    var width = box0.size.width * 0.5;
-    var height = box0.size.height * 0.5;
-    var angle = box0.angle * Math.PI / 180.;
-    var a = Math.sin(angle), b = -Math.cos(angle);
-    var inv_ww = 1. / (width * width), inv_hh = 1. / (height * height);
+    generate_object(): void {
+        //int x, y;
+        var cx = this.box0.center.x;
+        var cy = this.box0.center.y;
+        var width = this.box0.size.width.valueOf() * 0.5;
+        var height = this.box0.size.height.valueOf() * 0.5;
+        var angle = this.box0.angle.valueOf() * Math.PI / 180.;
+        var a = Math.sin(angle), b = -Math.cos(angle);
+        var inv_ww = 1. / (width * width), inv_hh = 1. / (height * height);
 
-    img = cvCreateMat(img_size.height, img_size.width, img_type);
-    cvZero(img);
+        this.img = new alvision.Mat(this.img_size.height, this.img_size.width, this.img_type);
+        this.img.setTo(0);
+        //cvZero(img);
 
-    // use the straightforward algorithm: for every pixel check if it is inside the ellipse
-    for (y = 0; y < img_size.height; y++) {
-        uchar * ptr = img .data.ptr + img .step * y;
-        float * fl = (float *)ptr;
-        double x_ = (y - cy) * b, y_ = (y - cy) * a;
+        // use the straightforward algorithm: for every pixel check if it is inside the ellipse
+        for (let y = 0; y < this.img_size.height; y++) {
+            //uchar * ptr = img.data.ptr + this.img.step * y;
+            let ptr = this.img.ptr<alvision.uchar>("uchar").slice(this.img.step * y);
+            //float * fl = (float *)ptr;
+            let fl = this.img.ptr<alvision.float>("float").slice(this.img.step * y);
+            let x_ = (y - cy.valueOf()) * b, y_ = (y - cy.valueOf()) * a;
 
-        for (x = 0; x < img_size.width; x++) {
-            double x1 = (x - cx) * a - x_;
-            double y1 = (x - cx) * b + y_;
+            for (let x = 0; x < this.img_size.width; x++) {
+                let x1 = (x - cx.valueOf()) * a - x_;
+                let y1 = (x - cx.valueOf()) * b + y_;
 
-            if (x1 * x1 * inv_hh + y1 * y1 * inv_ww <= 1.) {
-                if (img_type == CV_8U)
-                    ptr[x] = (uchar)1;
-                else
-                fl[x] = (float)1.f;
+                if (x1 * x1 * inv_hh + y1 * y1 * inv_ww <= 1.) {
+                    if (this.img_type == alvision.MatrixType.CV_8U)
+                        ptr[x] = 1;
+                    else
+                        fl[x] = 1.;
+                }
             }
         }
     }
 
-    }
+    
 
     protected min_log_size: alvision.int
-protected max_log_size: alvision.int;
-    CvMat* img;
-    CvBox2D box0;
-    CvSize img_size;
-    CvTermCriteria criteria;
+    protected max_log_size: alvision.int;
+    protected img: alvision.Mat;
+    protected box0: alvision.RotatedRect;
+    protected img_size: alvision.Size;
+    protected criteria: alvision.TermCriteria;
     protected img_type: alvision.int;
 };
 
@@ -174,38 +178,52 @@ protected max_log_size: alvision.int;
 class CV_CamShiftTest extends CV_TrackBaseTest
 {
     run_func() {
-        cvCamShift(img, init_rect, criteria, &comp, &box);
+        let rr = alvision.CamShift(this.img, this.init_rect, this.criteria);//, this.comp, this.box);
+
+
+        if (this.comp) {
+            this.comp.rect = this.init_rect;
+            let roi = alvision.Rect.op_And(rr.boundingRect(), new alvision.Rect(0, 0, this.img.cols(), this.img.rows()));
+            this.comp.area = Math.round(alvision.sum(this.img).val[0].valueOf());
+            //comp ->area = cvRound(cv::sum(img(roi))[0]);
+        }
+
+        if (this.box) {
+            this.box = rr;
+        }
+
 
     }
     prepare_test_case(test_case_idx: alvision.int): alvision.int {
         var rng = this.ts.get_rng();
-        double m;
-        var code = CV_TrackBaseTest::prepare_test_case(test_case_idx);
-        int  area;
+        //double m;
+        var code = super.prepare_test_case(test_case_idx);
+        //int  area;
 
         if (code <= 0)
             return code;
 
-        area0 = cvCountNonZero(img);
+        this.area0 = alvision.countNonZero(this.img);
 
         for (var i = 0; i < 100; i++) {
-            CvMat temp;
+            let temp = new alvision.Mat();
 
-            m = MAX(box0.size.width, box0.size.height) * 0.8;
-            init_rect.x = Math.floor(box0.center.x - m * (0.45 + alvision.cvtest.randReal(rng) * 0.2));
-            init_rect.y = Math.floor(box0.center.y - m * (0.45 + alvision.cvtest.randReal(rng) * 0.2));
-            init_rect.width = cvCeil(box0.center.x + m * (0.45 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.x);
-            init_rect.height = cvCeil(box0.center.y + m * (0.45 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.y);
+            let m = Math.max(this.box0.size.width.valueOf(), this.box0.size.height.valueOf()) * 0.8;
+            this.init_rect.x = Math.floor(this.box0.center.x.valueOf() - m * (0.45 + alvision.cvtest.randReal(rng).valueOf() * 0.2));
+            this.init_rect.y = Math.floor(this.box0.center.y.valueOf() - m * (0.45 + alvision.cvtest.randReal(rng).valueOf() * 0.2));
+            this.init_rect.width = Math.ceil (this.box0.center.x.valueOf() + m * (0.45 + alvision.cvtest.randReal(rng).valueOf() * 0.2) - this.init_rect.x.valueOf());
+            this.init_rect.height = Math.ceil(this.box0.center.y.valueOf() + m * (0.45 + alvision.cvtest.randReal(rng).valueOf() * 0.2) - this.init_rect.y.valueOf());
 
-            if (init_rect.x < 0 || init_rect.y < 0 ||
-                init_rect.x + init_rect.width >= img_size.width ||
-                init_rect.y + init_rect.height >= img_size.height)
+            if (this.init_rect.x < 0 || this.init_rect.y < 0 ||
+                this.init_rect.x.valueOf() + this.init_rect.width .valueOf()>=  this.img_size.width ||
+                this.init_rect.y.valueOf() + this.init_rect.height.valueOf() >= this.img_size.height)
                 continue;
 
-            cvGetSubRect(img, &temp, init_rect);
-            area = cvCountNonZero( &temp);
+            temp = this.img.roi(this.init_rect);
+            
+            let area = alvision.countNonZero( temp);
 
-            if (area >= 0.1 * area0)
+            if (area >= 0.1 * this.area0.valueOf())
                 break;
         }
 
@@ -214,74 +232,80 @@ class CV_CamShiftTest extends CV_TrackBaseTest
     validate_test_results(test_case_idx: alvision.int): alvision.int {
         var code = alvision.cvtest.FailureCode.OK;
 
-        var m = Math.max(box0.size.width, box0.size.height),
-            double        delta;
-        double diff_angle;
+        var m = Math.max(this.box0.size.width.valueOf(), this.box0.size.height.valueOf());
+            //double        delta;
+        //double diff_angle;
 
-        if (cvIsNaN(box.size.width) || cvIsInf(box.size.width) || box.size.width <= 0 ||
-            cvIsNaN(box.size.height) || cvIsInf(box.size.height) || box.size.height <= 0 ||
-            cvIsNaN(box.center.x) || cvIsInf(box.center.x) ||
-            cvIsNaN(box.center.y) || cvIsInf(box.center.y) ||
-            cvIsNaN(box.angle) || cvIsInf(box.angle) || box.angle < -180 || box.angle > 180 ||
-            cvIsNaN(comp.area) || cvIsInf(comp.area) || comp.area <= 0) {
+        if (isNaN(this.box.size.width.valueOf()) || !isFinite( this.box.size.width .valueOf()) ||  this.box.size.width <= 0 ||
+            isNaN(this.box.size.height.valueOf()) || !isFinite(this.box.size.height.valueOf()) || this.box.size.height <= 0 ||
+            isNaN(this.box.center.x.valueOf()) || !isFinite(this.box.center.x.valueOf()) ||
+            isNaN(this.box.center.y.valueOf()) || !isFinite(this.box.center.y.valueOf()) ||
+            isNaN(this.box.angle.valueOf()) || !isFinite(this.box.angle.valueOf()) || this.box.angle < -180 || this.box.angle > 180 ||
+            isNaN(this.comp.area.valueOf()) || !isFinite(this.comp.area.valueOf()) || this.comp.area <= 0) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Invalid CvBox2D or CvConnectedComp was returned by cvCamShift\n");
             code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
-            goto _exit_;
+            //goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
         }
 
-        box.angle = (float)(180 - box.angle);
+        this.box.angle = (180 - this.box.angle.valueOf());
 
-        if (fabs(box.size.width - box0.size.width) > box0.size.width * 0.2 ||
-            fabs(box.size.height - box0.size.height) > box0.size.height * 0.3) {
+        if (Math.abs(this.box.size.width.valueOf() -  this.box0.size.width .valueOf()) >  this.box0.size.width .valueOf() * 0.2 ||
+            Math.abs(this.box.size.height.valueOf() - this.box0.size.height.valueOf()) >  this.box0.size.height.valueOf() * 0.3) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D size (=%.1f x %.1f, should be %.1f x %.1f)\n",
-                box.size.width, box.size.height, box0.size.width, box0.size.height);
+                this.box.size.width, this.box.size.height, this.box0.size.width, this.box0.size.height);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            //goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
         }
 
-        if (fabs(box.center.x - box0.center.x) > m * 0.1 ||
-            fabs(box.center.y - box0.center.y) > m * 0.1) {
+        if (Math.abs(this.box.center.x.valueOf() - this.box0.center.x.valueOf()) > m * 0.1 ||
+            Math.abs(this.box.center.y.valueOf() - this.box0.center.y.valueOf()) > m * 0.1) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
-                box.center.x, box.center.y, box0.center.x, box0.center.y);
+                this.box.center.x, this.box.center.y, this.box0.center.x, this.box0.center.y);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            //goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
         }
 
-        if (box.angle < 0)
-            box.angle += 180;
+        if (this.box.angle < 0)
+            this.box.angle = this.box.angle.valueOf() + 180;
 
-        diff_angle = fabs(box0.angle - box.angle);
-        diff_angle = MIN(diff_angle, fabs(box0.angle - box.angle + 180));
+        let diff_angle = Math.abs(this.box0.angle.valueOf() - this.box.angle.valueOf());
+        diff_angle = Math.min(diff_angle, Math.abs(this.box0.angle.valueOf() - this.box.angle.valueOf() + 180));
 
-        if (fabs(diff_angle) > 30 && box0.size.height > box0.size.width * 1.2) {
+        if (Math.abs(diff_angle) > 30 && this.box0.size.height > this.box0.size.width.valueOf() * 1.2) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D angle (=%1.f, should be %1.f)\n",
-                box.angle, box0.angle);
+                this.box.angle, this.box0.angle);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            //goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
         }
 
-        delta = m * 0.7;
+        let delta = m * 0.7;
 
-        if (comp.rect.x < box0.center.x - delta ||
-            comp.rect.y < box0.center.y - delta ||
-            comp.rect.x + comp.rect.width > box0.center.x + delta ||
-            comp.rect.y + comp.rect.height > box0.center.y + delta) {
+        if (this.comp.rect.x < this.box0.center.x.valueOf() - delta ||
+            this.comp.rect.y < this.box0.center.y.valueOf() - delta ||
+            this.comp.rect.x.valueOf() + this.comp.rect.width .valueOf() >  this.box0.center.x.valueOf() + delta ||
+            this.comp.rect.y.valueOf() + this.comp.rect.height.valueOf() >  this.box0.center.y.valueOf() + delta) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG,
                 "Incorrect CvConnectedComp ((%d,%d,%d,%d) is not within (%.1f,%.1f,%.1f,%.1f))\n",
-                comp.rect.x, comp.rect.y, comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height,
-                box0.center.x - delta, box0.center.y - delta, box0.center.x + delta, box0.center.y + delta);
+                this.comp.rect.x, this.comp.rect.y, this.comp.rect.x.valueOf() + this.comp.rect.width.valueOf(), this.comp.rect.y.valueOf() + this.comp.rect.height.valueOf(),
+                this.box0.center.x.valueOf() - delta, this.box0.center.y.valueOf() - delta, this.box0.center.x.valueOf() + delta, this.box0.center.y.valueOf() + delta);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
+            //goto _exit_;
         }
 
-        if (fabs(comp.area - area0) > area0 * 0.15) {
+        if (Math.abs(this.comp.area.valueOf() - this.area0.valueOf()) > this.area0.valueOf() * 0.15) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG,
-                "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", comp.area, area0);
+                "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", this.comp.area, this.area0);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            //goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
         }
 
-        _exit_:
+        //_exit_:
 
         if (code < 0) {
 //            #if 0 //defined _DEBUG && defined WIN32
@@ -304,10 +328,10 @@ class CV_CamShiftTest extends CV_TrackBaseTest
     generate_object(): void {
     }
 
-    CvBox2D box;
-    CvRect init_rect;
-    CvConnectedComp comp;
-    int area0;
+    protected box: alvision.RotatedRect;
+    protected init_rect: alvision.Rect;
+    protected comp: alvision.ConnectedComp;
+    protected area0: alvision.int;
 };
 
 
@@ -317,37 +341,43 @@ class CV_CamShiftTest extends CV_TrackBaseTest
 class CV_MeanShiftTest extends CV_TrackBaseTest
 {
     run_func(): void {
-        cvMeanShift(img, init_rect, criteria, &comp);
+        alvision.meanShift(this.img, this.init_rect, this.criteria);//, this.comp);
+
+        if (this.comp) {
+            this.comp.rect = this.init_rect;
+            this.comp.area = Math.round(alvision.sum(this.img.roi(this.init_rect)).val[0].valueOf());
+        }
     }
     prepare_test_case(test_case_idx: alvision.int): alvision.int {
         var rng = this.ts.get_rng();
-        double m;
+        //double m;
         var code = super.prepare_test_case(test_case_idx);
 
 
         if (code <= 0)
             return code;
 
-        area0 = cvCountNonZero(img);
+        this.area0 = alvision.countNonZero(this.img);
 
         for (var i = 0; i < 100; i++) {
-            CvMat temp;
+            let temp = new alvision.Mat();
 
-            m = (box0.size.width + box0.size.height) * 0.5;
-            init_rect.x = Math.floor(box0.center.x - m * (0.4 + alvision.cvtest.randReal(rng) * 0.2));
-            init_rect.y = Math.floor(box0.center.y - m * (0.4 + alvision.cvtest.randReal(rng) * 0.2));
-            init_rect.width = cvCeil(box0.center.x + m * (0.4 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.x);
-            init_rect.height = cvCeil(box0.center.y + m * (0.4 + alvision.cvtest.randReal(rng) * 0.2) - init_rect.y);
+            let m = (this.box0.size.width.valueOf() + this.box0.size.height.valueOf()) * 0.5;
+            this.init_rect.x = Math.floor(this.box0.center.x.valueOf() - m * (0.4 + alvision.cvtest.randReal(rng).valueOf() * 0.2));
+            this.init_rect.y = Math.floor(this.box0.center.y.valueOf() - m * (0.4 + alvision.cvtest.randReal(rng).valueOf() * 0.2));
+            this.init_rect.width = Math.ceil( this.box0.center.x.valueOf() + m * (0.4 + alvision.cvtest.randReal(rng).valueOf() * 0.2) - this.init_rect.x.valueOf());
+            this.init_rect.height = Math.ceil(this.box0.center.y.valueOf() + m * (0.4 + alvision.cvtest.randReal(rng).valueOf() * 0.2) - this.init_rect.y.valueOf());
 
-            if (init_rect.x < 0 || init_rect.y < 0 ||
-                init_rect.x + init_rect.width >= img_size.width ||
-                init_rect.y + init_rect.height >= img_size.height)
+            if (this.init_rect.x < 0 || this.init_rect.y < 0 ||
+                this.init_rect.x.valueOf() + this.init_rect.width .valueOf()>=  this.img_size.width ||
+                this.init_rect.y.valueOf() + this.init_rect.height.valueOf() >= this.img_size.height)
                 continue;
 
-            cvGetSubRect(img, &temp, init_rect);
-            area = cvCountNonZero( &temp);
+            
+            temp = this.img.roi(this.init_rect);
+            this.area = alvision.countNonZero(temp);
 
-            if (area >= 0.5 * area0)
+            if (this.area >= 0.5 * this.area0.valueOf())
                 break;
         }
 
@@ -355,45 +385,53 @@ class CV_MeanShiftTest extends CV_TrackBaseTest
     }
     validate_test_results(test_case_idx: alvision.int): alvision.int {
         var code = alvision.cvtest.FailureCode.OK;
-        CvPoint2D32f c;
-        double m = MAX(box0.size.width, box0.size.height), delta;
+        //CvPoint2D32f c;
+        let c = new alvision.Point2f();
+        let m = Math.max(this.box0.size.width.valueOf(), this.box0.size.height.valueOf()), delta;
 
-        if (cvIsNaN(comp.area) || cvIsInf(comp.area) || comp.area <= 0) {
+        
+        
+        
+        if (isNaN(this.comp.area.valueOf()) || !isFinite(this.comp.area.valueOf()) || this.comp.area <= 0) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Invalid CvConnectedComp was returned by cvMeanShift\n");
             code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
-            goto _exit_;
+            //goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
         }
 
-        c.x = (float)(comp.rect.x + comp.rect.width * 0.5);
-        c.y = (float)(comp.rect.y + comp.rect.height * 0.5);
+        c.x = (this.comp.rect.x.valueOf() + this.comp.rect.width .valueOf() * 0.5);
+        c.y = (this.comp.rect.y.valueOf() + this.comp.rect.height.valueOf() * 0.5);
 
-        if (fabs(c.x - box0.center.x) > m * 0.1 ||
-            fabs(c.y - box0.center.y) > m * 0.1) {
+        if (Math.abs(c.x.valueOf() - this.box0.center.x.valueOf()) > m * 0.1 ||
+            Math.abs(c.y.valueOf() - this.box0.center.y.valueOf()) > m * 0.1) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Incorrect CvBox2D position (=(%.1f, %.1f), should be (%.1f, %.1f))\n",
-                c.x, c.y, box0.center.x, box0.center.y);
+                c.x, c.y, this.box0.center.x, this.box0.center.y);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            //goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
         }
 
         delta = m * 0.7;
 
-        if (comp.rect.x < box0.center.x - delta ||
-            comp.rect.y < box0.center.y - delta ||
-            comp.rect.x + comp.rect.width > box0.center.x + delta ||
-            comp.rect.y + comp.rect.height > box0.center.y + delta) {
+        if (this.comp.rect.x < this.box0.center.x.valueOf() - delta ||
+            this.comp.rect.y < this.box0.center.y.valueOf() - delta ||
+            this.comp.rect.x.valueOf() + this.comp.rect.width .valueOf() >  this.box0.center.x + delta ||
+            this.comp.rect.y.valueOf() + this.comp.rect.height.valueOf() > this.box0.center.y + delta) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG,
                 "Incorrect CvConnectedComp ((%d,%d,%d,%d) is not within (%.1f,%.1f,%.1f,%.1f))\n",
-                comp.rect.x, comp.rect.y, comp.rect.x + comp.rect.width, comp.rect.y + comp.rect.height,
-                box0.center.x - delta, box0.center.y - delta, box0.center.x + delta, box0.center.y + delta);
+                this.comp.rect.x, this.comp.rect.y, this.comp.rect.x.valueOf() +  this.comp.rect.width.valueOf(), this.comp.rect.y.valueOf() + this.comp.rect.height.valueOf(),
+                this.box0.center.x.valueOf() - delta, this.box0.center.y.valueOf() - delta, this.box0.center.x + delta, this.box0.center.y + delta);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            //goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
         }
 
-        if (fabs((double)(comp.area - area0)) > fabs((double)(area - area0)) + area0 * 0.05) {
+        if (Math.abs((this.comp.area.valueOf() - this.area0.valueOf())) > Math.abs((this.area.valueOf() - this.area0.valueOf())) + this.area0.valueOf() * 0.05) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG,
-                "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", comp.area, area0);
+                "Incorrect CvConnectedComp area (=%.1f, should be %d)\n", this.comp.area, this.area0);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            //goto _exit_;
+            this.ts.set_failed_test_info(code); return code;
         }
 
         _exit_:
@@ -420,9 +458,8 @@ class CV_MeanShiftTest extends CV_TrackBaseTest
     }
     generate_object(): void { }
 
-    CvRect init_rect;
-    CvConnectedComp comp;
-
+    protected init_rect: alvision.Rect;
+    protected comp: alvision.ConnectedComp;
     protected area0: alvision.int;
     protected area: alvision.int;
 };

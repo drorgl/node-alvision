@@ -1,3 +1,4 @@
+
 /*M///////////////////////////////////////////////////////////////////////////////////////
 //
 //  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -66,105 +67,113 @@ class CV_OptFlowPyrLKTest  extends alvision.cvtest.BaseTest
         var    merr_i = 0, merr_j = 0, merr_k = 0;
         var filename: string;
 
-        CvPoint2D32f * u = 0, *v = 0, *v2 = 0;
-        CvMat * _u = 0, *_v = 0, *_v2 = 0;
-        char * status = 0;
+        //CvPoint2D32f * u = 0, *v = 0, *v2 = 0;
+        //let u: alvision.Point2f, v: alvision.Point2f, v2: alvision.Point2f;
+        let _u = new alvision.Mat(), _v = new alvision.Mat(), _v2 = new alvision.Mat();
+        //char * status = 0;
 
-        IplImage imgI;
-        IplImage imgJ;
-        alvision.Mat  imgI2, imgJ2;
+        let imgI: alvision.Mat;
+        let imgJ: alvision.Mat;
 
-        int  n = 0, i = 0;
+        let imgI2 = new alvision.Mat();
+        let imgJ2 = new alvision.Mat();
+
+        //let  n = 0, i = 0;
 
         console.log(util.format(filename, "%soptflow/%s", this.ts.get_data_path(), "lk_prev.dat"));
-        _u = (CvMat *)cvLoad(filename);
+        _u = alvision.readImage(filename);
 
         if (!_u) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "could not read %s\n", filename);
             code = alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA;
-            goto _exit_;
+            //goto _exit_;
+            if (code < 0) this.ts.set_failed_test_info(code); return;
         }
 
         console.log(util.format(filename, "%soptflow/%s", this.ts.get_data_path(), "lk_next.dat"));
-        _v = (CvMat *)cvLoad(filename);
+        _v = alvision.readImage(filename);
 
         if (!_v) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "could not read %s\n", filename);
             code = alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA;
-            goto _exit_;
+            //goto _exit_;
+            if (code < 0) this.ts.set_failed_test_info(code); return;
         }
 
-        if (_u .cols != 2 || CV_MAT_TYPE(_u .type) != CV_32F ||
-            _v .cols != 2 || CV_MAT_TYPE(_v .type) != CV_32F || _v .rows != _u .rows) {
+        if (_u .cols() != 2 || alvision.MatrixType.CV_MAT_TYPE(_u .type()) != alvision.MatrixType.CV_32F ||
+            _v .cols() != 2 || alvision.MatrixType.CV_MAT_TYPE(_v .type()) != alvision.MatrixType.CV_32F || _v .rows != _u .rows) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "the loaded matrices of points are not valid\n");
             code = alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA;
-            goto _exit_;
+            //goto _exit_;
+            if (code < 0) this.ts.set_failed_test_info(code); return;
 
         }
 
-        u = (CvPoint2D32f *)_u.data.fl;
-        v = (CvPoint2D32f *)_v.data.fl;
+        let u = _u.ptr<alvision.Point2f>("Point2f");
+        let v = _v.ptr<alvision.Point2f>("Point2f");
 
         /* allocate adidtional buffers */
-        _v2 = cvCloneMat(_u);
-        v2 = (CvPoint2D32f *)_v2.data.fl;
+        _v2 = _u.clone();
+        let v2 = _v2.ptr<alvision.Point2f>("Point2f");
 
         /* read first image */
-        console.log(util.format(filename, "%soptflow/%s", ts .get_data_path(), "rock_1.bmp"));
+        console.log(util.format(filename, "%soptflow/%s", this.ts .get_data_path(), "rock_1.bmp"));
         imgI2 = alvision.imread(filename, alvision.ImreadModes.IMREAD_UNCHANGED);
         imgI = imgI2;
 
         if (imgI2.empty()) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "could not read %s\n", filename);
             code = alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA;
-            goto _exit_;
+            //goto _exit_;
+            if (code < 0) this.ts.set_failed_test_info(code); return;
         }
 
         /* read second image */
-        console.log(util.format(filename, "%soptflow/%s", ts .get_data_path(), "rock_2.bmp"));
-        imgJ2 = alvision.imread(filename, alvision.IMREAD_UNCHANGED);
+        console.log(util.format(filename, "%soptflow/%s", this.ts .get_data_path(), "rock_2.bmp"));
+        imgJ2 = alvision.imread(filename, alvision.ImreadModes.IMREAD_UNCHANGED);
         imgJ = imgJ2;
 
         if (imgJ2.empty()) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "could not read %s\n", filename);
-            code = alvision.cvtest.TS::FAIL_MISSING_TEST_DATA;
-            goto _exit_;
+            code =alvision.cvtest.FailureCode.FAIL_MISSING_TEST_DATA;
+            //goto _exit_;
+            if (code < 0) this.ts.set_failed_test_info(code); return;
         }
 
-        n = _u .rows;
-        status = (char *)cvAlloc(n * sizeof(status[0]));
+        let n = _u .rows();
+        //status = (char *)cvAlloc(n * sizeof(status[0]));
 
         /* calculate flow */
-        cvCalcOpticalFlowPyrLK( &imgI, &imgJ, 0, 0, u, v2, n, cvSize(41, 41),
-            4, status, 0, cvTermCriteria(CV_TERMCRIT_ITER |
-                CV_TERMCRIT_EPS, 30, 0.01f ), 0);
+        alvision.calcOpticalFlowPyrLK(imgI, imgJ, null,u, v2, null, new alvision.Size(41, 41),
+            4, new alvision.TermCriteria( alvision.TermCriteriaType.MAX_ITER | alvision.TermCriteriaType.EPS, 30, 0.01 ), 0);
 
         /* compare results */
-        for (i = 0; i < n; i++) {
-            if (status[i] != 0) {
-                double err;
-                if (cvIsNaN(v[i].x)) {
+        for (let i = 0; i < n; i++) {
+            if (status[i] != null) {
+                //double err;
+                if (isNaN(v[i].x.valueOf())) {
                     merr_j++;
                     continue;
                 }
 
-                err = fabs(v2[i].x - v[i].x) + fabs(v2[i].y - v[i].y);
+                let err = Math.abs(v2[i].x.valueOf() - v[i].x.valueOf()) + Math.abs(v2[i].y.valueOf() - v[i].y.valueOf());
                 if (err > max_err) {
                     max_err = err;
                     merr_i = i;
                 }
 
-                pt_exceed += err > success_error_level;
+                pt_exceed += (err > success_error_level) ? 1 : 0;
                 sum_err += err;
                 pt_cmpd++;
             }
             else {
-                if (!cvIsNaN(v[i].x)) {
+                if (!isNaN(v[i].x.valueOf())) {
                     merr_i = i;
                     merr_k++;
                     this.ts.printf(alvision.cvtest.TSConstants.LOG, "The algorithm lost the point #%d\n", i);
                     code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-                    goto _exit_;
+                    //goto _exit_;
+                    if (code < 0) this.ts.set_failed_test_info(code); return;
                 }
             }
         }
@@ -173,21 +182,24 @@ class CV_OptFlowPyrLKTest  extends alvision.cvtest.BaseTest
             this.ts.printf(alvision.cvtest.TSConstants.LOG,
                 "The number of poorly tracked points is too big (>=%d)\n", pt_exceed);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            //goto _exit_;
+            if (code < 0) this.ts.set_failed_test_info(code); return;
         }
 
         if (max_err > 1) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Maximum tracking error is too big (=%g) at %d\n", max_err, merr_i);
             code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
-            goto _exit_;
+            //goto _exit_;
+            if (code < 0) this.ts.set_failed_test_info(code); return;
         }
 
-        _exit_:
+        //_exit_:
 
-        cvFree( &status);
-        cvReleaseMat( &_u);
-        cvReleaseMat( &_v);
-        cvReleaseMat( &_v2);
+
+        //cvFree( &status);
+        //cvReleaseMat( &_u);
+        //cvReleaseMat( &_v);
+        //cvReleaseMat( &_v2);
 
         if (code < 0)
             this.ts.set_failed_test_info(code);
@@ -209,12 +221,12 @@ alvision.cvtest.TEST('Video_OpticalFlowPyrLK', 'submat',()=>
     var wholeImage = new alvision.Mat();
     alvision.resize(lenaImg, wholeImage, new alvision.Size(1024, 1024));
 
-    var img1 = wholeImage(alvision.Rect(0, 0, 640, 360)).clone();
-    var img2 = wholeImage(alvision.Rect(40, 60, 640, 360));
+    var img1 = wholeImage.roi(new alvision.Rect(0, 0, 640, 360)).clone();
+    var img2 = wholeImage.roi(new alvision.Rect(40, 60, 640, 360));
 
     
     var status = new Array<alvision.uchar>();
-    var error = new Array<alvision.float>;
+    var error = new Array<alvision.float>();
     var prev = new Array<alvision.Point2f>();
     var next = new Array<alvision.Point2f>();
 
@@ -228,5 +240,5 @@ alvision.cvtest.TEST('Video_OpticalFlowPyrLK', 'submat',()=>
         prev.push(new alvision.Point2f(x, y));
     }
 
-    alvision.ASSERT_NO_THROW(alvision.calcOpticalFlowPyrLK(img1, img2, prev, next, status, error));
+    alvision.ASSERT_NO_THROW(()=>alvision.calcOpticalFlowPyrLK(img1, img2, prev, next, status, error));
 });

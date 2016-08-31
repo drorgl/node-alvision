@@ -57,125 +57,124 @@ import fs = require('fs');
 
 //#define DUMP
 
-namespace
-{
+//namespace
+//{
     // first four bytes, should be the same in little endian
-    const float FLO_TAG_FLOAT = 202021.25f;  // check for this when READING the file
+    const FLO_TAG_FLOAT = 202021.25;  // check for this when READING the file
 
-#ifdef DUMP
+//#ifdef DUMP
     // binary file format for flow data specified here:
     // http://vision.middlebury.edu/flow/data/
-    void writeOpticalFlowToFile(const Mat_<Point2f>& flow, const string& fileName)
+    function writeOpticalFlowToFile(flow: alvision.Mat_<alvision.Point2f>, fileName : string) : void
     {
-        const char FLO_TAG_STRING[] = "PIEH";    // use this when WRITING the file
-        ofstream file(fileName, ios_base::binary);
+        const FLO_TAG_STRING = "PIEH";    // use this when WRITING the file
 
-        file << FLO_TAG_STRING;
+        //TODO: implement 
+        //let file = fs.openSync(fileName, "w");
+        //ofstream file(fileName, ios_base::binary);
 
-        file.write((const char*) &flow.cols, sizeof(int));
-        file.write((const char*) &flow.rows, sizeof(int));
-
-        for (int i = 0; i < flow.rows; ++i)
-        {
-            for (int j = 0; j < flow.cols; ++j)
-            {
-                const Point2f u = flow(i, j);
-
-                file.write((const char*) &u.x, sizeof(float));
-                file.write((const char*) &u.y, sizeof(float));
-            }
-        }
+        
+        //fs.writeSync(file, FLO_TAG_STRING);
+        //
+        //file.write((const char*) &flow.cols, sizeof(int));
+        //file.write((const char*) &flow.rows, sizeof(int));
+        //
+        //for (let i = 0; i < flow.rows; ++i)
+        //{
+        //    for (let j = 0; j < flow.cols; ++j)
+        //    {
+        //        const Point2f u = flow(i, j);
+        //
+        //        file.write((const char*) &u.x, sizeof(float));
+        //        file.write((const char*) &u.y, sizeof(float));
+        //    }
+        //}
     }
-#endif
+//#endif
 
     // binary file format for flow data specified here:
     // http://vision.middlebury.edu/flow/data/
-    void readOpticalFlowFromFile(Mat_<Point2f>& flow, const string& fileName)
+    function readOpticalFlowFromFile(flow: alvision.Mat_<alvision.Point2f>, fileName : string) : void
     {
-        ifstream file(fileName, ios_base::binary);
-
-        float tag;
-        file.read((char*) &tag, sizeof(float));
-        CV_Assert( tag == FLO_TAG_FLOAT );
-
-        Size size;
-
-        file.read((char*) &size.width, sizeof(int));
-        file.read((char*) &size.height, sizeof(int));
-
-        flow.create(size);
-
-        for (int i = 0; i < flow.rows; ++i)
-        {
-            for (int j = 0; j < flow.cols; ++j)
-            {
-                Point2f u;
-
-                file.read((char*) &u.x, sizeof(float));
-                file.read((char*) &u.y, sizeof(float));
-
-                flow(i, j) = u;
-            }
-        }
+        //TODO: implement read
+        //ifstream file(fileName, ios_base::binary);
+        //
+        //float tag;
+        //file.read((char*) &tag, sizeof(float));
+        //alvision.CV_Assert( tag == FLO_TAG_FLOAT );
+        //
+        //Size size;
+        //
+        //file.read((char*) &size.width, sizeof(int));
+        //file.read((char*) &size.height, sizeof(int));
+        //
+        //flow.create(size);
+        //
+        //for (let i = 0; i < flow.rows; ++i)
+        //{
+        //    for (let j = 0; j < flow.cols; ++j)
+        //    {
+        //        Point2f u;
+        //
+        //        file.read((char*) &u.x, sizeof(float));
+        //        file.read((char*) &u.y, sizeof(float));
+        //
+        //        flow(i, j) = u;
+        //    }
+        //}
     }
 
-    bool isFlowCorrect(Point2f u)
+    function isFlowCorrect(u: alvision.Point2f) : boolean
     {
-        return !cvIsNaN(u.x) && !cvIsNaN(u.y) && (fabs(u.x) < 1e9) && (fabs(u.y) < 1e9);
+        return !isNaN(u.x.valueOf()) && !isNaN(u.y.valueOf()) && (Math.abs(u.x.valueOf()) < 1e9) && (Math.abs(u.y.valueOf()) < 1e9);
     }
 
-    double calcRMSE(const Mat_<Point2f>& flow1, const Mat_<Point2f>& flow2)
-    {
-        double sum = 0.0;
-        int counter = 0;
+    function calcRMSE(flow1: alvision.Mat_<alvision.Point2f>, flow2: alvision.Mat_<alvision.Point2f>): alvision.double {
+        let sum = 0.0;
+        let counter = 0;
 
-        for (int i = 0; i < flow1.rows; ++i)
-        {
-            for (int j = 0; j < flow1.cols; ++j)
-            {
-                const Point2f u1 = flow1(i, j);
-                const Point2f u2 = flow2(i, j);
+        for (let i = 0; i < flow1.rows(); ++i) {
+            for (let j = 0; j < flow1.cols(); ++j) {
+                const u1 = flow1.Element(i, j);
+                const u2 = flow2.Element(i, j);
 
-                if (isFlowCorrect(u1) && isFlowCorrect(u2))
-                {
-                    const Point2f diff = u1 - u2;
-                    sum += diff.ddot(diff);
+                if (isFlowCorrect(u1) && isFlowCorrect(u2)) {
+                    const diff = u1.op_Substraction(u2);
+                    sum = sum.valueOf() + diff.ddot(diff).valueOf();
                     ++counter;
                 }
             }
         }
-        return sqrt(sum / (1e-9 + counter));
+        return Math.sqrt(sum / (1e-9 + counter));
     }
-}
 
-alvision.cvtest.TEST(Video_calcOpticalFlowDual_TVL1, Regression)
-{
-    const double MAX_RMSE = 0.03;
+alvision.cvtest.TEST('Video_calcOpticalFlowDual_TVL1', 'Regression', () => {
+    const MAX_RMSE = 0.03;
 
-    const string frame1_path = TS::ptr().get_data_path() + "optflow/RubberWhale1.png";
-    const string frame2_path = TS::ptr().get_data_path() + "optflow/RubberWhale2.png";
-    const string gold_flow_path = TS::ptr().get_data_path() + "optflow/tvl1_flow.flo";
+    const frame1_path =    alvision.cvtest.TS.ptr().get_data_path() + "optflow/RubberWhale1.png";
+    const frame2_path =    alvision.cvtest.TS.ptr().get_data_path() + "optflow/RubberWhale2.png";
+    const gold_flow_path = alvision.cvtest.TS.ptr().get_data_path() + "optflow/tvl1_flow.flo";
 
-    Mat frame1 = imread(frame1_path, IMREAD_GRAYSCALE);
-    Mat frame2 = imread(frame2_path, IMREAD_GRAYSCALE);
-    ASSERT_FALSE(frame1.empty());
-    ASSERT_FALSE(frame2.empty());
+    let frame1 = alvision.imread(frame1_path, alvision.ImreadModes. IMREAD_GRAYSCALE);
+    let frame2 = alvision.imread(frame2_path, alvision.ImreadModes.IMREAD_GRAYSCALE);
+    alvision.ASSERT_FALSE(frame1.empty());
+    alvision.ASSERT_FALSE(frame2.empty());
 
-    Mat_<Point2f> flow;
-    Ptr<DenseOpticalFlow> tvl1 = createOptFlow_DualTVL1();
+    let flow: alvision.Mat_<alvision.Point2f>;
+    let tvl1 = alvision.createOptFlow_DualTVL1();
 
     tvl1.calc(frame1, frame2, flow);
 
-#ifdef DUMP
+    //#ifdef DUMP
     writeOpticalFlowToFile(flow, gold_flow_path);
-#else
-    Mat_<Point2f> gold;
+    //#else
+    let gold: alvision.Mat_<alvision.Point2f>;
     readOpticalFlowFromFile(gold, gold_flow_path);
 
-    ASSERT_EQ(gold.rows, flow.rows);
-    ASSERT_EQ(gold.cols, flow.cols);
+    alvision.ASSERT_EQ(gold.rows, flow.rows);
+    alvision.ASSERT_EQ(gold.cols, flow.cols);
 
-    double err = calcRMSE(gold, flow);
-    EXPECT_LE(err, MAX_RMSE);
-#endif
-}
+    let err = calcRMSE(gold, flow);
+    alvision.EXPECT_LE(err, MAX_RMSE);
+    //#endif
+});

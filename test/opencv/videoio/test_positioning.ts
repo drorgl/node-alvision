@@ -115,7 +115,7 @@ run_test(method : METHOD) : void{
                 }
                 failed_frames++;
                 ts.printf(alvision.cvtest.TSConstants.LOG, "\nIteration: %d\n\nError: cannot read a frame with index %d.\n", j, idx.at(j));
-                this.ts.set_failed_test_info(alvision.cvtest.TS::FAIL_EXCEPTION);
+                this.ts.set_failed_test_info(alvision.cvtest.alvision.cvtest.FailureCode.FAIL_EXCEPTION);
                 flag = !flag;
             } */
 

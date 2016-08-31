@@ -107,14 +107,14 @@ class fisheyeTest extends alvision.cvtest.CUDA_TEST{// : public::testing::Test {
      };
      mergeRectification(l: alvision.Mat, r: alvision.Mat): alvision.Mat {
          alvision.CV_Assert(()=>l.type() == r.type() && l.size() == r.size());
-         let merged = new alvision.Mat (l.rows, l.cols.valueOf() * 2, l.type());
-         let lpart = merged.colRange(0, l.cols);
-         let rpart = merged.colRange(l.cols, merged.cols);
+         let merged = new alvision.Mat (l.rows(), l.cols().valueOf() * 2, l.type());
+         let lpart = merged.colRange(0, l.cols());
+         let rpart = merged.colRange(l.cols(), merged.cols());
          l.copyTo(lpart);
          r.copyTo(rpart);
 
-         for (let i = 0; i < l.rows; i += 20)
-         alvision.line(merged, new alvision.Point(0, i), new alvision.Point(merged.cols, i), new alvision.Scalar(0, 255, 0));
+         for (let i = 0; i < l.rows(); i += 20)
+         alvision.line(merged, new alvision.Point(0, i), new alvision.Point(merged.cols(), i), new alvision.Scalar(0, 255, 0));
 
          return merged;
 
@@ -373,7 +373,7 @@ class fisheyeTest_Homography extends fisheyeTest
         let objectPointsMean = new alvision.Mat();
         let covObjectPoints = new alvision.Mat();
 
-        let Np = imagePointsNormalized.cols;
+        let Np = imagePointsNormalized.cols();
         alvision.calcCovarMatrix(_objectPoints, covObjectPoints, objectPointsMean, alvision.CovarFlags.COVAR_NORMAL | alvision.CovarFlags.COVAR_COLS);
         let svd = new alvision.SVD (covObjectPoints);
         let R = new alvision.Mat (svd.vt);
@@ -387,7 +387,7 @@ class fisheyeTest_Homography extends fisheyeTest
         let X_new = alvision.MatExpr.op_Multiplication(R, _objectPoints).op_Addition(alvision.MatExpr.op_Multiplication(T, alvision.Mat.ones(1, Np, alvision.MatrixType.CV_64FC1))).toMat();
         let H = alvision.ComputeHomography(imagePointsNormalized, X_new.rowRange(0, 2));
 
-        let M = alvision.Mat.ones(3, X_new.cols,alvision.MatrixType. CV_64FC1).toMat();
+        let M = alvision.Mat.ones(3, X_new.cols(),alvision.MatrixType. CV_64FC1).toMat();
         X_new.rowRange(0, 2).copyTo(M.rowRange(0, 2));
         let mrep = alvision.MatExpr.op_Multiplication(H, M).toMat();
 
@@ -519,9 +519,9 @@ class fisheyeTest_rectify extends fisheyeTest
             break;
 
         let ndisp = 128;
-        alvision.rectangle(l, new alvision.Rect(255, 0, 829, l.rows.valueOf() - 1), new alvision.Scalar(0, 0, 255));
-        alvision.rectangle(r, new alvision.Rect(255, 0, 829, l.rows.valueOf() - 1), new alvision.Scalar(0, 0, 255));
-        alvision.rectangle(r, new alvision.Rect(255 - ndisp, 0, 829 + ndisp, l.rows.valueOf() - 1), new alvision.Scalar(0, 0, 255));
+        alvision.rectangle(l, new alvision.Rect(255, 0, 829, l.rows().valueOf() - 1), new alvision.Scalar(0, 0, 255));
+        alvision.rectangle(r, new alvision.Rect(255, 0, 829, l.rows().valueOf() - 1), new alvision.Scalar(0, 0, 255));
+        alvision.rectangle(r, new alvision.Rect(255 - ndisp, 0, 829 + ndisp, l.rows().valueOf() - 1), new alvision.Scalar(0, 0, 255));
         alvision.remap(l, lundist, lmapx, lmapy, alvision.InterpolationFlags.INTER_LINEAR);
         alvision.remap(r, rundist, rmapx, rmapy, alvision.InterpolationFlags.INTER_LINEAR);
 

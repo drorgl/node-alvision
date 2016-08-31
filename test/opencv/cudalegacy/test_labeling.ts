@@ -1,205 +1,207 @@
-/*M///////////////////////////////////////////////////////////////////////////////////////
-//
-//  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-//
-//  By downloading, copying, installing or using the software you agree to this license.
-//  If you do not agree to this license, do not download, install,
-//  copy or use the software.
-//
-//
-//                           License Agreement
-//                For Open Source Computer Vision Library
-//
-// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
-// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
-// Third party copyrights are property of their respective owners.
-//
-// Redistribution and use in source and binary forms, with or without modification,
-// are permitted provided that the following conditions are met:
-//
-//   * Redistribution's of source code must retain the above copyright notice,
-//     this list of conditions and the following disclaimer.
-//
-//   * Redistribution's in binary form must reproduce the above copyright notice,
-//     this list of conditions and the following disclaimer in the documentation
-//     and/or other materials provided with the distribution.
-//
-//   * The name of the copyright holders may not be used to endorse or promote products
-//     derived from this software without specific prior written permission.
-//
-// This software is provided by the copyright holders and contributors "as is" and
-// any express or implied warranties, including, but not limited to, the implied
-// warranties of merchantability and fitness for a particular purpose are disclaimed.
-// In no event shall the Intel Corporation or contributors be liable for any direct,
-// indirect, incidental, special, exemplary, or consequential damages
-// (including, but not limited to, procurement of substitute goods or services;
-// loss of use, data, or profits; or business interruption) however caused
-// and on any theory of liability, whether in contract, strict liability,
-// or tort (including negligence or otherwise) arising in any way out of
-// the use of this software, even if advised of the possibility of such damage.
-//
-//M*/
+//do not implement, legacy
 
-import tape = require("tape");
-import path = require("path");
-import colors = require("colors");
-import async = require("async");
-import alvision = require("../../../tsbinding/alvision");
-import util = require('util');
-import fs = require('fs');
+///*M///////////////////////////////////////////////////////////////////////////////////////
+////
+////  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+////
+////  By downloading, copying, installing or using the software you agree to this license.
+////  If you do not agree to this license, do not download, install,
+////  copy or use the software.
+////
+////
+////                           License Agreement
+////                For Open Source Computer Vision Library
+////
+//// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
+//// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
+//// Third party copyrights are property of their respective owners.
+////
+//// Redistribution and use in source and binary forms, with or without modification,
+//// are permitted provided that the following conditions are met:
+////
+////   * Redistribution's of source code must retain the above copyright notice,
+////     this list of conditions and the following disclaimer.
+////
+////   * Redistribution's in binary form must reproduce the above copyright notice,
+////     this list of conditions and the following disclaimer in the documentation
+////     and/or other materials provided with the distribution.
+////
+////   * The name of the copyright holders may not be used to endorse or promote products
+////     derived from this software without specific prior written permission.
+////
+//// This software is provided by the copyright holders and contributors "as is" and
+//// any express or implied warranties, including, but not limited to, the implied
+//// warranties of merchantability and fitness for a particular purpose are disclaimed.
+//// In no event shall the Intel Corporation or contributors be liable for any direct,
+//// indirect, incidental, special, exemplary, or consequential damages
+//// (including, but not limited to, procurement of substitute goods or services;
+//// loss of use, data, or profits; or business interruption) however caused
+//// and on any theory of liability, whether in contract, strict liability,
+//// or tort (including negligence or otherwise) arising in any way out of
+//// the use of this software, even if advised of the possibility of such damage.
+////
+////M*/
 
-#include "test_precomp.hpp"
+//import tape = require("tape");
+//import path = require("path");
+//import colors = require("colors");
+//import async = require("async");
+//import alvision = require("../../../tsbinding/alvision");
+//import util = require('util');
+//import fs = require('fs');
 
-#ifdef HAVE_CUDA
+//#include "test_precomp.hpp"
 
-namespace
-{
-    struct GreedyLabeling
-    {
-        struct dot
-        {
-            int x;
-            int y;
+//#ifdef HAVE_CUDA
 
-            static dot make(int i, int j)
-            {
-                dot d; d.x = i; d.y = j;
-                return d;
-            }
-        };
+//namespace
+//{
+//    struct GreedyLabeling
+//    {
+//        struct dot
+//        {
+//            int x;
+//            int y;
 
-        struct InInterval
-        {
-            InInterval(const int& _lo, const int& _hi) : lo(-_lo), hi(_hi) {}
-            const int lo, hi;
+//            static dot make(int i, int j)
+//            {
+//                dot d; d.x = i; d.y = j;
+//                return d;
+//            }
+//        };
 
-            bool operator() (const unsigned char a, const unsigned char b) const
-            {
-                int d = a - b;
-                return lo <= d && d <= hi;
-            }
-        };
+//        struct InInterval
+//        {
+//            InInterval(const int& _lo, const int& _hi) : lo(-_lo), hi(_hi) {}
+//            const int lo, hi;
 
-        GreedyLabeling(alvision.Mat img)
-        : image(img), _labels(image.size(), CV_32SC1, alvision.Scalar::all(-1)) {}
+//            bool operator() (const unsigned char a, const unsigned char b) const
+//            {
+//                int d = a - b;
+//                return lo <= d && d <= hi;
+//            }
+//        };
 
-        void operator() (alvision.Mat labels) const
-        {
-            InInterval inInt(0, 2);
-            dot* stack = new dot[image.cols * image.rows];
+//        GreedyLabeling(alvision.Mat img)
+//        : image(img), _labels(image.size(), alvision.MatrixType.CV_32SC1, alvision.Scalar.all(-1)) {}
 
-            int cc = -1;
+//        void operator() (alvision.Mat labels) const
+//        {
+//            InInterval inInt(0, 2);
+//            dot* stack = new dot[image.cols * image.rows];
 
-            int* dist_labels = (int*)labels.data;
-            int pitch = (int) labels.step1();
+//            int cc = -1;
 
-            unsigned char* source = (unsigned char*)image.data;
-            int width = image.cols;
-            int height = image.rows;
-            int step1 = (int)image.step1();
+//            int* dist_labels = (int*)labels.data;
+//            int pitch = (int) labels.step1();
 
-            for (int j = 0; j < image.rows; ++j)
-                for (int i = 0; i < image.cols; ++i)
-                {
-                    if (dist_labels[j * pitch + i] != -1) continue;
+//            unsigned char* source = (unsigned char*)image.data;
+//            int width = image.cols;
+//            int height = image.rows;
+//            int step1 = (int)image.step1();
 
-                    dot* top = stack;
-                    dot p = dot::make(i, j);
-                    cc++;
+//            for (int j = 0; j < image.rows; ++j)
+//                for (let i = 0; i < image.cols; ++i)
+//                {
+//                    if (dist_labels[j * pitch + i] != -1) continue;
 
-                    dist_labels[j * pitch + i] = cc;
+//                    dot* top = stack;
+//                    dot p = dot::make(i, j);
+//                    cc++;
 
-                    while (top >= stack)
-                    {
-                        int*  dl = &dist_labels[p.y * pitch + p.x];
-                        unsigned char* sp = &source[p.y * step1 + p.x];
+//                    dist_labels[j * pitch + i] = cc;
 
-                        dl[0] = cc;
+//                    while (top >= stack)
+//                    {
+//                        int*  dl = &dist_labels[p.y * pitch + p.x];
+//                        unsigned char* sp = &source[p.y * step1 + p.x];
 
-                        //right
-                        if( p.x < (width - 1) && dl[ +1] == -1 && inInt(sp[0], sp[+1]))
-                            *top++ = dot::make(p.x + 1, p.y);
+//                        dl[0] = cc;
 
-                        //left
-                        if( p.x > 0 && dl[-1] == -1 && inInt(sp[0], sp[-1]))
-                            *top++ = dot::make(p.x - 1, p.y);
+//                        //right
+//                        if( p.x < (width - 1) && dl[ +1] == -1 && inInt(sp[0], sp[+1]))
+//                            *top++ = dot::make(p.x + 1, p.y);
 
-                        //bottom
-                        if( p.y < (height - 1) && dl[+pitch] == -1 && inInt(sp[0], sp[+step1]))
-                            *top++ = dot::make(p.x, p.y + 1);
+//                        //left
+//                        if( p.x > 0 && dl[-1] == -1 && inInt(sp[0], sp[-1]))
+//                            *top++ = dot::make(p.x - 1, p.y);
 
-                        //top
-                        if( p.y > 0 && dl[-pitch] == -1 && inInt(sp[0], sp[-step1]))
-                            *top++ = dot::make(p.x, p.y - 1);
+//                        //bottom
+//                        if( p.y < (height - 1) && dl[+pitch] == -1 && inInt(sp[0], sp[+step1]))
+//                            *top++ = dot::make(p.x, p.y + 1);
 
-                        p = *--top;
-                    }
-                }
-            delete[] stack;
-        }
+//                        //top
+//                        if( p.y > 0 && dl[-pitch] == -1 && inInt(sp[0], sp[-step1]))
+//                            *top++ = dot::make(p.x, p.y - 1);
 
-        void checkCorrectness(alvision.Mat gpu)
-        {
-            alvision.Mat diff = gpu - _labels;
+//                        p = *--top;
+//                    }
+//                }
+//            delete[] stack;
+//        }
 
-            int outliers = 0;
-            for (int j = 0; j < image.rows; ++j)
-                for (int i = 0; i < image.cols - 1; ++i)
-                {
-                    if ( (_labels.at<int>(j,i) == gpu.at<int>(j,i + 1)) && (diff.at<int>(j, i) != diff.at<int>(j,i + 1)))
-                    {
-                        outliers++;
-                    }
-                }
-            ASSERT_TRUE(outliers < gpu.cols + gpu.rows);
-        }
+//        void checkCorrectness(alvision.Mat gpu)
+//        {
+//            alvision.Mat diff = gpu - _labels;
 
-        alvision.Mat image;
-        alvision.Mat _labels;
-    };
-}
+//            int outliers = 0;
+//            for (int j = 0; j < image.rows; ++j)
+//                for (let i = 0; i < image.cols - 1; ++i)
+//                {
+//                    if ( (_labels.at<int>(j,i) == gpu.at<int>(j,i + 1)) && (diff.at<int>(j, i) != diff.at<int>(j,i + 1)))
+//                    {
+//                        outliers++;
+//                    }
+//                }
+//            ASSERT_TRUE(outliers < gpu.cols + gpu.rows);
+//        }
 
-struct Labeling : testing::TestWithParam<alvision.cuda::DeviceInfo>
-{
-    alvision.cuda::DeviceInfo devInfo;
+//        alvision.Mat image;
+//        alvision.Mat _labels;
+//    };
+//}
 
-    virtual void SetUp()
-    {
-        devInfo = GetParam();
-        alvision.cuda::setDevice(devInfo.deviceID());
-    }
+//struct Labeling : testing::TestWithParam<alvision.cuda.DeviceInfo>
+//{
+//    alvision.cuda.DeviceInfo devInfo;
 
-    alvision.Mat loat_image()
-    {
-        return alvision.imread(std::string( alvision.cvtest.TS.ptr().get_data_path() ) + "labeling/label.png");
-    }
-};
+//    virtual void SetUp()
+//    {
+//        devInfo = GetParam();
+//        alvision.cuda.setDevice(this.devInfo.deviceID());
+//    }
 
-CUDA_TEST_P(Labeling, DISABLED_ConnectedComponents)
-{
-    alvision.Mat image;
-    cvtColor(loat_image(), image, alvision.COLOR_BGR2GRAY);
+//    alvision.Mat loat_image()
+//    {
+//        return alvision.imread(std::string( alvision.cvtest.TS.ptr().get_data_path() ) + "labeling/label.png");
+//    }
+//};
 
-    alvision.threshold(image, image, 150, 255, alvision.THRESH_BINARY);
+//CUDA_TEST_P(Labeling, DISABLED_ConnectedComponents)
+//{
+//    alvision.Mat image;
+//    cvtColor(loat_image(), image, alvision.COLOR_BGR2GRAY);
 
-    ASSERT_TRUE(image.type() == CV_8UC1);
+//    alvision.threshold(image, image, 150, 255, alvision.THRESH_BINARY);
 
-    GreedyLabeling host(image);
-    host(host._labels);
+//    ASSERT_TRUE(image.type() == alvision.MatrixType.CV_8UC1);
 
-    alvision.cuda::GpuMat mask;
-    mask.create(image.rows, image.cols, CV_8UC1);
+//    GreedyLabeling host(image);
+//    host(host._labels);
 
-    alvision.cuda::GpuMat components;
-    components.create(image.rows, image.cols, CV_32SC1);
+//    alvision.cuda.GpuMat mask;
+//    mask.create(image.rows, image.cols, alvision.MatrixType.CV_8UC1);
 
-    alvision.cuda::connectivityMask(alvision.cuda::GpuMat(image), mask, alvision.alvision.Scalar.all(0), alvision.Scalar::all(2));
+//    alvision.cuda.GpuMat components;
+//    components.create(image.rows, image.cols, alvision.MatrixType.CV_32SC1);
 
-    alvision.cuda::labelComponents(mask, components);
+//    alvision.cuda::connectivityMask(alvision.cuda.GpuMat(image), mask, alvision.Scalar.all(0), alvision.Scalar.all(2));
 
-    host.checkCorrectness(alvision.Mat(components));
-}
+//    alvision.cuda::labelComponents(mask, components);
 
-INSTANTIATE_TEST_CASE_P(CUDA_ConnectedComponents, Labeling, ALL_DEVICES);
+//    host.checkCorrectness(alvision.Mat(components));
+//}
 
-#endif // HAVE_CUDA
+//INSTANTIATE_TEST_CASE_P(CUDA_ConnectedComponents, Labeling, ALL_DEVICES);
+
+//#endif // HAVE_CUDA

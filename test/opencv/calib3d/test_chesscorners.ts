@@ -72,7 +72,7 @@ function show_points(gray: alvision.Mat, u: alvision.Mat, v: Array<alvision.Poin
     if( !u.empty() )
     {
         var u_data = u.ptr<alvision.Point2f>("Point2f");
-        var count = u.cols.valueOf() * u.rows.valueOf();
+        var count = u.cols().valueOf() * u.rows().valueOf();
         for(var i = 0; i < count; i++ )
             alvision.circle( rgb, u_data[i], 3, new alvision.Scalar(0, 255, 0), alvision.CV_FILLED);
     }
@@ -184,7 +184,7 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
                 doesContatinChessboard = fs1.nodes["isFound"].readInt() != 0;
                 fs1.release();
             }
-            var count_exp = (expected.cols.valueOf() * expected.rows.valueOf());
+            var count_exp = (expected.cols().valueOf() * expected.rows().valueOf());
             var pattern_size = expected.size();
 
             var v = new Array<alvision.Point2f>();
@@ -269,7 +269,7 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
         alvision.randu(bg, alvision.Scalar.all(0),alvision. Scalar.all(255));
         alvision.GaussianBlur(bg, bg,new alvision. Size(7, 7), 3.0);
 
-        var camMat = new alvision.Matf(3, 3, [300., 0., bg.cols.valueOf() / 2., 0, 300., bg.rows.valueOf() / 2., 0., 0., 1.]);
+        var camMat = new alvision.Matf(3, 3, [300., 0., bg.cols().valueOf() / 2., 0, 300., bg.rows().valueOf() / 2., 0., 0., 1.]);
         //camMat << 300., 0., bg.cols / 2., 0, 300., bg.rows / 2., 0., 0., 1.;
 
         var distCoeffs = new alvision.Matf(1, 5, [1.2, 0.2, 0., 0., 0.]);
@@ -369,7 +369,7 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
 
 
 function calcError(v: Array<alvision.Point2f>, u: alvision.Mat): alvision.double {
-    var count_exp = u.cols.valueOf() * u.rows.valueOf();
+    var count_exp = u.cols().valueOf() * u.rows().valueOf();
     const u_data = u.ptr<alvision.Point2f>("Point2f");
 
     var err = alvision.DBL_MAX;// alvision.DBL_MAX;
@@ -429,8 +429,8 @@ function validateData(cbg: chessgen. ChessBoardGenerator, imgSz: alvision.Size,
 
     var minNeibDist = alvision.DBL_MAX;// std::alvision.DBL_MAX;
     var tmp = 0;
-    for(var i = 1; i < mat.rows.valueOf() - 2; ++i)
-        for(var j = 1; j < mat.cols.valueOf() - 2; ++j)
+    for(var i = 1; i < mat.rows().valueOf() - 2; ++i)
+        for(var j = 1; j < mat.cols().valueOf() - 2; ++j)
         {
             const cur = mat.Element(i, j);
 

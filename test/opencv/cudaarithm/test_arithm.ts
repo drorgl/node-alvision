@@ -232,7 +232,7 @@ function testC2C(hint: string, cols: alvision.int, rows: alvision.int, flags: al
         if (inplace)
         {
             d_b_data.create(1, a.size().area(), alvision.MatrixType. CV_32FC2);
-            d_b = new alvision.cuda.GpuMat(a.rows, a.cols, alvision.MatrixType.CV_32FC2, d_b_data.ptr<alvision.uchar>("uchar"), a.cols.valueOf() * d_b_data.elemSize().valueOf());
+            d_b = new alvision.cuda.GpuMat(a.rows(), a.cols(), alvision.MatrixType.CV_32FC2, d_b_data.ptr<alvision.uchar>("uchar"), a.cols().valueOf() * d_b_data.elemSize().valueOf());
         }
         alvision.cudaarithm.dft(alvision.loadMat(a), d_b, new alvision.Size(cols, rows), flags);
 
@@ -280,18 +280,18 @@ class Dft_C2C extends Dft {
         var d_c_data = new alvision.cuda.GpuMat()
         if (inplace)
         {
-            if (a.cols == 1)
+            if (a.cols() == 1)
             {
-                d_b_data.create(1, (a.rows.valueOf() / 2 + 1) * a.cols.valueOf(), alvision.MatrixType.CV_32FC2);
-                d_b = new alvision.cuda.GpuMat(a.rows.valueOf() / 2 + 1, a.cols, alvision.MatrixType.CV_32FC2, d_b_data.ptr<alvision.uchar>("uchar"), a.cols.valueOf() * d_b_data.elemSize().valueOf());
+                d_b_data.create(1, (a.rows().valueOf() / 2 + 1) * a.cols().valueOf(), alvision.MatrixType.CV_32FC2);
+                d_b = new alvision.cuda.GpuMat(a.rows().valueOf() / 2 + 1, a.cols(), alvision.MatrixType.CV_32FC2, d_b_data.ptr<alvision.uchar>("uchar"), a.cols().valueOf() * d_b_data.elemSize().valueOf());
             }
             else
             {
-                d_b_data.create(1, a.rows.valueOf() * (a.cols.valueOf() / 2 + 1), alvision.MatrixType.CV_32FC2);
-                d_b = new alvision.cuda.GpuMat(a.rows, a.cols.valueOf() / 2 + 1, alvision.MatrixType.CV_32FC2, d_b_data.ptr<alvision.uchar>("uchar"), (a.cols.valueOf() / 2 + 1) * d_b_data.elemSize().valueOf());
+                d_b_data.create(1, a.rows().valueOf() * (a.cols().valueOf() / 2 + 1), alvision.MatrixType.CV_32FC2);
+                d_b = new alvision.cuda.GpuMat(a.rows(), a.cols().valueOf() / 2 + 1, alvision.MatrixType.CV_32FC2, d_b_data.ptr<alvision.uchar>("uchar"), (a.cols().valueOf() / 2 + 1) * d_b_data.elemSize().valueOf());
             }
             d_c_data.create(1, a.size().area(), alvision.MatrixType.CV_32F);
-            d_c = new alvision.cuda.GpuMat(a.rows, a.cols, alvision.MatrixType.CV_32F, d_c_data.ptr<alvision.uchar>("uchar"), a.cols.valueOf() * d_c_data.elemSize().valueOf());
+            d_c = new alvision.cuda.GpuMat(a.rows(), a.cols(), alvision.MatrixType.CV_32F, d_c_data.ptr<alvision.uchar>("uchar"), a.cols().valueOf() * d_c_data.elemSize().valueOf());
         }
 
         alvision.cudaarithm.dft(alvision.loadMat(a), d_b, new alvision.Size(cols, rows), 0);
@@ -340,27 +340,27 @@ alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_Arithm', 'Dft', (case_name, test_n
 function convolveDFT(A: alvision.Mat, B: alvision.Mat, C: alvision.Mat , ccorr  : boolean= false) : void
     {
         // reallocate the output array if needed
-        C.create(Math.abs(A.rows.valueOf() - B.rows.valueOf()) + 1, Math.abs(A.cols.valueOf() - B.cols.valueOf()) + 1, A.type());
+        C.create(Math.abs(A.rows().valueOf() - B.rows().valueOf()) + 1, Math.abs(A.cols().valueOf() - B.cols().valueOf()) + 1, A.type());
         var dftSize = new alvision.Size();
 
         // compute the size of DFT transform
-        dftSize.width = alvision.getOptimalDFTSize (A.cols.valueOf() + B.cols.valueOf() - 1);
-        dftSize.height = alvision.getOptimalDFTSize(A.rows.valueOf() + B.rows.valueOf() - 1);
+        dftSize.width = alvision.getOptimalDFTSize (A.cols().valueOf() + B.cols().valueOf() - 1);
+        dftSize.height = alvision.getOptimalDFTSize(A.rows().valueOf() + B.rows().valueOf() - 1);
 
         // allocate temporary buffers and initialize them with 0s
         var tempA = new alvision.Mat(dftSize, A.type(), alvision.Scalar.all(0));
         var tempB = new alvision.Mat(dftSize, B.type(), alvision.Scalar.all(0));
 
         // copy A and B to the top-left corners of tempA and tempB, respectively
-        var roiA = tempA.roi(new alvision.Rect(0, 0, A.cols, A.rows));
+        var roiA = tempA.roi(new alvision.Rect(0, 0, A.cols(), A.rows()));
         A.copyTo(roiA);
-        var roiB = tempB.roi(new alvision.Rect(0, 0, B.cols, B.rows));
+        var roiB = tempB.roi(new alvision.Rect(0, 0, B.cols(), B.rows()));
         B.copyTo(roiB);
 
         // now transform the padded A & B in-place;
         // use "nonzeroRows" hint for faster processing
-        alvision.dft(tempA, tempA, 0, A.rows);
-        alvision.dft(tempB, tempB, 0, B.rows);
+        alvision.dft(tempA, tempA, 0, A.rows());
+        alvision.dft(tempB, tempB, 0, B.rows());
 
         // multiply the spectrums;
         // the function handles packed spectrum representations well
@@ -370,10 +370,10 @@ function convolveDFT(A: alvision.Mat, B: alvision.Mat, C: alvision.Mat , ccorr  
         // Even though all the result rows will be non-zero,
         // you need only the first C.rows of them, and thus you
         // pass nonzeroRows == C.rows
-        alvision.dft(tempA, tempA, alvision.DftFlags.DFT_INVERSE + alvision.DftFlags.DFT_SCALE, C.rows);
+        alvision.dft(tempA, tempA, alvision.DftFlags.DFT_INVERSE + alvision.DftFlags.DFT_SCALE, C.rows());
 
         // now copy the result back to C.
-        tempA.roi(new alvision.Rect(0, 0, C.cols, C.rows)).copyTo(C);
+        tempA.roi(new alvision.Rect(0, 0, C.cols(), C.rows())).copyTo(C);
     }
 
 //    IMPLEMENT_PARAM_CLASS(KSize, int)

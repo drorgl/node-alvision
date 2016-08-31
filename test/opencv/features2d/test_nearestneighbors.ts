@@ -73,35 +73,39 @@ class NearestNeighborTest  extends alvision.cvtest.BaseTest
 
     run(start_from: alvision.int): void {
         var code = alvision.cvtest.FailureCode.OK, tempCode;
-        Mat desc(featuresCount, dims, CV_32FC1);
-        randu(desc, Scalar(minValue), Scalar(maxValue));
+        let desc = new alvision.Mat (this.featuresCount, this.dims,alvision.MatrixType. CV_32FC1);
+        alvision.randu(desc,new alvision. Scalar(this.minValue),new alvision. Scalar(this.maxValue));
 
-        createModel(desc);
+        this.createModel(desc);
 
-        tempCode = checkGetPoins(desc);
+        tempCode = this.checkGetPoins(desc);
         if (tempCode != alvision.cvtest.FailureCode.OK) {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of GetPoints \n");
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of GetPoints \n");
             code = tempCode;
         }
 
-        tempCode = checkFindBoxed();
+        tempCode = this.checkFindBoxed();
         if (tempCode != alvision.cvtest.FailureCode.OK) {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of FindBoxed \n");
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of FindBoxed \n");
             code = tempCode;
         }
 
-        tempCode = checkFind(desc);
+        tempCode = this.checkFind(desc);
         if (tempCode != alvision.cvtest.FailureCode.OK) {
-            ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of Find \n");
+            this.ts.printf(alvision.cvtest.TSConstants.LOG, "bad accuracy of Find \n");
             code = tempCode;
         }
 
-        releaseModel();
+        this.releaseModel();
 
         this.ts.set_failed_test_info(code);
     }
     createModel(data: alvision.Mat): void { }
-    findNeighbors(points: alvision.Mat, neighbors: alvision.Mat ): alvision.int{}
+
+    findNeighbors(points: alvision.Mat, neighbors: alvision.Mat): alvision.int {
+        throw new Error("not implemented");
+    }
+
     checkGetPoins(data: alvision.Mat): alvision.int{
         return alvision.cvtest.FailureCode.OK;
     }
@@ -109,36 +113,36 @@ class NearestNeighborTest  extends alvision.cvtest.BaseTest
         return alvision.cvtest.FailureCode.OK;
     }
     checkFind(data: alvision.Mat): alvision.int{
-        int code = alvision.cvtest.FailureCode.OK;
-        int pointsCount = 1000;
-        float noise = 0.2f;
+        let code = alvision.cvtest.FailureCode.OK;
+        let pointsCount = 1000;
+        let noise = 0.2;
 
-        RNG rng;
-        Mat points(pointsCount, dims, CV_32FC1);
-        Mat results(pointsCount, K, CV_32SC1);
+        let rng = new alvision.RNG();
+        let points = new alvision.Mat (pointsCount, this.dims, alvision.MatrixType.CV_32FC1);
+        let results = new alvision.Mat (pointsCount,this. K, alvision.MatrixType.CV_32SC1);
 
-        Array < int > fmap(pointsCount);
-        for (int pi = 0; pi < pointsCount; pi++ )
+        let fmap = new Array<alvision.int>(pointsCount);
+        for (let pi = 0; pi < pointsCount; pi++ )
         {
-            int fi = rng.next() % featuresCount;
+            let fi = rng.next().valueOf() % this.featuresCount.valueOf();
             fmap[pi] = fi;
-            for (int d = 0; d < dims; d++ )
-            points.at<float>(pi, d) = data.at<float>(fi, d) + rng.uniform(0.0f, 1.0f) * noise;
+            for (let d = 0; d < this.dims; d++)
+                points.at<alvision.float>("float", pi, d).set(data.at<alvision.float>("float", fi, d).get().valueOf() + rng.uniform(0.0, 1.0).valueOf() * noise);
         }
 
-        code = findNeighbors(points, results);
+        code = <alvision.cvtest.FailureCode>this.findNeighbors(points, results);
 
         if (code == alvision.cvtest.FailureCode.OK) {
-            int correctMatches = 0;
-            for (int pi = 0; pi < pointsCount; pi++ )
+            let correctMatches = 0;
+            for (let pi = 0; pi < pointsCount; pi++ )
             {
-                if (fmap[pi] == results.at<int>(pi, 0))
+                if (fmap[pi] == results.at<alvision.int>("int", pi, 0).get())
                     correctMatches++;
             }
 
-            double correctPerc = correctMatches / (double)pointsCount;
+            let correctPerc = correctMatches / pointsCount;
             if (correctPerc < .75) {
-                ts.printf(alvision.cvtest.TSConstants.LOG, "correct_perc = %d\n", correctPerc);
+                this.ts.printf(alvision.cvtest.TSConstants.LOG, "correct_perc = %d\n", correctPerc);
                 code = alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
             }
         }
@@ -152,70 +156,70 @@ class NearestNeighborTest  extends alvision.cvtest.BaseTest
 //--------------------------------------------------------------------------------
 class CV_FlannTest extends NearestNeighborTest
 {
-    createIndex(data: alvision.Mat, params: alvision.IndexParams) {
-        this.index = new Index(data, params);
+    createIndex(data: alvision.Mat, params: alvision.flann.IndexParams) {
+        this.index = new alvision.flann.Index(data, params);
     }
     knnSearch(points: alvision.Mat, neighbors: alvision.Mat): alvision.int {
-        Mat dist(points.rows, neighbors.cols, CV_32FC1);
-        int knn = 1, j;
+        let dist = new alvision.Mat (points.rows(), neighbors.cols(),alvision.MatrixType. CV_32FC1);
+        let knn = 1;
 
         // 1st way
-        index.knnSearch(points, neighbors, dist, knn, SearchParams());
+        this.index.knnSearch(points, neighbors, dist, knn, new alvision.flann.SearchParams());
 
         // 2nd way
-        Mat neighbors1(neighbors.size(), CV_32SC1);
-        for (int i = 0; i < points.rows; i++ )
+        let neighbors1 = new alvision.Mat (neighbors.size(), alvision.MatrixType.CV_32SC1);
+        for (let i = 0; i < points.rows(); i++ )
         {
-            float * fltPtr = points.ptr<float>(i);
-            Array < float > query(fltPtr, fltPtr + points.cols);
-            Array < int > indices(neighbors1.cols, 0);
-            Array < float > dists(dist.cols, 0);
-            index.knnSearch(query, indices, dists, knn, SearchParams());
-            Array<int>::const_iterator it = indices.begin();
-            for (j = 0; it != indices.end(); ++it, j++)
-                neighbors1.at<int>(i, j) = *it;
+            let fltPtr = points.ptr<alvision.float>("float", i);
+            let query = new Array<alvision.float>();//fltPtr, fltPtr + points.cols);
+            let indices = new Array<alvision.int> (neighbors1.cols(), 0);
+            let dists = new Array<alvision.float> (dist.cols(), 0);
+            this.index.knnSearch(query, indices, dists, knn, new alvision.flann.SearchParams());
+            //Array<int>::const_iterator it = indices.begin();
+            for (let j = 0; j < indices.length; j++)
+                neighbors1.at<alvision.int>("int", i, j).set(indices[j]);
         }
 
         // compare results
-        if (alvision.cvtest.norm(neighbors, neighbors1, NORM_L1) != 0)
+        if (alvision.cvtest.norm(neighbors, neighbors1,alvision.NormTypes.NORM_L1) != 0)
             return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
 
         return alvision.cvtest.FailureCode.OK;
     }
     radiusSearch(points: alvision.Mat, neighbors: alvision.Mat): alvision.int  {
-        Mat dist(1, neighbors.cols, CV_32FC1);
-        Mat neighbors1(neighbors.size(), CV_32SC1);
-        float radius = 10.0f;
-        int j;
+        let dist = new alvision.Mat (1, neighbors.cols(),alvision.MatrixType. CV_32FC1);
+        let neighbors1 = new alvision.Mat (neighbors.size(), alvision.MatrixType.CV_32SC1);
+        let radius = 10.0;
+        //int j;
 
         // radiusSearch can only search one feature at a time for range search
-        for (int i = 0; i < points.rows; i++ )
+        for (let i = 0; i < points.rows(); i++ )
         {
             // 1st way
-            Mat p(1, points.cols, CV_32FC1, points.ptr<float>(i)),
-                n(1, neighbors.cols, CV_32SC1, neighbors.ptr<int>(i));
-            index.radiusSearch(p, n, dist, radius, neighbors.cols, SearchParams());
+            let p = new alvision.Mat (1, points.cols(), alvision.MatrixType.CV_32FC1, points.ptr<alvision.float>("float", i)),
+                n = new alvision.Mat(1, neighbors.cols(), alvision.MatrixType.CV_32SC1, neighbors.ptr<alvision.int>("int", i));
+            this.index.radiusSearch(p, n, dist, radius, neighbors.cols(),new  alvision.flann.SearchParams());
 
             // 2nd way
-            float * fltPtr = points.ptr<float>(i);
-            Array < float > query(fltPtr, fltPtr + points.cols);
-            Array < int > indices(neighbors1.cols, 0);
-            Array < float > dists(dist.cols, 0);
-            index.radiusSearch(query, indices, dists, radius, neighbors.cols, SearchParams());
-            Array<int>::const_iterator it = indices.begin();
-            for (j = 0; it != indices.end(); ++it, j++)
-                neighbors1.at<int>(i, j) = *it;
+            let fltPtr = points.ptr<alvision.float>("float", i);
+            let query = new Array<alvision.float>();//fltPtr, fltPtr + points.cols);
+            let indices = new Array<alvision.int> (neighbors1.cols(), 0);
+            let dists = new Array<alvision.float> (dist.cols(), 0);
+            this.index.radiusSearch(query, indices, dists, radius, neighbors.cols(),new  alvision.flann.SearchParams());
+            //Array<int>::const_iterator it = indices.begin();
+            for (let j = 0; j < indices.length; j++)
+                neighbors1.at<alvision.int>("int", i, j).set(indices[j]);
         }
         // compare results
-        if (alvision.cvtest.norm(neighbors, neighbors1, NORM_L1) != 0)
+        if (alvision.cvtest.norm(neighbors, neighbors1,alvision.NormTypes. NORM_L1) != 0)
             return alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY;
 
         return alvision.cvtest.FailureCode.OK;
     }
     releaseModel(): void{
-        delete index;
+        delete this.index;
     }
-    protected index: alvision.Index
+    protected index: alvision.flann.Index
 };
 
 
@@ -223,63 +227,63 @@ class CV_FlannTest extends NearestNeighborTest
 //---------------------------------------
 class CV_FlannLinearIndexTest extends CV_FlannTest
 {
-    createModel(data:alvision.Mat) : void { this.createIndex( data, LinearIndexParams() ); }
+    createModel(data: alvision.Mat): void { this.createIndex(data, new alvision.flann.LinearIndexParams() ); }
     findNeighbors(points:alvision.Mat,neighbors : alvision.Mat) : alvision.int { return this.knnSearch( points, neighbors ); }
 };
 
 //---------------------------------------
 class CV_FlannKMeansIndexTest extends CV_FlannTest
 {
-    createModel(data:alvision.Mat) : void { this.createIndex( data, KMeansIndexParams() ); }
+    createModel(data:alvision.Mat) : void { this.createIndex( data,new alvision.flann.KMeansIndexParams() ); }
     findNeighbors(points:alvision.Mat,neighbors : alvision.Mat) : alvision.int { return this.radiusSearch( points, neighbors ); }
 };
 
 //---------------------------------------
 class CV_FlannKDTreeIndexTest extends CV_FlannTest
 {
-    createModel(data:alvision.Mat) : void { this.createIndex( data, KDTreeIndexParams() ); }
+    createModel(data:alvision.Mat) : void { this.createIndex( data,new alvision.flann.KDTreeIndexParams() ); }
     findNeighbors(points:alvision.Mat,neighbors : alvision.Mat) : alvision.int { return this.radiusSearch( points, neighbors ); }
 };
 
 //----------------------------------------
 class CV_FlannCompositeIndexTest extends CV_FlannTest
 {
-    createModel(data:alvision.Mat) : void { this.createIndex( data, CompositeIndexParams() ); }
+    createModel(data:alvision.Mat) : void { this.createIndex( data,new alvision.flann.CompositeIndexParams() ); }
     findNeighbors(points:alvision.Mat,neighbors : alvision.Mat) : alvision.int { return this.knnSearch( points, neighbors ); }
 };
 
 //----------------------------------------
 class CV_FlannAutotunedIndexTest extends CV_FlannTest
 {
-    createModel(data:alvision.Mat) : void { this.createIndex( data, AutotunedIndexParams() ); }
-    findNeighbors(points:alvision.Mat,neighbors : alvision.Mat) : alvision.int { return knnSearch( points, neighbors ); }
+    createModel(data:alvision.Mat) : void { this.createIndex( data,new  alvision.flann.AutotunedIndexParams() ); }
+    findNeighbors(points:alvision.Mat,neighbors : alvision.Mat) : alvision.int { return this.knnSearch( points, neighbors ); }
 };
 //----------------------------------------
 class CV_FlannSavedIndexTest extends CV_FlannTest
 {
     createModel(data: alvision.Mat): void {
-        switch (alvision.cvtest.randInt(ts.get_rng()) % 2) {
+        switch (alvision.cvtest.randInt(this.ts.get_rng()).valueOf() % 2) {
             //case 0: createIndex( data, LinearIndexParams() ); break; // nothing to save for linear search
-            case 0: createIndex(data, KMeansIndexParams()); break;
-            case 1: createIndex(data, KDTreeIndexParams()); break;
+            case 0: this.createIndex(data, new alvision.flann.KMeansIndexParams()); break;
+            case 1: this.createIndex(data, new alvision.flann.KDTreeIndexParams()); break;
             //case 2: createIndex( data, CompositeIndexParams() ); break; // nothing to save for linear search
             //case 2: createIndex( data, AutotunedIndexParams() ); break; // possible linear index !
-            default: assert(0);
+            default: alvision.assert(()=>false);
         }
-        string filename = tempfile();
-        index.save(filename);
+        let filename = alvision.tempfile("");
+        this.index.save(filename);
 
-        createIndex(data, SavedIndexParams(filename));
-        remove(filename);
+        this.createIndex(data, new alvision.flann.SavedIndexParams(filename));
+        alvision.remove(filename);
     }
-    findNeighbors(points:alvision.Mat,neighbors : alvision.Mat) : alvision.int { return knnSearch( points, neighbors ); }
+    findNeighbors(points:alvision.Mat,neighbors : alvision.Mat) : alvision.int { return this.knnSearch( points, neighbors ); }
 };
 
 
 
-alvision.cvtest.TEST('Features2d_FLANN_Linear', 'regression', () => { CV_FlannLinearIndexTest test; test.safe_run(); });
-alvision.cvtest.TEST('Features2d_FLANN_KMeans', 'regression', () => { CV_FlannKMeansIndexTest test; test.safe_run(); });
-alvision.cvtest.TEST('Features2d_FLANN_KDTree', 'regression', () => { CV_FlannKDTreeIndexTest test; test.safe_run(); });
-alvision.cvtest.TEST('Features2d_FLANN_Composite', 'regression', () => { CV_FlannCompositeIndexTest test; test.safe_run(); });
-alvision.cvtest.TEST('Features2d_FLANN_Auto', 'regression', () => { CV_FlannAutotunedIndexTest test; test.safe_run(); });
-alvision.cvtest.TEST('Features2d_FLANN_Saved', 'regression', () => { CV_FlannSavedIndexTest test; test.safe_run(); });
+alvision.cvtest.TEST('Features2d_FLANN_Linear', 'regression', () => { let test = new CV_FlannLinearIndexTest(); test.safe_run(); });
+alvision.cvtest.TEST('Features2d_FLANN_KMeans', 'regression', () => { let test = new CV_FlannKMeansIndexTest(); test.safe_run(); });
+alvision.cvtest.TEST('Features2d_FLANN_KDTree', 'regression', () => { let test = new CV_FlannKDTreeIndexTest(); test.safe_run(); });
+alvision.cvtest.TEST('Features2d_FLANN_Composite', 'regression', () => { let test = new CV_FlannCompositeIndexTest (); test.safe_run(); });
+alvision.cvtest.TEST('Features2d_FLANN_Auto', 'regression', () => { let test = new CV_FlannAutotunedIndexTest(); test.safe_run(); });
+alvision.cvtest.TEST('Features2d_FLANN_Saved', 'regression', () => { let test = new CV_FlannSavedIndexTest(); test.safe_run(); });

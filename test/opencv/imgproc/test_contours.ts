@@ -72,7 +72,8 @@ class CV_FindContourTest  extends alvision.cvtest.BaseTest
          for (var i = 0; i < this.NUM_IMG; i++)
              this.img[i] = null;
 
-         this.storage = null;
+         this.contours = null;
+         this.hierarchy = null;
      }
      clear(): void {
          //int i;
@@ -82,7 +83,10 @@ class CV_FindContourTest  extends alvision.cvtest.BaseTest
          //for (var i = 0; i < NUM_IMG; i++)
          //    cvReleaseImage( img[i]);
 
-         this.storage.release();
+         //this.storage.release();
+         //this.storage.length = 0;
+         this.contours = null;
+         this.hierarchy = null;
          //cvReleaseMemStorage( &storage);
      }
 
@@ -93,25 +97,29 @@ class CV_FindContourTest  extends alvision.cvtest.BaseTest
          if (code < 0)
              return code;
 
-         this.min_blob_size = cvReadInt(find_param(fs, "min_blob_size"), min_blob_size);
-         this.max_blob_size = cvReadInt(find_param(fs, "max_blob_size"), max_blob_size);
-         this.max_log_blob_count = cvReadInt(find_param(fs, "max_log_blob_count"), max_log_blob_count);
-         this.min_log_img_size = cvReadInt(find_param(fs, "min_log_img_size"), min_log_img_size);
-         this.max_log_img_size = cvReadInt(find_param(fs, "max_log_img_size"), max_log_img_size);
+         this.min_blob_size = alvision.cvReadInt(this.find_param(fs, "min_blob_size"), this.min_blob_size);
+         this.max_blob_size = alvision.cvReadInt(this.find_param(fs, "max_blob_size"), this.max_blob_size);
+         this.max_log_blob_count = alvision.cvReadInt(this.find_param(fs, "max_log_blob_count"), this.max_log_blob_count);
+         this.min_log_img_size = alvision.cvReadInt(this.find_param(fs, "min_log_img_size"), this.min_log_img_size);
+         this.max_log_img_size = alvision.cvReadInt(this.find_param(fs, "max_log_img_size"), this.max_log_img_size);
 
-         this.min_blob_size = alvision.cvtest.clipInt(min_blob_size, 1, 100);
-         this.max_blob_size = alvision.cvtest.clipInt(max_blob_size, 1, 100);
+         this.min_blob_size = alvision.cvtest.clipInt(this.min_blob_size, 1, 100);
+         this.max_blob_size = alvision.cvtest.clipInt(this.max_blob_size, 1, 100);
 
-         if (min_blob_size > max_blob_size)
-             CV_SWAP(min_blob_size, max_blob_size, t);
+         if (this.min_blob_size > this.max_blob_size) {
+             let t = this.min_blob_size; this.min_blob_size = this.max_blob_size; this.max_blob_size = t;
+             //CV_SWAP(this.min_blob_size, this.max_blob_size, t);
+         }
 
-         this.max_log_blob_count = alvision.cvtest.clipInt(max_log_blob_count, 1, 10);
+         this.max_log_blob_count = alvision.cvtest.clipInt(this.max_log_blob_count, 1, 10);
 
-         this.min_log_img_size = alvision.cvtest.clipInt(min_log_img_size, 1, 10);
-         this.max_log_img_size = alvision.cvtest.clipInt(max_log_img_size, 1, 10);
+         this.min_log_img_size = alvision.cvtest.clipInt(this.min_log_img_size, 1, 10);
+         this.max_log_img_size = alvision.cvtest.clipInt(this.max_log_img_size, 1, 10);
 
-         if (this.min_log_img_size > max_log_img_size)
-             CV_SWAP(min_log_img_size, max_log_img_size, t);
+         if (this.min_log_img_size > this.max_log_img_size) {
+             let t = this.min_log_img_size; this.min_log_img_size = this.max_log_img_size; this.max_log_img_size = t;
+             //CV_SWAP(this.min_log_img_size, this.max_log_img_size, t);
+         }
 
          return 0;
      }
@@ -126,132 +134,143 @@ class CV_FindContourTest  extends alvision.cvtest.BaseTest
 
          this.clear();
 
-         this.blob_count = Math.round(exp(alvision.cvtest.randReal(rng) * max_log_blob_count * Math.LOG2E));
+         this.blob_count = Math.round(Math.exp(alvision.cvtest.randReal(rng).valueOf() * this.max_log_blob_count.valueOf() * Math.LOG2E));
 
-         this.img_size.width = Math.round(exp((alvision.cvtest.randReal(rng) *
-             (max_log_img_size - min_log_img_size) + min_log_img_size) * Math.LOG2E));
-         this.img_size.height = Math.round(exp((alvision.cvtest.randReal(rng) *
-             (max_log_img_size - min_log_img_size) + min_log_img_size) * Math.LOG2E));
+         this.img_size.width = Math.round(Math.exp((alvision.cvtest.randReal(rng).valueOf() *
+             (this.max_log_img_size.valueOf() - this.min_log_img_size.valueOf()) + this.min_log_img_size.valueOf()) * Math.LOG2E));
+         this.img_size.height = Math.round(Math.exp((alvision.cvtest.randReal(rng).valueOf() *
+             (this.max_log_img_size.valueOf() - this.min_log_img_size.valueOf()) + this.min_log_img_size.valueOf()) * Math.LOG2E));
 
-         this.approx_method = alvision.cvtest.randInt(rng) % 4 + 1;
-         this.retr_mode = alvision.cvtest.randInt(rng) % 4;
+         this.approx_method = alvision.cvtest.randInt(rng).valueOf() % 4 + 1;
+         this.retr_mode = alvision.cvtest.randInt(rng).valueOf() % 4;
 
-         this.storage = cvCreateMemStorage(1 << 10);
+         this.contours = new Array<Array<alvision.Point>>();// new alvision.FileStorage("x.xml", alvision.FileStorageMode.MEMORY);// cvCreateMemStorage(1 << 10);
 
-         for (var i = 0; i < NUM_IMG; i++)
-             img[i] = cvCreateImage(img_size, 8, 1);
+         for (var i = 0; i < this.NUM_IMG; i++)
+             this.img[i] = new alvision.Mat(this.img_size, alvision.MatrixType.CV_MAKETYPE(8, 1));// cvCreateImage(img_size, 8, 1);
 
-         cvTsGenerateBlobImage(img[0], min_blob_size, max_blob_size,
-             blob_count, min_brightness, max_brightness, rng);
+         cvTsGenerateBlobImage(this.img[0], this.min_blob_size, this.max_blob_size,
+             this.blob_count, min_brightness, max_brightness, rng);
 
-         cvCopy(img[0], img[1]);
-         cvCopy(img[0], img[2]);
+         this.img[0].copyTo(this.img[1]);
+         //cvCopy(img[0], img[1]);
+         this.img[0].copyTo(this.img[2]);
+         //cvCopy(img[0], img[2]);
 
-         cvTsMarkContours(img[1], 255);
+         cvTsMarkContours(this.img[1], 255);
 
          return 1;
      }
      validate_test_results(test_case_idx: alvision.int): alvision.int {
          var code = alvision.cvtest.FailureCode.OK;
 
-         cvCmpS(img[0], 0, img[0], CV_CMP_GT);
+         alvision.compare(this.img[0],0, this.img[0], alvision.CmpTypes.CMP_GT);
 
-         if (count != count2) {
-             this.ts.printf(alvision.cvtest.TSConstants.LOG, "The number of contours retrieved with different "
-            "approximation methods is not the same\n"
-            "(%d contour(s) for method %d vs %d contour(s) for method %d)\n",
-                 count, approx_method, count2, CV_CHAIN_CODE);
+         if (this.count != this.count2) {
+             this.ts.printf(alvision.cvtest.TSConstants.LOG, "The number of contours retrieved with different " +
+                 "approximation methods is not the same\n" +
+                 "(%d contour(s) for method %d vs %d contour(s) for method %d)\n",
+                 this.count, this.approx_method, this.count2);//, CV_CHAIN_CODE);
              code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
          }
 
-         if (retr_mode != CV_RETR_EXTERNAL && approx_method < CV_CHAIN_APPROX_TC89_L1) {
-             Mat _img[4];
+         if (this.retr_mode != alvision.RetrievalModes.RETR_EXTERNAL && this.approx_method < alvision.ContourApproximationModes.CHAIN_APPROX_TC89_L1) {
+             let _img = new Array < alvision.Mat>(4);
              for (var i = 0; i < 4; i++ )
-             _img[i] = cvarrToMat(img[i]);
+                _img[i] = this.img[i];
 
              code = alvision.cvtest.cmpEps2(this.ts, _img[0], _img[3], 0, true, "Comparing original image with the map of filled contours");
 
-             if (code < 0)
-                 goto _exit_;
+             if (code < 0) {
+                 this.ts.set_failed_test_info(code);return code;
+                 //goto _exit_;
+             }
 
              code = alvision.cvtest.cmpEps2(this.ts, _img[1], _img[2], 0, true,
                  "Comparing contour outline vs manually produced edge map");
 
-             if (code < 0)
-                 goto _exit_;
+             if (code < 0) {
+                 this.ts.set_failed_test_info(code); return code;
+                 //goto _exit_;
+             }
          }
 
-         if (contours) {
-             CvTreeNodeIterator iterator1;
-             CvTreeNodeIterator iterator2;
-             int count3;
+         if (this.contours) {
+             //CvTreeNodeIterator iterator1;
+             //CvTreeNodeIterator iterator2;
+             //int count3;
+             let count3: alvision.int;
 
              for (var i = 0; i < 2; i++ )
              {
-                 CvTreeNodeIterator iterator;
-                 cvInitTreeNodeIterator( &iterator, i == 0 ? contours : contours2, INT_MAX);
+                 //CvTreeNodeIterator iterator;
+                 //cvInitTreeNodeIterator( &iterator, i == 0 ? contours : contours2, INT_MAX);
 
-                 for (count3 = 0; cvNextTreeNode( &iterator) != 0; count3++)
-                     ;
+                 //for (count3 = 0; cvNextTreeNode( &iterator) != 0; count3++)
+                 //    ;
 
-                 if (count3 != count) {
-                     ts.printf(alvision.cvtest.TSConstants.LOG,
-                         "The returned number of retrieved contours (using the approx_method = %d) does not match\n"
-                    "to the actual number of contours in the tree/list (returned %d, actual %d)\n",
-                         i == 0 ? approx_method : 0, count, count3);
-                     code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
-                     goto _exit_;
-                 }
-             }
-
-             cvInitTreeNodeIterator( &iterator1, contours, INT_MAX);
-             cvInitTreeNodeIterator( &iterator2, contours2, INT_MAX);
-
-             for (count3 = 0; count3 < count; count3++) {
-                 CvSeq * seq1 = (CvSeq *)cvNextTreeNode( &iterator1);
-                 CvSeq * seq2 = (CvSeq *)cvNextTreeNode( &iterator2);
-                 CvSeqReader reader1;
-                 CvSeqReader reader2;
-
-                 if (!seq1 || !seq2) {
-                     ts.printf(alvision.cvtest.TSConstants.LOG,
-                         "There are NULL pointers in the original contour tree or the "
-                    "tree produced by cvApproxChains\n" );
-                     code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
-                     goto _exit_;
-                 }
-
-                 cvStartReadSeq(seq1, &reader1);
-                 cvStartReadSeq(seq2, &reader2);
-
-                 if (seq1.total != seq2.total) {
+                 if (this.contours.length != this.hierarchy.length){
+                 //if (count3 != this.count) {
                      this.ts.printf(alvision.cvtest.TSConstants.LOG,
-                         "The original contour #%d has %d points, while the corresponding contour has %d point\n",
-                         count3, seq1.total, seq2.total);
-                     code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
-                     goto _exit_;
-                 }
-
-                 for (int i = 0; i < seq1.total; i++ )
-                 {
-                     CvPoint pt1;
-                     CvPoint pt2;
-
-                     CV_READ_SEQ_ELEM(pt1, reader1);
-                     CV_READ_SEQ_ELEM(pt2, reader2);
-
-                     if (pt1.x != pt2.x || pt1.y != pt2.y) {
-                         this.ts.printf(alvision.cvtest.TSConstants.LOG,
-                             "The point #%d in the contour #%d is different from the corresponding point "
-                    "in the approximated chain ((%d,%d) vs (%d,%d)", count3, i, pt1.x, pt1.y, pt2.x, pt2.y);
-                         code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
-                         goto _exit_;
-                     }
+                         "The returned number of retrieved contours (using the approx_method = %d) does not match\n" + 
+                    "to the actual number of contours in the tree/list (returned %d, actual %d)\n",
+                         i == 0 ? this.approx_method : 0, this.count, count3);
+                 code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+                 this.ts.set_failed_test_info(code); return code;
+                     //goto _exit_;
                  }
              }
+
+             //TODO: add validations for new api
+
+             //cvInitTreeNodeIterator( &iterator1, contours, INT_MAX);
+             //cvInitTreeNodeIterator( &iterator2, contours2, INT_MAX);
+
+             //for (count3 = 0; count3 < count; count3++) {
+                 //CvSeq * seq1 = (CvSeq *)cvNextTreeNode( &iterator1);
+                 //CvSeq * seq2 = (CvSeq *)cvNextTreeNode( &iterator2);
+                 //CvSeqReader reader1;
+                 //CvSeqReader reader2;
+                 //
+                 //if (!seq1 || !seq2) {
+                 //    this.ts.printf(alvision.cvtest.TSConstants.LOG,
+                 //        "There are NULL pointers in the original contour tree or the " + 
+                 //   "tree produced by cvApproxChains\n" );
+                 //    code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+                 //    goto _exit_;
+                 //}
+                 //
+                 //cvStartReadSeq(seq1, &reader1);
+                 //cvStartReadSeq(seq2, &reader2);
+
+                 //if (seq1.total != seq2.total) {
+                 //    this.ts.printf(alvision.cvtest.TSConstants.LOG,
+                 //        "The original contour #%d has %d points, while the corresponding contour has %d point\n",
+                 //        count3, seq1.total, seq2.total);
+                 //    code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+                 //    goto _exit_;
+                 //}
+                 //
+                 //for (let i = 0; i < seq1.total; i++ )
+                 //{
+                 //    let pt1 = new alvision.Point();
+                 //    let pt2 = new alvision.Point();
+                 //
+                 //    CV_READ_SEQ_ELEM(pt1, reader1);
+                 //    CV_READ_SEQ_ELEM(pt2, reader2);
+                 //
+                 //    if (pt1.x != pt2.x || pt1.y != pt2.y) {
+                 //        this.ts.printf(alvision.cvtest.TSConstants.LOG,
+                 //            "The point #%d in the contour #%d is different from the corresponding point " + 
+                 //   "in the approximated chain ((%d,%d) vs (%d,%d)", count3, i, pt1.x, pt1.y, pt2.x, pt2.y);
+                 //        code = alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT;
+                 //        goto _exit_;
+                 //    }
+                 //}
+             //}
          }
 
-         _exit_:
+         //_exit_:
          if (code < 0) {
              //#if 0
              //        cvNamedWindow( "test", 0 );
@@ -264,33 +283,43 @@ class CV_FindContourTest  extends alvision.cvtest.BaseTest
          return code;
      }
     run_func(): void {
-        contours = contours2 = chain = 0;
-        count = cvFindContours(img[2], storage, &contours, sizeof(CvContour), retr_mode, approx_method);
+        //this.contours = new Array<alvision.Veci>();
+            //= this.contours2 = this.chain = null;
+        alvision.findContours(this.img[2], this.contours, this.hierarchy, this.retr_mode, this.approx_method);
+        this.count = this.contours.length;
 
-        cvZero(img[3]);
+        //cvZero(img[3]);
+        this.img[3].setTo(0);
 
-        if (contours && retr_mode != CV_RETR_EXTERNAL && approx_method < CV_CHAIN_APPROX_TC89_L1)
-            cvDrawContours(img[3], contours, cvScalar(255), cvScalar(255), INT_MAX, -1);
+        if (this.contours && this.retr_mode != alvision.RetrievalModes.RETR_EXTERNAL && this.approx_method < alvision.ContourApproximationModes.CHAIN_APPROX_TC89_L1) {
+            //cvDrawContours(img[3], contours, cvScalar(255), cvScalar(255), INT_MAX, -1);
+            alvision.drawContours(this.img[3], this.contours, 0, new alvision.Scalar(255));
+        }
 
-        cvCopy(img[0], img[2]);
+        //cvCopy(img[0], img[2]);
+        this.img[0].copyTo(this.img[2]);
 
-        count2 = cvFindContours(img[2], storage, &chain, sizeof(CvChain), retr_mode, CV_CHAIN_CODE);
+        //this.count2 = alvision.findContours(this.img[2], this.storage, this.chain, sizeof(CvChain), this.retr_mode,  CV_CHAIN_CODE);
+        //
+        //if (this.chain) {
+        //    contours2 = cvApproxChains(chain, storage, approx_method, 0, 0, 1);
+        //}
 
-        if (chain)
-            contours2 = cvApproxChains(chain, storage, approx_method, 0, 0, 1);
-
-        cvZero(img[2]);
-
-        if (contours && retr_mode != CV_RETR_EXTERNAL && approx_method < CV_CHAIN_APPROX_TC89_L1)
-            cvDrawContours(img[2], contours2, cvScalar(255), cvScalar(255), INT_MAX);
+        //cvZero(img[2]);
+        //this.img[2].setTo(0);
+        //
+        //if (this.contours && this.retr_mode != alvision.RetrievalModes.RETR_EXTERNAL && this.approx_method < alvision.ContourApproximationModes.CHAIN_APPROX_TC89_L1) {
+        //    //cvDrawContours(this.img[2], this.contours2, new alvision.Scalar(255), new alvision.Scalar(255), alvision.INT_MAX);
+        //    alvision.drawContours(this.img[2], this.contours2, 0, new alvision.Scalar(255));
+        //}
     }
 
     protected  min_blob_size: alvision.int;
         protected max_blob_size : alvision.int;
         protected blob_count: alvision.int;
         protected max_log_blob_count: alvision.int;
-        protected retr_mode: alvision.int;
-        protected approx_method: alvision.int;
+        protected retr_mode: alvision.RetrievalModes ;
+        protected approx_method: alvision.ContourApproximationModes ;
 
         protected min_log_img_size: alvision.int;
         protected max_log_img_size: alvision.int;
@@ -299,170 +328,184 @@ class CV_FindContourTest  extends alvision.cvtest.BaseTest
     protected count2: alvision.int;
 
     protected img/*[NUM_IMG]*/ : Array<alvision.Mat>;
-    protected storage: alvision.FileStorage;
-    protected CvSeq * contours, 
-        *contours2, 
-        *chain;
+    protected contours: Array<Array<alvision.Point>>;
+
+    protected hierarchy: Array<alvision.Veci>;
+    //protected hierarchy: 
+    //protected chain: any;
+    //protected CvSeq * contours, 
+    //    *contours2, 
+    //    *chain;
 };
 
 
 
-function cvTsGenerateBlobImage( IplImage* img, int min_blob_size, int max_blob_size,
-                       int blob_count, int min_brightness, int max_brightness,
-                       RNG& rng ) : void
+function cvTsGenerateBlobImage( img : alvision.Mat, min_blob_size : alvision.int, max_blob_size : alvision.int,
+                       blob_count : alvision.int, min_brightness : alvision.int, max_brightness : alvision.int,
+                       rng  : alvision.RNG) : void
 {
-    int i;
-    CvSize size;
+    //int i;
+    let size = new alvision.Size();
 
-    assert( img.depth == IPL_DEPTH_8U && img.nChannels == 1 );
+    alvision.assert(() => img.depth() == alvision.MatrixType.CV_8U && img.channels() == 1);
 
-    cvZero( img );
+    //cvZero(img);
+    img.setTo(0);
 
     // keep the border clear
-    cvSetImageROI( img, cvRect(1,1,img.width-2,img.height-2) );
-    size = cvGetSize( img );
+    let img_ = img.roi(new alvision.Rect(1, 1, img.size().width.valueOf() - 2, img.size().height.valueOf() - 2));
+    //cvSetImageROI( img, cvRect(1,1,img.width-2,img.height-2) );
+    size = img_.size(); //cvGetSize( img );
 
-    for( i = 0; i < blob_count; i++ )
+    for(let i = 0; i < blob_count; i++ )
     {
-        CvPoint center;
-        CvSize  axes;
-        int angle = alvision.cvtest.randInt(rng) % 180;
-        int brightness = alvision.cvtest.randInt(rng) %
-                         (max_brightness - min_brightness) + min_brightness;
-        center.x = alvision.cvtest.randInt(rng) % size.width;
-        center.y = alvision.cvtest.randInt(rng) % size.height;
+        let center = new alvision.Point();
+        let axes = new alvision.Size();
+        let angle = alvision.cvtest.randInt(rng).valueOf() % 180;
+        let brightness = alvision.cvtest.randInt(rng).valueOf() %
+                         (max_brightness.valueOf() - min_brightness.valueOf()) + min_brightness.valueOf();
+        center.x = alvision.cvtest.randInt(rng).valueOf() % size.width.valueOf();
+        center.y = alvision.cvtest.randInt(rng).valueOf() % size.height.valueOf();
 
-        axes.width = (alvision.cvtest.randInt(rng) %
-                     (max_blob_size - min_blob_size) + min_blob_size + 1)/2;
-        axes.height = (alvision.cvtest.randInt(rng) %
-                      (max_blob_size - min_blob_size) + min_blob_size + 1)/2;
+        axes.width = (alvision.cvtest.randInt(rng).valueOf() %
+                     (max_blob_size.valueOf() - min_blob_size.valueOf()) + min_blob_size.valueOf() + 1)/2;
+        axes.height = (alvision.cvtest.randInt(rng).valueOf() %
+                      (max_blob_size.valueOf() - min_blob_size.valueOf()) + min_blob_size.valueOf() + 1)/2;
 
-        cvEllipse( img, center, axes, angle, 0, 360, cvScalar(brightness), CV_FILLED );
+        alvision.ellipse( img_, center, axes, angle, 0, 360, new alvision.Scalar(brightness), alvision.CV_FILLED );
     }
 
-    cvResetImageROI( img );
+    //cvResetImageROI( img );
 }
 
 
-function cvTsMarkContours( IplImage* img, int val ) : void
+function cvTsMarkContours(  img : alvision.Mat, val  : alvision.int) : void
 {
-    int i, j;
-    int step = img.widthStep;
+    //int i, j;
+    let step = img.step;// .widthStep;
 
-    assert( img.depth == IPL_DEPTH_8U && img.nChannels == 1 && (val&1) != 0);
+    alvision.assert(()=>img.depth() == alvision.MatrixType.CV_8U && img.channels() == 1 && (val.valueOf() & 1) != 0);
 
-    for( i = 1; i < img.height - 1; i++ )
-        for( j = 1; j < img.width - 1; j++ )
+    for(let i = 1; i < img.size().height.valueOf() - 1; i++ )
+        for(let j = 1; j < img.size().width.valueOf() - 1; j++ )
         {
-            uchar* t = (uchar*)(img.imageData + img.widthStep*i + j);
-            if( *t == 1 && (t[-step] == 0 || t[-1] == 0 || t[1] == 0 || t[step] == 0))
-                *t = (uchar)val;
+            let ptr = img.ptr<alvision.uchar>("uchar");
+            let t = ptr[step * i + j];
+            if (ptr[step * i + j] == 1 && (ptr[(step * i + j) - step] == 0 || ptr[(step * i + j) - 1] == 0 || t[(step * i + j) + 1] == 0 || t[(step * i + j) + step] == 0))
+                ptr[step * i + j] = val;
         }
 
-    cvThreshold( img, img, val - 2, val, CV_THRESH_BINARY );
+    alvision.threshold( img, img, val.valueOf() - 2, val, alvision.ThresholdTypes.THRESH_BINARY );
 }
 
 
 
 
 
-alvision.cvtest.TEST('Imgproc_FindContours', 'accuracy', () => { CV_FindContourTest test; test.safe_run(); });
+alvision.cvtest.TEST('Imgproc_FindContours', 'accuracy', () => { let test = new CV_FindContourTest(); test.safe_run(); });
 
 alvision.cvtest.TEST('Core_Drawing', '_914', () => {
-    const int rows = 256;
-    const int cols = 256;
+    const  rows = 256;
+    const  cols = 256;
 
-    Mat img(rows, cols, CV_8UC1, Scalar(255));
+    let img = new alvision.Mat(rows, cols, alvision.MatrixType.CV_8UC1,new  alvision.Scalar(255));
 
-    line(img, Point(0, 10), Point(255, 10), Scalar(0), 2, 4);
-    line(img, Point(-5, 20), Point(260, 20), Scalar(0), 2, 4);
-    line(img, Point(10, 0), Point(10, 255), Scalar(0), 2, 4);
+    alvision.line(img, new alvision.Point(0, 10),  new alvision.Point(255, 10), new alvision.Scalar(0), 2, 4);
+    alvision.line(img, new alvision.Point(-5, 20), new alvision.Point(260, 20), new alvision.Scalar(0), 2, 4);
+    alvision.line(img, new alvision.Point(10, 0),  new alvision.Point(10, 255), new alvision.Scalar(0), 2, 4);
 
-    double x0 = 0.0 / pow(2.0, -2.0);
-    double x1 = 255.0 / pow(2.0, -2.0);
-    double y = 30.5 / pow(2.0, -2.0);
+    let x0 = 0.0 /   Math.pow(2.0, -2.0);
+    let x1 = 255.0 / Math.pow(2.0, -2.0);
+    let y = 30.5 /   Math.pow(2.0, -2.0);
 
-    line(img, Point(int(x0), int(y)), Point(int(x1), int(y)), Scalar(0), 2, 4, 2);
+    alvision.line(img, new alvision.Point(x0, y), new alvision.Point(x1,y), new alvision.Scalar(0), 2, 4, 2);
 
-    int pixelsDrawn = rows * cols - countNonZero(img);
-    ASSERT_EQ((3 * rows + cols) * 3 - 3 * 9, pixelsDrawn);
+    let pixelsDrawn = rows * cols - alvision.countNonZero(img).valueOf();
+    alvision.ASSERT_EQ((3 * rows + cols) * 3 - 3 * 9, pixelsDrawn);
 });
 
 alvision.cvtest.TEST('Core_Drawing', 'polylines_empty', () => {
-    Mat img(100, 100, CV_8UC1, Scalar(0));
-    Array < Point > pts; // empty
-    polylines(img, pts, false, Scalar(255));
-    int cnt = countNonZero(img);
-    ASSERT_EQ(cnt, 0);
+    let img = new alvision.Mat(100, 100, alvision.MatrixType.CV_8UC1, new alvision.Scalar(0));
+    let pts = new Array<alvision.Point> (); // empty
+    alvision.polylines(img, pts, false, new alvision.Scalar(255));
+    let cnt = alvision.countNonZero(img);
+    alvision.ASSERT_EQ(cnt, 0);
 });
 
 alvision.cvtest.TEST('Core_Drawing', 'polylines', () => {
-    Mat img(100, 100, CV_8UC1, Scalar(0));
-    Array < Point > pts;
-    pts.push(Point(0, 0));
-    pts.push(Point(20, 0));
-    polylines(img, pts, false, Scalar(255));
-    int cnt = countNonZero(img);
-    ASSERT_EQ(cnt, 21);
+    let img = new alvision.Mat(100, 100, alvision.MatrixType.CV_8UC1, new alvision.Scalar(0));
+    let pts = new Array<alvision.Point> ();
+    pts.push(new alvision.Point(0, 0));
+    pts.push(new alvision.Point(20, 0));
+    alvision.polylines(img, pts, false, new alvision.Scalar(255));
+    let cnt = alvision.countNonZero(img);
+    alvision.ASSERT_EQ(cnt, 21);
 });
 
 //rotate/flip a quadrant appropriately
-function rot(int n, int *x, int *y, int rx, int ry) : void
+function rot(n: alvision.int, x : alvision.int, y : alvision.int, rx: alvision.int , ry: alvision.int, cbout:(x_ : alvision.int, y_ : alvision.int)=>void ) : void
 {
     if (ry == 0) {
         if (rx == 1) {
-            *x = n-1 - *x;
-            *y = n-1 - *y;
+            x = n.valueOf()-1 - x.valueOf();
+            y = n.valueOf()-1 - y.valueOf();
         }
 
         //Swap x and y
-        int t  = *x;
-        *x = *y;
-        *y = t;
+        let t  = x;
+        x = y;
+        y = t;
     }
+
+    cbout(x, y);
 }
 
-function d2xy(int n, int d, int *x, int *y) : void
+function d2xy(n: alvision.int, d: alvision.int, x: alvision.int, y: alvision.int, cbout:(x_:alvision.int, y_:alvision.int)=>void) : void
 {
-    int rx, ry, s, t=d;
-    *x = *y = 0;
-    for (s=1; s<n; s*=2)
+    //int rx, ry, s,
+    let rx: alvision.int; let ry: alvision.int;
+    let t = d;
+
+    x = y = 0;
+    for (let s=1; s<n; s*=2)
     {
-        rx = 1 & (t/2);
-        ry = 1 & (t ^ rx);
-        rot(s, x, y, rx, ry);
-        *x += s * rx;
-        *y += s * ry;
-        t /= 4;
+        rx = 1 & (t.valueOf()/2);
+        ry = 1 & (t.valueOf() ^ rx.valueOf());
+        rot(s, x, y, rx, ry, (x_, y_) => { x = x_; y = y_; });
+        x =x.valueOf() + s * rx.valueOf();
+        y =y.valueOf() + s * ry.valueOf();
+        t = t.valueOf()/ 4;
     }
+
+    cbout(x, y);
 }
 
 alvision.cvtest.TEST('Imgproc_FindContours', 'hilbert',()=>
 {
-    int n = 64, n2 = n*n, scale = 10, w = (n + 2)*scale;
-    Point ofs(scale, scale);
-    Mat img(w, w, CV_8U);
+    let n = 64, n2 = n*n, scale = 10, w = (n + 2)*scale;
+    let ofs = new alvision.Point (scale, scale);
+    let img = new alvision.Mat (w, w,alvision.MatrixType. CV_8U);
     img.setTo(alvision.Scalar.all(0));
 
-    Point p(0,0);
-    for( int i = 0; i < n2; i++ )
+    let p = new alvision.Point (0,0);
+    for( let i = 0; i < n2; i++ )
     {
-        Point q(0,0);
-        d2xy(n2, i, &q.x, &q.y);
-        line(img, p*scale + ofs, q*scale + ofs, Scalar::all(255));
+        var q = new alvision.Point (0,0);
+        d2xy(n2, i, q.x, q.y, (x_, y_) => { q.x = x_; q.y = y_; });
+        alvision.line(img, p.op_Multiplication( scale).op_Addition( ofs), q.op_Multiplication( scale).op_Addition( ofs), alvision.Scalar.all(255));
         p = q;
     }
-    dilate(img, img, Mat());
-    Array<Array<Point> > contours;
-    findContours(img, contours, noArray(), RETR_LIST, CHAIN_APPROX_SIMPLE);
-    printf("ncontours = %d, contour[0].npoints=%d\n", (int)contours.size(), (int)contours[0].size());
+    alvision.dilate(img, img, new alvision.Mat());
+    let contours = new Array<Array<alvision.Point>>();
+    alvision.findContours(img, contours, null, alvision.RetrievalModes.RETR_LIST, alvision.ContourApproximationModes. CHAIN_APPROX_SIMPLE);
+    console.log(util.format("ncontours = %d, contour[0].npoints=%d\n", contours.length, contours[0].length));
     img.setTo(alvision.Scalar.all(0));
 
-    drawContours(img, contours, 0, Scalar::all(255), 1);
+    alvision.drawContours(img, contours, 0, alvision.Scalar.all(255), 1);
     //imshow("hilbert", img);
     //waitKey();
-    ASSERT_EQ(1, (int)contours.size());
-    ASSERT_EQ(9832, (int)contours[0].size());
+    alvision.ASSERT_EQ(1, contours.length);
+    alvision.ASSERT_EQ(9832, contours[0].length);
 });
 
 /* End of file. */

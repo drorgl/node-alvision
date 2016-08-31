@@ -1,508 +1,510 @@
-/*M///////////////////////////////////////////////////////////////////////////////////////
-//
-//  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
-//
-//  By downloading, copying, installing or using the software you agree to this license.
-//  If you do not agree to this license, do not download, install,
-//  copy or use the software.
-//
-//
-//                           License Agreement
-//                For Open Source Computer Vision Library
-//
-// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
-// Copyright (C) 2008-2011, Willow Garage Inc., all rights reserved.
-// Third party copyrights are property of their respective owners.
-//
-// @Authors
-//      Nghia Ho, nghiaho12@yahoo.com
-//
-// Redistribution and use in source and binary forms, with or without modification,
-// are permitted provided that the following conditions are met:
-//
-//   * Redistribution's of source code must retain the above copyright notice,
-//     this list of conditions and the following disclaimer.
-//
-//   * Redistribution's in binary form must reproduce the above copyright notice,
-//     this list of conditions and the following disclaimer in the documentation
-//     and/or other materials provided with the distribution.
-//
-//   * The name of OpenCV Foundation may not be used to endorse or promote products
-//     derived from this software without specific prior written permission.
-//
-// This software is provided by the copyright holders and contributors "as is" and
-// any express or implied warranties, including, but not limited to, the implied
-// warranties of merchantability and fitness for a particular purpose are disclaimed.
-// In no event shall the OpenCV Foundation or contributors be liable for any direct,
-// indirect, incidental, special, exemplary, or consequential damages
-// (including, but not limited to, procurement of substitute goods or services;
-// loss of use, data, or profits; or business interruption) however caused
-// and on any theory of liability, whether in contract, strict liability,
-// or tort (including negligence or otherwise) arising in any way out of
-// the use of this software, even if advised of the possibility of such damage.
-//
-//M*/
-
-import tape = require("tape");
-import path = require("path");
-import colors = require("colors");
-import async = require("async");
-import alvision = require("../../../tsbinding/alvision");
-import util = require('util');
-import fs = require('fs');
-
-
-//#include "test_precomp.hpp"
-//
-//using namespace cv;
-//using namespace std;
-//
-//#define ACCURACY 0.00001
-
-class CV_RotatedRectangleIntersectionTest extends alvision.cvtest.ArrayTest
-{
-public:
-
-protected:
-    run(iii : alvision.int) : void {}
-
-private:
-    void test1();
-    void test2();
-    void test3();
-    void test4();
-    void test5();
-    void test6();
-    void test7();
-    void test8();
-    void test9();
-};
-
-void CV_RotatedRectangleIntersectionTest::run(int)
-{
-    // See pics/intersection.png for the scenarios we are testing
-
-    // Test the following scenarios:
-    // 1 - no intersection
-    // 2 - partial intersection, rectangle translated
-    // 3 - partial intersection, rectangle rotated 45 degree on the corner, forms a triangle intersection
-    // 4 - full intersection, rectangles of same size directly on top of each other
-    // 5 - partial intersection, rectangle on top rotated 45 degrees
-    // 6 - partial intersection, rectangle on top of different size
-    // 7 - full intersection, rectangle fully enclosed in the other
-    // 8 - partial intersection, rectangle corner just touching. point contact
-    // 9 - partial intersetion. rectangle side by side, line contact
-
-    test1();
-    test2();
-    test3();
-    test4();
-    test5();
-    test6();
-    test7();
-    test8();
-    test9();
-}
+//TODO: implement!
+
+///*M///////////////////////////////////////////////////////////////////////////////////////
+////
+////  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
+////
+////  By downloading, copying, installing or using the software you agree to this license.
+////  If you do not agree to this license, do not download, install,
+////  copy or use the software.
+////
+////
+////                           License Agreement
+////                For Open Source Computer Vision Library
+////
+//// Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
+//// Copyright (C) 2008-2011, Willow Garage Inc., all rights reserved.
+//// Third party copyrights are property of their respective owners.
+////
+//// @Authors
+////      Nghia Ho, nghiaho12@yahoo.com
+////
+//// Redistribution and use in source and binary forms, with or without modification,
+//// are permitted provided that the following conditions are met:
+////
+////   * Redistribution's of source code must retain the above copyright notice,
+////     this list of conditions and the following disclaimer.
+////
+////   * Redistribution's in binary form must reproduce the above copyright notice,
+////     this list of conditions and the following disclaimer in the documentation
+////     and/or other materials provided with the distribution.
+////
+////   * The name of OpenCV Foundation may not be used to endorse or promote products
+////     derived from this software without specific prior written permission.
+////
+//// This software is provided by the copyright holders and contributors "as is" and
+//// any express or implied warranties, including, but not limited to, the implied
+//// warranties of merchantability and fitness for a particular purpose are disclaimed.
+//// In no event shall the OpenCV Foundation or contributors be liable for any direct,
+//// indirect, incidental, special, exemplary, or consequential damages
+//// (including, but not limited to, procurement of substitute goods or services;
+//// loss of use, data, or profits; or business interruption) however caused
+//// and on any theory of liability, whether in contract, strict liability,
+//// or tort (including negligence or otherwise) arising in any way out of
+//// the use of this software, even if advised of the possibility of such damage.
+////
+////M*/
+
+//import tape = require("tape");
+//import path = require("path");
+//import colors = require("colors");
+//import async = require("async");
+//import alvision = require("../../../tsbinding/alvision");
+//import util = require('util');
+//import fs = require('fs');
+
+
+////#include "test_precomp.hpp"
+////
+////using namespace cv;
+////using namespace std;
+////
+////#define ACCURACY 0.00001
+
+//class CV_RotatedRectangleIntersectionTest extends alvision.cvtest.ArrayTest
+//{
+//public:
+
+//protected:
+//    run(iii : alvision.int) : void {}
+
+//private:
+//    void test1();
+//    void test2();
+//    void test3();
+//    void test4();
+//    void test5();
+//    void test6();
+//    void test7();
+//    void test8();
+//    void test9();
+//};
+
+//void CV_RotatedRectangleIntersectionTest::run(int)
+//{
+//    // See pics/intersection.png for the scenarios we are testing
+
+//    // Test the following scenarios:
+//    // 1 - no intersection
+//    // 2 - partial intersection, rectangle translated
+//    // 3 - partial intersection, rectangle rotated 45 degree on the corner, forms a triangle intersection
+//    // 4 - full intersection, rectangles of same size directly on top of each other
+//    // 5 - partial intersection, rectangle on top rotated 45 degrees
+//    // 6 - partial intersection, rectangle on top of different size
+//    // 7 - full intersection, rectangle fully enclosed in the other
+//    // 8 - partial intersection, rectangle corner just touching. point contact
+//    // 9 - partial intersetion. rectangle side by side, line contact
+
+//    test1();
+//    test2();
+//    test3();
+//    test4();
+//    test5();
+//    test6();
+//    test7();
+//    test8();
+//    test9();
+//}
 
-void CV_RotatedRectangleIntersectionTest::test1()
-{
-    // no intersection
+//void CV_RotatedRectangleIntersectionTest::test1()
+//{
+//    // no intersection
 
-    RotatedRect rect1, rect2;
+//    RotatedRect rect1, rect2;
 
-    rect1.center.x = 0;
-    rect1.center.y = 0;
-    rect1.size.width = 2;
-    rect1.size.height = 2;
-    rect1.angle = 12.0f;
+//    rect1.center.x = 0;
+//    rect1.center.y = 0;
+//    rect1.size.width = 2;
+//    rect1.size.height = 2;
+//    rect1.angle = 12.0f;
 
-    rect2.center.x = 10;
-    rect2.center.y = 10;
-    rect2.size.width = 2;
-    rect2.size.height = 2;
-    rect2.angle = 34.0f;
+//    rect2.center.x = 10;
+//    rect2.center.y = 10;
+//    rect2.size.width = 2;
+//    rect2.size.height = 2;
+//    rect2.angle = 34.0f;
+
+//    Array<Point2f> vertices;
 
-    Array<Point2f> vertices;
+//    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+
+//    CV_Assert(ret == INTERSECT_NONE);
+//    CV_Assert(vertices.empty());
+//}
+
+//void CV_RotatedRectangleIntersectionTest::test2()
+//{
+//    // partial intersection, rectangles translated
 
-    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+//    RotatedRect rect1, rect2;
 
-    CV_Assert(ret == INTERSECT_NONE);
-    CV_Assert(vertices.empty());
-}
+//    rect1.center.x = 0;
+//    rect1.center.y = 0;
+//    rect1.size.width = 2;
+//    rect1.size.height = 2;
+//    rect1.angle = 0;
+
+//    rect2.center.x = 1;
+//    rect2.center.y = 1;
+//    rect2.size.width = 2;
+//    rect2.size.height = 2;
+//    rect2.angle = 0;
 
-void CV_RotatedRectangleIntersectionTest::test2()
-{
-    // partial intersection, rectangles translated
+//    Array<Point2f> vertices;
 
-    RotatedRect rect1, rect2;
+//    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
-    rect1.center.x = 0;
-    rect1.center.y = 0;
-    rect1.size.width = 2;
-    rect1.size.height = 2;
-    rect1.angle = 0;
+//    CV_Assert(ret == INTERSECT_PARTIAL);
+//    CV_Assert(vertices.size() == 4);
 
-    rect2.center.x = 1;
-    rect2.center.y = 1;
-    rect2.size.width = 2;
-    rect2.size.height = 2;
-    rect2.angle = 0;
+//    Array<Point2f> possibleVertices(4);
 
-    Array<Point2f> vertices;
+//    possibleVertices[0] = Point2f(0.0f, 0.0f);
+//    possibleVertices[1] = Point2f(1.0f, 1.0f);
+//    possibleVertices[2] = Point2f(0.0f, 1.0f);
+//    possibleVertices[3] = Point2f(1.0f, 0.0f);
 
-    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+//    for( size_t i = 0; i < vertices.size(); i++ )
+//    {
+//        double bestR = DBL_MAX;
 
-    CV_Assert(ret == INTERSECT_PARTIAL);
-    CV_Assert(vertices.size() == 4);
+//        for( size_t j = 0; j < possibleVertices.size(); j++ )
+//        {
+//            double dx = vertices[i].x - possibleVertices[j].x;
+//            double dy = vertices[i].y - possibleVertices[j].y;
+//            double r = sqrt(dx*dx + dy*dy);
 
-    Array<Point2f> possibleVertices(4);
+//            bestR = Math.min(bestR, r);
+//        }
 
-    possibleVertices[0] = Point2f(0.0f, 0.0f);
-    possibleVertices[1] = Point2f(1.0f, 1.0f);
-    possibleVertices[2] = Point2f(0.0f, 1.0f);
-    possibleVertices[3] = Point2f(1.0f, 0.0f);
+//        CV_Assert(bestR < ACCURACY);
+//    }
+//}
 
-    for( size_t i = 0; i < vertices.size(); i++ )
-    {
-        double bestR = DBL_MAX;
+//void CV_RotatedRectangleIntersectionTest::test3()
+//{
+//    // partial intersection, rectangles rotated 45 degree on the corner, forms a triangle intersection
+//    RotatedRect rect1, rect2;
 
-        for( size_t j = 0; j < possibleVertices.size(); j++ )
-        {
-            double dx = vertices[i].x - possibleVertices[j].x;
-            double dy = vertices[i].y - possibleVertices[j].y;
-            double r = sqrt(dx*dx + dy*dy);
+//    rect1.center.x = 0;
+//    rect1.center.y = 0;
+//    rect1.size.width = 2;
+//    rect1.size.height = 2;
+//    rect1.angle = 0;
 
-            bestR = Math.min(bestR, r);
-        }
+//    rect2.center.x = 1;
+//    rect2.center.y = 1;
+//    rect2.size.width = sqrt(2.0f);
+//    rect2.size.height = 20;
+//    rect2.angle = 45.0f;
 
-        CV_Assert(bestR < ACCURACY);
-    }
-}
+//    Array<Point2f> vertices;
 
-void CV_RotatedRectangleIntersectionTest::test3()
-{
-    // partial intersection, rectangles rotated 45 degree on the corner, forms a triangle intersection
-    RotatedRect rect1, rect2;
+//    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
-    rect1.center.x = 0;
-    rect1.center.y = 0;
-    rect1.size.width = 2;
-    rect1.size.height = 2;
-    rect1.angle = 0;
+//    CV_Assert(ret == INTERSECT_PARTIAL);
+//    CV_Assert(vertices.size() == 3);
 
-    rect2.center.x = 1;
-    rect2.center.y = 1;
-    rect2.size.width = sqrt(2.0f);
-    rect2.size.height = 20;
-    rect2.angle = 45.0f;
+//    Array<Point2f> possibleVertices(3);
 
-    Array<Point2f> vertices;
+//    possibleVertices[0] = Point2f(1.0f, 1.0f);
+//    possibleVertices[1] = Point2f(0.0f, 1.0f);
+//    possibleVertices[2] = Point2f(1.0f, 0.0f);
 
-    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+//    for( size_t i = 0; i < vertices.size(); i++ )
+//    {
+//        double bestR = DBL_MAX;
 
-    CV_Assert(ret == INTERSECT_PARTIAL);
-    CV_Assert(vertices.size() == 3);
+//        for( size_t j = 0; j < possibleVertices.size(); j++ )
+//        {
+//            double dx = vertices[i].x - possibleVertices[j].x;
+//            double dy = vertices[i].y - possibleVertices[j].y;
+//            double r = sqrt(dx*dx + dy*dy);
 
-    Array<Point2f> possibleVertices(3);
+//            bestR = Math.min(bestR, r);
+//        }
 
-    possibleVertices[0] = Point2f(1.0f, 1.0f);
-    possibleVertices[1] = Point2f(0.0f, 1.0f);
-    possibleVertices[2] = Point2f(1.0f, 0.0f);
+//        CV_Assert(bestR < ACCURACY);
+//    }
+//}
 
-    for( size_t i = 0; i < vertices.size(); i++ )
-    {
-        double bestR = DBL_MAX;
+//void CV_RotatedRectangleIntersectionTest::test4()
+//{
+//    // full intersection, rectangles of same size directly on top of each other
 
-        for( size_t j = 0; j < possibleVertices.size(); j++ )
-        {
-            double dx = vertices[i].x - possibleVertices[j].x;
-            double dy = vertices[i].y - possibleVertices[j].y;
-            double r = sqrt(dx*dx + dy*dy);
+//    RotatedRect rect1, rect2;
 
-            bestR = Math.min(bestR, r);
-        }
+//    rect1.center.x = 0;
+//    rect1.center.y = 0;
+//    rect1.size.width = 2;
+//    rect1.size.height = 2;
+//    rect1.angle = 0;
 
-        CV_Assert(bestR < ACCURACY);
-    }
-}
+//    rect2.center.x = 0;
+//    rect2.center.y = 0;
+//    rect2.size.width = 2;
+//    rect2.size.height = 2;
+//    rect2.angle = 0;
 
-void CV_RotatedRectangleIntersectionTest::test4()
-{
-    // full intersection, rectangles of same size directly on top of each other
+//    Array<Point2f> vertices;
+
+//    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
-    RotatedRect rect1, rect2;
+//    CV_Assert(ret == INTERSECT_FULL);
+//    CV_Assert(vertices.size() == 4);
 
-    rect1.center.x = 0;
-    rect1.center.y = 0;
-    rect1.size.width = 2;
-    rect1.size.height = 2;
-    rect1.angle = 0;
+//    Array<Point2f> possibleVertices(4);
 
-    rect2.center.x = 0;
-    rect2.center.y = 0;
-    rect2.size.width = 2;
-    rect2.size.height = 2;
-    rect2.angle = 0;
+//    possibleVertices[0] = Point2f(-1.0f, 1.0f);
+//    possibleVertices[1] = Point2f(1.0f, -1.0f);
+//    possibleVertices[2] = Point2f(-1.0f, -1.0f);
+//    possibleVertices[3] = Point2f(1.0f, 1.0f);
 
-    Array<Point2f> vertices;
+//    for( size_t i = 0; i < vertices.size(); i++ )
+//    {
+//        double bestR = DBL_MAX;
 
-    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+//        for( size_t j = 0; j < possibleVertices.size(); j++ )
+//        {
+//            double dx = vertices[i].x - possibleVertices[j].x;
+//            double dy = vertices[i].y - possibleVertices[j].y;
+//            double r = sqrt(dx*dx + dy*dy);
 
-    CV_Assert(ret == INTERSECT_FULL);
-    CV_Assert(vertices.size() == 4);
+//            bestR = Math.min(bestR, r);
+//        }
 
-    Array<Point2f> possibleVertices(4);
+//        CV_Assert(bestR < ACCURACY);
+//    }
+//}
 
-    possibleVertices[0] = Point2f(-1.0f, 1.0f);
-    possibleVertices[1] = Point2f(1.0f, -1.0f);
-    possibleVertices[2] = Point2f(-1.0f, -1.0f);
-    possibleVertices[3] = Point2f(1.0f, 1.0f);
+//void CV_RotatedRectangleIntersectionTest::test5()
+//{
+//    // partial intersection, rectangle on top rotated 45 degrees
 
-    for( size_t i = 0; i < vertices.size(); i++ )
-    {
-        double bestR = DBL_MAX;
+//    RotatedRect rect1, rect2;
 
-        for( size_t j = 0; j < possibleVertices.size(); j++ )
-        {
-            double dx = vertices[i].x - possibleVertices[j].x;
-            double dy = vertices[i].y - possibleVertices[j].y;
-            double r = sqrt(dx*dx + dy*dy);
+//    rect1.center.x = 0;
+//    rect1.center.y = 0;
+//    rect1.size.width = 2;
+//    rect1.size.height = 2;
+//    rect1.angle = 0;
 
-            bestR = Math.min(bestR, r);
-        }
+//    rect2.center.x = 0;
+//    rect2.center.y = 0;
+//    rect2.size.width = 2;
+//    rect2.size.height = 2;
+//    rect2.angle = 45.0f;
 
-        CV_Assert(bestR < ACCURACY);
-    }
-}
+//    Array<Point2f> vertices;
 
-void CV_RotatedRectangleIntersectionTest::test5()
-{
-    // partial intersection, rectangle on top rotated 45 degrees
+//    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
-    RotatedRect rect1, rect2;
+//    CV_Assert(ret == INTERSECT_PARTIAL);
+//    CV_Assert(vertices.size() == 8);
 
-    rect1.center.x = 0;
-    rect1.center.y = 0;
-    rect1.size.width = 2;
-    rect1.size.height = 2;
-    rect1.angle = 0;
+//    Array<Point2f> possibleVertices(8);
 
-    rect2.center.x = 0;
-    rect2.center.y = 0;
-    rect2.size.width = 2;
-    rect2.size.height = 2;
-    rect2.angle = 45.0f;
+//    possibleVertices[0] = Point2f(-1.0f, -0.414214f);
+//    possibleVertices[1] = Point2f(-1.0f, 0.414214f);
+//    possibleVertices[2] = Point2f(-0.414214f, -1.0f);
+//    possibleVertices[3] = Point2f(0.414214f, -1.0f);
+//    possibleVertices[4] = Point2f(1.0f, -0.414214f);
+//    possibleVertices[5] = Point2f(1.0f, 0.414214f);
+//    possibleVertices[6] = Point2f(0.414214f, 1.0f);
+//    possibleVertices[7] = Point2f(-0.414214f, 1.0f);
 
-    Array<Point2f> vertices;
+//    for( size_t i = 0; i < vertices.size(); i++ )
+//    {
+//        double bestR = DBL_MAX;
 
-    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+//        for( size_t j = 0; j < possibleVertices.size(); j++ )
+//        {
+//            double dx = vertices[i].x - possibleVertices[j].x;
+//            double dy = vertices[i].y - possibleVertices[j].y;
+//            double r = sqrt(dx*dx + dy*dy);
 
-    CV_Assert(ret == INTERSECT_PARTIAL);
-    CV_Assert(vertices.size() == 8);
+//            bestR = Math.min(bestR, r);
+//        }
 
-    Array<Point2f> possibleVertices(8);
+//        CV_Assert(bestR < ACCURACY);
+//    }
+//}
 
-    possibleVertices[0] = Point2f(-1.0f, -0.414214f);
-    possibleVertices[1] = Point2f(-1.0f, 0.414214f);
-    possibleVertices[2] = Point2f(-0.414214f, -1.0f);
-    possibleVertices[3] = Point2f(0.414214f, -1.0f);
-    possibleVertices[4] = Point2f(1.0f, -0.414214f);
-    possibleVertices[5] = Point2f(1.0f, 0.414214f);
-    possibleVertices[6] = Point2f(0.414214f, 1.0f);
-    possibleVertices[7] = Point2f(-0.414214f, 1.0f);
+//void CV_RotatedRectangleIntersectionTest::test6()
+//{
+//    // 6 - partial intersection, rectangle on top of different size
 
-    for( size_t i = 0; i < vertices.size(); i++ )
-    {
-        double bestR = DBL_MAX;
+//    RotatedRect rect1, rect2;
 
-        for( size_t j = 0; j < possibleVertices.size(); j++ )
-        {
-            double dx = vertices[i].x - possibleVertices[j].x;
-            double dy = vertices[i].y - possibleVertices[j].y;
-            double r = sqrt(dx*dx + dy*dy);
+//    rect1.center.x = 0;
+//    rect1.center.y = 0;
+//    rect1.size.width = 2;
+//    rect1.size.height = 2;
+//    rect1.angle = 0;
 
-            bestR = Math.min(bestR, r);
-        }
+//    rect2.center.x = 0;
+//    rect2.center.y = 0;
+//    rect2.size.width = 2;
+//    rect2.size.height = 10;
+//    rect2.angle = 0;
 
-        CV_Assert(bestR < ACCURACY);
-    }
-}
+//    Array<Point2f> vertices;
 
-void CV_RotatedRectangleIntersectionTest::test6()
-{
-    // 6 - partial intersection, rectangle on top of different size
+//    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
-    RotatedRect rect1, rect2;
+//    alvision.CV_Assert(()=>ret == INTERSECT_PARTIAL);
+//    alvision.CV_Assert(()=>vertices.size() == 4);
 
-    rect1.center.x = 0;
-    rect1.center.y = 0;
-    rect1.size.width = 2;
-    rect1.size.height = 2;
-    rect1.angle = 0;
+//    Array<Point2f> possibleVertices(4);
 
-    rect2.center.x = 0;
-    rect2.center.y = 0;
-    rect2.size.width = 2;
-    rect2.size.height = 10;
-    rect2.angle = 0;
+//    possibleVertices[0] = Point2f(1.0f, 1.0f);
+//    possibleVertices[1] = Point2f(1.0f, -1.0f);
+//    possibleVertices[2] = Point2f(-1.0f, -1.0f);
+//    possibleVertices[3] = Point2f(-1.0f, 1.0f);
 
-    Array<Point2f> vertices;
+//    for( size_t i = 0; i < vertices.size(); i++ )
+//    {
+//        double bestR = DBL_MAX;
 
-    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+//        for( size_t j = 0; j < possibleVertices.size(); j++ )
+//        {
+//            double dx = vertices[i].x - possibleVertices[j].x;
+//            double dy = vertices[i].y - possibleVertices[j].y;
+//            double r = sqrt(dx*dx + dy*dy);
 
-    CV_Assert(ret == INTERSECT_PARTIAL);
-    CV_Assert(vertices.size() == 4);
+//            bestR = Math.min(bestR, r);
+//        }
 
-    Array<Point2f> possibleVertices(4);
+//        CV_Assert(bestR < ACCURACY);
+//    }
+//}
 
-    possibleVertices[0] = Point2f(1.0f, 1.0f);
-    possibleVertices[1] = Point2f(1.0f, -1.0f);
-    possibleVertices[2] = Point2f(-1.0f, -1.0f);
-    possibleVertices[3] = Point2f(-1.0f, 1.0f);
+//void CV_RotatedRectangleIntersectionTest::test7()
+//{
+//    // full intersection, rectangle fully enclosed in the other
 
-    for( size_t i = 0; i < vertices.size(); i++ )
-    {
-        double bestR = DBL_MAX;
+//    RotatedRect rect1, rect2;
 
-        for( size_t j = 0; j < possibleVertices.size(); j++ )
-        {
-            double dx = vertices[i].x - possibleVertices[j].x;
-            double dy = vertices[i].y - possibleVertices[j].y;
-            double r = sqrt(dx*dx + dy*dy);
+//    rect1.center.x = 0;
+//    rect1.center.y = 0;
+//    rect1.size.width = 12.34f;
+//    rect1.size.height = 56.78f;
+//    rect1.angle = 0;
 
-            bestR = Math.min(bestR, r);
-        }
+//    rect2.center.x = 0;
+//    rect2.center.y = 0;
+//    rect2.size.width = 2;
+//    rect2.size.height = 2;
+//    rect2.angle = 0;
 
-        CV_Assert(bestR < ACCURACY);
-    }
-}
+//    Array<Point2f> vertices;
 
-void CV_RotatedRectangleIntersectionTest::test7()
-{
-    // full intersection, rectangle fully enclosed in the other
+//    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
-    RotatedRect rect1, rect2;
+//    CV_Assert(ret == INTERSECT_FULL);
+//    CV_Assert(vertices.size() == 4);
 
-    rect1.center.x = 0;
-    rect1.center.y = 0;
-    rect1.size.width = 12.34f;
-    rect1.size.height = 56.78f;
-    rect1.angle = 0;
+//    Array<Point2f> possibleVertices(4);
 
-    rect2.center.x = 0;
-    rect2.center.y = 0;
-    rect2.size.width = 2;
-    rect2.size.height = 2;
-    rect2.angle = 0;
+//    possibleVertices[0] = Point2f(1.0f, 1.0f);
+//    possibleVertices[1] = Point2f(1.0f, -1.0f);
+//    possibleVertices[2] = Point2f(-1.0f, -1.0f);
+//    possibleVertices[3] = Point2f(-1.0f, 1.0f);
 
-    Array<Point2f> vertices;
+//    for( size_t i = 0; i < vertices.size(); i++ )
+//    {
+//        double bestR = DBL_MAX;
 
-    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+//        for( size_t j = 0; j < possibleVertices.size(); j++ )
+//        {
+//            double dx = vertices[i].x - possibleVertices[j].x;
+//            double dy = vertices[i].y - possibleVertices[j].y;
+//            double r = sqrt(dx*dx + dy*dy);
 
-    CV_Assert(ret == INTERSECT_FULL);
-    CV_Assert(vertices.size() == 4);
+//            bestR = Math.min(bestR, r);
+//        }
 
-    Array<Point2f> possibleVertices(4);
+//        CV_Assert(bestR < ACCURACY);
+//    }
+//}
 
-    possibleVertices[0] = Point2f(1.0f, 1.0f);
-    possibleVertices[1] = Point2f(1.0f, -1.0f);
-    possibleVertices[2] = Point2f(-1.0f, -1.0f);
-    possibleVertices[3] = Point2f(-1.0f, 1.0f);
+//void CV_RotatedRectangleIntersectionTest::test8()
+//{
+//    // full intersection, rectangle fully enclosed in the other
 
-    for( size_t i = 0; i < vertices.size(); i++ )
-    {
-        double bestR = DBL_MAX;
+//    RotatedRect rect1, rect2;
 
-        for( size_t j = 0; j < possibleVertices.size(); j++ )
-        {
-            double dx = vertices[i].x - possibleVertices[j].x;
-            double dy = vertices[i].y - possibleVertices[j].y;
-            double r = sqrt(dx*dx + dy*dy);
+//    rect1.center.x = 0;
+//    rect1.center.y = 0;
+//    rect1.size.width = 2;
+//    rect1.size.height = 2;
+//    rect1.angle = 0;
 
-            bestR = Math.min(bestR, r);
-        }
+//    rect2.center.x = 2;
+//    rect2.center.y = 2;
+//    rect2.size.width = 2;
+//    rect2.size.height = 2;
+//    rect2.angle = 0;
 
-        CV_Assert(bestR < ACCURACY);
-    }
-}
+//    Array<Point2f> vertices;
 
-void CV_RotatedRectangleIntersectionTest::test8()
-{
-    // full intersection, rectangle fully enclosed in the other
+//    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
-    RotatedRect rect1, rect2;
+//    CV_Assert(ret == INTERSECT_PARTIAL);
+//    CV_Assert(vertices.size() == 1);
 
-    rect1.center.x = 0;
-    rect1.center.y = 0;
-    rect1.size.width = 2;
-    rect1.size.height = 2;
-    rect1.angle = 0;
+//    double dx = vertices[0].x - 1;
+//    double dy = vertices[0].y - 1;
+//    double r = sqrt(dx*dx + dy*dy);
 
-    rect2.center.x = 2;
-    rect2.center.y = 2;
-    rect2.size.width = 2;
-    rect2.size.height = 2;
-    rect2.angle = 0;
+//    CV_Assert(r < ACCURACY);
+//}
 
-    Array<Point2f> vertices;
+//void CV_RotatedRectangleIntersectionTest::test9()
+//{
+//    // full intersection, rectangle fully enclosed in the other
 
-    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+//    RotatedRect rect1, rect2;
 
-    CV_Assert(ret == INTERSECT_PARTIAL);
-    CV_Assert(vertices.size() == 1);
+//    rect1.center.x = 0;
+//    rect1.center.y = 0;
+//    rect1.size.width = 2;
+//    rect1.size.height = 2;
+//    rect1.angle = 0;
 
-    double dx = vertices[0].x - 1;
-    double dy = vertices[0].y - 1;
-    double r = sqrt(dx*dx + dy*dy);
+//    rect2.center.x = 2;
+//    rect2.center.y = 0;
+//    rect2.size.width = 2;
+//    rect2.size.height = 123.45f;
+//    rect2.angle = 0;
 
-    CV_Assert(r < ACCURACY);
-}
+//    Array<Point2f> vertices;
 
-void CV_RotatedRectangleIntersectionTest::test9()
-{
-    // full intersection, rectangle fully enclosed in the other
+//    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
 
-    RotatedRect rect1, rect2;
+//    CV_Assert(ret == INTERSECT_PARTIAL);
+//    CV_Assert(vertices.size() == 2);
 
-    rect1.center.x = 0;
-    rect1.center.y = 0;
-    rect1.size.width = 2;
-    rect1.size.height = 2;
-    rect1.angle = 0;
+//    Array<Point2f> possibleVertices(2);
 
-    rect2.center.x = 2;
-    rect2.center.y = 0;
-    rect2.size.width = 2;
-    rect2.size.height = 123.45f;
-    rect2.angle = 0;
+//    possibleVertices[0] = Point2f(1.0f, 1.0f);
+//    possibleVertices[1] = Point2f(1.0f, -1.0f);
 
-    Array<Point2f> vertices;
+//    for( size_t i = 0; i < vertices.size(); i++ )
+//    {
+//        double bestR = DBL_MAX;
 
-    int ret = rotatedRectangleIntersection(rect1, rect2, vertices);
+//        for( size_t j = 0; j < possibleVertices.size(); j++ )
+//        {
+//            double dx = vertices[i].x - possibleVertices[j].x;
+//            double dy = vertices[i].y - possibleVertices[j].y;
+//            double r = sqrt(dx*dx + dy*dy);
 
-    CV_Assert(ret == INTERSECT_PARTIAL);
-    CV_Assert(vertices.size() == 2);
+//            bestR = Math.min(bestR, r);
+//        }
 
-    Array<Point2f> possibleVertices(2);
+//        CV_Assert(bestR < ACCURACY);
+//    }
+//}
 
-    possibleVertices[0] = Point2f(1.0f, 1.0f);
-    possibleVertices[1] = Point2f(1.0f, -1.0f);
-
-    for( size_t i = 0; i < vertices.size(); i++ )
-    {
-        double bestR = DBL_MAX;
-
-        for( size_t j = 0; j < possibleVertices.size(); j++ )
-        {
-            double dx = vertices[i].x - possibleVertices[j].x;
-            double dy = vertices[i].y - possibleVertices[j].y;
-            double r = sqrt(dx*dx + dy*dy);
-
-            bestR = Math.min(bestR, r);
-        }
-
-        CV_Assert(bestR < ACCURACY);
-    }
-}
-
-TEST (Imgproc_RotatedRectangleIntersection, accuracy) { CV_RotatedRectangleIntersectionTest test; test.safe_run(); }
+//TEST (Imgproc_RotatedRectangleIntersection, accuracy) { CV_RotatedRectangleIntersectionTest test; test.safe_run(); }

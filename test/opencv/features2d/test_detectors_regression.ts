@@ -75,11 +75,11 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
         const  maxAngleDif = 2.;
         const  maxResponseDif = 0.1;
 
-        var dist = norm(p1.pt - p2.pt);
+        var dist = alvision.Point.norm(p1.pt.op_Substraction( p2.pt));
         return (dist < maxPtDif &&
-            Math.abs(p1.size - p2.size) < maxSizeDif &&
-            Math.abs(p1.angle - p2.angle) < maxAngleDif &&
-            Math.abs(p1.response - p2.response) < maxResponseDif &&
+            Math.abs(p1.size.valueOf() - p2.size.valueOf()) < maxSizeDif &&
+            Math.abs(p1.angle.valueOf() - p2.angle.valueOf()) < maxAngleDif &&
+            Math.abs(p1.response.valueOf() - p2.response.valueOf()) < maxResponseDif &&
             p1.octave == p2.octave &&
             p1.class_id == p2.class_id);
     }
@@ -87,38 +87,38 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
         const  maxCountRatioDif = 0.01;
 
         // Compare counts of validation and calculated keypoints.
-        var countRatio = (float)validKeypoints.size() / (float)calcKeypoints.size();
-        if (countRatio < 1 - maxCountRatioDif || countRatio > 1.f + maxCountRatioDif )
+        var countRatio = validKeypoints.length / calcKeypoints.length;
+        if (countRatio < 1 - maxCountRatioDif || countRatio > 1. + maxCountRatioDif )
         {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Bad keypoints count ratio (validCount = %d, calcCount = %d).\n",
-                validKeypoints.size(), calcKeypoints.size());
+                validKeypoints.length, calcKeypoints.length);
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             return;
         }
 
-        var  progress = 0, progressCount = (int)(validKeypoints.size() * calcKeypoints.size());
-        var  badPointCount = 0, commonPointCount = max((int)validKeypoints.size(), (int)calcKeypoints.size());
-        for (var v = 0; v < validKeypoints.size(); v++ )
+        var  progress = 0, progressCount = (validKeypoints.length * calcKeypoints.length);
+        var  badPointCount = 0, commonPointCount = Math.max(validKeypoints.length, calcKeypoints.length);
+        for (var v = 0; v < validKeypoints.length; v++ )
         {
             var nearestIdx = -1;
             var minDist = alvision.FLT_MAX;
 
-            for (var c = 0; c < calcKeypoints.size(); c++ )
+            for (var c = 0; c < calcKeypoints.length; c++ )
             {
-                progress = update_progress(progress, (int)(v * calcKeypoints.size() + c), progressCount, 0);
-                var curDist = (float)norm(calcKeypoints[c].pt - validKeypoints[v].pt);
+                progress = this.update_progress(progress, (v * calcKeypoints.length + c), progressCount, 0).valueOf();
+                var curDist = alvision.Point.norm(calcKeypoints[c].pt.op_Substraction( validKeypoints[v].pt)).valueOf();
                 if (curDist < minDist) {
                     minDist = curDist;
-                    nearestIdx = (int)c;
+                    nearestIdx = c;
                 }
             }
 
-            assert(minDist >= 0);
-            if (!isSimilarKeypoints(validKeypoints[v], calcKeypoints[nearestIdx]))
+            alvision.assert(()=>minDist >= 0);
+            if (!this.isSimilarKeypoints(validKeypoints[v], calcKeypoints[nearestIdx]))
                 badPointCount++;
         }
         this.ts.printf(alvision.cvtest.TSConstants.LOG, "badPointCount = %d; validPointCount = %d; calcPointCount = %d\n",
-            badPointCount, validKeypoints.size(), calcKeypoints.size());
+            badPointCount, validKeypoints.length, calcKeypoints.length);
         if (badPointCount > 0.9 * commonPointCount) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, " - Bad accuracy!\n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
@@ -130,26 +130,26 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
     emptyDataTest(): void {
         // One image.
         var image = new alvision.Mat();
-        Array < KeyPoint > keypoints;
+        var keypoints = new Array<alvision.KeyPoint>();
         try {
-            fdetector.detect(image, keypoints);
+            this.fdetector.detect(image, (kp) => { keypoints = kp; });
         }
         catch (e) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "detect() on empty image must not generate exception (1).\n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
         }
 
-        if (!keypoints.empty()) {
+        if (!keypoints.length) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "detect() on empty image must return empty keypoints vector (1).\n");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
             return;
         }
 
         // Several images.
-        Array < Mat > images;
-        Array < Array < KeyPoint > > keypointCollection;
+        var images = new Array<alvision.Mat>();
+        var keypointCollection = new Array<Array<alvision.KeyPoint>>();
         try {
-            fdetector.detect(images, keypointCollection);
+            this.fdetector.detect(images, keypointCollection);
         }
         catch (e) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "detect() on empty image vector must not generate exception (2).\n");
@@ -157,7 +157,7 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
         }
     }
     regressionTest(): void {
-        assert(!fdetector.empty());
+        alvision.assert(()=>!this.fdetector.empty());
         var imgFilename = this.ts.get_data_path() + FEATURES2D_DIR + "/" + IMAGE_FILENAME;
         var resFilename = this.ts.get_data_path() + DETECTOR_DIR + "/" + (name) + ".xml.gz";
 
@@ -169,11 +169,11 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
             return;
         }
 
-        var fs = new alvision.FileStorage (resFilename, FileStorage::READ);
+        var fs = new alvision.FileStorage (resFilename, alvision.FileStorageMode.READ);
 
         // Compute keypoints.
         var calcKeypoints = new Array<alvision.KeyPoint>();
-        fdetector.detect(image, calcKeypoints);
+        this.fdetector.detect(image, (kp) => { calcKeypoints = kp; });
 
         if (fs.isOpened()) // Compare computed and valid keypoints.
         {
@@ -181,8 +181,9 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
 
             // Read validation keypoints set.
             var validKeypoints = new Array<alvision.KeyPoint>();
-            read(fs["keypoints"], validKeypoints);
-            if (validKeypoints.empty()) {
+            fs.nodes["keypoints"].readKeyPoint(validKeypoints);
+            //read(fs["keypoints"], validKeypoints);
+            if (validKeypoints.length) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Keypoints can not be read.\n");
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
                 return;
@@ -192,18 +193,20 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
         }
         else // Write detector parameters and computed keypoints as validation data.
         {
-            fs.open(resFilename, FileStorage::WRITE);
+            fs.open(resFilename, alvision.FileStorageMode.WRITE);
             if (!fs.isOpened()) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "File %s can not be opened to write.\n", resFilename);
                 this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
                 return;
             }
             else {
-                fs << "detector_params" << "{";
-                fdetector.write(fs);
-                fs << "}";
+                fs.writeScalar("detector_params");
+                fs.writeScalar("{");
+                this.fdetector.write(fs);
+                fs.writeScalar( "}");
 
-                write(fs, "keypoints", calcKeypoints);
+                fs.write("keypoints", calcKeypoints);
+                //write(fs, "keypoints", calcKeypoints);
             }
         }
     } // TODO test of detect() with mask

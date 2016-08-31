@@ -53,14 +53,14 @@ import fs = require('fs');
 function make_noisy(img : alvision.Mat, noisy : alvision.Mat, sigma : alvision.double, pepper_salt_ratio : alvision.double ,  rng : alvision.RNG) : void
 {
     noisy.create(img.size(), img.type());
-    var noise = new alvision.Mat(img.size(), img.type()), mask(img.size(), CV_8U);
-    rng.fill(noise,alvision.RNG::NORMAL,128.0,sigma);
+    var noise = new alvision.Mat(img.size(), img.type()), mask = new alvision.Mat(img.size(), alvision.MatrixType.CV_8U);
+    rng.fill(noise,alvision.DistType.NORMAL,128.0,sigma);
     alvision.addWeighted(img, 1, noise, 1, -128, noisy);
-    alvision.randn(noise, alvision.alvision.Scalar.all(0), alvision.Scalar::all(2));
-    noise *= 255;
-    alvision.randu(mask, 0, Math.round(1./pepper_salt_ratio));
-    alvision.Mat half = mask.colRange(0, img.cols/2);
-    half = alvision.Scalar::all(1);
+    alvision.randn(noise, alvision.Scalar.all(0), alvision.Scalar.all(2));
+    noise = alvision.MatExpr.op_Multiplication(noise, 255).toMat();
+    alvision.randu(mask, 0, Math.round(1./pepper_salt_ratio.valueOf()));
+    var half = mask.colRange(0, img.cols().valueOf()/2);
+    half.setTo(alvision.Scalar.all(1));
     noise.setTo(128, mask);
     alvision.addWeighted(noisy, 1, noise, 1, -128, noisy);
 }
@@ -69,18 +69,18 @@ function make_spotty(img: alvision.Mat, rng: alvision.RNG, r: alvision.int = 3, 
 {
     for(var i=0;i<n;i++)
     {
-        var x=rng(img.cols-r),y=rng(img.rows-r);
-        if(rng(2)==0)
-            img(alvision.Range(y,y+r),alvision.Range(x,x+r))=(uchar)0;
+        var x=rng.unsigned(img.cols().valueOf()-r.valueOf()),y=rng.unsigned(img.rows().valueOf()-r.valueOf());
+        if (rng.unsigned(2) == 0)
+            img.roi([new alvision.Range(y, y.valueOf() + r.valueOf()), new alvision.Range(x, x.valueOf() + r.valueOf())]).setTo(0);
         else
-            img(alvision.Range(y,y+r),alvision.Range(x,x+r))=(uchar)255;
+            img.roi([new alvision.Range(y, y.valueOf() + r.valueOf()), new alvision.Range(x, x.valueOf() + r.valueOf())]).setTo(255);
     }
 }
 
 function validate_pixel(image: alvision.Mat, x: alvision.int, y: alvision.int, val: alvision.uchar ): boolean
 {
-    var ok = Math.abs(image.atGet<alvision.uchar>("uchar",x,y) - val) < 10;
-    console.log(util.format("test: image(%d,%d)=%d vs %d - %s\n",x,y,image.atGet<alvision.uchar>("uchar",x,y),val,ok?"ok":"bad");
+    var ok = Math.abs(<any>image.at<alvision.uchar>("uchar",x,y).get() - <any>val) < 10;
+    console.log(util.format("test: image(%d,%d)=%d vs %d - %s\n",x,y,image.at<alvision.uchar>("uchar",x,y).get(),val,ok?"ok":"bad"));
     return ok;
 }
 
@@ -89,10 +89,10 @@ alvision.cvtest.TEST('Optim_denoise_tvl1', 'regression_basic',()=>
     var rng = new alvision.RNG (42);
     var img = alvision.imread(alvision.cvtest.TS.ptr().get_data_path() + "shared/lena.png", 0), noisy = new alvision.Mat(), res = new alvision.Mat();
 
-    alvision.ASSERT_FALSE(img.empty(),  "Error: can't open 'lena.png'";
+    alvision.ASSERT_FALSE(img.empty(), "Error: can't open 'lena.png'");
 
     const obs_num=5;
-    var images = new Array<alvision.Mat>(obs_num, new alvision.Mat());
+    var images = alvision.NewArray(obs_num,()=> new alvision.Mat());
     for(var i=0;i<images.length;i++)
     {
         make_noisy(img,images[i], 20, 0.02,rng);

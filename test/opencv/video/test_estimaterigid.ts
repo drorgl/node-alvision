@@ -63,7 +63,7 @@ import fs = require('fs');
 
 class CV_RigidTransform_Test extends alvision.cvtest.BaseTest {
     run(start_from: alvision.int): void {
-        alvision.cvtest.DefaultRngAuto dra;
+        //alvision.cvtest.DefaultRngAuto dra;
 
         if (!this.testNPoints(start_from))
             return;
@@ -80,35 +80,36 @@ class CV_RigidTransform_Test extends alvision.cvtest.BaseTest {
         var progress : alvision.int = 0;
         var ntests = 10000;
 
-        for (var k = from; k < ntests; k++) {
+        for (var k = from.valueOf(); k < ntests; k++) {
             this.ts.update_context(this, k, true);
             progress = this.update_progress(progress, k, ntests, 0);
 
             var aff = new alvision.Mat(2, 3,alvision.MatrixType. CV_64F);
-            rng.fill(aff, RNG::UNIFORM, new alvision.Scalar(-2), new alvision.Scalar(2));
+            rng.fill(aff, alvision.DistType.UNIFORM, new alvision.Scalar(-2), new alvision.Scalar(2));
 
-            var n = (unsigned)rng % 100 + 10;
+            var n = rng.unsigned().valueOf() % 100 + 10;
 
             var fpts = new alvision.Mat(1, n,alvision.MatrixType. CV_32FC2);
             var tpts = new alvision.Mat(1, n,alvision.MatrixType. CV_32FC2);
 
-            rng.fill(fpts, RNG::UNIFORM, new alvision.Scalar(0, 0), new alvision.Scalar(10, 10));
-            alvision.transform(fpts.ptr<alvision.Point2f>("Point2f"), fpts.ptr<alvision.Point2f>("Point2f") + n, tpts.ptr<alvision.Point2f>("Point2f"), WrapAff2D(aff));
+            rng.fill(fpts, alvision.DistType.UNIFORM, new alvision.Scalar(0, 0), new alvision.Scalar(10, 10));
+            
+            alvision.transformOp(fpts.ptr<alvision.Point2f>("Point2f").slice(0,n), tpts.ptr<alvision.Point2f>("Point2f"),new WrapAff2D(aff));
 
             var noise = new alvision.Mat (1, n,alvision.MatrixType. CV_32FC2);
-            rng.fill(noise, RNG::NORMAL, alvision.Scalar.all(0), alvision.Scalar.all(0.001 * (n <= 7 ? 0 : n <= 30 ? 1 : 10)));
-            tpts += noise;
+            rng.fill(noise, alvision.DistType.NORMAL , alvision.Scalar.all(0), alvision.Scalar.all(0.001 * (n <= 7 ? 0 : n <= 30 ? 1 : 10)));
+            tpts = alvision.MatExpr.op_Addition(tpts, noise).toMat();
 
             var aff_est = alvision.estimateRigidTransform(fpts, tpts, true);
 
-            var thres = 0.1 * alvision.cvtest.norm(aff, alvision.NormTypes.NORM_L2);
+            var thres = 0.1 * alvision.cvtest.norm(aff, alvision.NormTypes.NORM_L2).valueOf();
             var d = alvision.cvtest.norm(aff_est, aff, alvision.NormTypes.NORM_L2);
             if (d > thres) {
-                var dB= 0, nB = 0;
+                var dB= null, nB = null;
                 if (n <= 4) {
                     var A = fpts.reshape(1, 3);
-                    var B = A - alvision.repeat(A.row(0), 3, 1), Bt = B.t();
-                    B = Bt * B;
+                    var B = alvision.MatExpr.op_Substraction( A , alvision.repeat(A.row(0), 3, 1)).toMat(), Bt = B.t();
+                    B = alvision.MatExpr.op_Multiplication( Bt , B).toMat();
                     dB = alvision.determinant(B);
                     nB = alvision.cvtest.norm(B, alvision.NormTypes.NORM_L2);
                     if (Math.abs(dB) < 0.01 * nB)
@@ -122,29 +123,29 @@ class CV_RigidTransform_Test extends alvision.cvtest.BaseTest {
         return true;
     }
     testImage(): boolean {
-        Mat img;
-        Mat testImg = imread(this.ts.get_data_path() + "shared/graffiti.png", 1);
+        var img = new alvision.Mat();
+        var testImg = alvision.imread(this.ts.get_data_path() + "shared/graffiti.png", 1);
         if (testImg.empty()) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "test image can not be read");
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
             return false;
         }
-        pyrDown(testImg, img);
+        alvision.pyrDown(testImg, img);
 
-        Mat aff = alvision.getRotationMatrix2D(Point(img.cols / 2, img.rows / 2), 1, 0.99);
-        aff.ptr<double>()[2] += 3;
-        aff.ptr<double>()[5] += 3;
+        var aff = alvision.getRotationMatrix2D(new alvision.Point(img.cols().valueOf() / 2, img.rows().valueOf() / 2), 1, 0.99);
+        aff.ptr<alvision.double>("double")[2] = aff.ptr<alvision.double>("double")[2].valueOf() + 3;
+        aff.ptr<alvision.double>("double")[5] = aff.ptr<alvision.double>("double")[5].valueOf() + 3;
 
-        Mat rotated;
-        warpAffine(img, rotated, aff, img.size());
+        var rotated = new alvision.Mat();
+        alvision.warpAffine(img, rotated, aff, img.size());
 
-        Mat aff_est = estimateRigidTransform(img, rotated, true);
+        var aff_est = alvision.estimateRigidTransform(img, rotated, true);
 
-        const double thres = 0.033;
-        if (alvision.cvtest.norm(aff_est, aff, NORM_INF) > thres) {
+        const  thres = 0.033;
+        if (alvision.cvtest.norm(aff_est, aff, alvision.NormTypes. NORM_INF) > thres) {
             this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "Threshold = %f, norm of difference = %f", thres,
-                alvision.cvtest.norm(aff_est, aff, NORM_INF));
+                alvision.cvtest.norm(aff_est, aff,alvision.NormTypes. NORM_INF));
             return false;
         }
 
@@ -154,12 +155,15 @@ class CV_RigidTransform_Test extends alvision.cvtest.BaseTest {
 
 class WrapAff2D
 {
-    const double *F;
-    WrapAff2D(const Mat& aff) : F(aff.ptr<double>()) {}
-    Point2f operator()(const Point2f& p)
+    private F: Array<alvision.double>;
+
+    constructor(aff: alvision.Mat) {
+        this.F = aff.ptr<alvision.double>("double");
+    }
+    run(p: alvision.Point2f): alvision.Point2f 
     {
-        return Point2f( (float)(p.x * F[0] + p.y * F[1] + F[2]),
-                        (float)(p.x * F[3] + p.y * F[4] + F[5]) );
+        return new alvision.Point2f((p.x.valueOf() * this.F[0].valueOf() + p.y.valueOf() * this.F[1].valueOf() + this.F[2].valueOf()),
+                        (p.x.valueOf() * this.F[3].valueOf() + p.y.valueOf() * this.F[4].valueOf() + this.F[5].valueOf()) );
     }
 };
 

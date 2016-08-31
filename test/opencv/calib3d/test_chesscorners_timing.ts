@@ -117,8 +117,8 @@ class CV_ChessboardDetectorTimingTest extends alvision.cvtest.BaseTest
 
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s: chessboard %d:\n", imgname, is_chessboard);
 
-            var gray = new alvision.Mat(new alvision.Size(img.cols, img.rows), alvision.MatrixType.CV_8UC1);
-            var thresh = new alvision.Mat(new alvision.Size(img.cols, img.rows), alvision.MatrixType.CV_8UC1);
+            var gray = new alvision.Mat(new alvision.Size(img.cols(), img.rows()), alvision.MatrixType.CV_8UC1);
+            var thresh = new alvision.Mat(new alvision.Size(img.cols(), img.rows()), alvision.MatrixType.CV_8UC1);
             alvision.cvtColor( img, gray,alvision.ColorConversionCodes.COLOR_BGR2GRAY );
 
 
@@ -154,7 +154,7 @@ class CV_ChessboardDetectorTimingTest extends alvision.cvtest.BaseTest
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "Warning: results differ cvCheckChessboard %d, cvFindChessboardCorners %d\n",result, result1);
             }
 
-            var num_pixels = gray.cols.valueOf() * gray.rows.valueOf();
+            var num_pixels = gray.cols().valueOf() * gray.rows().valueOf();
             var check_chessboard_time = (_time01 - _time0) / alvision.cvGetTickFrequency(); // in us
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "    cvCheckChessboard time s: %f, us per pixel: %f\n",
                 check_chessboard_time * 1e-6, check_chessboard_time / num_pixels);
