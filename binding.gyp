@@ -2,8 +2,10 @@
 
 {
 	'target_defaults': {
+
 		'configurations': {
 			'Debug' : {
+				
 				'conditions':[
 					['1==1',{
 						'msvs_settings': {
@@ -11,8 +13,9 @@
 							# object files to same directory... even if they have the same name!
 							'VCCLCompilerTool': {
 							  'WholeProgramOptimization' : 'false',
-							  'AdditionalOptions': ['/GL-','/w'], #['/wd4244' ,'/wd4018','/wd4133' ,'/wd4090'] #GL- was added because the forced optimization coming from node-gyp is disturbing the weird coding style from ffmpeg.
+							  #'AdditionalOptions': ['/w'], #['/wd4244' ,'/wd4018','/wd4133' ,'/wd4090'] #GL- was added because the forced optimization coming from node-gyp is disturbing the weird coding style from ffmpeg
 							  'RuntimeLibrary': 3, # dll debug
+							  'ExceptionHandling' : 1 #/EHsc
 							},
 							'VCLinkerTool': {
 							  'LinkTimeCodeGeneration': '0',
@@ -20,6 +23,7 @@
 							
 							'VCLibrarianTool': {
 								'AdditionalOptions!': ['/LTCG'],
+								'AdditionalOptions': ['/LTCG'],
 							 },
 						}
 				}]
@@ -27,14 +31,15 @@
 			},
 			'Release' : {
 				'conditions':[
-					['1==0',{
+					['1==1',{
 						'msvs_settings': {
 							# This magical incantation is necessary because VC++ will compile
 							# object files to same directory... even if they have the same name!
 							'VCCLCompilerTool': {
 							  'WholeProgramOptimization' : 'false',
-							  'AdditionalOptions': ['/GL-','/w'], #['/wd4244' ,'/wd4018','/wd4133' ,'/wd4090'] #GL- was added because the forced optimization coming from node-gyp is disturbing the weird coding style from ffmpeg.
+							   #'AdditionalOptions': ['/w'], #['/wd4244' ,'/wd4018','/wd4133' ,'/wd4090'] #GL- was added because the forced optimization coming from node-gyp is disturbing the weird coding style from ffmpeg
 							  'RuntimeLibrary': 2, # dll release
+							  'ExceptionHandling' : 1 #/EHsc
 							},
 							'VCLinkerTool': {
 							  'LinkTimeCodeGeneration': '0',
@@ -42,6 +47,7 @@
 							
 							'VCLibrarianTool': {
 								'AdditionalOptions!': ['/LTCG'],
+								'AdditionalOptions': ['/LTCG'],
 							 },
 						}
 				}]

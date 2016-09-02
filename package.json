@@ -4,7 +4,7 @@
   "author": "Dror Gluska <drorgl@yahoo.com>",
   "dependencies": {
     "buffers": "0.1.1",
-    "nan": "^2.1.0",
+    "nan": "^2.4.0",
     "ts-node": "^1.3.0"
   },
   "version": "1.0.0",
