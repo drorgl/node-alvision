@@ -56,7 +56,8 @@
       , "sources": [
 		  "todo.txt"
 		, "binding.gyp"
-		, "test/unit.js"
+		, "test/ffmpeg.ts"
+		, "test/opencv.ts"
         , "src/init.cc"
 		, "src/alvision.h"
 		, "src/safecast.h"
@@ -95,7 +96,7 @@
         #, "src/FaceRecognizer.cc"
         #, "src/BackgroundSubtractor.cc"
         
-		,'typings/tsd.d.ts'
+		,'typings/index.d.ts'
 		,'typings/node/node.d.ts'
 		,'typings/tape/tape.d.ts'
 		

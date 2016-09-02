@@ -7,30 +7,13 @@
 *.suo
 *.sdf
 /npm-debug.log
-/tsbinding/*.js
-/tsbinding/*/*.js
-/test/*/*.cpp
-/test/*/*/*.cpp
-/test/*/*/*/*.cpp
-/test/*/*.cu
-/test/*/*/*.cu
-/test/*/*/*/*.cu
 
-/test/*/*.js
-/test/*/*/*.js
+/test/**/*.cpp
+/test/**/*.cu
+/test/**/*.js
+/test/**/*.map
 
-/test/*/*.map
-/test/*/*/*.map
-/test/*/*/*/*.map
-
-/tsbinding/*.map
-/tsbinding/*/*.map
-/tsbinding/*/*/*.map
-/tsbinding/*/*/*/*.map
-
-/tsbinding/*.js
-/tsbinding/*/*.js
-/tsbinding/*/*/*.js
-/tsbinding/*/*/*/*.js
+/tsbinding/**/*.js
+/tsbinding/**/*.map
 
 /typings/
