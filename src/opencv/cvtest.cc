@@ -12,6 +12,7 @@ cvtest::Init(Handle<Object> target) {
 	target->Set(Nan::New("cvtest").ToLocalChecked(), test);
 
 	
-
+#ifdef HAVE_CUDA
 	DeviceManager::Init(target);
+#endif
 };

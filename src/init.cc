@@ -13,6 +13,8 @@
 #include "opencv/flann.h"
 #include "opencv/cvtest.h"
 
+#include "opencv/Size.h"
+
 
 extern "C"{ 
 void
@@ -31,6 +33,10 @@ init(Handle<Object> target) {
 	flann::Init(target);
 
 	cvtest::Init(target);
+
+	Size<cv::Size2i>::Init(target,"Size2i");
+	Size<cv::Size2f>::Init(target, "Size2f");
+	Size<cv::Size2d>::Init(target, "Size2d");
 
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());

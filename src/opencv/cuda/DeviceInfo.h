@@ -4,12 +4,19 @@
 #include "../../alvision.h"
 
 
+#ifdef HAVE_CUDA
+
+
 class DeviceInfo : public Nan::ObjectWrap {
 public:
 	static void Init(Handle<Object> target);
 	static Nan::Persistent<FunctionTemplate> constructor;
 
+	std::shared_ptr<cv::cuda::DeviceInfo> _deviceInfo;
+
 	static NAN_METHOD(New);
 };
+
+#endif
 
 #endif

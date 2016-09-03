@@ -11,5 +11,8 @@ Cuda::Init(Handle<Object> target) {
 
 	target->Set(Nan::New("cuda").ToLocalChecked(), cuda);
 
+
+#ifdef HAVE_CUDA
 	DeviceInfo::Init(cuda);
+#endif
 };

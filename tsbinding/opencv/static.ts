@@ -783,3 +783,18 @@ export class Dictionary<K,V> {
         return values;
     }
 }
+
+
+
+export function CheckAndAssign<T>(check: any, assignIfValid: () => T, assignOtherwise: () => T, invalidCallback?: () => void): T {
+    //TODO: add debug logging
+    if (check != null) {
+        return assignIfValid();
+    }
+
+    if (invalidCallback) {
+        invalidCallback();
+    }
+
+    return assignOtherwise();
+}

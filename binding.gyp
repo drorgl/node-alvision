@@ -83,6 +83,10 @@
 		, "src/opencv/flann.cc"
 		, "src/opencv/flann.h"
 		
+		, "src/opencv/Size.cc"
+		, "src/opencv/Size.h"
+
+		
 		, "src/opencv/cvtest.cc"
 		, "src/opencv/cvtest.h"
 		

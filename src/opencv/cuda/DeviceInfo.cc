@@ -1,5 +1,7 @@
 #include "DeviceInfo.h"
 
+#ifdef HAVE_CUDA
+
 Nan::Persistent<FunctionTemplate> DeviceInfo::constructor;
 
 
@@ -51,3 +53,7 @@ NAN_METHOD(DeviceInfo::New) {
 	//info.Holder()->Set(Nan::New("type").ToLocalChecked(), Nan::New(Constants::fromMatType(mat->_mat->type())).ToLocalChecked());
 	//info.GetReturnValue().Set(info.Holder());
 }
+
+
+
+#endif

@@ -1,5 +1,7 @@
 #include "DeviceManager.h"
 
+#ifdef HAVE_CUDA
+
 Nan::Persistent<FunctionTemplate> DeviceManager::constructor;
 
 
@@ -64,3 +66,6 @@ NAN_METHOD(DeviceManager::instance) {
 	info.GetReturnValue().Set(im_h);
 
 }
+
+
+#endif

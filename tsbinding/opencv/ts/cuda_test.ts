@@ -181,7 +181,7 @@ interface DeviceManager
 
 export var DeviceManager: DeviceManagerStatic = alvision_module.DeviceManager;
 
-export var ALL_DEVICES = DeviceManager.instance().values();
+export var ALL_DEVICES = _st.CheckAndAssign(DeviceManager,()=> DeviceManager.instance().values(),()=> []);
 //    #define ALL_DEVICES testing::ValuesIn(cvtest::DeviceManager::instance().values())
 
 //    //////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@
 //#include "OpenCV.h"
 #include "../../alvision.h"
 
+#ifdef HAVE_CUDA
 
 class DeviceManager : public Nan::ObjectWrap {
 public:
@@ -12,5 +13,7 @@ public:
 	static NAN_METHOD(New);
 	static NAN_METHOD(instance);
 };
+
+#endif
 
 #endif
