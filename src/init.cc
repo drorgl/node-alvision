@@ -15,6 +15,9 @@
 
 #include "opencv/Size.h"
 
+#include "opencv/ml.h"
+#include "opencv/superres.h"
+
 
 extern "C"{ 
 void
@@ -38,6 +41,8 @@ init(Handle<Object> target) {
 	Size<cv::Size2f>::Init(target, "Size2f");
 	Size<cv::Size2d>::Init(target, "Size2d");
 
+	ml::Init(target);
+	superres::Init(target);
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 };

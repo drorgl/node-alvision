@@ -75,6 +75,12 @@
 		, "src/opencv/HighGUI.cc"
 		, "src/opencv/HighGUI.h"
 		
+		, "src/opencv/superres.cc"
+		, "src/opencv/superres.h"
+		
+		, "src/opencv/ml.cc"
+		, "src/opencv/ml.h"
+		
 		, "src/opencv/Cuda.cc"
 		, "src/opencv/Cuda.h"
 		, "src/opencv/cuda/DeviceInfo.cc"
