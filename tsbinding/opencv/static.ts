@@ -1,5 +1,8 @@
-//////// <reference path="Matrix.ts" />
+/// <reference path="../../typings/index.d.ts" />
+
 var alvision_module = require('../../lib/bindings.js');
+
+import process = require("process");
 
 import * as _types from './types';
 import * as _cvdef from './cvdef';
@@ -761,7 +764,7 @@ export class Dictionary<K,V> {
 
         for (var prop in this.items) {
             if (this.items.hasOwnProperty(prop)) {
-                keySet.push(prop);
+                keySet.push(<any>prop);
             }
         }
 

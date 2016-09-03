@@ -421,12 +421,12 @@ export var MSER: MSERStatic = alvision_module.MSER;
 
 /** @overload */
 
-interface IFAST {
-    (image: _st.InputArray, cb: (keypoints: Array<_types.KeyPoint>) => void,
-        threshold: _st.int , nonmaxSuppression : boolean/*= true*/): void;
-}
+//interface IFAST {
+//    (image: _st.InputArray, cb: (keypoints: Array<_types.KeyPoint>) => void,
+//        threshold: _st.int , nonmaxSuppression : boolean/*= true*/): void;
+//}
 
-export var FAST: IFAST = alvision_module.FAST;
+//export var FAST: IFAST = alvision_module.FAST;
 
 //CV_EXPORTS void FAST( InputArray image, CV_OUT Array<KeyPoint>& keypoints,
 //                      int threshold, bool nonmaxSuppression=true );
@@ -452,7 +452,9 @@ detection, use cv2.FAST.detect() method.
 
 interface IFAST {
     (image: _st.InputArray, cb: (keypoints: Array<_types.KeyPoint> )=>void,
-        threshold: _st.int, nonmaxSuppression: boolean, type: _st.int ): void;
+        threshold: _st.int, nonmaxSuppression: boolean, type: _st.int): void;
+    (image: _st.InputArray, cb: (keypoints: Array<_types.KeyPoint>) => void,
+        threshold: _st.int, nonmaxSuppression?: boolean/*= true*/): void;
 }
 
 export var FAST: IFAST = alvision_module.FAST;
@@ -499,12 +501,12 @@ export interface FastFeatureDetector extends Feature2D
 
 export var FastFeatureDetector: FastFeatureDetectorStatic = alvision_module.FastFeatureDetector;
 
-interface IAGAST {
-    (image: _st.InputArray ,cb : (keypoints : Array<_types.KeyPoint>) => void,
-        threshold : _st.int , nonmaxSuppression : boolean /*= true*/): void;
-}
+//interface IAGAST {
+//    (image: _st.InputArray ,cb : (keypoints : Array<_types.KeyPoint>) => void,
+//        threshold : _st.int , nonmaxSuppression : boolean /*= true*/): void;
+//}
 
-export var AGAST: IAGAST = alvision_module.AGAST;
+//export var AGAST: IAGAST = alvision_module.AGAST;
 
 /** @overload */
 //CV_EXPORTS void AGAST( InputArray image, CV_OUT Array<KeyPoint>& keypoints,
@@ -531,7 +533,9 @@ Detects corners using the AGAST algorithm by @cite mair2010_agast .
 
 interface IAGAST {
     (image: _st.InputArray ,cb:(keypoints : Array<_types.KeyPoint>)=>void,
-        threshold: _st.int, nonmaxSuppression: boolean, type: AgastFeatureDetectorTypes  ): void;
+        threshold: _st.int, nonmaxSuppression: boolean, type: AgastFeatureDetectorTypes): void;
+    (image: _st.InputArray, cb: (keypoints: Array<_types.KeyPoint>) => void,
+        threshold: _st.int, nonmaxSuppression: boolean /*= true*/): void;
 }
 
 export var AGAST: IAGAST = alvision_module.AGAST;

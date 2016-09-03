@@ -48,6 +48,8 @@ var alvision_module = require('../../lib/bindings.js');
 //import * as _constants from './Constants'
 import * as _st from './static';
 import * as _mat from './Mat';
+import * as _core from './core';
+import * as _matx from './Matx';
 import * as _types from './types';
 //import * as _core from './Core';
 import * as _base from './base';
@@ -162,11 +164,11 @@ import * as _persistence from './persistence'
     @deprecated drop this version
      */
     
-    export interface Ierror {
-        (exc: IException): void;
-    }
+//    export interface Ierror {
+//        (exc: IException): void;
+//    }
 
-export var error: Ierror = alvision_module.error;
+//export var error: Ierror = alvision_module.error;
 
     //CV_EXPORTS void error( const Exception& exc );
 
@@ -893,6 +895,8 @@ interface Inormalize {
     (src: _st.InputArray, Inputdst: _st.OutputArray, alpha: _st.double /*= 1*/, beta: _st.double /*= 0*/,
         norm_type: _st.int  /*= NORM_L2*/, dtype: _st.int /* = -1 */, mask: _st.InputArray /* = noArray()*/): void;
     (src: _mat.SparseMat, dst: _mat.SparseMat, alpha: _st.double, normType: _st.int): void;
+
+    <T>(v: _matx.Vec<T>): _matx.Vec<T>;
 }
 
 export var normalize: Inormalize = alvision_module.normalize;
@@ -930,12 +934,12 @@ export var normalize: Inormalize = alvision_module.normalize;
 
 
 
-export interface IminMaxLoc {
-    (src: _st.InputArray, cb: (minVal: _st.double,maxVal: _st.double,minLoc: Array<_types.Point>,maxLoc: Array<_types.Point>)=> void, mask? : _st.InputArray /* = noArray()*/) : void;
+//export interface IminMaxLoc {
+//    (src: _st.InputArray, cb: (minVal: _st.double,maxVal: _st.double,minLoc: Array<_types.Point>,maxLoc: Array<_types.Point>)=> void, mask? : _st.InputArray /* = noArray()*/) : void;
 
-}
+//}
 
-export var minMaxLoc : IminMaxLoc = alvision_module.minMaxLoc;
+//export var minMaxLoc : IminMaxLoc = alvision_module.minMaxLoc;
 
     //CV_EXPORTS_W void minMaxLoc(src : _st.InputArray, CV_OUT double* minVal,
     //    CV_OUT double* maxVal = 0, CV_OUT Point* minLoc = 0,
@@ -992,7 +996,9 @@ export var minMaxIdx: IminMaxIdx = alvision_module.minMaxIdx;
 //}
 
 export interface IminMaxLoc {
-    (a: _mat.SparseMat, cb: (minVal: _st.double, maxVal: _st.double, minIdx: Array<_st.int>/* = 0*/, maxIdx: Array<_st.int> /* = 0*/)=> void) : void;
+    (a: _mat.SparseMat, cb: (minVal: _st.double, maxVal: _st.double, minIdx: Array<_st.int>/* = 0*/, maxIdx: Array<_st.int> /* = 0*/) => void): void;
+
+    (src: _st.InputArray, cb: (minVal: _st.double, maxVal: _st.double, minLoc: Array<_types.Point>, maxLoc: Array<_types.Point>) => void, mask?: _st.InputArray /* = noArray()*/): void;
 }
 
 export var minMaxLoc: IminMaxLoc = alvision_module.minMaxLoc;
@@ -1042,11 +1048,11 @@ export var reduce: Ireduce = alvision_module.reduce;
     @sa  mixChannels, split, Mat::reshape
     */
 
-export interface Imerge {
-    (mv: _mat.Mat, count: _st.size_t, dst: _st.OutputArray): void;
-}
+//export interface Imerge {
+//    (mv: _mat.Mat, count: _st.size_t, dst: _st.OutputArray): void;
+//}
 
-export var merge: Imerge = alvision_module.merge;
+//export var merge: Imerge = alvision_module.merge;
 
     //CV_EXPORTS void merge(mv : _mat.Mat, count : _st.size_t, dst : _st.OutputArray);
 
@@ -1059,6 +1065,8 @@ export var merge: Imerge = alvision_module.merge;
 
 export interface Imerge {
     (mv: _st.InputArrayOfArrays, dst: _st.OutputArray): void;
+
+    (mv: _mat.Mat, count: _st.size_t, dst: _st.OutputArray): void;
 }
 
 export var merge: Imerge = alvision_module.merge;
@@ -1077,11 +1085,11 @@ export var merge: Imerge = alvision_module.merge;
     @sa merge, mixChannels, cvtColor
     */
 
-export interface Isplit {
-    (src: _mat.Mat, mvbegin: _mat.Mat): void;
-}
+//export interface Isplit {
+//    (src: _mat.Mat, mvbegin: _mat.Mat): void;
+//}
 
-export var split: Isplit = alvision_module.split;
+//export var split: Isplit = alvision_module.split;
 
     //CV_EXPORTS void split(src : _mat.Mat, mvbegin : _mat.Mat);
 
@@ -1092,6 +1100,8 @@ export var split: Isplit = alvision_module.split;
 
 export interface Isplit{
     (m: _st.InputArray, mv: _st.OutputArrayOfArrays): void;
+
+    (src: _mat.Mat, mvbegin: _mat.Mat): void;
 }
 
 export var split: Isplit = alvision_module.split;
@@ -1144,13 +1154,13 @@ export interface MixChannelsFromTo {
     [id: number]: number;
 }
 
-export interface ImixChannels {
-    (src : Array< _mat.Mat> | _mat.Mat, nsrcs : _st.size_t, dst : Array<_mat.Mat> | _mat.Mat, ndsts : _st.size_t,
-        fromTo: MixChannelsFromTo, npairs: _st.size_t): void;
-    (src: Array<_mat.Mat> | _mat.Mat, dst: Array<_mat.Mat> | _mat.Mat,fromTo: MixChannelsFromTo): void;
-}
+//export interface ImixChannels {
+//    (src : Array< _mat.Mat> | _mat.Mat, nsrcs : _st.size_t, dst : Array<_mat.Mat> | _mat.Mat, ndsts : _st.size_t,
+//        fromTo: MixChannelsFromTo, npairs: _st.size_t): void;
+//    (src: Array<_mat.Mat> | _mat.Mat, dst: Array<_mat.Mat> | _mat.Mat,fromTo: MixChannelsFromTo): void;
+//}
 
-export var mixChannels: ImixChannels = alvision_module.mixChannels;
+//export var mixChannels: ImixChannels = alvision_module.mixChannels;
 
     //CV_EXPORTS void mixChannels(src : _mat.Mat, nsrcs : _st.size_t, dst : _mat.Mat, ndsts : _st.size_t,
     //const int* fromTo, size_t npairs);
@@ -1173,7 +1183,11 @@ export var mixChannels: ImixChannels = alvision_module.mixChannels;
         (src: _st.InputArrayOfArrays, dst: _st.InputOutputArrayOfArrays ,
             fromTo: MixChannelsFromTo, npairs: _st.size_t ): void;
         (src: _st.InputArrayOfArrays, dst: _st.InputOutputArrayOfArrays ,
-                             fromTo : MixChannelsFromTo): void;
+            fromTo: MixChannelsFromTo): void;
+
+        (src: Array<_mat.Mat> | _mat.Mat, nsrcs: _st.size_t, dst: Array<_mat.Mat> | _mat.Mat, ndsts: _st.size_t,
+            fromTo: MixChannelsFromTo, npairs: _st.size_t): void;
+        (src: Array<_mat.Mat> | _mat.Mat, dst: Array<_mat.Mat> | _mat.Mat, fromTo: MixChannelsFromTo): void;
 }
 
 export var mixChannels: ImixChannels = alvision_module.mixChannels;
@@ -1383,11 +1397,11 @@ export var hconcat: Ihconcat = alvision_module.hconcat;
     @sa cv::hconcat(const Mat*, size_t, OutputArray), @sa cv::hconcat(InputArrayOfArrays, OutputArray) and @sa cv::hconcat(InputArray, InputArray, OutputArray)
     */
 
-export interface Ivconcat {
-    (src: _mat.Mat, nsrc: _st.size_t, dst: _st.OutputArray): void;
-}
+//export interface Ivconcat {
+//    (src: _mat.Mat, nsrc: _st.size_t, dst: _st.OutputArray): void;
+//}
 
-export var vconcat: Ivconcat = alvision_module.vconcat;
+//export var vconcat: Ivconcat = alvision_module.vconcat;
 
     //CV_EXPORTS void vconcat(src : _mat.Mat, nsrc : _st.size_t, dst : _st.OutputArray);
     /** @overload
@@ -1413,11 +1427,13 @@ export var vconcat: Ivconcat = alvision_module.vconcat;
      @param src2 second input array to be considered for vertical concatenation.
      @param dst output array. It has the same number of cols and depth as the src1 and src2, and the sum of rows of the src1 and src2.
      */
-export interface Ivconcat {
-    (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray): void;
-}
+//export interface Ivconcat {
+//    (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray): void;
 
-export var vconcat: Ivconcat = alvision_module.vconcat;
+//    (src: _mat.Mat, nsrc: _st.size_t, dst: _st.OutputArray): void;
+//}
+
+//export var vconcat: Ivconcat = alvision_module.vconcat;
 
     //CV_EXPORTS void vconcat(src1 : _st.InputArray, src2 : _st.InputArray, dst : _st.OutputArray);
     /** @overload
@@ -1440,6 +1456,10 @@ export var vconcat: Ivconcat = alvision_module.vconcat;
 
 export interface Ivconcat {
     (src: _st.InputArrayOfArrays, dst: _st.OutputArray): void;
+
+    (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray): void;
+
+    (src: _mat.Mat, nsrc: _st.size_t, dst: _st.OutputArray): void;
 }
 
 export var vconcat: Ivconcat = alvision_module.vconcat;
@@ -2410,12 +2430,12 @@ export var eigen: Ieigen = alvision_module.eigen;
     @todo InputArrayOfArrays
     */
 
-export interface IcalcCovarMatrix {
-    (samples: Array<_mat.Mat>, covar: _mat.Mat, mean: _mat.Mat,
-        flags: _st.int, ctype?: _st.int /* = CV_64F*/): void;
-}
+//export interface IcalcCovarMatrix {
+//    (samples: Array<_mat.Mat>, covar: _mat.Mat, mean: _mat.Mat,
+//        flags: _st.int, ctype?: _st.int /* = CV_64F*/): void;
+//}
 
-export var calcCovarMatrix: IcalcCovarMatrix = alvision_module.calcCovarMatrix;
+//export var calcCovarMatrix: IcalcCovarMatrix = alvision_module.calcCovarMatrix;
 
     //CV_EXPORTS void calcCovarMatrix( const Mat* samples, int nsamples, Mat& covar, Mat& mean,
     //    int flags, int ctype = CV_64F);
@@ -2432,6 +2452,8 @@ export var calcCovarMatrix: IcalcCovarMatrix = alvision_module.calcCovarMatrix;
 export interface IcalcCovarMatrix {
     (samples: _st.InputArray , covar: _st.OutputArray,
         Inputmean: _st.OutputArray, flags: _st.int, ctype?: _st.int /* = CV_64F*/): void;
+    (samples: Array<_mat.Mat>, covar: _mat.Mat, mean: _mat.Mat,
+        flags: _st.int, ctype?: _st.int /* = CV_64F*/): void;
 }
 
 export var calcCovarMatrix: IcalcCovarMatrix = alvision_module.calcCovarMatrix;
@@ -2439,12 +2461,12 @@ export var calcCovarMatrix: IcalcCovarMatrix = alvision_module.calcCovarMatrix;
     //CV_EXPORTS_W void calcCovarMatrix(InputArray samples, c : _st.OutputArrayovar,
     //    Inputmean : _st.OutputArray, int flags, int ctype = CV_64F);
 
-export interface IPCACompute {
-    PCACompute(data: _st.InputArray, mean: _st.InputOutputArray,
-        eigenvectors: _st.OutputArray, maxComponents: _st.int  /* = 0*/): void;
-}
+//export interface IPCACompute {
+//    PCACompute(data: _st.InputArray, mean: _st.InputOutputArray,
+//        eigenvectors: _st.OutputArray, maxComponents: _st.int  /* = 0*/): void;
+//}
 
-export var PCACompute: IPCACompute = alvision_module.PCACompute;
+//export var PCACompute: IPCACompute = alvision_module.PCACompute;
 
     /** wrap PCA::operator() */
     //CV_EXPORTS_W void PCACompute(data : _st.InputArray, mean : _st.InputOutputArray,
@@ -2452,7 +2474,10 @@ export var PCACompute: IPCACompute = alvision_module.PCACompute;
 
 export interface IPCACompute {
     (data: _st.InputArray, mean: _st.InputOutputArray,
-        eigenvectors: _st.OutputArray, retainedVariance: _st.double ): void;
+        eigenvectors: _st.OutputArray, retainedVariance: _st.double): void;
+
+    PCACompute(data: _st.InputArray, mean: _st.InputOutputArray,
+        eigenvectors: _st.OutputArray, maxComponents: _st.int  /* = 0*/): void;
 }
 
 export var PCACompute: IPCACompute = alvision_module.PCACompute;

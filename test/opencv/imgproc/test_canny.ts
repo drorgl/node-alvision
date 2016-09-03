@@ -41,7 +41,7 @@
 
 import tape = require("tape");
 import path = require("path");
-import colors = require("colors");
+
 import async = require("async");
 import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
@@ -264,7 +264,7 @@ function test_Canny(  src : alvision.Mat, dst : alvision.Mat,
                 c = Math.abs(mag.at<alvision.float>("float",y2, x2).get().valueOf());
 
             if ((a > b || (a == b && ((x1 == x + 1 && y1 == y) || (x1 == x && y1 == y + 1)))) && a > c)
-                ;
+                var dummy = 1; //nop
             else
                 mag.at<alvision.float>("float", y, x).set(-a);
         }

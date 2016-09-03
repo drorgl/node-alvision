@@ -787,11 +787,11 @@ export interface Vec<T> extends Matx<T> {
 //Vec < _Tp, m > operator * () const;
 //};
 
-interface Inormalize {
-    <T>(v: Vec<T>): Vec<T>;
-}
+//interface Inormalize {
+//    <T>(v: Vec<T>): Vec<T>;
+//}
 
-export var normalize: Inormalize = alvision_module.normalize;
+//export var normalize: Inormalize = alvision_module.normalize;
 
 //template < typename _Tp, int cn> static Vec< _Tp, cn > normalize(const Vec<_Tp, cn>& v);
 

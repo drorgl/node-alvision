@@ -75,8 +75,8 @@
 		, "src/opencv/HighGUI.cc"
 		, "src/opencv/HighGUI.h"
 		
-		, "src/opencv/vec.cc"
-		, "src/opencv/vec.h"
+		#, "src/opencv/vec.cc"
+		#, "src/opencv/vec.h"
 		
 		
 		, "src/ffmpeg/ffmpeg.cc"

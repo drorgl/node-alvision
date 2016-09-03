@@ -40,13 +40,8 @@
 //
 //M*/
 
-import tape = require("tape");
-import path = require("path");
-import colors = require("colors");
-import async = require("async");
 import alvision = require("../../../tsbinding/alvision");
-import util = require('util');
-import fs = require('fs');
+
 
 //#ifndef CV_CHESSBOARDGENERATOR_H143KJTVYM389YTNHKFDHJ89NYVMO3VLMEJNTBGUEIYVCM203P
 //#define CV_CHESSBOARDGENERATOR_H143KJTVYM389YTNHKFDHJ89NYVMO3VLMEJNTBGUEIYVCM203P

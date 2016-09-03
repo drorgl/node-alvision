@@ -1,4 +1,4 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/index.d.ts" />
 var alvision_module = require('../../lib/bindings.js');
 
 import * as _st from './static';
@@ -12,7 +12,6 @@ import * as _cudatest from './ts/cuda_test';
 
 import tape = require("tape");
 import path = require("path");
-import colors = require("colors");
 import async = require("async");
 import util = require('util');
 import fs = require('fs');
@@ -833,25 +832,18 @@ export namespace cvtest {
         switch (depth) {
             case _cvdef.MatrixType.CV_8U:
                 return m.ptr<any>("uchar",i0);
-                break;
             case _cvdef.MatrixType.CV_8S:
                 return m.ptr<any>("schar",i0);
-                break;
             case _cvdef.MatrixType.CV_16U:
                 return m.ptr<any>("ushort",i0);
-                break;
             case _cvdef.MatrixType.CV_16S:
                 return m.ptr<any>("short",i0);
-                break;
             case _cvdef.MatrixType.CV_32S:
                 return m.ptr<any>("int",i0);
-                break;
             case _cvdef.MatrixType.CV_32F:
                 return m.ptr<any>("float",i0);
-                break;
             case _cvdef.MatrixType.CV_64F:
                 return m.ptr<any>("double",i0);
-                break;
             default:
                 //unimplemented
                 return null;

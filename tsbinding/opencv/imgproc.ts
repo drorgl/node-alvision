@@ -2661,11 +2661,11 @@ export var getRotationMatrix2D: IgetRotationMatrix2D = alvision_module.getRotati
 //    CV_EXPORTS_W Mat getRotationMatrix2D(center : _types.Point2f, angle : _st.double, scale : _st.double );
 
 
-interface IgetPerspectiveTransform{
-    ( src : Array<_types.Point2f>, dst : Array<_types.Point2f>): _mat.Mat;
-}
+//interface IgetPerspectiveTransform{
+//    ( src : Array<_types.Point2f>, dst : Array<_types.Point2f>): _mat.Mat;
+//}
 
-export var getPerspectiveTransform: IgetPerspectiveTransform = alvision_module.getPerspectiveTransform;
+//export var getPerspectiveTransform: IgetPerspectiveTransform = alvision_module.getPerspectiveTransform;
 
     //! returns 3x3 perspective transformation for the corresponding 4 point pairs.
 //    CV_EXPORTS Mat getPerspectiveTransform( src : Array<_types.Point2f>, dst : Array<_types.Point2f> );
@@ -2686,11 +2686,11 @@ export var getPerspectiveTransform: IgetPerspectiveTransform = alvision_module.g
     @sa  warpAffine, transform
      */
 
-interface IgetAffineTransform{
-    (src: Array<_types.Point2f>, dst: Array<_types.Point2f>): _mat.Mat;
-}
+//interface IgetAffineTransform{
+//    (src: Array<_types.Point2f>, dst: Array<_types.Point2f>): _mat.Mat;
+//}
 
-export var getAffineTransform: IgetAffineTransform = alvision_module.getAffineTransform;
+//export var getAffineTransform: IgetAffineTransform = alvision_module.getAffineTransform;
 
     //CV_EXPORTS Mat getAffineTransform( src : Array<_types.Point2f>, dst : Array<_types.Point2f> );
 
@@ -2731,7 +2731,9 @@ export var invertAffineTransform: IinvertAffineTransform = alvision_module.inver
      */
 
 interface IgetPerspectiveTransform{
-    (src: _st.InputArray, dst : _st.InputArray ): _mat.Mat;
+    (src: _st.InputArray, dst: _st.InputArray): _mat.Mat;
+
+    (src: Array<_types.Point2f>, dst: Array<_types.Point2f>): _mat.Mat;
 }
 
 export var getPerspectiveTransform: IgetPerspectiveTransform = alvision_module.getPerspectiveTransform;
@@ -2740,6 +2742,8 @@ export var getPerspectiveTransform: IgetPerspectiveTransform = alvision_module.g
 
 interface IgetAffineTransform{
     (src: _st.InputArray, dst: _st.InputArray): _mat.Mat;
+
+    (src: Array<_types.Point2f>, dst: Array<_types.Point2f>): _mat.Mat;
 }
 
 export var getAffineTransform: IgetAffineTransform = alvision_module.getAffineTransform;
@@ -2843,22 +2847,24 @@ export var linearPolar: IlinearPolar = alvision_module.linearPolar;
 
     /** @overload */
 
-interface Iintegral{
-    (src: _st.InputArray, sum : _st.OutputArray, sdepth : _st.int /* = -1*/): void;
-}
+//interface Iintegral{
+//    (src: _st.InputArray, sum : _st.OutputArray, sdepth : _st.int /* = -1*/): void;
+//}
 
-export var integral: Iintegral = alvision_module.integral;
+//export var integral: Iintegral = alvision_module.integral;
 
 //    CV_EXPORTS_W void integral(src : _st.InputArray, sum : _st.OutputArray, sdepth : _st.int /* = -1*/);
 
     /** @overload */
 
-interface Iintegral {
-    (src: _st.InputArray, sum: _st.OutputArray,
-        sqsum : _st.OutputArray, sdepth: _st.int /* = -1*/, sqdepth : _st.int /* = -1*/): void;
-}
+//interface Iintegral {
+//    (src: _st.InputArray, sum: _st.OutputArray,
+//        sqsum: _st.OutputArray, sdepth: _st.int /* = -1*/, sqdepth: _st.int /* = -1*/): void;
 
-export var integral: Iintegral = alvision_module.integral;
+//    (src: _st.InputArray, sum: _st.OutputArray, sdepth: _st.int /* = -1*/): void;
+//}
+
+//export var integral: Iintegral = alvision_module.integral;
 
 //    CV_EXPORTS_AS(integral2) void integral(src : _st.InputArray, sum : _st.OutputArray,
 //        sqsum : _st.OutputArray, sdepth : _st.int /* = -1*/, sqdepth : _st.int /* = -1*/);
@@ -2902,6 +2908,12 @@ interface Iintegral{
     (src: _st.InputArray, sum: _st.OutputArray,
     sqsum: _st.OutputArray, tilted : _st.OutputArray,
     sdepth: _st.int /* = -1*/, sqdepth: _st.int /* = -1*/);
+
+    (src: _st.InputArray, sum: _st.OutputArray,
+        sqsum: _st.OutputArray, sdepth: _st.int /* = -1*/, sqdepth: _st.int /* = -1*/): void;
+
+
+    (src: _st.InputArray, sum: _st.OutputArray, sdepth: _st.int /* = -1*/): void;
 }
 
 
@@ -4000,13 +4012,13 @@ export var grabCut: IgrabCut = alvision_module.grabCut;
     @param labelType Type of the label array to build, see cv::DistanceTransformLabelTypes.
      */
 
-interface IdistanceTransform{
-    (src: _st.InputArray, dst: _st.OutputArray,
-        labels: _st.OutputArray,  distanceType :_st.int, maskSize : _st.int,
-        labelType: DistanceTransformLabelTypes /* = DIST_LABEL_CCOMP*/): void;
-}
+//interface IdistanceTransform{
+//    (src: _st.InputArray, dst: _st.OutputArray,
+//        labels: _st.OutputArray,  distanceType :_st.int, maskSize : _st.int,
+//        labelType: DistanceTransformLabelTypes /* = DIST_LABEL_CCOMP*/): void;
+//}
 
-export var distanceTransform: IdistanceTransform = alvision_module.distanceTransform;
+//export var distanceTransform: IdistanceTransform = alvision_module.distanceTransform;
 
 //    CV_EXPORTS_AS(distanceTransformWithLabels) void distanceTransform(src : _st.InputArray, dst : _st.OutputArray,
 //        labels : _st.OutputArray, int distanceType, int maskSize,
@@ -4026,7 +4038,10 @@ export var distanceTransform: IdistanceTransform = alvision_module.distanceTrans
 
 interface IdistanceTransform{
     (src: _st.InputArray, dst: _st.OutputArray,
-    distanceType: DistanceTypes, maskSize: _st.int, dstType: _st.int  /*= CV_32F*/): void;
+        distanceType: DistanceTypes, maskSize: _st.int, dstType: _st.int  /*= CV_32F*/): void;
+    (src: _st.InputArray, dst: _st.OutputArray,
+        labels: _st.OutputArray, distanceType: _st.int, maskSize: _st.int,
+        labelType: DistanceTransformLabelTypes /* = DIST_LABEL_CCOMP*/): void;
 }
 
 export var distanceTransform: IdistanceTransform = alvision_module.distanceTransform;
@@ -4043,14 +4058,14 @@ export var distanceTransform: IdistanceTransform = alvision_module.distanceTrans
     variant without `mask` parameter
     */
 
-interface IfloodFill{
-    (image: _st.InputOutputArray,
-        seedPoint: _types.Point, newVal: _types.Scalar, cb : (rect : _types.Rect) => void,
-            loDiff : _types.Scalar /* = Scalar()*/, upDiff : _types.Scalar /* = Scalar()*/,
-                flags : _st.int /* = 4*/) : _st.int;
-}
+//interface IfloodFill{
+//    (image: _st.InputOutputArray,
+//        seedPoint: _types.Point, newVal: _types.Scalar, cb : (rect : _types.Rect) => void,
+//            loDiff : _types.Scalar /* = Scalar()*/, upDiff : _types.Scalar /* = Scalar()*/,
+//                flags : _st.int /* = 4*/) : _st.int;
+//}
 
-export var floodFill: IfloodFill = alvision_module.floodFill;
+//export var floodFill: IfloodFill = alvision_module.floodFill;
 
  //   CV_EXPORTS int floodFill(image : _st.InputOutputArray,
  //       seedPoint : _types.Point, newVal : _types.Scalar, CV_OUT Rect* rect = 0,
@@ -4132,7 +4147,12 @@ export var floodFill: IfloodFill = alvision_module.floodFill;
         (image : _st.InputOutputArray, mask : _st.InputOutputArray,
         seedPoint : _types.Point, newVal : _types.Scalar, cb : (rect : _types.Rect) => void,
             loDiff : _types.Scalar /* = Scalar()*/, upDiff : _types.Scalar /* = Scalar()*/,
-                flags : _st.int /* = 4*/) : _st.int;
+            flags: _st.int /* = 4*/): _st.int;
+
+        (image: _st.InputOutputArray,
+            seedPoint: _types.Point, newVal: _types.Scalar, cb: (rect: _types.Rect) => void,
+            loDiff: _types.Scalar /* = Scalar()*/, upDiff: _types.Scalar /* = Scalar()*/,
+            flags: _st.int /* = 4*/): _st.int;
 }
 
 export var floodFill: IfloodFill = alvision_module.floodFill;
@@ -4959,13 +4979,13 @@ export var arrowedLine: IarrowedLine = alvision_module.arrowedLine;
     @param shift Number of fractional bits in the point coordinates.
      */
 
-    interface Irectangle {
-        (img: _st.InputOutputArray, pt1 : _types.Point, pt2 : _types.Point,
-            color: _types.Scalar, thickness?: _st.int /*= 1*/,
-            lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
-    }
+//    interface Irectangle {
+//        (img: _st.InputOutputArray, pt1 : _types.Point, pt2 : _types.Point,
+//            color: _types.Scalar, thickness?: _st.int /*= 1*/,
+//            lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
+//    }
 
-export var rectangle: Irectangle = alvision_module.rectangle;
+//export var rectangle: Irectangle = alvision_module.rectangle;
 
 //    CV_EXPORTS_W void rectangle(img : InputOutputArray, pt1 : _types.Point, pt2 : _types.Point,
 //                          color : _types.Scalar, thickness : _st.int = 1,
@@ -4979,6 +4999,10 @@ export var rectangle: Irectangle = alvision_module.rectangle;
 
     interface Irectangle {
         (img: _mat.Mat, rec : _types.Rect,
+            color: _types.Scalar, thickness?: _st.int /*= 1*/,
+            lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
+
+        (img: _st.InputOutputArray, pt1: _types.Point, pt2: _types.Point,
             color: _types.Scalar, thickness?: _st.int /*= 1*/,
             lineType?: _core.LineTypes /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
     }
@@ -5038,14 +5062,14 @@ export var circle: Icircle = alvision_module.circle;
     @param shift Number of fractional bits in the coordinates of the center and values of axes.
      */
 
-    interface Iellipse{
-        (img: _st.InputOutputArray, center: _types.Point, axes: _types.Size,
-            angle: _st.double, startAngle: _st.double, endAngle: _st.double,
-            color: _types.Scalar, thickness?: _st.int /*= 1*/,
-            lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
-    }
+//    interface Iellipse{
+//        (img: _st.InputOutputArray, center: _types.Point, axes: _types.Size,
+//            angle: _st.double, startAngle: _st.double, endAngle: _st.double,
+//            color: _types.Scalar, thickness?: _st.int /*= 1*/,
+//            lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
+//    }
 
-export var ellipse: Iellipse = alvision_module.ellipse;
+//export var ellipse: Iellipse = alvision_module.ellipse;
 
 //    CV_EXPORTS_W void ellipse(img : InputOutputArray, center : _types.Point, axes : _types.Size,
 //        angle : _st.double, startAngle : _st.double, endAngle : _st.double,
@@ -5065,6 +5089,10 @@ export var ellipse: Iellipse = alvision_module.ellipse;
     interface Iellipse{
         (img: _st.InputOutputArray, box: _types.RotatedRect, color: _types.Scalar,
             thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes  /* = LINE_8*/): void;
+        (img: _st.InputOutputArray, center: _types.Point, axes: _types.Size,
+            angle: _st.double, startAngle: _st.double, endAngle: _st.double,
+            color: _types.Scalar, thickness?: _st.int /*= 1*/,
+            lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
     }
 
 export var ellipse: Iellipse = alvision_module.ellipse;
@@ -5119,13 +5147,13 @@ export var drawMarker: IdrawMarker = alvision_module.drawMarker;
 
     /** @overload */
 
-    interface IfillConvexPoly{
-        (img: _mat.Mat, pts : Array<_types.Point>,
-            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/,
-            shift?: _st.int /* = 0*/): void;
-    }
+//    interface IfillConvexPoly{
+//        (img: _mat.Mat, pts : Array<_types.Point>,
+//            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/,
+//            shift?: _st.int /* = 0*/): void;
+//    }
 
-export var fillConvexPoly: IfillConvexPoly = alvision_module.fillConvexPoly;
+//export var fillConvexPoly: IfillConvexPoly = alvision_module.fillConvexPoly;
 
 //    CV_EXPORTS void fillConvexPoly(img : _mat.Mat, const Point* pts, int npts,
 //    color : _types.Scalar, lineType?: _core.LineTypes /* = LINE_8*/,
@@ -5149,6 +5177,10 @@ export var fillConvexPoly: IfillConvexPoly = alvision_module.fillConvexPoly;
         (img: _st.InputOutputArray, points: _st.InputArray,
             color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/,
             shift?: _st.int /* = 0*/): void;
+
+        (img: _mat.Mat, pts: Array<_types.Point>,
+            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/,
+            shift?: _st.int /* = 0*/): void;
     }
 
 export var fillConvexPoly: IfillConvexPoly = alvision_module.fillConvexPoly;
@@ -5159,13 +5191,13 @@ export var fillConvexPoly: IfillConvexPoly = alvision_module.fillConvexPoly;
 
     /** @overload */
 
-    interface IfillPoly{
-        (img: _mat.Mat, pts : Array<Array<_types.Point>>, /*ncontours: _st.int,*/
-            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/,
-        offset?: _types.Point /* = Point()*/): void;
-    }
+//    interface IfillPoly{
+//        (img: _mat.Mat, pts : Array<Array<_types.Point>>, /*ncontours: _st.int,*/
+//            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/,
+//        offset?: _types.Point /* = Point()*/): void;
+//    }
 
-export var fillPoly: IfillPoly = alvision_module.fillPoly;
+//export var fillPoly: IfillPoly = alvision_module.fillPoly;
 
 //    CV_EXPORTS void fillPoly(img : _mat.Mat, const Point** pts,
 //    const int* npts, ncontours : _st.int,
@@ -5188,6 +5220,10 @@ export var fillPoly: IfillPoly = alvision_module.fillPoly;
 
     interface IfillPoly {
         (img: _st.InputOutputArray, pts: _st.InputArrayOfArrays,
+            color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/,
+            offset?: _types.Point /* = Point()*/): void;
+
+        (img: _mat.Mat, pts: Array<Array<_types.Point>>, /*ncontours: _st.int,*/
             color: _types.Scalar, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/,
             offset?: _types.Point /* = Point()*/): void;
     }
@@ -5338,6 +5374,8 @@ export var drawContours: IdrawContours = alvision_module.drawContours;
 
         interface IclipLine{
             (imgSize: _types.Size, pt1: _types.Point, pt2: _types.Point, cb?: (pt1: _types.Point, pt2: _types.Point) => void): boolean;
+            (imgRect: _types.Rect, pt1: _types.Point, pt2: _types.Point, cb?: (pt1: _types.Point, pt2: _types.Point) => void): boolean;
+
         }
 
 export var clipLine: IclipLine = alvision_module.clipLine;
@@ -5349,11 +5387,11 @@ export var clipLine: IclipLine = alvision_module.clipLine;
     @param pt1 First line point.
     @param pt2 Second line point.
     */
-interface IclipLine {
-    (imgRect: _types.Rect, pt1: _types.Point, pt2: _types.Point, cb?: (pt1: _types.Point, pt2: _types.Point) => void): boolean;
-    }
+//interface IclipLine {
+//    (imgRect: _types.Rect, pt1: _types.Point, pt2: _types.Point, cb?: (pt1: _types.Point, pt2: _types.Point) => void): boolean;
+//    }
 
-export var clipLine: IclipLine = alvision_module.clipLine;
+//export var clipLine: IclipLine = alvision_module.clipLine;
 
     //CV_EXPORTS_W bool clipLine(imgRect : _types.Rect, CV_OUT CV_IN_OUT Point& pt1, CV_OUT CV_IN_OUT Point& pt2);
 

@@ -2,11 +2,13 @@
   "name": "node-alvision",
   "globalDependencies": {
     "async": "github:DefinitelyTyped/DefinitelyTyped/async/async.d.ts#5a8fc5ee71701431e4fdbb80c506e3c13f85a9ff",
-    "colors": "github:DefinitelyTyped/DefinitelyTyped/colors/colors.d.ts#5a8fc5ee71701431e4fdbb80c506e3c13f85a9ff",
-    "node": "github:DefinitelyTyped/DefinitelyTyped/node/node.d.ts#f8af639bf29b2b00e5d27ce93c0f046564b8525c",
-    "tape": "github:DefinitelyTyped/DefinitelyTyped/tape/tape.d.ts#f8af639bf29b2b00e5d27ce93c0f046564b8525c"
+    "core-js": "registry:dt/core-js#0.0.0+20160725163759",
+    "node": "registry:dt/node#6.0.0+20160831021119",
+    "tape": "github:DefinitelyTyped/DefinitelyTyped/tape/tape.d.ts#f8af639bf29b2b00e5d27ce93c0f046564b8525c",
+    "typescript": "registry:dt/typescript#0.4.0+20160317120654"
   },
   "dependencies": {
+    "chalk": "registry:npm/chalk#1.1.1+20160812215109",
     "ts-node": "npm:ts-node/dist/index.d.ts"
   }
 }

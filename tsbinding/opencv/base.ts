@@ -47,6 +47,7 @@ var alvision_module = require('../../lib/bindings.js');
 
 //import * as _constants from './Constants'
 import * as _st from './static'
+import * as _core from './core'
 import util = require('util');
 
 //#ifndef __OPENCV_CORE_BASE_HPP__
@@ -355,7 +356,9 @@ It is possible to alternate error processing by using redirectError().
  */
 
     interface Ierror {
-        (_code: cv.Error.Code, _err: string, _func: string, _file: string, _line: _st.int ): void;
+        (_code: cv.Error.Code, _err: string, _func: string, _file: string, _line: _st.int): void;
+
+        (exc: _core.IException): void;
     }
 
 export var error: Ierror = alvision_module.error;

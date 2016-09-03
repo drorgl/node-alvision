@@ -1,7 +1,7 @@
 //TODO: implement 2nd stage 
 //import tape = require("tape");
 //import path = require("path");
-//import colors = require("colors");
+//
 //import async = require("async");
 //import alvision = require("../../../tsbinding/alvision");
 //import util = require('util');

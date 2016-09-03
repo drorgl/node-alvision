@@ -156,11 +156,11 @@ export var inpaint: Iinpaint = alvision_module.inpaint;
     parameter.
      */
 
-interface IfastNlMeansDenoising {
-    (src: _st.InputArray, dst: _st.OutputArray , h? : _st.float /*= 3*/,
-        templateWindowSize? :_st.int /*= 7*/, searchWindowSize? : _st.int /*= 21*/): void;
-}
-export var fastNlMeansDenoising: IfastNlMeansDenoising = alvision_module.fastNlMeansDenoising;
+//interface IfastNlMeansDenoising {
+//    (src: _st.InputArray, dst: _st.OutputArray , h? : _st.float /*= 3*/,
+//        templateWindowSize? :_st.int /*= 7*/, searchWindowSize? : _st.int /*= 21*/): void;
+//}
+//export var fastNlMeansDenoising: IfastNlMeansDenoising = alvision_module.fastNlMeansDenoising;
 
 //    CV_EXPORTS_W void fastNlMeansDenoising(InputArray src, OutputArray dst, float h = 3,
 //        int templateWindowSize = 7, int searchWindowSize = 21);
@@ -194,7 +194,10 @@ interface IfastNlMeansDenoising{
     (src: _st.InputArray, dst: _st.OutputArray,
         h : Array<_st.float>,
         templateWindowSize?: _st.int /* = 7*/, searchWindowSize?: _st.int /* = 21*/,
-    normType? : _base.NormTypes /* = NORM_L2*/) : void;
+        normType?: _base.NormTypes /* = NORM_L2*/): void;
+
+    (src: _st.InputArray, dst: _st.OutputArray, h?: _st.float /*= 3*/,
+        templateWindowSize?: _st.int /*= 7*/, searchWindowSize?: _st.int /*= 21*/): void;
 }
 export var fastNlMeansDenoising: IfastNlMeansDenoising = alvision_module.fastNlMeansDenoising;
 
@@ -258,13 +261,13 @@ export var fastNlMeansDenoisingColored: IfastNlMeansDenoisingColored = alvision_
     value preserves details but also preserves some noise
      */
 
-interface IfastNlMeansDenoisingMulti{
-    (srcImgs: _st.InputArrayOfArrays, dst: _st.OutputArray ,
-        imgToDenoiseIndex: _st.int, temporalWindowSize: _st.int ,
-        h?: _st.float /*= 3*/, templateWindowSize?: _st.int /* = 7*/, searchWindowSize?: _st.int /* = 21*/);
-}
+//interface IfastNlMeansDenoisingMulti{
+//    (srcImgs: _st.InputArrayOfArrays, dst: _st.OutputArray ,
+//        imgToDenoiseIndex: _st.int, temporalWindowSize: _st.int ,
+//        h?: _st.float /*= 3*/, templateWindowSize?: _st.int /* = 7*/, searchWindowSize?: _st.int /* = 21*/);
+//}
 
-export var fastNlMeansDenoisingMulti: IfastNlMeansDenoisingMulti = alvision_module.fastNlMeansDenoisingMulti;
+//export var fastNlMeansDenoisingMulti: IfastNlMeansDenoisingMulti = alvision_module.fastNlMeansDenoisingMulti;
 
 //    CV_EXPORTS_W void fastNlMeansDenoisingMulti(InputArrayOfArrays srcImgs, OutputArray dst,
 //        int imgToDenoiseIndex, int temporalWindowSize,
@@ -301,7 +304,12 @@ interface IfastNlMeansDenoisingMulti{
         imgToDenoiseIndex: _st.int, temporalWindowSize: _st.int,
         h : Array<_st.float>,
         templateWindowSize?: _st.int /* = 7*/, searchWindowSize?: _st.int /* = 21*/,
-    normType? : _base.NormTypes/* = NORM_L2*/) : void;
+        normType?: _base.NormTypes/* = NORM_L2*/): void;
+
+
+    (srcImgs: _st.InputArrayOfArrays, dst: _st.OutputArray,
+        imgToDenoiseIndex: _st.int, temporalWindowSize: _st.int,
+        h?: _st.float /*= 3*/, templateWindowSize?: _st.int /* = 7*/, searchWindowSize?: _st.int /* = 21*/);
 }
 
 export var fastNlMeansDenoisingMulti: IfastNlMeansDenoisingMulti = alvision_module.fastNlMeansDenoisingMulti;

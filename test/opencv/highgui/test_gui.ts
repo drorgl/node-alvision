@@ -40,7 +40,7 @@
 //
 //M*/
 
-/// <reference path="../../../typings/tsd.d.ts" />
+/// <reference path="../../../typings/index.d.ts" />
 /// <reference path="../../../tsbinding/alvision.d.ts" />
 /// <reference path="../../../tsbinding/alvision.ts" />
 
@@ -51,7 +51,7 @@
 
 import tape = require("tape");
 import path = require("path");
-import colors = require("colors");
+
 import async = require("async");
 import alvision = require("../../../tsbinding/alvision");
 

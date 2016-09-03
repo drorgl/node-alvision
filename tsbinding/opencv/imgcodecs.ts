@@ -278,11 +278,11 @@ See cv::imread for the list of supported formats and flags description.
 @param flags The same flags as in cv::imread, see cv::ImreadModes.
 */
 
-interface Iimdecode {
-    (buf: _st.InputArray | Buffer, flags: ImreadModes): _mat.Mat;
-}
+//interface Iimdecode {
+//    (buf: _st.InputArray | Buffer, flags: ImreadModes): _mat.Mat;
+//}
 
-export var imdecode: Iimdecode = alvision_module.imdecode;
+//export var imdecode: Iimdecode = alvision_module.imdecode;
 
 //CV_EXPORTS_W Mat imdecode( InputArray buf, int flags );
 
@@ -295,6 +295,8 @@ reallocations when the function is called repeatedly for images of the same size
 
 interface Iimdecode {
     (buf: _st.InputArray, flags: ImreadModes, dst: _mat.Mat): _mat.Mat;
+
+    (buf: _st.InputArray | Buffer, flags: ImreadModes): _mat.Mat;
 }
 
 export var imdecode: Iimdecode = alvision_module.imdecode;

@@ -1,7 +1,7 @@
 import fs = require('fs')
 import test = require('tape')
 import path = require('path')
-import colors = require('colors')
+import chalk = require('chalk')
 import async = require('async')
 
 var cv = null
@@ -49,6 +49,8 @@ function tablevel() : string {
 
 test.createStream({ objectMode: true }).on('data', (row)=> {
 	//console.log(JSON.stringify(row));
+    let errorColor = chalk.red.bold;
+    let okColor = chalk.green.bold;
 
 	if (row.type == "end") {
 		console.log();
@@ -59,13 +61,13 @@ test.createStream({ objectMode: true }).on('data', (row)=> {
 		console.log(tablevel() + "%d. Testing %s", row.id, row.name);
 	} else {
 		if (row.ok) {
-			console.log(tablevel() + "%d. \t %s \t %s".green.bold, row.id, row.ok, row.name);
+			console.log(tablevel() + okColor( "%d. \t %s \t %s"), row.id, row.ok, row.name);
 			if (row.operator == "throws" && row.actual != undefined) {
-				console.log(tablevel() + " threw: %s".green.bold, row.actual);
+				console.log(tablevel() + okColor( " threw: %s"), row.actual);
 			}
 		} else {
-			console.log(tablevel() + "%d. \t %s \t %s".red.bold, row.id, row.ok, row.name);
-			console.log(tablevel() + "\t %s".red.bold, row.actual);
+            console.log(tablevel() + errorColor( "%d. \t %s \t %s"), row.id, row.ok, row.name);
+			console.log(tablevel() + errorColor( "\t %s"), row.actual);
 		}
 	}
 	//row.

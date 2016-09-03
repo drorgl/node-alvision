@@ -69,7 +69,7 @@ import * as _features2d from './../features2d'
 ////
 ////namespace cv
 ////{
-export    namespace viz
+export    namespace viz3d
     {
 
 ////! @addtogroup viz

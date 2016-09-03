@@ -1,4 +1,4 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 /// <reference path="alvision.ts" />
 /// <reference path="ffmpeg/ffmpeg.ts" />
 
@@ -9,7 +9,7 @@
 
 import tape = require("tape");
 import path = require("path");
-import colors = require("colors");
+import chalk = require("chalk");
 import async = require("async");
 
 import * as alvision from './alvision'
@@ -28,7 +28,7 @@ import * as alvision from './alvision'
 
 
 //Workaround for ts optimizations
-var redColor = colors.red;
+//var redColor = colors.red;
 
 //var alvision = null;
 
@@ -56,25 +56,31 @@ function tablevel() : string{
     return retval;
 }
 
-tape.createStream({ objectMode: true }).on('data', (row) => {
-    if (row.type == "end") {
-        console.log();
-        level--;
-    } else if (row.type == "test") {
-        level++;
-        console.log();
-        console.log(tablevel() + "%d. Testing %s", row.id, row.name);
-    } else {
-        if (row.ok) {
-            console.log(tablevel() + "%d. \t %s \t %s".green.bold, row.id, row.ok, row.name);
-            if (row.operator == "throws" && row.actual != undefined) {
-                console.log(tablevel() + " threw: %s".green.bold, row.actual);
-            }
-        } else {
-            console.log(tablevel() + "%d. \t %s \t %s".red.bold, row.id, row.ok, row.name);
-            console.log(tablevel() + "\t %s".red.bold, row.actual);
-        }
-    }
+tape.createStream({ objectMode: true }).on('data', (row)=> {
+	//console.log(JSON.stringify(row));
+    let errorColor = chalk.red.bold;
+    let okColor = chalk.green.bold;
+
+	if (row.type == "end") {
+		console.log();
+		level--;
+	} else if (row.type == "test") {
+		level++;
+		console.log();
+		console.log(tablevel() + "%d. Testing %s", row.id, row.name);
+	} else {
+		if (row.ok) {
+			console.log(tablevel() + okColor( "%d. \t %s \t %s"), row.id, row.ok, row.name);
+			if (row.operator == "throws" && row.actual != undefined) {
+				console.log(tablevel() + okColor( " threw: %s"), row.actual);
+			}
+		} else {
+            console.log(tablevel() + errorColor( "%d. \t %s \t %s"), row.id, row.ok, row.name);
+			console.log(tablevel() + errorColor( "\t %s"), row.actual);
+		}
+	}
+	//row.
+	//console.log(JSON.stringify(row))
 });
 
 

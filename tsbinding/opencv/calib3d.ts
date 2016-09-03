@@ -1475,14 +1475,14 @@ stereoRectifyUncalibrated to compute the rectification transformation. :
 @endcode
  */
 
-interface IfindFundamentalMat {
-    (points1: _st.InputArray, points2: _st.InputArray ,
-        method?  : FundMatrixAlgo /*= FM_RANSAC*/,
-        param1?: _st.double /* = 3.*/, param2?: _st.double /* = 0.99*/,
-        mask?: _st.OutputArray  /*= noArray()*/): _mat.Mat;
-}
+//interface IfindFundamentalMat {
+//    (points1: _st.InputArray, points2: _st.InputArray ,
+//        method?  : FundMatrixAlgo /*= FM_RANSAC*/,
+//        param1?: _st.double /* = 3.*/, param2?: _st.double /* = 0.99*/,
+//        mask?: _st.OutputArray  /*= noArray()*/): _mat.Mat;
+//}
 
-export var findFundamentalMat: IfindFundamentalMat = alvision_module.findFundamentalMat;
+//export var findFundamentalMat: IfindFundamentalMat = alvision_module.findFundamentalMat;
 
 
 //CV_EXPORTS_W Mat findFundamentalMat( InputArray points1, InputArray points2,
@@ -1495,7 +1495,12 @@ export var findFundamentalMat: IfindFundamentalMat = alvision_module.findFundame
 interface IfindFundamentalMat{
     (points1: _st.InputArray, points2: _st.InputArray ,
         mask: _st.OutputArray , method? : FundMatrixAlgo /* = FM_RANSAC*/,
-        param1?: _st.double /* = 3.*/, param2?: _st.double /*= 0.99*/ ) : _mat.Mat;
+        param1?: _st.double /* = 3.*/, param2?: _st.double /*= 0.99*/): _mat.Mat;
+
+    (points1: _st.InputArray, points2: _st.InputArray,
+        method?: FundMatrixAlgo /*= FM_RANSAC*/,
+        param1?: _st.double /* = 3.*/, param2?: _st.double /* = 0.99*/,
+        mask?: _st.OutputArray  /*= noArray()*/): _mat.Mat;
 }
 export var findFundamentalMat: IfindFundamentalMat = alvision_module.findFundamentalMat;
 
@@ -1533,13 +1538,13 @@ second images, respectively. The result of this function may be passed further t
 decomposeEssentialMat or recoverPose to recover the relative pose between cameras.
  */
 
-interface IfindEssentialMat {
-    (points1: _st.InputArray, points2: _st.InputArray ,
-        cameraMatrix: _st.InputArray, method?: _st.int /* = RANSAC*/,
-        prob?: _st.double /*= 0.999*/, threshold?: _st.double /*= 1.0*/,
-        mask?: _st.OutputArray /* = noArray()*/): _mat.Mat
-}
-export var findEssentialMat: IfindEssentialMat = alvision_module.findEssentialMat;
+//interface IfindEssentialMat {
+//    (points1: _st.InputArray, points2: _st.InputArray ,
+//        cameraMatrix: _st.InputArray, method?: _st.int /* = RANSAC*/,
+//        prob?: _st.double /*= 0.999*/, threshold?: _st.double /*= 1.0*/,
+//        mask?: _st.OutputArray /* = noArray()*/): _mat.Mat
+//}
+//export var findEssentialMat: IfindEssentialMat = alvision_module.findEssentialMat;
 
 //CV_EXPORTS_W Mat findEssentialMat( InputArray points1, InputArray points2,
 //                                 InputArray cameraMatrix, int method = RANSAC,
@@ -1581,6 +1586,11 @@ interface IfindEssentialMat {
         focal?: _st.double /* = 1.0*/, pp?: _types.Point2d /*= Point2d(0, 0)*/,
         method?: _st.int /* = RANSAC*/, prob?: _st.double /*= 0.999*/,
         threshold?: _st.double  /* = 1.0*/, mask?: _st.OutputArray  /* = noArray()*/): _mat.Mat;
+
+    (points1: _st.InputArray, points2: _st.InputArray,
+        cameraMatrix: _st.InputArray, method?: _st.int /* = RANSAC*/,
+        prob?: _st.double /*= 0.999*/, threshold?: _st.double /*= 1.0*/,
+        mask?: _st.OutputArray /* = noArray()*/): _mat.Mat
 }
 
 export var findEssentialMat: IfindEssentialMat = alvision_module.findEssentialMat;
@@ -1654,12 +1664,12 @@ points1 and points2 are the same input for findEssentialMat. :
 @endcode
  */
 
-interface IrecoverPose {
-    (E: _st.InputArray, points1: _st.InputArray, points2: _st.InputArray ,
-        cameraMatrix: _st.InputArray, R: _st.OutputArray, t: _st.OutputArray ,
-        mask: _st.InputOutputArray /* = noArray()*/): _mat.Mat;
-}
-export var recoverPose: IrecoverPose = alvision_module.recoverPose;
+//interface IrecoverPose {
+//    (E: _st.InputArray, points1: _st.InputArray, points2: _st.InputArray ,
+//        cameraMatrix: _st.InputArray, R: _st.OutputArray, t: _st.OutputArray ,
+//        mask: _st.InputOutputArray /* = noArray()*/): _mat.Mat;
+//}
+//export var recoverPose: IrecoverPose = alvision_module.recoverPose;
 
 //CV_EXPORTS_W int recoverPose( InputArray E, InputArray points1, InputArray points2,
 //                            InputArray cameraMatrix, OutputArray R, OutputArray t,
@@ -1696,6 +1706,11 @@ interface IrecoverPose {
         R: _st.OutputArray, t: _st.OutputArray ,
         focal?: _st.double /* = 1.0*/, pp?: _types.Point2d /* = Point2d(0, 0)*/,
         mask?: _st.InputOutputArray /* = noArray()*/): _st.int;
+
+
+    (E: _st.InputArray, points1: _st.InputArray, points2: _st.InputArray,
+        cameraMatrix: _st.InputArray, R: _st.OutputArray, t: _st.OutputArray,
+        mask: _st.InputOutputArray /* = noArray()*/): _mat.Mat;
 }
 export var recoverPose: IrecoverPose = alvision_module.recoverPose;
 

@@ -432,11 +432,11 @@ export var waitKey: IwaitKey = alvision_module.waitKey;
     @param mat Image to be shown.
      */
 
-interface Iimshow {
-    (winname: string, mat: _st.InputArray ): void;
-}
+//interface Iimshow {
+//    (winname: string, mat: _st.InputArray ): void;
+//}
 
-export var imshow: Iimshow = alvision_module.imshow;
+//export var imshow: Iimshow = alvision_module.imshow;
 
     //CV_EXPORTS_W void imshow(const String& winname, InputArray mat);
 
@@ -692,6 +692,8 @@ export var setTrackbarMin: IsetTrackbarMin = alvision_module.setTrackbarMin;
      */
 interface Iimshow {
     (winname: string, tex: _opengl.ogl.Texture2D): void;
+
+    (winname: string, mat: _st.InputArray): void;
 }
 export var imshow: Iimshow = alvision_module.imshow;
 //    CV_EXPORTS void imshow(const String& winname, const ogl::Texture2D& tex);

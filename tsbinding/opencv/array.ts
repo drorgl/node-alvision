@@ -224,25 +224,18 @@ function cvGetReal1DMat(mat: _mat.Mat, idx0: _st.int): number {
     switch (_cvdef.MatrixType.CV_MAT_TYPE(mat.type())) {
         case _cvdef.MatrixType.CV_8U:
             return <number> mat.at<_st.uchar>("uchar", idx0).get();
-            break;
         case _cvdef.MatrixType.CV_8S:
             return <number> mat.at<_st.schar>("schar", idx0).get();
-            break;
         case _cvdef.MatrixType.CV_16U:
             return <number> mat.at<_st.ushort>("ushort", idx0).get();
-            break;
         case _cvdef.MatrixType.CV_16S:
             return <number> mat.at<_st.short>("short", idx0).get();
-            break;
         case _cvdef.MatrixType.CV_32S:
             return <number> mat.at<_st.int>("int", idx0).get();
-            break;
         case _cvdef.MatrixType.CV_32F:
             return <number> mat.at<_st.float>("float", idx0).get()
-            break;
         case _cvdef.MatrixType.CV_64F:
             return <number> mat.at<_st.double>("double", idx0).get();
-            break;
     }
     throw new Error("not implemented");
 }
@@ -251,25 +244,18 @@ function cvGetReal1DSparseMat(sparseMat: _mat.SparseMat, idx0: _st.int): number 
     switch (_cvdef.MatrixType.CV_MAT_TYPE(sparseMat.type())) {
         case _cvdef.MatrixType.CV_8U:
             return <number>sparseMat.ptr<_st.uchar>("uchar", idx0, false).get();
-            break;
         case _cvdef.MatrixType.CV_8S:
             return <number>sparseMat.ptr<_st.schar>("schar", idx0, false).get();
-            break;
         case _cvdef.MatrixType.CV_16U:
             return <number>sparseMat.ptr<_st.ushort>("ushort", idx0, false).get();
-            break;
         case _cvdef.MatrixType.CV_16S:
             return <number>sparseMat.ptr<_st.short>("short", idx0, false).get();
-            break;
         case _cvdef.MatrixType.CV_32S:
             return <number>sparseMat.ptr<_st.int>("int", idx0, false).get();
-            break;
         case _cvdef.MatrixType.CV_32F:
             return <number>sparseMat.ptr<_st.float>("float", idx0, false).get();
-            break;
         case _cvdef.MatrixType.CV_64F:
             return <number>sparseMat.ptr<_st.double>("double", idx0, false).get();
-            break;
     }
 }
 
@@ -288,25 +274,18 @@ function cvGetReal2DMat(mat: _mat.Mat, idx0: _st.int, idx1: _st.int): number {
     switch (_cvdef.MatrixType.CV_MAT_TYPE(mat.type())) {
         case _cvdef.MatrixType.CV_8U:
             return <number>mat.at<_st.uchar>("uchar", idx0, idx1).get();
-            break;
         case _cvdef.MatrixType.CV_8S:
             return <number>mat.at<_st.schar>("schar", idx0, idx1).get();
-            break;
         case _cvdef.MatrixType.CV_16U:
             return <number>mat.at<_st.ushort>("ushort", idx0, idx1).get();
-            break;
         case _cvdef.MatrixType.CV_16S:
             return <number>mat.at<_st.short>("short", idx0, idx1).get();
-            break;
         case _cvdef.MatrixType.CV_32S:
             return <number>mat.at<_st.int>("int", idx0, idx1).get();
-            break;
         case _cvdef.MatrixType.CV_32F:
             return <number>mat.at<_st.float>("float", idx0, idx1).get();
-            break;
         case _cvdef.MatrixType.CV_64F:
             return <number>mat.at<_st.double>("double", idx0, idx1).get();
-            break;
     }
 }
 
@@ -314,25 +293,18 @@ function cvGetReal2DSparseMat(sparseMat: _mat.SparseMat, idx0: _st.int, idx1: _s
     switch (_cvdef.MatrixType.CV_MAT_TYPE(sparseMat.type())) {
         case _cvdef.MatrixType.CV_8U:
             return <number>sparseMat.ptr<_st.uchar>("uchar", idx0, idx1, false).get();
-            break;
         case _cvdef.MatrixType.CV_8S:
             return <number>sparseMat.ptr<_st.schar>("schar", idx0, idx1, false).get();
-            break;
         case _cvdef.MatrixType.CV_16U:
             return <number>sparseMat.ptr<_st.ushort>("ushort", idx0, idx1, false).get();
-            break;
         case _cvdef.MatrixType.CV_16S:
             return <number>sparseMat.ptr<_st.short>("short", idx0, idx1, false).get();
-            break;
         case _cvdef.MatrixType.CV_32S:
             return <number>sparseMat.ptr<_st.int>("int", idx0, idx1, false).get();
-            break;
         case _cvdef.MatrixType.CV_32F:
             return <number>sparseMat.ptr<_st.float>("float", idx0, idx1, false).get();
-            break;
         case _cvdef.MatrixType.CV_64F:
             return <number>sparseMat.ptr<_st.double>("double", idx0, idx1, false).get();
-            break;
     }
 }
 
@@ -351,25 +323,18 @@ function cvGetReal3DMat(mat: _mat.Mat, idx0: _st.int, idx1: _st.int, idx2: _st.i
     switch (_cvdef.MatrixType.CV_MAT_TYPE(mat.type())) {
         case _cvdef.MatrixType.CV_8U:
             return <number>mat.at<_st.uchar>("uchar", idx0, idx1, idx2).get();
-            break;
         case _cvdef.MatrixType.CV_8S:
             return <number>mat.at<_st.schar>("schar", idx0, idx1, idx2).get();
-            break;
         case _cvdef.MatrixType.CV_16U:
             return <number>mat.at<_st.ushort>("ushort", idx0, idx1, idx2).get();
-            break;
         case _cvdef.MatrixType.CV_16S:
             return <number>mat.at<_st.short>("short", idx0, idx1, idx2).get();
-            break;
         case _cvdef.MatrixType.CV_32S:
             return <number>mat.at<_st.int>("int", idx0, idx1, idx2).get();
-            break;
         case _cvdef.MatrixType.CV_32F:
             return <number>mat.at<_st.float>("float", idx0, idx1, idx2).get();
-            break;
         case _cvdef.MatrixType.CV_64F:
             return <number>mat.at<_st.double>("double", idx0, idx1, idx2).get();
-            break;
     }
 }
 
@@ -377,25 +342,18 @@ function cvGetReal3DSparseMat(sparseMat: _mat.SparseMat, idx0: _st.int, idx1: _s
     switch (_cvdef.MatrixType.CV_MAT_TYPE(sparseMat.type())) {
         case _cvdef.MatrixType.CV_8U:
             return <number>sparseMat.ptr<_st.uchar>("uchar", idx0, idx1, idx2, false).get();
-            break;
         case _cvdef.MatrixType.CV_8S:
             return <number>sparseMat.ptr<_st.schar>("schar", idx0, idx1, idx2, false).get();
-            break;
         case _cvdef.MatrixType.CV_16U:
             return <number>sparseMat.ptr<_st.ushort>("ushort", idx0, idx1, idx2, false).get();
-            break;
         case _cvdef.MatrixType.CV_16S:
             return <number>sparseMat.ptr<_st.short>("short", idx0, idx1, idx2, false).get();
-            break;
         case _cvdef.MatrixType.CV_32S:
             return <number>sparseMat.ptr<_st.int>("int", idx0, idx1, idx2, false).get();
-            break;
         case _cvdef.MatrixType.CV_32F:
             return <number>sparseMat.ptr<_st.float>("float", idx0, idx1, idx2, false).get();
-            break;
         case _cvdef.MatrixType.CV_64F:
             return <number>sparseMat.ptr<_st.double>("double", idx0, idx1, idx2, false).get();
-            break;
     }
 }
 

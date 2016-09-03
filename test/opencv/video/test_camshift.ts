@@ -41,7 +41,7 @@
 
 import tape = require("tape");
 import path = require("path");
-import colors = require("colors");
+
 import async = require("async");
 import alvision = require("../../../tsbinding/alvision");
 import util = require('util');
@@ -434,7 +434,7 @@ class CV_MeanShiftTest extends CV_TrackBaseTest
             this.ts.set_failed_test_info(code); return code;
         }
 
-        _exit_:
+        //_exit_:
 
         if (code < 0) {
 //            #if 0// defined _DEBUG && defined WIN32
