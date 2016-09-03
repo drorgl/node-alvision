@@ -42,7 +42,7 @@
 //M*/
 
 ////// <reference path="Matrix.ts" />
-var alvision_module = require('../../lib/bindings.js');
+import alvision_module from "../bindings";
 
 //import * as _constants from './Constants'
 import * as _st from './static';
@@ -665,21 +665,25 @@ interface Event
 //
 //        /** @brief Class providing functionality for querying the specified GPU properties.
 //         */
+        export interface DeviceInfoStatic {
+            //! creates DeviceInfo object for the current GPU
+            new (): DeviceInfo;
+
+            /** @brief The constructors.
+            
+            @param device_id System index of the CUDA device starting with 0.
+            
+            Constructs the DeviceInfo object for the specified device. If device_id parameter is missed, it
+            constructs an object for the current device.
+             */
+            new (device_id: _st.int ): DeviceInfo
+
+        }
+
 export interface DeviceInfo
 {
 //            public:
-//            //! creates DeviceInfo object for the current GPU
-//            DeviceInfo();
-//
-//            /** @brief The constructors.
-//        
-//            @param device_id System index of the CUDA device starting with 0.
-//        
-//            Constructs the DeviceInfo object for the specified device. If device_id parameter is missed, it
-//            constructs an object for the current device.
-//             */
-//            DeviceInfo(int device_id);
-//
+
     /** @brief Returns system index of the CUDA device starting with 0.
     */
     deviceID(): _st.int;
@@ -869,7 +873,9 @@ export interface DeviceInfo
 //
 //            private:
 //            int device_id_;
-};
+        };
+
+        export var DeviceInfo: DeviceInfoStatic = alvision_module.cuda.DeviceInfo;
 //
 //        CV_EXPORTS void printCudaDeviceInfo(int device);
 //        CV_EXPORTS void printShortCudaDeviceInfo(int device);

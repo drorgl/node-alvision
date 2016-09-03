@@ -1,5 +1,5 @@
 /// <reference path="../../typings/index.d.ts" />
-var alvision_module = require('../../lib/bindings.js');
+import alvision_module from "../bindings";
 
 import * as _st from './static';
 import * as _pers from './persistence';
@@ -62,6 +62,204 @@ import fs = require('fs');
 //#include "opencv2/core/utility.hpp"
 
 export namespace cvtest {
+
+    export abstract class BaseTest {
+        //public:
+        //    // constructor(s) and destructor
+        constructor() {
+            this.ts = new TS();
+            this.test_case_count = -1;
+        }
+        //    
+        //
+        //    // the main procedure of the test
+        run(start_from: _st.int): void {
+            var test_case_idx: _st.int
+            var count = this.get_test_case_count();
+            //var t_start: _st.int64 = cvGetTickCount();
+            //var freq: _st.double = cv::getTickFrequency();
+
+            //var time = process.hrtime();
+            //var diff[0] * 1e9 + diff[1]
+
+            var ff: boolean = this.can_do_fast_forward();
+            var progress: _st.int = 0;
+            var code: _st.int;
+            //var t1: _st.int64 = t_start;
+
+            for (test_case_idx = ff && start_from >= 0 ? start_from : 0;
+                count < 0 || test_case_idx < count; test_case_idx = test_case_idx.valueOf() + 1) {
+                this.ts.update_context(this, test_case_idx, ff);
+
+                //DROR: this doesn't make any sense, dt will always be 0...
+                progress = this.update_progress(progress, test_case_idx, count, 0);// (t1.valueOf() - t_start.valueOf()) / (freq.valueOf() * 1000));
+
+                code = this.prepare_test_case(test_case_idx);
+                if (code < 0 || this.ts.get_err_code() < 0)
+                    return;
+
+                if (code == 0)
+                    continue;
+
+                this.run_func();
+
+                if (this.ts.get_err_code() < 0)
+                    return;
+
+                if (this.validate_test_results(test_case_idx) < 0 || this.ts.get_err_code() < 0)
+                    return;
+            }
+        }
+        //
+        //    // the wrapper for run that cares of exceptions
+        safe_run(start_from?: _st.int /*= 0*/): void {
+            this.read_params(this.ts.get_file_storage());
+            this.ts.update_context(null, -1, true);
+            this.ts.update_context(this, -1, true);
+
+            try {
+                this.run(start_from);
+            }
+            catch (exc) {
+                //todo, check if correct!
+                var errorStr = exc.message(); //+ cvErrorStr(exc.code);
+                var buf = util.format("OpenCV Error:\n\t % s(%s) in %s, file % s, line % d",
+                    errorStr, exc.err.c_str(), exc.func.size() > 0 ?
+                        exc.func.c_str() : "unknown function", exc.file.c_str(), exc.line);
+                console.log(buf);
+                this.ts.printf(TSConstants.LOG, "%s\n", buf);
+            }
+
+            this.ts.set_failed_test_info(FailureCode.FAIL_ERROR_IN_CALLED_FUNC);
+
+            //        catch (const TS::FailureCode& fc)
+            //        {
+            //            std::string errorStr = TS::str_from_code(fc);
+            //    ts ->printf(TS::LOG, "General failure:\n\t%s (%d)\n", errorStr.c_str(), fc);
+
+            //    ts ->set_failed_test_info(fc);
+            //}
+            //        catch (...)
+            //{
+            //    ts ->printf(TS::LOG, "Unknown failure\n");
+
+            //    ts ->set_failed_test_info(TS::FAIL_EXCEPTION);
+            //}
+            //    }
+
+            this.ts.set_gtest_status();
+        }
+        //
+        get_name(): string { return this.name; }
+        //
+        //    // returns true if and only if the different test cases do not depend on each other
+        //    // (so that test system could get right to a problematic test case)
+        can_do_fast_forward(): boolean {
+            return true;
+        }
+
+        //
+        //    // deallocates all the memory.
+        //    // called by init() (before initialization) and by the destructor
+        clear(): void { }
+        //
+        //
+        protected test_case_count: _st.int; // the total number of test cases
+        //
+        //    // read test params
+        protected read_params(fs: _pers.FileStorage): _st.int {
+            return 0;
+        }
+        //
+        //    // returns the number of tests or -1 if it is unknown a-priori
+        protected get_test_case_count(): _st.int {
+            return this.test_case_count;
+        }
+        //
+        //    // prepares data for the next test case. rng seed is updated by the function
+        protected prepare_test_case(test_case_idx: _st.int): _st.int {
+            return 0;
+        }
+        //
+        //    // checks if the test output is valid and accurate
+        protected validate_test_results(test_case_idx: _st.int): _st.int {
+            return 0;
+        }
+        //
+        //    // calls the tested function. the method is called from run_test_case()
+        protected run_func(): void { // runs tested func(s)
+            //assert(0);
+            throw new Error("no override");
+        }
+        //
+        //    // updates progress bar
+        protected update_progress(progress: _st.int, test_case_idx: _st.int, count: _st.int, dt: _st.double): _st.int {
+            var width: _st.int = 60 - this.get_name().length;
+            if (count > 0) {
+                var t = Math.round((test_case_idx.valueOf() * width.valueOf()) / count.valueOf());
+                if (t > progress) {
+                    this.ts.printf(TSConstants.CONSOLE, ".");
+                    progress = t;
+                }
+            }
+            else if (Math.round(dt.valueOf()) > progress) {
+                this.ts.printf(TSConstants.CONSOLE, ".");
+                progress = Math.round(dt.valueOf());
+            }
+
+            return progress;
+        }
+        //
+
+        // finds test parameter
+        protected find_param(fs: _pers.FileStorage, param_name: string): _pers.FileNode {
+            if (fs.nodes[this.get_name()] != null) {
+                return fs.nodes[this.get_name()].nodes[param_name];
+            }
+            return null;
+            //CvFileNode * node = cvGetFileNodeByName(fs, 0, get_name().c_str());
+            //return node ? cvGetFileNodeByName(fs, node, param_name) : 0;
+        }
+
+
+
+        //protected CV_Assert(expr: boolean): void {
+        //    if (!(expr)) {
+        //         else cv::error(cv::Error::StsAssert, #expr, CV_Func, __FILE__, __LINE__)
+        //    }
+        //}
+
+
+
+        // name of the test (it is possible to locate a test by its name)
+        protected name: string;
+
+        // pointer to the system that includes the test
+        protected ts: TS;
+    };
+
+    export class TestWithParam extends BaseTest {//extends WithParamInterface<T>  {
+        protected _params: Array<any>;
+
+        constructor() {
+            super();
+            this._params = [];
+        }
+
+
+        protected GET_PARAM<T>(id: number): T {
+            return this._params[id];
+        }
+
+        public SET_PARAM(id: number, val: any) {
+            this._params[id] = val;
+        }
+
+        protected randomInt(minVal: _st.int, maxVal: _st.int): _st.int {
+            return this.ts.get_rng().uniform(minVal, maxVal);
+        }
+    };
+
     //export namespace cuda {
     export class CUDA_TEST extends TestWithParam {
         constructor(public test_case_name: string, public test_name: string) {
@@ -112,7 +310,7 @@ export namespace cvtest {
         const maxAngleDif = 2.0;
         const maxResponseDif = 0.1;
 
-        let dist = _types.Point2f.norm(p1.pt.op_Substraction( p2.pt));
+        let dist = _types.Point2f.norm(p1.pt.op_Substraction(p2.pt));
 
         if (dist < maxPtDif &&
             Math.abs(p1.size.valueOf() - p2.size.valueOf()) < maxSizeDif &&
@@ -125,7 +323,7 @@ export namespace cvtest {
 
         return false;
     }
-        
+
     function KeyPointLess(kp1: _types.KeyPoint, kp2: _types.KeyPoint): number {
         if (kp1.pt.y == kp2.pt.y && kp1.pt.x == kp2.pt.x) {
             return 0;
@@ -142,23 +340,21 @@ export namespace cvtest {
 
         let validCount = 0;
 
-        for (let i = 0; i < gold.length; ++i)
-        {
+        for (let i = 0; i < gold.length; ++i) {
             const p1 = gold[i];
             const p2 = actual[i];
 
-            if ( keyPointsEquals(p1, p2))
+            if (keyPointsEquals(p1, p2))
                 ++validCount;
         }
 
         return validCount;
     }
 
-    export function getMatchedPointsCount2(keypoints1: Array<_types.KeyPoint>, keypoints2: Array<_types.KeyPoint>, matches: Array<_types.DMatch> ): _st.int {
+    export function getMatchedPointsCount2(keypoints1: Array<_types.KeyPoint>, keypoints2: Array<_types.KeyPoint>, matches: Array<_types.DMatch>): _st.int {
         let validCount = 0;
 
-        for (let i = 0; i < matches.length; ++i)
-        {
+        for (let i = 0; i < matches.length; ++i) {
             const m = matches[i];
 
             const p1 = keypoints1[m.queryIdx.valueOf()];
@@ -171,12 +367,12 @@ export namespace cvtest {
         return validCount;
     }
 
-        
-
-        
 
 
-    
+
+
+
+
     //class WithParamInterface<T> extends BaseTest {
     //    // The current parameter value. Is also available in the test fixture's
     //    // constructor. This member function is non-static, even though it only
@@ -234,7 +430,7 @@ export namespace cvtest {
             for (var i = 0; i < this.NumberOfParameters; i++) {
                 retval[i] = this.values[i][this.counters[i]];
             }
-                
+
             //advance counters
             this.counters[0]++;
             for (var i = 0; i < this.NumberOfParameters; i++) {
@@ -248,27 +444,7 @@ export namespace cvtest {
         }
     }
 
-    export class TestWithParam extends BaseTest {//extends WithParamInterface<T>  {
-        protected _params: Array<any>;
-
-        constructor() {
-            super();
-            this._params = [];
-        }
-
-
-        protected GET_PARAM<T>(id: number): T {
-            return this._params[id];
-        }
-
-        public SET_PARAM(id: number, val: any) {
-            this._params[id] = val;
-        }
-
-        protected randomInt(minVal: _st.int, maxVal: _st.int): _st.int {
-            return this.ts.get_rng().uniform(minVal, maxVal);
-        }
-    };
+  
 
 
     //export function fscanf(fd: number, fmt: string, values: (v1: any, v2: any, v3: any) => void) {
@@ -393,9 +569,9 @@ export namespace cvtest {
     export function SCOPED_TRACE(message: string): void {
         //?
     }
- 
 
- 
+
+
 
     //using std::vector;
     //using std::string;
@@ -483,7 +659,7 @@ export namespace cvtest {
     //CV_EXPORTS int randomType(RNG& rng, int typeMask, int minChannels, int maxChannels);
 
 
-    
+
     interface IrandomMat {
         (rng: _core.RNG, size: _types.Size, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi?: boolean): _mat.Mat;
         (rng: _core.RNG, size: Array<_st.int>, type: _st.int, minVal: _st.double, maxVal: _st.double, useRoi?: boolean): _mat.Mat;
@@ -565,7 +741,7 @@ export namespace cvtest {
     //CV_EXPORTS void dilate(const Mat& src, Mat& dst, const Mat& _kernel, Point anchor=Point(-1,-1),
     //                       int borderType=0, const Scalar& borderValue=Scalar());
     interface Ifilter2D {
-        (src: _mat.Mat, dst: _mat.Mat, ddepth: _st.int, kernel: _mat.Mat ,
+        (src: _mat.Mat, dst: _mat.Mat, ddepth: _st.int, kernel: _mat.Mat,
             anchor: _types.Point, delta: _st.double, borderType: _base.BorderTypes | _st.int,
             borderValue?: _types.Scalar /*=Scalar()*/): void;
     }
@@ -809,11 +985,9 @@ export namespace cvtest {
 
 
     //template < typename _Tp, typename _WTp> static void
-    function writeElems(data : Array<any>, nelems : _st.int, starpos : _st.int ) : string
-    {
+    function writeElems(data: Array<any>, nelems: _st.int, starpos: _st.int): string {
         var retval = "";
-        for (var i = 0; i < nelems; i++)
-        {
+        for (var i = 0; i < nelems; i++) {
             if (i == starpos)
                 retval += "*";
             retval += data[i];
@@ -824,26 +998,26 @@ export namespace cvtest {
         return retval;
     }
 
-   
+
     //get the mat ptr from mat type
-    function GetMatPtr(m: _mat.Mat,i0 : _st.int): Array<any> {
+    function GetMatPtr(m: _mat.Mat, i0: _st.int): Array<any> {
         var depth = _cvdef.MatrixType.CV_MAT_DEPTH(m.type());
 
         switch (depth) {
             case _cvdef.MatrixType.CV_8U:
-                return m.ptr<any>("uchar",i0);
+                return m.ptr<any>("uchar", i0);
             case _cvdef.MatrixType.CV_8S:
-                return m.ptr<any>("schar",i0);
+                return m.ptr<any>("schar", i0);
             case _cvdef.MatrixType.CV_16U:
-                return m.ptr<any>("ushort",i0);
+                return m.ptr<any>("ushort", i0);
             case _cvdef.MatrixType.CV_16S:
-                return m.ptr<any>("short",i0);
+                return m.ptr<any>("short", i0);
             case _cvdef.MatrixType.CV_32S:
-                return m.ptr<any>("int",i0);
+                return m.ptr<any>("int", i0);
             case _cvdef.MatrixType.CV_32F:
-                return m.ptr<any>("float",i0);
+                return m.ptr<any>("float", i0);
             case _cvdef.MatrixType.CV_64F:
-                return m.ptr<any>("double",i0);
+                return m.ptr<any>("double", i0);
             default:
                 //unimplemented
                 return null;
@@ -867,7 +1041,7 @@ export namespace cvtest {
     }
 
 
-    function getSubArray(m: _mat.Mat, border: _st.int, ofs0: Array<_st.int>, ofs: Array<_st.int> ): _mat.Mat {
+    function getSubArray(m: _mat.Mat, border: _st.int, ofs0: Array<_st.int>, ofs: Array<_st.int>): _mat.Mat {
         ofs.length = (ofs0.length);
         if (border < 0) {
             ofs.forEach((v, i, a) => { ofs[i] = a[i]; });
@@ -876,14 +1050,14 @@ export namespace cvtest {
         }
         //int i, 
         var d = m.dims.valueOf();
-        _base.CV_Assert(()=>d == ofs.length);
-        var r = _st.NewArray<_types.Range> (d,()=>new _types.Range());
+        _base.CV_Assert(() => d == ofs.length);
+        var r = _st.NewArray<_types.Range>(d, () => new _types.Range());
         for (var i = 0; i < d; i++) {
             r[i].start = Math.max(0, ofs0[i].valueOf() - border.valueOf());
             r[i].end = Math.min(ofs0[i].valueOf() + 1 + border.valueOf(), m.size[i]);
             ofs[i] = Math.min(ofs0[i].valueOf(), border.valueOf());
         }
-        return m.roi (r);
+        return m.roi(r);
     }
 
     export class MatComparator {
@@ -894,15 +1068,14 @@ export namespace cvtest {
         }
 
         //AssertionResult
-        public run(m1: _mat.Mat, m2: _mat.Mat)
-        {
+        public run(m1: _mat.Mat, m2: _mat.Mat) {
             var expr1: string = m1.toString();
             var expr2: string = m2.toString();
             if (m1.type() != m2.type() || m1.size != m2.size)
                 return new AssertionFailure(
-                     "The reference and the actual output arrays have different type or size:\n" +
-                     expr1 + " ~ " + MatInfo(m1) + "\n" + 
-                     expr2 + " ~ " + MatInfo(m2) + "\n")
+                    "The reference and the actual output arrays have different type or size:\n" +
+                    expr1 + " ~ " + MatInfo(m1) + "\n" +
+                    expr2 + " ~ " + MatInfo(m2) + "\n")
 
             //bool ok = cvtest::cmpUlps(m1, m2, maxdiff, &realmaxdiff, &loc0);
             var code = cmpEps(m1, m2, 1, true, (idx_, max_diff_) => { this.loc0 = idx_; this.maxdiff = this.realmaxdiff = max_diff_; });// &realmaxdiff, maxdiff, &loc0, true);
@@ -921,8 +1094,8 @@ export namespace cvtest {
 
             if (border == 0) {
                 loc = this.loc0;
-                m1part = new _mat.Mat(1, 1, m[0].depth(),GetMatPtr( m[0], loc[0]));
-                m2part = new _mat.Mat(1, 1, m[1].depth(),GetMatPtr( m[1], loc[0]));
+                m1part = new _mat.Mat(1, 1, m[0].depth(), GetMatPtr(m[0], loc[0]));
+                m2part = new _mat.Mat(1, 1, m[1].depth(), GetMatPtr(m[1], loc[0]));
             }
             else {
                 m1part = getSubArray(m[0], border, this.loc0, loc);
@@ -948,741 +1121,567 @@ export namespace cvtest {
     //class BaseTest;
     //class TS;
 
-    export abstract class BaseTest {
+
+
+    /*****************************************************************************************\
+    *                               Information about a failed test                           *
+    \*****************************************************************************************/
+
+    interface TestInfo {
+
+        // pointer to the test
+        test: BaseTest;
+
+        // failure code (TS::FAIL_*)
+        code: _st.int
+
+        // seed value right before the data for the failed test case is prepared.
+        rng_seed: _st.uint64;
+
+        // seed value right before running the test
+        rng_seed0: _st.uint64;
+
+        // index of test case, can be then passed to BaseTest::proceed_to_test_case()
+        test_case_idx: _st.int;
+    };
+
+    /*****************************************************************************************\
+    *                                 Base Class for test system                              *
+    \*****************************************************************************************/
+
+    // common parameters:
+    class TSParams {
+        constructor() { }
+
+        // RNG seed, passed to and updated by every test executed.
+        rng_seed: _st.uint64
+
+        // whether to use IPP, MKL etc. or not
+        use_optimized: boolean;
+
+        // extensivity of the tests, scale factor for test_case_count
+        test_case_count_scale: _st.double;
+    };
+
+    // test error codes
+    export enum FailureCode {
+        // everything is Ok
+        OK = 0,
+
+        // generic error: stub value to be used
+        // temporarily if the error's cause is unknown
+        FAIL_GENERIC = -1,
+
+        // the test is missing some essential data to proceed further
+        FAIL_MISSING_TEST_DATA = -2,
+
+        // the tested function raised an error via cxcore error handler
+        FAIL_ERROR_IN_CALLED_FUNC = -3,
+
+        // an exception has been raised;
+        // for memory and arithmetic exception
+        // there are two specialized codes (see below...)
+        FAIL_EXCEPTION = -4,
+
+        // a memory exception
+        // (access violation, access to missed page, stack overflow etc.)
+        FAIL_MEMORY_EXCEPTION = -5,
+
+        // arithmetic exception (overflow, division by zero etc.)
+        FAIL_ARITHM_EXCEPTION = -6,
+
+        // the tested function corrupted memory (no exception have been raised)
+        FAIL_MEMORY_CORRUPTION_BEGIN = -7,
+        FAIL_MEMORY_CORRUPTION_END = -8,
+
+        // the tested function (or test ifself) do not deallocate some memory
+        FAIL_MEMORY_LEAK = -9,
+
+        // the tested function returned invalid object, e.g. matrix, containing NaNs,
+        // structure with NULL or out-of-range fields (while it should not)
+        FAIL_INVALID_OUTPUT = -10,
+
+        // the tested function returned valid object, but it does not match to
+        // the original (or produced by the test) object
+        FAIL_MISMATCH = -11,
+
+        // the tested function returned valid object (a single number or numerical array),
+        // but it differs too much from the original (or produced by the test) object
+        FAIL_BAD_ACCURACY = -12,
+
+        // the tested function hung. Sometimes, can be determined by unexpectedly long
+        // processing time (in this case there should be possibility to interrupt such a function
+        FAIL_HANG = -13,
+
+        // unexpected response on passing bad arguments to the tested function
+        // (the function crashed, proceed successfully (while it should not), or returned
+        // error code that is different from what is expected)
+        FAIL_BAD_ARG_CHECK = -14,
+
+        // the test data (in whole or for the particular test case) is invalid
+        FAIL_INVALID_TEST_DATA = -15,
+
+        // the test has been skipped because it is not in the selected subset of the tests to run,
+        // because it has been run already within the same run with the same parameters, or because
+        // of some other reason and this is not considered as an error.
+        // Normally TS::run() (or overridden method in the derived class) takes care of what
+        // needs to be run, so this code should not occur.
+        SKIPPED = 1
+    };
+
+    export enum TSConstants {
+        NUL = 0,
+        SUMMARY_IDX = 0,
+        SUMMARY = 1 << SUMMARY_IDX,
+        LOG_IDX = 1,
+        LOG = 1 << LOG_IDX,
+        CSV_IDX = 2,
+        CSV = 1 << CSV_IDX,
+        CONSOLE_IDX = 3,
+        CONSOLE = 1 << CONSOLE_IDX,
+        MAX_IDX = 4
+    };
+
+    
+
+    export class TS {
+        //public:
+        // constructor(s) and destructor
+        constructor() {
+        }
+        //virtual ~TS();
+
+
+
+        public static ptr(): TS {
+            return _tsSingleton;
+        }
+
+        //    // initialize test system before running the first test
+        //    virtual void init( const string& modulename );
+        //
+        //    // low-level printing functions that are used by individual tests and by the system itself
+
+        vprintf(streams: _st.int, format: any, ...param: any[]): void {
+            this.output_buf += util.format(format, param)
+
+            //             char str[1 << 14];
+            //            vsnprintf(str, sizeof(str) - 1, fmt, l);
+            //
+            //        for (int i = 0; i < MAX_IDX; i++ )
+            //        if ((streams & (1 << i))) {
+            //            output_buf[i] += std::string(str);
+            //            // in the new GTest-based framework we do not use
+            //            // any output files (except for the automatically generated xml report).
+            //            // if a test fails, all the buffers are printed, so we do not want to duplicate the information and
+            //            // thus only add the new information to a single buffer and return from the function.
+            //            break;
+            //        }
+        }
+
+
+        printf(streams: TSConstants, format: any, ...param: any[]): void {
+            this.vprintf(streams, format, param);
+        }
+
+
+        //
+        //    // updates the context: current test, test case, rng state
+        update_context(test: BaseTest, test_case_idx: _st.int, update_ts_context: boolean): void {
+            if (this.current_test_info.test != test) {
+                for (var i = 0; i <= TSConstants.CONSOLE_IDX; i++)
+                    this.output_buf = "";
+                this.rng = new _core.RNG(this.params.rng_seed);
+                this.current_test_info.rng_seed0 = this.current_test_info.rng_seed = this.rng.state;
+            }
+
+            this.current_test_info.test = test;
+            this.current_test_info.test_case_idx = test_case_idx;
+            this.current_test_info.code = 0;
+            //cvSetErrStatus(CV_StsOk);
+            if (update_ts_context)
+                this.current_test_info.rng_seed = this.rng.state;
+        }
+        //
+        get_current_test_info(): TestInfo { return this.current_test_info; }
+        //
+        //    // sets information about a failed test
+        set_failed_test_info(fail_code: FailureCode | _st.int): void {
+            if (this.current_test_info.code >= 0)
+                this.current_test_info.code = fail_code;
+        }
+        //
+        set_gtest_status(): void {
+            //TS::FailureCode code = get_err_code();
+            //if (code >= 0)
+            //    return SUCCEED();
+
+            //char seedstr[32];
+            //sprintf(seedstr, "%08x%08x", (unsigned)(current_test_info.rng_seed >> 32),
+            //    (unsigned)(current_test_info.rng_seed));
+
+            //string logs = "";
+            //if (!output_buf[SUMMARY_IDX].empty())
+            //    logs += "\n-----------------------------------\n\tSUM: " + output_buf[SUMMARY_IDX];
+            //if (!output_buf[LOG_IDX].empty())
+            //    logs += "\n-----------------------------------\n\tLOG:\n" + output_buf[LOG_IDX];
+            //if (!output_buf[CONSOLE_IDX].empty())
+            //    logs += "\n-----------------------------------\n\tCONSOLE: " + output_buf[CONSOLE_IDX];
+            //logs += "\n-----------------------------------\n";
+
+            //FAIL() << "\n\tfailure reason: " << str_from_code(code) <<
+            //    "\n\ttest case #" << current_test_info.test_case_idx <<
+            //    "\n\tseed: " << seedstr << logs;
+        }
+        //
+
+        //
+        //    // get file storage
+        get_file_storage(): _pers.FileStorage {
+            return null;
+        }
+        //
+        //    // get RNG to generate random input data for a test
+        get_rng(): _core.RNG { return this.rng; }
+        //
+        //    // returns the current error code
+        get_err_code(): FailureCode { return this.current_test_info.code.valueOf(); }
+        //
+        //    // returns the test extensivity scale
+        get_test_case_count_scale(): _st.double { return this.params.test_case_count_scale; }
+        //
+        //    const string& get_data_path() const { return data_path; }
+        get_data_path(): string { return this.data_path; }
+        //
+        //    // returns textual description of failure code
+        //    static string str_from_code( const TS::FailureCode code );
+        //
+        //protected:
+        //
+        // these are allocated within a test to try keep them valid in case of stack corruption
+        protected rng: _core.RNG;
+
+        // information about the current test
+        protected current_test_info: TestInfo;
+
+        // the path to data files used by tests
+        protected data_path: string;
+
+        protected params: TSParams;
+        protected output_buf: string;// std::string output_buf[MAX_IDX];
+    };
+
+    var _tsSingleton = new TS();
+
+
+    /*****************************************************************************************\
+    *            Subclass of BaseTest for testing functions that process dense arrays           *
+    \*****************************************************************************************/
+
+    export enum _ArrayTestInternal { INPUT, INPUT_OUTPUT, OUTPUT, REF_INPUT_OUTPUT, REF_OUTPUT, TEMP, MASK, MAX_ARR };
+
+    export abstract class ArrayTest extends BaseTest {
+        constructor() {
+            super();
+        }
         //public:
         //    // constructor(s) and destructor
-        constructor() {
-            this.ts = new TS();
-            this.test_case_count = -1;
-        }
-        //    
+        //    ArrayTest();
+        //    virtual ~ArrayTest();
         //
-        //    // the main procedure of the test
-        run(start_from: _st.int): void {
-            var test_case_idx: _st.int
-            var count = this.get_test_case_count();
-            //var t_start: _st.int64 = cvGetTickCount();
-            //var freq: _st.double = cv::getTickFrequency();
-
-            //var time = process.hrtime();
-            //var diff[0] * 1e9 + diff[1]
-
-            var ff: boolean = this.can_do_fast_forward();
-            var progress: _st.int = 0;
-            var code: _st.int;
-            //var t1: _st.int64 = t_start;
-
-            for (test_case_idx = ff && start_from >= 0 ? start_from : 0;
-                count < 0 || test_case_idx < count; test_case_idx = test_case_idx.valueOf() + 1) {
-                this.ts.update_context(this, test_case_idx, ff);
-
-                //DROR: this doesn't make any sense, dt will always be 0...
-                progress = this.update_progress(progress, test_case_idx, count, 0);// (t1.valueOf() - t_start.valueOf()) / (freq.valueOf() * 1000));
-
-                code = this.prepare_test_case(test_case_idx);
-                if (code < 0 || this.ts.get_err_code() < 0)
-                    return;
-
-                if (code == 0)
-                    continue;
-
-                this.run_func();
-
-                if (this.ts.get_err_code() < 0)
-                    return;
-
-                if (this.validate_test_results(test_case_idx) < 0 || this.ts.get_err_code() < 0)
-                    return;
-            }
-        }
+        //    virtual void clear();
         //
-        //    // the wrapper for run that cares of exceptions
-        safe_run(start_from?: _st.int /*= 0*/): void {
-            this.read_params(this.ts.get_file_storage());
-            this.ts.update_context(null, -1, true);
-            this.ts.update_context(this, -1, true);
+        //protected:
+        //
+        //    virtual int read_params( CvFileStorage* fs );
+        //    virtual int prepare_test_case( int test_case_idx );
+        //    virtual int validate_test_results( int test_case_idx );
+        //
+        //    virtual void prepare_to_validation( int test_case_idx );
+        get_test_array_types_and_sizes(int /*test_case_idx*/, sizes: Array<Array<_types.Size>>, types: Array<Array<_st.int>>): void {
+            var rng = this.ts.get_rng();
+            //Size size;
+            var size = new _types.Size();
+            //double val;
+            //size_t i, j;
 
-            try {
-                this.run(start_from);
-            }
-            catch (exc) {
-                //todo, check if correct!
-                var errorStr = exc.message(); //+ cvErrorStr(exc.code);
-                var buf = util.format("OpenCV Error:\n\t % s(%s) in %s, file % s, line % d",
-                    errorStr, exc.err.c_str(), exc.func.size() > 0 ?
-                        exc.func.c_str() : "unknown function", exc.file.c_str(), exc.line);
-                console.log(buf);
-                this.ts.printf(TSConstants.LOG, "%s\n", buf);
-            }
+            var val = randReal(rng).valueOf() * (this.max_log_array_size.valueOf() - this.min_log_array_size.valueOf()) + this.min_log_array_size.valueOf();
+            size.width = Math.round(Math.exp(val * Math.LOG2E));
+            val = randReal(rng).valueOf() * (this.max_log_array_size.valueOf() - this.min_log_array_size.valueOf()) + this.min_log_array_size.valueOf();
+            size.height = Math.round(Math.exp(val * Math.LOG2E));
 
-            this.ts.set_failed_test_info(FailureCode.FAIL_ERROR_IN_CALLED_FUNC);
-     
-            //        catch (const TS::FailureCode& fc)
-            //        {
-            //            std::string errorStr = TS::str_from_code(fc);
-            //    ts ->printf(TS::LOG, "General failure:\n\t%s (%d)\n", errorStr.c_str(), fc);
-
-            //    ts ->set_failed_test_info(fc);
-            //}
-            //        catch (...)
-            //{
-            //    ts ->printf(TS::LOG, "Unknown failure\n");
-
-            //    ts ->set_failed_test_info(TS::FAIL_EXCEPTION);
-            //}
-            //    }
-
-            this.ts.set_gtest_status();
-        }
-        //
-        get_name(): string { return this.name; }
-        //
-        //    // returns true if and only if the different test cases do not depend on each other
-        //    // (so that test system could get right to a problematic test case)
-        can_do_fast_forward(): boolean {
-            return true;
-        }
-
-        //
-        //    // deallocates all the memory.
-        //    // called by init() (before initialization) and by the destructor
-        clear(): void { }
-        //
-        //
-        protected test_case_count: _st.int; // the total number of test cases
-        //
-        //    // read test params
-        protected read_params(fs: _pers.FileStorage): _st.int {
-            return 0;
-        }
-        //
-        //    // returns the number of tests or -1 if it is unknown a-priori
-        protected get_test_case_count(): _st.int {
-            return this.test_case_count;
-        }
-        //
-        //    // prepares data for the next test case. rng seed is updated by the function
-        protected prepare_test_case(test_case_idx: _st.int): _st.int {
-            return 0;
-        }
-        //
-        //    // checks if the test output is valid and accurate
-        protected validate_test_results(test_case_idx: _st.int): _st.int {
-            return 0;
-        }
-        //
-        //    // calls the tested function. the method is called from run_test_case()
-        protected run_func(): void { // runs tested func(s)
-            //assert(0);
-            throw new Error("no override");
-        }
-        //
-        //    // updates progress bar
-        protected update_progress(progress: _st.int, test_case_idx: _st.int, count: _st.int, dt: _st.double): _st.int {
-            var width: _st.int = 60 - this.get_name().length;
-            if (count > 0) {
-                var t = Math.round((test_case_idx.valueOf() * width.valueOf()) / count.valueOf() );
-                if (t > progress) {
-                    this.ts.printf(TSConstants.CONSOLE, ".");
-                    progress = t;
+            for (var i = 0; i < this.test_array.length; i++) {
+                var sizei = this.test_array[i].length;
+                for (var j = 0; j < sizei; j++) {
+                    sizes[i][j] = size;
+                    types[i][j] = _cvdef.MatrixType.CV_8UC1;
                 }
             }
-            else if (Math.round(dt.valueOf()) > progress) {
-                this.ts.printf(TSConstants.CONSOLE, ".");
-                progress = Math.round(dt.valueOf());
-            }
-
-            return progress;
         }
+        fill_array(test_case_idx: _st.int, i: _st.int, j: _st.int, arr: _mat.Mat): void { }
+        get_minmax_bounds(i: _st.int, j: _st.int, type: _st.int, low: _types.Scalar, high: _types.Scalar): void { }
+        get_success_error_level(test_case_idx: _st.int, i: _st.int, j: _st.int): _st.double { return 0; }
         //
-        
-        // finds test parameter
-        protected find_param(fs: _pers.FileStorage, param_name: string): _pers.FileNode {
-            if (fs.nodes[this.get_name()] != null) {
-                return fs.nodes[this.get_name()].nodes[param_name];
-            }
-            return null;
-            //CvFileNode * node = cvGetFileNodeByName(fs, 0, get_name().c_str());
-            //return node ? cvGetFileNodeByName(fs, node, param_name) : 0;
-        }
-
-        
-
-        //protected CV_Assert(expr: boolean): void {
-        //    if (!(expr)) {
-        //         else cv::error(cv::Error::StsAssert, #expr, CV_Func, __FILE__, __LINE__)
-        //    }
-        //}
-
-    
-    
-    // name of the test (it is possible to locate a test by its name)
-    protected name: string;
-    
-    // pointer to the system that includes the test
-    protected ts: TS;
-};
-
-
-/*****************************************************************************************\
-*                               Information about a failed test                           *
-\*****************************************************************************************/
-
-interface TestInfo
-{
-    
-    // pointer to the test
-    test: BaseTest;
-
-    // failure code (TS::FAIL_*)
-    code : _st.int
-
-    // seed value right before the data for the failed test case is prepared.
-    rng_seed: _st.uint64;
-
-    // seed value right before running the test
-    rng_seed0: _st.uint64;
-
-    // index of test case, can be then passed to BaseTest::proceed_to_test_case()
-    test_case_idx: _st.int;
-};
-
-/*****************************************************************************************\
-*                                 Base Class for test system                              *
-\*****************************************************************************************/
-
-// common parameters:
-class TSParams
-{
-    constructor() { }
-
-    // RNG seed, passed to and updated by every test executed.
-    rng_seed: _st.uint64 
-
-    // whether to use IPP, MKL etc. or not
-    use_optimized: boolean;
-
-    // extensivity of the tests, scale factor for test_case_count
-    test_case_count_scale: _st.double;
-};
-
-// test error codes
-export enum FailureCode {
-    // everything is Ok
-    OK = 0,
-
-    // generic error: stub value to be used
-    // temporarily if the error's cause is unknown
-    FAIL_GENERIC = -1,
-
-    // the test is missing some essential data to proceed further
-    FAIL_MISSING_TEST_DATA = -2,
-
-    // the tested function raised an error via cxcore error handler
-    FAIL_ERROR_IN_CALLED_FUNC = -3,
-
-    // an exception has been raised;
-    // for memory and arithmetic exception
-    // there are two specialized codes (see below...)
-    FAIL_EXCEPTION = -4,
-
-    // a memory exception
-    // (access violation, access to missed page, stack overflow etc.)
-    FAIL_MEMORY_EXCEPTION = -5,
-
-    // arithmetic exception (overflow, division by zero etc.)
-    FAIL_ARITHM_EXCEPTION = -6,
-
-    // the tested function corrupted memory (no exception have been raised)
-    FAIL_MEMORY_CORRUPTION_BEGIN = -7,
-    FAIL_MEMORY_CORRUPTION_END = -8,
-
-    // the tested function (or test ifself) do not deallocate some memory
-    FAIL_MEMORY_LEAK = -9,
-
-    // the tested function returned invalid object, e.g. matrix, containing NaNs,
-    // structure with NULL or out-of-range fields (while it should not)
-    FAIL_INVALID_OUTPUT = -10,
-
-    // the tested function returned valid object, but it does not match to
-    // the original (or produced by the test) object
-    FAIL_MISMATCH = -11,
-
-    // the tested function returned valid object (a single number or numerical array),
-    // but it differs too much from the original (or produced by the test) object
-    FAIL_BAD_ACCURACY = -12,
-
-    // the tested function hung. Sometimes, can be determined by unexpectedly long
-    // processing time (in this case there should be possibility to interrupt such a function
-    FAIL_HANG = -13,
-
-    // unexpected response on passing bad arguments to the tested function
-    // (the function crashed, proceed successfully (while it should not), or returned
-    // error code that is different from what is expected)
-    FAIL_BAD_ARG_CHECK = -14,
-
-    // the test data (in whole or for the particular test case) is invalid
-    FAIL_INVALID_TEST_DATA = -15,
-
-    // the test has been skipped because it is not in the selected subset of the tests to run,
-    // because it has been run already within the same run with the same parameters, or because
-    // of some other reason and this is not considered as an error.
-    // Normally TS::run() (or overridden method in the derived class) takes care of what
-    // needs to be run, so this code should not occur.
-    SKIPPED = 1
-};
-
-export enum TSConstants
-{
-    NUL = 0,
-    SUMMARY_IDX = 0,
-    SUMMARY = 1 << SUMMARY_IDX,
-    LOG_IDX = 1,
-    LOG = 1 << LOG_IDX,
-    CSV_IDX = 2,
-    CSV = 1 << CSV_IDX,
-    CONSOLE_IDX = 3,
-    CONSOLE = 1 << CONSOLE_IDX,
-    MAX_IDX = 4
-};
-
-var _tsSingleton = new TS();
-
-export class TS
-{
-    //public:
-    // constructor(s) and destructor
-    constructor() {}
-    //virtual ~TS();
-
-    
-
-    public static ptr(): TS{
-        return _tsSingleton;
-    }
-
-//    // initialize test system before running the first test
-//    virtual void init( const string& modulename );
-//
-//    // low-level printing functions that are used by individual tests and by the system itself
-
-    vprintf(streams: _st.int, format: any, ...param: any[]): void {
-        this.output_buf += util.format(format, param)
-
-        //             char str[1 << 14];
-        //            vsnprintf(str, sizeof(str) - 1, fmt, l);
+        //    bool cvmat_allowed;
+        //    bool iplimage_allowed;
+        protected optional_mask: boolean;
+        protected element_wise_relative_error: boolean;
         //
-        //        for (int i = 0; i < MAX_IDX; i++ )
-        //        if ((streams & (1 << i))) {
-        //            output_buf[i] += std::string(str);
-        //            // in the new GTest-based framework we do not use
-        //            // any output files (except for the automatically generated xml report).
-        //            // if a test fails, all the buffers are printed, so we do not want to duplicate the information and
-        //            // thus only add the new information to a single buffer and return from the function.
-        //            break;
-        //        }
-    }
+        protected min_log_array_size: _st.int;
+        protected max_log_array_size: _st.int;
+        //
+
+        //
+        //vector<vector<void*> > test_array;
+        protected test_array: Array<Array<any>>;
+        //    vector<vector<Mat> > test_mat;
+        protected test_mat: Array<Array<_mat.Mat>>;
+        //    float buf[4];
 
 
-    printf(streams: TSConstants, format: any, ...param: any[] ) : void
-    {
-        this.vprintf(streams, format, param);
-    }
 
-  
-//
-//    // updates the context: current test, test case, rng state
-    update_context(test: BaseTest, test_case_idx: _st.int, update_ts_context: boolean): void{
-        if (this.current_test_info.test != test) {
-            for (var i = 0; i <= TSConstants.CONSOLE_IDX; i++ )
-            this.output_buf = "";
-            this.rng = new _core.RNG(this.params.rng_seed);
-            this.current_test_info.rng_seed0 = this.current_test_info.rng_seed = this.rng.state;
+        protected INPUT = _ArrayTestInternal.INPUT;
+        protected INPUT_OUTPUT = _ArrayTestInternal.INPUT_OUTPUT;
+        protected OUTPUT = _ArrayTestInternal.OUTPUT;
+        protected REF_INPUT_OUTPUT = _ArrayTestInternal.REF_INPUT_OUTPUT;
+        protected REF_OUTPUT = _ArrayTestInternal.REF_OUTPUT;
+        protected TEMP = _ArrayTestInternal.TEMP;
+        protected MASK = _ArrayTestInternal.MASK;
+        protected MAX_ARR = _ArrayTestInternal.MAX_ARR;
+
+    };
+
+
+    export abstract class BadArgTest extends BaseTest {
+        constructor() {
+            super();
         }
-
-        this.current_test_info.test = test;
-        this.current_test_info.test_case_idx = test_case_idx;
-        this.current_test_info.code = 0;
-        //cvSetErrStatus(CV_StsOk);
-        if (update_ts_context)
-            this.current_test_info.rng_seed = this.rng.state;
-    }
-//
-    get_current_test_info() : TestInfo { return this.current_test_info; }
-//
-//    // sets information about a failed test
-    set_failed_test_info(fail_code: FailureCode | _st.int): void {
-        if (this.current_test_info.code >= 0)
-            this.current_test_info.code = fail_code;
-    }
-//
-    set_gtest_status(): void {
-        //TS::FailureCode code = get_err_code();
-        //if (code >= 0)
-        //    return SUCCEED();
-
-        //char seedstr[32];
-        //sprintf(seedstr, "%08x%08x", (unsigned)(current_test_info.rng_seed >> 32),
-        //    (unsigned)(current_test_info.rng_seed));
-
-        //string logs = "";
-        //if (!output_buf[SUMMARY_IDX].empty())
-        //    logs += "\n-----------------------------------\n\tSUM: " + output_buf[SUMMARY_IDX];
-        //if (!output_buf[LOG_IDX].empty())
-        //    logs += "\n-----------------------------------\n\tLOG:\n" + output_buf[LOG_IDX];
-        //if (!output_buf[CONSOLE_IDX].empty())
-        //    logs += "\n-----------------------------------\n\tCONSOLE: " + output_buf[CONSOLE_IDX];
-        //logs += "\n-----------------------------------\n";
-
-        //FAIL() << "\n\tfailure reason: " << str_from_code(code) <<
-        //    "\n\ttest case #" << current_test_info.test_case_idx <<
-        //    "\n\tseed: " << seedstr << logs;
-    }
-//
-
-//
-//    // get file storage
-    get_file_storage(): _pers.FileStorage {
-        return null;
-    }
-//
-//    // get RNG to generate random input data for a test
-    get_rng() : _core.RNG { return this.rng; }
-//
-//    // returns the current error code
-    get_err_code(): FailureCode  { return this.current_test_info.code.valueOf(); }
-//
-//    // returns the test extensivity scale
-    get_test_case_count_scale() : _st.double { return this.params.test_case_count_scale; } 
-//
-//    const string& get_data_path() const { return data_path; }
-    get_data_path() : string { return this.data_path; }
-//
-//    // returns textual description of failure code
-//    static string str_from_code( const TS::FailureCode code );
-//
-//protected:
-//
-  // these are allocated within a test to try keep them valid in case of stack corruption
-  protected rng : _core.RNG ;
-
-  // information about the current test
-  protected current_test_info: TestInfo;
-
-  // the path to data files used by tests
-  protected data_path : string ;
-
-  protected params: TSParams ;
-  protected output_buf: string;// std::string output_buf[MAX_IDX];
-};
+        //public:
+        //    // constructor(s) and destructor
+        //    BadArgTest();
+        //    virtual ~BadArgTest();
+        //
+        //protected:
+        //protected abstract run_test_case(expected_code : _st.int, descr : string ) : _st.int;
+        protected abstract run_func(): void;
+        public test_case_idx: _st.int;
+        //
+        //    template<class F>
+        protected run_test_case(expected_code: _base.cv.Error.Code | _st.int, descr: string, f?: () => void): _st.int {
+            var errcount = 0;
+            var thrown = false;
+            //const char* descr = _descr.c_str() ? _descr.c_str() : "";
 
 
-/*****************************************************************************************\
-*            Subclass of BaseTest for testing functions that process dense arrays           *
-\*****************************************************************************************/
-
-export enum _ArrayTestInternal { INPUT, INPUT_OUTPUT, OUTPUT, REF_INPUT_OUTPUT, REF_OUTPUT, TEMP, MASK, MAX_ARR };
-
-export abstract class ArrayTest extends BaseTest
-{
-//public:
-//    // constructor(s) and destructor
-//    ArrayTest();
-//    virtual ~ArrayTest();
-//
-//    virtual void clear();
-//
-//protected:
-//
-//    virtual int read_params( CvFileStorage* fs );
-//    virtual int prepare_test_case( int test_case_idx );
-//    virtual int validate_test_results( int test_case_idx );
-//
-//    virtual void prepare_to_validation( int test_case_idx );
-    get_test_array_types_and_sizes(int /*test_case_idx*/, sizes : Array<Array<_types.Size>>, types : Array<Array<_st.int>>): void {
-        var rng = this.ts.get_rng();
-        //Size size;
-        var size = new _types.Size();
-        //double val;
-        //size_t i, j;
-
-        var val = randReal(rng).valueOf() * (this.max_log_array_size.valueOf() - this.min_log_array_size.valueOf()) + this.min_log_array_size.valueOf();
-        size.width = Math.round(Math.exp(val * Math.LOG2E));
-        val = randReal(rng).valueOf() * (this.max_log_array_size.valueOf() - this.min_log_array_size.valueOf()) + this.min_log_array_size.valueOf();
-        size.height = Math.round(Math.exp(val * Math.LOG2E));
-
-        for (var i = 0; i < this.test_array.length; i++) {
-            var sizei = this.test_array[i].length;
-            for (var j = 0; j < sizei; j++) {
-                sizes[i][j] = size;
-                types[i][j] = _cvdef.MatrixType.CV_8UC1;
+            try {
+                f();
             }
-        }
-    }
-    fill_array(test_case_idx: _st.int, i: _st.int, j: _st.int, arr: _mat.Mat): void { }
-    get_minmax_bounds(i: _st.int, j: _st.int, type: _st.int, low: _types.Scalar, high: _types.Scalar): void { }
-    get_success_error_level(test_case_idx: _st.int, i: _st.int, j: _st.int): _st.double { return 0;}
-//
-//    bool cvmat_allowed;
-//    bool iplimage_allowed;
-    protected optional_mask: boolean;
-    protected element_wise_relative_error: boolean;
-//
-    protected min_log_array_size: _st.int;
-    protected max_log_array_size : _st.int;
-//
-    
-//
-    //vector<vector<void*> > test_array;
-    protected test_array: Array<Array<any>>;
-//    vector<vector<Mat> > test_mat;
-    protected test_mat: Array<Array<_mat.Mat>>;
-//    float buf[4];
-
-
-
-    protected INPUT = _ArrayTestInternal.INPUT;
-    protected INPUT_OUTPUT = _ArrayTestInternal.INPUT_OUTPUT;
-    protected OUTPUT = _ArrayTestInternal.OUTPUT;
-    protected REF_INPUT_OUTPUT = _ArrayTestInternal.REF_INPUT_OUTPUT;
-    protected REF_OUTPUT = _ArrayTestInternal.REF_OUTPUT;
-    protected TEMP = _ArrayTestInternal.TEMP;
-    protected MASK = _ArrayTestInternal.MASK;
-    protected MAX_ARR = _ArrayTestInternal.MAX_ARR;
-
-};
-
-
-export abstract class BadArgTest extends BaseTest
-{
-//public:
-//    // constructor(s) and destructor
-//    BadArgTest();
-//    virtual ~BadArgTest();
-//
-//protected:
-    //protected abstract run_test_case(expected_code : _st.int, descr : string ) : _st.int;
-    protected abstract run_func() : void;
-    public test_case_idx: _st.int;
-//
-//    template<class F>
-    protected run_test_case(expected_code: _base.cv.Error.Code | _st.int, descr : string, f? : ()=>void): _st.int
-    {
-        var errcount = 0;
-        var thrown = false;
-        //const char* descr = _descr.c_str() ? _descr.c_str() : "";
-
-
-        try {
-            f();
-        }
-        catch (e) {
-            thrown = true;
-            if (e.code != expected_code) {
-                this.ts.printf(TSConstants.LOG, "%s (test case #%d): the error code %d is different from the expected %d\n",
-                    descr, this.test_case_idx, e.code, expected_code);
+            catch (e) {
+                thrown = true;
+                if (e.code != expected_code) {
+                    this.ts.printf(TSConstants.LOG, "%s (test case #%d): the error code %d is different from the expected %d\n",
+                        descr, this.test_case_idx, e.code, expected_code);
+                    errcount = 1;
+                }
+            }
+            //catch(const cv::Exception& e)
+            //{
+            //    thrown = true;
+            //    if( e.code != expected_code )
+            //    {
+            //        ts->printf(TS::LOG, "%s (test case #%d): the error code %d is different from the expected %d\n",
+            //            descr, test_case_idx, e.code, expected_code);
+            //        errcount = 1;
+            //    }
+            //}
+            //catch(...)
+            //{
+            //    thrown = true;
+            //    ts->printf(TS::LOG, "%s  (test case #%d): unknown exception was thrown (the function has likely crashed)\n",
+            //               descr, test_case_idx);
+            //    errcount = 1;
+            //}
+            if (!thrown) {
+                this.ts.printf(TSConstants.LOG, "%s  (test case #%d): no expected exception was thrown\n",
+                    descr, this.test_case_idx);
                 errcount = 1;
             }
-        }
-        //catch(const cv::Exception& e)
-        //{
-        //    thrown = true;
-        //    if( e.code != expected_code )
-        //    {
-        //        ts->printf(TS::LOG, "%s (test case #%d): the error code %d is different from the expected %d\n",
-        //            descr, test_case_idx, e.code, expected_code);
-        //        errcount = 1;
-        //    }
-        //}
-        //catch(...)
-        //{
-        //    thrown = true;
-        //    ts->printf(TS::LOG, "%s  (test case #%d): unknown exception was thrown (the function has likely crashed)\n",
-        //               descr, test_case_idx);
-        //    errcount = 1;
-        //}
-        if(!thrown)
-        {
-            this.ts.printf(TSConstants.LOG, "%s  (test case #%d): no expected exception was thrown\n",
-                       descr, this.test_case_idx);
-            errcount = 1;
-        }
-        this.test_case_idx = this.test_case_idx.valueOf() + 1;
+            this.test_case_idx = this.test_case_idx.valueOf() + 1;
 
-        return errcount;
+            return errcount;
+        }
+    };
+
+    class DefaultRngAuto {
+        //    const uint64 old_state;
+        //
+        //    DefaultRngAuto() : old_state(cv::theRNG().state) { cv::theRNG().state = (uint64)-1; }
+        //    ~DefaultRngAuto() { cv::theRNG().state = old_state; }
+        //
+        //    DefaultRngAuto& operator=(const DefaultRngAuto&);
+    };
+
+}
+
+export namespace cvtest {
+
+    // test images generation functions
+    //CV_EXPORTS void fillGradient(Mat& img, int delta = 5);
+    //CV_EXPORTS void smoothBorder(Mat& img, const Scalar& color, int delta = 3);
+    //
+    //CV_EXPORTS void printVersionInfo(bool useStdOut = true);
+    //} //namespace cvtest
+    //
+    //#ifndef __CV_TEST_EXEC_ARGS
+    //#if defined(_MSC_VER) && (_MSC_VER <= 1400)
+    //#define __CV_TEST_EXEC_ARGS(...)    \
+    //    while (++argc >= (--argc,-1)) {__VA_ARGS__; break;} /*this ugly construction is needed for VS 2005*/
+    //#else
+    //#define __CV_TEST_EXEC_ARGS(...)    \
+    //    __VA_ARGS__;
+    //#endif
+    //#endif
+    //
+    //#ifdef HAVE_OPENCL
+    namespace cvtest {
+        namespace ocl {
+            //function dumpOpenCLDevice() : void;
+        }
     }
-};
+    //#define TEST_DUMP_OCL_INFO cvtest::ocl::dumpOpenCLDevice();
+    //#else
+    //#define TEST_DUMP_OCL_INFO
+    //#endif
+    //
+    //void parseCustomOptions(int argc, char **argv);
+    //
+    //#define CV_TEST_MAIN(resourcesubdir, ...) \
+    //int main(int argc, char **argv) \
+    //{ \
+    //    __CV_TEST_EXEC_ARGS(__VA_ARGS__) \
+    //    cvtest::TS::ptr()->init(resourcesubdir); \
+    //    ::testing::InitGoogleTest(&argc, argv); \
+    //    cvtest::printVersionInfo(); \
+    //    TEST_DUMP_OCL_INFO \
+    //    parseCustomOptions(argc, argv); \
+    //    return RUN_ALL_TESTS(); \
+    //}
+    //
+    //// This usually only makes sense in perf tests with several implementations,
+    //// some of which are not available.
+    //#define CV_TEST_FAIL_NO_IMPL() do { \
+    //    ::testing::Test::RecordProperty("custom_status", "noimpl"); \
+    //    FAIL() << "No equivalent implementation."; \
+    //} while (0)
+    //
+    //#endif
+    //
+    //#include "opencv2/ts/ts_perf.hpp"
+    //
+    //#ifdef WINRT
+    //#ifndef __FSTREAM_EMULATED__
+    //#define __FSTREAM_EMULATED__
+    //#include <stdlib.h>
+    //#include <fstream>
+    //#include <sstream>
+    //
+    //#undef ifstream
+    //#undef ofstream
+    //#define ifstream ifstream_emulated
+    //#define ofstream ofstream_emulated
+    //
+    //namespace std {
+    //
+    //class ifstream : public stringstream
+    //{
+    //    FILE* f;
+    //public:
+    //    ifstream(const char* filename, ios_base::openmode mode = ios_base::in)
+    //        : f(NULL)
+    //    {
+    //        string modeStr("r");
+    //        printf("Open file (read): %s\n", filename);
+    //        if (mode & ios_base::binary)
+    //            modeStr += "b";
+    //        f = fopen(filename, modeStr.c_str());
+    //
+    //        if (f == NULL)
+    //        {
+    //            printf("Can't open file: %s\n", filename);
+    //            return;
+    //        }
+    //        fseek(f, 0, SEEK_END);
+    //        size_t sz = ftell(f);
+    //        if (sz > 0)
+    //        {
+    //            char* buf = (char*) malloc(sz);
+    //            fseek(f, 0, SEEK_SET);
+    //            if (fread(buf, 1, sz, f) == sz)
+    //            {
+    //                this->str(std::string(buf, sz));
+    //            }
+    //            free(buf);
+    //        }
+    //    }
+    //
+    //    ~ifstream() { close(); }
+    //    bool is_open() const { return f != NULL; }
+    //    void close()
+    //    {
+    //        if (f)
+    //            fclose(f);
+    //        f = NULL;
+    //        this->str("");
+    //    }
+    //};
 
-class DefaultRngAuto
-{
-//    const uint64 old_state;
-//
-//    DefaultRngAuto() : old_state(cv::theRNG().state) { cv::theRNG().state = (uint64)-1; }
-//    ~DefaultRngAuto() { cv::theRNG().state = old_state; }
-//
-//    DefaultRngAuto& operator=(const DefaultRngAuto&);
-};
+    //class ofstream : public stringstream
+    //{
+    //    FILE* f;
+    //public:
+    //    ofstream(const char* filename, ios_base::openmode mode = ios_base::out)
+    //    : f(NULL)
+    //    {
+    //        open(filename, mode);
+    //    }
+    //    ~ofstream() { close(); }
+    //    void open(const char* filename, ios_base::openmode mode = ios_base::out)
+    //    {
+    //        string modeStr("w+");
+    //        if (mode & ios_base::trunc)
+    //            modeStr = "w";
+    //        if (mode & ios_base::binary)
+    //            modeStr += "b";
+    //        f = fopen(filename, modeStr.c_str());
+    //        printf("Open file (write): %s\n", filename);
+    //        if (f == NULL)
+    //        {
+    //            printf("Can't open file (write): %s\n", filename);
+    //            return;
+    //        }
+    //    }
+    //    bool is_open() const { return f != NULL; }
+    //    void close()
+    //    {
+    //        if (f)
+    //        {
+    //            fwrite(reinterpret_cast<const char *>(this->str().c_str()), this->str().size(), 1, f);
+    //            fclose(f);
+    //        }
+    //        f = NULL;
+    //        this->str("");
+    //    }
+    //};
+    //
+    //} // namespace std
+    //#endif // __FSTREAM_EMULATED__
+    //#endif // WINRT
+    //
 
-}
-
-export namespace cvtest
-{
-
-// test images generation functions
-//CV_EXPORTS void fillGradient(Mat& img, int delta = 5);
-//CV_EXPORTS void smoothBorder(Mat& img, const Scalar& color, int delta = 3);
-//
-//CV_EXPORTS void printVersionInfo(bool useStdOut = true);
-//} //namespace cvtest
-//
-//#ifndef __CV_TEST_EXEC_ARGS
-//#if defined(_MSC_VER) && (_MSC_VER <= 1400)
-//#define __CV_TEST_EXEC_ARGS(...)    \
-//    while (++argc >= (--argc,-1)) {__VA_ARGS__; break;} /*this ugly construction is needed for VS 2005*/
-//#else
-//#define __CV_TEST_EXEC_ARGS(...)    \
-//    __VA_ARGS__;
-//#endif
-//#endif
-//
-//#ifdef HAVE_OPENCL
-namespace cvtest { namespace ocl {
-//function dumpOpenCLDevice() : void;
-} }
-//#define TEST_DUMP_OCL_INFO cvtest::ocl::dumpOpenCLDevice();
-//#else
-//#define TEST_DUMP_OCL_INFO
-//#endif
-//
-//void parseCustomOptions(int argc, char **argv);
-//
-//#define CV_TEST_MAIN(resourcesubdir, ...) \
-//int main(int argc, char **argv) \
-//{ \
-//    __CV_TEST_EXEC_ARGS(__VA_ARGS__) \
-//    cvtest::TS::ptr()->init(resourcesubdir); \
-//    ::testing::InitGoogleTest(&argc, argv); \
-//    cvtest::printVersionInfo(); \
-//    TEST_DUMP_OCL_INFO \
-//    parseCustomOptions(argc, argv); \
-//    return RUN_ALL_TESTS(); \
-//}
-//
-//// This usually only makes sense in perf tests with several implementations,
-//// some of which are not available.
-//#define CV_TEST_FAIL_NO_IMPL() do { \
-//    ::testing::Test::RecordProperty("custom_status", "noimpl"); \
-//    FAIL() << "No equivalent implementation."; \
-//} while (0)
-//
-//#endif
-//
-//#include "opencv2/ts/ts_perf.hpp"
-//
-//#ifdef WINRT
-//#ifndef __FSTREAM_EMULATED__
-//#define __FSTREAM_EMULATED__
-//#include <stdlib.h>
-//#include <fstream>
-//#include <sstream>
-//
-//#undef ifstream
-//#undef ofstream
-//#define ifstream ifstream_emulated
-//#define ofstream ofstream_emulated
-//
-//namespace std {
-//
-//class ifstream : public stringstream
-//{
-//    FILE* f;
-//public:
-//    ifstream(const char* filename, ios_base::openmode mode = ios_base::in)
-//        : f(NULL)
-//    {
-//        string modeStr("r");
-//        printf("Open file (read): %s\n", filename);
-//        if (mode & ios_base::binary)
-//            modeStr += "b";
-//        f = fopen(filename, modeStr.c_str());
-//
-//        if (f == NULL)
-//        {
-//            printf("Can't open file: %s\n", filename);
-//            return;
-//        }
-//        fseek(f, 0, SEEK_END);
-//        size_t sz = ftell(f);
-//        if (sz > 0)
-//        {
-//            char* buf = (char*) malloc(sz);
-//            fseek(f, 0, SEEK_SET);
-//            if (fread(buf, 1, sz, f) == sz)
-//            {
-//                this->str(std::string(buf, sz));
-//            }
-//            free(buf);
-//        }
-//    }
-//
-//    ~ifstream() { close(); }
-//    bool is_open() const { return f != NULL; }
-//    void close()
-//    {
-//        if (f)
-//            fclose(f);
-//        f = NULL;
-//        this->str("");
-//    }
-//};
-
-//class ofstream : public stringstream
-//{
-//    FILE* f;
-//public:
-//    ofstream(const char* filename, ios_base::openmode mode = ios_base::out)
-//    : f(NULL)
-//    {
-//        open(filename, mode);
-//    }
-//    ~ofstream() { close(); }
-//    void open(const char* filename, ios_base::openmode mode = ios_base::out)
-//    {
-//        string modeStr("w+");
-//        if (mode & ios_base::trunc)
-//            modeStr = "w";
-//        if (mode & ios_base::binary)
-//            modeStr += "b";
-//        f = fopen(filename, modeStr.c_str());
-//        printf("Open file (write): %s\n", filename);
-//        if (f == NULL)
-//        {
-//            printf("Can't open file (write): %s\n", filename);
-//            return;
-//        }
-//    }
-//    bool is_open() const { return f != NULL; }
-//    void close()
-//    {
-//        if (f)
-//        {
-//            fwrite(reinterpret_cast<const char *>(this->str().c_str()), this->str().size(), 1, f);
-//            fclose(f);
-//        }
-//        f = NULL;
-//        this->str("");
-//    }
-//};
-//
-//} // namespace std
-//#endif // __FSTREAM_EMULATED__
-//#endif // WINRT
-//
-
-interface IdumpImage {
-    (fileName : string, image : _mat.Mat): void;
-}
-export var dumpImage: IdumpImage = alvision_module.cvtest.dumpImage;
+    interface IdumpImage {
+        (fileName: string, image: _mat.Mat): void;
+    }
+    export var dumpImage: IdumpImage = alvision_module.cvtest.dumpImage;
     //CV_EXPORTS void dumpImage(const std::string& fileName, const cv::Mat& image);
 }
 

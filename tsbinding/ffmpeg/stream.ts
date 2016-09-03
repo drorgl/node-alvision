@@ -1,4 +1,4 @@
-var alvision_module = require('../../lib/bindings.js');
+import alvision_module from "../bindings";
 
 /// <reference path="packet.ts" />
 /// <reference path="ffmpeg.ts" />

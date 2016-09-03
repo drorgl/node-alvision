@@ -42,7 +42,7 @@
 
 
 ////// <reference path="Matrix.ts" />
-var alvision_module = require('../../lib/bindings.js');
+import alvision_module from "../../bindings";
 
 //import * as _constants from './Constants'
 import * as _st from './../static';

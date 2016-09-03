@@ -41,7 +41,7 @@
 //
 //M*/
 
-var alvision_module = require('../../lib/bindings.js');
+import alvision_module from "../bindings";
 
 import * as _mat from './mat'
 import * as _matx from './matx'
@@ -548,7 +548,7 @@ export var Affine3d: Affine3Static<_st.double> = alvision_module.Affine3d;
 ///// <reference path="../../typings/tsd.d.ts" />
 
 //////// <reference path="Matrix.ts" />
-//var alvision_module = require('../../lib/bindings.js');
+//import alvision_module from "../../bindings";
 
 //import * as _constants from './Constants'
 //import * as _matrix from './Matrix'

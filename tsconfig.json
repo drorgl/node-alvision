@@ -6,9 +6,5 @@
         "removeComments": false,
         "preserveConstEnums": true,
         "sourceMap": true
-    },
-	"exclude" : [
-		"node_modules",
-		"typings"
-	]
+    }
 }

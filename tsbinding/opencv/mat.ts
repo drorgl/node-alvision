@@ -41,7 +41,7 @@
 //
 //M*/
 
-var alvision_module = require('../../lib/bindings.js');
+import alvision_module from "../bindings";
 import * as _st from './static';
 import * as _types from './types';
 import * as _matx from './matx';

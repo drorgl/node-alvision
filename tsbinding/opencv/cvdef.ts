@@ -1,4 +1,4 @@
-var alvision_module = require('../../lib/bindings.js');
+import alvision_module from "../bindings";
 
 import * as _st from './static';
 
@@ -60,6 +60,13 @@ const CV_MAT_CN_MASK = ((CV_CN_MAX - 1) << CV_CN_SHIFT);
 const CV_MAT_TYPE_MASK = (CV_DEPTH_MAX * CV_CN_MAX - 1);
 
 
+interface ICV_MAKETYPE {
+    (depth: number | _st.int | MatrixType, channels: number | _st.int): number;
+    //(depth: MatrixType, channels: number | _st.int): number;
+}
+
+var CV_MAKETYPE: ICV_MAKETYPE = alvision_module.MatrixType.CV_MAKETYPE;
+
 
 export enum MatrixType {
     //const CV_8U = CV_MAKETYPE();
@@ -79,55 +86,52 @@ export enum MatrixType {
     //#define CV_MAKETYPE(depth, cn)(CV_MAT_DEPTH(depth) + (((cn) - 1) << CV_CN_SHIFT))
     //#define CV_MAKE_TYPE CV_MAKETYPE
 
-     CV_8UC1 = MatrixType.CV_MAKETYPE(CV_8U, 1),
-     CV_8UC2  = MatrixType.CV_MAKETYPE(CV_8U, 2),
-     CV_8UC3  = MatrixType.CV_MAKETYPE(CV_8U, 3),
-     CV_8UC4  = MatrixType.CV_MAKETYPE(CV_8U, 4),
+     CV_8UC1 = CV_MAKETYPE(CV_8U, 1),
+     CV_8UC2  = CV_MAKETYPE(CV_8U, 2),
+     CV_8UC3  = CV_MAKETYPE(CV_8U, 3),
+     CV_8UC4  = CV_MAKETYPE(CV_8U, 4),
     //#define CV_8UC(n) CV_MAKETYPE(CV_8U, (n)),
 
-    CV_8SC1  = MatrixType.CV_MAKETYPE(CV_8S, 1),
-    CV_8SC2  = MatrixType.CV_MAKETYPE(CV_8S, 2),
-    CV_8SC3  = MatrixType.CV_MAKETYPE(CV_8S, 3),
-    CV_8SC4  = MatrixType.CV_MAKETYPE(CV_8S, 4),
+    CV_8SC1  = CV_MAKETYPE(CV_8S, 1),
+    CV_8SC2  = CV_MAKETYPE(CV_8S, 2),
+    CV_8SC3  = CV_MAKETYPE(CV_8S, 3),
+    CV_8SC4  = CV_MAKETYPE(CV_8S, 4),
     //#define CV_8SC(n) CV_MAKETYPE(CV_8S, (n)),
 
-    CV_16UC1  = MatrixType.CV_MAKETYPE(CV_16U, 1),
-    CV_16UC2  = MatrixType.CV_MAKETYPE(CV_16U, 2),
-    CV_16UC3  = MatrixType.CV_MAKETYPE(CV_16U, 3),
-    CV_16UC4  = MatrixType.CV_MAKETYPE(CV_16U, 4),
+    CV_16UC1  = CV_MAKETYPE(CV_16U, 1),
+    CV_16UC2  = CV_MAKETYPE(CV_16U, 2),
+    CV_16UC3  = CV_MAKETYPE(CV_16U, 3),
+    CV_16UC4  = CV_MAKETYPE(CV_16U, 4),
     //#define CV_16UC(n) CV_MAKETYPE(CV_16U, (n)),
 
-    CV_16SC1 = MatrixType.CV_MAKETYPE(CV_16S, 1),
-    CV_16SC2 = MatrixType.CV_MAKETYPE(CV_16S, 2),
-    CV_16SC3 = MatrixType.CV_MAKETYPE(CV_16S, 3),
-    CV_16SC4 = MatrixType.CV_MAKETYPE(CV_16S, 4),
+    CV_16SC1 = CV_MAKETYPE(CV_16S, 1),
+    CV_16SC2 = CV_MAKETYPE(CV_16S, 2),
+    CV_16SC3 = CV_MAKETYPE(CV_16S, 3),
+    CV_16SC4 = CV_MAKETYPE(CV_16S, 4),
     //#define CV_16SC(n) CV_MAKETYPE(CV_16S, (n)),
 
-    CV_32SC1  = MatrixType.CV_MAKETYPE(CV_32S, 1),
-    CV_32SC2  = MatrixType.CV_MAKETYPE(CV_32S, 2),
-    CV_32SC3  = MatrixType.CV_MAKETYPE(CV_32S, 3),
-    CV_32SC4  = MatrixType.CV_MAKETYPE(CV_32S, 4),
+    CV_32SC1  = CV_MAKETYPE(CV_32S, 1),
+    CV_32SC2  = CV_MAKETYPE(CV_32S, 2),
+    CV_32SC3  = CV_MAKETYPE(CV_32S, 3),
+    CV_32SC4  = CV_MAKETYPE(CV_32S, 4),
     //#define CV_32SC(n) CV_MAKETYPE(CV_32S, (n)),
 
-    CV_32FC1  = MatrixType.CV_MAKETYPE(CV_32F, 1),
-    CV_32FC2  = MatrixType.CV_MAKETYPE(CV_32F, 2),
-    CV_32FC3  = MatrixType.CV_MAKETYPE(CV_32F, 3),
-    CV_32FC4  = MatrixType.CV_MAKETYPE(CV_32F, 4),
+    CV_32FC1  = CV_MAKETYPE(CV_32F, 1),
+    CV_32FC2  = CV_MAKETYPE(CV_32F, 2),
+    CV_32FC3  = CV_MAKETYPE(CV_32F, 3),
+    CV_32FC4  = CV_MAKETYPE(CV_32F, 4),
     //#define CV_32FC(n) CV_MAKETYPE(CV_32F, (n)),
 
-    CV_64FC1  = MatrixType.CV_MAKETYPE(CV_64F, 1),
-    CV_64FC2  = MatrixType.CV_MAKETYPE(CV_64F, 2),
-    CV_64FC3  = MatrixType.CV_MAKETYPE(CV_64F, 3),
-    CV_64FC4  = MatrixType.CV_MAKETYPE(CV_64F, 4),
+    CV_64FC1  = CV_MAKETYPE(CV_64F, 1),
+    CV_64FC2  = CV_MAKETYPE(CV_64F, 2),
+    CV_64FC3  = CV_MAKETYPE(CV_64F, 3),
+    CV_64FC4  = CV_MAKETYPE(CV_64F, 4),
     //#define CV_64FC(n) CV_MAKETYPE(CV_64F, (n)),
 
 }
 
 export module MatrixType {
-    export interface ICV_MAKETYPE {
-        (depth: number | _st.int | MatrixType, channels: number | _st.int): number;
-        //(depth: MatrixType, channels: number | _st.int): number;
-    }
+    
 
     export function CV_MAT_DEPTH(flags: _st.int): _st.int {
         return ((flags.valueOf()) & CV_MAT_DEPTH_MASK)
@@ -152,7 +156,7 @@ export module MatrixType {
 
 
     //export declare function CV_MAKETYPE(depth: number, channels: number): number = alvision_module.MatrixType.CV_MAKETYPE;
-    export var CV_MAKETYPE: ICV_MAKETYPE = alvision_module.MatrixType.CV_MAKETYPE;
+    export var CV_MAKETYPE;
 
     export function ToString(type: _st.int | MatrixType) {
         var depth = type.valueOf() & CV_MAT_DEPTH_MASK;

@@ -9,6 +9,9 @@
 
 #include "opencv/HighGUI.h"
 #include "opencv/Constants.h"
+#include "opencv/Cuda.h"
+#include "opencv/flann.h"
+#include "opencv/cvtest.h"
 
 
 extern "C"{ 
@@ -22,6 +25,13 @@ init(Handle<Object> target) {
 	alvision::stream::Init(target);
 	Constants::Init(target);
 	NamedWindow::Init(target);
+
+	Cuda::Init(target);
+
+	flann::Init(target);
+
+	cvtest::Init(target);
+
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 };

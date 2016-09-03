@@ -75,8 +75,19 @@
 		, "src/opencv/HighGUI.cc"
 		, "src/opencv/HighGUI.h"
 		
-		#, "src/opencv/vec.cc"
-		#, "src/opencv/vec.h"
+		, "src/opencv/Cuda.cc"
+		, "src/opencv/Cuda.h"
+		, "src/opencv/cuda/DeviceInfo.cc"
+		, "src/opencv/cuda/DeviceInfo.h"
+		
+		, "src/opencv/flann.cc"
+		, "src/opencv/flann.h"
+		
+		, "src/opencv/cvtest.cc"
+		, "src/opencv/cvtest.h"
+		
+		, "src/opencv/ts/DeviceManager.cc"
+		, "src/opencv/ts/DeviceManager.h"
 		
 		
 		, "src/ffmpeg/ffmpeg.cc"
@@ -106,7 +117,7 @@
 		,'typings/node/node.d.ts'
 		,'typings/tape/tape.d.ts'
 		
-		
+		,'tsbinding/bindings.ts'
 		
 		,'tsbinding/tests.ts'
 		,'tsbinding/alvision.ts'
