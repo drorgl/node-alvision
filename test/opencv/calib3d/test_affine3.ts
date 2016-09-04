@@ -54,7 +54,7 @@ import fs = require('fs');
 //#include < iostream >
 
 alvision.cvtest.TEST('Calib3d_Affine3f', 'accuracy', () => {
-    var rvec = new alvision.Vecd(0.2, 0.5, 0.3);
+    var rvec = new alvision.Vec3d(0.2, 0.5, 0.3);
     var affine = new alvision.Affine3d(rvec);
 
     var expected = new alvision.Mat();
@@ -73,8 +73,8 @@ alvision.cvtest.TEST('Calib3d_Affine3f', 'accuracy', () => {
     R.val[1] = -R.val[3];
 
 
-    var affine1 = new alvision.Affine3d(new alvision.Mat(new alvision.Vecd(0.2, 0.5, 0.3)).reshape(1, 1), new alvision.Vecd(4, 5, 6));
-    var affine2 = new alvision.Affine3d(R, new alvision.Vecd(1, 1, 0.4));
+    var affine1 = new alvision.Affine3d(new alvision.Mat(new alvision.Vec3d(0.2, 0.5, 0.3)).reshape(1, 1), new alvision.Vec3d(4, 5, 6));
+    var affine2 = new alvision.Affine3d(R, new alvision.Vec3d(1, 1, 0.4));
 
     var result = alvision.Affine3d.op_Multiplication( affine1.inv() , affine2);
 
@@ -93,7 +93,7 @@ alvision.cvtest.TEST('Calib3d_Affine3f', 'accuracy_rvec',()=>
     //typedef float T;
 
     //alvision.Affine3<T>::Vec3 w;
-    var w = new alvision.Vecf();
+    var w = new alvision.Vec3f();
     //alvision.Affine3<T>::Mat3 u, vt, R;
     var u = new alvision.Matxf();
     var vt = new alvision.Matxf();
@@ -111,7 +111,7 @@ alvision.cvtest.TEST('Calib3d_Affine3f', 'accuracy_rvec',()=>
         //console.log("M:" <<(alvision.getTickCount() - s)*1000/alvision.getTickFrequency() << std::endl;
 
         //alvision.Affine3<T>::Vec3 vo;
-        var vo = new alvision.Vecf;
+        var vo = new alvision.Vec3f();
         //s = (double)alvision.getTickCount();
         alvision.Rodrigues(R, vo);
         //console.log("O:" <<(alvision.getTickCount() - s)*1000/alvision.getTickFrequency() << std::endl;

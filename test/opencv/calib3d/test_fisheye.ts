@@ -58,9 +58,9 @@ class fisheyeTest extends alvision.cvtest.CUDA_TEST{// : public::testing::Test {
     //protected:
     protected  imageSize : alvision.Size;
     protected K: alvision.Matxd;
-    protected D: alvision.Vecd;
+    protected D: alvision.Vec4d;
     protected R: alvision.Matxd;
-    protected T: alvision.Vecd;
+    protected T: alvision.Vec4d;
     protected datasets_repository_path: string;
 
     constructor(case_name : string, test_name : string) {
@@ -70,13 +70,13 @@ class fisheyeTest extends alvision.cvtest.CUDA_TEST{// : public::testing::Test {
             0, 560.506767351568, 381.939424848348,
             0, 0, 1]);
 
-        this.D = new alvision.Vecd([-0.0014613319981768, -0.00329861110580401, 0.00605760088590183, -0.00374209380722371]);
+        this.D = new alvision.Vec4d([-0.0014613319981768, -0.00329861110580401, 0.00605760088590183, -0.00374209380722371]);
 
         this.R = new alvision.Matxd([9.9756700084424932e-01, 6.9698277640183867e-02, 1.4929569991321144e-03,
             -6.9711825162322980e-02, 9.9748249845531767e-01, 1.2997180766418455e-02,
             -5.8331736398316541e-04, -1.3069635393884985e-02, 9.9991441852366736e-01]);
 
-        this.T = new alvision.Vecd([-9.9217369356044638e-02, 3.1741831972356663e-03, 1.8551007952921010e-04]);
+        this.T = new alvision.Vec4d([-9.9217369356044638e-02, 3.1741831972356663e-03, 1.8551007952921010e-04]);
 
 
 
@@ -135,25 +135,25 @@ class fisheyeTest_projectPoints extends fisheyeTest
         let distorted0 = new alvision.Mat(1, N * N, alvision.MatrixType.CV_64FC2), undist1 = new alvision.Mat(), undist2 = new alvision.Mat(), distorted1 = new alvision.Mat(), distorted2 = new alvision.Mat ();
 
         undist2.create(distorted0.size(), alvision.MatrixType.CV_MAKETYPE(distorted0.depth(), 3));
-        let pts = distorted0.ptr<alvision.Vecd>("Vec2d");
+        let pts = distorted0.ptr<alvision.Vec2d>("Vec2d");
 
-        let c = new alvision.Vecd(this.K.at(0, 2).get(), this.K.at(1, 2).get());
+        let c = new alvision.Vec2d(this.K.at(0, 2).get(), this.K.at(1, 2).get());
         for (let y = 0, k = 0; y < N; ++y)
         for (let x = 0; x < N; ++x)
         {
-            let point = new alvision.Vecd(x * cols.valueOf() / (N - 1.), y * rows.valueOf() / (N - 1.));
-            pts[k++] = <alvision.Vecd>(point.op_Substraction(c)).op_Multiplication(0.85).op_Addition( c);
+            let point = new alvision.Vec2d(x * cols.valueOf() / (N - 1.), y * rows.valueOf() / (N - 1.));
+            pts[k++] = <alvision.Vec2d>(point.op_Substraction(c)).op_Multiplication(0.85).op_Addition( c);
         }
 
         alvision.fisheye.undistortPoints(distorted0, undist1, this.K, this.D);
 
-        let u1 = undist1.ptr<alvision.Vecd>("Vec2d");
-        let u2 = undist2.ptr<alvision.Vecd>("Vec3d");
+        let u1 = undist1.ptr<alvision.Vec2d>("Vec2d");
+        let u2 = undist2.ptr<alvision.Vec3d>("Vec3d");
         for (let i = 0; i < distorted0.total(); ++i)
-        u2[i] = new alvision.Vecd(u1[i][0], u1[i][1], 1.0);
+        u2[i] = new alvision.Vec3d(u1[i][0], u1[i][1], 1.0);
 
         alvision.fisheye.distortPoints(undist1, distorted1, this.K, this.D);
-        alvision.fisheye.projectPoints(undist2, distorted2, alvision.Vecd.all(0), alvision.Vecd.all(0), this.K, this.D);
+        alvision.fisheye.projectPoints(undist2, distorted2, alvision.Vec3d.all(0), alvision.Vec3d.all(0), this.K, this.D);
 
         alvision.EXPECT_MAT_NEAR(distorted0, distorted1, 1e-10);
         alvision.EXPECT_MAT_NEAR(distorted0, distorted2, 1e-10);
@@ -329,7 +329,7 @@ class fisheyeTest_Calibration extends fisheyeTest
         flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_FIX_SKEW;
 
         let K = new alvision.Matxd();
-        let D = new alvision.Vecd();
+        let D = new alvision.Vec4d();
 
         alvision.fisheye.calibrate(objectPoints, imagePoints, this.imageSize, K, D,
             null, null, flag,new alvision.TermCriteria(3, 20, 1e-6));
@@ -362,8 +362,8 @@ class fisheyeTest_Homography extends fisheyeTest
         fs_object.release();
 
         let param = new alvision.IntrinsicParams();
-        param.Init(new alvision.Vecd(Math.max(this.imageSize.width.valueOf(), this.imageSize.height.valueOf()) / Math.PI, Math.max(this.imageSize.width.valueOf(), this.imageSize.height.valueOf()) / Math.PI),
-            new alvision.Vecd(this.imageSize.width.valueOf() / 2.0 - 0.5, this.imageSize.height.valueOf() / 2.0 - 0.5));
+        param.Init(new alvision.Vec2d(Math.max(this.imageSize.width.valueOf(), this.imageSize.height.valueOf()) / Math.PI, Math.max(this.imageSize.width.valueOf(), this.imageSize.height.valueOf()) / Math.PI),
+            new alvision.Vec2d(this.imageSize.width.valueOf() / 2.0 - 0.5, this.imageSize.height.valueOf() / 2.0 - 0.5));
 
         let _imagePoints  = new alvision.Mat(imagePoints[0]);
         let _objectPoints = new alvision.Mat(objectPoints[0]);
@@ -395,11 +395,11 @@ class fisheyeTest_Homography extends fisheyeTest
 
         let merr = alvision.MatExpr.op_Substraction(mrep.rowRange(0, 2), imagePointsNormalized).toMat().t().toMat();
 
-        let std_err = new alvision.Vecd();
+        let std_err = new alvision.Vec2d();
         alvision.meanStdDev(merr.reshape(2), null, std_err);
-        std_err = <alvision.Vecd>std_err.op_Multiplication(Math.sqrt(merr.reshape(2).total().valueOf() / (merr.reshape(2).total().valueOf() - 1)));
+        std_err = <alvision.Vec2d>std_err.op_Multiplication(Math.sqrt(merr.reshape(2).total().valueOf() / (merr.reshape(2).total().valueOf() - 1)));
 
-        let correct_std_err = new alvision.Vecd (0.00516740156010384, 0.00644205331553901);
+        let correct_std_err = new alvision.Vec2d (0.00516740156010384, 0.00644205331553901);
         alvision.EXPECT_MAT_NEAR(std_err, correct_std_err, 1e-12);
     }
 }
@@ -432,18 +432,18 @@ class fisheyeTest_EtimateUncertainties extends fisheyeTest
     flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_FIX_SKEW;
 
     let K = new alvision.Matxd();
-    let D = new alvision.Vecd();
-    let rvec = new Array < alvision.Vecd > ();
-    let tvec = new Array < alvision.Vecd > ();
+    let D = new alvision.Vec4d();
+    let rvec = new Array < alvision.Vec3d > ();
+    let tvec = new Array < alvision.Vec3d > ();
 
     alvision.fisheye.calibrate(objectPoints, imagePoints, this.imageSize, K, D,
         rvec, tvec, flag, new alvision.TermCriteria(3, 20, 1e-6));
 
     let param = new alvision.IntrinsicParams(), errors = new alvision.IntrinsicParams (); 
-    let err_std = new alvision.Vecd();
+    let err_std = new alvision.Vec2d();
     let thresh_cond = 1e6;
     let check_cond = 1;
-    param.Init(new alvision.Vecd(K.at(0, 0).get(), K.at(1, 1).get()),new alvision.Vecd(K.at(0, 2).get(), K.at(1, 2).get()), D);
+    param.Init(new alvision.Vec2d(K.at(0, 0).get(), K.at(1, 1).get()),new alvision.Vec2d(K.at(0, 2).get(), K.at(1, 2).get()), D);
     param.isEstimate = Array<alvision.int>(9, 1);
     param.isEstimate[4] = 0;
 
@@ -455,10 +455,10 @@ class fisheyeTest_EtimateUncertainties extends fisheyeTest
     alvision.EstimateUncertainties(objectPoints, imagePoints, param, rvec, tvec,
         errors, err_std, thresh_cond, check_cond, (rms_) => { rms = rms_; });
 
-    alvision.EXPECT_MAT_NEAR(errors.f, new alvision.Vecd(1.29837104202046, 1.31565641071524), 1e-10);
-    alvision.EXPECT_MAT_NEAR(errors.c, new alvision.Vecd(0.890439368129246, 0.816096854937896), 1e-10);
-    alvision.EXPECT_MAT_NEAR(errors.k, new alvision.Vecd(0.00516248605191506, 0.0168181467500934, 0.0213118690274604, 0.00916010877545648), 1e-10);
-    alvision.EXPECT_MAT_NEAR(err_std,  new alvision.Vecd(0.187475975266883, 0.185678953263995), 1e-10);
+    alvision.EXPECT_MAT_NEAR(errors.f, new alvision.Vec2d(1.29837104202046, 1.31565641071524), 1e-10);
+    alvision.EXPECT_MAT_NEAR(errors.c, new alvision.Vec2d(0.890439368129246, 0.816096854937896), 1e-10);
+    alvision.EXPECT_MAT_NEAR(errors.k, new alvision.Vec4d(0.00516248605191506, 0.0168181467500934, 0.0213118690274604, 0.00916010877545648), 1e-10);
+    alvision.EXPECT_MAT_NEAR(err_std,  new alvision.Vec2d(0.187475975266883, 0.185678953263995), 1e-10);
     alvision.CV_Assert(()=>Math.abs(rms.valueOf() - 0.263782587133546) < 1e-10);
     alvision.CV_Assert(()=>errors.alpha == 0);
 }
@@ -568,8 +568,8 @@ class fisheyeTest_stereoCalibrate extends fisheyeTest
     fs_object.release();
 
     let K1 = new alvision.Matxd(), K2 = new alvision.Matxd(), R = new alvision.Matxd ();
-    let T = new alvision.Vecd ();
-    let D1 = new alvision.Vecd(), D2 = new alvision.Vecd ();
+    let T = new alvision.Vec3d ();
+    let D1 = new alvision.Vec4d(), D2 = new alvision.Vec4d ();
 
     let flag = 0;
     flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_RECOMPUTE_EXTRINSIC;
@@ -584,7 +584,7 @@ class fisheyeTest_stereoCalibrate extends fisheyeTest
     let R_correct = new alvision.Matxd (0.9975587205950972, 0.06953016383322372, 0.006492709911733523,
         -0.06956823121068059, 0.9975601387249519, 0.005833595226966235,
         -0.006071257768382089, -0.006271040135405457, 0.9999619062167968);
-    let T_correct = new alvision.Vecd (-0.099402724724121, 0.00270812139265413, 0.00129330292472699);
+    let T_correct = new alvision.Vec3d (-0.099402724724121, 0.00270812139265413, 0.00129330292472699);
     let K1_correct = new alvision.Matxd (561.195925927249, 0, 621.282400272412,
         0, 562.849402029712, 380.555455380889,
         0, 0, 1);
@@ -593,8 +593,8 @@ class fisheyeTest_stereoCalibrate extends fisheyeTest
         0, 561.90171021422, 380.401340535339,
         0, 0, 1);
 
-    let D1_correct = new alvision.Vecd (-7.44253716539556e-05, -0.00702662033932424, 0.00737569823650885, -0.00342230256441771);
-    let D2_correct = new alvision.Vecd (-0.0130785435677431, 0.0284434505383497, -0.0360333869900506, 0.0144724062347222);
+    let D1_correct = new alvision.Vec4d (-7.44253716539556e-05, -0.00702662033932424, 0.00737569823650885, -0.00342230256441771);
+    let D2_correct = new alvision.Vec4d (-0.0130785435677431, 0.0284434505383497, -0.0360333869900506, 0.0144724062347222);
 
     alvision.EXPECT_MAT_NEAR(R, R_correct, 1e-10);
     alvision.EXPECT_MAT_NEAR(T, T_correct, 1e-10);
@@ -638,7 +638,7 @@ class fisheyeTest_stereoCalibrateFixIntrinsic extends fisheyeTest
         fs_object.release();
 
         let R = new alvision.Matxd();
-        let T = new alvision.Vecd();
+        let T = new alvision.Vec3d();
 
         let flag = 0; 
         flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_RECOMPUTE_EXTRINSIC;
@@ -654,8 +654,8 @@ class fisheyeTest_stereoCalibrateFixIntrinsic extends fisheyeTest
             0, 561.90171021422, 380.401340535339,
             0, 0, 1);
 
-        let D1 = new alvision.Vecd  (-7.44253716539556e-05, -0.00702662033932424, 0.00737569823650885, -0.00342230256441771);
-        let D2 = new alvision.Vecd  (-0.0130785435677431, 0.0284434505383497, -0.0360333869900506, 0.0144724062347222);
+        let D1 = new alvision.Vec4d  (-7.44253716539556e-05, -0.00702662033932424, 0.00737569823650885, -0.00342230256441771);
+        let D2 = new alvision.Vec4d  (-0.0130785435677431, 0.0284434505383497, -0.0360333869900506, 0.0144724062347222);
 
         alvision.fisheye.stereoCalibrate(objectPoints, leftPoints, rightPoints,
             K1, D1, K2, D2, this.imageSize, R, T, flag,
@@ -664,7 +664,7 @@ class fisheyeTest_stereoCalibrateFixIntrinsic extends fisheyeTest
         let R_correct = new alvision.Matxd(0.9975587205950972, 0.06953016383322372, 0.006492709911733523,
             -0.06956823121068059, 0.9975601387249519, 0.005833595226966235,
             -0.006071257768382089, -0.006271040135405457, 0.9999619062167968);
-        let T_correct = new alvision.Vecd (-0.099402724724121, 0.00270812139265413, 0.00129330292472699);
+        let T_correct = new alvision.Vec3d (-0.099402724724121, 0.00270812139265413, 0.00129330292472699);
 
 
         alvision.EXPECT_MAT_NEAR(R, R_correct, 1e-10);

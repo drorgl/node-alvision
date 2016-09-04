@@ -876,7 +876,7 @@ export namespace ml {
                 the sample. First element is an index of the most probable mixture component for the given
                 sample.
                  */
-                predict2(sample: _st.InputArray, probs: _st.OutputArray): _matx.Vecd;
+                predict2(sample: _st.InputArray, probs: _st.OutputArray): _matx.Vec2d;
         
                 /** @brief Estimate the Gaussian mixture parameters from a samples set.
             

@@ -68,12 +68,12 @@ function renderMSERs(gray: alvision.Mat, img: alvision.Mat, msers: Array<Array<a
         let b = rng.uniform(0, 256);
         let g = rng.uniform(0, 256);
         let r = rng.uniform(0, 256);
-        let color = new alvision.Vecb(b, g, r);
+        let color = new alvision.Vec3b(b, g, r);
 
         const  pt = msers[i][0];
         let n = msers[i].length;
         for (let j = 0; j < n; j++)
-            img.at<alvision.Vecb>("Vec3b", pt[j]).set(color);
+            img.at<alvision.Vec3b>("Vec3b", pt[j]).set(color);
     }
 }
 //#endif

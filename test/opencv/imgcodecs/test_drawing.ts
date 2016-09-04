@@ -243,7 +243,7 @@ class CV_DrawingTest_CPP extends CV_DrawingTest {
         //for (let i = 0; i < it.count; ++it, i++ )
         var i = 0;
         it.each((pos) => {
-            var v = img.at<alvision.Vecb>("Vec3b", pos.x, pos.y).get().op_Substraction(img.at<alvision.Vecb>("Vec3b", 300, i).get());
+            var v = img.at<alvision.Vec3b>("Vec3b", pos.x, pos.y).get().op_Substraction(img.at<alvision.Vec3b>("Vec3b", 300, i).get());
             //Vec3b v = (Vec3b)(*(*it)) - img.at<Vec3b>(300, i);
             i++;
             var err = alvision.cvtest.norm(v, alvision.NormTypes.NORM_L2);
@@ -439,7 +439,7 @@ class CV_DrawingTest_C extends CV_DrawingTest {
         var it = new alvision.LineIterator(_img, new alvision.Point(0, 300), new alvision.Point(1000, 300));
         var i = 0;
         it.each((pos) => {
-            var v = _img.at<alvision.Vecb>("Vec3b", pos.x, pos.y).get().op_Substraction(_img.at<alvision.Vecb>("Vec3b", 300, i).get());
+            var v = _img.at<alvision.Vec3b>("Vec3b", pos.x, pos.y).get().op_Substraction(_img.at<alvision.Vec3b>("Vec3b", 300, i).get());
             i++;
             var err = alvision.cvtest.norm(v, alvision.NormTypes.NORM_L2);
             if (err != 0) {

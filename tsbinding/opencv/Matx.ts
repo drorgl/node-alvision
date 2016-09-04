@@ -716,46 +716,71 @@ export interface Vec<T> extends Matx<T> {
   @{
 */
 
-    export interface Vecb extends Vec<_st.uchar> { }
-    export interface Vecs extends Vec<_st.short> { }
-    export interface Vecw extends Vec<_st.ushort> { }
-    export interface Veci extends Vec<_st.int> { }
-    export interface Vecf extends Vec<_st.float> { }
-    export interface Vecd extends Vec<_st.double> { }
 
-    export var Vecb: VecStatic<_st.uchar> = alvision_module.Vecb;
-    export var Vecs: VecStatic<_st.short> = alvision_module.Vecs;
-    export var Veci: VecStatic<_st.int> = alvision_module.Veci;
-    export var Vecd: VecStatic<_st.double> = alvision_module.Vecd;
-    export var Vecf: VecStatic<_st.float> = alvision_module.Vecf;
+export interface Vec2<T> extends Vec<T> { }
+export interface Vec3<T> extends Vec<T> { }
+export interface Vec4<T> extends Vec<T> { }
+export interface Vec6<T> extends Vec<T> { }
+export interface Vec8<T> extends Vec<T> { }
 
-//typedef Vec< uchar, 2 > Vec2b;
-//typedef Vec< uchar, 3 > Vec3b;
-//typedef Vec< uchar, 4 > Vec4b;
+interface Vec2Static<T> extends VecStatic<T> { }
+interface Vec3Static<T> extends VecStatic<T> { }
+interface Vec4Static<T> extends VecStatic<T> { }
+interface Vec6Static<T> extends VecStatic<T> { }
+interface Vec8Static<T> extends VecStatic<T> { }
 
-//typedef Vec< short, 2 > Vec2s;
-//typedef Vec< short, 3 > Vec3s;
-//typedef Vec< short, 4 > Vec4s;
 
-//typedef Vec< ushort, 2 > Vec2w;
-//typedef Vec< ushort, 3 > Vec3w;
-//typedef Vec< ushort, 4 > Vec4w;
+export interface Vec2b extends Vec2<_st.uchar> { }
+export interface Vec3b extends Vec3<_st.uchar> { } 
+export interface Vec4b extends Vec4<_st.uchar> { } 
+export interface Vec2s extends Vec2<_st.short> { } 
+export interface Vec3s extends Vec3<_st.short> { } 
+export interface Vec4s extends Vec4<_st.short> { } 
+export interface Vec2w extends Vec2<_st.ushort> { }
+export interface Vec3w extends Vec3<_st.ushort> { }
+export interface Vec4w extends Vec4<_st.ushort> { }
+export interface Vec2i extends Vec2<_st.int>  { } 
+export interface Vec3i extends Vec3<_st.int>  { } 
+export interface Vec4i extends Vec4<_st.int>  { } 
+export interface Vec6i extends Vec6<_st.int>  { } 
+export interface Vec8i extends Vec8<_st.int> { } 
+export interface Vec2f extends Vec2<_st.float>  { }
+export interface Vec3f extends Vec3<_st.float>  { }
+export interface Vec4f extends Vec4<_st.float>  { }
+export interface Vec6f extends Vec6<_st.float> { }
+export interface Vec2d extends Vec2<_st.double> { }
+export interface Vec3d extends Vec3<_st.double> { }
+export interface Vec4d extends Vec4<_st.double> { }
+export interface Vec6d extends Vec6<_st.double> { }
 
-//typedef Vec< int, 2 > Vec2i;
-//typedef Vec< int, 3 > Vec3i;
-//typedef Vec< int, 4 > Vec4i;
-//typedef Vec< int, 6 > Vec6i;
-//typedef Vec< int, 8 > Vec8i;
 
-//typedef Vec< float, 2 > Vec2f;
-//typedef Vec< float, 3 > Vec3f;
-//typedef Vec< float, 4 > Vec4f;
-//typedef Vec< float, 6 > Vec6f;
 
-//typedef Vec< double, 2 > Vec2d;
-//typedef Vec< double, 3 > Vec3d;
-//typedef Vec< double, 4 > Vec4d;
-//typedef Vec< double, 6 > Vec6d;
+
+
+export var Vec2b : Vec2Static<_st.uchar> = alvision_module.Vec2b;
+export var Vec3b : Vec3Static<_st.uchar> = alvision_module.Vec3b;
+export var Vec4b : Vec4Static<_st.uchar> = alvision_module.Vec4b;
+export var Vec2s : Vec2Static<_st.short> = alvision_module.Vec2s;
+export var Vec3s : Vec3Static<_st.short> = alvision_module.Vec3s;
+export var Vec4s : Vec4Static<_st.short> = alvision_module.Vec4s;
+export var Vec2w : Vec2Static<_st.ushort> = alvision_module.Vec2w;
+export var Vec3w : Vec2Static<_st.ushort> = alvision_module.Vec3w;
+export var Vec4w : Vec4Static<_st.ushort> = alvision_module.Vec4w;
+export var Vec2i : Vec2Static<_st.int> = alvision_module.Vec2i;
+export var Vec3i : Vec3Static<_st.int> = alvision_module.Vec3i;
+export var Vec4i : Vec4Static<_st.int> = alvision_module.Vec4i;
+export var Vec6i : Vec6Static<_st.int> = alvision_module.Vec6i;
+export var Vec8i : Vec8Static<_st.int> = alvision_module.Vec8i;
+export var Vec2f : Vec2Static<_st.float> = alvision_module.Vec2f;
+export var Vec3f : Vec3Static<_st.float> = alvision_module.Vec3f;
+export var Vec4f : Vec4Static<_st.float> = alvision_module.Vec4f;
+export var Vec6f : Vec6Static<_st.float> = alvision_module.Vec6f;
+export var Vec2d : Vec2Static<_st.double> = alvision_module.Vec2d;
+export var Vec3d : Vec3Static<_st.double> = alvision_module.Vec3d;
+export var Vec4d : Vec4Static<_st.double> = alvision_module.Vec4d;
+export var Vec6d : Vec6Static<_st.double> = alvision_module.Vec6d;
+
+
 /** @} */
 
 /*!

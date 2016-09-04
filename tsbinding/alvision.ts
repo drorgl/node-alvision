@@ -1,4 +1,5 @@
-var alvision_module = require('../lib/bindings.js');
+//var alvision_module = require('../lib/bindings.js');
+import alvision_module from "./bindings";
 
 export * from './ffmpeg/ffmpeg';
 export * from './ffmpeg/packet';

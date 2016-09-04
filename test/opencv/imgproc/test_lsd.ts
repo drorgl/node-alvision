@@ -20,7 +20,7 @@ const  EPOCHS = 20;
 class LSDBase {//extends testing::Test {
 
     public test_image : alvision.Mat;
-    public lines: Array<alvision.Vecf>;
+    public lines: Array<alvision.Vec4f>;
     public rng: alvision.RNG;
     public passedtests: alvision.int;
 

@@ -72,8 +72,8 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
 
             // Create the original (and random) camera matrix, rotation, and translation
             //alvision.Vec2d f, c;
-            var f = new alvision.Vecd(new Array[2]);
-            var c = new alvision.Vecd(new Array[2]);
+            var f = new alvision.Vec2d(new Array[2]);
+            var c = new alvision.Vec2d(new Array[2]);
 
             rng.fill(f, alvision.DistType.UNIFORM, 300, 1000);
             rng.fill(c, alvision.DistType.UNIFORM, 150, 600);
@@ -86,13 +86,13 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
                 0, 0, 1);
 
 
-            var rVec = new alvision.Vecd();
+            var rVec = new alvision.Vec3d();
             rng.fill(rVec, alvision.DistType.UNIFORM, -Math.PI, Math.PI);
 
             var origR = new alvision.Matxd();
             alvision.Rodrigues(rVec, origR);
 
-            var origT = new alvision.Vecd() //3
+            var origT = new alvision.Vec3d() //3
             rng.fill(origT, alvision.DistType.NORMAL, 0, 1);
 
 
@@ -107,13 +107,13 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
             var R = new alvision.Matxd();
             var K = new alvision.Matxd();
 
-            var homogCameraCenter = new alvision.Vecd() ;
+            var homogCameraCenter = new alvision.Vec4d() ;
             alvision.decomposeProjectionMatrix(P, K, R, homogCameraCenter);
 
 
             // Recover translation from the camera center
-            var cameraCenter = new alvision.Vecd(homogCameraCenter.at(0).get(), homogCameraCenter.at(1).get(), homogCameraCenter.at(2).get());
-            cameraCenter = alvision.Vecd.op_Division(cameraCenter, homogCameraCenter.at(3).get());
+            var cameraCenter = new alvision.Vec3d(homogCameraCenter.at(0).get(), homogCameraCenter.at(1).get(), homogCameraCenter.at(2).get());
+            cameraCenter = alvision.Vec3d.op_Division(cameraCenter, homogCameraCenter.at(3).get());
 
             var t = alvision.Matxd.op_Substraction(R).op_Multiplication( cameraCenter);
 

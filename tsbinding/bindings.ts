@@ -1,6 +1,9 @@
 var alvision: any = null;
 
 (() => {
+    let debugError: any = null;
+    let releaseError: any = null;
+
 
     try {
         let lib = '../build/Release/alvision.node';
@@ -10,8 +13,8 @@ var alvision: any = null;
 
         return;
     } catch (e) {
+        releaseError = e;
         //release was not found, loading debug
-        console.warn("unable to load alvision.node", e);
     }
 
 
@@ -23,10 +26,14 @@ var alvision: any = null;
         return;
     } catch (e) {
         //debug was not found as well
-        console.warn("unable to load alvision.node", e);
+        debugError = e;
     }
 
-    console.error('alvision.node module was not found, you may need to compile it');
+    if (!debugError && !releaseError) {
+        console.error('alvision.node module was not found, you may need to compile it');
+        console.error("debug:", debugError);
+        console.error("release:", releaseError);
+    }
 })();
 
 export default alvision;

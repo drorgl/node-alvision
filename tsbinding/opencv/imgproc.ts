@@ -1017,7 +1017,7 @@ location of points on the plane, building special graphs (such as NNG,RNG), and 
         The function gives each edge as a 4 numbers vector, where each two are one of the edge
         vertices. i.e. org_x = v[0], org_y = v[1], dst_x = v[2], dst_y = v[3].
          */
-        getEdgeList(cb: (edgeList : Array<_matx.Vecf>) => void) : void;
+        getEdgeList(cb: (edgeList : Array<_matx.Vec4f>) => void) : void;
 
         /** @brief Returns a list of all triangles.
     
@@ -1026,7 +1026,7 @@ location of points on the plane, building special graphs (such as NNG,RNG), and 
         The function gives each triangle as a 6 numbers vector, where each two are one of the triangle
         vertices. i.e. p1_x = v[0], p1_y = v[1], p2_x = v[2], p2_y = v[3], p3_x = v[4], p3_y = v[5].
          */
-        getTriangleList(cb : (triangleList : _matx.Vecf) => void) : void;
+        getTriangleList(cb : (triangleList : _matx.Vec6f) => void) : void;
 
         /** @brief Returns a list of all Voroni facets.
     

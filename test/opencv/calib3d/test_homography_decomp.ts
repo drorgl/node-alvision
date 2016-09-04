@@ -104,8 +104,8 @@ class CV_HomographyDecompTest extends alvision.cvtest.BaseTest {
                      -0.85630229674426, 0.497582023798831, -0.138414255706431,
                       0.281404038139784, 0.67421809131173, 0.682818960388909);
 
-         this._t = new alvision.Vecd(1.826751712278038,  1.264718492450820,  0.195080809998819);
-         this._n = new alvision.Vecd(0.244875830334816, 0.480857890778889, 0.841909446789566);
+         this._t = new alvision.Vec3d(1.826751712278038,  1.264718492450820,  0.195080809998819);
+         this._n = new alvision.Vec3d(0.244875830334816, 0.480857890778889, 0.841909446789566);
     }
 
     containsValidMotion(rotations: Array<alvision.Mat>,
@@ -136,8 +136,8 @@ class CV_HomographyDecompTest extends alvision.cvtest.BaseTest {
     protected _R: alvision.Matxd;
     protected _K: alvision.Matxd;
     protected _H: alvision.Matxd;
-    protected _t: alvision.Vecd;
-    protected _n: alvision.Vecd;
+    protected _t: alvision.Vec3d;
+    protected _n: alvision.Vec3d;
 };
 
 alvision.cvtest.TEST('Calib3d_DecomposeHomography', 'regression', () => { var test = new CV_HomographyDecompTest(); test.safe_run(); });

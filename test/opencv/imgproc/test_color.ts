@@ -1534,11 +1534,11 @@ function calculateBayerPattern<T>(Ttype: string, src: alvision.Mat, bayer: alvis
             for (let x = 0; x < ssize.width; ++x)
             {
                 if ((x + y) % 2)
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[1]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[1]));
                 else if (x % 2)
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[0]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[0]));
                 else
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[2]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[2]));
             }
     }
     else if (pattern == "gb")
@@ -1547,11 +1547,11 @@ function calculateBayerPattern<T>(Ttype: string, src: alvision.Mat, bayer: alvis
             for (let x = 0; x < ssize.width; ++x)
             {
                 if ((x + y) % 2 == 0)
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[1]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[1]));
                 else if (x % 2 == 0)
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[0]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[0]));
                 else
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[2]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[2]));
             }
     }
     else if (pattern ==  "rg")
@@ -1560,11 +1560,11 @@ function calculateBayerPattern<T>(Ttype: string, src: alvision.Mat, bayer: alvis
             for (let x = 0; x < ssize.width; ++x)
             {
                 if ((x + y) % 2)
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[1]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[1]));
                 else if (x % 2 == 0)
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[0]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[0]));
                 else
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[2]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[2]));
             }
     }
     else
@@ -1573,11 +1573,11 @@ function calculateBayerPattern<T>(Ttype: string, src: alvision.Mat, bayer: alvis
             for (let x = 0; x < ssize.width; ++x)
             {
                 if ((x + y) % 2 == 0)
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[1]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[1]));
                 else if (x % 2)
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[0]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[0]));
                 else
-                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vecb>("Vec3b", y, x)[2]));
+                    bayer.at<T>(Ttype, y, x).set((src.at<alvision.Vec3b>("Vec3b", y, x)[2]));
             }
     }
 }
@@ -1673,7 +1673,7 @@ function getTestMatrix(src : alvision.Mat) : void
             if (b < 0) b = 0; else if (b > 1) b = 1;
             if (g < 0) g = 0; else if (g > 1) g = 1;
             if (r < 0) r = 0; else if (r > 1) r = 1;
-            src.at<alvision.Vecf>("Vec3f", i, j).set(new alvision.Vecf(b, g, r));
+            src.at<alvision.Vec3f>("Vec3f", i, j).set(new alvision.Vec3f(b, g, r));
         }
     }
 }

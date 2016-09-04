@@ -2690,7 +2690,7 @@ class Demosaicing extends alvision.cvtest.CUDA_TEST// testing::TestWithParam<alv
         alvision.cuda.setDevice(this.devInfo.deviceID());
     }
 
-    mosaic(src: alvision.Mat_<alvision.Vecb> | alvision.Mat, dst: alvision.Mat_<alvision.uchar>, firstRed: alvision.Point ) : void
+    mosaic(src: alvision.Mat_<alvision.Vec3b> | alvision.Mat, dst: alvision.Mat_<alvision.uchar>, firstRed: alvision.Point ) : void
     {
         dst.create(src.size());
 
@@ -2698,7 +2698,7 @@ class Demosaicing extends alvision.cvtest.CUDA_TEST// testing::TestWithParam<alv
         {
             for (let x = 0; x < src.cols(); ++x)
             {
-                let pix = src.at<alvision.Vecb>("Vecb", y, x).get();
+                let pix = src.at<alvision.Vec3b>("Vec3b", y, x).get();
 
                 let alternate = new alvision.Point();
                 alternate.x = (x + firstRed.x.valueOf()) % 2;
@@ -2710,13 +2710,13 @@ class Demosaicing extends alvision.cvtest.CUDA_TEST// testing::TestWithParam<alv
                     {
                         // RG
                         // GB
-                        dst.at<alvision.Vecb>("Vecb", x).set(pix[2]);
+                        dst.at<alvision.Vec3b>("Vec3b", x).set(pix[2]);
                     }
                     else
                     {
                         // GR
                         // BG
-                        dst.at<alvision.Vecb>("Vecb", y, x).set(pix[1]);
+                        dst.at<alvision.Vec3b>("Vec3b", y, x).set(pix[1]);
                     }
                 }
                 else
@@ -2725,13 +2725,13 @@ class Demosaicing extends alvision.cvtest.CUDA_TEST// testing::TestWithParam<alv
                     {
                         // GB
                         // RG
-                        dst.at<alvision.Vecb>("Vecb", y, x).set(pix[1]);
+                        dst.at<alvision.Vec3b>("Vec3b", y, x).set(pix[1]);
                     }
                     else
                     {
                         // BG
                         // GR
-                        dst.at<alvision.Vecb>("Vecb", y, x).set(pix[0]);
+                        dst.at<alvision.Vec3b>("Vec3b", y, x).set(pix[0]);
                     }
                 }
             }

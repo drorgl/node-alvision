@@ -106,7 +106,7 @@ function loadResponseCSV(path: string, response: alvision.Mat): void {
 
     for (var i = 0; i < lines.length && i < 256; i++) {
 
-        let vec = response.at<alvision.Vecf>("Vec3f", i);
+        let vec = response.at<alvision.Vec3f>("Vec3f", i);
         let records = lines[i].toString().split(',');
 
         let vecObj = vec.get();

@@ -40,7 +40,7 @@
 // the use of this software, even if advised of the possibility of such damage.
 //
 //M*/
-var alvision_module = require('../../../lib/bindings.js');
+import alvision_module from "../../bindings";
 
 
 import * as _mat from './../mat'

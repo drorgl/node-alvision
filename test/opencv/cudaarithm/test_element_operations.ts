@@ -790,9 +790,9 @@ class Multiply_Array_Special_Case_8UC4x_32FC1 extends Multiply_Array_Special
 
         for (let y = 0; y < h_dst.rows(); ++y)
         {
-            const mat1_row = mat1.ptr<alvision.Vecb>("Vec4b",y);
+            const mat1_row = mat1.ptr<alvision.Vec4b>("Vec4b",y);
             const mat2_row = mat2.ptr<alvision.float>("float", y);
-            const dst_row = h_dst.ptr<alvision.Vecb>("Vec4b",y);
+            const dst_row = h_dst.ptr<alvision.Vec4b>("Vec4b",y);
 
             for (let x = 0; x < h_dst.cols(); ++x)
             {
@@ -800,7 +800,7 @@ class Multiply_Array_Special_Case_8UC4x_32FC1 extends Multiply_Array_Special
                 let val2 = mat2_row[x];
                 let actual = dst_row[x];
 
-                let gold = new alvision.Vecb();
+                let gold = new alvision.Vec4b();
 
                 gold[0] = alvision.saturate_cast<alvision.uchar>(val1[0] * val2.valueOf(),"uchar");
                 gold[1] = alvision.saturate_cast<alvision.uchar>(val1[1] * val2.valueOf(),"uchar");
@@ -830,9 +830,9 @@ class Multiply_Array_Special_Case_16SC4x_32FC1 extends Multiply_Array_Special
 
         for (let y = 0; y < h_dst.rows(); ++y)
         {
-            const mat1_row = mat1.ptr<alvision.Vecs>("Vec4s",y);
+            const mat1_row = mat1.ptr<alvision.Vec4s>("Vec4s",y);
             const mat2_row = mat2.ptr<alvision.float>("float", y);
-            const dst_row = h_dst.ptr<alvision.Vecs>("Vec4s",y);
+            const dst_row = h_dst.ptr<alvision.Vec4s>("Vec4s",y);
 
             for (let x = 0; x < h_dst.cols(); ++x)
             {
@@ -840,7 +840,7 @@ class Multiply_Array_Special_Case_16SC4x_32FC1 extends Multiply_Array_Special
                 let val2 = mat2_row[x];
                 let actual = dst_row[x];
 
-                let gold = new alvision.Vecs();
+                let gold = new alvision.Vec4s();
 
                 gold[0] = alvision.saturate_cast<alvision.short>(val1[0] * val2.valueOf(),"short");
                 gold[1] = alvision.saturate_cast<alvision.short>(val1[1] * val2.valueOf(),"short");
@@ -1160,9 +1160,9 @@ class Divide_Array_Special_Case_8UC4x_32FC1 extends Divide_Array_Special
 
         for (let y = 0; y < h_dst.rows(); ++y)
         {
-            const mat1_row = mat1.ptr<alvision.Vecb>("Vec4b",y);
+            const mat1_row = mat1.ptr<alvision.Vec4b>("Vec4b",y);
             const mat2_row = mat2.ptr<alvision.float>("float", y);
-            const dst_row = h_dst.ptr<alvision.Vecb>("Vec4b",y);
+            const dst_row = h_dst.ptr<alvision.Vec4b>("Vec4b",y);
 
             for (let x = 0; x < h_dst.cols(); ++x)
             {
@@ -1170,7 +1170,7 @@ class Divide_Array_Special_Case_8UC4x_32FC1 extends Divide_Array_Special
                 let val2 = mat2_row[x];
                 let actual = dst_row[x];
 
-                let gold = new alvision.Vecb();
+                let gold = new alvision.Vec4b();
 
                 gold[0] = alvision.saturate_cast<alvision.uchar>(val1[0] / val2.valueOf(),"uchar");
                 gold[1] = alvision.saturate_cast<alvision.uchar>(val1[1] / val2.valueOf(),"uchar");
@@ -1200,9 +1200,9 @@ class Divide_Array_Special_Case_16SC4x_32FC1 extends Divide_Array_Special
 
         for (let y = 0; y < h_dst.rows(); ++y)
         {
-            const mat1_row = mat1.ptr<alvision.Vecs>("Vec4s",y);
+            const mat1_row = mat1.ptr<alvision.Vec4s>("Vec4s",y);
             const mat2_row = mat2.ptr<alvision.float>("float", y);
-            const dst_row = h_dst.ptr<alvision.Vecs>("Vec4s",y);
+            const dst_row = h_dst.ptr<alvision.Vec4s>("Vec4s",y);
 
             for (let x = 0; x < h_dst.cols(); ++x)
             {
@@ -1210,7 +1210,7 @@ class Divide_Array_Special_Case_16SC4x_32FC1 extends Divide_Array_Special
                 let val2 = mat2_row[x];
                 let actual = dst_row[x];
 
-                let gold = new alvision.Vecs();
+                let gold = new alvision.Vec4s();
 
                 gold[0] = alvision.saturate_cast<alvision.short>(val1[0] / val2.valueOf(),"short");
                 gold[1] = alvision.saturate_cast<alvision.short>(val1[1] / val2.valueOf(),"short");

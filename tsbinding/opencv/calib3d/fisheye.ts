@@ -1,4 +1,4 @@
-var alvision_module = require('../../../lib/bindings.js');
+import alvision_module from "../../bindings";
 
 import * as _mat from './../mat'
 import * as _matx from './../matx'
@@ -21,9 +21,9 @@ interface IntrinsicParamsStatic {
 }
 
 export interface IntrinsicParams {
-    f: _matx.Vecd;
-    c: _matx.Vecd;
-    k: _matx.Vecd;
+    f: _matx.Vec2d;
+    c: _matx.Vec2d;
+    k: _matx.Vec4d;
     alpha: _st.double;
     isEstimate: Array<_st.uchar>;
 
@@ -37,7 +37,7 @@ export interface IntrinsicParams {
     //}
     //IntrinsicParams operator+(const Mat& a);
     //IntrinsicParams& operator =(const Mat& a);
-    Init(f_: _matx.Vecd, c_: _matx.Vecd, k_?: _matx.Vecd /*= new _matx.Vecd(0, 0, 0, 0)*/, alpha_?: _st.double /*= 0*/): void /*{
+    Init(f_: _matx.Vec2d, c_: _matx.Vec2d, k_?: _matx.Vec4d /*= new _matx.Vecd(0, 0, 0, 0)*/, alpha_?: _st.double /*= 0*/): void /*{
         this.f = f_;
         this.c = c_;
         this.k = k_;
@@ -80,7 +80,7 @@ export var NormalizePixels: INormalizePixels = alvision_module.NormalizePixels;
 interface IEstimateUncertainties{
     (objectPoints: _st.InputArrayOfArrays, imagePoints: _st.InputArrayOfArrays ,
         params: IntrinsicParams, omc: _st.InputArray, Tc: _st.InputArray ,
-        errors: IntrinsicParams , std_err: _matx.Vecd, thresh_cond: _st.double, check_cond: _st.int,cb:( rms: _st.double)=>void ) : void;
+        errors: IntrinsicParams , std_err: _matx.Vec2d, thresh_cond: _st.double, check_cond: _st.int,cb:( rms: _st.double)=>void ) : void;
 }
 export var EstimateUncertainties: IEstimateUncertainties = alvision_module.EstimateUncertainties;
 

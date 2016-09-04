@@ -15,9 +15,9 @@ import fs = require('fs');
 //#undef YUV
 //
 //typedef Vec3b YUV;
-interface YUV extends alvision.Vecb { }
-interface RGB extends alvision.Vecb { }
-//let YUV = alvision.Vecb;
+interface YUV extends alvision.Vec3b { }
+interface RGB extends alvision.Vec3b { }
+//let YUV = alvision.Vec3b;
 //typedef Vec3b RGB;
 
 function countOfDifferencies(gold: alvision.Mat, result: alvision.Mat, maxAllowedDifference: alvision.int  = 1): alvision.int 
@@ -224,7 +224,7 @@ class RGB888Writer extends RGBwriter
 {
     write(rgb: alvision.Mat, row: alvision.int, col: alvision.int, val: RGB) : void
     {
-        rgb.at<alvision.Vecb>("Vec3b", row, col).set(val);
+        rgb.at<alvision.Vec3b>("Vec3b", row, col).set(val);
     }
 
     channels(): alvision.int { return 3; }
@@ -234,8 +234,8 @@ class BGR888Writer extends RGBwriter
 {
     write(rgb: alvision.Mat, row: alvision.int, col: alvision.int, val: RGB ): void 
     {
-        let tmp = new alvision.Vecb(val[2], val[1], val[0]);
-        rgb.at<alvision.Vecb>("Vec3b", row, col).set(tmp);
+        let tmp = new alvision.Vec3b(val[2], val[1], val[0]);
+        rgb.at<alvision.Vec3b>("Vec3b", row, col).set(tmp);
     }
 
     channels(): alvision.int { return 3; }
@@ -245,8 +245,8 @@ class RGBA8888Writer extends RGBwriter
 {
     write(rgb: alvision.Mat, row: alvision.int, col: alvision.int, val: RGB ): void 
     {
-        let tmp = new alvision.Vecb (val[0], val[1], val[2], 255);
-        rgb.at<alvision.Vecb>("Vec4b", row, col).set(tmp);
+        let tmp = new alvision.Vec3b (val[0], val[1], val[2], 255);
+        rgb.at<alvision.Vec3b>("Vec4b", row, col).set(tmp);
     }
 
     channels(): alvision.int  { return 4; }
@@ -256,8 +256,8 @@ class BGRA8888Writer extends RGBwriter
 {
     write(rgb: alvision.Mat, row: alvision.int, col: alvision.int, val: RGB ): void 
     {
-        let tmp = new alvision.Vecb (val[2], val[1], val[0], 255);
-        rgb.at<alvision.Vecb>("Vec4b", row, col).set(tmp);
+        let tmp = new alvision.Vec3b (val[2], val[1], val[0], 255);
+        rgb.at<alvision.Vec3b>("Vec4b", row, col).set(tmp);
     }
 
     channels() : alvision.int { return 4; }
@@ -320,7 +320,7 @@ class NV21Reader extends  YUV420Reader
         let u = yuv.at<alvision.uchar>("uchar",yuv.rows().valueOf() * 2 / 3 + row.valueOf()/2,(col.valueOf()/2)*2 + 1);
         let v = yuv.at<alvision.uchar>("uchar",yuv.rows().valueOf() * 2 / 3 + row.valueOf()/2,(col.valueOf()/2)*2);
 
-        return <YUV>new alvision.Vecb(y, u, v);
+        return <YUV>new alvision.Vec3b(y, u, v);
     }
 };
 
@@ -333,7 +333,7 @@ class NV12Reader extends YUV420Reader
         let u = yuv.at<alvision.uchar>("uchar",yuv.rows().valueOf() * 2 / 3 + row.valueOf()/2,(col.valueOf()/2)*2).get();
         let v = yuv.at<alvision.uchar>("uchar",yuv.rows().valueOf() * 2 / 3 + row.valueOf()/2,(col.valueOf()/2)*2 + 1).get();
 
-        return <YUV > new alvision.Vecb(y, u, v);
+        return <YUV > new alvision.Vec3b(y, u, v);
     }
 };
 
@@ -346,7 +346,7 @@ class YV12Reader extends  YUV420Reader
         let u = yuv.at<alvision.uchar>("uchar",h + (row.valueOf()/2 + h/2)/2,col.valueOf()/2 + ((row.valueOf()/2 + h/2) % 2) * (yuv.cols().valueOf()/2)).get();
         let v = yuv.at<alvision.uchar>("uchar",h +  row.valueOf()/4,col.valueOf()/2 + ((row.valueOf()/2) % 2) * (yuv.cols().valueOf()/2)).get();
 
-        return <YUV>new alvision.Vecb(y, u, v);
+        return <YUV>new alvision.Vec3b(y, u, v);
     }
 };
 
@@ -359,7 +359,7 @@ class IYUVReader extends  YUV420Reader
         let u = yuv.at<alvision.uchar>("uchar",h + row.valueOf()/4,col.valueOf()/2 + ((row.valueOf()/2) % 2) * (yuv.cols().valueOf()/2)).get();
         let v = yuv.at<alvision.uchar>("uchar",h + (row.valueOf()/2 + h/2)/2,col.valueOf()/2 + ((row.valueOf()/2 + h/2) % 2) * (yuv.cols().valueOf()/2)).get();
 
-        return <YUV>new alvision.Vecb(y, u, v);
+        return <YUV>new alvision.Vec3b(y, u, v);
     }
 };
 
@@ -367,11 +367,11 @@ class UYVYReader extends  YUV422Reader
 {
     read(yuv : alvision.Mat, row: alvision.int, col: alvision.int): YUV 
     {
-        let y = yuv.at<alvision.Vecb>("Vec2b",row,col).get().val[1];
-        let u = yuv.at<alvision.Vecb>("Vec2b",row,(col.valueOf()/2)*2).get().val[0];
-        let v = yuv.at<alvision.Vecb>("Vec2b",row,(col.valueOf()/2)*2 + 1).get().val[0];
+        let y = yuv.at<alvision.Vec3b>("Vec2b",row,col).get().val[1];
+        let u = yuv.at<alvision.Vec3b>("Vec2b",row,(col.valueOf()/2)*2).get().val[0];
+        let v = yuv.at<alvision.Vec3b>("Vec2b",row,(col.valueOf()/2)*2 + 1).get().val[0];
 
-        return <YUV>new alvision.Vecb(y, u, v);
+        return <YUV>new alvision.Vec3b(y, u, v);
     }
 };
 
@@ -379,11 +379,11 @@ class YUY2Reader extends  YUV422Reader
 {
     read(yuv : alvision.Mat, row: alvision.int, col: alvision.int): YUV 
     {
-        let y = yuv.at<alvision.Vecb>("Vec2b",row,col).get().val[0];
-        let u = yuv.at<alvision.Vecb>("Vec2b",row,(col.valueOf()/2)*2).get().val[1];
-        let v = yuv.at<alvision.Vecb>("Vec2b",row,(col.valueOf()/2)*2 + 1).get().val[1];
+        let y = yuv.at<alvision.Vec3b>("Vec2b",row,col).get().val[0];
+        let u = yuv.at<alvision.Vec3b>("Vec2b",row,(col.valueOf()/2)*2).get().val[1];
+        let v = yuv.at<alvision.Vec3b>("Vec2b",row,(col.valueOf()/2)*2 + 1).get().val[1];
 
-        return <YUV>new alvision.Vecb(y, u, v);
+        return <YUV>new alvision.Vec3b(y, u, v);
     }
 };
 
@@ -391,11 +391,11 @@ class YVYUReader extends  YUV422Reader
 {
     read(yuv : alvision.Mat, row: alvision.int, col: alvision.int): YUV 
     {
-        let y = yuv.at<alvision.Vecb>("Vec2b",row,col).get().val[0];
-        let u = yuv.at<alvision.Vecb>("Vec2b",row,(col.valueOf()/2)*2 + 1).get().val[1];
-        let v = yuv.at<alvision.Vecb>("Vec2b",row,(col.valueOf()/2)*2).get().val[1];
+        let y = yuv.at<alvision.Vec3b>("Vec2b",row,col).get().val[0];
+        let u = yuv.at<alvision.Vec3b>("Vec2b",row,(col.valueOf()/2)*2 + 1).get().val[1];
+        let v = yuv.at<alvision.Vec3b>("Vec2b",row,(col.valueOf()/2)*2).get().val[1];
 
-        return <YUV>new alvision.Vecb(y, u, v);
+        return <YUV>new alvision.Vec3b(y, u, v);
     }
 };
 
@@ -427,7 +427,7 @@ class BGR888Reader extends RGBreader
     read(rgb: alvision.Mat , row: alvision.int, col: alvision.int): RGB 
     {
         let tmp = rgb.at<RGB>("Vec2b",row, col);
-        return <RGB>new alvision.Vecb(tmp[2], tmp[1], tmp[0]);
+        return <RGB>new alvision.Vec3b(tmp[2], tmp[1], tmp[0]);
     }
 
     channels() : alvision.int { return 3; }
@@ -437,8 +437,8 @@ class RGBA8888Reader extends RGBreader
 {
     read(rgb: alvision.Mat, row: alvision.int, col: alvision.int): RGB 
     {
-        let rgba = rgb.at<alvision.Vecb>("Vec4b",row, col);
-        return <RGB>new alvision.Vecb(rgba[0], rgba[1], rgba[2]);
+        let rgba = rgb.at<alvision.Vec3b>("Vec4b",row, col);
+        return <RGB>new alvision.Vec3b(rgba[0], rgba[1], rgba[2]);
     }
 
     channels() : alvision.int { return 4; }
@@ -448,8 +448,8 @@ class BGRA8888Reader extends RGBreader
 {
     read(rgb: alvision.Mat , row: alvision.int, col: alvision.int): RGB 
     {
-        let rgba = rgb.at<alvision.Vecb>("Vec4b",row, col);
-        return <RGB>new alvision.Vecb(rgba[2], rgba[1], rgba[0]);
+        let rgba = rgb.at<alvision.Vec3b>("Vec4b",row, col);
+        return <RGB>new alvision.Vec3b(rgba[2], rgba[1], rgba[0]);
     }
 
     channels() : alvision.int { return 4; }
@@ -471,7 +471,7 @@ class YUV2RGB_Converter implements IConverter<RGB>
         let g = alvision.saturate_cast<alvision.uchar>(1.164 * y - 0.813 * v - 0.391 * u,"uchar");
         let b = alvision.saturate_cast<alvision.uchar>(1.164 * y + 2.018 * u,"uchar");
 
-        return <RGB>new alvision.Vecb(r, g, b);
+        return <RGB>new alvision.Vec3b(r, g, b);
     }
 };
 
@@ -496,7 +496,7 @@ convert(rgb: RGB): YUV
         let u = alvision.saturate_cast<alvision.uchar>((-0.148*r - 0.291*g + 0.439*b + 0.5) + 128,"uchar");
         let v = alvision.saturate_cast<alvision.uchar>(( 0.439*r - 0.368*g - 0.071*b + 0.5) + 128,"uchar");
 
-        return <YUV>new alvision.Vecb(y, u, v);
+        return <YUV>new alvision.Vec3b(y, u, v);
     }
 };
 

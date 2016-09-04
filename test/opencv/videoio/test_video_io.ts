@@ -434,9 +434,9 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
 
             for (var k = 0; k < img.rows(); ++k)
                 for (var l = 0; l < img.cols(); ++l)
-                    if (img.at<alvision.Vecb>("Vec3b",k, l).get() == alvision.Vecb.all(0))
-                        img.at<alvision.Vecb>("Vec3b", k, l).set(new alvision.Vecb(0, 255, 0));
-                else img.at<alvision.Vecb>("Vec3b",k, l).set( new alvision.Vecb(0, 0, 255));
+                    if (img.at<alvision.Vec3b>("Vec3b",k, l).get() == alvision.Vec3b.all(0))
+                        img.at<alvision.Vec3b>("Vec3b", k, l).set(new alvision.Vec3b(0, 255, 0));
+                else img.at<alvision.Vec3b>("Vec3b",k, l).set( new alvision.Vec3b(0, 0, 255));
 
             alvision.resize(img, img, frame_size, 0.0, 0.0,alvision.InterpolationFlags. INTER_CUBIC);
 

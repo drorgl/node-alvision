@@ -86,9 +86,14 @@ function getFiles(dir : string, files_? : Array<string>)  : Array<string>{
     return files_;
 }
 
-function testAllTsFiles() {
+function testAllTsFiles(filter : string) {
     let files = getFiles(__dirname);
     for (let f of files) {
+
+        if (filter && f.indexOf(filter) == -1) {
+            continue;
+        }
+
         if (path.extname(f) == ".ts") {
             try {
                 console.log("testing ", f);
@@ -102,4 +107,11 @@ function testAllTsFiles() {
 }
 
 console.log("opencv node bindings tests");
-testAllTsFiles();
+
+let filter = "";
+//console.log(process.argv);
+if (process.argv.length >= 2) {
+    filter = process.argv[2];
+    console.log("filter", filter);
+}
+testAllTsFiles(filter);

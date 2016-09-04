@@ -108,8 +108,8 @@ interface Affine3Static<T> {
 
     op_Multiplication(affine1: Affine3<T>, affine2: Affine3<T>): Affine3<T>;
     op_Multiplication(affine: Affine3<T>, vector: Array<T>): Affine3<T>;
-    op_Multiplication(affine: Affine3<_st.float>, vector: _matx.Vecf): _matx.Vecf;
-    op_Multiplication(affine: Affine3<_st.double>, vector: _matx.Vecd): _matx.Vecd;
+    op_Multiplication(affine: Affine3<_st.float>, vector: _matx.Vec3f): _matx.Vec3f;
+    op_Multiplication(affine: Affine3<_st.double>, vector: _matx.Vec3d): _matx.Vec3d;
 
 
 }
@@ -128,7 +128,7 @@ interface Affine3Static<T> {
             rotation( R : _matx.Matx<T>): void;
 
     //! Rodrigues vector
-            rotation(rvec : _matx.Vec<T>): void;
+            rotation(rvec : _matx.Vec3<T>): void;
 
     //! Combines rotation methods above. Suports 3x3, 1x3, 3x1 sizes of data matrix;
             rotation(data : _mat.Mat): void;
@@ -149,10 +149,10 @@ interface Affine3Static<T> {
     rotate(R : _matx.Matx<T>): Affine3<T>;
 
     //! a.rotate(rvec) is equivalent to Affine(rvec, 0) * a;
-    rotate(rvec : _matx.Vec<T>): Affine3<T>;
+    rotate(rvec : _matx.Vec3<T>): Affine3<T>;
 
     //! a.translate(t) is equivalent to Affine(E, t) * a;
-    translate(t : _matx.Vec<T>): Affine3<T>;
+    translate(t : _matx.Vec3<T>): Affine3<T>;
 
     //! a.concatenate(affine) is equivalent to affine * a;
     concatenate(affine : Affine3<T>): Affine3<T>;

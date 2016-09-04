@@ -44,7 +44,7 @@
 //M*/
 
 
-var alvision_module = require('../../../lib/bindings.js');
+import alvision_module from "../../bindings";
 
 import * as _mat from './../mat'
 import * as _matx from './../matx'
@@ -91,7 +91,7 @@ export namespace viz {
     This function returns pose of the camera in global coordinate frame.
      */
     interface ImakeCameraPose {
-        (position: _matx.Vecd, focal_point: _matx.Vecd, y_dir: _matx.Vecd): _affine.Affine3d;
+        (position: _matx.Vec3d, focal_point: _matx.Vec3d, y_dir: _matx.Vec3d): _affine.Affine3d;
     }
     export var makeCameraPose: ImakeCameraPose = alvision_module.makeCameraPose;
     //CV_EXPORTS Affine3d makeCameraPose(const Vec3d& position, const Vec3d& focal_point, const Vec3d& y_dir);

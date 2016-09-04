@@ -318,12 +318,12 @@ export class ChessBoardGenerator {
     generateBasis(pb1: alvision.Point3f, pb2: alvision.Point3f): void {
         var rng = alvision.theRNG();
 
-        var n = new alvision.Vecf();
+        var n = new alvision.Vec3f();
         for (; ;) {
             n[0] = rng.uniform(-1., 1.).valueOf();
             n[1] = rng.uniform(-1., 1.).valueOf();
             n[2] = rng.uniform(-1., 1.).valueOf();
-            var len =  alvision.Vecf.norm(n);
+            var len =  alvision.Vec3f.norm(n);
             n.at(0).set( n.at(0).get().valueOf() / len.valueOf());
             n.at(1).set( n.at(1).get().valueOf() / len.valueOf());
             n.at(2).set( n.at(2).get().valueOf() / len.valueOf());
@@ -335,8 +335,8 @@ export class ChessBoardGenerator {
         var n_temp = n; n_temp[0] += 100;
         var b1 = n.cross(n_temp);
         var b2 = n.cross(b1);
-        var len_b1 =alvision.Vecf. norm(b1);
-        var len_b2 =alvision.Vecf. norm(b2);
+        var len_b1 =alvision.Vec3f. norm(b1);
+        var len_b2 =alvision.Vec3f. norm(b2);
 
         pb1 = new alvision.Point3f(b1.at(0).get().valueOf() / len_b1.valueOf(), b1.at(1).get().valueOf() / len_b1.valueOf(), b1.at(2).get().valueOf() / len_b1.valueOf());
         pb2 = new alvision.Point3f(b2.at(0).get().valueOf() / len_b1.valueOf(), b2.at(1).get().valueOf() / len_b2.valueOf(), b2.at(2).get().valueOf() / len_b2.valueOf());

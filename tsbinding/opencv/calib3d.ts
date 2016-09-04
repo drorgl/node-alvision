@@ -429,7 +429,7 @@ interface IRQDecomp3x3 {
     (src: _st.InputArray, mtxR: _st.OutputArray, mtxQ: _st.OutputArray ,
         Qx?: _st.OutputArray /* = noArray()*/,
         Qy?: _st.OutputArray /* = noArray()*/,
-        Qz?: _st.OutputArray /*= noArray() */) : _matx.Vecd
+        Qz?: _st.OutputArray /*= noArray() */) : _matx.Vec3d
 }
 
 export var RQDecomp3x3: IRQDecomp3x3 = alvision_module.RQDecomp3x3;

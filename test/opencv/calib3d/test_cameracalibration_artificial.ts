@@ -79,14 +79,14 @@ function calcRvec(points: Array<alvision.Point3f>, cornerSize: alvision.Size ) :
     var p10 = points[1];
     var p01 = points[cornerSize.width.valueOf()];
 
-    var ex = new alvision.Vecd(p10.x.valueOf() - p00.x.valueOf(), p10.y.valueOf() - p00.y.valueOf(), p10.z.valueOf() - p00.z.valueOf());
-    var ey = new alvision.Vecd(p01.x.valueOf() - p00.x.valueOf(), p01.y.valueOf() - p00.y.valueOf(), p01.z.valueOf() - p00.z.valueOf());
+    var ex = new alvision.Vec3d(p10.x.valueOf() - p00.x.valueOf(), p10.y.valueOf() - p00.y.valueOf(), p10.z.valueOf() - p00.z.valueOf());
+    var ey = new alvision.Vec3d(p01.x.valueOf() - p00.x.valueOf(), p01.y.valueOf() - p00.y.valueOf(), p01.z.valueOf() - p00.z.valueOf());
     var ez = ex.cross(ey);
 
     var rot = new alvision.Mat(3, 3, alvision.MatrixType.CV_64F);
-    rot.ptr<alvision.Vecd>("Vecd")[0] = ex;
-    rot.ptr<alvision.Vecd>("Vecd")[1] = ey;
-    rot.ptr<alvision.Vecd>("Vecd")[2] = alvision.Vecd.op_Multiplication(ez, (1.0 / alvision.Vecd.norm(ez).valueOf()));
+    rot.ptr<alvision.Vec3d>("Vec3d")[0] = ex;
+    rot.ptr<alvision.Vec3d>("Vec3d")[1] = ey;
+    rot.ptr<alvision.Vec3d>("Vec3d")[2] = alvision.Vec3d.op_Multiplication(ez, (1.0 / alvision.Vec3d.norm(ez).valueOf()));
 
     var res = new alvision.Mat();
     alvision.Rodrigues(rot.t(), res);

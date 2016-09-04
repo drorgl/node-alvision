@@ -330,7 +330,7 @@ class CV_FindContourTest  extends alvision.cvtest.BaseTest
     protected img/*[NUM_IMG]*/ : Array<alvision.Mat>;
     protected contours: Array<Array<alvision.Point>>;
 
-    protected hierarchy: Array<alvision.Veci>;
+    protected hierarchy: Array<alvision.Vec4i>;
     //protected hierarchy: 
     //protected chain: any;
     //protected CvSeq * contours, 

@@ -70,7 +70,7 @@ class HoughLines extends alvision.cvtest.CUDA_TEST
         alvision.line(img, new alvision.Point(img.cols(), 0),new alvision.Point(0, img.rows()), alvision.Scalar.all(255));
     }
 
-    drawLines(dst: alvision.Mat, lines: Array<alvision.Vecf> ) : void
+    drawLines(dst: alvision.Mat, lines: Array<alvision.Vec2f> ) : void
     {
         dst.setTo(alvision.Scalar.all(0));
 
@@ -110,7 +110,7 @@ class HoughLines_Accuracy extends HoughLines
         let d_lines = new alvision.cuda.GpuMat();
         hough.detect(alvision.loadMat(src, useRoi), d_lines);
 
-        let lines = new Array<alvision.Vecf>();
+        let lines = new Array<alvision.Vec2f>();
         hough.downloadResults(d_lines, lines);
 
         let dst = new alvision.Mat (size, alvision.MatrixType.CV_8UC1);
@@ -132,7 +132,7 @@ alvision.cvtest.INSTANTIATE_TEST_CASE_P('CUDA_ImgProc', 'HoughLines', (case_name
 //PARAM_TEST_CASE(HoughCircles, alvision.cuda.DeviceInfo, alvision.Size, UseRoi)
 class HoughCircles extends alvision.cvtest.CUDA_TEST
 {
-    drawCircles(dst: alvision.Mat, circles: Array<alvision.Vecf>, fill: boolean) : void
+    drawCircles(dst: alvision.Mat, circles: Array<alvision.Vec3f>, fill: boolean) : void
     {
         dst.setTo(alvision.Scalar.all(0));
 
@@ -156,11 +156,11 @@ class HoughCircles_Accuracy extends HoughCircles {
         const cannyThreshold = 100;
         const votesThreshold = 20;
 
-        let circles_gold = new Array<alvision.Vecf> (4);
-        circles_gold[0] = new alvision.Veci(20, 20, minRadius);
-        circles_gold[1] = new alvision.Veci(90, 87, minRadius + 3);
-        circles_gold[2] = new alvision.Veci(30, 70, minRadius + 8);
-        circles_gold[3] = new alvision.Veci(80, 10, maxRadius);
+        let circles_gold = new Array<alvision.Vec3f> (4);
+        circles_gold[0] = new alvision.Vec3i(20, 20, minRadius);
+        circles_gold[1] = new alvision.Vec3i(90, 87, minRadius + 3);
+        circles_gold[2] = new alvision.Vec3i(30, 70, minRadius + 8);
+        circles_gold[3] = new alvision.Vec3i(80, 10, maxRadius);
 
         let src = new alvision.Mat (size,alvision.MatrixType. CV_8UC1);
         this.drawCircles(src, circles_gold, true);
@@ -170,7 +170,7 @@ class HoughCircles_Accuracy extends HoughCircles {
         let d_circles = new alvision.cuda.GpuMat();
         houghCircles.detect(alvision.loadMat(src, useRoi), d_circles);
 
-        let circles = new Array<alvision.Vecf>();
+        let circles = new Array<alvision.Vec3f>();
         d_circles.download(circles);
 
         alvision.ASSERT_FALSE(circles.length ==0);
@@ -247,7 +247,7 @@ class GeneralizedHough_Ballard extends GeneralizedHough
         let d_pos = new alvision.cuda.GpuMat();
         alg.detect(alvision.loadMat(image, useRoi), d_pos);
 
-        let pos = new Array<alvision.Vecf>();
+        let pos = new Array<alvision.Vec4f>();
         d_pos.download(pos);
 
         alvision.ASSERT_EQ(gold_count, pos.length);

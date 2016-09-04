@@ -580,10 +580,10 @@ class Core_ArrayOpTest extends alvision.cvtest.BaseTest {
                 //cvGetReal3D(&matA, idx0[0], idx0[1], idx0[2]) != val0 ||
                 //cvGetRealND(&matA, idx1) != -val0 ||
 
-                new alvision.Scalar(B.at<alvision.Vecs>("Vec4s", idx0[0], idx0[1], idx0[2]).get()) != val1 ||
-                new alvision.Scalar(B.at<alvision.Vecs>("Vec4s", idx1[0], idx1[1], idx1[2]).get()).val[0] != -val1 ||
-                new alvision.Scalar(matC.at<alvision.Vecs>("Vec4s", idx0[0], idx0[1], idx0[2]).get()) != val1 ||
-                new alvision.Scalar(matC.at<alvision.Vecs>("Vec4s", idx1[0]).get()).val[0] != -val1.val[0]) {
+                new alvision.Scalar(B.at<alvision.Vec4s>("Vec4s", idx0[0], idx0[1], idx0[2]).get()) != val1 ||
+                new alvision.Scalar(B.at<alvision.Vec4s>("Vec4s", idx1[0], idx1[1], idx1[2]).get()).val[0] != -val1 ||
+                new alvision.Scalar(matC.at<alvision.Vec4s>("Vec4s", idx0[0], idx0[1], idx0[2]).get()) != val1 ||
+                new alvision.Scalar(matC.at<alvision.Vec4s>("Vec4s", idx1[0]).get()).val[0] != -val1.val[0]) {
                 //new alvision.Scalar(cvGet3D(matC, idx0[0], idx0[1], idx0[2])) != val1 ||
                 //new alvision.Scalar(cvGetND(matC, idx1)) != -val1) {
                 this.ts.printf(alvision.cvtest.TSConstants.LOG, "one of cvSetReal3D, cvSetRealND, cvSet3D, cvSetND " +
