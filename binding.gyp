@@ -77,6 +77,8 @@
 		
 		, "src/opencv/superres.cc"
 		, "src/opencv/superres.h"
+		, "src/opencv/superres/optical_flow.cc"
+		, "src/opencv/superres/optical_flow.h"
 		
 		, "src/opencv/ml.cc"
 		, "src/opencv/ml.h"

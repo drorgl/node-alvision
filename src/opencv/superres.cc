@@ -11,4 +11,6 @@ superres::Init(Handle<Object> target) {
 
 	target->Set(Nan::New("superres").ToLocalChecked(), superres);
 
+	optical_flow::Init(superres);
+
 };

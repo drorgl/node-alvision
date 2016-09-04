@@ -45,6 +45,7 @@ init(Handle<Object> target) {
 	superres::Init(target);
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
+
 };
 }
 
