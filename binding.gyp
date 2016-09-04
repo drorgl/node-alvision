@@ -93,6 +93,9 @@
 		
 		, "src/opencv/Size.cc"
 		, "src/opencv/Size.h"
+		
+		, "src/opencv/Vec.cc"
+		, "src/opencv/Vec.h"
 
 		
 		, "src/opencv/cvtest.cc"
