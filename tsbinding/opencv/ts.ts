@@ -112,7 +112,7 @@ export namespace cvtest {
         }
         //
         //    // the wrapper for run that cares of exceptions
-        safe_run(start_from?: _st.int /*= 0*/): void {
+        safe_run(start_from: _st.int = 0): void {
             this.read_params(this.ts.get_file_storage());
             this.ts.update_context(null, -1, true);
             this.ts.update_context(this, -1, true);
@@ -1414,6 +1414,28 @@ export namespace cvtest {
     export abstract class ArrayTest extends BaseTest {
         constructor() {
             super();
+            this.test_array = [];
+            this.test_array[this.INPUT] = [];
+            this.test_array[this.INPUT_OUTPUT] = [];
+            this.test_array[this.OUTPUT] = [];
+            this.test_array[this.REF_INPUT_OUTPUT] = [];
+            this.test_array[this.REF_OUTPUT] = [];
+            this.test_array[this.TEMP] = [];
+            this.test_array[this.MASK] = [];
+            this.test_array[this.MAX_ARR] = [];
+
+
+
+            this.test_mat = [];
+            this.test_mat[this.INPUT] = [];
+            this.test_mat[this.INPUT_OUTPUT] = [];
+            this.test_mat[this.OUTPUT] = [];
+            this.test_mat[this.REF_INPUT_OUTPUT] = [];
+            this.test_mat[this.REF_OUTPUT] = [];
+            this.test_mat[this.TEMP] = [];
+            this.test_mat[this.MASK] = [];
+            this.test_mat[this.MAX_ARR] = [];
+
         }
         //public:
         //    // constructor(s) and destructor
