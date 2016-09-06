@@ -1486,6 +1486,7 @@ export namespace cvtest {
     export abstract class BadArgTest extends BaseTest {
         constructor() {
             super();
+            this.test_case_idx = 0;
         }
         //public:
         //    // constructor(s) and destructor

@@ -16,6 +16,7 @@ RNG::Init(Handle<Object> target) {
 	// Prototype
 	Nan::SetPrototypeMethod(ctor, "fill", fill);
 	Nan::SetPrototypeMethod(ctor, "int", genInt);
+	Nan::SetPrototypeMethod(ctor, "int", genDouble);
 	
 
 	target->Set(Nan::New("RNG").ToLocalChecked(), ctor->GetFunction());
@@ -41,5 +42,9 @@ NAN_METHOD(RNG::fill) {
 }
 
 NAN_METHOD(RNG::genInt) {
+	return Nan::ThrowError("not implemented");
+}
+
+NAN_METHOD(RNG::genDouble) {
 	return Nan::ThrowError("not implemented");
 }

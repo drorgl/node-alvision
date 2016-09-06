@@ -68,6 +68,13 @@
 		, "src/alvision.h"
 		, "src/safecast.h"
 		
+		, "src/opencv/videoio.cc"
+		, "src/opencv/videoio.h"
+		, "src/opencv/videoio/VideoWriter.cc"
+		, "src/opencv/videoio/VideoWriter.h"
+		, "src/opencv/videoio/VideoCapture.cc"
+		, "src/opencv/videoio/VideoCapture.h"
+		
 		, "src/opencv/Mat_.cc"
 		, "src/opencv/Mat_.h"
 		

@@ -14,6 +14,7 @@ public:
 	static NAN_METHOD(New);
 	static NAN_METHOD(fill);
 	static NAN_METHOD(genInt);
+	static NAN_METHOD(genDouble);
 
 
 
