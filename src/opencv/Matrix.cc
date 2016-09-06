@@ -27,6 +27,8 @@ Matrix::Init(Handle<Object> target) {
 	Nan::SetPrototypeMethod(ctor, "pixelRow", PixelRow);
 	Nan::SetPrototypeMethod(ctor, "pixelCol", PixelCol);
 
+	Nan::SetPrototypeMethod(ctor, "cols", Cols);
+
 	target->Set(Nan::New("Mat").ToLocalChecked(), ctor->GetFunction());
 };
 
@@ -333,4 +335,9 @@ NAN_METHOD(Matrix::PixelCol){
 		arr->Set(offset + 2, Nan::New<Number>((double)pixel.val[2]));
 	}
 	info.GetReturnValue().Set(arr);
+}
+
+
+NAN_METHOD(Matrix::Cols) {
+	return Nan::ThrowError("not implemented");
 }

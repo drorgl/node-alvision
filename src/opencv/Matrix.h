@@ -30,6 +30,8 @@ public:
 	static NAN_METHOD(Col);
 	static NAN_METHOD(PixelCol);
 
+	static NAN_METHOD(Cols);
+
 	/*static NAN_METHOD(getUMat);
 	static NAN_METHOD(rowRange);
 	static NAN_METHOD(rowRange);
