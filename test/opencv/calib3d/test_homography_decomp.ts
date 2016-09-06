@@ -90,17 +90,17 @@ class CV_HomographyDecompTest extends alvision.cvtest.BaseTest {
 
     buildTestDataSet() : void
     {
-        this._K = new alvision.Matxd(640, 0.0,  320,
+        this._K = new alvision.Matx33d(640, 0.0,  320,
                       0,    640, 240,
                       0,    0,   1);
 
-         this._H = new alvision.Matxd(2.649157564634028,  4.583875997496426,  70.694447785121326,
+         this._H = new alvision.Matx33d(2.649157564634028,  4.583875997496426,  70.694447785121326,
                      -1.072756858861583,  3.533262150437228,  1513.656999614321649,
                       0.001303887589576,  0.003042206876298,  1.000000000000000
                       );
 
         //expected solution for the given homography and intrinsic matrices
-         this._R = new alvision.Matxd(0.43307983549125, 0.545749113549648, -0.717356090899523,
+         this._R = new alvision.Matx33d(0.43307983549125, 0.545749113549648, -0.717356090899523,
                      -0.85630229674426, 0.497582023798831, -0.138414255706431,
                       0.281404038139784, 0.67421809131173, 0.682818960388909);
 
@@ -133,9 +133,9 @@ class CV_HomographyDecompTest extends alvision.cvtest.BaseTest {
         return false;
     }
 
-    protected _R: alvision.Matxd;
-    protected _K: alvision.Matxd;
-    protected _H: alvision.Matxd;
+    protected _R: alvision.Matx33d;
+    protected _K: alvision.Matx33d;
+    protected _H: alvision.Matx33d;
     protected _t: alvision.Vec3d;
     protected _n: alvision.Vec3d;
 };

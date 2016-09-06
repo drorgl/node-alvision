@@ -80,7 +80,7 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
 
             var alpha = 0.01 * rng.gaussian(1).valueOf();
 
-            var origK = new alvision.Matxd(
+            var origK = new alvision.Matx33d(
                 f.at(0).get(), alpha * f.at(0).get().valueOf(), c.at(0).get(),
                 0, f.at(1).get(), c.at(1).get(),
                 0, 0, 1);
@@ -89,7 +89,7 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
             var rVec = new alvision.Vec3d();
             rng.fill(rVec, alvision.DistType.UNIFORM, -Math.PI, Math.PI);
 
-            var origR = new alvision.Matxd();
+            var origR = new alvision.Matx33d();
             alvision.Rodrigues(rVec, origR);
 
             var origT = new alvision.Vec3d() //3
@@ -97,15 +97,15 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
 
 
             // Compose the projection matrix
-            var P = new alvision.Matxd(3, 4); //34
-            alvision.hconcat(alvision.Matxd.op_Multiplication( origK ,origR),alvision.Matxd.op_Multiplication( origK , origT), P);
+            var P = new alvision.Matx34d(3, 4); //34
+            alvision.hconcat(alvision.Matx33d.op_Multiplication( origK ,origR),alvision.Matx33d.op_Multiplication( origK , origT), P);
 
 
             // Decompose
             //alvision.Matx33d K, R;
 
-            var R = new alvision.Matxd();
-            var K = new alvision.Matxd();
+            var R = new alvision.Matx33d();
+            var K = new alvision.Matx33d();
 
             var homogCameraCenter = new alvision.Vec4d() ;
             alvision.decomposeProjectionMatrix(P, K, R, homogCameraCenter);
@@ -115,7 +115,7 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
             var cameraCenter = new alvision.Vec3d(homogCameraCenter.at(0).get(), homogCameraCenter.at(1).get(), homogCameraCenter.at(2).get());
             cameraCenter = alvision.Vec3d.op_Division(cameraCenter, homogCameraCenter.at(3).get());
 
-            var t = alvision.Matxd.op_Substraction(R).op_Multiplication( cameraCenter);
+            var t = alvision.Matx33d.op_Substraction(R).op_Multiplication( cameraCenter);
 
 
             const thresh = 1e-6;

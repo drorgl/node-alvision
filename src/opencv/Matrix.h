@@ -23,6 +23,8 @@ public:
 	static NAN_METHOD(Ones); // factory
 	static NAN_METHOD(Eye); // factory
 
+	static NAN_METHOD(colRange);
+
 	static NAN_METHOD(Row);
 	static NAN_METHOD(PixelRow);
 	static NAN_METHOD(Col);

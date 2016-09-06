@@ -57,22 +57,22 @@ class fisheyeTest extends alvision.cvtest.CUDA_TEST{// : public::testing::Test {
 
     //protected:
     protected  imageSize : alvision.Size;
-    protected K: alvision.Matxd;
+    protected K: alvision.Matx33d;
     protected D: alvision.Vec4d;
-    protected R: alvision.Matxd;
+    protected R: alvision.Matx33d;
     protected T: alvision.Vec4d;
     protected datasets_repository_path: string;
 
     constructor(case_name : string, test_name : string) {
         super(case_name,test_name)
         this.imageSize = new alvision.Size(1280, 800);
-        this.K = new alvision.Matxd([558.478087865323, 0, 620.458515360843,
+        this.K = new alvision.Matx33d([558.478087865323, 0, 620.458515360843,
             0, 560.506767351568, 381.939424848348,
             0, 0, 1]);
 
         this.D = new alvision.Vec4d([-0.0014613319981768, -0.00329861110580401, 0.00605760088590183, -0.00374209380722371]);
 
-        this.R = new alvision.Matxd([9.9756700084424932e-01, 6.9698277640183867e-02, 1.4929569991321144e-03,
+        this.R = new alvision.Matx33d([9.9756700084424932e-01, 6.9698277640183867e-02, 1.4929569991321144e-03,
             -6.9711825162322980e-02, 9.9748249845531767e-01, 1.2997180766418455e-02,
             -5.8331736398316541e-04, -1.3069635393884985e-02, 9.9991441852366736e-01]);
 
@@ -237,7 +237,7 @@ class fisheyeTest_jacobians extends fisheyeTest
         let alpha = 0.01 * r.gaussian(1).valueOf();
 
         let x1 = new alvision.Mat(), x2 = new alvision.Mat(), xpred = new alvision.Mat ();
-        let K = new alvision.Matxd(f.at<alvision.double>("double",0).get(), alpha * f.at<alvision.double>("double",0).get().valueOf(), c.at<alvision.double>("double",0).get(),
+        let K = new alvision.Matx33d(f.at<alvision.double>("double",0).get(), alpha * f.at<alvision.double>("double",0).get().valueOf(), c.at<alvision.double>("double",0).get(),
         0, f.at<alvision.double>("double",1).get(), c.at<alvision.double>("double",1).get(),
         0, 0, 1);
 
@@ -266,7 +266,7 @@ class fisheyeTest_jacobians extends fisheyeTest
         let df = new alvision.Mat (2, 1,alvision.MatrixType. CV_64FC1);
         r.fill(df, alvision.DistType.NORMAL, 0, 1);
         df = alvision.MatExpr.op_Multiplication(df, 1e-9).op_Multiplication(alvision.norm(f)).toMat();
-        let K2 = K.op_Addition(new alvision.Matxd(df.at<alvision.double>("double",0).get(), df.at<alvision.double>("double",0).get().valueOf() * alpha, 0, 0, df.at<alvision.double>("double",1).get(), 0, 0, 0, 0));
+        let K2 = K.op_Addition(new alvision.Matx33d(df.at<alvision.double>("double",0).get(), df.at<alvision.double>("double",0).get().valueOf() * alpha, 0, 0, df.at<alvision.double>("double",1).get(), 0, 0, 0, 0));
         alvision.fisheye.projectPoints(X, x2, om, T, K2, k, alpha, null);
         xpred = alvision.MatExpr.op_Addition(x1, new alvision.Mat(alvision.MatExpr.op_Multiplication(jacobians.colRange(0, 2), df).toMat()).reshape(2, 1)).toMat();
         alvision.CV_Assert(()=>alvision.norm(alvision.MatExpr.op_Substraction( x2 , xpred).toMat()) < 1e-10);
@@ -275,7 +275,7 @@ class fisheyeTest_jacobians extends fisheyeTest
         let dc = new alvision.Mat(2, 1,alvision.MatrixType. CV_64FC1);
         r.fill(dc, alvision.DistType.NORMAL, 0, 1);
         dc = alvision.MatExpr.op_Multiplication(dc, 1e-9).op_Multiplication(alvision.norm(c).valueOf()).toMat();
-        K2 = K.op_Addition( new alvision.Matxd(0, 0, dc.at<alvision.double>("double", 0).get(), 0, 0, dc.at<alvision.double>("double", 1).get(), 0, 0, 0))
+        K2 = K.op_Addition( new alvision.Matx33d(0, 0, dc.at<alvision.double>("double", 0).get(), 0, 0, dc.at<alvision.double>("double", 1).get(), 0, 0, 0))
         alvision.fisheye.projectPoints(X, x2, om, T, K2, k, alpha, null);
         xpred = alvision.MatExpr.op_Addition(x1, new alvision.Mat(alvision.MatExpr.op_Multiplication(jacobians.colRange(2, 4), dc).toMat()).reshape(2, 1)).toMat();
         alvision.CV_Assert(()=>alvision.norm(alvision.MatExpr.op_Substraction( x2 , xpred).toMat()) < 1e-10);
@@ -294,7 +294,7 @@ class fisheyeTest_jacobians extends fisheyeTest
         r.fill(dalpha, alvision.DistType.NORMAL, 0, 1);
         dalpha = alvision.MatExpr.op_Multiplication(dalpha, 1e-9).op_Multiplication(alvision.norm(f)).toMat();
         let alpha2 = alpha + dalpha.at<alvision.double>("double",0).get().valueOf();
-        K2 = K.op_Addition( new alvision.Matxd(0, f.at<alvision.double>("double",0).get().valueOf() * dalpha.at<alvision.double>("double", 0).get().valueOf(), 0, 0, 0, 0, 0, 0, 0));
+        K2 = K.op_Addition( new alvision.Matx33d(0, f.at<alvision.double>("double",0).get().valueOf() * dalpha.at<alvision.double>("double", 0).get().valueOf(), 0, 0, 0, 0, 0, 0, 0));
         alvision.fisheye.projectPoints(X, x2, om, T, K, k, alpha2, null);
         xpred = alvision.MatExpr.op_Addition(x1, alvision.MatExpr.op_Multiplication(jacobians.col(14), dalpha).toMat().reshape(2, 1)).toMat();
         alvision.CV_Assert(()=>alvision.norm(alvision.MatExpr.op_Substraction(x2 , xpred).toMat()) < 1e-10);
@@ -328,7 +328,7 @@ class fisheyeTest_Calibration extends fisheyeTest
         flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_CHECK_COND;
         flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_FIX_SKEW;
 
-        let K = new alvision.Matxd();
+        let K = new alvision.Matx33d();
         let D = new alvision.Vec4d();
 
         alvision.fisheye.calibrate(objectPoints, imagePoints, this.imageSize, K, D,
@@ -431,7 +431,7 @@ class fisheyeTest_EtimateUncertainties extends fisheyeTest
     flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_CHECK_COND;
     flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_FIX_SKEW;
 
-    let K = new alvision.Matxd();
+    let K = new alvision.Matx33d();
     let D = new alvision.Vec4d();
     let rvec = new Array < alvision.Vec3d > ();
     let tvec = new Array < alvision.Vec3d > ();
@@ -567,7 +567,7 @@ class fisheyeTest_stereoCalibrate extends fisheyeTest
         fs_object.nodes[util.format("image_%d", i)].readPoint3d(objectPoints[i]);
     fs_object.release();
 
-    let K1 = new alvision.Matxd(), K2 = new alvision.Matxd(), R = new alvision.Matxd ();
+    let K1 = new alvision.Matx33d(), K2 = new alvision.Matx33d(), R = new alvision.Matx33d ();
     let T = new alvision.Vec3d ();
     let D1 = new alvision.Vec4d(), D2 = new alvision.Vec4d ();
 
@@ -581,15 +581,15 @@ class fisheyeTest_stereoCalibrate extends fisheyeTest
         K1, D1, K2, D2, this.imageSize, R, T, flag,
         new alvision.TermCriteria(3, 12, 0));
 
-    let R_correct = new alvision.Matxd (0.9975587205950972, 0.06953016383322372, 0.006492709911733523,
+    let R_correct = new alvision.Matx33d (0.9975587205950972, 0.06953016383322372, 0.006492709911733523,
         -0.06956823121068059, 0.9975601387249519, 0.005833595226966235,
         -0.006071257768382089, -0.006271040135405457, 0.9999619062167968);
     let T_correct = new alvision.Vec3d (-0.099402724724121, 0.00270812139265413, 0.00129330292472699);
-    let K1_correct = new alvision.Matxd (561.195925927249, 0, 621.282400272412,
+    let K1_correct = new alvision.Matx33d (561.195925927249, 0, 621.282400272412,
         0, 562.849402029712, 380.555455380889,
         0, 0, 1);
 
-    let K2_correct = new alvision.Matxd (560.395452535348, 0, 678.971652040359,
+    let K2_correct = new alvision.Matx33d (560.395452535348, 0, 678.971652040359,
         0, 561.90171021422, 380.401340535339,
         0, 0, 1);
 
@@ -637,7 +637,7 @@ class fisheyeTest_stereoCalibrateFixIntrinsic extends fisheyeTest
             fs_object.nodes[util.format("image_%d", i)].readPoint3d(objectPoints[i]);
         fs_object.release();
 
-        let R = new alvision.Matxd();
+        let R = new alvision.Matx33d();
         let T = new alvision.Vec3d();
 
         let flag = 0; 
@@ -646,11 +646,11 @@ class fisheyeTest_stereoCalibrateFixIntrinsic extends fisheyeTest
         flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_FIX_SKEW;
         flag |= alvision.fisheye.FISHEYE_CALIB.CALIB_FIX_INTRINSIC;
 
-        let K1 = new alvision.Matxd  (561.195925927249, 0, 621.282400272412,
+        let K1 = new alvision.Matx33d  (561.195925927249, 0, 621.282400272412,
             0, 562.849402029712, 380.555455380889,
             0, 0, 1);
 
-        let K2 = new alvision.Matxd  (560.395452535348, 0, 678.971652040359,
+        let K2 = new alvision.Matx33d  (560.395452535348, 0, 678.971652040359,
             0, 561.90171021422, 380.401340535339,
             0, 0, 1);
 
@@ -661,7 +661,7 @@ class fisheyeTest_stereoCalibrateFixIntrinsic extends fisheyeTest
             K1, D1, K2, D2, this.imageSize, R, T, flag,
             new alvision.TermCriteria(3, 12, 0));
 
-        let R_correct = new alvision.Matxd(0.9975587205950972, 0.06953016383322372, 0.006492709911733523,
+        let R_correct = new alvision.Matx33d(0.9975587205950972, 0.06953016383322372, 0.006492709911733523,
             -0.06956823121068059, 0.9975601387249519, 0.005833595226966235,
             -0.006071257768382089, -0.006271040135405457, 0.9999619062167968);
         let T_correct = new alvision.Vec3d (-0.099402724724121, 0.00270812139265413, 0.00129330292472699);

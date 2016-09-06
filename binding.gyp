@@ -68,6 +68,24 @@
 		, "src/alvision.h"
 		, "src/safecast.h"
 		
+		, "src/opencv/core.cc"
+		, "src/opencv/core.h"
+		
+		, "src/opencv/core/RNG.cc"
+		, "src/opencv/core/RNG.h"
+		
+		, "src/opencv/Affine3.cc"
+		, "src/opencv/Affine3.h"
+		
+		, "src/opencv/calib3d.cc"
+		, "src/opencv/calib3d.h"
+		
+		, "src/opencv/MatExpr.cc"
+		, "src/opencv/MatExpr.h"
+		
+		, "src/opencv/Matx.cc"
+		, "src/opencv/Matx.h"
+		
         , "src/opencv/Matrix.cc"
 		, "src/opencv/Matrix.h"
 		, "src/opencv/Constants.cc"

@@ -348,11 +348,137 @@ export interface MatxStatic<T> {
 //}
 };
 
-export interface Matxf extends Matx<_st.float> { }
-export interface Matxd extends Matx<_st.double> { }
 
-export var Matxf: MatxStatic<_st.float> = alvision_module.Matxf;
-export var Matxd: MatxStatic<_st.double> = alvision_module.Matxd;
+
+
+export interface Matx12<T> extends Matx<T> { };
+export interface Matx13<T> extends Matx<T> { };
+export interface Matx14<T> extends Matx<T> { };
+export interface Matx16<T> extends Matx<T> { };
+
+export interface Matx21<T> extends Matx<T> { };
+export interface Matx31<T> extends Matx<T> { };
+export interface Matx41<T> extends Matx<T> { };
+export interface Matx61<T> extends Matx<T> { };
+
+export interface Matx22<T> extends Matx<T> { };
+export interface Matx23<T> extends Matx<T> { };
+export interface Matx32<T> extends Matx<T> { };
+
+export interface Matx33<T> extends Matx<T> { };
+
+
+export interface Matx34<T> extends Matx<T> { };
+export interface Matx43<T> extends Matx<T> { };
+export interface Matx44<T> extends Matx<T> { };
+
+export interface Matx66<T> extends Matx<T> { };
+
+
+
+
+export interface Matx12Static<T> extends MatxStatic<T> { };
+export interface Matx13Static<T> extends MatxStatic<T> { };
+export interface Matx14Static<T> extends MatxStatic<T> { };
+export interface Matx16Static<T> extends MatxStatic<T> { };
+
+export interface Matx21Static<T> extends MatxStatic<T> { };
+export interface Matx31Static<T> extends MatxStatic<T> { };
+export interface Matx41Static<T> extends MatxStatic<T> { };
+export interface Matx61Static<T> extends MatxStatic<T> { };
+
+export interface Matx22Static<T> extends MatxStatic<T> { };
+export interface Matx23Static<T> extends MatxStatic<T> { };
+export interface Matx32Static<T> extends MatxStatic<T> { };
+
+export interface Matx33Static<T> extends MatxStatic<T> { };
+
+export interface Matx34Static<T> extends MatxStatic<T> { };
+export interface Matx43Static<T> extends MatxStatic<T> { };
+export interface Matx44Static<T> extends MatxStatic<T> { };
+
+export interface Matx66Static<T> extends MatxStatic<T> { };
+
+
+
+export interface Matx12f extends Matx12<_st. float>  {}
+export interface Matx12d extends Matx12<_st. double> {}
+export interface Matx13f extends Matx13<_st. float>  {}
+export interface Matx13d extends Matx13<_st. double> {}
+export interface Matx14f extends Matx14<_st. float>  {}
+export interface Matx14d extends Matx14<_st. double> {}
+export interface Matx16f extends Matx16<_st. float>  {}
+export interface Matx16d extends Matx16<_st. double> {}
+
+export interface Matx21f extends Matx21<_st.float > {}
+export interface Matx21d extends Matx21<_st.double> {}
+export interface Matx31f extends Matx31<_st.float > {}
+export interface Matx31d extends Matx31<_st.double> {}
+export interface Matx41f extends Matx41<_st.float > {}
+export interface Matx41d extends Matx41<_st.double> {}
+export interface Matx61f extends Matx61<_st.float > {}
+export interface Matx61d extends Matx61<_st.double> {}
+
+export interface Matx22f extends Matx22<_st. float > {}
+export interface Matx22d extends Matx22<_st. double> {}
+export interface Matx23f extends Matx23<_st. float > {}
+export interface Matx23d extends Matx23<_st. double> {}
+export interface Matx32f extends Matx32<_st. float > {}
+export interface Matx32d extends Matx32<_st. double> {}
+
+export interface Matx33f extends Matx33<_st. float > {}
+export interface Matx33d extends Matx33<_st. double> {}
+
+export interface Matx34f extends Matx34<_st. float > {}
+export interface Matx34d extends Matx34<_st. double> {}
+export interface Matx43f extends Matx43<_st. float > {}
+export interface Matx43d extends Matx43<_st. double> {}
+
+export interface Matx44f extends Matx44<_st. float > {}
+export interface Matx44d extends Matx44<_st. double> {}
+export interface Matx66f extends Matx66<_st. float > {}
+export interface Matx66d extends Matx66<_st. double> {}
+
+
+
+export var Matx12f : Matx12Static<_st.float>  = alvision_module.Matx12f
+export var Matx12d : Matx12Static<_st.double> = alvision_module.Matx12d
+export var Matx13f : Matx13Static<_st.float>  = alvision_module.Matx13f
+export var Matx13d : Matx13Static<_st.double> = alvision_module.Matx13d
+export var Matx14f : Matx14Static<_st.float>  = alvision_module.Matx14f
+export var Matx14d : Matx14Static<_st.double> = alvision_module.Matx14d
+export var Matx16f : Matx16Static<_st.float>  = alvision_module.Matx16f
+export var Matx16d : Matx16Static<_st.double> = alvision_module.Matx16d
+
+export var Matx21f : Matx21Static<_st.float>  = alvision_module.Matx21f
+export var Matx21d : Matx21Static<_st.double> = alvision_module.Matx21d
+export var Matx31f : Matx31Static<_st.float>  = alvision_module.Matx31f
+export var Matx31d : Matx31Static<_st.double> = alvision_module.Matx31d
+export var Matx41f : Matx41Static<_st.float>  = alvision_module.Matx41f
+export var Matx41d : Matx41Static<_st.double> = alvision_module.Matx41d
+export var Matx61f : Matx61Static<_st.float>  = alvision_module.Matx61f
+export var Matx61d : Matx61Static<_st.double> = alvision_module.Matx61d
+
+export var Matx22f : Matx22Static<_st.float>  = alvision_module.Matx22f
+export var Matx22d : Matx22Static<_st.double> = alvision_module.Matx22d
+export var Matx23f : Matx23Static<_st.float>  = alvision_module.Matx23f
+export var Matx23d : Matx23Static<_st.double> = alvision_module.Matx23d
+export var Matx32f : Matx32Static<_st.float>  = alvision_module.Matx32f
+export var Matx32d : Matx32Static<_st.double> = alvision_module.Matx32d
+
+export var Matx33f : Matx33Static<_st.float>  = alvision_module.Matx33f
+export var Matx33d : Matx33Static<_st.double> = alvision_module.Matx33d
+
+export var Matx34f : Matx34Static<_st.float>  = alvision_module.Matx34f
+export var Matx34d : Matx34Static<_st.double> = alvision_module.Matx34d
+export var Matx43f : Matx43Static<_st.float>  = alvision_module.Matx43f
+export var Matx43d : Matx43Static<_st.double> = alvision_module.Matx43d
+
+export var Matx44f : Matx44Static<_st.float>  = alvision_module.Matx44f
+export var Matx44d : Matx44Static<_st.double> = alvision_module.Matx44d
+export var Matx66f : Matx66Static<_st.float>  = alvision_module.Matx66f
+export var Matx66d : Matx66Static<_st.double> = alvision_module.Matx66d
+
 
 //typedef Matx< float, 1, 2 > Matx12f;
 //typedef Matx< double, 1, 2 > Matx12d;

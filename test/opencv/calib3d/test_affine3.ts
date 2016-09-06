@@ -65,7 +65,7 @@ alvision.cvtest.TEST('Calib3d_Affine3f', 'accuracy', () => {
     alvision.ASSERT_EQ(0, alvision.cvtest.norm(alvision.MatExpr.op_NotEquals(new alvision.Mat(affine.linear()) , expected).toMat(), alvision.NormTypes.NORM_L2));
 
 
-    var R = alvision.Matxd.eye(); //33
+    var R = alvision.Matx33d.eye(); //33
 
     var angle = 50;
     R.val[0] = R.val[4] = Math.cos(Math.PI * angle / 180.0);
@@ -95,15 +95,15 @@ alvision.cvtest.TEST('Calib3d_Affine3f', 'accuracy_rvec',()=>
     //alvision.Affine3<T>::Vec3 w;
     var w = new alvision.Vec3f();
     //alvision.Affine3<T>::Mat3 u, vt, R;
-    var u = new alvision.Matxf();
-    var vt = new alvision.Matxf();
-    var R = new alvision.Matxf();
+    var u = new alvision.Matx33f();
+    var vt = new alvision.Matx33f();
+    var R = new alvision.Matx33f();
 
     for (var i = 0; i < 100; ++i)
     {
         rng.fill(R, alvision.DistType.UNIFORM, -10, 10, true);
         alvision.SVD.compute(R, w, u, vt, alvision.SVDFlags.FULL_UV + alvision.SVDFlags.MODIFY_A);
-        R = alvision.Matxf.op_Multiplication(u, vt);
+        R = alvision.Matx33f.op_Multiplication(u, vt);
 
         //double s = (double)alvision.getTickCount();
         //alvision.Affine3<T>::Vec3 va = alvision.Affine3<T>(R).rvec();

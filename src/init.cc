@@ -20,6 +20,15 @@
 #include "opencv/ml.h"
 #include "opencv/superres.h"
 
+#include "opencv/Affine3.h"
+
+#include "opencv/calib3d.h"
+
+#include "opencv/MatExpr.h"
+
+#include "opencv/core.h"
+
+#include "opencv/Matx.h"
 
 extern "C"{ 
 void
@@ -66,10 +75,58 @@ init(Handle<Object> target) {
 	Vec<cv::Vec3d>::Init(target,"Vec3d");
 	Vec<cv::Vec4d>::Init(target,"Vec4d");
 	Vec<cv::Vec6d>::Init(target,"Vec6d");
+
+	Affine3<cv::Affine3d>::Init(target, "Affine3d");
+	Affine3<cv::Affine3f>::Init(target, "Affine3f");
 	
 
 	ml::Init(target);
 	superres::Init(target);
+
+	calib3d::Init(target);
+
+	MatExpr::Init(target);
+
+	core::Init(target);
+
+	//Matx<cv::Matx
+	Matx<cv::Matx12f>::Init(target,"Matx12f");
+	Matx<cv::Matx12d>::Init(target,"Matx12d");
+	Matx<cv::Matx13f>::Init(target,"Matx13f");
+	Matx<cv::Matx13d>::Init(target,"Matx13d");
+	Matx<cv::Matx14f>::Init(target,"Matx14f");
+	Matx<cv::Matx14d>::Init(target,"Matx14d");
+	Matx<cv::Matx16f>::Init(target,"Matx16f");
+	Matx<cv::Matx16d>::Init(target,"Matx16d");
+
+	Matx<cv::Matx21f>::Init(target,"Matx21f");
+	Matx<cv::Matx21d>::Init(target,"Matx21d");
+	Matx<cv::Matx31f>::Init(target,"Matx31f");
+	Matx<cv::Matx31d>::Init(target,"Matx31d");
+	Matx<cv::Matx41f>::Init(target,"Matx41f");
+	Matx<cv::Matx41d>::Init(target,"Matx41d");
+	Matx<cv::Matx61f>::Init(target,"Matx61f");
+	Matx<cv::Matx61d>::Init(target,"Matx61d");
+
+	Matx<cv::Matx22f>::Init(target,"Matx22f");
+	Matx<cv::Matx22d>::Init(target,"Matx22d");
+	Matx<cv::Matx23f>::Init(target,"Matx23f");
+	Matx<cv::Matx23d>::Init(target,"Matx23d");
+	Matx<cv::Matx32f>::Init(target,"Matx32f");
+	Matx<cv::Matx32d>::Init(target,"Matx32d");
+
+	Matx<cv::Matx33f>::Init(target,"Matx33f");
+	Matx<cv::Matx33d>::Init(target,"Matx33d");
+
+	Matx<cv::Matx34f>::Init(target,"Matx34f");
+	Matx<cv::Matx34d>::Init(target,"Matx34d");
+	Matx<cv::Matx43f>::Init(target,"Matx43f");
+	Matx<cv::Matx43d>::Init(target,"Matx43d");
+
+	Matx<cv::Matx44f>::Init(target,"Matx44f");
+	Matx<cv::Matx44d>::Init(target,"Matx44d");
+	Matx<cv::Matx66f>::Init(target,"Matx66f");
+	Matx<cv::Matx66d>::Init(target,"Matx66d");
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 

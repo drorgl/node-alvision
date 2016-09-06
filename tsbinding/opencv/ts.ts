@@ -548,7 +548,12 @@ export namespace cvtest {
     }
 
     export function TEST(test_case_name: string, test_name: string, cb: () => void) {
-        cb();
+        try {
+            cb();
+            console.log(test_case_name, test_name, "Passed");
+        } catch (e) {
+            console.log("Error Running ", test_case_name, test_name, e);
+        }
         //tape(
         //TODO:!!
     }
