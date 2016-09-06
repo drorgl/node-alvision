@@ -70,9 +70,9 @@ class CV_ChessboardDetectorBadArgTest extends alvision.cvtest.BadArgTest {
 
     run(iii: alvision.int): void {
         var bg = new alvision.Mat (800, 600,alvision.MatrixType. CV_8U, new alvision.Scalar(0));
-        var camMat = new alvision.Matf(3, 3, [300., 0., bg.cols().valueOf() / 2., 0, 300., bg.rows().valueOf() / 2., 0., 0., 1.]);
+        var camMat = new alvision.Mat1f(3, 3, [300., 0., bg.cols().valueOf() / 2., 0, 300., bg.rows().valueOf() / 2., 0., 0., 1.]);
         //camMat << 300.f, 0.f, bg.cols / 2.f, 0, 300.f, bg.rows / 2.f, 0.f, 0.f, 1.f;
-        var distCoeffs = new alvision.Matf(1, 5, [1.2, 0.2, 0., 0., 0.]);
+        var distCoeffs = new alvision.Mat1f(1, 5, [1.2, 0.2, 0., 0., 0.]);
         //distCoeffs << 1.2f, 0.2f, 0.f, 0.f, 0.f;
 
         var cbg = new _cbgen.ChessBoardGenerator (new alvision.Size(8, 6));

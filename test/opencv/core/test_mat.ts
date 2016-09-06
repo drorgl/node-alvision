@@ -660,7 +660,7 @@ class Core_ArrayOpTest extends alvision.cvtest.BaseTest {
             nz0 = Math.min(Math.max(nz0, 1), p);
             all_vals.length = (nz0);
             all_vals2.length = (nz0);
-            var _all_vals = new alvision.Matd(all_vals), _all_vals2 = new alvision.Matd(all_vals2);
+            var _all_vals = new alvision.Mat1d(all_vals), _all_vals2 = new alvision.Mat1d(all_vals2);
             rng.fill(_all_vals, alvision.DistType.UNIFORM, new alvision.Scalar(-1000), new alvision.Scalar(1000));
             if (depth == alvision.MatrixType.CV_32F) {
                 let _all_vals_f = new alvision.Mat();
@@ -1167,8 +1167,8 @@ alvision.cvtest.TEST('Core_Split', 'shape_operations', () => { var test = new Co
 
 
 alvision.cvtest.TEST('Core_IOArray', 'submat_assignment', () => {
-    let A = new alvision.Matf(alvision.Matf.zeros(2, 2));
-    let B = new alvision.Matf(alvision.Matf.ones(1, 3));
+    let A = new alvision.Mat1f(alvision.Mat1f.zeros(2, 2));
+    let B = new alvision.Mat1f(alvision.Mat1f.ones(1, 3));
 
     alvision.EXPECT_THROW(()=>B.colRange(0, 3).copyTo(A.row(0)));
 
@@ -1182,7 +1182,7 @@ function OutputArray_create1(m: alvision.OutputArray) : void{ m.create(1, 2,   a
 function OutputArray_create2( m : alvision.OutputArray) : void{ m.create(1, 3, alvision.MatrixType.CV_32F); }
 
 alvision.cvtest.TEST('Core_IOArray', 'submat_create', () => {
-    let A = new alvision.Matf(alvision.Matf.zeros(2, 2));
+    let A = new alvision.Mat1f(alvision.Mat1f.zeros(2, 2));
 
     alvision.EXPECT_THROW(()=>OutputArray_create1(A.row(0)));
     alvision.EXPECT_THROW(()=>OutputArray_create2(A.row(0)));
@@ -1190,7 +1190,7 @@ alvision.cvtest.TEST('Core_IOArray', 'submat_create', () => {
 
 alvision.cvtest.TEST('Core_Mat', 'reshape_1942',()=>
 {
-    let A = (new alvision.Matf(2, 3, [3.4884074, 1.4159607, 0.78737736, 2.3456569, -0.88010466, 0.3009364]));
+    let A = (new alvision.Mat1f(2, 3, [3.4884074, 1.4159607, 0.78737736, 2.3456569, -0.88010466, 0.3009364]));
     let cn = 0;
     alvision.ASSERT_NO_THROW(() => {
         let M = A.reshape(3);
@@ -1201,25 +1201,25 @@ alvision.cvtest.TEST('Core_Mat', 'reshape_1942',()=>
 });
 
 alvision.cvtest.TEST('Core_Mat', 'copyNx1ToVector', () => {
-    let src = new alvision.Matb(5, 1, [1, 2, 3, 4, 5]);
-    let ref_dst8 = new alvision.Matb();
-    let ref_dst16 = new alvision.Matw();
+    let src = new alvision.Mat1b(5, 1, [1, 2, 3, 4, 5]);
+    let ref_dst8 = new alvision.Mat1b();
+    let ref_dst16 = new alvision.Mat1w();
     let dst8 = new Array<alvision.uchar>();
     let dst16 = new Array<alvision.ushort>();
 
     src.copyTo(ref_dst8);
     src.copyTo(dst8);
 
-    alvision.cvtest.ASSERT_PRED_FORMAT2(new alvision.cvtest.MatComparator(0, 0).run(ref_dst8, new alvision.Matb(dst8)));
+    alvision.cvtest.ASSERT_PRED_FORMAT2(new alvision.cvtest.MatComparator(0, 0).run(ref_dst8, new alvision.Mat1b(dst8)));
 
     src.convertTo(ref_dst16, alvision.MatrixType.CV_16U);
     src.convertTo(dst16, alvision.MatrixType.CV_16U);
 
-    alvision.cvtest.ASSERT_PRED_FORMAT2(new alvision.cvtest.MatComparator(0, 0).run(ref_dst16, new alvision.Matw(dst16)));
+    alvision.cvtest.ASSERT_PRED_FORMAT2(new alvision.cvtest.MatComparator(0, 0).run(ref_dst16, new alvision.Mat1w(dst16)));
 });
 
 alvision.cvtest.TEST('Core_Matx', 'fromMat_', () => {
-    let a = new alvision.Matd(2, 2, [10, 11, 12, 13]);
+    let a = new alvision.Mat1d(2, 2, [10, 11, 12, 13]);
     let b = (a);
     alvision.ASSERT_EQ(alvision.norm(a, b,alvision.NormTypes. NORM_INF), 0.);
 });
@@ -1230,11 +1230,11 @@ alvision.cvtest.TEST('Core_InputArray', 'empty', () => {
 });
 
 alvision.cvtest.TEST('Core_CopyMask', 'bug1918', () => {
-    let tmpSrc = new alvision.Matb(100, 100);
+    let tmpSrc = new alvision.Mat1b(100, 100);
     tmpSrc.setTo(124);
-    let tmpMask = new alvision.Matb(100, 100);
+    let tmpMask = new alvision.Mat1b(100, 100);
     tmpMask.setTo(255);
-    let  tmpDst = new alvision.Matb(100, 100);
+    let  tmpDst = new alvision.Mat1b(100, 100);
     tmpDst.setTo(2);
     tmpSrc.copyTo(tmpDst, tmpMask);
     alvision.ASSERT_EQ(alvision.sum(tmpDst).val[0], 124 * 100 * 100);

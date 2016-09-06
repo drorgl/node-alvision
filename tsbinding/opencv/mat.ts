@@ -2227,22 +2227,87 @@ export interface Mat_<T> extends Mat
     op_BinaryNot(): Mat_<T>;
 };
 
-export interface Matb extends Mat_<_st.uchar> { }
-export interface Mats extends Mat_<_st.short> { }
-export interface Matw extends Mat_<_st.ushort> { }
-export interface Mati extends Mat_<_st.int> { }
-export interface Matf extends Mat_<_st.float> { }
-export interface Matd extends Mat_<_st.double> { }
+export interface Mat1b extends Mat_< _st.uchar > {}
+export interface Mat2b extends Mat_< _matx.Vec2b > {}
+export interface Mat3b extends Mat_< _matx.Vec3b > {}
+export interface Mat4b extends Mat_< _matx.Vec4b > {}
+
+export interface Mat1s extends Mat_< _st.short > {}
+export interface Mat2s extends Mat_< _matx.Vec2s > {}
+export interface Mat3s extends Mat_< _matx.Vec3s > {}
+export interface Mat4s extends Mat_< _matx.Vec4s > {}
+
+export interface Mat1w extends Mat_< _st.ushort > {}
+export interface Mat2w extends Mat_< _matx.Vec2w >  {}
+export interface Mat3w extends Mat_< _matx.Vec3w >  {}
+export interface Mat4w extends Mat_< _matx.Vec4w >  {}
+
+export interface Mat1i extends Mat_< _st.int >   {}
+export interface Mat2i extends Mat_< _matx.Vec2i > {}
+export interface Mat3i extends Mat_< _matx.Vec3i > {}
+export interface Mat4i extends Mat_< _matx.Vec4i > {}
+
+export interface Mat1f extends Mat_< _st.float > {}
+export interface Mat2f extends Mat_< _matx.Vec2f > {}
+export interface Mat3f extends Mat_< _matx.Vec3f > {}
+export interface Mat4f extends Mat_< _matx.Vec4f > {}
+
+export interface Mat1d extends Mat_< _st.double > {}
+export interface Mat2d extends Mat_< _matx.Vec2d >  {}
+export interface Mat3d extends Mat_< _matx.Vec3d >  {}
+export interface Mat4d extends Mat_<_matx.Vec4d>  { }
+
 export interface MatPoint2f extends Mat_<_types.Point2f> { }
 
 
-export var Matb: Mat_Static<_st.uchar> = alvision_module.Matb;
-export var Mats : Mat_Static<_st.short> = alvision_module.Mats;
-export var Matw : Mat_Static<_st.ushort>= alvision_module.Matw;
-export var Mati : Mat_Static<_st.int>   = alvision_module.Mati;
-export var Matf : Mat_Static<_st.float> = alvision_module.Matf;
-export var Matd: Mat_Static<_st.double> = alvision_module.Matd;
-export var MatPoint2f: Mat_Static<_types.Point2f> = alvision_module.MatPoint2f;
+export var Mat1b : Mat_Static<_st.uchar >  = alvision_module.Mat1b ;
+export var Mat2b : Mat_Static<_matx.Vec2b > = alvision_module.Mat2b ;
+export var Mat3b : Mat_Static<_matx.Vec3b > = alvision_module.Mat3b ;
+export var Mat4b : Mat_Static<_matx.Vec4b > = alvision_module.Mat4b ;
+
+export var Mat1s : Mat_Static<_st.short >  = alvision_module.Mat1s ;
+export var Mat2s : Mat_Static<_matx.Vec2s > = alvision_module.Mat2s ;
+export var Mat3s : Mat_Static<_matx.Vec3s > = alvision_module.Mat3s ;
+export var Mat4s : Mat_Static<_matx.Vec4s > = alvision_module.Mat4s ;
+
+export var Mat1w : Mat_Static<_st.ushort > = alvision_module.Mat1w ;
+export var Mat2w : Mat_Static<_matx.Vec2w > = alvision_module.Mat2w ;
+export var Mat3w : Mat_Static<_matx.Vec3w > = alvision_module.Mat3w ;
+export var Mat4w : Mat_Static<_matx.Vec4w > = alvision_module.Mat4w ;
+
+export var Mat1i : Mat_Static<_st.int    > = alvision_module.Mat1i ;
+export var Mat2i : Mat_Static<_matx.Vec2i > = alvision_module.Mat2i ;
+export var Mat3i : Mat_Static<_matx.Vec3i > = alvision_module.Mat3i ;
+export var Mat4i : Mat_Static<_matx.Vec4i > = alvision_module.Mat4i ;
+
+export var Mat1f : Mat_Static<_st.float  > = alvision_module.Mat1f ;
+export var Mat2f : Mat_Static<_matx.Vec2f > = alvision_module.Mat2f ;
+export var Mat3f : Mat_Static<_matx.Vec3f > = alvision_module.Mat3f ;
+export var Mat4f : Mat_Static<_matx.Vec4f > = alvision_module.Mat4f ;
+
+export var Mat1d : Mat_Static<_st.double > = alvision_module.Mat1d ;
+export var Mat2d : Mat_Static<_matx.Vec2d > = alvision_module.Mat2d ;
+export var Mat3d : Mat_Static<_matx.Vec3d > = alvision_module.Mat3d ;
+export var Mat4d: Mat_Static<_matx.Vec4d> = alvision_module.Mat4d;
+
+export var MatPoint2f: Mat_Static<_types.Point2f> = alvision_module.Point2f;
+
+//export interface Matb extends Mat_<_st.uchar> { }
+//export interface Mats extends Mat_<_st.short> { }
+//export interface Matw extends Mat_<_st.ushort> { }
+//export interface Mati extends Mat_<_st.int> { }
+//export interface Matf extends Mat_<_st.float> { }
+//export interface Matd extends Mat_<_st.double> { }
+//export interface MatPoint2f extends Mat_<_types.Point2f> { }
+
+
+//export var Matb: Mat_Static<_st.uchar> = alvision_module.Matb;
+//export var Mats : Mat_Static<_st.short> = alvision_module.Mats;
+//export var Matw : Mat_Static<_st.ushort>= alvision_module.Matw;
+//export var Mati : Mat_Static<_st.int>   = alvision_module.Mati;
+//export var Matf : Mat_Static<_st.float> = alvision_module.Matf;
+//export var Matd: Mat_Static<_st.double> = alvision_module.Matd;
+//export var MatPoint2f: Mat_Static<_types.Point2f> = alvision_module.MatPoint2f;
 
 
 

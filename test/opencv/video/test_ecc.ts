@@ -123,14 +123,14 @@ class CV_ECC_Test_Translation extends CV_ECC_BaseTest
             this.ts.update_context(this, k, true);
             progress = this.update_progress(progress, k, this.ntests, 0);
 
-            var translationGround = new alvision.Mat (new alvision.Matf(2, 3,[ 1, 0, (rng.uniform(10., 20.)),0, 1, (rng.uniform(10., 20.))]));
+            var translationGround = new alvision.Mat (new alvision.Mat1f(2, 3,[ 1, 0, (rng.uniform(10., 20.)),0, 1, (rng.uniform(10., 20.))]));
 
             var warpedImage = new alvision.Mat();
 
             alvision.warpAffine(testImg, warpedImage, translationGround,
                 new alvision.Size(200, 200),alvision.InterpolationFlags. INTER_LINEAR +alvision.InterpolationFlags. WARP_INVERSE_MAP);
 
-            var mapTranslation = new alvision.Mat (new alvision.Matf(2, 3,[ 1, 0, 0, 0, 1, 0]));
+            var mapTranslation = new alvision.Mat (new alvision.Mat1f(2, 3,[ 1, 0, 0, 0, 1, 0]));
 
             alvision.findTransformECC(warpedImage, testImg, mapTranslation, 0,
                 new alvision.TermCriteria(alvision.TermCriteriaType.COUNT + alvision.TermCriteriaType.EPS,this. ECC_iterations,this. ECC_epsilon));
@@ -182,7 +182,7 @@ class CV_ECC_Test_Euclidean extends CV_ECC_BaseTest
 
             var angle = Math.PI / 30 + Math.PI * rng.uniform( - 2., 2.).valueOf() / 180;
 
-            var euclideanGround = new alvision.Mat(new alvision.Matf(2, 3, [Math.cos(angle), -Math.sin(angle), (rng.uniform(10., 20.)),
+            var euclideanGround = new alvision.Mat(new alvision.Mat1f(2, 3, [Math.cos(angle), -Math.sin(angle), (rng.uniform(10., 20.)),
                 Math.sin(angle), Math.cos(angle), (rng.uniform(10., 20.))]));
 
             var warpedImage = new alvision.Mat();
@@ -190,7 +190,7 @@ class CV_ECC_Test_Euclidean extends CV_ECC_BaseTest
             alvision.warpAffine(testImg, warpedImage, euclideanGround,
                 new alvision.Size(200, 200),alvision.InterpolationFlags. INTER_LINEAR +alvision.InterpolationFlags. WARP_INVERSE_MAP);
 
-            var mapEuclidean = new alvision.Mat (new alvision.Matf(2, 3,[ 1, 0, 0, 0, 1, 0]));
+            var mapEuclidean = new alvision.Mat (new alvision.Mat1f(2, 3,[ 1, 0, 0, 0, 1, 0]));
 
             alvision.findTransformECC(warpedImage, testImg, mapEuclidean, 1,
                 new alvision.TermCriteria(alvision.TermCriteriaType.COUNT+ alvision.TermCriteriaType.EPS, this.ECC_iterations,this. ECC_epsilon));
@@ -242,7 +242,7 @@ class CV_ECC_Test_Affine extends CV_ECC_BaseTest
         progress = this.update_progress(progress, k, this.ntests, 0);
 
 
-        var affineGround = new alvision.Mat(new alvision.Matf(2, 3,[ (1 - rng.uniform(-0.05, 0.05).valueOf()),
+        var affineGround = new alvision.Mat(new alvision.Mat1f(2, 3,[ (1 - rng.uniform(-0.05, 0.05).valueOf()),
             (rng.uniform(-0.03, 0.03)), (rng.uniform(10., 20.)),
             (rng.uniform(-0.03, 0.03)), (1 - rng.uniform(-0.05, 0.05).valueOf()),
             (rng.uniform(10., 20.))]));
@@ -252,7 +252,7 @@ class CV_ECC_Test_Affine extends CV_ECC_BaseTest
         alvision.warpAffine(testImg, warpedImage, affineGround,
             new alvision.Size(200, 200), alvision.InterpolationFlags.INTER_LINEAR + alvision.InterpolationFlags.WARP_INVERSE_MAP);
 
-        let mapAffine = new alvision.Mat (new alvision.Matf(2, 3,[ 1, 0, 0, 0, 1, 0]));
+        let mapAffine = new alvision.Mat (new alvision.Mat1f(2, 3,[ 1, 0, 0, 0, 1, 0]));
 
         alvision.findTransformECC(warpedImage, testImg, mapAffine, 2,
             new alvision.TermCriteria(alvision.TermCriteriaType.COUNT + alvision.TermCriteriaType.EPS, this.ECC_iterations,this. ECC_epsilon));
@@ -303,7 +303,7 @@ class CV_ECC_Test_Homography extends CV_ECC_BaseTest
             this.ts.update_context(this, k, true);
             progress = this.update_progress(progress, k, this.ntests, 0);
 
-            var homoGround = new alvision.Mat (new alvision.Matf(3, 3,[ (1 - rng.uniform(-0.05, 0.05).valueOf()),
+            var homoGround = new alvision.Mat (new alvision.Mat1f(3, 3,[ (1 - rng.uniform(-0.05, 0.05).valueOf()),
                 (rng.uniform(-0.03, 0.03)), (rng.uniform(10., 20.)),
                 (rng.uniform(-0.03, 0.03)), (1 - rng.uniform(-0.05, 0.05).valueOf()), (rng.uniform(10., 20.)),
                 (rng.uniform(0.0001, 0.0003)), (rng.uniform(0.0001, 0.0003)), 1.]));

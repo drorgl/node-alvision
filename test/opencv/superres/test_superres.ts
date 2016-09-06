@@ -128,7 +128,7 @@ function addGaussNoise(_image: alvision.Mat, sigma: alvision.double ) : void
 function addSpikeNoise(_image: alvision.Mat, frequency: alvision.int )
 {
     let imgSize = _image.size();
-    let mask = new alvision.Matb(imgSize.height, imgSize.width, 0);
+    let mask = new alvision.Mat1b(imgSize.height, imgSize.width, 0);
 
     for (let y = 0; y < mask.rows(); ++y)
         for (let x = 0; x < mask.cols(); ++x)

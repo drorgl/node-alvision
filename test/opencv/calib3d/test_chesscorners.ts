@@ -269,10 +269,10 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
         alvision.randu(bg, alvision.Scalar.all(0),alvision. Scalar.all(255));
         alvision.GaussianBlur(bg, bg,new alvision. Size(7, 7), 3.0);
 
-        var camMat = new alvision.Matf(3, 3, [300., 0., bg.cols().valueOf() / 2., 0, 300., bg.rows().valueOf() / 2., 0., 0., 1.]);
+        var camMat = new alvision.Mat1f(3, 3, [300., 0., bg.cols().valueOf() / 2., 0, 300., bg.rows().valueOf() / 2., 0., 0., 1.]);
         //camMat << 300., 0., bg.cols / 2., 0, 300., bg.rows / 2., 0., 0., 1.;
 
-        var distCoeffs = new alvision.Matf(1, 5, [1.2, 0.2, 0., 0., 0.]);
+        var distCoeffs = new alvision.Mat1f(1, 5, [1.2, 0.2, 0., 0., 0.]);
         //distCoeffs << 1.2, 0.2, 0., 0., 0.;
 
         const sizes = [new alvision. Size(6, 6),new alvision. Size(8, 6),new alvision. Size(11, 12),new alvision.  Size(5, 4) ];
@@ -337,7 +337,7 @@ class CV_ChessboardDetectorTest extends alvision.cvtest.BaseTest {
 
             //Point2f c =  std::accumulate(cg.begin(), cg.end(), Point2f(), plus<Point2f>()) * (1.f/ cg.size());
 
-            var aff = new alvision.Matd(2, 3, [1.0, 0.0, -c.x, 0.0, 1.0, 0.0]);
+            var aff = new alvision.Mat1d(2, 3, [1.0, 0.0, -c.x, 0.0, 1.0, 0.0]);
             //aff << 1.0, 0.0, -(double)c.x, 0.0, 1.0, 0.0;
             var sh = new alvision.Mat();
             alvision.warpAffine(cb, sh, new alvision.Mat(aff), cb.size());

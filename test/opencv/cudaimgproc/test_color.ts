@@ -2746,7 +2746,7 @@ class Demosaicing_BayerBG2BGR extends Demosaicing
         let img = alvision.readImage("stereobm/aloe-L.png");
         alvision.ASSERT_FALSE(img.empty(), "Can't load input image");
 
-        let src = new alvision.Matb();
+        let src = new alvision.Mat1b();
         this.mosaic(img, src, new alvision.Point(1, 1));
 
         let dst = new alvision.cuda.GpuMat();
@@ -2763,7 +2763,7 @@ class Demosaicing_BayerGB2BGR extends Demosaicing
         let img = alvision.readImage("stereobm/aloe-L.png");
         alvision.ASSERT_FALSE(img.empty(), "Can't load input image");
 
-        let src = new alvision.Matb();
+        let src = new alvision.Mat1b();
         this.mosaic(img, src, new alvision.Point(0, 1));
 
         let dst = new alvision.cuda.GpuMat();
@@ -2780,7 +2780,7 @@ class Demosaicing_BayerRG2BGR extends Demosaicing
         let img = alvision.readImage("stereobm/aloe-L.png");
         alvision.ASSERT_FALSE(img.empty(), "Can't load input image");
 
-        let src = new alvision.Matb();
+        let src = new alvision.Mat1b();
         this.mosaic(img, src, new alvision.Point(0, 0));
 
         let dst = new alvision.cuda.GpuMat();
@@ -2797,7 +2797,7 @@ class Demosaicing_BayerGR2BGR extends Demosaicing
         let img = alvision.readImage("stereobm/aloe-L.png");
         alvision.ASSERT_FALSE(img.empty(), "Can't load input image");
 
-        let src = new alvision.Matb();
+        let src = new alvision.Mat1b();
         this.mosaic(img, src, new alvision.Point(1, 0));
 
         let dst = new alvision.cuda.GpuMat();
@@ -2814,7 +2814,7 @@ class Demosaicing_BayerBG2BGR_MHT extends Demosaicing
         let img = alvision.readImage("stereobm/aloe-L.png");
         alvision.ASSERT_FALSE(img.empty(), "Can't load input image");
 
-        let src = new alvision.Matb();
+        let src = new alvision.Mat1b();
         this.mosaic(img, src, new alvision.Point(1, 1));
 
         let dst = new alvision.cuda.GpuMat();
@@ -2831,7 +2831,7 @@ class Demosaicing_BayerGB2BGR_MHT extends Demosaicing
         let img = alvision.readImage("stereobm/aloe-L.png");
         alvision.ASSERT_FALSE(img.empty(), "Can't load input image");
 
-        let src = new alvision.Matb();
+        let src = new alvision.Mat1b();
         this.mosaic(img, src, new alvision.Point(0, 1));
 
         let dst = new alvision.cuda.GpuMat();
@@ -2848,7 +2848,7 @@ class Demosaicing_BayerRG2BGR_MHT extends Demosaicing
         let img = alvision.readImage("stereobm/aloe-L.png");
         alvision.ASSERT_FALSE(img.empty(), "Can't load input image");
 
-        let src = new alvision.Matb();
+        let src = new alvision.Mat1b();
         this.mosaic(img, src, new alvision.Point(0, 0));
 
         let dst = new alvision.cuda.GpuMat();
@@ -2865,7 +2865,7 @@ class Demosaicing_BayerGR2BGR_MHT extends Demosaicing
         let img = alvision.readImage("stereobm/aloe-L.png");
         alvision.ASSERT_FALSE(img.empty(), "Can't load input image");
 
-        let src = new alvision.Matb();
+        let src = new alvision.Mat1b();
         this.mosaic(img, src, new alvision.Point(1, 0));
 
         let dst = new alvision.cuda.GpuMat();

@@ -1648,11 +1648,11 @@ class CV_ArithmMaskTest  extends alvision.cvtest.BaseTest
                 alvision.CV_Assert(()=> alvision.cvtest.norm(c, d1,alvision.NormTypes.NORM_INF) <= alvision.DBL_EPSILON );
             }
 
-            var tmpSrc = new alvision.Matb (100,100);
+            var tmpSrc = new alvision.Mat1b (100,100);
             tmpSrc.setTo( 124);
-            var tmpMask = new alvision.Matb(100,100);
+            var tmpMask = new alvision.Mat1b(100,100);
             tmpMask.setTo(255);
-            var tmpDst = new alvision.Matb(100,100);
+            var tmpDst = new alvision.Mat1b(100,100);
             tmpDst.setTo(2);
             tmpSrc.copyTo(tmpDst,tmpMask);
         }
@@ -1675,21 +1675,21 @@ alvision.cvtest.TEST('Multiply', 'FloatingPointRounding', () => {
 });
 
 alvision.cvtest.TEST('Core_Add', 'AddToColumnWhen3Rows', () => {
-    var m1 = new alvision.Mat(new alvision.Matd(3, 2,[ 1, 2, 3, 4, 5, 6]));
+    var m1 = new alvision.Mat(new alvision.Mat1d(3, 2,[ 1, 2, 3, 4, 5, 6]));
     // m1.col(1) += 10;
     alvision.MatExpr.op_Addition(m1.col(1), 10).toMat().copyTo(m1.col(1));
 
-    var m2 = new alvision.Mat(new alvision.Matd(3, 2,[ 1, 12, 3, 14, 5, 16]));
+    var m2 = new alvision.Mat(new alvision.Mat1d(3, 2,[ 1, 12, 3, 14, 5, 16]));
 
     alvision.ASSERT_EQ(0, alvision.countNonZero(alvision.MatExpr.op_Substraction( m1 , m2).toMat()));
 });
 
 alvision.cvtest.TEST('Core_Add', 'AddToColumnWhen4Rows', () => {
-    var m1 = new alvision.Mat(new alvision.Matd(4, 2,[ 1, 2, 3, 4, 5, 6, 7, 8]));
+    var m1 = new alvision.Mat(new alvision.Mat1d(4, 2,[ 1, 2, 3, 4, 5, 6, 7, 8]));
     //m1.col(1) += 10;
     alvision.MatExpr.op_Addition(m1.col(1), 10).toMat().copyTo(m1.col(1));
 
-    var m2 = new alvision.Mat (new alvision.Matd(4, 2[ 1, 12, 3, 14, 5, 16, 7, 18]));
+    var m2 = new alvision.Mat (new alvision.Mat1d(4, 2[ 1, 12, 3, 14, 5, 16, 7, 18]));
 
     alvision.ASSERT_EQ(0, alvision.countNonZero(alvision.MatExpr.op_Substraction( m1 , m2).toMat()));
 });

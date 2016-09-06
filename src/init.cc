@@ -31,6 +31,8 @@
 #include "opencv/Matx.h"
 #include "opencv/Scalar.h"
 
+#include "opencv/Mat_.h"
+
 extern "C"{ 
 void
 init(Handle<Object> target) {
@@ -130,6 +132,39 @@ init(Handle<Object> target) {
 	Matx<cv::Matx66d>::Init(target,"Matx66d");
 
 	Scalar<cv::Scalar>::Init(target, "Scalar");
+
+	Mat_<uchar >	::Init(target,"Mat1b");
+	Mat_<cv::Vec2b >::Init(target,"Mat2b");
+	Mat_<cv::Vec3b >::Init(target,"Mat3b");
+	Mat_<cv::Vec4b >::Init(target,"Mat4b");
+	
+	Mat_<short >     ::Init(target,"Mat1s");
+	Mat_<cv::Vec2s > ::Init(target,"Mat2s");
+	Mat_<cv::Vec3s > ::Init(target,"Mat3s");
+	Mat_<cv::Vec4s > ::Init(target,"Mat4s");
+	
+	Mat_<ushort >    ::Init(target,"Mat1w");
+	Mat_<cv::Vec2w > ::Init(target,"Mat2w");
+	Mat_<cv::Vec3w > ::Init(target,"Mat3w");
+	Mat_<cv::Vec4w > ::Init(target,"Mat4w");
+	
+	Mat_<int    >    ::Init(target,"Mat1i");
+	Mat_<cv::Vec2i > ::Init(target,"Mat2i");
+	Mat_<cv::Vec3i > ::Init(target,"Mat3i");
+	Mat_<cv::Vec4i > ::Init(target,"Mat4i");
+	
+	Mat_<float  >	 ::Init(target,"Mat1f");
+	Mat_<cv::Vec2f > ::Init(target,"Mat2f");
+	Mat_<cv::Vec3f > ::Init(target,"Mat3f");
+	Mat_<cv::Vec4f > ::Init(target,"Mat4f");
+	
+	Mat_<double >    ::Init(target,"Mat1d");
+	Mat_<cv::Vec2d > ::Init(target,"Mat2d");
+	Mat_<cv::Vec3d > ::Init(target,"Mat3d");
+	Mat_<cv::Vec4d>  ::Init(target,"Mat4d");
+
+	Mat_<cv::Point2f>::Init(target, "MatPoint2f");
+
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 

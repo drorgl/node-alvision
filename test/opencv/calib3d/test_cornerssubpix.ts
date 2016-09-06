@@ -177,8 +177,8 @@ class CV_ChessboardSubpixelTest extends alvision.cvtest.BaseTest {
         var p2 = 0.05 * alvision.cvtest.randReal(rng).valueOf();
         var k3 = 0.0;
 
-        this.intrinsic_matrix_ = new alvision.Mat(new alvision.Matd(3, 3,[ fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0]));
-        this.distortion_coeffs_ = new alvision.Mat(new alvision.Matd(1, 5,[ k1, k2, p1, p2, k3]));
+        this.intrinsic_matrix_ = new alvision.Mat(new alvision.Mat1d(3, 3,[ fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0]));
+        this.distortion_coeffs_ = new alvision.Mat(new alvision.Mat1d(1, 5,[ k1, k2, p1, p2, k3]));
     }
 }
 

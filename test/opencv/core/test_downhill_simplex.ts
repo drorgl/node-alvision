@@ -108,9 +108,9 @@ alvision.cvtest.TEST('Core_DownhillSolver', 'regression_basic', () => {
     //#if 1
     (() => {
         var ptr_F = new SphereF();
-        var x = new alvision.Mat(new alvision.Matd(1, 2, [1.0, 1.0])),
-            step = new alvision.Mat(new alvision.Matd(2, 1, [-0.5, -0.5])),
-            etalon_x = new alvision.Mat(new alvision.Matd(1, 2, [-0.0, 0.0]));
+        var x = new alvision.Mat(new alvision.Mat1d(1, 2, [1.0, 1.0])),
+            step = new alvision.Mat(new alvision.Mat1d(2, 1, [-0.5, -0.5])),
+            etalon_x = new alvision.Mat(new alvision.Mat1d(1, 2, [-0.0, 0.0]));
         var etalon_res = 0.0;
         mytest(solver, ptr_F, x, step, etalon_x, etalon_res);
     })();
@@ -118,9 +118,9 @@ alvision.cvtest.TEST('Core_DownhillSolver', 'regression_basic', () => {
     //#if 1
     (() => {
         var ptr_F = new RosenbrockF();
-        var x = new alvision.Mat(new alvision.Matd(2, 1, [0.0, 0.0])),
-            step = new alvision.Mat(new alvision.Matd(2, 1, [0.5, +0.5])),
-            etalon_x = new alvision.Mat(new alvision.Matd(2, 1, [1.0, 1.0]));
+        var x = new alvision.Mat(new alvision.Mat1d(2, 1, [0.0, 0.0])),
+            step = new alvision.Mat(new alvision.Mat1d(2, 1, [0.5, +0.5])),
+            etalon_x = new alvision.Mat(new alvision.Mat1d(2, 1, [1.0, 1.0]));
         var etalon_res = 0.0;
         mytest(solver, ptr_F, x, step, etalon_x, etalon_res);
     })();

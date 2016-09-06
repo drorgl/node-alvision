@@ -413,7 +413,7 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
             var cx = bg.cols().valueOf()/2 + (40 * rng.double().valueOf() - 20);
             var cy = bg.rows().valueOf()/2 + (40 * rng.double().valueOf() - 20);
 
-            var camMat = new alvision.Matd(3, 3, [fx, 0., cx, 0, fy, cy, 0., 0., 1.]);
+            var camMat = new alvision.Mat1d(3, 3, [fx, 0., cx, 0, fy, cy, 0., 0., 1.]);
             //camMat << fx, 0., cx, 0, fy, cy, 0., 0., 1.;
 
             var k1 = 0.5 + rng.double().valueOf()/5;
@@ -423,7 +423,7 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
             var p1 = 0.001 + rng.double().valueOf()/10;
             var p2 = 0.001 + rng.double().valueOf()/10;
 
-            var distCoeffs = new alvision.Matd(1, 5, [k1, k2, p1, p2, k3]);
+            var distCoeffs = new alvision.Mat1d(1, 5, [k1, k2, p1, p2, k3]);
             //distCoeffs << k1, k2, p1, p2, k3;
 
             var cbg = new cbgenerator.ChessBoardGenerator (new alvision.Size(9, 8));

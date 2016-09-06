@@ -81,8 +81,8 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         this.imgSize = new alvision.Size(800, 600);
     }
     run(iii: alvision.int): void {
-        var camMat = new alvision.Matf(3, 3, [300., 0., this.imgSize.width.valueOf() / 2., 0, 300., this.imgSize.height.valueOf() / 2., 0., 0., 1.]);
-        var distCoeffs0 = new alvision.Matf(1, 5, [1.2, 0.2, 0., 0., 0.]);
+        var camMat = new alvision.Mat1f(3, 3, [300., 0., this.imgSize.width.valueOf() / 2., 0, 300., this.imgSize.height.valueOf() / 2., 0., 0., 1.]);
+        var distCoeffs0 = new alvision.Mat1f(1, 5, [1.2, 0.2, 0., 0., 0.]);
 
         //camMat << 300., 0., this.imgSize.width / 2.f, 0, 300., this.imgSize.height / 2., 0., 0., 1.;
         //distCoeffs0 << 1.2, 0.2, 0., 0., 0.;
@@ -133,7 +133,7 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         objPts_cpp = objPts_cpp.reshape(3, 1);
 
         imgPts_cpp = this.corners.clone().reshape(2, 1);
-        npoints_cpp = new alvision.Mati(this.M, 1, this.corSize.width.valueOf() * this.corSize.height.valueOf());
+        npoints_cpp = new alvision.Mat1i(this.M, 1, this.corSize.width.valueOf() * this.corSize.height.valueOf());
         cameraMatrix_cpp.create(3, 3, alvision.MatrixType.CV_32F);
         distCoeffs_cpp.create(5, 1, alvision.MatrixType.CV_32F);
         rvecs_cpp.create(this.M, 1, alvision.MatrixType.CV_32FC3);
@@ -184,8 +184,8 @@ class CV_CameraCalibrationBadArgTest extends alvision.cvtest.BadArgTest {
         bad_caller.imageSize.height = -1;
         errors += this.run_test_case(alvision.cv.Error.Code.StsOutOfRange, "Bad image height", bad_caller.run).valueOf();
 
-        var bad_nts_cpp1 = new alvision.Matf(this.M, 1, 1.);
-        var bad_nts_cpp2 = new alvision.Mati(3, 3, this.corSize.width.valueOf() * this.corSize.height.valueOf());
+        var bad_nts_cpp1 = new alvision.Mat1f(this.M, 1, 1.);
+        var bad_nts_cpp2 = new alvision.Mat1i(3, 3, this.corSize.width.valueOf() * this.corSize.height.valueOf());
         var bad_npts_c1 = bad_nts_cpp1;
         var bad_npts_c2 = bad_nts_cpp2;
 
@@ -499,8 +499,8 @@ class CV_ProjectPoints2BadArgTest extends alvision.cvtest.BadArgTest
     constructor() 
     {
         super();
-        this.camMat = new alvision.Matf(3, 3, [300., 0., imsSize.width.valueOf() / 2., 0, 300., imsSize.height.valueOf() / 2., 0., 0., 1.]);
-        this.distCoeffs = new alvision.Matf(1, 5, [1.2, 0.2, 0., 0., 0.]);
+        this.camMat = new alvision.Mat1f(3, 3, [300., 0., imsSize.width.valueOf() / 2., 0, 300., imsSize.height.valueOf() / 2., 0., 0., 1.]);
+        this.distCoeffs = new alvision.Mat1f(1, 5, [1.2, 0.2, 0., 0., 0.]);
         var imsSize = new alvision.Size (800, 600);
         //camMat << 300., 0., imsSize.width/2., 0, 300., imsSize.height/2., 0., 0., 1.;
         //distCoeffs << 1.2, 0.2, 0., 0., 0.;
