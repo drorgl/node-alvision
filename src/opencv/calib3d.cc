@@ -4,11 +4,14 @@
 void
 calib3d::Init(Handle<Object> target) {
   Nan::SetMethod(target, "Rodrigues", Rodrigues);
-
+  Nan::SetMethod(target, "calibrateCamera", calibrateCamera);
 }
 
 NAN_METHOD(calib3d::Rodrigues){
-	
-	info.GetReturnValue().Set(Nan::New("not implemented").ToLocalChecked());
+	return Nan::ThrowError("not implemented");
+}
+
+NAN_METHOD(calib3d::calibrateCamera) {
+	return Nan::ThrowError("not implemented");
 }
 

@@ -12,6 +12,8 @@ public:
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 	static NAN_METHOD(New);
+	static NAN_METHOD(fill);
+	static NAN_METHOD(genInt);
 
 
 

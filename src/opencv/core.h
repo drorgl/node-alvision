@@ -8,6 +8,8 @@
 class core : public Nan::ObjectWrap {
 public:
 	static void Init(Handle<Object> target);
+	static NAN_METHOD(randu);
+	static NAN_METHOD(theRNG);
 };
 
 #endif

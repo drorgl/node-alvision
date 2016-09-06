@@ -5,5 +5,5 @@ class calib3d: public Nan::ObjectWrap {
     static void Init(Handle<Object> target);
 
 	static NAN_METHOD(Rodrigues);
-
+	static NAN_METHOD(calibrateCamera);
 };

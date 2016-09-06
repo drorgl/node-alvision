@@ -14,6 +14,8 @@ RNG::Init(Handle<Object> target) {
 	ctor->SetClassName(Nan::New("RNG").ToLocalChecked());
 
 	// Prototype
+	Nan::SetPrototypeMethod(ctor, "fill", fill);
+	Nan::SetPrototypeMethod(ctor, "int", genInt);
 	
 
 	target->Set(Nan::New("RNG").ToLocalChecked(), ctor->GetFunction());
@@ -26,11 +28,18 @@ NAN_METHOD(RNG::New) {
 
 	RNG *rng;
 
-	if (info.Length() == 0){
+	//if (info.Length() == 0){
 		rng = new RNG();
-	}
+	//}
 
 	rng->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 
+NAN_METHOD(RNG::fill) {
+	return Nan::ThrowError("not implemented");
+}
+
+NAN_METHOD(RNG::genInt) {
+	return Nan::ThrowError("not implemented");
+}

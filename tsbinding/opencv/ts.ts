@@ -122,12 +122,17 @@ export namespace cvtest {
             }
             catch (exc) {
                 //todo, check if correct!
-                var errorStr = exc.message(); //+ cvErrorStr(exc.code);
-                var buf = util.format("OpenCV Error:\n\t % s(%s) in %s, file % s, line % d",
-                    errorStr, exc.err.c_str(), exc.func.size() > 0 ?
-                        exc.func.c_str() : "unknown function", exc.file.c_str(), exc.line);
-                console.log(buf);
-                this.ts.printf(TSConstants.LOG, "%s\n", buf);
+                //var errorStr = exc;//.message(); //+ cvErrorStr(exc.code);
+                //var buf = util.format("OpenCV Error:\n\t % s(%s) in %s, file % s, line % d",
+                //    errorStr, exc.err.c_str(), exc.func.size() > 0 ?
+                //        exc.func.c_str() : "unknown function", exc.file.c_str(), exc.line);
+                //console.log(buf);
+                //let buf = util.format("OpenCV Error:\n\t %s",(exc.message)
+                
+                //this.ts.printf(TSConstants.LOG, "%s\n", buf);
+                console.log("OpenCV Error:", exc);
+                this.ts.printf(TSConstants.LOG, "%s\n", exc);
+
             }
 
             this.ts.set_failed_test_info(FailureCode.FAIL_ERROR_IN_CALLED_FUNC);
@@ -554,6 +559,7 @@ export namespace cvtest {
         } catch (e) {
             console.log("Error Running ", test_case_name, test_name, e);
         }
+        console.log(" ");
         //tape(
         //TODO:!!
     }
@@ -1253,6 +1259,26 @@ export namespace cvtest {
         //public:
         // constructor(s) and destructor
         constructor() {
+            this.params = new TSParams();
+
+            this.rng = new _core.RNG();
+
+            this.current_test_info = {
+                // pointer to the test
+                test: null,
+
+                // failure code (TS::FAIL_*)
+                code: 0,
+
+                // seed value right before the data for the failed test case is prepared.
+                rng_seed: 0,
+
+                // seed value right before running the test
+                rng_seed0: 0,
+
+                // index of test case, can be then passed to BaseTest::proceed_to_test_case()
+                test_case_idx: 0
+            };
         }
         //virtual ~TS();
 

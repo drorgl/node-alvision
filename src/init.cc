@@ -29,6 +29,7 @@
 #include "opencv/core.h"
 
 #include "opencv/Matx.h"
+#include "opencv/Scalar.h"
 
 extern "C"{ 
 void
@@ -127,6 +128,8 @@ init(Handle<Object> target) {
 	Matx<cv::Matx44d>::Init(target,"Matx44d");
 	Matx<cv::Matx66f>::Init(target,"Matx66f");
 	Matx<cv::Matx66d>::Init(target,"Matx66d");
+
+	Scalar<cv::Scalar>::Init(target, "Scalar");
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 

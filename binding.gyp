@@ -68,6 +68,9 @@
 		, "src/alvision.h"
 		, "src/safecast.h"
 		
+		, "src/opencv/Scalar.cc"
+		, "src/opencv/Scalar.h"
+		
 		, "src/opencv/core.cc"
 		, "src/opencv/core.h"
 		
