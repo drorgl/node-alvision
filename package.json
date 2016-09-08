@@ -5,6 +5,7 @@
   "dependencies": {
     "buffers": "0.1.1",
     "nan": "^2.4.0",
+    "source-map-support": "^0.4.2",
     "ts-node": "^1.3.0",
     "typescript": "^1.8.10"
   },
