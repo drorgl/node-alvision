@@ -6,9 +6,20 @@ import async = require('async')
 
 import * as alvision from "../tsbinding/alvision";
 
-import * as tsnode from "ts-node";
-tsnode.register();
-//import tsnode = require("ts-node/register");
+
+
+//NOTE: Careful with this section, if running with ts-node, this section is 
+//redundant and will cause source map problems as it will attempt to transpile the output javascript file.
+
+//import * as sourceMapSupport from 'source-map-support'
+//sourceMapSupport.install({
+//    environment: 'node'
+//})
+
+
+//import * as tsnode from "ts-node";
+//tsnode.register();
+
 
 
 
@@ -100,6 +111,7 @@ function testAllTsFiles(filter : string) {
                 let testFile = require(f);
 
             } catch (e) {
+
                 console.log("unable to load ", f, e)
             }
         }
