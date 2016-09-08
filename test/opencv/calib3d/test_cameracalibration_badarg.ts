@@ -499,9 +499,10 @@ class CV_ProjectPoints2BadArgTest extends alvision.cvtest.BadArgTest
     constructor() 
     {
         super();
+        var imsSize = new alvision.Size(800, 600);
         this.camMat = new alvision.Mat1f(3, 3, [300., 0., imsSize.width.valueOf() / 2., 0, 300., imsSize.height.valueOf() / 2., 0., 0., 1.]);
         this.distCoeffs = new alvision.Mat1f(1, 5, [1.2, 0.2, 0., 0., 0.]);
-        var imsSize = new alvision.Size (800, 600);
+        
         //camMat << 300., 0., imsSize.width/2., 0, 300., imsSize.height/2., 0., 0., 1.;
         //distCoeffs << 1.2, 0.2, 0., 0., 0.;
     }
