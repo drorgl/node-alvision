@@ -29,6 +29,8 @@ Matrix::Init(Handle<Object> target) {
 
 	Nan::SetPrototypeMethod(ctor, "cols", Cols);
 
+	Nan::SetPrototypeMethod(ctor, "create", create);
+
 	target->Set(Nan::New("Mat").ToLocalChecked(), ctor->GetFunction());
 };
 
@@ -126,7 +128,9 @@ Matrix::DblGet(cv::Mat mat, int i, int j){
 	return val;
 }
 
-
+NAN_METHOD(Matrix::create) {
+	return Nan::ThrowError("not implemented");
+}
 
 //NAN_METHOD(Matrix::Pixel){
 //	SETUP_FUNCTION(Matrix)

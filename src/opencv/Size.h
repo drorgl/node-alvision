@@ -12,6 +12,9 @@ public:
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
+		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "width").ToLocalChecked(), Size::width);
+		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "height").ToLocalChecked(), Size::height);
+		
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 	}
@@ -33,7 +36,13 @@ public:
 		info.GetReturnValue().Set(info.Holder());
 	}
 	
+	static NAN_PROPERTY_GETTER(width) {
+		return Nan::ThrowError("not implemented");
+	}
 
+	static NAN_PROPERTY_GETTER(height) {
+		return Nan::ThrowError("not implemented");
+	}
 	
 };
 

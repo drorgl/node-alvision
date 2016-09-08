@@ -29,6 +29,7 @@ public:
 	static NAN_METHOD(PixelRow);
 	static NAN_METHOD(Col);
 	static NAN_METHOD(PixelCol);
+	static NAN_METHOD(create);
 
 	static NAN_METHOD(Cols);
 
@@ -54,7 +55,7 @@ public:
 	static NAN_METHOD(zeros);
 	static NAN_METHOD(ones);
 	static NAN_METHOD(eye);
-	static NAN_METHOD(create);
+	
 	static NAN_METHOD(copySize);
 	static NAN_METHOD(reserve);
 	static NAN_METHOD(resize);

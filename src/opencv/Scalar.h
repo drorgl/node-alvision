@@ -12,6 +12,7 @@ public:
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
+		Nan::SetMethod(ctor, "all", all);
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 	}
@@ -31,6 +32,10 @@ public:
 		scalar->Wrap(info.Holder());
 
 		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static NAN_METHOD(all) {
+		return Nan::ThrowError("not implemented");
 	}
 	
 
