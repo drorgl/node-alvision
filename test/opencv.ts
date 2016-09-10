@@ -20,6 +20,8 @@ import * as alvision from "../tsbinding/alvision";
 //import * as tsnode from "ts-node";
 //tsnode.register();
 
+let errorColor = chalk.red.bold;
+let okColor = chalk.green.bold;
 
 
 
@@ -42,8 +44,7 @@ function tablevel() : string {
 
 test.createStream({ objectMode: true }).on('data', (row) => {
     //console.log(JSON.stringify(row));
-    let errorColor = chalk.red.bold;
-    let okColor = chalk.green.bold;
+    
 
     if (row.type == "end") {
         console.log();
@@ -111,8 +112,13 @@ function testAllTsFiles(filter : string) {
                 let testFile = require(f);
 
             } catch (e) {
+                if (e instanceof Error) {
+                    let err = <Error>e;
+                    console.log("unable to load ", f, errorColor( err.message), err.stack)
+                } else {
+                    console.log("unable to load ", f, e)
+                }
 
-                console.log("unable to load ", f, e)
             }
         }
     }

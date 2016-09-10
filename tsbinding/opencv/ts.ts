@@ -15,6 +15,11 @@ import path = require("path");
 import async = require("async");
 import util = require('util');
 import fs = require('fs');
+import chalk = require('chalk')
+
+
+let errorColor = chalk.red.bold;
+let okColor = chalk.green.bold;
 
 
 //#ifndef __OPENCV_GTESTCV_HPP__
@@ -130,7 +135,13 @@ export namespace cvtest {
                 //let buf = util.format("OpenCV Error:\n\t %s",(exc.message)
                 
                 //this.ts.printf(TSConstants.LOG, "%s\n", buf);
-                console.log("OpenCV Error:", exc);
+
+                if (exc instanceof Error) {
+                    let exErr = <Error>exc;
+                    console.log("OpenCV Error:",errorColor( exErr.message),exErr.stack);
+                } else {
+                    console.log("OpenCV Error:", exc);
+                }
                 this.ts.printf(TSConstants.LOG, "%s\n", exc);
 
             }
@@ -555,9 +566,14 @@ export namespace cvtest {
     export function TEST(test_case_name: string, test_name: string, cb: () => void) {
         try {
             cb();
-            console.log(test_case_name, test_name, "Passed");
+            console.log(test_case_name, test_name,okColor( "Passed"));
         } catch (e) {
-            console.log("Error Running ", test_case_name, test_name, e);
+            if (e instanceof Error) {
+                let err = <Error>e;
+                console.log("Error Running ", test_case_name, test_name, errorColor(err.message), err.stack);
+            } else {
+                console.log("Error Running ", test_case_name, test_name, e);
+            }
         }
         console.log(" ");
         //tape(
