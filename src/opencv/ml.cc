@@ -11,4 +11,5 @@ ml::Init(Handle<Object> target) {
 
 	target->Set(Nan::New("ml").ToLocalChecked(), ml);
 
+	TrainData::Init(ml);
 };

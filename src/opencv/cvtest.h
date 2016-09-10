@@ -11,7 +11,8 @@ public:
 	static void Init(Handle<Object> target);
 	static Nan::Persistent<Object> cvtestObject;
 
-	static NAN_METHOD(Row);
+	static NAN_METHOD(randomSize);
+	static NAN_METHOD(readImage);
 };
 
 #endif

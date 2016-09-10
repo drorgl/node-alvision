@@ -1,17 +1,17 @@
-#include "RNG.h"
+#include "RNG_MT19937.h"
 
-Nan::Persistent<FunctionTemplate> RNG::constructor;
+Nan::Persistent<FunctionTemplate> RNG_MT19937::constructor;
 
 
 void
-RNG::Init(Handle<Object> target) {
+RNG_MT19937::Init(Handle<Object> target) {
 	
 
 	//Class
-	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(RNG::New);
+	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(RNG_MT19937::New);
 	constructor.Reset(ctor);
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
-	ctor->SetClassName(Nan::New("RNG").ToLocalChecked());
+	ctor->SetClassName(Nan::New("RNG_MT19937").ToLocalChecked());
 
 	// Prototype
 	Nan::SetPrototypeMethod(ctor, "fill", fill);
@@ -20,36 +20,36 @@ RNG::Init(Handle<Object> target) {
 	Nan::SetPrototypeMethod(ctor, "next", genNext);
 	
 
-	target->Set(Nan::New("RNG").ToLocalChecked(), ctor->GetFunction());
+	target->Set(Nan::New("RNG_MT19937").ToLocalChecked(), ctor->GetFunction());
 };
 
-NAN_METHOD(RNG::New) {
+NAN_METHOD(RNG_MT19937::New) {
 	
 	if (info.This()->InternalFieldCount() == 0)
 		Nan::ThrowTypeError("Cannot instantiate without new");
 
-	RNG *rng;
+	RNG_MT19937 *rng_mt19937;
 
 	//if (info.Length() == 0){
-		rng = new RNG();
+	rng_mt19937 = new RNG_MT19937();
 	//}
 
-	rng->Wrap(info.Holder());
+	rng_mt19937->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 
-NAN_METHOD(RNG::fill) {
+NAN_METHOD(RNG_MT19937::fill) {
 	return Nan::ThrowError("not implemented");
 }
 
-NAN_METHOD(RNG::genInt) {
+NAN_METHOD(RNG_MT19937::genInt) {
 	return Nan::ThrowError("not implemented");
 }
 
-NAN_METHOD(RNG::genDouble) {
+NAN_METHOD(RNG_MT19937::genDouble) {
 	return Nan::ThrowError("not implemented");
 }
 
-NAN_METHOD(RNG::genNext) {
+NAN_METHOD(RNG_MT19937::genNext) {
 	return Nan::ThrowError("not implemented");
 }

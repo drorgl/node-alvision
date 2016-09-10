@@ -1,43 +1,37 @@
-#ifndef _ALVISION_MATRIX_H_
-#define _ALVISION_MATRIX_H_
+#ifndef _ALVISION_MATND_H_
+#define _ALVISION_MATND_H_
 //#include "OpenCV.h"
 #include "../alvision.h"
 
 
-class Matrix : public Nan::ObjectWrap {
+class MatND : public Nan::ObjectWrap {
 public:
 	static void Init(Handle<Object> target);
 
-	std::shared_ptr<cv::Mat> _mat;
+	std::shared_ptr<cv::MatND> _mat;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 	static NAN_METHOD(New);
-	Matrix();
+	/*Matrix();
 	Matrix(std::shared_ptr<cv::Mat> other, cv::Rect roi);
 	Matrix(int64_t rows, int64_t cols);
-	Matrix(int64_t rows, int64_t cols, int64_t type);
+	Matrix(int64_t rows, int64_t cols, int64_t type);*/
 
-	static double DblGet(cv::Mat mat, int i, int j);
+	//static double DblGet(cv::Mat mat, int i, int j);
 
-	static NAN_METHOD(zeros); // factory
-	static NAN_METHOD(ones); // factory
-	static NAN_METHOD(eye); // factory
+	//static NAN_METHOD(zeros); // factory
+	//static NAN_METHOD(ones); // factory
+	//static NAN_METHOD(eye); // factory
 
-	static NAN_METHOD(colRange);
+	//static NAN_METHOD(colRange);
 
-	static NAN_METHOD(Row);
-	static NAN_METHOD(PixelRow);
-	static NAN_METHOD(Col);
-	static NAN_METHOD(PixelCol);
-	static NAN_METHOD(create);
+	//static NAN_METHOD(Row);
+	//static NAN_METHOD(PixelRow);
+	//static NAN_METHOD(Col);
+	//static NAN_METHOD(PixelCol);
+	//static NAN_METHOD(create);
 
-	static NAN_METHOD(cols);
-	static NAN_METHOD(rows);
-
-	static NAN_METHOD(copyTo);
-	static NAN_METHOD(setTo);
-
-	static NAN_METHOD(at);
+	//static NAN_METHOD(Cols);
 
 	/*static NAN_METHOD(getUMat);
 	static NAN_METHOD(rowRange);

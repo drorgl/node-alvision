@@ -68,6 +68,22 @@
 		, "src/alvision.h"
 		, "src/safecast.h"
 		
+		, "src/opencv/imgproc.cc"
+		, "src/opencv/imgproc.h"
+		
+		, "src/opencv/shape.cc"
+		, "src/opencv/shape.h"
+		
+		, "src/opencv/video.cc"
+		, "src/opencv/video.h"
+		
+		, "src/opencv/persistence.cc"
+		, "src/opencv/persistence.h"
+		, "src/opencv/persistence/FileStorage.cc"
+		, "src/opencv/persistence/FileStorage.h"
+		, "src/opencv/persistence/FileNode.cc"
+		, "src/opencv/persistence/FileNode.h"
+		
 		, "src/opencv/videoio.cc"
 		, "src/opencv/videoio.h"
 		, "src/opencv/videoio/VideoWriter.cc"
@@ -78,14 +94,31 @@
 		, "src/opencv/Mat_.cc"
 		, "src/opencv/Mat_.h"
 		
+		, "src/opencv/Point.cc"
+		, "src/opencv/Point.h"
+		
+		, "src/opencv/imgcodecs.cc"
+		, "src/opencv/imgcodecs.h"
+		
 		, "src/opencv/Scalar.cc"
 		, "src/opencv/Scalar.h"
 		
 		, "src/opencv/core.cc"
 		, "src/opencv/core.h"
-		
 		, "src/opencv/core/RNG.cc"
 		, "src/opencv/core/RNG.h"
+		, "src/opencv/core/RNG_MT19937.cc"
+		, "src/opencv/core/RNG_MT19937.h"
+		, "src/opencv/core/ConjGradSolver.cc"
+		, "src/opencv/core/ConjGradSolver.h"
+		, "src/opencv/core/DownhillSolver.cc"
+		, "src/opencv/core/DownhillSolver.h"
+		, "src/opencv/core/Algorithm.cc"
+		, "src/opencv/core/Algorithm.h"
+		, "src/opencv/core/MinProblemSolver.cc"
+		, "src/opencv/core/MinProblemSolver.h"
+		, "src/opencv/core/DMatch.cc"
+		, "src/opencv/core/DMatch.h"
 		
 		, "src/opencv/Affine3.cc"
 		, "src/opencv/Affine3.h"
@@ -98,6 +131,12 @@
 		
 		, "src/opencv/Matx.cc"
 		, "src/opencv/Matx.h"
+		
+		, "src/opencv/MatND.cc"
+		, "src/opencv/MatND.h"
+		
+		, "src/opencv/SparseMat.cc"
+		, "src/opencv/SparseMat.h"
 		
         , "src/opencv/Matrix.cc"
 		, "src/opencv/Matrix.h"
@@ -113,6 +152,8 @@
 		
 		, "src/opencv/ml.cc"
 		, "src/opencv/ml.h"
+		, "src/opencv/ml/TrainData.cc"
+		, "src/opencv/ml/TrainData.h"
 		
 		, "src/opencv/Cuda.cc"
 		, "src/opencv/Cuda.h"

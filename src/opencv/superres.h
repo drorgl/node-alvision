@@ -9,6 +9,8 @@ class superres : public Nan::ObjectWrap {
 public:
 	static void Init(Handle<Object> target);
 	static Nan::Persistent<Object> superresObject;
+
+	static NAN_METHOD(createSuperResolution_BTVL1);
 };
 
 #endif

@@ -33,6 +33,25 @@
 
 #include "opencv/Mat_.h"
 
+#include "opencv/persistence.h"
+
+#include "opencv/MatND.h"
+#include "opencv/SparseMat.h"
+
+#include "opencv/Point.h"
+
+#include "opencv/imgcodecs.h"
+#include "opencv/imgproc.h"
+
+
+#include "opencv/stitching.h"
+
+#include "opencv/shape.h"
+#include "opencv/video.h"
+
+#include "opencv/videoio.h"
+
+
 extern "C"{ 
 void
 init(Handle<Object> target) {
@@ -43,7 +62,7 @@ init(Handle<Object> target) {
 	alvision::packet::Init(target);
 	alvision::stream::Init(target);
 	Constants::Init(target);
-	NamedWindow::Init(target);
+	highgui::Init(target);
 
 	Cuda::Init(target);
 
@@ -164,6 +183,26 @@ init(Handle<Object> target) {
 	Mat_<cv::Vec4d>  ::Init(target,"Mat4d");
 
 	Mat_<cv::Point2f>::Init(target, "MatPoint2f");
+
+	persistence::Init(target);
+
+	MatND::Init(target);
+	SparseMat::Init(target);
+
+	Point<cv::Point2i>::Init(target, "Point2i");
+	Point<cv::Point2f>::Init(target, "Point2f");
+	Point<cv::Point2d>::Init(target, "Point2d");
+	Point<cv::Point>::Init(target, "Point");
+
+	imgcodecs::Init(target);
+	imgproc::Init(target);
+
+	stitching::Init(target);
+
+	shape::Init(target);
+	video::Init(target);
+
+	videoio::Init(target);
 
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());

@@ -16,9 +16,9 @@ Matrix::Init(Handle<Object> target) {
 
 	// Prototype
 	
-	Nan::SetMethod(ctor, "Zeros", Zeros);
-	Nan::SetMethod(ctor, "Ones", Ones);
-	Nan::SetMethod(ctor, "Eye", Eye);
+	Nan::SetMethod(ctor, "zeros", zeros);
+	Nan::SetMethod(ctor, "ones", ones);
+	Nan::SetMethod(ctor, "eye", eye);
 
 	Nan::SetPrototypeMethod(ctor, "colRange", colRange);
 
@@ -27,9 +27,14 @@ Matrix::Init(Handle<Object> target) {
 	Nan::SetPrototypeMethod(ctor, "pixelRow", PixelRow);
 	Nan::SetPrototypeMethod(ctor, "pixelCol", PixelCol);
 
-	Nan::SetPrototypeMethod(ctor, "cols", Cols);
+	Nan::SetPrototypeMethod(ctor, "cols", cols);
+	Nan::SetPrototypeMethod(ctor, "rows", rows);
+
+	Nan::SetPrototypeMethod(ctor, "at", at);
 
 	Nan::SetPrototypeMethod(ctor, "create", create);
+	Nan::SetPrototypeMethod(ctor, "copyTo", copyTo);
+	Nan::SetPrototypeMethod(ctor, "setTo", setTo);
 
 	target->Set(Nan::New("Mat").ToLocalChecked(), ctor->GetFunction());
 };
@@ -224,7 +229,7 @@ NAN_METHOD(Matrix::create) {
 //	}
 //}
 
-NAN_METHOD(Matrix::Zeros){
+NAN_METHOD(Matrix::zeros){
 	
 
 	int w = info[0]->Uint32Value();
@@ -238,7 +243,7 @@ NAN_METHOD(Matrix::Zeros){
 		info.GetReturnValue().Set(im_h);
 }
 
-NAN_METHOD(Matrix::Ones){
+NAN_METHOD(Matrix::ones){
 	
 
 	int w = info[0]->Uint32Value();
@@ -252,7 +257,7 @@ NAN_METHOD(Matrix::Ones){
 	info.GetReturnValue().Set(im_h);
 }
 
-NAN_METHOD(Matrix::Eye){
+NAN_METHOD(Matrix::eye){
 	
 
 	int w = info[0]->Uint32Value();
@@ -342,6 +347,23 @@ NAN_METHOD(Matrix::PixelCol){
 }
 
 
-NAN_METHOD(Matrix::Cols) {
+NAN_METHOD(Matrix::cols) {
+	return Nan::ThrowError("not implemented");
+}
+
+NAN_METHOD(Matrix::rows) {
+	return Nan::ThrowError("not implemented");
+}
+
+
+NAN_METHOD(Matrix::copyTo) {
+	return Nan::ThrowError("not implemented");
+}
+
+NAN_METHOD(Matrix::setTo) {
+	return Nan::ThrowError("not implemented");
+}
+
+NAN_METHOD(Matrix::at) {
 	return Nan::ThrowError("not implemented");
 }

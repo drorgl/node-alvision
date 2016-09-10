@@ -11,8 +11,18 @@ cvtest::Init(Handle<Object> target) {
 
 	target->Set(Nan::New("cvtest").ToLocalChecked(), test);
 
-	
+	Nan::SetMethod(test, "randomSize", randomSize);
+	Nan::SetMethod(test, "readImage", readImage);
+		
 #ifdef HAVE_CUDA
 	DeviceManager::Init(target);
 #endif
 };
+
+NAN_METHOD(cvtest::randomSize) {
+	return Nan::ThrowError("not implemented");
+}
+
+NAN_METHOD(cvtest::readImage) {
+	return Nan::ThrowError("not implemented");
+}

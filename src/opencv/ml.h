@@ -3,6 +3,8 @@
 //#include "OpenCV.h"
 #include "../alvision.h"
 
+#include "ml/TrainData.h"
+
 class ml : public Nan::ObjectWrap {
 public:
 	static void Init(Handle<Object> target);

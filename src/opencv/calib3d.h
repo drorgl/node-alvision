@@ -1,3 +1,6 @@
+#ifndef _ALVISION_CALIB3D_H_
+#define _ALVISION_CALIB3D_H_
+
 #include "../alvision.h"
 
 class calib3d: public Nan::ObjectWrap {
@@ -6,4 +9,8 @@ class calib3d: public Nan::ObjectWrap {
 
 	static NAN_METHOD(Rodrigues);
 	static NAN_METHOD(calibrateCamera);
+	static NAN_METHOD(decomposeHomographyMat);
 };
+
+
+#endif

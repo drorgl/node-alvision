@@ -11,6 +11,12 @@ superres::Init(Handle<Object> target) {
 
 	target->Set(Nan::New("superres").ToLocalChecked(), superres);
 
+	Nan::SetMethod(superres, "createSuperResolution_BTVL1", createSuperResolution_BTVL1);
+
 	optical_flow::Init(superres);
 
 };
+
+NAN_METHOD(superres::createSuperResolution_BTVL1) {
+	return Nan::ThrowError("not implemented");
+}
