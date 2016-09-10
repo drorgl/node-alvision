@@ -1,19 +1,16 @@
+#ifndef _ALVISION_HIGHGUI_H_
+#define _ALVISION_HIGHGUI_H_
+
+
 #include "../alvision.h"
 
 
-class NamedWindow: public Nan::ObjectWrap {
-  public:
-    std::string winname;
-    int flags;
-
-	  static Nan::Persistent<FunctionTemplate> constructor;
+class highgui: public Nan::ObjectWrap {
+public:
 	  static void Init(Handle<Object> target);
-    static NAN_METHOD(New);
-
-	  NamedWindow(const std::string& winname, int flags);
-
-    JSFUNC(Show);
-    JSFUNC(Destroy);
-    JSFUNC(BlockingWaitKey);
+      static NAN_METHOD(destroyAllWindows);
 
 };
+
+
+#endif
