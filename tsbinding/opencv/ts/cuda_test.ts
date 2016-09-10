@@ -138,7 +138,7 @@ export var loadMat: IloadMat = alvision_module.loadMat;
 interface IreadImage {
     (fileName: string, flags?: _imgcodecs.ImreadModes | _st.int /*= cv::IMREAD_COLOR*/): _mat.Mat;
 }
-export var readImage: IreadImage = alvision_module.readImage;
+export var readImage: IreadImage = alvision_module.cvtest.readImage;
 //    CV_EXPORTS cv::Mat readImage(const std::string& fileName, int flags = cv::IMREAD_COLOR);
 
 //    //! read image from testdata folder and convert it to specified type

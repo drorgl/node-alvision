@@ -520,7 +520,7 @@ class CV_StereoMatchingTest  extends alvision.cvtest.BaseTest
     }
     run(iii: alvision.int): void {
         var dataPath = this.ts.get_data_path() + "cv/";
-        var algorithmName = name;
+        var algorithmName = this.name;
         alvision.assert(()=>(algorithmName) ? true : false);
         if (!dataPath) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "dataPath is empty");
@@ -739,7 +739,7 @@ class CV_StereoSGBMTest extends CV_StereoMatchingTest
 {
     constructor() {
         super();
-        name = "stereosgbm";
+        this.name = "stereosgbm";
         this.rmsEps.forEach((v, i, a) => a[i] = 0.25);
         this.fracEps.forEach((v, i, a) => a[i] = 0.01);
     }

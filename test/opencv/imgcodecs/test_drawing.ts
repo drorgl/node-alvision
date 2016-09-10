@@ -325,7 +325,7 @@ class CV_DrawingTest_C extends CV_DrawingTest {
         n = polyline.length;
         /*actualSize =*/ alvision.ellipse2Poly(new alvision.Point(500, 300), new alvision.Size(50, 80), 0, 0, 180, 10, (pts) => { polyline = pts; });
         //alvision.CV_Assert(()=>actualSize == n);
-        alvision.polyLines( img, pts, 1, true, new alvision.Scalar(100, 200, 100), 20);
+        alvision.polylines( img, pts, 1, true, new alvision.Scalar(100, 200, 100), 20);
         alvision.fillConvexPoly( img, pts, new alvision.Scalar(0, 80, 0));
 
         polyline.length = (8);

@@ -55,7 +55,7 @@ import fs = require('fs');
 //using namespace cvtest;
 
 //////////////////////////////////////////////////////////////////////////////
- Add_Array
+ //Add_Array
 
 //PARAM_TEST_CASE(Add_Array, alvision.cuda.DeviceInfo, alvision.Size, alvision.pair < MatDepth, MatDepth >, Channels, this.useRoi)
 class Add_Array extends alvision.cvtest.CUDA_TEST {

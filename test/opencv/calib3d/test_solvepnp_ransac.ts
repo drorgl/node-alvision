@@ -62,6 +62,7 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
     constructor()
     {
         super();
+        this.eps = [];
         this.eps[alvision.SOLVEPNP.SOLVEPNP_ITERATIVE] = 1.0e-2;
         this.eps[alvision.SOLVEPNP.SOLVEPNP_EPNP] = 1.0e-2;
         this.eps[alvision.SOLVEPNP.SOLVEPNP_P3P] = 1.0e-2;

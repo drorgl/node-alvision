@@ -5236,12 +5236,12 @@ export var fillPoly: IfillPoly = alvision_module.fillPoly;
 
     /** @overload */
 
-    interface Ipolylines{
-        (img : _mat.Mat, pts : Array<_types.Point>,
-        ncontours : _st.int, isClosed: boolean, color: _types.Scalar,
-        thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/ ) : void;
-    }
-export var polyLines: Ipolylines = alvision_module.polyLines;
+//    interface Ipolylines{
+//        (img : _mat.Mat, pts : Array<_types.Point>,
+//        ncontours : _st.int, isClosed: boolean, color: _types.Scalar,
+//        thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/ ) : void;
+//    }
+//export var polylines: Ipolylines = alvision_module.polyLines;
 
 //    CV_EXPORTS void polylines(img : _mat.Mat, const Point* const* pts, const int* npts,
 //        ncontours : _st.int, isClosed : boolean, color : _types.Scalar,
@@ -5266,6 +5266,9 @@ export var polyLines: Ipolylines = alvision_module.polyLines;
         isClosed : boolean, color: _types.Scalar,
         thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes  /* = LINE_8*/, shift? : _st.int /* = 0*/): void;
 
+        (img: _mat.Mat, pts: Array<_types.Point>,
+            ncontours: _st.int, isClosed: boolean, color: _types.Scalar,
+            thickness?: _st.int /*= 1*/, lineType?: _core.LineTypes  /* = LINE_8*/, shift?: _st.int /* = 0*/): void;
     }
 
 export var polylines: Ipolylines = alvision_module.polylines;
