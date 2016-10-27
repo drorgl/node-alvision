@@ -6,12 +6,14 @@
 template <typename T>
 class Matx : public Nan::ObjectWrap {
 public:
-	static void Init(Handle<Object> target, std::string name) {
+	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Matx<T>::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
+		//ctor->Inherit(?);
+		
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 	}

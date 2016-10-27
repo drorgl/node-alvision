@@ -2,7 +2,7 @@
 
 
 void
-imgcodecs::Init(Handle<Object> target) {
+imgcodecs::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
   Nan::SetMethod(target, "imread", imread);
   Nan::SetMethod(target, "imreadmulti", imreadmulti);
 }

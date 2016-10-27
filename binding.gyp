@@ -169,6 +169,11 @@
 		, "src/opencv/Vec.cc"
 		, "src/opencv/Vec.h"
 
+		, "src/opencv/video/KalmanFilter.cc"
+		, "src/opencv/video/KalmanFilter.h"
+		
+		, "src/opencv/stitching.cc"
+		, "src/opencv/stitching.h"
 		
 		, "src/opencv/cvtest.cc"
 		, "src/opencv/cvtest.h"
@@ -201,8 +206,8 @@
         #, "src/BackgroundSubtractor.cc"
         
 		,'typings/index.d.ts'
-		,'typings/node/node.d.ts'
-		,'typings/tape/tape.d.ts'
+		#,'typings/node/node.d.ts'
+		#,'typings/tape/tape.d.ts'
 		
 		,'tsbinding/bindings.ts'
 		
@@ -499,6 +504,7 @@
 			'../opencv.module/opencv.gyp:highgui',
 			'../opencv.module/opencv.gyp:ml',
 			'../opencv.module/opencv.gyp:flann',
+			'../node-overload-resolution/binding.gyp:node-overload-resolution',
 			#'../opencv.module/sources/3rdparty/3rdparty.gyp:zlib',
 			#'../ffmpeg/ffmpeg.gyp:compat',
 			#'../ffmpeg/ffmpeg.gyp:avcodec_p1',

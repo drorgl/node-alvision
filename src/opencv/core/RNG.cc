@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> RNG::constructor;
 
 
 void
-RNG::Init(Handle<Object> target) {
+RNG::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

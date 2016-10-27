@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> KalmanFilter::constructor;
 
 
 void
-KalmanFilter::Init(Handle<Object> target) {
+KalmanFilter::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

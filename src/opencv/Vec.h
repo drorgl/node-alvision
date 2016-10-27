@@ -6,7 +6,7 @@
 template <typename T>
 class Vec: public Nan::ObjectWrap {
 public:
-	static void Init(Handle<Object> target, std::string name) {
+	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Vec::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);

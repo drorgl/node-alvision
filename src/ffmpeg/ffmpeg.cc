@@ -21,7 +21,7 @@ namespace alvision{
 		}
 	}
 
-	NAN_MODULE_INIT(ffmpeg::Init) {
+	void ffmpeg::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target, std::shared_ptr<overload_resolution> overload){
 
 		//Class
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(ffmpeg::New);

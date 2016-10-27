@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> MatExpr::constructor;
 
 
 void
-MatExpr::Init(Handle<Object> target) {
+MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

@@ -5,7 +5,7 @@ Nan::Persistent<FunctionTemplate> MatND::constructor;
 
 
 void
-MatND::Init(Handle<Object> target) {
+MatND::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

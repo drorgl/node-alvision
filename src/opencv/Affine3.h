@@ -6,7 +6,7 @@
 template <typename T>
 class Affine3 : public Nan::ObjectWrap {
 public:
-	static void Init(Handle<Object> target, std::string name) {
+	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Affine3::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
@@ -21,6 +21,7 @@ public:
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	static NAN_METHOD(New) {
+		
 		if (info.This()->InternalFieldCount() == 0)
 			Nan::ThrowTypeError("Cannot instantiate without new");
 

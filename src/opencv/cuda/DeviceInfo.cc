@@ -6,7 +6,7 @@ Nan::Persistent<FunctionTemplate> DeviceInfo::constructor;
 
 
 void
-DeviceInfo::Init(Handle<Object> target) {
+DeviceInfo::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

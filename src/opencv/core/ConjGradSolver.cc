@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> ConjGradSolver::constructor;
 
 
 void
-ConjGradSolver::Init(Handle<Object> target) {
+ConjGradSolver::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

@@ -6,7 +6,7 @@
 
 class RNG_MT19937: public Nan::ObjectWrap {
 public:
-	static void Init(Handle<Object> target);
+	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
 	std::shared_ptr<cv::RNG_MT19937> _rng;
 

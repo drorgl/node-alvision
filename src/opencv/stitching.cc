@@ -2,6 +2,6 @@
 
 
 void
-stitching::Init(Handle<Object> target) {
+stitching::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 }
 

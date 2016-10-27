@@ -4,7 +4,7 @@
   obj->Set(Nan::New<String>(#C).ToLocalChecked(), Nan::New<Integer>(C));
 
 void
-Constants::Init(Handle<Object> target) {
+Constants::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
   Nan::Persistent<Object> inner;
   Local<Object> matrixTypeObj = Nan::New<Object>();
   inner.Reset(matrixTypeObj);

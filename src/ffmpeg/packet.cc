@@ -4,7 +4,7 @@ namespace alvision{
 
 	Nan::Persistent<FunctionTemplate> packet::constructor;
 
-	void packet::Init(Handle<Object> target) {
+	void packet::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target, std::shared_ptr<overload_resolution> overload){
 		
 
 		//Class

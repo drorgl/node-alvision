@@ -2,7 +2,7 @@
 
 
 void
-persistence::Init(Handle<Object> target) {
-	FileNode::Init(target);
-	FileStorage::Init(target);
+persistence::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	FileNode::Init(target,overload);
+	FileStorage::Init(target,overload);
 };

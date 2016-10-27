@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> VideoCapture::constructor;
 
 
 void
-VideoCapture::Init(Handle<Object> target) {
+VideoCapture::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

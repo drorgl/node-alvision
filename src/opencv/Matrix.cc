@@ -5,7 +5,7 @@ Nan::Persistent<FunctionTemplate> Matrix::constructor;
 
 
 void
-Matrix::Init(Handle<Object> target) {
+Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

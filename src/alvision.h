@@ -16,6 +16,8 @@
 
 #include "utilities/stacktrace.h"
 
+#include "overload_resolution.h"
+
 
 
 using namespace v8;

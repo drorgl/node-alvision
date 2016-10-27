@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> MinProblemSolver::constructor;
 
 
 void
-MinProblemSolver::Init(Handle<Object> target) {
+MinProblemSolver::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

@@ -2,7 +2,7 @@
 
 
 void
-shape::Init(Handle<Object> target) {
+shape::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
   Nan::SetMethod(target, "createShapeContextDistanceExtractor", createShapeContextDistanceExtractor);
   Nan::SetMethod(target, "createHausdorffDistanceExtractor", createHausdorffDistanceExtractor);
 }

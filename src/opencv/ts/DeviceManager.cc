@@ -6,7 +6,7 @@ Nan::Persistent<FunctionTemplate> DeviceManager::constructor;
 
 
 void
-DeviceManager::Init(Handle<Object> target) {
+DeviceManager::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

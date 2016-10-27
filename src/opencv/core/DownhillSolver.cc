@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> DownhillSolver::constructor;
 
 
 void
-DownhillSolver::Init(Handle<Object> target) {
+DownhillSolver::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

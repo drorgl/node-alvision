@@ -4,7 +4,7 @@ namespace alvision{
 
 	Nan::Persistent<FunctionTemplate> stream::constructor;
 
-	void stream::Init(Handle<Object> target) {
+	void stream::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target, std::shared_ptr<overload_resolution> overload){
 		
 
 		//Class

@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> TrainData::constructor;
 
 
 void
-TrainData::Init(Handle<Object> target) {
+TrainData::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

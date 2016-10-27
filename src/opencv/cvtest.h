@@ -8,7 +8,7 @@
 
 class cvtest : public Nan::ObjectWrap {
 public:
-	static void Init(Handle<Object> target);
+	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 	static Nan::Persistent<Object> cvtestObject;
 
 	static NAN_METHOD(randomSize);

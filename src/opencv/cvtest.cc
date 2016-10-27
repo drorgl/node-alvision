@@ -4,7 +4,7 @@ Nan::Persistent<Object> cvtest::cvtestObject;
 
 
 void
-cvtest::Init(Handle<Object> target) {
+cvtest::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	Local<Object> test = Nan::New<Object>();
 
 	cvtestObject.Reset(test);

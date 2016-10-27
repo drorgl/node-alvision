@@ -6,7 +6,7 @@
 
 class DownhillSolver: public Nan::ObjectWrap {
 public:
-	static void Init(Handle<Object> target);
+	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
 	std::shared_ptr<cv::DownhillSolver> _downhillSolver;
 

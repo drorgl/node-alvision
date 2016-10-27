@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> VideoWriter::constructor;
 
 
 void
-VideoWriter::Init(Handle<Object> target) {
+VideoWriter::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

@@ -2,7 +2,7 @@
 
 
 void
-imgproc::Init(Handle<Object> target) {
+imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
   Nan::SetMethod(target, "getTextSize", getTextSize);
 }
 

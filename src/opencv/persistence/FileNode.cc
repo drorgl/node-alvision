@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> FileNode::constructor;
 
 
 void
-FileNode::Init(Handle<Object> target) {
+FileNode::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

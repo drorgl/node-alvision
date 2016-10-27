@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> DMatch::constructor;
 
 
 void
-DMatch::Init(Handle<Object> target) {
+DMatch::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

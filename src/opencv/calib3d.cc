@@ -2,7 +2,7 @@
 
 
 void
-calib3d::Init(Handle<Object> target) {
+calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
   Nan::SetMethod(target, "Rodrigues", Rodrigues);
   Nan::SetMethod(target, "calibrateCamera", calibrateCamera);
   Nan::SetMethod(target, "decomposeHomographyMat", decomposeHomographyMat);

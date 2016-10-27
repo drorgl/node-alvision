@@ -4,7 +4,7 @@ Nan::Persistent<FunctionTemplate> Algorithm::constructor;
 
 
 void
-Algorithm::Init(Handle<Object> target) {
+Algorithm::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	
 
 	//Class

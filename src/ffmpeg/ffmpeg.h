@@ -96,7 +96,7 @@ namespace alvision{
 
 
 	public:
-		static NAN_MODULE_INIT(Init);
+		static void Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target, std::shared_ptr<overload_resolution> overload);
 
 		static NAN_METHOD(New);
 		static NAN_METHOD(ListInputFormats);
