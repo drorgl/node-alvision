@@ -50,11 +50,25 @@
 
 #include "opencv/videoio.h"
 
+#include "opencv/IOArray.h"
+
 
 extern "C"{ 
 void
 init(Handle<Object> target) {
 	auto overload = std::make_shared<overload_resolution>();
+
+	overload->add_type_alias("InputArray", "IOArray");
+	overload->add_type_alias("InputArrayOfArrays", "Array<InputArray>");
+	overload->add_type_alias("OutputArray", "IOArray");
+	overload->add_type_alias("OutputArrayOfArrays", "Array<InputArray>");
+	overload->add_type_alias("InputOutputArray", "IOArray");
+	overload->add_type_alias("InputOutputArrayOfArrays", "Array<InputArray>");
+	overload->add_type_alias("int", "Number");
+	overload->add_type_alias("size_t", "int");
+	overload->add_type_alias("MatrixType", "int");
+
+	IOArray::Init(target, overload);
 
 	Matrix::Init(target,overload);
 	alvision::ffmpeg::Init(target,overload);
@@ -206,6 +220,8 @@ init(Handle<Object> target) {
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 
+	//validate type/overload registrations
+	assert(overload->validate_type_registrations());
 };
 }
 

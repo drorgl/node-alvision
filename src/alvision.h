@@ -46,6 +46,7 @@ using namespace v8;
 //
 #define JSTHROW(ERR) \
 	Nan::ThrowError(ERR);
+
 //
 //
 //#define INT_FROM_ARGS(NAME, IND) \
@@ -70,7 +71,39 @@ using namespace v8;
 //
 //
 
+inline v8::Local<v8::Object> CreateNamedObject(v8::Handle<v8::Object> target, std::string objectName) {
+	auto obj = Nan::New<v8::Object>();
+	target->Set(Nan::New(objectName).ToLocalChecked(), obj);
+	return obj;
+}
 
+inline void SetObjectProperty(v8::Local<v8::Object> obj, std::string propertyName, v8::Local<v8::Value> val) {
+	obj->Set(Nan::New(propertyName).ToLocalChecked(), val);
+}
+
+inline void SetObjectProperty(v8::Local<v8::Object> obj, std::string propertyName, int val) {
+	SetObjectProperty(obj, propertyName, Nan::New(val));
+}
+
+inline void SetObjectProperty(v8::Local<v8::Object> obj, std::string propertyName, std::string val) {
+	SetObjectProperty(obj, propertyName, Nan::New(val).ToLocalChecked());
+}
+
+inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, v8::Local<v8::Value> defaultValue = Nan::Undefined()) {
+	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+}
+
+inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, int defaultValue) {
+	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+}
+
+inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, double defaultValue) {
+	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+}
+
+inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, std::string defaultValue) {
+	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+}
 
 #endif
 

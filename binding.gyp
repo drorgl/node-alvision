@@ -180,6 +180,15 @@
 		
 		, "src/opencv/ts/DeviceManager.cc"
 		, "src/opencv/ts/DeviceManager.h"
+
+		, "src/opencv/TrackedPtr.cc"
+		, "src/opencv/TrackedPtr.h"
+
+		, "src/opencv/TrackedElement.cc"
+		, "src/opencv/TrackedElement.h"
+
+		, "src/opencv/IOArray.cc"
+		, "src/opencv/IOArray.h"
 		
 		
 		, "src/ffmpeg/ffmpeg.cc"

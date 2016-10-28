@@ -38,6 +38,11 @@ public:
 		return Nan::ThrowError("not implemented");
 	}
 	
+	static v8::Local<v8::Object> all(double v0) {
+		//TODO: implement!
+		return Nan::New("not implemented").ToLocalChecked().As<v8::Object>();
+		//cv::Scalar::all()
+	}
 
 	
 };
