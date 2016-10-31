@@ -11,6 +11,7 @@ public:
 
 	static v8::Local<v8::Object> noArray();
 
+	static POLY_METHOD(New);
 
 };
 

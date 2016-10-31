@@ -19,13 +19,17 @@ void IOArray::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 	auto itpl = ctor->InstanceTemplate();
 	itpl->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("IOArray").ToLocalChecked());
-	ctor->Inherit(Nan::New(IOArray::constructor));
 
 	overload->register_type(ctor, "ioarray", "IOArray");
+
+	overload->addOverloadConstructor("ioarray", "IOArray", {}, IOArray::New);
 
 	target->Set(Nan::New("IOArray").ToLocalChecked(), ctor->GetFunction());
 }
 
+POLY_METHOD(IOArray::New) {
+
+}
 
 
 v8::Local<v8::Object> IOArray::noArray() {

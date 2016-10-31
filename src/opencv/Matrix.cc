@@ -2,6 +2,9 @@
 #include "Constants.h"
 
 #include "IOArray.h"
+#include "Size.h"
+#include "Scalar.h"
+#include "MatExpr.h"
 
 namespace matrix_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -188,50 +191,62 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	target->Set(Nan::New("Mat").ToLocalChecked(), ctor->GetFunction());
 };
 
-POLY_METHOD(Matrix::New) {
-	
-	if (info.This()->InternalFieldCount() == 0)
-		Nan::ThrowTypeError("Cannot instantiate without new");
-
-	Matrix *mat = NULL;
-
-	if (info.Length() == 0){
-		mat = new Matrix;
-	}
-	/*else if (info.Length() == 2 && info[0]->IsInt32() && info[1]->IsInt32()){
-		mat = new Matrix(info[0]->IntegerValue(), info[1]->IntegerValue());
-	}
-	else if (info.Length() == 3 && info[0]->IsInt32() && info[1]->IsInt32() && info[2]->IsInt32()) {
-		mat = new Matrix(info[0]->IntegerValue(), info[1]->IntegerValue(), info[2]->IntegerValue());
-	}*/
-	//else { // if (info.Length() == 5) {
-	//	Matrix *other = ObjectWrap::Unwrap<Matrix>(info[0]->ToObject());
-	//	int x = safe_cast<int>(info[1]->IntegerValue());
-	//	int y = safe_cast<int>(info[2]->IntegerValue());
-	//	int w = safe_cast<int>(info[3]->IntegerValue());
-	//	int h = safe_cast<int>(info[4]->IntegerValue());
-	//	mat = new Matrix(other->_mat, cv::Rect(x, y, w, h));
-	//}
-
-	if (mat != NULL) {
-		mat->Wrap(info.Holder());
-		info.Holder()->Set(Nan::New("width").ToLocalChecked(), Nan::New(mat->_mat->cols));
-		info.Holder()->Set(Nan::New("height").ToLocalChecked(), Nan::New(mat->_mat->rows));
-		info.Holder()->Set(Nan::New("type").ToLocalChecked(), Nan::New(Constants::fromMatType(mat->_mat->type())).ToLocalChecked());
-		info.GetReturnValue().Set(info.Holder());
-	}
-
-	//TODO: should throw an error
-	info.GetReturnValue().SetUndefined();
+v8::Local<v8::Object> Matrix::WrapThis() {
+	auto retval = Nan::New<v8::Object>();
+	this->Wrap(retval);
+	return retval;
 }
 
-POLY_METHOD(Matrix::New_rows_cols_type) {}
-POLY_METHOD(Matrix::New_size_type) {}
-POLY_METHOD(Matrix::New_rows_cols_type_scalar) {}
-POLY_METHOD(Matrix::New_size_type_scalar) {}
+POLY_METHOD(Matrix::New) {
+	Matrix *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>();
+
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_rows_cols_type) {
+	Matrix *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>((int)info[0]->IntegerValue(), (int)info[1]->IntegerValue(), (int)info[2]->IntegerValue());
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+POLY_METHOD(Matrix::New_size_type) {
+	Matrix *mat = new Matrix();
+	auto size = *Nan::ObjectWrap::Unwrap<Size<cv::Size>>(info[0].As<v8::Object>())->_size;
+
+	mat->_mat = std::make_shared<cv::Mat>(size, (int)info[1]->IntegerValue());
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+POLY_METHOD(Matrix::New_rows_cols_type_scalar) {
+	Matrix *mat = new Matrix();
+	auto s = *Nan::ObjectWrap::Unwrap<Scalar<cv::Scalar>>(info[3].As<v8::Object>())->_scalar;
+
+	mat->_mat = std::make_shared<cv::Mat>((int)info[0]->IntegerValue(), (int)info[1]->IntegerValue(), (int)info[2]->IntegerValue(), s);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+POLY_METHOD(Matrix::New_size_type_scalar) {
+	Matrix *mat = new Matrix();
+	
+	auto size = *Nan::ObjectWrap::Unwrap<Size<cv::Size>>(info[0].As<v8::Object>())->_size;
+	auto s = *Nan::ObjectWrap::Unwrap<Scalar<cv::Scalar>>(info[2].As<v8::Object>())->_scalar;
+
+	mat->_mat = std::make_shared<cv::Mat>(size, (int)info[1]->IntegerValue(), s);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
 POLY_METHOD(Matrix::New_ndims_sizes_type) {}
 POLY_METHOD(Matrix::New_ndims_sizes_type_scalar) {}
-POLY_METHOD(Matrix::New_mat) {}
+POLY_METHOD(Matrix::New_mat) {
+	Matrix *mat = new Matrix();
+	auto fromMat = *Nan::ObjectWrap::Unwrap<Matrix>(info[0].As<v8::Object>())->_mat;
+
+	mat->_mat = std::make_shared<cv::Mat>(fromMat);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
 POLY_METHOD(Matrix::New_rows_cols_type_data_step) {}
 POLY_METHOD(Matrix::New_size_type_data_step) {}
 POLY_METHOD(Matrix::New_array_copyData) {}
@@ -241,7 +256,16 @@ POLY_METHOD(Matrix::New_point_copyData) {}
 POLY_METHOD(Matrix::New_point3_copyData) {}
 POLY_METHOD(Matrix::New_gpuMat) {}
 POLY_METHOD(Matrix::New_buffer) {}
-POLY_METHOD(Matrix::zeros_rows_cols_type) {}
+POLY_METHOD(Matrix::zeros_rows_cols_type) {
+	auto retval = new MatExpr();
+	
+	auto res = cv::Mat::zeros((int)info[0]->IntegerValue(), (int)info[1]->IntegerValue(), (int)info[2]->IntegerValue());
+	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
+	
+	auto wrapped = retval->WrapThis();
+
+	info.GetReturnValue().Set(wrapped);
+}
 POLY_METHOD(Matrix::zeros_size_type) {}
 POLY_METHOD(Matrix::zeros_ndims_sz_type) {}
 POLY_METHOD(Matrix::ones_rows_cols_type) {}

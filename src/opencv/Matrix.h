@@ -12,6 +12,7 @@ public:
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
+	v8::Local<v8::Object> WrapThis();
 
 	//export interface MatStatic {
 		//public:
