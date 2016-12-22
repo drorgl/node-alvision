@@ -15,7 +15,7 @@
 #include "core/DMatch.h"
 
 
-class core : public Nan::ObjectWrap {
+class core : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 	static NAN_METHOD(randu);

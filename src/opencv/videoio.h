@@ -7,7 +7,7 @@
 #include "videoio/VideoWriter.h"
 
 
-class videoio : public Nan::ObjectWrap {
+class videoio : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

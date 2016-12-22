@@ -4,7 +4,7 @@
 #include "../alvision.h"
 
 template <typename T>
-class Affine3 : public Nan::ObjectWrap {
+class Affine3 : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Affine3::New);

@@ -19,4 +19,5 @@ npm-debug.log.*
 
 /typings/
 /node-overload-resolution/
+/node-addon-tracer/
 /.vscode/

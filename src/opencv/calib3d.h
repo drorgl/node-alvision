@@ -3,7 +3,7 @@
 
 #include "../alvision.h"
 
-class calib3d: public Nan::ObjectWrap {
+class calib3d: public or::ObjectWrap {
  public:
     static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

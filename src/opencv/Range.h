@@ -1,23 +1,24 @@
-#ifndef _ALVISION_MAT__H_
-#define _ALVISION_MAT__H_
+#ifndef _ALVISION_RANGE_H_
+#define _ALVISION_RANGE_H_
 //#include "OpenCV.h"
 #include "../alvision.h"
 
-template <typename T>
-class Mat_ : public or::ObjectWrap {
+class Range : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Mat_::New);
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Range::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
-		Nan::SetMethod(target, "zeros", zeros);
+		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "start").ToLocalChecked(), Range::start);
+		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "end").ToLocalChecked(), Range::end);
+		
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 	}
 
-	std::shared_ptr<T> _Mat_;
+	std::shared_ptr<cv::Range> _range;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
@@ -26,15 +27,19 @@ public:
 			Nan::ThrowTypeError("Cannot instantiate without new");
 
 
-		Mat_ *mat_;
-		mat_ = new Mat_();
+		Range *range;
+		range = new Range();
 
-		mat_->Wrap(info.Holder());
+		range->Wrap(info.Holder());
 
 		info.GetReturnValue().Set(info.Holder());
 	}
 	
-	static NAN_METHOD(zeros) {
+	static NAN_PROPERTY_GETTER(start) {
+		return Nan::ThrowError("not implemented");
+	}
+
+	static NAN_PROPERTY_GETTER(end) {
 		return Nan::ThrowError("not implemented");
 	}
 	
@@ -42,7 +47,7 @@ public:
 
 
 //declare variables
-template <typename T>
-Nan::Persistent<FunctionTemplate> Mat_<T>::constructor;
+//template <typename T>
+//Nan::Persistent<FunctionTemplate> Range::constructor;
 
 #endif

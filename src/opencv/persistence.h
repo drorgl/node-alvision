@@ -7,7 +7,7 @@
 #include "persistence/FileStorage.h"
 
 
-class persistence : public Nan::ObjectWrap {
+class persistence : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

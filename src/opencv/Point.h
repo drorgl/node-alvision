@@ -4,7 +4,7 @@
 #include "../alvision.h"
 
 template <typename T>
-class Point : public Nan::ObjectWrap {
+class Point : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Point::New);

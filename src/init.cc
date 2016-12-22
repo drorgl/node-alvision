@@ -52,10 +52,16 @@
 
 #include "opencv/IOArray.h"
 
+#include "opencv/Range.h"
+#include "opencv/Rect.h"
+
+#include "opencv/TrackedPtr.h"	
+#include "opencv/TrackedElement.h"	
 
 extern "C"{ 
 void
 init(Handle<Object> target) {
+	//assert(false);
 	auto overload = std::make_shared<overload_resolution>();
 
 	overload->add_type_alias("InputArray", "IOArray");
@@ -86,6 +92,7 @@ init(Handle<Object> target) {
 	Size<cv::Size2i>::Init(target,"Size2i" ,overload);
 	Size<cv::Size2f>::Init(target, "Size2f",overload);
 	Size<cv::Size2d>::Init(target, "Size2d",overload);
+	overload->add_type_alias("Size", "Size2i");
 
 
 	Vec<cv::Vec2b>::Init(target,"Vec2b",overload);
@@ -207,6 +214,15 @@ init(Handle<Object> target) {
 	Point<cv::Point2d>::Init(target, "Point2d",overload);
 	Point<cv::Point>::Init(target, "Point", overload);
 
+	
+	Rect<cv::Rect2i>::Init(target, "Rect2i", overload);
+	Rect<cv::Rect2f>::Init(target, "Rect2f", overload);
+	Rect<cv::Rect2d>::Init(target, "Rect2d", overload);
+	Rect<cv::Rect>::Init(target, "Rect", overload);
+
+
+	Range::Init(target, "Range", overload);
+
 	imgcodecs::Init(target, overload);
 	imgproc::Init(target, overload);
 
@@ -216,6 +232,9 @@ init(Handle<Object> target) {
 	video::Init(target,overload);
 
 	videoio::Init(target, overload);
+
+	TrackedPtr::Init(target, overload);
+	TrackedElement::Init(target, overload);
 
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());

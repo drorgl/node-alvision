@@ -166,6 +166,12 @@
 		, "src/opencv/Size.cc"
 		, "src/opencv/Size.h"
 		
+		, "src/opencv/Rect.cc"
+		, "src/opencv/Rect.h"
+		
+		, "src/opencv/Range.cc"
+		, "src/opencv/Range.h"
+		
 		, "src/opencv/Vec.cc"
 		, "src/opencv/Vec.h"
 

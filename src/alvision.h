@@ -89,21 +89,21 @@ inline void SetObjectProperty(v8::Local<v8::Object> obj, std::string propertyNam
 	SetObjectProperty(obj, propertyName, Nan::New(val).ToLocalChecked());
 }
 
-inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, v8::Local<v8::Value> defaultValue = Nan::Undefined()) {
-	return std::make_shared<overload_info>(parameterName, type, defaultValue);
-}
-
-inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, int defaultValue) {
-	return std::make_shared<overload_info>(parameterName, type, defaultValue);
-}
-
-inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, double defaultValue) {
-	return std::make_shared<overload_info>(parameterName, type, defaultValue);
-}
-
-inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, std::string defaultValue) {
-	return std::make_shared<overload_info>(parameterName, type, defaultValue);
-}
+//inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, v8::Local<v8::Value> defaultValue = Nan::Undefined()) {
+//	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+//}
+//
+//inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, int defaultValue) {
+//	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+//}
+//
+//inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, double defaultValue) {
+//	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+//}
+//
+//inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, std::string defaultValue) {
+//	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+//}
 
 #endif
 

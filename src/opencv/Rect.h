@@ -1,24 +1,25 @@
-#ifndef _ALVISION_MATX_H_
-#define _ALVISION_MATX_H_
+#ifndef _ALVISION_RECT_H_
+#define _ALVISION_RECT_H_
 //#include "OpenCV.h"
 #include "../alvision.h"
 
 template <typename T>
-class Matx : public or::ObjectWrap {
+class Rect : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Matx<T>::New);
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Rect::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
-		//ctor->Inherit(?);
+		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "width").ToLocalChecked(), Rect::width);
+		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "height").ToLocalChecked(), Rect::height);
 		
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 	}
 
-	std::shared_ptr<T> _matx;
+	std::shared_ptr<T> _rect;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
@@ -27,21 +28,27 @@ public:
 			Nan::ThrowTypeError("Cannot instantiate without new");
 
 
-		Matx<T> *matx;
-		matx = new Matx<T>();
+		Rect<T> *rect;
+		rect = new Rect<T>();
 
-		matx->Wrap(info.Holder());
+		rect->Wrap(info.Holder());
 
 		info.GetReturnValue().Set(info.Holder());
 	}
 	
+	static NAN_PROPERTY_GETTER(width) {
+		return Nan::ThrowError("not implemented");
+	}
 
+	static NAN_PROPERTY_GETTER(height) {
+		return Nan::ThrowError("not implemented");
+	}
 	
 };
 
 
 //declare variables
 template <typename T>
-Nan::Persistent<FunctionTemplate> Matx<T>::constructor;
+Nan::Persistent<FunctionTemplate> Rect<T>::constructor;
 
 #endif

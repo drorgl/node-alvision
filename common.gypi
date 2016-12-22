@@ -21,6 +21,12 @@
 				}
 			],
 			
+			['OS in "win"',{
+				'defines' : [
+					'DELAYIMP_INSECURE_WRITABLE_HOOKS'
+				]
+			}],
+			
 			['OS in "linux freebsd openbsd solaris android aix"', {
 					'cflags_cc!' : ['-fno-rtti', '-fno-exceptions']
 			}],

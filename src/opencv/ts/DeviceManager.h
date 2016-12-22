@@ -5,7 +5,7 @@
 
 #ifdef HAVE_CUDA
 
-class DeviceManager : public Nan::ObjectWrap {
+class DeviceManager : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 	static Nan::Persistent<FunctionTemplate> constructor;

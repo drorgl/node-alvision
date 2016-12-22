@@ -4,7 +4,7 @@
 #include "../alvision.h"
 
 template <typename T>
-class Vec: public Nan::ObjectWrap {
+class Vec: public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Vec::New);

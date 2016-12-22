@@ -3,7 +3,7 @@
 
 #include "../alvision.h"
 
-class IOArray : Nan::ObjectWrap {
+class IOArray : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
@@ -13,6 +13,12 @@ public:
 
 	static POLY_METHOD(New);
 
+	virtual cv::InputArray& GetInputArray() = 0;
+	virtual cv::InputArrayOfArrays& GetInputArrayOfArrays() = 0;
+	virtual cv::OutputArray& GetOutputArray() = 0;
+	virtual cv::OutputArrayOfArrays& GetOutputArrayOfArrays() = 0;
+	virtual cv::InputOutputArray& GetInputOutputArray() = 0;
+	virtual cv::InputOutputArrayOfArrays& GetInputOutputArrayOfArrays() = 0;
 };
 
 #endif

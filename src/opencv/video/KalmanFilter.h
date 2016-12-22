@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class KalmanFilter: public Nan::ObjectWrap {
+class KalmanFilter: public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

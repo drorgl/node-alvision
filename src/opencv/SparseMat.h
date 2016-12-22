@@ -4,7 +4,7 @@
 #include "../alvision.h"
 
 
-class SparseMat: public Nan::ObjectWrap {
+class SparseMat: public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

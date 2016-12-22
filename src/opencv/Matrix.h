@@ -2,9 +2,10 @@
 #define _ALVISION_MATRIX_H_
 //#include "OpenCV.h"
 #include "../alvision.h"
+#include "IOArray.h"
 
 
-class Matrix : public Nan::ObjectWrap {
+class Matrix : public IOArray {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
@@ -13,6 +14,13 @@ public:
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	v8::Local<v8::Object> WrapThis();
+
+	virtual cv::InputArray& GetInputArray();
+	virtual cv::InputArrayOfArrays& GetInputArrayOfArrays();
+	virtual cv::OutputArray& GetOutputArray();
+	virtual cv::OutputArrayOfArrays& GetOutputArrayOfArrays();
+	virtual cv::InputOutputArray& GetInputOutputArray();
+	virtual cv::InputOutputArrayOfArrays& GetInputOutputArrayOfArrays();
 
 	//export interface MatStatic {
 		//public:
@@ -669,7 +677,7 @@ public:
 	@param type New matrix type.
 	*/
 	//create(rows : _st.int, cols : _st.int, type : _st.int) : void;
-	static POLY_METHOD(create_rows_cols);
+	static POLY_METHOD(create_rows_cols_type);
 
 	/** @overload
 	@param size Alternative new matrix size specification: Size(cols, rows)

@@ -5,7 +5,7 @@
 
 #include "superres/optical_flow.h"
 
-class superres : public Nan::ObjectWrap {
+class superres : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 	static Nan::Persistent<Object> superresObject;

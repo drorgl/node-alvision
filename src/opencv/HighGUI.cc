@@ -266,14 +266,15 @@ POLY_METHOD(highgui::setTrackbarMin) {
 
 POLY_METHOD(highgui::imshowTex){
 	return Nan::ThrowError("not implemented");
-	//auto tex = Nan::ObjectWrap::Unwrap<Texture2D>(info[1]);
+	//auto tex = info.at<Texture2D*>(1);
 	//cv::imshow(*Nan::Utf8String(info[0]), tex._tex);
 }
 
 POLY_METHOD(highgui::imshowMat){
 	return Nan::ThrowError("not implemented");
-	//auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info[1]);
-	//cv::imshow(*Nan::Utf8String(info[0]), mat->_mat.get());
+	//auto mat = info.at<Matrix*>(1);
+	//auto winname = info.at<std::string>(0);
+	//cv::imshow(winname, mat->_mat.get());
 }
 
 
