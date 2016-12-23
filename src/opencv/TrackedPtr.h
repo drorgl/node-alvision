@@ -15,7 +15,6 @@ public:
 	std::string _Ttype;
 	int _i0;
 
-	v8::Local<v8::Object> WrapThis();
 };
 
 

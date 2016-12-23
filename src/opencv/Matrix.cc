@@ -48,12 +48,13 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int"),make_param("data","Array"),make_param<int>("step","size_t",(int)cv::Mat::AUTO_STEP) }, Matrix::New_rows_cols_type_data_step);
 	//TODO: not sure...
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","MatrixType"),make_param("data","Array"),make_param<int>("step","size_t",(int)cv::Mat::AUTO_STEP) }, Matrix::New_size_type_data_step);
-	overload->addOverloadConstructor("matrix", "Mat", {make_param("vec","Array"),make_param<bool>("copyData","bool",false)}, Matrix::New_array_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point_<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_point_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point3_<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_point3_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("m","cuda::GpuMat")}, Matrix::New_gpuMat);
+	//TODO: multiple implementations, all vecs, all matxs etc'
+	//overload->addOverloadConstructor("matrix", "Mat", {make_param("vec","Array"),make_param<bool>("copyData","bool",false)}, Matrix::New_array_copyData);
+	//overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_copyData);
+	//overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_copyData);
+	//overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point_<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_point_copyData);
+	//overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point3_<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_point3_copyData);
+	//overload->addOverloadConstructor("matrix", "Mat", { make_param("m","cuda::GpuMat")}, Matrix::New_gpuMat);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<uint8_t>>>("buf","Buffer") }, Matrix::New_buffer);
 
 	//static
@@ -199,11 +200,6 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	target->Set(Nan::New("Mat").ToLocalChecked(), ctor->GetFunction());
 };
 
-v8::Local<v8::Object> Matrix::WrapThis() {
-	auto retval = Nan::New<v8::Object>();
-	this->Wrap(retval);
-	return retval;
-}
 
 cv::InputArray& Matrix::GetInputArray() {
 	return *_mat;
@@ -234,33 +230,33 @@ POLY_METHOD(Matrix::New) {
 
 POLY_METHOD(Matrix::New_rows_cols_type) {
 	Matrix *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>((int)info[0]->IntegerValue(), (int)info[1]->IntegerValue(), (int)info[2]->IntegerValue());
+	mat->_mat = std::make_shared<cv::Mat>(info.at<int>(0),info.at<int>(1),info.at<int>(2));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_size_type) {
-	//Matrix *mat = new Matrix();
-	//auto size = info.at<Size<cv::Size>*>(0)->_size;
-	//
-	//mat->_mat = std::make_shared<cv::Mat>(size, (int)info[1]->IntegerValue());
-	//mat->Wrap(info.Holder());
-	//info.GetReturnValue().Set(info.Holder());
+	Matrix *mat = new Matrix();
+	auto size = info.at<Size<cv::Size>*>(0)->_size;
+	
+	mat->_mat = std::make_shared<cv::Mat>(*size, info.at<int>(1));
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_rows_cols_type_scalar) {
 	Matrix *mat = new Matrix();
-	auto s = *Nan::ObjectWrap::Unwrap<Scalar<cv::Scalar>>(info[3].As<v8::Object>())->_scalar;
+	auto s = info.at<Scalar<cv::Scalar>*>(3)->_scalar;
 
-	mat->_mat = std::make_shared<cv::Mat>((int)info[0]->IntegerValue(), (int)info[1]->IntegerValue(), (int)info[2]->IntegerValue(), s);
+	mat->_mat = std::make_shared<cv::Mat>(info.at<int>(0), info.at<int>(1),info.at<int>(2), s);
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_size_type_scalar) {
 	Matrix *mat = new Matrix();
 	
-	auto size = *Nan::ObjectWrap::Unwrap<Size<cv::Size>>(info[0].As<v8::Object>())->_size;
-	auto s = *Nan::ObjectWrap::Unwrap<Scalar<cv::Scalar>>(info[2].As<v8::Object>())->_scalar;
+	auto size = info.at<Size<cv::Size>*>(0)->_size;
+	auto s = info.at<Scalar<cv::Scalar>*>(2)->_scalar;
 
-	mat->_mat = std::make_shared<cv::Mat>(size, (int)info[1]->IntegerValue(), s);
+	mat->_mat = std::make_shared<cv::Mat>(size, info.at<int>(1), s);
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
@@ -268,7 +264,7 @@ POLY_METHOD(Matrix::New_ndims_sizes_type) {}
 POLY_METHOD(Matrix::New_ndims_sizes_type_scalar) {}
 POLY_METHOD(Matrix::New_mat) {
 	Matrix *mat = new Matrix();
-	auto fromMat = *Nan::ObjectWrap::Unwrap<Matrix>(info[0].As<v8::Object>())->_mat;
+	auto fromMat = info.at<Matrix*>(0)->_mat;
 
 	mat->_mat = std::make_shared<cv::Mat>(fromMat);
 	mat->Wrap(info.Holder());
@@ -286,22 +282,22 @@ POLY_METHOD(Matrix::New_buffer) {}
 POLY_METHOD(Matrix::zeros_rows_cols_type) {
 	auto retval = new MatExpr();
 	
-	auto res = cv::Mat::zeros((int)info[0]->IntegerValue(), (int)info[1]->IntegerValue(), (int)info[2]->IntegerValue());
+	auto res = cv::Mat::zeros(info.at<int>(0), info.at<int>(1), info.at<int>(2));
 	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
 	
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::zeros_size_type) {
 	auto retval = new MatExpr();
 	
-	auto size = *Nan::ObjectWrap::Unwrap<Size<cv::Size>>(info[0].As<v8::Object>())->_size;
+	auto size = info.at<Size<cv::Size>*>(0)->_size;
 
-	auto res = cv::Mat::zeros(size, (int)info[1]->IntegerValue());
+	auto res = cv::Mat::zeros(*size, info.at<int>(1));
 	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -309,22 +305,22 @@ POLY_METHOD(Matrix::zeros_ndims_sz_type) {}
 POLY_METHOD(Matrix::ones_rows_cols_type) {
 	auto retval = new MatExpr();
 
-	auto res = cv::Mat::ones((int)info[0]->IntegerValue(), (int)info[1]->IntegerValue(), (int)info[2]->IntegerValue());
+	auto res = cv::Mat::ones(info.at<int>(0), info.at<int>(1), info.at<int>(2));
 	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::ones_size_type) {
 	auto retval = new MatExpr();
 
-	auto size = *Nan::ObjectWrap::Unwrap<Size<cv::Size>>(info[0].As<v8::Object>())->_size;
+	auto size = info.at<Size<cv::Size>*>(0)->_size;
 
-	auto res = cv::Mat::ones(size, (int)info[1]->IntegerValue());
+	auto res = cv::Mat::ones(*size, info.at<int>(1));
 	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -332,44 +328,46 @@ POLY_METHOD(Matrix::ones_ndims_sz_type) {}
 POLY_METHOD(Matrix::eye_rows_cols_type) {
 	auto retval = new MatExpr();
 
-	auto res = cv::Mat::eye((int)info[0]->IntegerValue(), (int)info[1]->IntegerValue(), (int)info[2]->IntegerValue());
+	auto res = cv::Mat::eye(info.at<int>(0), info.at<int>(1), info.at<int>(2));
 	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::eye_size_type) {
 	auto retval = new MatExpr();
 
-	auto size = *Nan::ObjectWrap::Unwrap<Size<cv::Size>>(info[0].As<v8::Object>())->_size;
+	auto size = info.at<Size<cv::Size>*>(0)->_size;
 
-	auto res = cv::Mat::eye(size, (int)info[1]->IntegerValue());
+	auto res = cv::Mat::eye(*size, info.at<int>(1));
 	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::from_mat) {}
 POLY_METHOD(Matrix::from_matexpr) {
-	auto matexpr = *Nan::ObjectWrap::Unwrap<MatExpr>(info[0].As<v8::Object>())->_matExpr;
+	auto matexpr = info.at<MatExpr*>(0)->_matExpr;
+
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(matexpr);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::getUMat) {}
 POLY_METHOD(Matrix::row) {
+
 	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto rowmat = mat->row(info[0]->IntegerValue());
+	auto rowmat = mat->row(info.at<int>(0));
 
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(rowmat);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -380,7 +378,7 @@ POLY_METHOD(Matrix::col) {
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(colmat);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 
@@ -392,7 +390,7 @@ POLY_METHOD(Matrix::rowRange_startRow) {
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(rowrange);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -404,7 +402,7 @@ POLY_METHOD(Matrix::rowRange_range) {
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(rowrange);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -415,7 +413,7 @@ POLY_METHOD(Matrix::colRange_startcol) {
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(colrange);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -427,7 +425,7 @@ POLY_METHOD(Matrix::colRange_range) {
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(colrange);
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -437,7 +435,7 @@ POLY_METHOD(Matrix::clone) {
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(mat->clone());
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -497,7 +495,7 @@ POLY_METHOD(Matrix::t) {
 	auto retval = new MatExpr();
 	retval->_matExpr = std::make_shared<cv::MatExpr>(mat->_mat->t());
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -507,7 +505,7 @@ POLY_METHOD(Matrix::inv) {
 	auto retval = new MatExpr();
 	retval->_matExpr = std::make_shared<cv::MatExpr>(mat->_mat->inv(info[0]->IntegerValue()));
 
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -520,7 +518,7 @@ POLY_METHOD(Matrix::mul) {
 	auto matexpr = new MatExpr();
 	matexpr->_matExpr = std::make_shared<cv::MatExpr>(retval);
 
-	auto wrapped = matexpr->WrapThis();
+	auto wrapped = matexpr->Wrap();
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::cross) {
@@ -532,7 +530,7 @@ POLY_METHOD(Matrix::cross) {
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(crossresult);
 	
-	auto wrapped = retval->WrapThis();
+	auto wrapped = retval->Wrap();
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::dot) {
@@ -545,9 +543,9 @@ POLY_METHOD(Matrix::dot) {
 POLY_METHOD(Matrix::create_rows_cols_type) {
 	auto* mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This());
 	
-	mat->_mat->create((int)info[0]->IntegerValue(), (int)info[1]->IntegerValue(), (int)info[2]->IntegerValue());
+	mat->_mat->create(info.at<int>(0), info.at<int>(1), info.at<int>(2));
 
-	auto wrapped = mat->WrapThis();
+	auto wrapped = mat->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
@@ -575,7 +573,7 @@ POLY_METHOD(Matrix::roi_rect) {
 	//
 	//auto retval = new Matrix();
 	//retval->_mat = std::make_shared<cv::Mat>(retval);
-	//auto wrapped = retval->WrapThis();
+	//auto wrapped = retval->Wrap();
 	//
 	//info.GetReturnValue().Set(wrapped);
 }
@@ -623,7 +621,7 @@ POLY_METHOD(Matrix::ptr) {
 	tptr->_Ttype = *Nan::Utf8String(info[0]);
 	tptr->_i0 = safe_cast<int>(info[1]->IntegerValue());
 
-	auto retval = tptr->WrapThis();
+	auto retval = tptr->Wrap();
 
 	info.GetReturnValue().Set(retval);
 }
@@ -639,7 +637,7 @@ POLY_METHOD(Matrix::at) {
 	tat->_i1 = safe_cast<int>(info[2]->IntegerValue());
 	tat->_i2 = safe_cast<int>(info[3]->IntegerValue());
 
-	auto retval = tat->WrapThis();
+	auto retval = tat->Wrap();
 
 	info.GetReturnValue().Set(retval);
 }

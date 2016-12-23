@@ -12,7 +12,6 @@ public:
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
-	v8::Local<v8::Object> WrapThis();
 
 	//constructors
 	//new () : MatExpr;

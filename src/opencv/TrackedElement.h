@@ -3,7 +3,7 @@
 
 #include "../alvision.h"
 
-class TrackedElement : or::ObjectWrap {
+class TrackedElement : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
@@ -16,8 +16,6 @@ public:
 	int _i0;
 	int _i1;
 	int _i2;
-
-	v8::Local<v8::Object> WrapThis();
 
 	static POLY_METHOD(get);
 	static POLY_METHOD(set);

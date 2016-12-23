@@ -31,8 +31,3 @@ POLY_METHOD(TrackedElement::New) {
 	return Nan::ThrowError("TrackedElement cannot be created manually, its part of the Alvision internal module");
 }
 
-v8::Local<v8::Object> TrackedElement::WrapThis() {
-	auto retval = Nan::New<v8::Object>();
-	this->Wrap(retval);
-	return retval;
-}

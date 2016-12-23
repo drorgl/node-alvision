@@ -31,8 +31,3 @@ POLY_METHOD(TrackedPtr::New) {
 	return Nan::ThrowError("TrackedPtr cannot be created manually, its part of the Alvision internal module");
 }
 
-v8::Local<v8::Object> TrackedPtr::WrapThis() {
-	auto retval = Nan::New<v8::Object>();
-	this->Wrap(retval);
-	return retval;
-}

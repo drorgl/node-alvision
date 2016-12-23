@@ -302,12 +302,6 @@ MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	target->Set(Nan::New("MatExpr").ToLocalChecked(), ctor->GetFunction());
 }
 
-v8::Local<v8::Object> MatExpr::WrapThis() {
-	auto retval = Nan::New<v8::Object>();
-
-	this->Wrap(retval);
-	return retval;
-}
 
 
 //constructors
