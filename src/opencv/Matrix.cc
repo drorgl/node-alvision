@@ -44,7 +44,9 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<int>("ndims","int"),make_param<std::shared_ptr<std::vector<int>>>("sizes","Array<int>"),make_param<int>("type","int") }, Matrix::New_ndims_sizes_type);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<int>("ndims","int"),make_param<std::shared_ptr<std::vector<int>>>("sizes","Array<int>"),make_param<int>("type","int"),make_param<Scalar<cv::Scalar>*>("s","Scalar") }, Matrix::New_ndims_sizes_type_scalar);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<Matrix*>("m","Mat") }, Matrix::New_mat);
+	//TODO: not sure...
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int"),make_param("data","Array"),make_param<int>("step","size_t",(int)cv::Mat::AUTO_STEP) }, Matrix::New_rows_cols_type_data_step);
+	//TODO: not sure...
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","MatrixType"),make_param("data","Array"),make_param<int>("step","size_t",(int)cv::Mat::AUTO_STEP) }, Matrix::New_size_type_data_step);
 	overload->addOverloadConstructor("matrix", "Mat", {make_param("vec","Array"),make_param<bool>("copyData","bool",false)}, Matrix::New_array_copyData);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_copyData);
@@ -52,64 +54,64 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point_<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_point_copyData);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point3_<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_point3_copyData);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param("m","cuda::GpuMat")}, Matrix::New_gpuMat);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("buf","Buffer") }, Matrix::New_buffer);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<uint8_t>>>("buf","Buffer") }, Matrix::New_buffer);
 
 	//static
-	overload->addStaticOverload("matrix", "Mat", "zeros", {make_param("rows","int"),make_param("cols","int"),make_param("type","int")}, Matrix::zeros_rows_cols_type);
-	overload->addStaticOverload("matrix", "Mat", "zeros", { make_param("size","Size"),make_param("type","int")}, Matrix::zeros_size_type);
-	overload->addStaticOverload("matrix", "Mat", "zeros", { make_param("ndims","int"),make_param("sz","Array<int>"),make_param("type","int") }, Matrix::zeros_ndims_sz_type);
+	overload->addStaticOverload("matrix", "Mat", "zeros", {make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int")}, Matrix::zeros_rows_cols_type);
+	overload->addStaticOverload("matrix", "Mat", "zeros", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","int")}, Matrix::zeros_size_type);
+	overload->addStaticOverload("matrix", "Mat", "zeros", { make_param<int>("ndims","int"),make_param<std::shared_ptr<std::vector<int>>>("sz","Array<int>"),make_param<int>("type","int") }, Matrix::zeros_ndims_sz_type);
 	Nan::SetMethod(ctor, "zeros", matrix_general_callback::callback);
 
-	overload->addStaticOverload("matrix", "Mat", "ones", { make_param("rows","int"),make_param("cols","int"),make_param("type","int") }, Matrix::ones_rows_cols_type);
-	overload->addStaticOverload("matrix", "Mat", "ones", { make_param("size","Size"),make_param("type","int") }, Matrix::ones_size_type);
-	overload->addStaticOverload("matrix", "Mat", "ones", { make_param("ndims","int"),make_param("sz","Array<int>"), make_param("type","MatrixType") }, Matrix::ones_ndims_sz_type);
+	overload->addStaticOverload("matrix", "Mat", "ones", { make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int") }, Matrix::ones_rows_cols_type);
+	overload->addStaticOverload("matrix", "Mat", "ones", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","int") }, Matrix::ones_size_type);
+	overload->addStaticOverload("matrix", "Mat", "ones", { make_param<int>("ndims","int"),make_param<std::shared_ptr<std::vector<int>>>("sz","Array<int>"), make_param<int>("type","MatrixType") }, Matrix::ones_ndims_sz_type);
 	Nan::SetMethod(ctor, "ones", matrix_general_callback::callback);
 
-	overload->addStaticOverload("matrix", "Mat", "eye", { make_param("rows","int"),make_param("cols","int"), make_param("type","int") }, Matrix::eye_rows_cols_type);
-	overload->addStaticOverload("matrix", "Mat", "eye", { make_param("size","Size"),make_param("type","int") }, Matrix::eye_size_type);
+	overload->addStaticOverload("matrix", "Mat", "eye", { make_param<int>("rows","int"),make_param<int>("cols","int"), make_param<int>("type","int") }, Matrix::eye_rows_cols_type);
+	overload->addStaticOverload("matrix", "Mat", "eye", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","int") }, Matrix::eye_size_type);
 	Nan::SetMethod(ctor, "eye", matrix_general_callback::callback);
 
-	overload->addStaticOverload("matrix", "Mat", "from", { make_param("m","Mat") }, Matrix::from_mat);
-	overload->addStaticOverload("matrix", "Mat", "from", { make_param("expr","MatExpr") }, Matrix::from_matexpr);
+	overload->addStaticOverload("matrix", "Mat", "from", { make_param<Matrix*>("m","Mat") }, Matrix::from_mat);
+	overload->addStaticOverload("matrix", "Mat", "from", { make_param<MatExpr*>("expr","MatExpr") }, Matrix::from_matexpr);
 	Nan::SetMethod(ctor, "from", matrix_general_callback::callback);
 
 	// Prototype
 	overload->add_type_alias("UMatUsageFlags", "int");
 
 
-	overload->addOverload("matrix", "Mat", "getUMat", { make_param("accessFlags","int"),make_param("usageFlags","UMatUsageFlags",cv::UMatUsageFlags::USAGE_DEFAULT) }, Matrix::getUMat);
+	overload->addOverload("matrix", "Mat", "getUMat", { make_param<int>("accessFlags","int"),make_param<int>("usageFlags","UMatUsageFlags",(int)cv::UMatUsageFlags::USAGE_DEFAULT) }, Matrix::getUMat);
 	Nan::SetPrototypeMethod(ctor, "getUMat", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "row", { make_param("y","int")}, Matrix::row);
+	overload->addOverload("matrix", "Mat", "row", { make_param<int>("y","int")}, Matrix::row);
 	Nan::SetPrototypeMethod(ctor, "row", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "col", { make_param("x","int") }, Matrix::col);
+	overload->addOverload("matrix", "Mat", "col", { make_param<int>("x","int") }, Matrix::col);
 	Nan::SetPrototypeMethod(ctor, "col", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "rowRange", { make_param("startrow","int"),make_param("endrow","int") }, Matrix::rowRange_startRow);
-	overload->addOverload("matrix", "Mat", "rowRange", { make_param("r","Range")}, Matrix::rowRange_range);
+	overload->addOverload("matrix", "Mat", "rowRange", { make_param<int>("startrow","int"),make_param<int>("endrow","int") }, Matrix::rowRange_startRow);
+	overload->addOverload("matrix", "Mat", "rowRange", { make_param<Range*>("r","Range")}, Matrix::rowRange_range);
 	Nan::SetPrototypeMethod(ctor, "rowRange", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "colRange", { make_param("startcol","int"),make_param("endcol","int") }, Matrix::colRange_startcol);
-	overload->addOverload("matrix", "Mat", "colRange", { make_param("r","Range") }, Matrix::colRange_range);
+	overload->addOverload("matrix", "Mat", "colRange", { make_param<int>("startcol","int"),make_param<int>("endcol","int") }, Matrix::colRange_startcol);
+	overload->addOverload("matrix", "Mat", "colRange", { make_param<Range*>("r","Range") }, Matrix::colRange_range);
 	Nan::SetPrototypeMethod(ctor, "colRange", matrix_general_callback::callback);
 
 	overload->addOverload("matrix", "Mat", "clone", { }, Matrix::clone);
 	Nan::SetPrototypeMethod(ctor, "clone", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "copyTo", {make_param("m","OutputArray")}, Matrix::copyTo_outputArray);
-	overload->addOverload("matrix", "Mat", "copyTo", { make_param("m","OutputArray"),make_param("mask","InputArray") }, Matrix::copyTo_masked);
+	overload->addOverload("matrix", "Mat", "copyTo", {make_param<IOArray*>("m","OutputArray")}, Matrix::copyTo_outputArray);
+	overload->addOverload("matrix", "Mat", "copyTo", { make_param<IOArray*>("m","OutputArray"),make_param<IOArray*>("mask","InputArray") }, Matrix::copyTo_masked);
 	Nan::SetPrototypeMethod(ctor, "copyTo", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "convertTo", { make_param("m","OutputArray"),make_param("rtype","int"), make_param("alpha","double",1), make_param("beta","double",0) }, Matrix::convertTo);
+	overload->addOverload("matrix", "Mat", "convertTo", { make_param<IOArray*>("m","OutputArray"),make_param<int>("rtype","int"), make_param<double>("alpha","double",1), make_param<double>("beta","double",0) }, Matrix::convertTo);
 	Nan::SetPrototypeMethod(ctor, "convertTo", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "setTo", { make_param("value","InputArray"),make_param("mask","InputArray", IOArray::noArray())}, Matrix::setTo_inputArray);
-	overload->addOverload("matrix", "Mat", "setTo", { make_param("value","Scalar"),make_param("mask","InputArray", IOArray::noArray()) }, Matrix::setTo_scalar);
-	overload->addOverload("matrix", "Mat", "setTo", { make_param("value","int"),make_param("mask","InputArray", IOArray::noArray()) }, Matrix::setTo_int);
+	overload->addOverload("matrix", "Mat", "setTo", { make_param<IOArray*>("value","InputArray"),make_param<IOArray*>("mask","InputArray", IOArray::noArray())}, Matrix::setTo_inputArray);
+	overload->addOverload("matrix", "Mat", "setTo", { make_param<Scalar<cv::Scalar>*>("value","Scalar"),make_param<IOArray*>("mask","InputArray", IOArray::noArray()) }, Matrix::setTo_scalar);
+	overload->addOverload("matrix", "Mat", "setTo", { make_param<int>("value","int"),make_param<IOArray*>("mask","InputArray", IOArray::noArray()) }, Matrix::setTo_int);
 	Nan::SetPrototypeMethod(ctor, "setTo", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "reshape", { make_param("cn","int"),make_param("rows","int", 0) }, Matrix::reshape);
+	overload->addOverload("matrix", "Mat", "reshape", { make_param<int>("cn","int"),make_param<int>("rows","int", 0) }, Matrix::reshape);
 	Nan::SetPrototypeMethod(ctor, "reshape", matrix_general_callback::callback);
 
 	overload->addOverload("matrix", "Mat", "t", {  }, Matrix::t);
@@ -117,31 +119,33 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 
 	overload->add_type_alias("DecompTypes", "int");
 
-	overload->addOverload("matrix", "Mat", "inv", {make_param("method","DecompTypes",cv::DECOMP_LU)}, Matrix::inv);
+	overload->addOverload("matrix", "Mat", "inv", {make_param<int>("method","DecompTypes",(int)cv::DECOMP_LU)}, Matrix::inv);
 	Nan::SetPrototypeMethod(ctor, "inv", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "mul", { make_param("m","InputArray"),make_param("scale","double",1) }, Matrix::mul);
+	overload->addOverload("matrix", "Mat", "mul", { make_param<IOArray*>("m","InputArray"),make_param<double>("scale","double",1) }, Matrix::mul);
 	Nan::SetPrototypeMethod(ctor, "mul", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "cross", { make_param("m","InputArray") }, Matrix::cross);
+	overload->addOverload("matrix", "Mat", "cross", { make_param<IOArray*>("m","InputArray") }, Matrix::cross);
 	Nan::SetPrototypeMethod(ctor, "cross", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "dot", { make_param("m","InputArray") }, Matrix::dot);
+	overload->addOverload("matrix", "Mat", "dot", { make_param<IOArray*>("m","InputArray") }, Matrix::dot);
 	Nan::SetPrototypeMethod(ctor, "dot", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "create", { make_param("rows","int"), make_param("cols","int"), make_param("type","int") }, Matrix::create_rows_cols_type);
-	overload->addOverload("matrix", "Mat", "create", { make_param("size","Size"), make_param("type","int")}, Matrix::create_size);
-	overload->addOverload("matrix", "Mat", "create", { make_param("size","MatSize"), make_param("type","int") }, Matrix::create_matsize);
-	overload->addOverload("matrix", "Mat", "create", { make_param("ndims","int"), make_param("sizes","Array<int>"), make_param("type","int") }, Matrix::create_ndims_size);
-	overload->addOverload("matrix", "Mat", "create", { make_param("ndims","int"), make_param("size","MatSize"), make_param("type","int") }, Matrix::create_ndims_matsize);
+	overload->addOverload("matrix", "Mat", "create", { make_param<int>("rows","int"), make_param<int>("cols","int"), make_param<int>("type","int") }, Matrix::create_rows_cols_type);
+	overload->addOverload("matrix", "Mat", "create", { make_param<Size<cv::Size2i>* >("size","Size"), make_param<int>("type","int")}, Matrix::create_size);
+	//TODO: decide on matsize
+	//overload->addOverload("matrix", "Mat", "create", { make_param<MatSize*>("size","MatSize"), make_param<int>("type","int") }, Matrix::create_matsize);
+	overload->addOverload("matrix", "Mat", "create", { make_param<int>("ndims","int"), make_param<std::shared_ptr<std::vector<int>>>("sizes","Array<int>"), make_param<int>("type","int") }, Matrix::create_ndims_size);
+	//TODO: decide on matsize
+	//overload->addOverload("matrix", "Mat", "create", { make_param<int>("ndims","int"), make_param<MatSize*>("size","MatSize"), make_param<int>("type","int") }, Matrix::create_ndims_matsize);
 	Nan::SetPrototypeMethod(ctor, "create", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "resize", { make_param("sz","size_t"), make_param("s","Scalar", Nan::Null()) }, Matrix::resize);
+	overload->addOverload("matrix", "Mat", "resize", { make_param<int>("sz","size_t"), make_param<Scalar<cv::Scalar>*>("s","Scalar", Nan::Null()) }, Matrix::resize);
 	Nan::SetPrototypeMethod(ctor, "resize", matrix_general_callback::callback);
 
 
-	overload->addOverload("matrix", "Mat", "roi", { make_param("roi","Rect")}, Matrix::roi_rect);
-	overload->addOverload("matrix", "Mat", "roi", { make_param("ranges","Array<Range>") }, Matrix::roi_ranges);
+	overload->addOverload("matrix", "Mat", "roi", { make_param<Rect<cv::Rect>*>("roi","Rect")}, Matrix::roi_rect);
+	overload->addOverload("matrix", "Mat", "roi", { make_param<std::shared_ptr<std::vector<Range*>>>("ranges","Array<Range>") }, Matrix::roi_ranges);
 	Nan::SetPrototypeMethod(ctor, "roi", matrix_general_callback::callback);
 
 
@@ -169,10 +173,10 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	overload->addOverload("matrix", "Mat", "total", {}, Matrix::total);
 	Nan::SetPrototypeMethod(ctor, "total", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "ptr", {make_param("type","String"),make_param("i0","int",0)}, Matrix::ptr);
+	overload->addOverload("matrix", "Mat", "ptr", {make_param<std::string>("type","String"),make_param<int>("i0","int",0)}, Matrix::ptr);
 	Nan::SetPrototypeMethod(ctor, "ptr", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "at", { make_param("type","String"),make_param("i0","int"),make_param("i1","int",Nan::Null()), make_param("i2","int",Nan::Null()) }, Matrix::at);
+	overload->addOverload("matrix", "Mat", "at", { make_param<std::string>("type","String"),make_param<int>("i0","int"),make_param<int>("i1","int",Nan::Null()), make_param<int>("i2","int",Nan::Null()) }, Matrix::at);
 	Nan::SetPrototypeMethod(ctor, "at", matrix_general_callback::callback);
 
 	Nan::SetAccessor(itpl, Nan::New("dims").ToLocalChecked(), Matrix::dims);
