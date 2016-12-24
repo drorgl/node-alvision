@@ -22,7 +22,7 @@ MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("MatExpr").ToLocalChecked());
 
-	overload->register_type(ctor, "matexpr", "MatExpr");
+	overload->register_type<MatExpr>(ctor, "matexpr", "MatExpr");
 
 
 

@@ -20,7 +20,7 @@ void IOArray::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 	itpl->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("IOArray").ToLocalChecked());
 
-	overload->register_type(ctor, "ioarray", "IOArray");
+	overload->register_type<IOArray>(ctor, "ioarray", "IOArray");
 
 	overload->addOverloadConstructor("ioarray", "IOArray", {}, IOArray::New);
 

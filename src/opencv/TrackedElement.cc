@@ -20,7 +20,7 @@ void TrackedElement::Init(Handle<Object> target, std::shared_ptr<overload_resolu
 	itpl->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("TrackedElement").ToLocalChecked());
 
-	overload->register_type(ctor, "tracked_element", "TrackedElement");
+	overload->register_type<TrackedElement>(ctor, "tracked_element", "TrackedElement");
 
 	overload->addOverloadConstructor("tracked_element", "TrackedElement", {}, TrackedElement::New);
 

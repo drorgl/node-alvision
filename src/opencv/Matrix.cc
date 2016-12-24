@@ -34,7 +34,7 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	ctor->SetClassName(Nan::New("Mat").ToLocalChecked());
 	ctor->Inherit(Nan::New(IOArray::constructor));
 
-	overload->register_type(ctor, "matrix", "Mat");
+	overload->register_type<Matrix>(ctor, "matrix", "Mat");
 
 	overload->addOverloadConstructor("matrix", "Mat", {}, Matrix::New);
 	overload->addOverloadConstructor("matrix", "Mat", {make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int")}, Matrix::New_rows_cols_type);
@@ -244,7 +244,7 @@ POLY_METHOD(Matrix::New_size_type) {
 }
 POLY_METHOD(Matrix::New_rows_cols_type_scalar) {
 	Matrix *mat = new Matrix();
-	auto s = info.at<Scalar<cv::Scalar>*>(3)->_scalar;
+	auto s = *info.at<Scalar<cv::Scalar>*>(3)->_scalar;
 
 	mat->_mat = std::make_shared<cv::Mat>(info.at<int>(0), info.at<int>(1),info.at<int>(2), s);
 	mat->Wrap(info.Holder());
@@ -253,8 +253,8 @@ POLY_METHOD(Matrix::New_rows_cols_type_scalar) {
 POLY_METHOD(Matrix::New_size_type_scalar) {
 	Matrix *mat = new Matrix();
 	
-	auto size = info.at<Size<cv::Size>*>(0)->_size;
-	auto s = info.at<Scalar<cv::Scalar>*>(2)->_scalar;
+	auto size = *info.at<Size<cv::Size>*>(0)->_size;
+	auto s = *info.at<Scalar<cv::Scalar>*>(2)->_scalar;
 
 	mat->_mat = std::make_shared<cv::Mat>(size, info.at<int>(1), s);
 	mat->Wrap(info.Holder());
@@ -264,7 +264,7 @@ POLY_METHOD(Matrix::New_ndims_sizes_type) {}
 POLY_METHOD(Matrix::New_ndims_sizes_type_scalar) {}
 POLY_METHOD(Matrix::New_mat) {
 	Matrix *mat = new Matrix();
-	auto fromMat = info.at<Matrix*>(0)->_mat;
+	auto fromMat = *info.at<Matrix*>(0)->_mat;
 
 	mat->_mat = std::make_shared<cv::Mat>(fromMat);
 	mat->Wrap(info.Holder());
@@ -349,7 +349,7 @@ POLY_METHOD(Matrix::eye_size_type) {
 }
 POLY_METHOD(Matrix::from_mat) {}
 POLY_METHOD(Matrix::from_matexpr) {
-	auto matexpr = info.at<MatExpr*>(0)->_matExpr;
+	auto matexpr = *info.at<MatExpr*>(0)->_matExpr;
 
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(matexpr);
@@ -360,8 +360,7 @@ POLY_METHOD(Matrix::from_matexpr) {
 }
 POLY_METHOD(Matrix::getUMat) {}
 POLY_METHOD(Matrix::row) {
-
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = info.This<Matrix*>()->_mat;
 	auto rowmat = mat->row(info.at<int>(0));
 
 	auto retval = new Matrix();
@@ -372,8 +371,8 @@ POLY_METHOD(Matrix::row) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::col) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto colmat = mat->col(info[0]->IntegerValue());
+	auto mat = info.This<Matrix*>()->_mat;
+	auto colmat = mat->col(info.at<int>(0));
 
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(colmat);
@@ -384,8 +383,8 @@ POLY_METHOD(Matrix::col) {
 
 }
 POLY_METHOD(Matrix::rowRange_startRow) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto rowrange = mat->rowRange(info[0]->IntegerValue(), info[1]->IntegerValue());
+	auto mat = info.This<Matrix*>()->_mat;
+	auto rowrange = mat->rowRange(info.at<int>(0),info.at<int>(1));
 
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(rowrange);
@@ -395,9 +394,9 @@ POLY_METHOD(Matrix::rowRange_startRow) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::rowRange_range) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto range = *Nan::ObjectWrap::Unwrap<Range>(info[0].As<v8::Object>())->_range;
-	auto rowrange = mat->rowRange(range);
+	auto mat = info.This<Matrix*>()->_mat;
+	auto range = info.at<Range*>(0);
+	auto rowrange = mat->rowRange(*range->_range);
 
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(rowrange);
@@ -407,8 +406,8 @@ POLY_METHOD(Matrix::rowRange_range) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::colRange_startcol) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto colrange = mat->colRange(info[0]->IntegerValue(), info[1]->IntegerValue());
+	auto mat = info.This<Matrix*>()->_mat;
+	auto colrange = mat->colRange(info.at<int>(0),info.at<int>(1));
 
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(colrange);
@@ -418,9 +417,9 @@ POLY_METHOD(Matrix::colRange_startcol) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::colRange_range) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto range = *Nan::ObjectWrap::Unwrap<Range>(info[0].As<v8::Object>())->_range;
-	auto colrange = mat->colRange(range);
+	auto mat = info.This<Matrix*>()->_mat;
+	auto range = info.at<Range*>(0);
+	auto colrange = mat->colRange(*range->_range);
 
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(colrange);
@@ -430,7 +429,7 @@ POLY_METHOD(Matrix::colRange_range) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::clone) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = info.This<Matrix*>()->_mat;
 
 	auto retval = new Matrix();
 	retval->_mat = std::make_shared<cv::Mat>(mat->clone());
@@ -440,57 +439,55 @@ POLY_METHOD(Matrix::clone) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::copyTo_outputArray) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto outputArray = Nan::ObjectWrap::Unwrap<IOArray>(info[0].As<v8::Object>())->GetOutputArray();
+	auto mat = info.This<Matrix*>()->_mat;
+	auto outputArray = info.at<IOArray*>(0)->GetOutputArray();
 	mat->copyTo(outputArray);
 
 	info.GetReturnValue().SetUndefined();
 }
 POLY_METHOD(Matrix::copyTo_masked) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto outputArray = Nan::ObjectWrap::Unwrap<IOArray>(info[0].As<v8::Object>())->GetOutputArray();
-	auto maskArray = Nan::ObjectWrap::Unwrap<IOArray>(info[1].As<v8::Object>())->GetInputArray();
+	auto mat = info.This<Matrix*>()->_mat;
+	auto outputArray = info.at<IOArray*>(0)->GetOutputArray();
+	auto maskArray = info.at<IOArray*>(1)->GetInputArray();
 	mat->copyTo(outputArray,maskArray);
 
 	info.GetReturnValue().SetUndefined();
 }
 POLY_METHOD(Matrix::convertTo) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto outputArray = Nan::ObjectWrap::Unwrap<IOArray>(info[0].As<v8::Object>())->GetOutputArray();
-	mat->convertTo(outputArray, info[1]->IntegerValue(), info[2]->NumberValue(), info[3]->NumberValue());
+	auto mat = info.This<Matrix*>()->_mat;
+	auto outputArray = info.at<IOArray*>(0)->GetOutputArray();
+	mat->convertTo(outputArray, info.at<double>(1), info.at<double>(2),info.at<double>(3) );
 
 	info.GetReturnValue().SetUndefined();
 }
 POLY_METHOD(Matrix::setTo_inputArray) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto inputArray = Nan::ObjectWrap::Unwrap<IOArray>(info[0].As<v8::Object>())->GetInputArray();
-	auto maskArray = Nan::ObjectWrap::Unwrap<IOArray>(info[1].As<v8::Object>())->GetInputArray();
-	mat->setTo(inputArray, maskArray);
+	auto mat = info.This<Matrix*>()->_mat;
+	mat->setTo(info.at<IOArray*>(0)->GetInputArray(), info.at<IOArray*>(1)->GetInputArray());
 }
 POLY_METHOD(Matrix::setTo_scalar) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto scalar = *Nan::ObjectWrap::Unwrap<Scalar<cv::Scalar>>(info[0].As<v8::Object>())->_scalar;
-	auto maskArray = Nan::ObjectWrap::Unwrap<IOArray>(info[1].As<v8::Object>())->GetInputArray();
-	mat->setTo(scalar, maskArray);
+	auto mat = info.This<Matrix*>()->_mat;
+	auto scalar = *info.at<Scalar<cv::Scalar>*>(0)->_scalar;
+	auto maskArray = info.at<IOArray*>(1)->GetInputArray();
+	mat->setTo( scalar, maskArray);
 
 	info.GetReturnValue().SetUndefined();
 }
 POLY_METHOD(Matrix::setTo_int) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto scalar = info[0]->IntegerValue();
-	auto maskArray = Nan::ObjectWrap::Unwrap<IOArray>(info[1].As<v8::Object>())->GetInputArray();
+	auto mat = info.This<Matrix*>()->_mat;
+	auto scalar = info.at<int>(0);
+	auto maskArray = info.at<IOArray*>(1)->GetInputArray();
 	mat->setTo(scalar, maskArray);
 
 	info.GetReturnValue().SetUndefined();
 }
 POLY_METHOD(Matrix::reshape) {
-	auto* mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This());
+	auto mat = info.This<Matrix*>();
 
-	mat->_mat->reshape(info[0]->IntegerValue(), info[1]->IntegerValue());
+	mat->_mat->reshape(info.at<int>(0),info.at<int>(1));
 }
 
 POLY_METHOD(Matrix::t) {
-	auto* mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This());
+	auto  mat = info.This<Matrix*>();
 
 	auto retval = new MatExpr();
 	retval->_matExpr = std::make_shared<cv::MatExpr>(mat->_mat->t());
@@ -500,20 +497,20 @@ POLY_METHOD(Matrix::t) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::inv) {
-	auto* mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This());
+	auto mat = info.This<Matrix*>();
 
 	auto retval = new MatExpr();
-	retval->_matExpr = std::make_shared<cv::MatExpr>(mat->_mat->inv(info[0]->IntegerValue()));
+	retval->_matExpr = std::make_shared<cv::MatExpr>(mat->_mat->inv(info.at<int>(0)));
 
 	auto wrapped = retval->Wrap();
 
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::mul) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto inputArray = Nan::ObjectWrap::Unwrap<IOArray>(info[0].As<v8::Object>())->GetInputArray();
+	auto mat = info.This<Matrix*>()->_mat;
+	auto inputArray = info.at<IOArray*>(0)->GetInputArray();
 
-	auto retval = mat->mul(inputArray, info[1]->NumberValue());
+	auto retval = mat->mul(inputArray, info.at<double>(1));
 
 	auto matexpr = new MatExpr();
 	matexpr->_matExpr = std::make_shared<cv::MatExpr>(retval);
@@ -522,8 +519,8 @@ POLY_METHOD(Matrix::mul) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::cross) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto inputArray = Nan::ObjectWrap::Unwrap<IOArray>(info[0].As<v8::Object>())->GetInputArray();
+	auto mat = info.This<Matrix*>()->_mat;
+	auto inputArray = info.at<IOArray*>(0)->GetInputArray();
 
 	auto crossresult = mat->cross(inputArray);
 
@@ -534,14 +531,14 @@ POLY_METHOD(Matrix::cross) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::dot) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto inputArray = Nan::ObjectWrap::Unwrap<IOArray>(info[0].As<v8::Object>())->GetInputArray();
+	auto mat = info.This<Matrix*>()->_mat;
+	auto inputArray = info.at<IOArray*>(0)->GetInputArray();
 
 	auto retval = mat->dot(inputArray);
 	info.GetReturnValue().Set(retval);
 }
 POLY_METHOD(Matrix::create_rows_cols_type) {
-	auto* mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This());
+	auto mat = info.This<Matrix*>();
 	
 	mat->_mat->create(info.at<int>(0), info.at<int>(1), info.at<int>(2));
 
@@ -550,109 +547,105 @@ POLY_METHOD(Matrix::create_rows_cols_type) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::create_size) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto size = *Nan::ObjectWrap::Unwrap<Size<cv::Size>>(info[0].As<v8::Object>())->_size;
+	auto mat = info.This<Matrix*>()->_mat;
+	auto size = *info.at<Size<cv::Size>*>(0)->_size;
 
-	mat->create(size, info[1]->IntegerValue());
+	mat->create(size, info.at<int>(1));
 }
 POLY_METHOD(Matrix::create_matsize) {
 }
 POLY_METHOD(Matrix::create_ndims_size) {}
 POLY_METHOD(Matrix::create_ndims_matsize) {}
 POLY_METHOD(Matrix::resize) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	auto scalar = *Nan::ObjectWrap::Unwrap<Scalar<cv::Scalar>>(info[1].As<v8::Object>())->_scalar;
+	auto mat = info.This<Matrix*>()->_mat;
+	auto scalar = *info.at<Scalar<cv::Scalar>*>(1)->_scalar;
 
-	mat->resize(info[0]->IntegerValue(), scalar);
+	mat->resize(info.at<int>(0), scalar);
 }
 POLY_METHOD(Matrix::roi_rect) {
-	//auto mat = *Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	//auto roirect = *Nan::ObjectWrap::Unwrap<Rect<cv::Rect>>(info[0].As<v8::Object>())->_rect;
-	//
-	//auto roimat = mat(roirect);
-	//
-	//auto retval = new Matrix();
-	//retval->_mat = std::make_shared<cv::Mat>(retval);
+	auto mat = *info.This<Matrix*>()->_mat;
+	auto roirect = * info.at<Rect<cv::Rect>*>(0)->_rect;
+	
+	auto roimat = mat(roirect);
+	
+	auto retval = new Matrix();
+	retval->_mat = std::make_shared<cv::Mat>(roimat);
 	//auto wrapped = retval->Wrap();
-	//
-	//info.GetReturnValue().Set(wrapped);
+	
+	info.SetReturnValue(retval);
 }
 POLY_METHOD(Matrix::roi_ranges) {
 
 }
 POLY_METHOD(Matrix::isContinuous) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	info.GetReturnValue().Set(mat->isContinuous());
+	auto mat = info.This<Matrix*>()->_mat;
+	info.SetReturnValue(mat->isContinuous());
 }
 POLY_METHOD(Matrix::elemSize) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	info.GetReturnValue().Set(safe_cast<int>(mat->elemSize()));
+	auto mat = info.This<Matrix*>()->_mat;
+	info.SetReturnValue(safe_cast<int>(mat->elemSize()));
 }
 POLY_METHOD(Matrix::elemSize1) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	info.GetReturnValue().Set(safe_cast<int>(mat->elemSize1()));
+	auto mat = info.This<Matrix*>()->_mat;
+	info.SetReturnValue(safe_cast<int>(mat->elemSize1()));
 }
 POLY_METHOD(Matrix::type) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	info.GetReturnValue().Set(mat->type());
+	auto mat = info.This<Matrix*>()->_mat;
+	info.SetReturnValue(mat->type());
 }
 POLY_METHOD(Matrix::depth) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	info.GetReturnValue().Set(mat->depth());
+	auto mat = info.This<Matrix*>()->_mat;
+	info.SetReturnValue(mat->depth());
 }
 POLY_METHOD(Matrix::channels) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = info.This<Matrix*>()->_mat;
 	info.GetReturnValue().Set(mat->channels());
 }
 POLY_METHOD(Matrix::empty) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	info.GetReturnValue().Set(mat->empty());
+	auto mat = info.This<Matrix*>()->_mat;
+	info.SetReturnValue(mat->empty());
 }
 POLY_METHOD(Matrix::total) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
-	info.GetReturnValue().Set(safe_cast<int>(mat->total()));
+	auto mat = info.This<Matrix*>()->_mat;
+	info.SetReturnValue(safe_cast<int>(mat->total()));
 }
 POLY_METHOD(Matrix::ptr) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = info.This<Matrix*>()->_mat;
 
 	//ptr<T>(T: string, i0?: _st.int /* = 0*/): TrackedPtr<T>;
 	auto tptr = new TrackedPtr();
 	tptr->_from = mat;
-	tptr->_Ttype = *Nan::Utf8String(info[0]);
-	tptr->_i0 = safe_cast<int>(info[1]->IntegerValue());
+	tptr->_Ttype = info.at<std::string>(0);
+	tptr->_i0 = safe_cast<int>(info.at<int>(1));
 
-	auto retval = tptr->Wrap();
-
-	info.GetReturnValue().Set(retval);
+	info.SetReturnValue(tptr);
 }
 POLY_METHOD(Matrix::at) {
 	//at<T>(T: string, i0 : _st.int, i1 ? : _st.int, i2 ? : _st.int) : TrackedElement<T>;
 
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = info.This<Matrix*>()->_mat;
 
 	auto tat = new TrackedElement();
 	tat->_from = mat;
-	tat->_Ttype = *Nan::Utf8String(info[0]);
-	tat->_i0 = safe_cast<int>(info[1]->IntegerValue());
-	tat->_i1 = safe_cast<int>(info[2]->IntegerValue());
-	tat->_i2 = safe_cast<int>(info[3]->IntegerValue());
+	tat->_Ttype = info.at<std::string>(0);
+	tat->_i0 = safe_cast<int>(info.at<int>(1));
+	tat->_i1 = safe_cast<int>(info.at<int>(2));
+	tat->_i2 = safe_cast<int>(info.at<int>(3));
 
-	auto retval = tat->Wrap();
-
-	info.GetReturnValue().Set(retval);
+	info.SetReturnValue(tat);
 }
 
 NAN_PROPERTY_GETTER(Matrix::dims) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = or ::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
 	info.GetReturnValue().Set(mat->dims);
 }
 
 POLY_METHOD(Matrix::rows) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = info.This<Matrix*>()->_mat;
 	info.GetReturnValue().Set(mat->rows);
 }
 POLY_METHOD(Matrix::cols) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = info.This<Matrix*>()->_mat;
 	info.GetReturnValue().Set(mat->cols);
 }
 
@@ -662,7 +655,7 @@ static void FreeMatRef(char* data, void* hint) {
 }
 
 POLY_METHOD(Matrix::data) {
-	auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = info.This<Matrix*>()->_mat;
 	mat->addref();
 	int size = mat->total() * mat->elemSize();
 	auto buf = Nan::NewBuffer((char*)mat->data, size, FreeMatRef, (void*)&*mat);
@@ -670,12 +663,12 @@ POLY_METHOD(Matrix::data) {
 	info.GetReturnValue().Set(buf.ToLocalChecked());
 }
 POLY_METHOD(Matrix::size) {
-	//auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	//auto mat = info.This<Matrix*>()->_mat;
 	//mat->size
 }
 
 NAN_PROPERTY_GETTER(Matrix::step) {
-	//auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	//auto mat = info.This<Matrix*>()->_mat;
 	//info.GetReturnValue().Set(mat->step);
 }
 
