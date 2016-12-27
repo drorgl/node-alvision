@@ -13,10 +13,19 @@ FileStorage::Init(Handle<Object> target, std::shared_ptr<overload_resolution> ov
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("FileStorage").ToLocalChecked());
 
+	overload->register_type<FileStorage>(ctor, "filestorage", "FileStorage");
+
 	Nan::SetPrototypeMethod(ctor, "isOpened", isOpened);
 
 	target->Set(Nan::New("FileStorage").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> FileStorage::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(FileStorage::New) {
 	

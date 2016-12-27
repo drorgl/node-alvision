@@ -13,9 +13,17 @@ KalmanFilter::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("KalmanFilter").ToLocalChecked());
 
+	overload->register_type<KalmanFilter>(ctor, "kalmanfilter", "KalmanFilter");
 
 	target->Set(Nan::New("KalmanFilter").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> KalmanFilter::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(KalmanFilter::New) {
 	

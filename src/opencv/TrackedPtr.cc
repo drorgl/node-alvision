@@ -10,6 +10,11 @@ namespace trackedptr_general_callback {
 
 Nan::Persistent<FunctionTemplate> TrackedPtr::constructor;
 
+v8::Local<v8::Function> TrackedPtr::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
+
 void TrackedPtr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	trackedptr_general_callback::overload = overload;
 
@@ -22,9 +27,13 @@ void TrackedPtr::Init(Handle<Object> target, std::shared_ptr<overload_resolution
 
 	overload->register_type<TrackedPtr>(ctor, "trackedptr", "TrackedPtr");
 
+
+
 	overload->addOverloadConstructor("trackedptr", "TrackedPtr", {}, TrackedPtr::New);
 
 	target->Set(Nan::New("TrackedPtr").ToLocalChecked(), ctor->GetFunction());
+
+	
 }
 
 POLY_METHOD(TrackedPtr::New) {

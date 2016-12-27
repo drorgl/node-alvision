@@ -14,10 +14,19 @@ SparseMat::Init(Handle<Object> target, std::shared_ptr<overload_resolution> over
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("SparseMat").ToLocalChecked());
 
+	overload->register_type<SparseMat>(ctor, "sparsemat", "SparseMat");
+
 	
 
 	target->Set(Nan::New("SparseMat").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> SparseMat::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(SparseMat::New) {
 	

@@ -13,6 +13,8 @@ RNG_MT19937::Init(Handle<Object> target, std::shared_ptr<overload_resolution> ov
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("RNG_MT19937").ToLocalChecked());
 
+	overload->register_type<RNG_MT19937>(ctor, "rng_mt19937", "RNG_MT19937");
+
 	// Prototype
 	Nan::SetPrototypeMethod(ctor, "fill", fill);
 	Nan::SetPrototypeMethod(ctor, "int", genInt);
@@ -21,7 +23,14 @@ RNG_MT19937::Init(Handle<Object> target, std::shared_ptr<overload_resolution> ov
 	
 
 	target->Set(Nan::New("RNG_MT19937").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> RNG_MT19937::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(RNG_MT19937::New) {
 	

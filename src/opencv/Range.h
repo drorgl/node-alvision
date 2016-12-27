@@ -22,6 +22,10 @@ public:
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
+	virtual v8::Local<v8::Function> get_constructor() {
+		return Nan::New(constructor)->GetFunction();
+	}
+
 	static NAN_METHOD(New) {
 		if (info.This()->InternalFieldCount() == 0)
 			Nan::ThrowTypeError("Cannot instantiate without new");

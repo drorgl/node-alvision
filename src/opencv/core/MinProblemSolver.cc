@@ -12,10 +12,18 @@ MinProblemSolver::Init(Handle<Object> target, std::shared_ptr<overload_resolutio
 	constructor.Reset(ctor);
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("MinProblemSolver").ToLocalChecked());
+	overload->register_type<MinProblemSolver>(ctor, "minproblemsolver", "MinProblemSolver");
 
 
 	target->Set(Nan::New("MinProblemSolver").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> MinProblemSolver::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(MinProblemSolver::New) {
 	

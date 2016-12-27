@@ -12,13 +12,22 @@ public:
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
+		overload->register_type<Affine3<T>>(ctor, "affine3", "name");
+
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
+
+		
 	}
 
 	std::shared_ptr<T> _affine3;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
+
+	virtual v8::Local<v8::Function> get_constructor() {
+		return Nan::New(constructor)->GetFunction();
+	}
+
 
 	static NAN_METHOD(New) {
 		

@@ -14,6 +14,8 @@ MatND::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("MatND").ToLocalChecked());
 
+	overload->register_type<MatND>(ctor, "matnd", "MatND");
+
 	// Prototype
 	
 	/*Nan::SetMethod(ctor, "zeros", zeros);
@@ -32,7 +34,13 @@ MatND::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload
 	Nan::SetPrototypeMethod(ctor, "create", create);*/
 
 	target->Set(Nan::New("MatND").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> MatND::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
 
 NAN_METHOD(MatND::New) {
 	

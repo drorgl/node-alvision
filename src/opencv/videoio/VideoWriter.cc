@@ -13,6 +13,8 @@ VideoWriter::Init(Handle<Object> target, std::shared_ptr<overload_resolution> ov
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("VideoWriter").ToLocalChecked());
 
+	overload->register_type<VideoWriter>(ctor, "videowriter", "VideoWriter");
+
 	// Prototype
 	//Nan::SetPrototypeMethod(ctor, "fill", fill);
 	//Nan::SetPrototypeMethod(ctor, "int", genInt);
@@ -20,7 +22,14 @@ VideoWriter::Init(Handle<Object> target, std::shared_ptr<overload_resolution> ov
 	
 
 	target->Set(Nan::New("VideoWriter").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> VideoWriter::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(VideoWriter::New) {
 	

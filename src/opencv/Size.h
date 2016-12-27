@@ -12,16 +12,25 @@ public:
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
+		overload->register_type<Size<T>>(ctor, "size", name);
+
 		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "width").ToLocalChecked(), Size::width);
 		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "height").ToLocalChecked(), Size::height);
 		
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
+
+		
 	}
 
 	std::shared_ptr<T> _size;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
+
+	virtual v8::Local<v8::Function> get_constructor() {
+		return Nan::New(constructor)->GetFunction();
+	}
+
 
 	static NAN_METHOD(New) {
 		if (info.This()->InternalFieldCount() == 0)

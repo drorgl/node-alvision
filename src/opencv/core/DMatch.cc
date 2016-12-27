@@ -13,9 +13,19 @@ DMatch::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("DMatch").ToLocalChecked());
 
+	overload->register_type<DMatch>(ctor, "dmatch", "DMatch");
+
 
 	target->Set(Nan::New("DMatch").ToLocalChecked(), ctor->GetFunction());
+
+	
+
 };
+
+v8::Local<v8::Function> DMatch::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(DMatch::New) {
 	

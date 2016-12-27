@@ -15,11 +15,15 @@ DeviceManager::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("DeviceManager").ToLocalChecked());
 
+	overload->register_type<DeviceManager>(ctor, "devicemanager", "DeviceManager");
+
 
 	Nan::SetMethod(ctor, "instance", instance);
 	// Prototype
 
 	target->Set(Nan::New("DeviceManager").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
 
 

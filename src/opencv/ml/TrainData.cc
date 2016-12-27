@@ -18,6 +18,11 @@ TrainData::Init(Handle<Object> target, std::shared_ptr<overload_resolution> over
 	target->Set(Nan::New("TrainData").ToLocalChecked(), ctor->GetFunction());
 };
 
+v8::Local<v8::Function> TrainData::get_constructor()  {
+	return Nan::New(constructor)->GetFunction();
+}
+
+
 NAN_METHOD(TrainData::New) {
 	
 	if (info.This()->InternalFieldCount() == 0)

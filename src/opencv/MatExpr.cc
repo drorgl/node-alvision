@@ -300,8 +300,13 @@ MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 
 	target->Set(Nan::New("MatExpr").ToLocalChecked(), ctor->GetFunction());
+
+	
 }
 
+v8::Local<v8::Function> MatExpr::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
 
 
 //constructors

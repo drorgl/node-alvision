@@ -12,10 +12,18 @@ DownhillSolver::Init(Handle<Object> target, std::shared_ptr<overload_resolution>
 	constructor.Reset(ctor);
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("DownhillSolver").ToLocalChecked());
+	overload->register_type<DownhillSolver>(ctor, "downhillsolver", "DownhillSolver");
+
 
 
 	target->Set(Nan::New("DownhillSolver").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> DownhillSolver::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
 
 NAN_METHOD(DownhillSolver::New) {
 	

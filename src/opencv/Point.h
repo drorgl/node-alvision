@@ -12,13 +12,22 @@ public:
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
+		overload->register_type<Point>(ctor, "", "Point");
+
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
+
+		
 	}
 
 	std::shared_ptr<T> _Point;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
+
+	virtual v8::Local<v8::Function> get_constructor() {
+		return Nan::New(constructor)->GetFunction();
+	}
+
 
 	static NAN_METHOD(New) {
 		if (info.This()->InternalFieldCount() == 0)

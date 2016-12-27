@@ -13,9 +13,18 @@ FileNode::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("FileNode").ToLocalChecked());
 
+	overload->register_type<FileNode>(ctor, "filenode", "FileNode");
+
 
 	target->Set(Nan::New("FileNode").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> FileNode::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(FileNode::New) {
 	

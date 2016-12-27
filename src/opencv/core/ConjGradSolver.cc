@@ -13,9 +13,18 @@ ConjGradSolver::Init(Handle<Object> target, std::shared_ptr<overload_resolution>
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("ConjGradSolver").ToLocalChecked());
 
+	overload->register_type<ConjGradSolver>(ctor, "conjgradsolver", "ConjGradSolver");
 
 	target->Set(Nan::New("ConjGradSolver").ToLocalChecked(), ctor->GetFunction());
+
+	
+
 };
+
+v8::Local<v8::Function> ConjGradSolver::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(ConjGradSolver::New) {
 	

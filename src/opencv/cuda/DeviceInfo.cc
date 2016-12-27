@@ -15,9 +15,13 @@ DeviceInfo::Init(Handle<Object> target, std::shared_ptr<overload_resolution> ove
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("DeviceInfo").ToLocalChecked());
 
+	overload->register_type<DeviceInfo>(ctor, "deviceinfo", "DeviceInfo");
+
 	// Prototype
 
 	target->Set(Nan::New("DeviceInfo").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
 
 

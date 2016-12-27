@@ -13,14 +13,14 @@ public:
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
-	v8::Local<v8::Object> WrapThis();
+	virtual v8::Local<v8::Function> get_constructor(); 
 
-	virtual cv::InputArray& GetInputArray();
-	virtual cv::InputArrayOfArrays& GetInputArrayOfArrays();
-	virtual cv::OutputArray& GetOutputArray();
-	virtual cv::OutputArrayOfArrays& GetOutputArrayOfArrays();
-	virtual cv::InputOutputArray& GetInputOutputArray();
-	virtual cv::InputOutputArrayOfArrays& GetInputOutputArrayOfArrays();
+	virtual cv::InputArray GetInputArray();
+	virtual cv::InputArrayOfArrays GetInputArrayOfArrays();
+	virtual cv::OutputArray GetOutputArray();
+	virtual cv::OutputArrayOfArrays GetOutputArrayOfArrays();
+	virtual cv::InputOutputArray GetInputOutputArray();
+	virtual cv::InputOutputArrayOfArrays GetInputOutputArrayOfArrays();
 
 	//export interface MatStatic {
 		//public:
@@ -212,13 +212,65 @@ public:
 		*/
 		//template < typename _Tp, int n> explicit Mat(const Vec<_Tp, n>& vec, bool copyData= true);
 		//new <T>(vec: _matx.Vec<T>, copyData ? : boolean /* = true*/) : Mat;
-		static POLY_METHOD(New_vec_copyData);
+		static POLY_METHOD(New_vec_Vec2b_copyData);
+		static POLY_METHOD(New_vec_Vec3b_copyData);
+		static POLY_METHOD(New_vec_Vec4b_copyData);
+		static POLY_METHOD(New_vec_Vec2s_copyData);
+		static POLY_METHOD(New_vec_Vec3s_copyData);
+		static POLY_METHOD(New_vec_Vec4s_copyData);
+		static POLY_METHOD(New_vec_Vec2w_copyData);
+		static POLY_METHOD(New_vec_Vec3w_copyData);
+		static POLY_METHOD(New_vec_Vec4w_copyData);
+		static POLY_METHOD(New_vec_Vec2i_copyData);
+		static POLY_METHOD(New_vec_Vec3i_copyData);
+		static POLY_METHOD(New_vec_Vec4i_copyData);
+		static POLY_METHOD(New_vec_Vec6i_copyData);
+		static POLY_METHOD(New_vec_Vec8i_copyData);
+		static POLY_METHOD(New_vec_Vec2f_copyData);
+		static POLY_METHOD(New_vec_Vec3f_copyData);
+		static POLY_METHOD(New_vec_Vec4f_copyData);
+		static POLY_METHOD(New_vec_Vec6f_copyData);
+		static POLY_METHOD(New_vec_Vec2d_copyData);
+		static POLY_METHOD(New_vec_Vec3d_copyData);
+		static POLY_METHOD(New_vec_Vec4d_copyData);
+		static POLY_METHOD(New_vec_Vec6d_copyData);
 
 		/** @overload
 		*/
 		//template < typename _Tp, int m, int n> explicit Mat(const Matx<_Tp, m, n>& mtx, bool copyData= true);
 		//new <T>(mtx: _matx.Matx<T>, copyData ? : boolean /* = true*/) : Mat;
-		static POLY_METHOD(New_matx_copyData);
+		static POLY_METHOD(New_matx_Matx12f_copyData);
+		static POLY_METHOD(New_matx_Matx12d_copyData);
+		static POLY_METHOD(New_matx_Matx13f_copyData);
+		static POLY_METHOD(New_matx_Matx13d_copyData);
+		static POLY_METHOD(New_matx_Matx14f_copyData);
+		static POLY_METHOD(New_matx_Matx14d_copyData);
+		static POLY_METHOD(New_matx_Matx16f_copyData);
+		static POLY_METHOD(New_matx_Matx16d_copyData);
+		static POLY_METHOD(New_matx_Matx21f_copyData);
+		static POLY_METHOD(New_matx_Matx21d_copyData);
+		static POLY_METHOD(New_matx_Matx31f_copyData);
+		static POLY_METHOD(New_matx_Matx31d_copyData);
+		static POLY_METHOD(New_matx_Matx41f_copyData);
+		static POLY_METHOD(New_matx_Matx41d_copyData);
+		static POLY_METHOD(New_matx_Matx61f_copyData);
+		static POLY_METHOD(New_matx_Matx61d_copyData);
+		static POLY_METHOD(New_matx_Matx22f_copyData);
+		static POLY_METHOD(New_matx_Matx22d_copyData);
+		static POLY_METHOD(New_matx_Matx23f_copyData);
+		static POLY_METHOD(New_matx_Matx23d_copyData);
+		static POLY_METHOD(New_matx_Matx32f_copyData);
+		static POLY_METHOD(New_matx_Matx32d_copyData);
+		static POLY_METHOD(New_matx_Matx33f_copyData);
+		static POLY_METHOD(New_matx_Matx33d_copyData);
+		static POLY_METHOD(New_matx_Matx34f_copyData);
+		static POLY_METHOD(New_matx_Matx34d_copyData);
+		static POLY_METHOD(New_matx_Matx43f_copyData);
+		static POLY_METHOD(New_matx_Matx43d_copyData);
+		static POLY_METHOD(New_matx_Matx44f_copyData);
+		static POLY_METHOD(New_matx_Matx44d_copyData);
+		static POLY_METHOD(New_matx_Matx66f_copyData);
+		static POLY_METHOD(New_matx_Matx66d_copyData);
 
 		/** @overload
 		*/

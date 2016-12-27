@@ -11,6 +11,9 @@ public:
 	std::shared_ptr<cv::DownhillSolver> _downhillSolver;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
+
+	virtual v8::Local<v8::Function> get_constructor();
+
 	static NAN_METHOD(New);
 
 

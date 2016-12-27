@@ -10,6 +10,8 @@ public:
 
 	std::shared_ptr<cv::MatND> _mat;
 
+	virtual v8::Local<v8::Function> get_constructor(); 
+
 	static Nan::Persistent<FunctionTemplate> constructor;
 	static NAN_METHOD(New);
 	/*Matrix();

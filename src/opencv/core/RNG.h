@@ -11,6 +11,10 @@ public:
 	std::shared_ptr<cv::RNG> _rng;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
+
+	virtual v8::Local<v8::Function> get_constructor();
+
+
 	static NAN_METHOD(New);
 	static NAN_METHOD(fill);
 	static NAN_METHOD(genInt);

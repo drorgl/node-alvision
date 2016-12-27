@@ -13,9 +13,18 @@ VideoCapture::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("VideoCapture").ToLocalChecked());
 
+	overload->register_type<VideoCapture>(ctor, "videocapture", "VideoCapture");
+
 
 	target->Set(Nan::New("VideoCapture").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> VideoCapture::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(VideoCapture::New) {
 	

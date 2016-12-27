@@ -13,6 +13,8 @@ RNG::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("RNG").ToLocalChecked());
 
+	overload->register_type<RNG>(ctor, "rng", "RNG");
+
 	// Prototype
 	Nan::SetPrototypeMethod(ctor, "fill", fill);
 	Nan::SetPrototypeMethod(ctor, "int", genInt);
@@ -21,7 +23,14 @@ RNG::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 	
 
 	target->Set(Nan::New("RNG").ToLocalChecked(), ctor->GetFunction());
+
+	
 };
+
+v8::Local<v8::Function> RNG::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
 
 NAN_METHOD(RNG::New) {
 	

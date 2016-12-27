@@ -10,6 +10,11 @@ namespace trackedelement_general_callback {
 
 Nan::Persistent<FunctionTemplate> TrackedElement::constructor;
 
+ v8::Local<v8::Function> TrackedElement::get_constructor() {
+	return Nan::New(constructor)->GetFunction();
+}
+
+
 void TrackedElement::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	trackedelement_general_callback::overload = overload;
 
@@ -20,11 +25,14 @@ void TrackedElement::Init(Handle<Object> target, std::shared_ptr<overload_resolu
 	itpl->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("TrackedElement").ToLocalChecked());
 
-	overload->register_type<TrackedElement>(ctor, "tracked_element", "TrackedElement");
+	overload->register_type<TrackedElement>(ctor, "trackedelement", "TrackedElement");
+
 
 	overload->addOverloadConstructor("tracked_element", "TrackedElement", {}, TrackedElement::New);
 
 	target->Set(Nan::New("TrackedElement").ToLocalChecked(), ctor->GetFunction());
+
+	
 }
 
 POLY_METHOD(TrackedElement::New) {
