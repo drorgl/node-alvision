@@ -4,6 +4,7 @@
 #include "../alvision.h"
 
 #include "cuda/DeviceInfo.h"
+#include "cuda/GpuMat.h"
 
 class Cuda : public or::ObjectWrap {
 public:

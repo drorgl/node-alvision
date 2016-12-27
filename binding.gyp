@@ -94,8 +94,8 @@
 		, "src/opencv/Mat_.cc"
 		, "src/opencv/Mat_.h"
 		
-		, "src/opencv/Point.cc"
 		, "src/opencv/Point.h"
+		, "src/opencv/Point3.h"
 		
 		, "src/opencv/imgcodecs.cc"
 		, "src/opencv/imgcodecs.h"
@@ -159,6 +159,8 @@
 		, "src/opencv/Cuda.h"
 		, "src/opencv/cuda/DeviceInfo.cc"
 		, "src/opencv/cuda/DeviceInfo.h"
+		, "src/opencv/cuda/GpuMat.cc"
+		, "src/opencv/cuda/GpuMat.h"
 		
 		, "src/opencv/flann.cc"
 		, "src/opencv/flann.h"

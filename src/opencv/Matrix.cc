@@ -11,6 +11,8 @@
 #include "TrackedElement.h"
 #include "Vec.h"
 #include "Matx.h"
+#include "Point.h"
+#include "Point3.h"
 
 namespace matrix_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -50,73 +52,78 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int"),make_param("data","Array"),make_param<int>("step","size_t",(int)cv::Mat::AUTO_STEP) }, Matrix::New_rows_cols_type_data_step);
 	//TODO: not sure...
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","MatrixType"),make_param("data","Array"),make_param<int>("step","size_t",(int)cv::Mat::AUTO_STEP) }, Matrix::New_size_type_data_step);
-	//TODO: multiple implementations, all vecs, all matxs etc'
-	//overload->addOverloadConstructor("matrix", "Mat", {make_param("vec","Array"),make_param<bool>("copyData","bool",false)}, Matrix::New_array_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec2b>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2b_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec3b>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3b_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec4b>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4b_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec2s>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2s_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec3s>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3s_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec4s>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4s_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec2w>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2w_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec3w>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3w_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec4w>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4w_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec2i>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2i_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec3i>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3i_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec4i>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4i_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec6i>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec6i_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec8i>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec8i_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec2f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec3f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec4f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec6f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec6f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec2d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec3d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec4d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec<Vec6d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec6d_copyData);
+
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec2b"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2b_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec3b"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3b_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec4b"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4b_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec2s"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2s_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec3s"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3s_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec4s"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4s_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec2w"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2w_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec3w"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3w_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec4w"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4w_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec2i"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec3i"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec4i"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec6i"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec6i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec8i"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec8i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec2f"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec3f"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec4f"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec6f"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec6f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec2d"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec3d"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec4d"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec4d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec6d"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec6d_copyData);
+
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx12f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx12f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx12d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx12d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx13f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx13f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx13d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx13d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx14f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx14f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx14d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx14d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx16f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx16f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx16d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx16d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx21f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx21f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx21d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx21d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx31f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx31f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx31d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx31d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx41f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx41f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx41d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx41d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx61f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx61f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx61d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx61d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx22f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx22f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx22d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx22d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx23f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx23f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx23d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx23d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx32f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx32f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx32d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx32d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx33f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx33f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx33d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx33d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx34f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx34f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx34d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx34d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx43f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx43f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx43d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx43d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx44f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx44f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx44d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx44d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx66f"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx66f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx66d"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx66d_copyData);
 
 
 
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point2i"),make_param<bool>("copyData","bool",false) }, Matrix::New_point_Point2i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point2f"),make_param<bool>("copyData","bool",false) }, Matrix::New_point_Point2f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point2d"),make_param<bool>("copyData","bool",false) }, Matrix::New_point_Point2d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point"  ),make_param<bool>("copyData","bool",false) }, Matrix::New_point_Point_copyData  );
 
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point3i"),make_param<bool>("copyData","bool",false) }, Matrix::New_point3_Point3i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point3f"),make_param<bool>("copyData","bool",false) }, Matrix::New_point3_Point3f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point3d"),make_param<bool>("copyData","bool",false) }, Matrix::New_point3_Point3d_copyData);
 
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx12f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx12f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx12d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx12d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx13f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx13f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx13d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx13d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx14f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx14f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx14d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx14d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx16f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx16f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx16d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx16d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx21f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx21f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx21d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx21d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx31f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx31f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx31d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx31d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx41f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx41f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx41d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx41d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx61f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx61f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx61d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx61d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx22f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx22f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx22d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx22d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx23f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx23f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx23d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx23d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx32f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx32f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx32d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx32d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx33f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx33f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx33d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx33d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx34f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx34f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx34d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx34d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx43f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx43f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx43d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx43d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx44f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx44f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx44d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx44d_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx66f>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx66f_copyData);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param("mtx","Matx<Matx66d>"),make_param<bool>("copyData","bool",false) }, Matrix::New_matx_Matx66d_copyData);
+#ifdef HAVE_CUDA
+	overload->addOverloadConstructor("matrix", "Mat", { make_param("m","cuda::GpuMat")}, Matrix::New_gpuMat);
+#endif
 
-
-
-	//overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point_<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_point_copyData);
-	//overload->addOverloadConstructor("matrix", "Mat", { make_param("pt","Point3_<>"),make_param<bool>("copyData","bool",false) }, Matrix::New_point3_copyData);
-	//overload->addOverloadConstructor("matrix", "Mat", { make_param("m","cuda::GpuMat")}, Matrix::New_gpuMat);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<uint8_t>>>("buf","Buffer") }, Matrix::New_buffer);
 
 	//static
@@ -673,11 +680,62 @@ POLY_METHOD(Matrix::New_matx_Matx66d_copyData){
 
 
 
+POLY_METHOD(Matrix::New_point_Point2i_copyData) {
+	auto *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point<cv::Point2i>*>(0)->_point, info.at<bool>(1));
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+POLY_METHOD(Matrix::New_point_Point2f_copyData){
+	auto *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point<cv::Point2f>*>(0)->_point, info.at<bool>(1));
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+POLY_METHOD(Matrix::New_point_Point2d_copyData){
+	auto *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point<cv::Point2d>*>(0)->_point, info.at<bool>(1));
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+POLY_METHOD(Matrix::New_point_Point_copyData  ){
+	auto *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point<cv::Point>*>(0)->_point, info.at<bool>(1));
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
 
-POLY_METHOD(Matrix::New_point_copyData) {}
-POLY_METHOD(Matrix::New_point3_copyData) {}
-POLY_METHOD(Matrix::New_gpuMat) {}
-POLY_METHOD(Matrix::New_buffer) {}
+POLY_METHOD(Matrix::New_point3_Point3i_copyData){
+	auto *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3<cv::Point3i>*>(0)->_point, info.at<bool>(1));
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+POLY_METHOD(Matrix::New_point3_Point3f_copyData){
+	auto *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3<cv::Point3f>*>(0)->_point, info.at<bool>(1));
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+POLY_METHOD(Matrix::New_point3_Point3d_copyData){
+	auto *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3<cv::Point3d>*>(0)->_point, info.at<bool>(1));
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+#ifdef HAVE_CUDA
+POLY_METHOD(Matrix::New_gpuMat) {
+	auto *mat = new Matrix();
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<GpuMat*>(0)->_gpumat);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+#endif
+
+POLY_METHOD(Matrix::New_buffer) {
+
+}
 POLY_METHOD(Matrix::zeros_rows_cols_type) {
 	auto retval = new MatExpr();
 	

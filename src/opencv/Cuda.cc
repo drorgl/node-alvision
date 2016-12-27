@@ -14,5 +14,6 @@ Cuda::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload)
 
 #ifdef HAVE_CUDA
 	DeviceInfo::Init(cuda);
+	GpuMat::Init(cuda);
 #endif
 };

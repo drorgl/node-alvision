@@ -1,18 +1,18 @@
-#ifndef _ALVISION_POINT_H_
-#define _ALVISION_POINT_H_
+#ifndef _ALVISION_POINT3_H_
+#define _ALVISION_POINT3_H_
 //#include "OpenCV.h"
 #include "../alvision.h"
 
 template <typename T>
-class Point : public or::ObjectWrap {
+class Point3 : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Point::New);
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Point3::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
-		overload->register_type<Point<T>>(ctor, "", name);
+		overload->register_type<Point3<T>>(ctor, "", name);
 
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
@@ -48,6 +48,6 @@ public:
 
 //declare variables
 template <typename T>
-Nan::Persistent<FunctionTemplate> Point<T>::constructor;
+Nan::Persistent<FunctionTemplate> Point3<T>::constructor;
 
 #endif

@@ -38,6 +38,7 @@
 #include "opencv/SparseMat.h"
 
 #include "opencv/Point.h"
+#include "opencv/Point3.h"
 
 #include "opencv/imgcodecs.h"
 #include "opencv/imgproc.h"
@@ -61,7 +62,7 @@
 extern "C"{ 
 void
 init(Handle<Object> target) {
-	//assert(false);
+	assert(false);
 	auto overload = std::make_shared<overload_resolution>();
 
 	overload->add_type_alias("InputArray", "IOArray");
@@ -71,6 +72,7 @@ init(Handle<Object> target) {
 	overload->add_type_alias("InputOutputArray", "IOArray");
 	overload->add_type_alias("InputOutputArrayOfArrays", "Array<InputArray>");
 	overload->add_type_alias("int", "Number");
+	overload->add_type_alias("double", "Number");
 	overload->add_type_alias("size_t", "int");
 	overload->add_type_alias("MatrixType", "int");
 
@@ -140,7 +142,6 @@ init(Handle<Object> target) {
 	Matx<cv::Matx14d>::Init(target,"Matx14d",overload);
 	Matx<cv::Matx16f>::Init(target,"Matx16f",overload);
 	Matx<cv::Matx16d>::Init(target,"Matx16d",overload);
-
 	Matx<cv::Matx21f>::Init(target,"Matx21f",overload);
 	Matx<cv::Matx21d>::Init(target,"Matx21d",overload);
 	Matx<cv::Matx31f>::Init(target,"Matx31f",overload);
@@ -149,22 +150,18 @@ init(Handle<Object> target) {
 	Matx<cv::Matx41d>::Init(target,"Matx41d",overload);
 	Matx<cv::Matx61f>::Init(target,"Matx61f",overload);
 	Matx<cv::Matx61d>::Init(target,"Matx61d",overload);
-
 	Matx<cv::Matx22f>::Init(target,"Matx22f",overload);
 	Matx<cv::Matx22d>::Init(target,"Matx22d",overload);
 	Matx<cv::Matx23f>::Init(target,"Matx23f",overload);
 	Matx<cv::Matx23d>::Init(target,"Matx23d",overload);
 	Matx<cv::Matx32f>::Init(target,"Matx32f",overload);
 	Matx<cv::Matx32d>::Init(target,"Matx32d",overload);
-
 	Matx<cv::Matx33f>::Init(target,"Matx33f",overload);
 	Matx<cv::Matx33d>::Init(target,"Matx33d",overload);
-
 	Matx<cv::Matx34f>::Init(target,"Matx34f",overload);
 	Matx<cv::Matx34d>::Init(target,"Matx34d",overload);
 	Matx<cv::Matx43f>::Init(target,"Matx43f",overload);
 	Matx<cv::Matx43d>::Init(target,"Matx43d",overload);
-
 	Matx<cv::Matx44f>::Init(target,"Matx44f",overload);
 	Matx<cv::Matx44d>::Init(target,"Matx44d",overload);
 	Matx<cv::Matx66f>::Init(target,"Matx66f",overload);
@@ -212,12 +209,17 @@ init(Handle<Object> target) {
 	Point<cv::Point2i>::Init(target, "Point2i",overload);
 	Point<cv::Point2f>::Init(target, "Point2f",overload);
 	Point<cv::Point2d>::Init(target, "Point2d",overload);
-	Point<cv::Point>::Init(target, "Point", overload);
+	Point<cv::Point>::Init(target,   "Point", overload);
+
+	Point3<cv::Point3i>::Init(target, "Point3i", overload);
+	Point3<cv::Point3f>::Init(target, "Point3f", overload);
+	Point3<cv::Point3d>::Init(target, "Point3d", overload);
 
 	
 	Rect<cv::Rect2i>::Init(target, "Rect2i", overload);
 	Rect<cv::Rect2f>::Init(target, "Rect2f", overload);
 	Rect<cv::Rect2d>::Init(target, "Rect2d", overload);
+	
 	Rect<cv::Rect>::Init(target, "Rect", overload);
 
 

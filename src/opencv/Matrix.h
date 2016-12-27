@@ -276,13 +276,20 @@ public:
 		*/
 		//template < typename _Tp> explicit Mat(const Point_<_Tp>& pt, bool copyData= true);
 		//new <T>(pt: _types.Point_<T>, copyData ? : boolean /* = true*/) : Mat;
-		static POLY_METHOD(New_point_copyData);
+		//static POLY_METHOD(New_point_copyData);
+		static POLY_METHOD(New_point_Point2i_copyData);
+		static POLY_METHOD(New_point_Point2f_copyData);
+		static POLY_METHOD(New_point_Point2d_copyData);
+		static POLY_METHOD(New_point_Point_copyData  );
 
 		/** @overload
 		*/
 		//template < typename _Tp> explicit Mat(const Point3_<_Tp>& pt, bool copyData= true);
 		//new <T>(pt: _types.Point3_<T>, copyData ? : boolean /* = true*/) : Mat;
-		static POLY_METHOD(New_point3_copyData);
+		//static POLY_METHOD(New_point3_copyData);
+		static POLY_METHOD(New_point3_Point3i_copyData);
+		static POLY_METHOD(New_point3_Point3f_copyData);
+		static POLY_METHOD(New_point3_Point3d_copyData);
 
 		/** @overload
 		*/
@@ -291,7 +298,9 @@ public:
 		//! download data from GpuMat
 		//explicit Mat(const cuda::GpuMat& m);
 		//new (m: _cuda.cuda.GpuMat) : Mat;
+#ifdef HAVE_CUDA
 		static POLY_METHOD(New_gpuMat);
+#endif
 
 		//new (buf: Buffer) : Mat;
 		static POLY_METHOD(New_buffer);

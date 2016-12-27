@@ -21,7 +21,8 @@
     "windows": "build_windows_alvision.bat",
     "arm": "./build_android_alvision",
     "linux": "build_linux_alvision",
-    "test": "ts-node test/unit.ts"
+    "test": "ts-node test/unit.ts",
+	"test-opencv" : "ts-node test/opencv.ts"
   },
   "keywords": [
     "opencv",
