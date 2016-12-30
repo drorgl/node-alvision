@@ -700,7 +700,8 @@ export interface VecStatic<T> {
 //    {
 //        return Vec<_Tp, cn>(a, alpha, Matx_ScaleOp());
 //}
-    op_Multiplication(a: Vec<T> | _st.float | _st.double | _st.int, b: Vec<T> | _st.float | _st.double | _st.int): Vec<T>;
+    //op_Multiplication(a: Vec<T> | _st.float | _st.double | _st.int, b: Vec<T> | _st.float | _st.double | _st.int): Vec<T>;
+    op_Multiplication(a: Vec<T> | _st.float | _st.double | _st.int, b: _st.float | _st.double | _st.int): Vec<T>;
 //template < typename _Tp, int cn> static inline
 //Vec < _Tp, cn > operator * (int alpha, const Vec<_Tp, cn>& a)
 //    {
@@ -737,7 +738,8 @@ export interface VecStatic<T> {
 //    {
 //        return Vec<_Tp, cn>(a, 1. / alpha, Matx_ScaleOp());
 //}
-    op_Division(a: Vec<T> | _st.float | _st.double | _st.int, b: Vec<T> | _st.float | _st.double | _st.int): Vec<T>;
+    //op_Division(a: Vec<T> | _st.float | _st.double | _st.int, b: Vec<T> | _st.float | _st.double | _st.int): Vec<T>;
+    op_Division(a: Vec<T> | _st.float | _st.double | _st.int, b: _st.float | _st.double | _st.int): Vec<T>;
 
 //template < typename _Tp, int cn> static inline
 //Vec < _Tp, cn > operator / (const Vec<_Tp, cn>& a, float alpha)
@@ -772,7 +774,7 @@ export interface VecStatic<T> {
 //    v1 = v1 * v2;
 //    return v1;
 //}
-    norm(m?: Vec<T>): _st.double;
+    //norm(m?: Vec<T>): _st.double;
 }
 
 //template < typename _Tp, int cn> class Vec : public Matx < _Tp, cn, 1 >

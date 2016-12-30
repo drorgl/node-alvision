@@ -758,7 +758,9 @@ POLY_METHOD(Matrix::zeros_size_type) {
 
 	info.GetReturnValue().Set(wrapped);
 }
-POLY_METHOD(Matrix::zeros_ndims_sz_type) {}
+POLY_METHOD(Matrix::zeros_ndims_sz_type) {
+	throw std::exception("not implemented");
+}
 POLY_METHOD(Matrix::ones_rows_cols_type) {
 	auto retval = new MatExpr();
 
@@ -781,7 +783,9 @@ POLY_METHOD(Matrix::ones_size_type) {
 
 	info.GetReturnValue().Set(wrapped);
 }
-POLY_METHOD(Matrix::ones_ndims_sz_type) {}
+POLY_METHOD(Matrix::ones_ndims_sz_type) {
+	throw std::exception("not implemented");
+}
 POLY_METHOD(Matrix::eye_rows_cols_type) {
 	auto retval = new MatExpr();
 
@@ -804,7 +808,13 @@ POLY_METHOD(Matrix::eye_size_type) {
 
 	info.GetReturnValue().Set(wrapped);
 }
-POLY_METHOD(Matrix::from_mat) {}
+POLY_METHOD(Matrix::from_mat) {
+	auto retval = new Matrix();
+	retval->_mat = std::make_shared<cv::Mat>(*info.at<Matrix*>(0)->_mat);
+	auto wrapped = retval->Wrap();
+
+	info.GetReturnValue().Set(wrapped);
+}
 POLY_METHOD(Matrix::from_matexpr) {
 	auto matexpr = *info.at<MatExpr*>(0)->_matExpr;
 
@@ -815,7 +825,9 @@ POLY_METHOD(Matrix::from_matexpr) {
 
 	info.GetReturnValue().Set(wrapped);
 }
-POLY_METHOD(Matrix::getUMat) {}
+POLY_METHOD(Matrix::getUMat) {
+	throw std::exception("not implemented");
+}
 POLY_METHOD(Matrix::row) {
 	auto mat = info.This<Matrix*>()->_mat;
 	auto rowmat = mat->row(info.at<int>(0));
@@ -1010,9 +1022,14 @@ POLY_METHOD(Matrix::create_size) {
 	mat->create(size, info.at<int>(1));
 }
 POLY_METHOD(Matrix::create_matsize) {
+	throw std::exception("not implemented");
 }
-POLY_METHOD(Matrix::create_ndims_size) {}
-POLY_METHOD(Matrix::create_ndims_matsize) {}
+POLY_METHOD(Matrix::create_ndims_size) {
+	throw std::exception("not implemented");
+}
+POLY_METHOD(Matrix::create_ndims_matsize) {
+	throw std::exception("not implemented");
+}
 POLY_METHOD(Matrix::resize) {
 	auto mat = info.This<Matrix*>()->_mat;
 	auto scalar = *info.at<Scalar<cv::Scalar>*>(1)->_scalar;
@@ -1032,7 +1049,7 @@ POLY_METHOD(Matrix::roi_rect) {
 	info.SetReturnValue(retval);
 }
 POLY_METHOD(Matrix::roi_ranges) {
-
+	throw std::exception("not implemented");
 }
 POLY_METHOD(Matrix::isContinuous) {
 	auto mat = info.This<Matrix*>()->_mat;
@@ -1070,7 +1087,7 @@ POLY_METHOD(Matrix::ptr) {
 	auto mat = info.This<Matrix*>()->_mat;
 
 	//ptr<T>(T: string, i0?: _st.int /* = 0*/): TrackedPtr<T>;
-	auto tptr = new TrackedPtr();
+	auto tptr = new TrackedPtr<cv::Mat>();
 	tptr->_from = mat;
 	tptr->_Ttype = info.at<std::string>(0);
 	tptr->_i0 = safe_cast<int>(info.at<int>(1));
@@ -1121,11 +1138,13 @@ POLY_METHOD(Matrix::data) {
 	info.GetReturnValue().Set(buf.ToLocalChecked());
 }
 POLY_METHOD(Matrix::size) {
+	throw std::exception("not implemented");
 	//auto mat = info.This<Matrix*>()->_mat;
 	//mat->size
 }
 
 NAN_PROPERTY_GETTER(Matrix::step) {
+	throw std::exception("not implemented");
 	//auto mat = info.This<Matrix*>()->_mat;
 	//info.GetReturnValue().Set(mat->step);
 }

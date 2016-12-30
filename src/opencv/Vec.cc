@@ -1,3 +1,13 @@
+#include "Vec.h"
+
+namespace vec_general_callback {
+	std::shared_ptr<overload_resolution> overload;
+	NAN_METHOD(callback) {
+		return overload->execute("vec", info);
+	}
+}
+
+
 //#include "Size.h"
 
 // Nan::Persistent<FunctionTemplate> Size::constructor;
