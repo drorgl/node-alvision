@@ -2,22 +2,179 @@
 #define _ALVISION_AFFINE3_H_
 //#include "OpenCV.h"
 #include "../alvision.h"
+#include "Matx.h"
+#include "Vec.h"
+
+#include <string>
+using namespace std::literals::string_literals;
+
+
+namespace affine3_general_callback {
+	extern std::shared_ptr<overload_resolution> overload;
+	NAN_METHOD(callback);
+}
 
 template <typename T>
 class Affine3 : public or::ObjectWrap {
 public:
+	typedef Matx<cv::Matx<typename T::float_type, 4, 4>> Matx4;
+	typedef Matx<cv::Matx<typename T::float_type, 3, 3>> Matx3;
+	typedef Vec<cv::Vec<typename T::float_type, 3>> Vec3;
+
+	static std::string name;
+
+
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Affine3::New);
+		affine3_general_callback::overload = overload;
+		Affine3<T>::name = name;
+		auto float_type = GetTypeName<T::float_type>();
+		auto array_float_type = "Array<"s + float_type + ">"s;
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(affine3_general_callback::callback);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
-		overload->register_type<Affine3<T>>(ctor, "affine3", "name");
+		overload->register_type<Affine3<T>>(ctor, "affine3", name);
 
-
+			
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 
+
+
+		//static 
+
+		//new() : Affine3<T>;
+		overload->addOverloadConstructor("affine3", name, {}, New_no_params);
+
+		////! Augmented affine matrix
+		//new (affine: _matx.Matx<T>) : Affine3<T>;
+		overload->addOverloadConstructor("affine3", name, { make_param<Matx4*>("affine",Matx4::name) }, New_matx);
+
+			////! Rotation matrix
+			//new (R: _matx.Matx<T>, t ? : _matx.Vec<T> /* = Vec3::all(0)*/) : Affine3<T>;
+			overload->addOverloadConstructor("affine3", name, { make_param < Matx3*>("R",Matx3::name), make_param<Vec3*>("t",Vec3::name,Vec3::all(0)) }, New_matx_vec);
+
+		////! Rodrigues vector
+		//new (rvec: _matx.Vec<T>, t ? : _matx.Vec<T> /* = Vec3::all(0)*/) : Affine3<T>;
+		overload->addOverloadConstructor("affine3", name, { make_param <Vec3*>("rvec",Vec3::name), make_param<Vec3*>("t",Vec3::name,Vec3::all(0)) }, New_vec_vec);
+
+		////! Combines all contructors above. Supports 4x4, 4x3, 3x3, 1x3, 3x1 sizes of data matrix
+		//new (data: _mat.Mat, t ? : _matx.Vec<T> /*= Vec3::all(0)*/) : Affine3<T>;
+		overload->addOverloadConstructor("affine3", name, { make_param <Matrix*>("data","Mat"), make_param<Vec3*>("t",Vec3::name,Vec3::all(0)) }, New_matx_vec);
+
+		////! From 16th element array
+		//new (vals: Array<T>) : Affine3<T>;
+		overload->addOverloadConstructor("affine3", name, { make_param<std::shared_ptr<std::vector<T::float_type>>>("vals",array_float_type) }, New_array_T);
+
+		////! Create identity transform
+		//Identity() : Affine3<T>
+		overload->addStaticOverload("affine3", name, "Identity", {}, Identity);
+		Nan::SetMethod(ctor, "Identity", affine3_general_callback::callback);
+
+		//	//    template<typename T> static
+		//	//    Affine3<T> operator * (const Affine3<T>& affine1, const Affine3<T>& affine2);
+		//	//
+		//	//template < typename T, typename V> static
+		//	//V operator* (const Affine3<T>& affine, const V& vector);
+		//	//
+		//	//
+		//	//
+		//	//    static Vec3f operator* (const Affine3f& affine, const Vec3f& vector);
+		//	//    static Vec3d operator* (const Affine3d& affine, const Vec3d& vector);
+
+		//	op_Multiplication(affine1: Affine3<T>, affine2 : Affine3<T>) : Affine3<T>;
+
+		//op_Multiplication(affine: Affine3<T>, vector : Array<T>) : Affine3<T
+
+		//TODO: find what type of vector this can be used on!
+		//overload->addStaticOverload("affine3", name, "op_Multiplication", { make_param<Affine3<T>>("affine",Affine3<T>::name), make_param<std::shared_ptr<std::vector<T>>>("vector","Array<T>") }, op_Multiplication_affine3_array);
 		
+		//op_Multiplication(affine: Affine3<_st.float>, vector : _matx.Vec3f) : _matx.Vec3f;
+		overload->addStaticOverload("affine3", name, "op_Multiplication", { make_param<Affine3<cv::Affine3<T::float_type>>*>("affine",Affine3<cv::Affine3<T::float_type>>::name), make_param<Vec3*>("vector",Vec3::name) }, op_Multiplication_affine3_vec3);
+		//op_Multiplication(affine: Affine3<_st.double>, vector : _matx.Vec3d) : _matx.Vec3d;
+			
+		//member
+
+
+	//	//! Rotation matrix
+	//	rotation(R : _matx.Matx<T>) : void;
+			overload->addOverload("affine3", name, "rotation", { make_param<Matx3*>("R",Matx3::name) }, rotation_matx);
+
+	//	//! Rodrigues vector
+	//	rotation(rvec : _matx.Vec3<T>) : void;
+			overload->addOverload("affine3", name, "rotation", { make_param<Vec3*>("rvec",Vec3::name) }, rotation_vec3T);
+
+	//	//! Combines rotation methods above. Suports 3x3, 1x3, 3x1 sizes of data matrix;
+	//	rotation(data : _mat.Mat) : void;
+			overload->addOverload("affine3", name, "rotation", { make_param<Matrix*>("data","Mat") }, rotation_mat);
+
+			Nan::SetPrototypeMethod(ctor, "rotation", affine3_general_callback::callback);
+
+	//	linear(L : _matx.Matx<T>) : void;
+			overload->addOverload("affine3", name, "linear", { make_param<Matx3*>("L",Matx3::name) }, linear_matxT);
+
+			Nan::SetPrototypeMethod(ctor, "linear", affine3_general_callback::callback);
+
+	//	translation(t : _matx.Vec<T>) : void;
+			overload->addOverload("affine3", name, "translation", { make_param<Vec3*>("t",Vec3::name) }, translation_vecT);
+
+			Nan::SetPrototypeMethod(ctor, "translation", affine3_general_callback::callback);
+
+	//	rotation() : _matx.Matx<T>;
+			overload->addOverload("affine3", name, "rotation", {}, rotation);
+	//	linear() : _matx.Matx<T>;
+			overload->addOverload("affine3", name, "linear", {}, linear);
+	//	translation() : _matx.Vec<T>;
+			overload->addOverload("affine3", name, "translation", {}, translation);
+
+	//	//! Rodrigues vector
+	//	rvec() : _matx.Vec<T>;
+			overload->addOverload("affine3", name, "rvec", {}, rvec);
+
+			Nan::SetPrototypeMethod(ctor, "rvec", affine3_general_callback::callback);
+
+	//	inv(method ? : _base.DecompTypes /*= cv::DECOMP_SVD*/) : Affine3<T>;
+			overload->addOverload("affine3", name, "inv", {make_param<int>("method","DecompTypes",cv::DECOMP_SVD)}, inv_decomptypes);
+
+			Nan::SetPrototypeMethod(ctor, "inv", affine3_general_callback::callback);
+
+	//	//! a.rotate(R) is equivalent to Affine(R, 0) * a;
+	//	rotate(R : _matx.Matx<T>) : Affine3<T>;
+			overload->addOverload("affine3", name, "rotate", { make_param < Matx3*>("R",Matx3::name) }, rotate_matxT);
+
+			Nan::SetPrototypeMethod(ctor, "rotate", affine3_general_callback::callback);
+
+	//	//! a.rotate(rvec) is equivalent to Affine(rvec, 0) * a;
+	//	rotate(rvec : _matx.Vec3<T>) : Affine3<T>;
+			overload->addOverload("affine3", name, "rotate", { make_param < Vec3*>("R",Vec3::name) }, rotate_vec3T);
+
+	//	//! a.translate(t) is equivalent to Affine(E, t) * a;
+	//	translate(t : _matx.Vec3<T>) : Affine3<T>;
+			overload->addOverload("affine3", name, "translate", { make_param<Vec3*>("t",Vec3::name) }, translate_vec3T);
+
+			Nan::SetPrototypeMethod(ctor, "translate", affine3_general_callback::callback);
+
+	//	//! a.concatenate(affine) is equivalent to affine * a;
+	//	concatenate(affine : Affine3<T>) : Affine3<T>;
+			overload->addOverload("affine3", name, "concatenate", { make_param<Affine3<T>*>("affine",Affine3<T>::name) }, concatenate_Affine3T);
+
+			Nan::SetPrototypeMethod(ctor, "concatenate", affine3_general_callback::callback);
+
+	//	//template < typename Y> operator Affine3<Y>() const;
+
+	//	//template < typename Y> Affine3 < Y > cast() const;
+
+	//matrix: _matx.Matx<T>;
+			
+			Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("matrix").ToLocalChecked(), matrix_getter, matrix_setter);
+
+	//	//#if defined EIGEN_WORLD_VERSION && defined EIGEN_GEOMETRY_MODULE_H
+	//	//Affine3(const Eigen::Transform<T, 3, Eigen::Affine, (Eigen::RowMajor)>& affine);
+	//	//Affine3(const Eigen::Transform<T, 3, Eigen::Affine >& affine);
+	//	//operator Eigen::Transform < T, 3, Eigen::Affine, (Eigen::RowMajor)>() const;
+	//	//operator Eigen::Transform < T, 3, Eigen::Affine > () const;
+	//	//#endif
+
 	}
 
 	std::shared_ptr<T> _affine3;
@@ -29,7 +186,7 @@ public:
 	}
 
 
-	static NAN_METHOD(New) {
+	/*static NAN_METHOD(New) {
 		
 		if (info.This()->InternalFieldCount() == 0)
 			Nan::ThrowTypeError("Cannot instantiate without new");
@@ -41,41 +198,125 @@ public:
 		affine->Wrap(info.Holder());
 
 		info.GetReturnValue().Set(info.Holder());
+	}*/
+	
+	static POLY_METHOD(New_no_params) {
+		/*auto aff= new Affine3<T>();
+		aff->_affine3 = std::make_shared<T>();
+
+		aff->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());*/
+	}
+
+	static POLY_METHOD(New_matx) {
+		/*auto matx = info.at < Matx < cv::Matx<T::float_type, 4, 4>*>(0);
+		auto aff = new Affine3<T>();
+		aff->_affine3 = std::make_shared<T>(matx->_matx);
+
+		aff->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());*/
+	}
+
+	static POLY_METHOD(New_matx_vec) {
+		/*auto matx = info.at <Matx3*>(0);
+		auto vec = info.at < Vec4*>(1);
+		auto aff = new Affine3<T>();
+		aff->_affine3 = std::make_shared<T>(matx->_matx);
+
+		aff->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());*/
+	}
+
+	static POLY_METHOD(New_vec_vec) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(New_array_T) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(Identity) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(op_Multiplication_affine3_vec3) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(rotation_matx) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(rotation_vec3T) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(rotation_mat) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(linear_matxT) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(translation_vecT) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(rotation) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(linear) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(translation) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(rvec) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(inv_decomptypes) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(rotate_matxT) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(rotate_vec3T) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(translate_vec3T) {
+		throw std::exception("not implemented");
+	}
+
+	static POLY_METHOD(concatenate_Affine3T) {
+		throw std::exception("not implemented");
+	}
+
+	
+
+
+	static NAN_GETTER(matrix_getter) {
+
+	}
+	static NAN_SETTER(matrix_setter) {
+
 	}
 	
-	//Identity() : Affine3<T>
-	//new() : Affine3<T>;
-	//new (affine: _matx.Matx<T>) : Affine3<T>;
-	//new (data: _mat.Mat, t ? : _matx.Vec<T> /*= Vec3::all(0)*/) : Affine3<T>;
-	//new (R: _matx.Matx<T>, t ? : _matx.Vec<T> /* = Vec3::all(0)*/) : Affine3<T>;
-	//new (rvec: _matx.Vec<T>, t ? : _matx.Vec<T> /* = Vec3::all(0)*/) : Affine3<T>;
-	//new (vals: Array<T>) : Affine3<T>;
-	//op_Multiplication(affine1: Affine3<T>, affine2 : Affine3<T>) : Affine3<T>;
-	//op_Multiplication(affine: Affine3<T>, vector : Array<T>) : Affine3<T>;
-	//op_Multiplication(affine: Affine3<_st.double>, vector : _matx.Vec3d) : _matx.Vec3d;
-	//op_Multiplication(affine: Affine3<_st.float>, vector : _matx.Vec3f) : _matx.Vec3f;
-	//
-	//
-	//concatenate(affine : Affine3<T>) : Affine3<T>;
-	//inv(method ? : _base.DecompTypes /*= cv::DECOMP_SVD*/) : Affine3<T>;
-	//linear() : _matx.Matx<T>;
-	//linear(L : _matx.Matx<T>) : void;
-	//matrix: _matx.Matx<T>;
-	//rotate(R : _matx.Matx<T>) : Affine3<T>;
-	//rotate(rvec : _matx.Vec3<T>) : Affine3<T>;
-	//rotation() : _matx.Matx<T>;
-	//rotation(data : _mat.Mat) : void;
-	//rotation(R : _matx.Matx<T>) : void;
-	//rotation(rvec : _matx.Vec3<T>) : void;
-	//rvec() : _matx.Vec<T>;
-	//translate(t : _matx.Vec3<T>) : Affine3<T>;
-	//translation() : _matx.Vec<T>;
-	//translation(t : _matx.Vec<T>) : void;
 };
 
 
 //declare variables
 template <typename T>
 Nan::Persistent<FunctionTemplate> Affine3<T>::constructor;
+
+template<typename T>
+std::string Affine3<T>::name;
 
 #endif

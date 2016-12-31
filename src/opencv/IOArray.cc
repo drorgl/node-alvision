@@ -3,6 +3,9 @@
 namespace general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(ioarray_callback) {
+		if (overload == nullptr) {
+			throw std::exception("ioarray_general_callback is empty");
+		}
 		return overload->execute("ioarray", info);
 	}
 }

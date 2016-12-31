@@ -73,6 +73,7 @@ init(Handle<Object> target) {
 	overload->add_type_alias("InputOutputArrayOfArrays", "Array<InputArray>");
 	overload->add_type_alias("int", "Number");
 	overload->add_type_alias("double", "Number");
+	overload->add_type_alias("float", "Number");
 	overload->add_type_alias("bool", "Boolean");
 	overload->add_type_alias("size_t", "int");
 	overload->add_type_alias("MatrixType", "int");
@@ -125,8 +126,7 @@ init(Handle<Object> target) {
 	//auto xx = x[0];
 
 
-	Affine3<cv::Affine3d>::Init(target, "Affine3d", overload);
-	Affine3<cv::Affine3f>::Init(target, "Affine3f", overload);
+	
 	
 
 	ml::Init(target, overload);
@@ -268,6 +268,8 @@ init(Handle<Object> target) {
 	
 	TrackedElement::Init(target, overload);
 
+	Affine3<cv::Affine3d>::Init(target, "Affine3d", overload);
+	Affine3<cv::Affine3f>::Init(target, "Affine3f", overload);
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 

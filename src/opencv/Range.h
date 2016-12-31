@@ -11,6 +11,8 @@ public:
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
+		overload->register_type<Range>(ctor, "range", name);
+
 		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "start").ToLocalChecked(), Range::start);
 		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "end").ToLocalChecked(), Range::end);
 		

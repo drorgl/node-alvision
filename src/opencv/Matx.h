@@ -12,7 +12,9 @@ public:
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
+		Matx<T>::name = name;
 		overload->register_type<Matx<T>>(ctor, "matx", name);
+		
 
 		//ctor->Inherit(?);
 		
@@ -23,6 +25,8 @@ public:
 	}
 
 	std::shared_ptr<T> _matx;
+
+	static std::string Matx<T>::name;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
@@ -52,5 +56,8 @@ public:
 //declare variables
 template <typename T>
 Nan::Persistent<FunctionTemplate> Matx<T>::constructor;
+
+template <typename T>
+std::string Matx<T>::name;
 
 #endif

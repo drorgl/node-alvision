@@ -22,6 +22,7 @@ public:
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
 		overload->register_type<Vec<T>>(ctor, "vec", name);
+		Vec<T>::name = name;
 
 		overload->addOverloadConstructor("vec", name, {}, New_no_parameters);
 		//Vec();
@@ -142,12 +143,19 @@ public:
 
 	std::shared_ptr<T> _vec;
 
+	static std::string Vec<T>::name;
+
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	virtual v8::Local<v8::Function> get_constructor() {
 		return Nan::New(constructor)->GetFunction();
 	}
 
+	static std::shared_ptr<Vec<T>> all(TVT value) {
+		auto vec = std::make_shared<Vec<T>>();
+		vec->_vec = std::make_shared<T>(T::all(value));
+		return vec;
+	}
 
 	/*static NAN_METHOD(New) {
 		if (info.This()->InternalFieldCount() == 0)
@@ -498,5 +506,8 @@ public:
 //declare variables
 template <typename T>
 Nan::Persistent<FunctionTemplate> Vec<T>::constructor;
+
+template <typename T>
+std::string Vec<T>::name;
 
 #endif

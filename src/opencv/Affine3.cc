@@ -1,3 +1,15 @@
+#include "Affine3.h"
+
+namespace affine3_general_callback {
+	std::shared_ptr<overload_resolution> overload;
+	NAN_METHOD(callback) {
+		if (overload == nullptr) {
+			throw std::exception("affine3_general_callback is empty");
+		}
+		return overload->execute("affine3", info);
+	}
+}
+
 //#include "Size.h"
 
 // Nan::Persistent<FunctionTemplate> Size::constructor;
