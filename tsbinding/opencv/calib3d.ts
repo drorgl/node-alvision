@@ -876,7 +876,7 @@ the board to make the detection more robust in various environments.
 interface IfindCirclesGrid{
     (image: _st.InputArray, patternSize: _types.Size ,
         centers: _st.OutputArray, flags?: CALIB_CB_SYM /*= CALIB_CB_SYMMETRIC_GRID*/,
-        blobDetector? : _features2d.FeatureDetector /*= SimpleBlobDetector::create()*/);
+        blobDetector? : _features2d.FeatureDetector /*= SimpleBlobDetector::create()*/) : boolean;
     }
 export var findCirclesGrid: IfindCirclesGrid = alvision_module.findCirclesGrid;
 
@@ -1146,7 +1146,7 @@ interface IstereoCalibrate {
         cameraMatrix2: _st.InputOutputArray, distCoeffs2: _st.InputOutputArray ,
         imageSize: _types.Size, R: _st.OutputArray, T: _st.OutputArray, E: _st.OutputArray, F: _st.OutputArray ,
         flags? : CALIB | _st.int /* = CALIB_FIX_INTRINSIC*/,
-        criteria?: _types.TermCriteria /* = TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, 30, 1e-6)*/);
+        criteria?: _types.TermCriteria /* = TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, 30, 1e-6)*/)  : double;
 }
 export var stereoCalibrate: IstereoCalibrate = alvision_module.stereoCalibrate;
 

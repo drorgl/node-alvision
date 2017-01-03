@@ -126,6 +126,17 @@
 		, "src/opencv/calib3d.cc"
 		, "src/opencv/calib3d.h"
 		
+		, "src/opencv/calib3d/fisheye.cc",
+		, "src/opencv/calib3d/fisheye.h",
+		, "src/opencv/calib3d/StereoBM.h",
+		, "src/opencv/calib3d/StereoBM.cc",
+		, "src/opencv/calib3d/StereoMatcher.h",
+		, "src/opencv/calib3d/StereoMatcher.cc",
+		, "src/opencv/calib3d/StereoSGBM.h",
+		, "src/opencv/calib3d/StereoSGBM.cc",
+		
+		
+		
 		, "src/opencv/MatExpr.cc"
 		, "src/opencv/MatExpr.h"
 		

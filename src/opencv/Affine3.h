@@ -17,9 +17,12 @@ namespace affine3_general_callback {
 template <typename T>
 class Affine3 : public or::ObjectWrap {
 public:
-	typedef Matx<cv::Matx<typename T::float_type, 4, 4>> Matx4;
-	typedef Matx<cv::Matx<typename T::float_type, 3, 3>> Matx3;
-	typedef Vec<cv::Vec<typename T::float_type, 3>> Vec3;
+	typedef cv::Matx<typename T::float_type, 4, 4> cvMatx4;
+	typedef Matx<cvMatx4> Matx4;
+	typedef cv::Matx<typename T::float_type, 3, 3> cvMatx3;
+	typedef Matx<cvMatx3> Matx3;
+	typedef cv::Vec<typename T::float_type, 3> cvVec3;
+	typedef Vec<cvVec3> Vec3;
 
 	static std::string name;
 
@@ -60,7 +63,7 @@ public:
 
 		////! Combines all contructors above. Supports 4x4, 4x3, 3x3, 1x3, 3x1 sizes of data matrix
 		//new (data: _mat.Mat, t ? : _matx.Vec<T> /*= Vec3::all(0)*/) : Affine3<T>;
-		overload->addOverloadConstructor("affine3", name, { make_param <Matrix*>("data","Mat"), make_param<Vec3*>("t",Vec3::name,Vec3::all(0)) }, New_matx_vec);
+		overload->addOverloadConstructor("affine3", name, { make_param <Matrix*>("data","Mat"), make_param<Vec3*>("t",Vec3::name,Vec3::all(0)) }, New_mat_vec);
 
 		////! From 16th element array
 		//new (vals: Array<T>) : Affine3<T>;
@@ -90,7 +93,7 @@ public:
 		//overload->addStaticOverload("affine3", name, "op_Multiplication", { make_param<Affine3<T>>("affine",Affine3<T>::name), make_param<std::shared_ptr<std::vector<T>>>("vector","Array<T>") }, op_Multiplication_affine3_array);
 		
 		//op_Multiplication(affine: Affine3<_st.float>, vector : _matx.Vec3f) : _matx.Vec3f;
-		overload->addStaticOverload("affine3", name, "op_Multiplication", { make_param<Affine3<cv::Affine3<T::float_type>>*>("affine",Affine3<cv::Affine3<T::float_type>>::name), make_param<Vec3*>("vector",Vec3::name) }, op_Multiplication_affine3_vec3);
+		overload->addStaticOverload("affine3", name, "op_Multiplication", { make_param<Affine3<T>*>("affine",Affine3<T>::name), make_param<Vec3*>("vector",Vec3::name) }, op_Multiplication_affine3_vec3);
 		//op_Multiplication(affine: Affine3<_st.double>, vector : _matx.Vec3d) : _matx.Vec3d;
 			
 		//member
@@ -201,112 +204,209 @@ public:
 	}*/
 	
 	static POLY_METHOD(New_no_params) {
-		/*auto aff= new Affine3<T>();
+		auto aff= new Affine3<T>();
 		aff->_affine3 = std::make_shared<T>();
 
 		aff->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());*/
+		info.GetReturnValue().Set(info.Holder());
 	}
 
 	static POLY_METHOD(New_matx) {
-		/*auto matx = info.at < Matx < cv::Matx<T::float_type, 4, 4>*>(0);
+		auto matx = info.at<Matx4*>(0);
 		auto aff = new Affine3<T>();
-		aff->_affine3 = std::make_shared<T>(matx->_matx);
+		aff->_affine3 = std::make_shared<T>(*matx->_matx);
 
 		aff->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());*/
+		info.GetReturnValue().Set(info.Holder());
 	}
 
 	static POLY_METHOD(New_matx_vec) {
-		/*auto matx = info.at <Matx3*>(0);
-		auto vec = info.at < Vec4*>(1);
+		auto matx = info.at <Matx3*>(0);
+		auto vec = info.at < Vec3*>(1);
 		auto aff = new Affine3<T>();
-		aff->_affine3 = std::make_shared<T>(matx->_matx);
+		aff->_affine3 = std::make_shared<T>(*matx->_matx, *vec->_vec);
 
 		aff->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());*/
+		info.GetReturnValue().Set(info.Holder());
 	}
 
 	static POLY_METHOD(New_vec_vec) {
-		throw std::exception("not implemented");
+		auto rvec = info.at <Vec3*>(0);
+		auto t = info.at < Vec3*>(1);
+		auto aff = new Affine3<T>();
+		aff->_affine3 = std::make_shared<T>(*rvec->_vec, *t->_vec);
+
+		aff->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_mat_vec) {
+		auto mat = info.at <Matrix*>(0);
+		auto t = info.at < Vec3*>(1);
+		auto aff = new Affine3<T>();
+		aff->_affine3 = std::make_shared<T>(*mat->_mat, *t->_vec);
+
+		aff->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
 	}
 
 	static POLY_METHOD(New_array_T) {
-		throw std::exception("not implemented");
+		auto vals = info.at<std::shared_ptr<std::vector<T::float_type>>>(0);
+		if (vals->size() != 16) {
+			throw std::exception("Affine3 from array works only with 16 values");
+		}
+		auto aff = new Affine3<T>();
+		aff->_affine3 = std::make_shared<T>(&((*vals)[0]));
+
+		aff->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
 	}
 
 	static POLY_METHOD(Identity) {
-		throw std::exception("not implemented");
+		auto aff = new Affine3<T>();
+		aff->_affine3 = std::shared_ptr<T>(new T(T::Identity()));
+
+		info.SetReturnValue(aff);
 	}
 
 	static POLY_METHOD(op_Multiplication_affine3_vec3) {
-		throw std::exception("not implemented");
+		auto affine = info.at<Affine3<T>*>(0);
+		auto vec = info.at<Vec3*>(1);
+
+		auto aff = new Affine3<T>();
+		aff->_affine3 = std::shared_ptr<T>(new T((*affine->_affine3) * (*vec->_vec)));
+
+		info.SetReturnValue(aff);
 	}
 
 	static POLY_METHOD(rotation_matx) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		this_->_affine3->rotation(*info.at<Matx3*>(0)->_matx);
 	}
 
 	static POLY_METHOD(rotation_vec3T) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		this_->_affine3->rotation(*info.at<Vec3*>(0)->_vec);
 	}
 
 	static POLY_METHOD(rotation_mat) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		this_->_affine3->rotation(*info.at<Matrix*>(0)->_mat);
 	}
 
 	static POLY_METHOD(linear_matxT) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		this_->_affine3->linear(*info.at<Matx3*>(0)->_matx);
 	}
 
 	static POLY_METHOD(translation_vecT) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		this_->_affine3->translation(*info.at<Vec3*>(0)->_vec);
 	}
 
 	static POLY_METHOD(rotation) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		auto mat3 = new Matx3();
+		mat3->_matx = std::make_shared<cvMatx3>(this_->_affine3->rotation());
+
+		info.SetReturnValue(mat3);
 	}
 
 	static POLY_METHOD(linear) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		auto mat3 = new Matx3();
+		mat3->_matx = std::make_shared<cvMatx3>(this_->_affine3->linear());
+
+		info.SetReturnValue(mat3);
 	}
 
 	static POLY_METHOD(translation) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		auto vec3 = new Vec3();
+		vec3->_vec = std::make_shared<cvVec3>(this_->_affine3->translation());
+
+		info.SetReturnValue(vec3);
 	}
 
 	static POLY_METHOD(rvec) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		auto vec3 = new Vec3();
+		vec3->_vec = std::make_shared<cvVec3>(this_->_affine3->rvec());
+
+		info.SetReturnValue(vec3);
 	}
 
 	static POLY_METHOD(inv_decomptypes) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		auto ret = new Affine3<T>();
+		ret->_affine3 = std::make_shared<T>(this_->_affine3->inv(info.at<int>(0)));
+
+		info.SetReturnValue(ret);
 	}
 
 	static POLY_METHOD(rotate_matxT) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		auto ret = new Affine3<T>();
+		ret->_affine3 = std::make_shared<T>(this_->_affine3->rotate(*info.at<Matx3*>(0)->_matx));
+
+		info.SetReturnValue(ret);
 	}
 
 	static POLY_METHOD(rotate_vec3T) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		auto ret = new Affine3<T>();
+		ret->_affine3 = std::make_shared<T>(this_->_affine3->rotate(*info.at<Vec3*>(0)->_vec));
+
+		info.SetReturnValue(ret);
 	}
 
 	static POLY_METHOD(translate_vec3T) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		auto ret = new Affine3<T>();
+		ret->_affine3 = std::make_shared<T>(this_->_affine3->translate(*info.at<Vec3*>(0)->_vec));
+
+		info.SetReturnValue(ret);
 	}
 
 	static POLY_METHOD(concatenate_Affine3T) {
-		throw std::exception("not implemented");
+		auto this_ = info.This<Affine3<T>*>();
+
+		auto ret = new Affine3<T>();
+		ret->_affine3 = std::make_shared<T>(this_->_affine3->concatenate(*info.at<Affine3<T>*>(0)->_affine3));
+
+		info.SetReturnValue(ret);
 	}
 
 	
 
 
 	static NAN_GETTER(matrix_getter) {
+		//TODO: add validation / move handling to overload-resolution
+		auto this_ = or ::ObjectWrap::Unwrap<Affine3<T>>(info.This());
 
+		auto matx = new Matx4();
+		matx->_matx = std::make_shared<cvMatx4>(this_->_affine3->matrix);
+
+		info.GetReturnValue().Set(matx->Wrap());
 	}
 	static NAN_SETTER(matrix_setter) {
+		//TODO: add validation / move handling to overload-resolution
+		auto this_ = or ::ObjectWrap::Unwrap<Affine3<T>>(info.This());
 
+		this_->_affine3->matrix = *or::ObjectWrap::Unwrap<Matx4>(value.As<v8::Object>())->_matx;
 	}
 	
 };

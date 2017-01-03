@@ -40,9 +40,9 @@ POLY_METHOD(IOArray::New) {
 	//auto instance = 
 }
 
-IOArray* IOArray::noArray() {
+std::shared_ptr<IOArray> IOArray::noArray() {
 
-	auto ret = new IOArray();
+	auto ret = std::make_shared<IOArray>();
 	ret->_ioarray = std::make_shared<cv::_InputOutputArray>(cv::noArray());
 	return ret;
 }

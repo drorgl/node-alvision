@@ -13,7 +13,7 @@ public:
 	static Nan::Persistent<FunctionTemplate> constructor;
 	virtual v8::Local<v8::Function> get_constructor();
 
-	static IOArray* noArray();
+	static std::shared_ptr<IOArray> noArray();
 
 	static POLY_METHOD(New);
 
