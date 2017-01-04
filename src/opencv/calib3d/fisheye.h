@@ -10,7 +10,8 @@ public:
 	static POLY_METHOD(projectPoints_a);
 	static POLY_METHOD(projectPoints_b);
 	static POLY_METHOD(distortPoints);
-	static POLY_METHOD(undistortPoints);
+	static POLY_METHOD(undistortPoints_a);
+	static POLY_METHOD(undistortPoints_b);
 	static POLY_METHOD(initUndistortRectifyMap);
 	static POLY_METHOD(undistortImage);
 	static POLY_METHOD(estimateNewCameraMatrixForUndistortRectify);
