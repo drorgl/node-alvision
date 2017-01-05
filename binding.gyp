@@ -136,6 +136,14 @@
 		, "src/opencv/calib3d/StereoSGBM.cc",
 		
 		
+		, "src/opencv/features2d/Feature2D.h"
+		, "src/opencv/features2d/Feature2D.cc"
+		, "src/opencv/features2d/SimpleBlobDetector.h"
+		, "src/opencv/features2d/SimpleBlobDetector.cc"
+		, "src/opencv/features2d/SimpleBlobDetectorParams.h"
+		, "src/opencv/features2d/SimpleBlobDetectorParams.cc"
+		
+		
 		
 		, "src/opencv/MatExpr.cc"
 		, "src/opencv/MatExpr.h"
@@ -184,6 +192,12 @@
 		
 		, "src/opencv/Range.cc"
 		, "src/opencv/Range.h"
+		
+		, "src/opencv/types/TermCriteria.h",
+		, "src/opencv/types/TermCriteria.cc",
+		
+		, "src/opencv/types/KeyPoint.h",
+		, "src/opencv/types/KeyPoint.cc",
 		
 		, "src/opencv/Vec.cc"
 		, "src/opencv/Vec.h"

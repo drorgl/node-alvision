@@ -93,10 +93,10 @@ init(Handle<Object> target) {
 
 	cvtest::Init(target, overload);
 
-	Size<cv::Size2i>::Init(target,"Size2i" ,overload);
-	Size<cv::Size2f>::Init(target, "Size2f",overload);
-	Size<cv::Size2d>::Init(target, "Size2d",overload);
-	overload->add_type_alias("Size", "Size2i");
+	Size2i::Init(target,"Size2i" ,overload);
+	Size2f::Init(target, "Size2f",overload);
+	Size2d::Init(target, "Size2d",overload);
+	Size::Init(target, "Size", overload);
 
 
 	Vec<cv::Vec2b>::Init(target,"Vec2b",overload);
@@ -211,14 +211,15 @@ init(Handle<Object> target) {
 	MatND::Init(target, overload);
 	SparseMat::Init(target, overload);
 
-	Point<cv::Point2i>::Init(target, "Point2i",overload);
-	Point<cv::Point2f>::Init(target, "Point2f",overload);
-	Point<cv::Point2d>::Init(target, "Point2d",overload);
-	Point<cv::Point>::Init(target,   "Point", overload);
+	Point2i::Init(target, "Point2i",overload);
+	Point2f::Init(target, "Point2f",overload);
+	Point2d::Init(target, "Point2d",overload);
+	Point::Init(target,   "Point", overload);
+	
 
-	Point3<cv::Point3i>::Init(target, "Point3i", overload);
-	Point3<cv::Point3f>::Init(target, "Point3f", overload);
-	Point3<cv::Point3d>::Init(target, "Point3d", overload);
+	Point3i::Init(target, "Point3i", overload);
+	Point3f::Init(target, "Point3f", overload);
+	Point3d::Init(target, "Point3d", overload);
 
 	
 	Rect<cv::Rect2i>::Init(target, "Rect2i", overload);

@@ -1,45 +1,120 @@
 #include "StereoMatcher.h"
+#include "../IOArray.h"
 
-auto StereoDISP = CreateNamedObject(target, "StereoDISP");
-SetObjectProperty(StereoDISP, "DISP_SHIFT", 4);
-SetObjectProperty(StereoDISP, "DISP_SCALE", (1 << DISP_SHIFT));
+namespace stereomatcher_general_callback {
+	std::shared_ptr<overload_resolution> overload;
+	NAN_METHOD(callback) {
+		if (overload == nullptr) {
+			throw std::exception("stereomatcher_general_callback is empty");
+		}
+		return overload->execute("stereomatcher", info);
+	}
+}
 
+void StereoMatcher::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	stereomatcher_general_callback::overload = overload;
+	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(stereomatcher_general_callback::callback);
+	constructor.Reset(ctor);
+	auto itpl = ctor->InstanceTemplate();
+	itpl->SetInternalFieldCount(1);
+	ctor->SetClassName(Nan::New("StereoMatcher").ToLocalChecked());
+	ctor->Inherit(Nan::New(Algorithm::constructor));
 
-export interface StereoMatcher extends _core.Algorithm
-{
-
-	//
-	/** @brief Computes disparity map for the specified stereo pair
-
-	@param left Left 8-bit single-channel image.
-	@param right Right image of the same size and the same type as the left one.
-	@param disparity Output disparity map. It has the same size as the input images. Some algorithms,
-	like StereoBM or StereoSGBM compute 16-bit fixed-point disparity map (where each disparity value
-	has 4 fractional bits), whereas other algorithms output 32-bit floating-point disparity map.
-	*/
-	compute(left: _st.InputArray, right : _st.InputArray ,
-	disparity : _st.OutputArray) : void;
-//
-//    CV_WRAP virtual int getMinDisparity() const = 0;
-//    CV_WRAP virtual void setMinDisparity(int minDisparity) = 0;
-//
-//    CV_WRAP virtual int getNumDisparities() const = 0;
-//    CV_WRAP virtual void setNumDisparities(int numDisparities) = 0;
-//
-//    CV_WRAP virtual int getBlockSize() const = 0;
-//    CV_WRAP virtual void setBlockSize(int blockSize) = 0;
-//
-//    CV_WRAP virtual int getSpeckleWindowSize() const = 0;
-//    CV_WRAP virtual void setSpeckleWindowSize(int speckleWindowSize) = 0;
-//
-//    CV_WRAP virtual int getSpeckleRange() const = 0;
-//    CV_WRAP virtual void setSpeckleRange(int speckleRange) = 0;
-//
-//    CV_WRAP virtual int getDisp12MaxDiff() const = 0;
-//    CV_WRAP virtual void setDisp12MaxDiff(int disp12MaxDiff) = 0;
-};
+	overload->register_type<StereoMatcher>(ctor, "stereomatcher", "StereoMatcher");
 
 
-/** @brief Class for computing stereo correspondence using the block matching algorithm, introduced and
-contributed to OpenCV by K. Konolige.
-*/
+
+	auto StereoDISP = CreateNamedObject(target, "StereoDISP");
+	SetObjectProperty(StereoDISP, "DISP_SHIFT", 4);
+	SetObjectProperty(StereoDISP, "DISP_SCALE", (1 << cv::StereoMatcher::DISP_SHIFT));
+
+
+
+	overload->addStaticOverload("stereomatcher", "", "compute", {
+			make_param<IOArray*>("left","IOArray"),
+			make_param<IOArray*>("right","IOArray"),
+			make_param<IOArray*>("disparity","IOArray")
+	}, StereoMatcher::compute);
+
+
+	overload->addOverload("stereomatcher", "", "getMinDisparity", {}, StereoMatcher::getMinDisparity);
+	overload->addOverload("stereomatcher", "", "setMinDisparity", { make_param<int>("minDisparity","int") }, StereoMatcher::setMinDisparity);
+	overload->addOverload("stereomatcher", "", "getNumDisparities", {}, StereoMatcher::getNumDisparities);
+	overload->addOverload("stereomatcher", "", "setNumDisparities", { make_param<int>("minDisparities","int") }, StereoMatcher::setNumDisparities);
+	overload->addOverload("stereomatcher", "", "getBlockSize", {}, StereoMatcher::getBlockSize);
+	overload->addOverload("stereomatcher", "", "setBlockSize", { make_param<int>("blockSize","int") }, StereoMatcher::setBlockSize);
+	overload->addOverload("stereomatcher", "", "getSpeckleWindowSize", {}, StereoMatcher::getSpeckleWindowSize);
+	overload->addOverload("stereomatcher", "", "setSpeckleWindowSize", { make_param<int>("speckleWindowSize","int") }, StereoMatcher::setSpeckleWindowSize);
+	overload->addOverload("stereomatcher", "", "getSpeckleRange", {}, StereoMatcher::getSpeckleRange);
+	overload->addOverload("stereomatcher", "", "setSpeckleRange", { make_param<int>("speckleRange","int") }, StereoMatcher::setSpeckleRange);
+	overload->addOverload("stereomatcher", "", "getDisp12MaxDiff", {}, StereoMatcher::getDisp12MaxDiff);
+	overload->addOverload("stereomatcher", "", "setDisp12MaxDiff", { make_param<int>("disp12MaxDiff","int") }, StereoMatcher::setDisp12MaxDiff);
+}
+
+
+POLY_METHOD(StereoMatcher::compute) {
+	auto left = info.at<IOArray*>(0)->GetInputArray();
+	auto right = info.at<IOArray*>(1)->GetInputArray();
+	auto disparity = info.at<IOArray*>(2)->GetOutputArray();
+
+	auto this_ = info.This<StereoMatcher*>();
+	this_->_algorithm.dynamicCast<cv::StereoMatcher>()->compute(left, right, disparity);
+}
+POLY_METHOD(StereoMatcher::getMinDisparity) {
+	auto this_ = info.This<StereoMatcher*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoMatcher>()->getMinDisparity();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoMatcher::setMinDisparity) {
+	auto this_ = info.This<StereoMatcher*>();
+	this_->_algorithm.dynamicCast<cv::StereoMatcher>()->setMinDisparity(info.at<int>(0));
+
+}
+POLY_METHOD(StereoMatcher::getNumDisparities) {
+	auto this_ = info.This<StereoMatcher*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoMatcher>()->getNumDisparities();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoMatcher::setNumDisparities) {
+	auto this_ = info.This<StereoMatcher*>();
+	this_->_algorithm.dynamicCast<cv::StereoMatcher>()->setNumDisparities(info.at<int>(0));
+}
+POLY_METHOD(StereoMatcher::getBlockSize) {
+	auto this_ = info.This<StereoMatcher*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoMatcher>()->getBlockSize();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoMatcher::setBlockSize) {
+	auto this_ = info.This<StereoMatcher*>();
+	this_->_algorithm.dynamicCast<cv::StereoMatcher>()->setBlockSize(info.at<int>(0));
+}
+POLY_METHOD(StereoMatcher::getSpeckleWindowSize) {
+	auto this_ = info.This<StereoMatcher*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoMatcher>()->getSpeckleWindowSize();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoMatcher::setSpeckleWindowSize) {
+	auto this_ = info.This<StereoMatcher*>();
+	this_->_algorithm.dynamicCast<cv::StereoMatcher>()->setSpeckleWindowSize(info.at<int>(0));
+}
+POLY_METHOD(StereoMatcher::getSpeckleRange) {
+	auto this_ = info.This<StereoMatcher*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoMatcher>()->getSpeckleRange();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoMatcher::setSpeckleRange) {
+	auto this_ = info.This<StereoMatcher*>();
+	this_->_algorithm.dynamicCast<cv::StereoMatcher>()->setSpeckleRange(info.at<int>(0));
+}
+POLY_METHOD(StereoMatcher::getDisp12MaxDiff) {
+	auto this_ = info.This<StereoMatcher*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoMatcher>()->getDisp12MaxDiff();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoMatcher::setDisp12MaxDiff) {
+	auto this_ = info.This<StereoMatcher*>();
+	this_->_algorithm.dynamicCast<cv::StereoMatcher>()->setDisp12MaxDiff(info.at<int>(0));
+}
+
+
+

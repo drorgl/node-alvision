@@ -4,15 +4,15 @@
 #include "../alvision.h"
 
 template <typename T>
-class Point3 : public or::ObjectWrap {
+class Point3_ : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Point3::New);
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Point3_::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
-		overload->register_type<Point3<T>>(ctor, "", name);
+		overload->register_type<Point3_<T>>(ctor, "", name);
 
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
@@ -34,7 +34,7 @@ public:
 			Nan::ThrowTypeError("Cannot instantiate without new");
 
 
-		auto *point = new Point<T>();
+		auto *point = new Point_<T>();
 
 		point->Wrap(info.Holder());
 
@@ -48,6 +48,10 @@ public:
 
 //declare variables
 template <typename T>
-Nan::Persistent<FunctionTemplate> Point3<T>::constructor;
+Nan::Persistent<FunctionTemplate> Point3_<T>::constructor;
+
+typedef typename Point3_<cv::Point3i> Point3i;
+typedef typename Point3_<cv::Point3f> Point3f;
+typedef typename Point3_<cv::Point3d> Point3d;
 
 #endif

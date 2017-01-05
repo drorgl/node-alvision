@@ -3,6 +3,11 @@
 #include "Matrix.h"
 #include "Vec.h"
 #include "Size.h"
+#include "Rect.h"
+#include "types/TermCriteria.h"
+#include "Point.h"
+#include "features2d/Feature2D.h"
+#include "features2d/SimpleBlobDetector.h"
 
 void
 calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
@@ -142,13 +147,13 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   overload->addStaticOverload("calib3d", "", "initCameraMatrix2D", {
 	  make_param<IOArray*>("objectPoints","IOArray"),
 	  make_param<IOArray*>("imagePoints","IOArray"),
-	  make_param<Size<cv::Size>*>("imageSize",Size<cv::Size>::name),
+	  make_param<Size*>("imageSize",Size::name),
 	  make_param<double>("aspectRatio","double",1.0)
   }, initCameraMatrix2D);
 
   overload->addStaticOverload("calib3d", "", "findChessboardCorners", {
 	  make_param<IOArray*>("image","IOArray"),
-	  make_param<Size<cv::Size>*>("patternSize",Size<cv::Size>::name),
+	  make_param<Size*>("patternSize",Size::name),
 	  make_param<IOArray*>("corners","IOArray"),
 	  make_param<int>("flags","int",cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE)
   }, findChessboardCorners);
@@ -157,12 +162,12 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   overload->addStaticOverload("calib3d", "", "find4QuadCornerSubpix", {
 	  make_param<IOArray*>("img","IOArray"),
 	  make_param<IOArray*>("corners","IOArray"),
-	  make_param<Size<cv::Size>*>("region_size",Size<cv::Size>::name)
+	  make_param<Size*>("region_size",Size::name)
   }, find4QuadCornerSubpix);
 
   overload->addStaticOverload("calib3d", "", "drawChessboardCorners", {
 	  make_param<IOArray*>("image","IOArray"),
-	  make_param<Size<cv::Size>*>("patternSize",Size<cv::Size>::name),
+	  make_param<Size*>("patternSize",Size::name),
 	  make_param<IOArray*>("corners","IOArray"),
 	  make_param<bool>("patternWasFound","bool")
   }, drawChessboardCorners);
@@ -170,7 +175,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
   overload->addStaticOverload("calib3d", "", "findCirclesGrid", {
 	  make_param<IOArray*>("image","IOArray"),
-	  make_param<Size<cv::Size>*>("patternSize",Size<cv::Size>::name),
+	  make_param<Size*>("patternSize",Size::name),
 	  make_param<IOArray*>("centers","IOArray"),
 	  make_param<int>("flags","CALIB_CB_SYM",cv::CALIB_CB_SYMMETRIC_GRID),
 	  make_param<FeatureDetector*>("blobDetector","FeatureDetector",SimpleBlobDetector::create())
@@ -179,18 +184,18 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   overload->addStaticOverload("calib3d", "", "calibrateCamera", {
 	  make_param<IOArray*>("objectPoints","IOArray"),
 	  make_param<IOArray*>("imagePoints","IOArray"),
-	  make_param<Size<cv::Size>*>("imageSize",Size<cv::Size>::name),
+	  make_param<Size*>("imageSize",Size::name),
 	  make_param<IOArray*>("cameraMatrix","IOArray"),
 	  make_param<IOArray*>("distCoeffs","IOArray"),
 	  make_param<IOArray*>("rvecs","IOArray"),
 	  make_param<IOArray*>("tvecs","IOArray"),
 	  make_param<int>("flags","int",0),
-	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON))
+	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::New(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON))
   }, calibrateCamera);
 
   overload->addStaticOverload("calib3d", "", "calibrationMatrixValues", {
 	  make_param<IOArray*>("cameraMatrix","IOArray"),
-	  make_param<Size<cv::Size>*>("imageSize",Size<cv::Size>::name),
+	  make_param<Size*>("imageSize",Size::name),
 	  make_param<double>("apertureWidth","double"),
 	  make_param<double>("apertureHeight","double"),
 	  make_param<std::shared_ptr< or ::Callback>>("cb","Function")// : (fovx : _st.double, fovy : _st.double, focalLength : _st.double, principalPoint : _types.Point2d, aspectRatio : _st.double) = >void
@@ -205,13 +210,13 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<IOArray*>("distCoeffs1","IOArray"),
 	  make_param<IOArray*>("cameraMatrix2","IOArray"),
 	  make_param<IOArray*>("distCoeffs2","IOArray"),
-	  make_param<Size<cv::Size>*>("imageSize",Size<cv::Size>::name),
+	  make_param<Size*>("imageSize",Size::name),
 	  make_param<IOArray*>("R","IOArray"),
 	  make_param<IOArray*>("T","IOArray"),
 	  make_param<IOArray*>("E","IOArray"),
 	  make_param<IOArray*>("F","IOArray"),
 	  make_param<int>("flags","CALIB",cv::CALIB_FIX_INTRINSIC),
-	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, 1e-6))
+	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::New(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, 1e-6))
 
   }, stereoCalibrate);
 
@@ -221,7 +226,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("distCoeffs1","IOArray"),
 		make_param<IOArray*>("cameraMatrix2","IOArray"),
 		make_param<IOArray*>("distCoeffs2","IOArray"),
-		make_param<Size<cv::Size>*>("imageSize",Size<cv::Size>::name),
+		make_param<Size*>("imageSize",Size::name),
 		make_param<IOArray*>("R","IOArray"),
 		make_param<IOArray*>("T","IOArray"),
 		make_param<IOArray*>("R1","IOArray"),
@@ -231,7 +236,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("Q","IOArray"),
 		make_param<int>("flags","CALIB",cv::CALIB_ZERO_DISPARITY),
 		make_param<double>("alpha","double",-1),
-		make_param<Size<cv::Size>*>("newImageSize",Size<cv::Size>::name,std::make_shared<Size<cv::Size>>()),
+		make_param<Size*>("newImageSize",Size::name,std::make_shared<Size>()),
 		make_param<std::shared_ptr<or::Callback>>("cb","Function")// ? : (validPixROI1 : _types.Rect, validPixROI2 : _types.Rect) = > void
 
   }, stereoRectify);
@@ -241,7 +246,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("points1","IOArray"),
 		make_param<IOArray*>("points2","IOArray"),
 		make_param<IOArray*>("F","IOArray"),
-		make_param<Size<cv::Size>*>("imgSize",Size<cv::Size>::name),
+		make_param<Size*>("imgSize",Size::name),
 		make_param<IOArray*>("H1","IOArray"),
 		make_param<IOArray*>("H2","IOArray"),
 		make_param<double>("threshold","double",5)
@@ -256,7 +261,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("distCoeffs3","IOArray"),
 		make_param<IOArray*>("imgpt1","IOArray"),
 		make_param<IOArray*>("imgpt3","IOArray"),
-		make_param<Size<cv::Size>*>("imageSize", Size<cv::Size>::name),
+		make_param<Size*>("imageSize", Size::name),
 		make_param<IOArray*>("R12","IOArray"),
 		make_param<IOArray*>("T12","IOArray"),
 		make_param<IOArray*>("R13","IOArray"),
@@ -269,7 +274,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("P3","IOArray"),
 		make_param<IOArray*>("Q","IOArray"),
 		make_param<double>("alpha","double"),
-		make_param<Size<cv::Size>*>("newImgSize",Size<cv::Size>::name),
+		make_param<Size*>("newImgSize",Size::name),
 		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (roi1 : _types.Rect, roi2 : _types.Rect) = > void, 
 		make_param<int>("flags","int")
   
@@ -279,9 +284,9 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   overload->addStaticOverload("calib3d", "", "getOptimalNewCameraMatrix", {
 		make_param<IOArray*>("cameraMatrix","IOArray"),
 		make_param<IOArray*>("distCoeffs","IOArray"),
-		make_param<Size<cv::Size>*>("imageSize",Size<cv::Size>::name),
+		make_param<Size*>("imageSize",Size::name),
 		make_param<double>("alpha","double"),
-		make_param<Size<cv::Size>*>("newImgSize",Size<cv::Size>::name, Size<cv::Size>()),
+		make_param<Size*>("newImgSize",Size::name, Size::Empty()),
 		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// ? : (validPixROI : _types.Rect) = > void,
 		make_param<bool>("centerPrincipalPoint","bool",false)
   }, getOptimalNewCameraMatrix);
@@ -306,7 +311,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
   overload->addStaticOverload("calib3d", "", "findFundamentalMat", {
 	make_param<IOArray*>("points1","IOArray"),
-	make_param<IOArray*>("points2","IOArray").
+	make_param<IOArray*>("points2","IOArray"),
 	make_param<IOArray*>("mask","IOArray"),
 	make_param<int>("method","FundMatrixAlgo",cv::FM_RANSAC),
 	  make_param<double>("param1","double",3.0),
@@ -327,7 +332,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<IOArray*>("points1","IOArray"),
 		make_param<IOArray*>("points2","IOArray"),
 		make_param<double>("focal","double",1.0),
-		make_param<Point2d*>("pp","Point2d",Point2d(0, 0)),
+		make_param<Point2d*>("pp","Point2d",Point2d::create(0, 0)),
 		make_param<int>("method","int",cv::RANSAC),
 		make_param<double>("prob","double", 0.999),
 		make_param<double>("threshold","double",1.0),
@@ -360,7 +365,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("R","IOArray"),
 		make_param<IOArray*>("t","IOArray"),
 		make_param<double>("focal","double", 1.0),
-		make_param<Point2d*>("pp","Point2d",Point2d(0, 0)),
+		make_param<Point2d*>("pp","Point2d",Point2d::create(0, 0)),
 		make_param<IOArray*>("mask","IOArray",IOArray::noArray())
   }, recoverPose_a);
 
@@ -419,8 +424,8 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 
   overload->addStaticOverload("calib3d", "", "getValidDisparityROI", {
-		make_param<Rect*>("roi1",Rect::name),
-		make_param<Rect*>("roi2",Rect::name),
+		make_param<Rect<cv::Rect>*>("roi1",Rect<cv::Rect>::name),
+		make_param<Rect<cv::Rect>*>("roi2",Rect<cv::Rect>::name),
 		make_param<int>("minDisparity","int"),
 		make_param<int>("numberOfDisparities","int"),
 		make_param<int>("SADWindowSize","int")
@@ -482,16 +487,16 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   
   }, decomposeHomographyMat);
 
-  #include StereoMatcher
+  //#include StereoMatcher
   
   
-  #include StereoBM
+  //#include StereoBM
 
   
-  #include StereoSGBM
+  //#include StereoSGBM
   //! @} calib3d
 
-  #include fisheye
+  //#include fisheye
 
 
 
@@ -621,7 +626,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  );
   }
 
-  POLY_METHOD(solvePnP) {
+  POLY_METHOD(calib3d::solvePnP) {
 	  auto objectPoints = info.at<IOArray*>(0)->GetInputArray();
 	  auto imagePoints = info.at<IOArray*>(1)->GetInputArray();
 	  auto cameraMatrix = info.at<IOArray*>(2)->GetInputArray();
@@ -676,7 +681,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   POLY_METHOD(calib3d::initCameraMatrix2D) {
 	  auto objectPoints = info.at<IOArray*>(0)->GetInputArrayOfArrays();
 	  auto imagePoints = info.at<IOArray*>(1)->GetInputArrayOfArrays();
-	  auto imageSize = info.at<Size<cv::Size>*>(2);
+	  auto imageSize = info.at<Size*>(2);
 	  auto aspectRatio = info.at<double>(3);
 
 	  auto ret = cv::initCameraMatrix2D(
@@ -693,7 +698,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
   POLY_METHOD(calib3d::findChessboardCorners) {
 	  auto image = info.at<IOArray*>(0)->GetInputArray();
-	  auto patternSize = info.at<Size<cv::Size>*>(1);
+	  auto patternSize = info.at<Size*>(1);
 	  auto corners = info.at<IOArray*>(2)->GetOutputArray();
 	  auto flags = info.at<int>(3);
 	  auto ret = cv::findChessboardCorners(
@@ -709,7 +714,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   POLY_METHOD(calib3d::find4QuadCornerSubpix) {
 	  auto img = info.at<IOArray*>(0)->GetInputArray();
 	  auto corners = info.at<IOArray*>(1)->GetInputOutputArray();
-	  auto region_size = info.at<Size<cv::Size>*>(2)->_size;
+	  auto region_size = info.at<Size*>(2)->_size;
 
 	  auto res = cv::find4QuadCornerSubpix(
 		  img,
@@ -722,7 +727,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
   POLY_METHOD(calib3d::drawChessboardCorners) {
 	  auto image = info.at<IOArray*>(0)->GetInputOutputArray();
-	  auto patternSize = info.at<Size<cv::Size>*>(1)->_size;
+	  auto patternSize = info.at<Size*>(1)->_size;
 	  auto corners = info.at<IOArray*>(2)->GetInputArray();
 	  auto patternWasFound = info.at<bool>(3);
 
@@ -737,17 +742,17 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
   POLY_METHOD(calib3d::findCirclesGrid) {
 	  auto image = info.at<IOArray*>(0)->GetInputArray();
-	  auto patternSize = info.at<Size<cv::Size>*>(1)->_size;
+	  auto patternSize = info.at<Size*>(1)->_size;
 	  auto centers = info.at<IOArray*>(2)->GetOutputArray();
 	  auto flags = info.at<int>(3);
-	  auto blobDetector = info.at<FeatureDetector*>(4);
+	  auto blobDetector = info.at<FeatureDetector*>(4)->_algorithm;
 
 	  auto ret = cv::findCirclesGrid(
 		  image,
 		  *patternSize,
 		  centers,
 		  flags,
-		  blobDetector
+		   blobDetector.dynamicCast<cv::FeatureDetector>()
 	  );
 	  info.SetReturnValue(ret);
   }
@@ -756,13 +761,13 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   POLY_METHOD(calib3d::calibrateCamera) {
 	  auto objectPoints = info.at<IOArray*>(0)->GetInputArrayOfArrays();
 	  auto imagePoints = info.at<IOArray*>(1)->GetInputArrayOfArrays();
-	  auto imageSize = info.at<Size<cv::Size>*>(2)->_size;
+	  auto imageSize = info.at<Size*>(2)->_size;
 	  auto cameraMatrix = info.at<IOArray*>(3)->GetInputOutputArray();
 	  auto distCoeffs = info.at<IOArray*>(4)->GetInputOutputArray();
 	  auto rvecs = info.at<IOArray*>(5)->GetOutputArrayOfArrays();
 	  auto tvecs = info.at<IOArray*>(6)->GetOutputArrayOfArrays();
 	  auto flags = info.at<int>(7);
-	  auto criteria = info.at<TermCriteria*>(8);
+	  auto criteria = info.at<TermCriteria*>(8)->_termCriteria;
 
 	  auto ret = cv::calibrateCamera(
 		  objectPoints,
@@ -773,14 +778,14 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		  rvecs,
 		  tvecs,
 		  flags,
-		  criteria
+		  *criteria
 	  );
 	  info.SetReturnValue(ret);
   }
 
   POLY_METHOD(calib3d::calibrationMatrixValues) {
 		auto cameraMatrix	= info.at<IOArray*>(0)->GetInputArray();
-		auto imageSize		= info.at<Size<cv::Size>*>(1)->_size;
+		auto imageSize		= info.at<Size*>(1)->_size;
 		auto apertureWidth	= info.at<double>(2); 
 		auto apertureHeight = info.at<double>(3);
 		auto cb  = info.at<std::shared_ptr<or::Callback>>(4); //(fovx : _st.double, fovy : _st.double, focalLength : _st.double, principalPoint : _types.Point2d, aspectRatio : _st.double) = >void
@@ -793,7 +798,10 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 		cv::calibrationMatrixValues(cameraMatrix, *imageSize, apertureWidth, apertureHeight, fovx, fovy, focalLength, principalPoint, aspectRatio);
 
-		cv->Call({ or ::make_value(fovx), or::make_value(fovy), or::make_value(focalLength), or::make_value(principalPoint), or::make_value(aspectRatio) });
+		auto principal_point = new Point2d();
+		principal_point->_point = std::make_shared<cv::Point2d>(principalPoint);
+
+		cb->Call({ or ::make_value(fovx), or::make_value(fovy), or::make_value(focalLength), or::make_value(principal_point), or::make_value(aspectRatio) });
   }
 
   POLY_METHOD(calib3d::stereoCalibrate) {
@@ -804,13 +812,13 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  auto distCoeffs1		= info.at<IOArray*>(4)->GetInputOutputArray()  ;
 	  auto cameraMatrix2	= info.at<IOArray*>(5)->GetInputOutputArray()  ;
 	  auto distCoeffs2		= info.at<IOArray*>(6)->GetInputOutputArray()  ;
-	  auto imageSize		= info.at<Size<cv::Size>*>(7)->_size;
+	  auto imageSize		= info.at<Size*>(7)->_size;
 	  auto R				= info.at<IOArray*>(8)->GetOutputArray(); 
 	  auto T				= info.at<IOArray*>(9)->GetOutputArray(); 
 	  auto E				= info.at<IOArray*>(10)->GetOutputArray(); 
 	  auto F				= info.at<IOArray*>(11)->GetOutputArray();
 	  auto flags 			= info.at<int>(12);
-	  auto criteria 		= info.at<TermCriteria*>(13);
+	  auto criteria 		= info.at<TermCriteria*>(13)->_termCriteria;
 
 	  auto ret = cv::stereoCalibrate(
 		  objectPoints,
@@ -826,7 +834,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		  E,
 		  F,
 		  flags,
-		  criteria);
+		  *criteria);
 
 	  info.SetReturnValue(ret);
   }
@@ -836,7 +844,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto distCoeffs1		= info.at<IOArray*>(1)->GetInputArray();
 		auto cameraMatrix2		= info.at<IOArray*>(2)->GetInputArray(); 
 		auto distCoeffs2		= info.at<IOArray*>(3)->GetInputArray();
-		auto imageSize			= info.at<Size<cv::Size>*>(4)->_size;
+		auto imageSize			= info.at<Size*>(4)->_size;
 		auto R					= info.at<IOArray*>(5)->GetInputArray();
 		auto T					= info.at<IOArray*>(6)->GetInputArray();
 		auto R1					= info.at<IOArray*>(7)->GetOutputArray();
@@ -846,7 +854,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto Q					= info.at<IOArray*>(11)->GetOutputArray();
 		auto flags				= info.at<int>(12);
 		auto alpha				= info.at<double>(13);
-		auto newImageSize		= info.at<Size<cv::Size>*>(14)->_size;
+		auto newImageSize		= info.at<Size*>(14)->_size;
 		auto cb 				= info.at<std::shared_ptr<or::Callback>>(15);// (validPixROI1 : _types.Rect, validPixROI2 : _types.Rect) = > void) : void;
 
 		cv::Rect validPixROI1;
@@ -859,13 +867,13 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 			P1, P2,
 			Q, flags,
 			alpha, *newImageSize,
-			validPixROI1, validPixROI2);
+			&validPixROI1, &validPixROI2);
 
 		auto rect1 = new Rect<cv::Rect>();
-		rect1->_rect = std::shared_ptr<cv::Rect>(validPixROI1);
+		rect1->_rect = std::make_shared<cv::Rect>(validPixROI1);
 
 		auto rect2 = new Rect<cv::Rect>();
-		rect2->_rect = std::shared_ptr<cv::Rect>(validPixROI2);
+		rect2->_rect = std::make_shared<cv::Rect>(validPixROI2);
 
 		cb->Call({or::make_value(rect1), or::make_value(rect2)});
   }
@@ -874,7 +882,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  auto points1 = info.at<IOArray*>(0)->GetInputArray();
 	  auto points2 = info.at<IOArray*>(1)->GetInputArray();
 	  auto F = info.at<IOArray*>(2)->GetInputArray();
-	  auto imgSize = info.at<Size<cv::Size>*>(3)->_size;
+	  auto imgSize = info.at<Size*>(3)->_size;
 	  auto H1 = info.at<IOArray*>(4)->GetOutputArray();
 	  auto H2 = info.at<IOArray*>(5)->GetOutputArray();
 	  auto threshold = info.at<double>(6);
@@ -883,7 +891,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		  points1,
 		  points2,
 		  F,
-		  imgSize,
+		  *imgSize,
 		  H1,
 		  H2,
 		  threshold);
@@ -900,7 +908,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto distCoeffs3		= info.at<IOArray*>(5)->GetInputArray();
 		auto imgpt1				= info.at<IOArray*>(6)->GetInputArrayOfArrays();
 		auto imgpt3				= info.at<IOArray*>(7)->GetInputArrayOfArrays();
-		auto imageSize			= info.at<Size<cv::Size>*>(8)->_size;
+		auto imageSize			= info.at<Size*>(8)->_size;
 		auto R12				= info.at<IOArray*>(9)->GetInputArray(); 
 		auto T12				= info.at<IOArray*>(10)->GetInputArray();
 		auto R13				= info.at<IOArray*>(11)->GetInputArray(); 
@@ -913,7 +921,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto P3					= info.at<IOArray*>(18)->GetOutputArray();
 		auto Q					= info.at<IOArray*>(19)->GetOutputArray(); 
 		auto alpha				= info.at<double>(20);
-		auto newImgSize			= info.at<Size<cv::Size>*>(21)->_size;
+		auto newImgSize			= info.at<Size*>(21)->_size;
 		auto cb					= info.at<std::shared_ptr<or::Callback>>(22);// (roi1 : _types.Rect, roi2 : _types.Rect) = > void, 
 		auto flags				= info.at<int>(23);
 		
@@ -930,7 +938,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 			R1, R2, R3,
 			P1, P2, P3,
 			Q, alpha, *newImgSize,
-			cvroi1, cvroi2, flags);
+			&cvroi1, &cvroi2, flags);
 
 		auto roi1 = new Rect<cv::Rect>();
 		roi1->_rect = std::make_shared<cv::Rect>(cvroi1);
@@ -943,46 +951,48 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   }
 
   POLY_METHOD(calib3d::getOptimalNewCameraMatrix) {
-	  auto cameraMatrix = info.at<IOArray*>(0)->GetInputArray()
-		  auto distCoeffs = info.at<IOArray*>(1)->GetInputArray()
-		  auto imageSize = info.at<Size<cv::Size>*>(2)->_size;
-	  auto alpha = info.at<double>(3);
-	  auto newImgSize = info.at<Size<cv::Size>*>(4)->_size;
-	  auto cb = info.at<std::shared_ptr< or ::Callback>>(5);// (validPixROI : _types.Rect) = > void,
-	  auto centerPrincipalPoint = info.at<bool>(6);
+	  throw std::exception("not implemented");
 
-	  auto ret = cv::getOptimalNewCameraMatrix(
-		  cameraMatrix,
-		  distCoeffs,
-		  imageSize,
-		  alpha,
-		  newImgSize,
-		  cb,
-		  centerPrincipalPoint);
-
-	  auto mat = new Matrix();
-	  mat->_mat = std::make_shared<cv::Mat>(ret);
-
-	  info.SetReturnValue(mat);
+	  //auto cameraMatrix = info.at<IOArray*>(0)->GetInputArray();
+	  //auto distCoeffs = info.at<IOArray*>(1)->GetInputArray();
+		//  auto imageSize = info.at<Size*>(2)->_size;
+	  //auto alpha = info.at<double>(3);
+	  //auto newImgSize = info.at<Size*>(4)->_size;
+	  //auto cb = info.at<std::shared_ptr< or ::Callback>>(5);// (validPixROI : _types.Rect) = > void,
+	  //auto centerPrincipalPoint = info.at<bool>(6);
+	  //
+	  ///*auto ret = cv::getOptimalNewCameraMatrix(
+		//  cameraMatrix,
+		//  distCoeffs,
+		//  *imageSize,
+		//  alpha,
+		//  *newImgSize,
+		//  cb,
+		//  centerPrincipalPoint);*/
+	  //
+	  //auto mat = new Matrix();
+	  //mat->_mat = std::make_shared<cv::Mat>(ret);
+	  //
+	  //info.SetReturnValue(mat);
   }
 
   POLY_METHOD(calib3d::convertPointsToHomogeneous) {
 	  auto src = info.at<IOArray*>(0)->GetInputArray();
-	  auto dst = info.at<IOarray*>(1)->GetOutputArray();
+	  auto dst = info.at<IOArray*>(1)->GetOutputArray();
 
 	  cv::convertPointsToHomogeneous(src, dst);
   }
 
   POLY_METHOD(calib3d::convertPointsFromHomogeneous) {
 	  auto src = info.at<IOArray*>(0)->GetInputArray();
-	  auto dst = info.at<IOarray*>(1)->GetOutputArray();
+	  auto dst = info.at<IOArray*>(1)->GetOutputArray();
 
 	  cv::convertPointsFromHomogeneous(src, dst);
   }
 
   POLY_METHOD(calib3d::convertPointsHomogeneous) {
 	  auto src = info.at<IOArray*>(0)->GetInputArray();
-	  auto dst = info.at<IOarray*>(1)->GetOutputArray();
+	  auto dst = info.at<IOArray*>(1)->GetOutputArray();
 
 	  cv::convertPointsHomogeneous(src, dst);
   }
@@ -997,7 +1007,10 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 	  auto ret = cv::findFundamentalMat(points1, points2, mask, method, param1, param2);
 
-	  info.SetReturnValue(ret);
+	  auto mat_ret = new Matrix();
+	  mat_ret->_mat = std::make_shared<cv::Mat>(ret);
+
+	  info.SetReturnValue(mat_ret);
   }
 
   POLY_METHOD(calib3d::findFundamentalMat_b) {
@@ -1017,7 +1030,10 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		  mask
 	  );
 
-	  info.SetReturnValue(ret);
+	  auto mat_ret = new Matrix();
+	  mat_ret->_mat = std::make_shared<cv::Mat>(ret);
+
+	  info.SetReturnValue(mat_ret);
   }
 
 
@@ -1025,7 +1041,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	auto points1		= info.at<IOArray*>(0)->GetInputArray(); 
 	auto points2		= info.at<IOArray*>(1)->GetInputArray();
 	auto focal 		= info.at<double>(2);
-	auto pp 			= info.at<Point2d*>(3);
+	auto pp = info.at<Point2d*>(3)->_point;
 	auto method 		= info.at<int>(4);
 	auto prob 			= info.at<double>(5);
 	auto threshold 	= info.at<double>(6);
@@ -1035,12 +1051,16 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		points1		,
 		points2		,
 		focal		,
-		pp			,
+		*pp			,
 		method		,
 		prob		,
 		threshold	,
 		mask);
-	info.SetReturnValue(ret);
+
+	auto mat_ret = new Matrix();
+	mat_ret->_mat = std::make_shared<cv::Mat>(ret);
+
+	info.SetReturnValue(mat_ret);
   }
 
   POLY_METHOD(calib3d::findEssentialMat_b) {
@@ -1061,7 +1081,10 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 			  threshold		,
 			  mask);
 
-		  info.SetReturnValue(ret);
+		  auto mat_ret = new Matrix();
+		  mat_ret->_mat = std::make_shared<cv::Mat>(ret);
+
+		  info.SetReturnValue(mat_ret);
   }
 
   POLY_METHOD(calib3d::decomposeEssentialMat) {
@@ -1081,7 +1104,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto R			= info.at<IOArray*>(3)->GetOutputArray(); 
 		auto t			= info.at<IOArray*>(4)->GetOutputArray();
 		auto focal		= info.at<double>(5);
-		auto pp			= info.at<Point2d*>(6);
+		auto pp = info.at<Point2d*>(6)->_point;
 		auto mask		= info.at<IOArray*>(7)->GetInputOutputArray();
 		  
 		auto ret = cv::recoverPose(
@@ -1091,7 +1114,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 			R			,
 			t			,
 			focal		,
-			pp			,
+			*pp			,
 			mask);
 
 		info.SetReturnValue(ret);
@@ -1183,21 +1206,24 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   }
 
   POLY_METHOD(calib3d::getValidDisparityROI) {
-	auto roi1					= info.at<Rect*>(0);
-	auto roi2					= info.at<Rect*>(1);
+	auto roi1					= info.at<Rect<cv::Rect>*>(0)->_rect;
+	auto roi2					= info.at<Rect<cv::Rect>*>(1)->_rect;
 	auto minDisparity			= info.at<int>(2);
 	auto numberOfDisparities	= info.at<int>(3);
 	auto SADWindowSize			= info.at<int>(4);
 
 	auto ret = cv::getValidDisparityROI(
-		roi1				,
-		roi2				,
+		*roi1				,
+		*roi2				,
 		minDisparity		,
 		numberOfDisparities	,
 		SADWindowSize);
 
 	//ret = Rect
-	info.SetReturnValue(ret);
+	auto rect_ret = new Rect<cv::Rect>();
+	rect_ret->_rect = std::make_shared<cv::Rect>(ret);
+
+	info.SetReturnValue(rect_ret);
 	
   }
 
@@ -1219,9 +1245,9 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 
   POLY_METHOD(calib3d::reprojectImageTo3D) {
-		auto disparity			 = info.at<>(0)->GetInputArray();
-		auto _3dImage			 = info.at<>(1)->GetOutputArray();
-		auto Q					 = info.at<>(2)->GetInputArray();
+		auto disparity			 = info.at<IOArray*>(0)->GetInputArray();
+		auto _3dImage			 = info.at<IOArray*>(1)->GetOutputArray();
+		auto Q					 = info.at<IOArray*>(2)->GetInputArray();
 		auto handleMissingValues = info.at<bool>(3);
 		auto ddepth				 = info.at<int>(4);
 

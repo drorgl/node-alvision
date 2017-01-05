@@ -8,7 +8,8 @@ class Algorithm: public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
-	std::shared_ptr<cv::Algorithm> _algorithm;
+	//std::shared_ptr<cv::Algorithm> _algorithm;
+	cv::Ptr<cv::Algorithm> _algorithm;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 

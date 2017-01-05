@@ -45,16 +45,16 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 
 	overload->addOverloadConstructor("matrix", "Mat", {}, Matrix::New);
 	overload->addOverloadConstructor("matrix", "Mat", {make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int")}, Matrix::New_rows_cols_type);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","int")}, Matrix::New_size_type);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<Size2i*>("size","Size"),make_param<int>("type","int")}, Matrix::New_size_type);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int"),make_param<Scalar<cv::Scalar>*>("s","Scalar") }, Matrix::New_rows_cols_type_scalar);
-	overload->addOverloadConstructor("matrix", "Mat", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","int"),make_param<Scalar<cv::Scalar>*>("s","Scalar") }, Matrix::New_size_type_scalar);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<Size2i*>("size","Size"),make_param<int>("type","int"),make_param<Scalar<cv::Scalar>*>("s","Scalar") }, Matrix::New_size_type_scalar);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<int>("ndims","int"),make_param<std::shared_ptr<std::vector<int>>>("sizes","Array<int>"),make_param<int>("type","int") }, Matrix::New_ndims_sizes_type);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<int>("ndims","int"),make_param<std::shared_ptr<std::vector<int>>>("sizes","Array<int>"),make_param<int>("type","int"),make_param<Scalar<cv::Scalar>*>("s","Scalar") }, Matrix::New_ndims_sizes_type_scalar);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<Matrix*>("m","Mat") }, Matrix::New_mat);
 	//TODO: not sure...
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int"),make_param("data","Array"),make_param<int>("step","size_t",(int)cv::Mat::AUTO_STEP) }, Matrix::New_rows_cols_type_data_step);
 	//TODO: not sure...
-	overload->addOverloadConstructor("matrix", "Mat", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","MatrixType"),make_param("data","Array"),make_param<int>("step","size_t",(int)cv::Mat::AUTO_STEP) }, Matrix::New_size_type_data_step);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<Size2i*>("size","Size"),make_param<int>("type","MatrixType"),make_param("data","Array"),make_param<int>("step","size_t",(int)cv::Mat::AUTO_STEP) }, Matrix::New_size_type_data_step);
 
 	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec2b"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec2b_copyData);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param("vec","Vec3b"),make_param<bool>("copyData","bool",false) }, Matrix::New_vec_Vec3b_copyData);
@@ -131,17 +131,17 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 
 	//static
 	overload->addStaticOverload("matrix", "Mat", "zeros", {make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int")}, Matrix::zeros_rows_cols_type);
-	overload->addStaticOverload("matrix", "Mat", "zeros", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","int")}, Matrix::zeros_size_type);
+	overload->addStaticOverload("matrix", "Mat", "zeros", { make_param<Size2i*>("size","Size"),make_param<int>("type","int")}, Matrix::zeros_size_type);
 	overload->addStaticOverload("matrix", "Mat", "zeros", { make_param<int>("ndims","int"),make_param<std::shared_ptr<std::vector<int>>>("sz","Array<int>"),make_param<int>("type","int") }, Matrix::zeros_ndims_sz_type);
 	Nan::SetMethod(ctor, "zeros", matrix_general_callback::callback);
 
 	overload->addStaticOverload("matrix", "Mat", "ones", { make_param<int>("rows","int"),make_param<int>("cols","int"),make_param<int>("type","int") }, Matrix::ones_rows_cols_type);
-	overload->addStaticOverload("matrix", "Mat", "ones", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","int") }, Matrix::ones_size_type);
+	overload->addStaticOverload("matrix", "Mat", "ones", { make_param<Size2i*>("size","Size"),make_param<int>("type","int") }, Matrix::ones_size_type);
 	overload->addStaticOverload("matrix", "Mat", "ones", { make_param<int>("ndims","int"),make_param<std::shared_ptr<std::vector<int>>>("sz","Array<int>"), make_param<int>("type","MatrixType") }, Matrix::ones_ndims_sz_type);
 	Nan::SetMethod(ctor, "ones", matrix_general_callback::callback);
 
 	overload->addStaticOverload("matrix", "Mat", "eye", { make_param<int>("rows","int"),make_param<int>("cols","int"), make_param<int>("type","int") }, Matrix::eye_rows_cols_type);
-	overload->addStaticOverload("matrix", "Mat", "eye", { make_param<Size<cv::Size2i>*>("size","Size"),make_param<int>("type","int") }, Matrix::eye_size_type);
+	overload->addStaticOverload("matrix", "Mat", "eye", { make_param<Size2i*>("size","Size"),make_param<int>("type","int") }, Matrix::eye_size_type);
 	Nan::SetMethod(ctor, "eye", matrix_general_callback::callback);
 
 	overload->addStaticOverload("matrix", "Mat", "from", { make_param<Matrix*>("m","Mat") }, Matrix::from_mat);
@@ -205,7 +205,7 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	Nan::SetPrototypeMethod(ctor, "dot", matrix_general_callback::callback);
 
 	overload->addOverload("matrix", "Mat", "create", { make_param<int>("rows","int"), make_param<int>("cols","int"), make_param<int>("type","int") }, Matrix::create_rows_cols_type);
-	overload->addOverload("matrix", "Mat", "create", { make_param<Size<cv::Size2i>* >("size","Size"), make_param<int>("type","int")}, Matrix::create_size);
+	overload->addOverload("matrix", "Mat", "create", { make_param<Size2i* >("size","Size"), make_param<int>("type","int")}, Matrix::create_size);
 	//TODO: decide on matsize
 	//overload->addOverload("matrix", "Mat", "create", { make_param<MatSize*>("size","MatSize"), make_param<int>("type","int") }, Matrix::create_matsize);
 	overload->addOverload("matrix", "Mat", "create", { make_param<int>("ndims","int"), make_param<std::shared_ptr<std::vector<int>>>("sizes","Array<int>"), make_param<int>("type","int") }, Matrix::create_ndims_size);
@@ -314,7 +314,7 @@ POLY_METHOD(Matrix::New_rows_cols_type) {
 }
 POLY_METHOD(Matrix::New_size_type) {
 	Matrix *mat = new Matrix();
-	auto size = info.at<Size<cv::Size>*>(0)->_size;
+	auto size = info.at<Size*>(0)->_size;
 	
 	mat->_mat = std::make_shared<cv::Mat>(*size, info.at<int>(1));
 	mat->Wrap(info.Holder());
@@ -332,7 +332,7 @@ POLY_METHOD(Matrix::New_rows_cols_type_scalar) {
 POLY_METHOD(Matrix::New_size_type_scalar) {
 	Matrix *mat = new Matrix();
 	
-	auto size = *info.at<Size<cv::Size>*>(0)->_size;
+	auto size = *info.at<Size*>(0)->_size;
 	auto s = *info.at<Scalar<cv::Scalar>*>(2)->_scalar;
 
 	mat->_mat = std::make_shared<cv::Mat>(size, info.at<int>(1), s);
@@ -685,44 +685,44 @@ POLY_METHOD(Matrix::New_matx_Matx66d_copyData){
 
 POLY_METHOD(Matrix::New_point_Point2i_copyData) {
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point<cv::Point2i>*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point2i*>(0)->_point, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_point_Point2f_copyData){
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point<cv::Point2f>*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point2f*>(0)->_point, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_point_Point2d_copyData){
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point<cv::Point2d>*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point2d*>(0)->_point, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_point_Point_copyData  ){
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point<cv::Point>*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point*>(0)->_point, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 
 POLY_METHOD(Matrix::New_point3_Point3i_copyData){
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3<cv::Point3i>*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3i*>(0)->_point, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_point3_Point3f_copyData){
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3<cv::Point3f>*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3f*>(0)->_point, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_point3_Point3d_copyData){
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3<cv::Point3d>*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3d*>(0)->_point, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
@@ -752,7 +752,7 @@ POLY_METHOD(Matrix::zeros_rows_cols_type) {
 POLY_METHOD(Matrix::zeros_size_type) {
 	auto retval = new MatExpr();
 	
-	auto size = info.at<Size<cv::Size>*>(0)->_size;
+	auto size = info.at<Size*>(0)->_size;
 
 	auto res = cv::Mat::zeros(*size, info.at<int>(1));
 	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
@@ -777,7 +777,7 @@ POLY_METHOD(Matrix::ones_rows_cols_type) {
 POLY_METHOD(Matrix::ones_size_type) {
 	auto retval = new MatExpr();
 
-	auto size = info.at<Size<cv::Size>*>(0)->_size;
+	auto size = info.at<Size*>(0)->_size;
 
 	auto res = cv::Mat::ones(*size, info.at<int>(1));
 	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
@@ -802,7 +802,7 @@ POLY_METHOD(Matrix::eye_rows_cols_type) {
 POLY_METHOD(Matrix::eye_size_type) {
 	auto retval = new MatExpr();
 
-	auto size = info.at<Size<cv::Size>*>(0)->_size;
+	auto size = info.at<Size*>(0)->_size;
 
 	auto res = cv::Mat::eye(*size, info.at<int>(1));
 	retval->_matExpr = std::make_shared<cv::MatExpr>(res);
@@ -1020,7 +1020,7 @@ POLY_METHOD(Matrix::create_rows_cols_type) {
 }
 POLY_METHOD(Matrix::create_size) {
 	auto mat = info.This<Matrix*>()->_mat;
-	auto size = *info.at<Size<cv::Size>*>(0)->_size;
+	auto size = *info.at<Size*>(0)->_size;
 
 	mat->create(size, info.at<int>(1));
 }

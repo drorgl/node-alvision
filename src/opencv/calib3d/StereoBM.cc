@@ -1,54 +1,136 @@
 #include "StereoBM.h"
+#include "../Rect.h"
 
-interface StereoBMStatic {
-	/** @brief Creates StereoBM object
-
-	@param numDisparities the disparity search range. For each pixel algorithm will find the best
-	disparity from 0 (default minimum disparity) to numDisparities. The search range can then be
-	shifted by changing the minimum disparity.
-	@param blockSize the linear size of the blocks compared by the algorithm. The size should be odd
-	(as the block is centered at the current pixel). Larger block size implies smoother, though less
-	accurate disparity map. Smaller block size gives more detailed disparity map, but there is higher
-	chance for algorithm to find a wrong correspondence.
-
-	The function create StereoBM object. You can then call StereoBM::compute() to compute disparity for
-	a specific stereo pair.
-	*/
-	create(numDisparities ? : _st.int /*= 0*/, blockSize ? : _st.int /*= 21*/) : StereoBM;
+namespace stereobm_general_callback {
+	std::shared_ptr<overload_resolution> overload;
+	NAN_METHOD(callback) {
+		if (overload == nullptr) {
+			throw std::exception("stereobm_general_callback is empty");
+		}
+		return overload->execute("stereobm", info);
+	}
 }
 
-export interface StereoBM extends StereoMatcher
-{
-	//public:
-	//    enum { PREFILTER_NORMALIZED_RESPONSE = 0,
-	//           PREFILTER_XSOBEL              = 1
-	//         };
-	//
-	//    CV_WRAP virtual int getPreFilterType() const = 0;
-	//    CV_WRAP virtual void setPreFilterType(int preFilterType) = 0;
-	//
-	//    CV_WRAP virtual int getPreFilterSize() const = 0;
-	//    CV_WRAP virtual void setPreFilterSize(int preFilterSize) = 0;
-	//
-	//    CV_WRAP virtual int getPreFilterCap() const = 0;
-	//    CV_WRAP virtual void setPreFilterCap(int preFilterCap) = 0;
-	//
-	//    CV_WRAP virtual int getTextureThreshold() const = 0;
-	//    CV_WRAP virtual void setTextureThreshold(int textureThreshold) = 0;
-	//
-	//    CV_WRAP virtual int getUniquenessRatio() const = 0;
-	//    CV_WRAP virtual void setUniquenessRatio(int uniquenessRatio) = 0;
-	//
-	//    CV_WRAP virtual int getSmallerBlockSize() const = 0;
-	//    CV_WRAP virtual void setSmallerBlockSize(int blockSize) = 0;
-	//
-	//    CV_WRAP virtual Rect getROI1() const = 0;
-	//    CV_WRAP virtual void setROI1(Rect roi1) = 0;
-	//
-	//    CV_WRAP virtual Rect getROI2() const = 0;
-	//    CV_WRAP virtual void setROI2(Rect roi2) = 0;
-	//
+void
+StereoBM::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	stereobm_general_callback::overload = overload;
+	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(stereobm_general_callback::callback);
+	constructor.Reset(ctor);
+	auto itpl = ctor->InstanceTemplate();
+	itpl->SetInternalFieldCount(1);
+	ctor->SetClassName(Nan::New("StereoBM").ToLocalChecked());
+	ctor->Inherit(Nan::New(StereoMatcher::constructor));
+
+	overload->register_type<StereoBM>(ctor, "stereobm", "StereoBM");
+
+
+
+	auto STEREOBM_PREFILTER = CreateNamedObject(target, "STEREOBM_PREFILTER");
+	SetObjectProperty(STEREOBM_PREFILTER, "PREFILTER_NORMALIZED_RESPONSE", 0);
+	SetObjectProperty(STEREOBM_PREFILTER, "PREFILTER_XSOBEL", 1);
+
+	overload->addStaticOverload("", "", "create", {
+		make_param<int>("numDisparities","int", 0),
+		make_param<int>("blockSize","int", 21)
+
+	}, create);
+
+	overload->addOverload("stereobm", "", "", {}, getPreFilterType);
+	overload->addOverload("stereobm", "", "", { make_param<int>("preFilterType","int") }, setPreFilterType);
+	overload->addOverload("stereobm", "", "", {}, getPreFilterSize);
+	overload->addOverload("stereobm", "", "", { make_param<int>("preFilterSize","int") }, setPreFilterSize);
+	overload->addOverload("stereobm", "", "", {}, getPreFilterCap);
+	overload->addOverload("stereobm", "", "", { make_param<int>("preFilterCap","int") }, setPreFilterCap);
+	overload->addOverload("stereobm", "", "", {}, getTextureThreshold);
+	overload->addOverload("stereobm", "", "", { make_param<int>("textureThreshold","int") }, setTextureThreshold);
+	overload->addOverload("stereobm", "", "", {}, getUniquenessRatio);
+	overload->addOverload("stereobm", "", "", { make_param<int>("uniquenessRatio","int") }, setUniquenessRatio);
+	overload->addOverload("stereobm", "", "", {}, getSmallerBlockSize);
+	overload->addOverload("stereobm", "", "", { make_param<int>("blockSize","int") }, setSmallerBlockSize);
+	overload->addOverload("stereobm", "", "", {}, getROI1);
+	overload->addOverload("stereobm", "", "", { make_param<Rect<cv::Rect>*>("roi1",Rect<cv::Rect>::name) }, setROI1);
+	overload->addOverload("stereobm", "", "", {}, getROI2);
+	overload->addOverload("stereobm", "", "", { make_param<Rect<cv::Rect>*>("roi2",Rect<cv::Rect>::name) }, setROI2);
+
 
 };
 
-export var StereoBM : StereoBMStatic = alvision_module.StereoBM;
+
+POLY_METHOD(StereoBM::create) {
+	auto ret = new StereoBM();
+	ret->_algorithm = cv::StereoBM::create(info.at<int>(0), info.at<int>(1));
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoBM::getPreFilterType) {
+	auto this_ = info.This<StereoBM*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoBM>()->getPreFilterType();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoBM::setPreFilterType) {
+	auto this_ = info.This<StereoBM*>();
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setPreFilterType(info.at<int>(0));
+}
+POLY_METHOD(StereoBM::getPreFilterSize) {
+	auto this_ = info.This<StereoBM*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoBM>()->getPreFilterType();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoBM::setPreFilterSize) {
+	auto this_ = info.This<StereoBM*>();
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setPreFilterSize(info.at<int>(0));
+}
+POLY_METHOD(StereoBM::getPreFilterCap) {
+	auto this_ = info.This<StereoBM*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoBM>()->getPreFilterType();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoBM::setPreFilterCap) {
+	auto this_ = info.This<StereoBM*>();
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setPreFilterCap(info.at<int>(0));
+}
+POLY_METHOD(StereoBM::getTextureThreshold) {
+	auto this_ = info.This<StereoBM*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoBM>()->getPreFilterType();
+	info.SetReturnValue(ret);
+}
+
+POLY_METHOD(StereoBM::setTextureThreshold) {
+	auto this_ = info.This<StereoBM*>();
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setTextureThreshold(info.at<int>(0));
+}
+POLY_METHOD(StereoBM::getUniquenessRatio) {
+	auto this_ = info.This<StereoBM*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoBM>()->getPreFilterType();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoBM::setUniquenessRatio) {
+	auto this_ = info.This<StereoBM*>();
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setUniquenessRatio(info.at<int>(0));
+}
+POLY_METHOD(StereoBM::getSmallerBlockSize) {
+	auto this_ = info.This<StereoBM*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoBM>()->getPreFilterType();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoBM::setSmallerBlockSize) {
+	auto this_ = info.This<StereoBM*>();
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setSmallerBlockSize(info.at<int>(0));
+}
+POLY_METHOD(StereoBM::getROI1) {
+	auto this_ = info.This<StereoBM*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoBM>()->getPreFilterType();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoBM::setROI1) {
+	auto this_ = info.This<StereoBM*>();
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setROI1(*info.at<Rect<cv::Rect>*>(0)->_rect);
+}
+POLY_METHOD(StereoBM::getROI2) {
+	auto this_ = info.This<StereoBM*>();
+	auto ret = this_->_algorithm.dynamicCast<cv::StereoBM>()->getPreFilterType();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(StereoBM::setROI2) {
+	auto this_ = info.This<StereoBM*>();
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setROI2(*info.at<Rect<cv::Rect>*>(0)->_rect);
+}

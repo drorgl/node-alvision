@@ -6,7 +6,9 @@
 template <typename T>
 class Rect : public or::ObjectWrap {
 public:
+	static std::string name;
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
+		Rect<T>::name = name;
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Rect::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
@@ -57,5 +59,10 @@ public:
 //declare variables
 template <typename T>
 Nan::Persistent<FunctionTemplate> Rect<T>::constructor;
+
+template <typename T>
+std::string Rect<T>::name;
+
+
 
 #endif
