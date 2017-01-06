@@ -1,4 +1,4 @@
-//#include "Size.h"
+#include "Size.h"
 
 // Nan::Persistent<FunctionTemplate> Size::constructor;
 //
@@ -31,3 +31,12 @@
 //	info.GetReturnValue().Set(info.Holder());
 //}
 //
+
+
+void SizeInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	Size2i::Init(target, "Size2i", overload);
+	Size2f::Init(target, "Size2f", overload);
+	Size2d::Init(target, "Size2d", overload);
+	Size::Init(target, "Size", overload);
+
+}

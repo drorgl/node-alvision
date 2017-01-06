@@ -1,3 +1,5 @@
+#include "Scalar.h"
+
 //#include "Size.h"
 
 // Nan::Persistent<FunctionTemplate> Size::constructor;
@@ -31,3 +33,9 @@
 //	info.GetReturnValue().Set(info.Holder());
 //}
 //
+
+
+
+void ScalarInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	Scalar_<cv::Scalar>::Init(target, "Scalar", overload);
+}

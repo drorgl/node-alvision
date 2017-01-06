@@ -22,6 +22,7 @@ DownhillSolver::Init(Handle<Object> target, std::shared_ptr<overload_resolution>
 };
 
 v8::Local<v8::Function> DownhillSolver::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
 }
 

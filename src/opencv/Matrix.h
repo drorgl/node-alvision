@@ -15,12 +15,12 @@ public:
 
 	virtual v8::Local<v8::Function> get_constructor(); 
 
-	virtual cv::InputArray GetInputArray();
-	virtual cv::InputArrayOfArrays GetInputArrayOfArrays();
-	virtual cv::OutputArray GetOutputArray();
-	virtual cv::OutputArrayOfArrays GetOutputArrayOfArrays();
-	virtual cv::InputOutputArray GetInputOutputArray();
-	virtual cv::InputOutputArrayOfArrays GetInputOutputArrayOfArrays();
+	virtual cv::_InputArray GetInputArray();
+	virtual cv::_InputArray GetInputArrayOfArrays();
+	virtual cv::_OutputArray GetOutputArray();
+	virtual cv::_OutputArray GetOutputArrayOfArrays();
+	virtual cv::_InputOutputArray GetInputOutputArray();
+	virtual cv::_InputOutputArray GetInputOutputArrayOfArrays();
 
 	//export interface MatStatic {
 		//public:

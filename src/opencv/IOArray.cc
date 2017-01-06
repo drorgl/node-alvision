@@ -33,6 +33,7 @@ void IOArray::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 }
 
 v8::Local<v8::Function> IOArray::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
 }
 
@@ -47,21 +48,21 @@ std::shared_ptr<IOArray> IOArray::noArray() {
 	return ret;
 }
 
-cv::InputArray					IOArray::GetInputArray() {
-	return cv::InputArray(*_ioarray);
+cv::_InputArray					IOArray::GetInputArray() {
+	return *_ioarray;
 }
-cv::InputArrayOfArrays			IOArray::GetInputArrayOfArrays() {
-	return cv::InputArrayOfArrays(*_ioarray);
+cv::_InputArray			IOArray::GetInputArrayOfArrays() {
+	return *_ioarray;
 }
-cv::OutputArray					IOArray::GetOutputArray() {
-	return cv::OutputArray(*_ioarray);
+cv::_OutputArray					IOArray::GetOutputArray() {
+	return *_ioarray;
 }
-cv::OutputArrayOfArrays			IOArray::GetOutputArrayOfArrays() {
-	return cv::OutputArrayOfArrays(*_ioarray);
+cv::_OutputArray			IOArray::GetOutputArrayOfArrays() {
+	return *_ioarray;
 }
-cv::InputOutputArray			IOArray::GetInputOutputArray() {
-	return cv::InputOutputArray(*_ioarray);
+cv::_InputOutputArray			IOArray::GetInputOutputArray() {
+	return *_ioarray;
 }
-cv::InputOutputArrayOfArrays	IOArray::GetInputOutputArrayOfArrays() {
-	return cv::InputOutputArrayOfArrays(*_ioarray);
+cv::_InputOutputArray	IOArray::GetInputOutputArrayOfArrays() {
+	return *_ioarray;
 }

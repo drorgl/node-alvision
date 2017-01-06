@@ -159,7 +159,7 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	Nan::SetMethod(target, "updateWindow", highgui_general_callback::callback);
 
 	overload->addStaticOverload("highgui", "", "fontQt", { std::make_shared<overload_info>("nameFont","String"), std::make_shared<overload_info>("pointSize","Number",-1),
-		std::make_shared<overload_info>("color","Scalar",Scalar<cv::Scalar>::all(0)), std::make_shared<overload_info>("weight","Number",cv::QT_FONT_NORMAL),
+		std::make_shared<overload_info>("color","Scalar",Scalar::all(0)), std::make_shared<overload_info>("weight","Number",cv::QT_FONT_NORMAL),
 		std::make_shared<overload_info>("style","Number",cv::QT_STYLE_NORMAL), std::make_shared<overload_info>("spacing","Number",0) }, highgui::fontQt);
 	Nan::SetMethod(target, "fontQt", highgui_general_callback::callback);
 

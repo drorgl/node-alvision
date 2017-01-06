@@ -22,6 +22,7 @@ namespace trackedptr_general_callback {
 //Nan::Persistent<FunctionTemplate> TrackedPtr::constructor;
 //
 //v8::Local<v8::Function> TrackedPtr::get_constructor() {
+//assert(!constructor.IsEmpty() && "constructor is empty");
 //	return Nan::New(constructor)->GetFunction();
 //}
 //

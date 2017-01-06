@@ -3,15 +3,21 @@
 //#include "OpenCV.h"
 #include "../alvision.h"
 
+#include "Matrix.h"
+#include "TrackedElement.h"
+#include "TrackedPtr.h"
+#include "IOArray.h"
+
 namespace vec_general_callback {
 	extern std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback);
 }
 
 template <typename T>
-class Vec : public or ::ObjectWrap{
+class Vec : public IOArray{
 public:
 	typedef typename T::value_type TVT;
+
 
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		vec_general_callback::overload = overload;
@@ -20,6 +26,9 @@ public:
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
+
+		assert(!IOArray::constructor.IsEmpty() && "cannot initialize derived class before base class");
+		ctor->Inherit(Nan::New(IOArray::constructor));
 
 		overload->register_type<Vec<T>>(ctor, "vec", name);
 		Vec<T>::name = name;
@@ -148,6 +157,7 @@ public:
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	virtual v8::Local<v8::Function> get_constructor() {
+		assert(!constructor.IsEmpty() && "constructor is empty");
 		return Nan::New(constructor)->GetFunction();
 	}
 
@@ -157,6 +167,25 @@ public:
 		return vec;
 	}
 
+	virtual cv::_InputArray GetInputArray() {
+		return *_vec;
+	}
+	virtual cv::_InputArray GetInputArrayOfArrays() {
+		return *_vec;
+	}
+	virtual cv::_OutputArray GetOutputArray() {
+		return *_vec;
+	}
+	virtual cv::_OutputArray GetOutputArrayOfArrays() {
+		return *_vec;
+	}
+	virtual cv::_InputOutputArray GetInputOutputArray() {
+		return *_vec;
+	}
+	virtual cv::_InputOutputArray GetInputOutputArrayOfArrays() {
+		return *_vec;
+	}
+	
 	/*static NAN_METHOD(New) {
 		if (info.This()->InternalFieldCount() == 0)
 			Nan::ThrowTypeError("Cannot instantiate without new");
@@ -509,5 +538,35 @@ Nan::Persistent<FunctionTemplate> Vec<T>::constructor;
 
 template <typename T>
 std::string Vec<T>::name;
+
+
+typedef typename Vec<cv::Vec2b> Vec2b;
+typedef typename Vec<cv::Vec3b> Vec3b;
+typedef typename Vec<cv::Vec4b> Vec4b;
+typedef typename Vec<cv::Vec2s> Vec2s;
+typedef typename Vec<cv::Vec3s> Vec3s;
+typedef typename Vec<cv::Vec4s> Vec4s;
+typedef typename Vec<cv::Vec2w> Vec2w;
+typedef typename Vec<cv::Vec3w> Vec3w;
+typedef typename Vec<cv::Vec4w> Vec4w;
+typedef typename Vec<cv::Vec2i> Vec2i;
+typedef typename Vec<cv::Vec3i> Vec3i;
+typedef typename Vec<cv::Vec4i> Vec4i;
+typedef typename Vec<cv::Vec6i> Vec6i;
+typedef typename Vec<cv::Vec8i> Vec8i;
+typedef typename Vec<cv::Vec2f> Vec2f;
+typedef typename Vec<cv::Vec3f> Vec3f;
+typedef typename Vec<cv::Vec4f> Vec4f;
+typedef typename Vec<cv::Vec6f> Vec6f;
+typedef typename Vec<cv::Vec2d> Vec2d;
+typedef typename Vec<cv::Vec3d> Vec3d;
+typedef typename Vec<cv::Vec4d> Vec4d;
+typedef typename Vec<cv::Vec6d> Vec6d;
+
+
+
+namespace VecInit {
+	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
+}
 
 #endif

@@ -9,8 +9,24 @@
 #include "features2d/Feature2D.h"
 #include "features2d/SimpleBlobDetector.h"
 
+#include "calib3d/fisheye.h"
+#include "calib3d/StereoMatcher.h"
+#include "calib3d/StereoBM.h"
+#include "calib3d/StereoSGBM.h"
+
+namespace calib3d_general_callback {
+	std::shared_ptr<overload_resolution> overload;
+	NAN_METHOD(callback) {
+		if (overload == nullptr) {
+			throw std::exception("calib3d_general_callback is empty");
+		}
+		return overload->execute("calib3d", info);
+	}
+}
+
 void
 calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	calib3d_general_callback::overload = overload;
 
   auto RobustEstimationAlgo = CreateNamedObject(target, "RobustEstimationAlgo");
   SetObjectProperty(RobustEstimationAlgo, "LMEDS", (4));
@@ -23,6 +39,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   SetObjectProperty(SOLVEPNP, "SOLVEPNP_P3P", (2));
   SetObjectProperty(SOLVEPNP, "SOLVEPNP_DLS", (3));
   SetObjectProperty(SOLVEPNP, "SOLVEPNP_UPNP", (4));
+  overload->add_type_alias("SOLVEPNP", "int");
 
 
   auto CALIB_CB = CreateNamedObject(target, "CALIB_CB");
@@ -35,6 +52,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   SetObjectProperty(CALIB_CB_SYM, "CALIB_CB_SYMMETRIC_GRID", (1));
   SetObjectProperty(CALIB_CB_SYM, "CALIB_CB_ASYMMETRIC_GRID", (2));
   SetObjectProperty(CALIB_CB_SYM, "CALIB_CB_CLUSTERING", (4));
+  overload->add_type_alias("CALIB_CB_SYM", "int");
 
   auto CALIB = CreateNamedObject(target, "CALIB");
   SetObjectProperty(CALIB, "CALIB_USE_INTRINSIC_GUESS", (0x00001));
@@ -58,6 +76,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   SetObjectProperty(CALIB, "CALIB_SAME_FOCAL_LENGTH", (0x00200));
   SetObjectProperty(CALIB, "CALIB_ZERO_DISPARITY", (0x00400));
   SetObjectProperty(CALIB, "CALIB_USE_LU", ((1 << 17)));
+  overload->add_type_alias("CALIB", "int");
 
 
   auto FundMatrixAlgo = CreateNamedObject(target, "FundMatrixAlgo");
@@ -65,30 +84,37 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   SetObjectProperty(FundMatrixAlgo, "FM_8POINT", (2));
   SetObjectProperty(FundMatrixAlgo, "FM_LMEDS", (4));
   SetObjectProperty(FundMatrixAlgo, "FM_RANSAC", (8));
+  overload->add_type_alias("FundMatrixAlgo", "int");
 
-  overload->addStaticOverload("calib3d", "", "Rodrigues", {make_param<IOArray*>("src","IOArray"),make_param<IOArray*>("dst","IOArray"),make_param<IOArray*>("jacobian","IOArray",IOArray::noArray())}, calib3d::Rodrigues);
+  overload->addOverload("calib3d", "", "Rodrigues", {make_param<IOArray*>("src","IOArray"),make_param<IOArray*>("dst","IOArray"),make_param<IOArray*>("jacobian","IOArray",IOArray::noArray())}, calib3d::Rodrigues);
+  Nan::SetMethod(target, "Rodrigues", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "findHomography", { make_param<IOArray*>("srcPoints","IOArray"), make_param<IOArray*>("dstPoints","IOArray"), make_param<int>("method","int",0),
+  overload->addOverload("calib3d", "", "findHomography", { make_param<IOArray*>("srcPoints","IOArray"), make_param<IOArray*>("dstPoints","IOArray"), make_param<int>("method","int",0),
 	make_param<double>("ransacReprojThreshold","double",3), make_param<IOArray*>("mask","IOArray",IOArray::noArray()), make_param<int>("maxIters","int",2000),make_param<double>("confidence","double",0.995) }, findHomography_adv);
+  Nan::SetMethod(target, "findHomography", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "findHomography", { make_param<IOArray*>("srcPoints","IOArray"), make_param<IOArray*>("dstPoints","IOArray"), make_param<IOArray*>("mask","IOArray"), make_param<int>("method","int",0), make_param<double>("ransacReprojThreshold","double",3) }, calib3d::findHomography);
+  overload->addOverload("calib3d", "", "findHomography", { make_param<IOArray*>("srcPoints","IOArray"), make_param<IOArray*>("dstPoints","IOArray"), make_param<IOArray*>("mask","IOArray"), make_param<int>("method","int",0), make_param<double>("ransacReprojThreshold","double",3) }, calib3d::findHomography);
+  
 
-  overload->addStaticOverload("calib3d", "", "RQDecomp3x3", { make_param<IOArray*>("src","IOArray"), make_param<IOArray*>("mtxR","IOArray"), make_param<IOArray*>("mtxQ","IOArray"),
+  overload->addOverload("calib3d", "", "RQDecomp3x3", { make_param<IOArray*>("src","IOArray"), make_param<IOArray*>("mtxR","IOArray"), make_param<IOArray*>("mtxQ","IOArray"),
 	  make_param<IOArray*>("Qx","IOArray",IOArray::noArray()),
 	  make_param<IOArray*>("Qy","IOArray",IOArray::noArray()),
 	  make_param<IOArray*>("Qz","IOArray",IOArray::noArray()), }, calib3d::RQDecomp3x3);
+  Nan::SetMethod(target, "RQDecomp3x3", calib3d_general_callback::callback);
 
 
-  overload->addStaticOverload("calib3d", "", "decomposeProjectionMatrix", {make_param<IOArray*>("projMatrix","IOArray"), make_param<IOArray*>("cameraMatrix","IOArray"), 
+  overload->addOverload("calib3d", "", "decomposeProjectionMatrix", {make_param<IOArray*>("projMatrix","IOArray"), make_param<IOArray*>("cameraMatrix","IOArray"), 
 		make_param<IOArray*>("rotMatrix","IOArray"), make_param<IOArray*>("transVect","IOArray"),
 		make_param<IOArray*>("rotMatrixX","IOArray", IOArray::noArray()), 
 	  make_param<IOArray*>("rotMatrixY","IOArray", IOArray::noArray()), 
 	  make_param<IOArray*>("rotMatrixZ","IOArray", IOArray::noArray()), 
 	  make_param<IOArray*>("eulerAngles","IOArray", IOArray::noArray()) }, decomposeProjectionMatrix);
+  Nan::SetMethod(target, "decomposeProjectionMatrix", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "matMulDeriv", {make_param<IOArray*>("A","IOArray"), make_param<IOArray*>("B","IOArray"), make_param<IOArray*>("dABdA","IOArray"), make_param<IOArray*>("dABdB","IOArray")}, matMulDeriv);
+  overload->addOverload("calib3d", "", "matMulDeriv", {make_param<IOArray*>("A","IOArray"), make_param<IOArray*>("B","IOArray"), make_param<IOArray*>("dABdA","IOArray"), make_param<IOArray*>("dABdB","IOArray")}, matMulDeriv);
+  Nan::SetMethod(target, "matMulDeriv", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "composeRT", {
+  overload->addOverload("calib3d", "", "composeRT", {
 	  make_param<IOArray*>("rvec1","IOArray"),
 	  make_param<IOArray*>("tvec1","IOArray"),
 	  make_param<IOArray*>("rvec2","IOArray"),
@@ -104,19 +130,21 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<IOArray*>("dt3dr2","IOArray",IOArray::noArray()),
 	  make_param<IOArray*>("dt3dt2","IOArray",IOArray::noArray())
   }, composeRT);
+  Nan::SetMethod(target, "composeRT", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "projectPoints", {
+  overload->addOverload("calib3d", "", "projectPoints", {
 	make_param<IOArray*>("objectPoints","IOArray"),
 	make_param<IOArray*>("rvec","IOArray"), 
 	make_param<IOArray*>("tvec","IOArray"),
 	make_param<IOArray*>("cameraMatrix","IOArray"),
-	make_param<IOArray*>("distCoeffs","IOarray"),
+	make_param<IOArray*>("distCoeffs","IOArray"),
 	make_param<IOArray*>("imagePoints","IOArray"),
 	make_param<IOArray*>("jacobian","IOArray",IOArray::noArray()),
 	make_param<double>("aspectRatio","double",0)
   }, projectPoints);
+  Nan::SetMethod(target, "projectPoints", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "solvePnP", {
+  overload->addOverload("calib3d", "", "solvePnP", {
 	make_param<IOArray*>("objectPoints","IOArray"),
 	make_param<IOArray*>("imagePoints","IOArray"),
 	make_param<IOArray*>("cameraMatrix","IOArray"),
@@ -125,10 +153,10 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	make_param<IOArray*>("tvec","IOArray"),
 	make_param<bool>("useExtrinsicGuess","bool",false),
 	make_param<int>("flags","SOLVEPNP",cv::SOLVEPNP_ITERATIVE)
-  
   }, solvePnP);
+  Nan::SetMethod(target, "solvePnP", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "solvePnPRansac", {
+  overload->addOverload("calib3d", "", "solvePnPRansac", {
 	  make_param<IOArray*>("objectPoints","IOArray"),
 	  make_param<IOArray*>("imagePoints","IOArray"),
 	  make_param<IOArray*>("cameraMatrix","IOArray"),
@@ -142,46 +170,52 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<IOArray*>("inliers","IOArray",IOArray::noArray()),
 	  make_param<int>("flags","int",cv::SOLVEPNP_ITERATIVE)
   }, solvePnPRansac);
+  Nan::SetMethod(target, "solvePnPRansac", calib3d_general_callback::callback);
 
 
-  overload->addStaticOverload("calib3d", "", "initCameraMatrix2D", {
+  overload->addOverload("calib3d", "", "initCameraMatrix2D", {
 	  make_param<IOArray*>("objectPoints","IOArray"),
 	  make_param<IOArray*>("imagePoints","IOArray"),
 	  make_param<Size*>("imageSize",Size::name),
 	  make_param<double>("aspectRatio","double",1.0)
   }, initCameraMatrix2D);
+  Nan::SetMethod(target, "initCameraMatrix2D", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "findChessboardCorners", {
+  overload->addOverload("calib3d", "", "findChessboardCorners", {
 	  make_param<IOArray*>("image","IOArray"),
 	  make_param<Size*>("patternSize",Size::name),
 	  make_param<IOArray*>("corners","IOArray"),
 	  make_param<int>("flags","int",cv::CALIB_CB_ADAPTIVE_THRESH + cv::CALIB_CB_NORMALIZE_IMAGE)
   }, findChessboardCorners);
+  Nan::SetMethod(target, "findChessboardCorners", calib3d_general_callback::callback);
 
 
-  overload->addStaticOverload("calib3d", "", "find4QuadCornerSubpix", {
+  overload->addOverload("calib3d", "", "find4QuadCornerSubpix", {
 	  make_param<IOArray*>("img","IOArray"),
 	  make_param<IOArray*>("corners","IOArray"),
 	  make_param<Size*>("region_size",Size::name)
   }, find4QuadCornerSubpix);
+  Nan::SetMethod(target, "find4QuadCornerSubpix", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "drawChessboardCorners", {
+  overload->addOverload("calib3d", "", "drawChessboardCorners", {
 	  make_param<IOArray*>("image","IOArray"),
 	  make_param<Size*>("patternSize",Size::name),
 	  make_param<IOArray*>("corners","IOArray"),
 	  make_param<bool>("patternWasFound","bool")
   }, drawChessboardCorners);
+  Nan::SetMethod(target, "drawChessboardCorners", calib3d_general_callback::callback);
 
 
-  overload->addStaticOverload("calib3d", "", "findCirclesGrid", {
+  overload->addOverload("calib3d", "", "findCirclesGrid", {
 	  make_param<IOArray*>("image","IOArray"),
 	  make_param<Size*>("patternSize",Size::name),
 	  make_param<IOArray*>("centers","IOArray"),
 	  make_param<int>("flags","CALIB_CB_SYM",cv::CALIB_CB_SYMMETRIC_GRID),
 	  make_param<FeatureDetector*>("blobDetector","FeatureDetector",SimpleBlobDetector::create())
   }, findCirclesGrid);
+  Nan::SetMethod(target, "findCirclesGrid", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "calibrateCamera", {
+  overload->addOverload("calib3d", "", "calibrateCamera", {
 	  make_param<IOArray*>("objectPoints","IOArray"),
 	  make_param<IOArray*>("imagePoints","IOArray"),
 	  make_param<Size*>("imageSize",Size::name),
@@ -192,17 +226,19 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<int>("flags","int",0),
 	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::New(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON))
   }, calibrateCamera);
+  Nan::SetMethod(target, "calibrateCamera", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "calibrationMatrixValues", {
+  overload->addOverload("calib3d", "", "calibrationMatrixValues", {
 	  make_param<IOArray*>("cameraMatrix","IOArray"),
 	  make_param<Size*>("imageSize",Size::name),
 	  make_param<double>("apertureWidth","double"),
 	  make_param<double>("apertureHeight","double"),
 	  make_param<std::shared_ptr< or ::Callback>>("cb","Function")// : (fovx : _st.double, fovy : _st.double, focalLength : _st.double, principalPoint : _types.Point2d, aspectRatio : _st.double) = >void
   }, calibrationMatrixValues);
+  Nan::SetMethod(target, "calibrationMatrixValues", calib3d_general_callback::callback);
 
 
-  overload->addStaticOverload("calib3d", "", "stereoCalibrate", {
+  overload->addOverload("calib3d", "", "stereoCalibrate", {
 	  make_param<IOArray*>("objectPoints","IOArray"),
 	  make_param<IOArray*>("imagePoints1","IOArray"),
 	  make_param<IOArray*>("imagePoints2","IOArray"),
@@ -217,11 +253,10 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<IOArray*>("F","IOArray"),
 	  make_param<int>("flags","CALIB",cv::CALIB_FIX_INTRINSIC),
 	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::New(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, 1e-6))
-
   }, stereoCalibrate);
+  Nan::SetMethod(target, "stereoCalibrate", calib3d_general_callback::callback);
 
-
-  overload->addStaticOverload("calib3d", "", "stereoRectify", {
+  overload->addOverload("calib3d", "", "stereoRectify", {
 		make_param<IOArray*>("cameraMatrix1","IOArray"),
 		make_param<IOArray*>("distCoeffs1","IOArray"),
 		make_param<IOArray*>("cameraMatrix2","IOArray"),
@@ -238,11 +273,11 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<double>("alpha","double",-1),
 		make_param<Size*>("newImageSize",Size::name,std::make_shared<Size>()),
 		make_param<std::shared_ptr<or::Callback>>("cb","Function")// ? : (validPixROI1 : _types.Rect, validPixROI2 : _types.Rect) = > void
-
   }, stereoRectify);
+  Nan::SetMethod(target, "stereoRectify", calib3d_general_callback::callback);
 
 
-  overload->addStaticOverload("calib3d", "", "stereoRectifyUncalibrated", {
+  overload->addOverload("calib3d", "", "stereoRectifyUncalibrated", {
 		make_param<IOArray*>("points1","IOArray"),
 		make_param<IOArray*>("points2","IOArray"),
 		make_param<IOArray*>("F","IOArray"),
@@ -251,8 +286,9 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("H2","IOArray"),
 		make_param<double>("threshold","double",5)
   }, stereoRectifyUncalibrated);
+  Nan::SetMethod(target, "stereoRectifyUncalibrated", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "rectify3Collinear", {
+  overload->addOverload("calib3d", "", "rectify3Collinear", {
 		make_param<IOArray*>("cameraMatrix1","IOArray"),
 		make_param<IOArray*>("distCoeffs1","IOArray"),
 		make_param<IOArray*>("cameraMatrix2","IOArray"),
@@ -277,11 +313,10 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<Size*>("newImgSize",Size::name),
 		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (roi1 : _types.Rect, roi2 : _types.Rect) = > void, 
 		make_param<int>("flags","int")
-  
-  
   }, calib3d::rectify3Collinear);
+  Nan::SetMethod(target, "rectify3Collinear", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "getOptimalNewCameraMatrix", {
+  overload->addOverload("calib3d", "", "getOptimalNewCameraMatrix", {
 		make_param<IOArray*>("cameraMatrix","IOArray"),
 		make_param<IOArray*>("distCoeffs","IOArray"),
 		make_param<Size*>("imageSize",Size::name),
@@ -290,26 +325,30 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// ? : (validPixROI : _types.Rect) = > void,
 		make_param<bool>("centerPrincipalPoint","bool",false)
   }, getOptimalNewCameraMatrix);
+  Nan::SetMethod(target, "getOptimalNewCameraMatrix", calib3d_general_callback::callback);
 
 
-  overload->addStaticOverload("calib3d", "", "convertPointsToHomogeneous", {
+  overload->addOverload("calib3d", "", "convertPointsToHomogeneous", {
 		make_param<IOArray*>("src","IOArray"),
 		make_param<IOArray*>("dst","IOArray")
   }, convertPointsToHomogeneous);
+  Nan::SetMethod(target, "convertPointsToHomogeneous", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "convertPointsFromHomogeneous", {
+  overload->addOverload("calib3d", "", "convertPointsFromHomogeneous", {
 	  make_param<IOArray*>("src","IOArray"),
 	  make_param<IOArray*>("dst","IOArray")
   }, convertPointsFromHomogeneous);
+  Nan::SetMethod(target, "convertPointsFromHomogeneous", calib3d_general_callback::callback);
 
 
-  overload->addStaticOverload("calib3d", "", "convertPointsHomogeneous", {
+  overload->addOverload("calib3d", "", "convertPointsHomogeneous", {
 	  make_param<IOArray*>("src","IOArray"),
 	  make_param<IOArray*>("dst","IOArray")
   }, convertPointsHomogeneous);
+  Nan::SetMethod(target, "convertPointsHomogeneous", calib3d_general_callback::callback);
 
 
-  overload->addStaticOverload("calib3d", "", "findFundamentalMat", {
+  overload->addOverload("calib3d", "", "findFundamentalMat", {
 	make_param<IOArray*>("points1","IOArray"),
 	make_param<IOArray*>("points2","IOArray"),
 	make_param<IOArray*>("mask","IOArray"),
@@ -317,8 +356,9 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<double>("param1","double",3.0),
 	  make_param<double>("param2","double",0.99)
   }, findFundamentalMat_a);
+  Nan::SetMethod(target, "findFundamentalMat", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "findFundamentalMat", {
+  overload->addOverload("calib3d", "", "findFundamentalMat", {
 	  make_param<IOArray*>("points1","IOArray"),
 	  make_param<IOArray*>("points2","IOArray"),
 	  make_param<int>("method","FundMatrixAlgo",cv::FM_RANSAC),
@@ -328,7 +368,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   }, findFundamentalMat_b);
 
   
-  overload->addStaticOverload("calib3d", "", "findEssentialMat", {
+  overload->addOverload("calib3d", "", "findEssentialMat", {
 	  make_param<IOArray*>("points1","IOArray"),
 		make_param<IOArray*>("points2","IOArray"),
 		make_param<double>("focal","double",1.0),
@@ -338,8 +378,9 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<double>("threshold","double",1.0),
 		make_param<IOArray*>("mask","IOArray",IOArray::noArray())
   }, findEssentialMat_a);
+  Nan::SetMethod(target, "findEssentialMat", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "findEssentialMat", {
+  overload->addOverload("calib3d", "", "findEssentialMat", {
 		make_param<IOArray*>("points1","IOArray"), 
 		make_param<IOArray*>("points2","IOArray"),
 		make_param<IOArray*>("cameraMatrix","IOArray"),
@@ -349,16 +390,17 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("mask","IOArray",IOArray::noArray())
   }, findEssentialMat_b);
 
-  overload->addStaticOverload("calib3d", "", "decomposeEssentialMat", {
+  overload->addOverload("calib3d", "", "decomposeEssentialMat", {
 		make_param<IOArray*>("E","IOArray"),
 		make_param<IOArray*>("R1","IOArray"), 
 		make_param<IOArray*>("R2","IOArray"),
 		make_param<IOArray*>("t","IOArray")
   }, decomposeEssentialMat);
+  Nan::SetMethod(target, "decomposeEssentialMat", calib3d_general_callback::callback);
 
 
 
-  overload->addStaticOverload("calib3d", "", "recoverPose", {
+  overload->addOverload("calib3d", "", "recoverPose", {
 		make_param<IOArray*>("E","IOArray"),
 		make_param<IOArray*>("points1","IOArray"),
 		make_param<IOArray*>("points2","IOArray"),
@@ -368,135 +410,132 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<Point2d*>("pp","Point2d",Point2d::create(0, 0)),
 		make_param<IOArray*>("mask","IOArray",IOArray::noArray())
   }, recoverPose_a);
+  Nan::SetMethod(target, "recoverPose", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "recoverPose", {
+  overload->addOverload("calib3d", "", "recoverPose", {
 		make_param<IOArray*>("E","IOArray"),
 		make_param<IOArray*>("points1","IOArray"), 
 		make_param<IOArray*>("points2","IOArray"),
 		make_param<IOArray*>("cameraMatrix","IOArray"),
 		make_param<IOArray*>("R","IOArray"),
 		make_param<IOArray*>("t","IOArray"),
-		make_param<IOArray*>("mask","IOArray",IOArray::noArray())
-														
+		make_param<IOArray*>("mask","IOArray",IOArray::noArray())						
   }, recoverPose_b);
 
-  overload->addStaticOverload("calib3d", "", "computeCorrespondEpilines", {
+  overload->addOverload("calib3d", "", "computeCorrespondEpilines", {
 		make_param<IOArray*>("points","IOArray"),
 		make_param<int>("whichImage","int"),
 		make_param<IOArray*>("F","IOArray"),
 		make_param<IOArray*>("lines","IOArray"),
-									
-  
   }, computeCorrespondEpilines);
+  Nan::SetMethod(target, "computeCorrespondEpilines", calib3d_general_callback::callback);
 
-  overload->addStaticOverload("calib3d", "", "triangulatePoints", {
+  overload->addOverload("calib3d", "", "triangulatePoints", {
 		make_param<IOArray*>("projMatr1","IOArray"), 
 		make_param<IOArray*>("projMatr2","IOArray"),
 		make_param<IOArray*>("projPoints1","IOArray"), 
 		make_param<IOArray*>("projPoints2","IOArray"),
 		make_param<IOArray*>("points4D","IOArray")
-							   
   }, triangulatePoints);
+  Nan::SetMethod(target, "triangulatePoints", calib3d_general_callback::callback);
 
 
 
-  overload->addStaticOverload("calib3d", "", "correctMatches", {
+  overload->addOverload("calib3d", "", "correctMatches", {
 		make_param<IOArray*>("F","IOArray"),
 		make_param<IOArray*>("points1","IOArray"), 
 		make_param<IOArray*>("points2","IOArray"),
 		make_param<IOArray*>("newPoints1","IOArray"), 
 		make_param<IOArray*>("newPoints2","IOArray")
-
   }, correctMatches);
+  Nan::SetMethod(target, "correctMatches", calib3d_general_callback::callback);
 
 
 
-  overload->addStaticOverload("calib3d", "", "filterSpeckles", {
+  overload->addOverload("calib3d", "", "filterSpeckles", {
 		make_param<IOArray*>("img","IOArray"),
 		make_param<double>("newVal","double"),
 		make_param<int>("maxSpeckleSize","int"),
 		make_param<double>("maxDiff","double"),
-		make_param<IOArray*>("buf","IOArray",IOArray::noArray())
-					   
-					   
+		make_param<IOArray*>("buf","IOArray",IOArray::noArray())   
   }, filterSpeckles);
+  Nan::SetMethod(target, "filterSpeckles", calib3d_general_callback::callback);
 
 
 
-  overload->addStaticOverload("calib3d", "", "getValidDisparityROI", {
+  overload->addOverload("calib3d", "", "getValidDisparityROI", {
 		make_param<Rect<cv::Rect>*>("roi1",Rect<cv::Rect>::name),
 		make_param<Rect<cv::Rect>*>("roi2",Rect<cv::Rect>::name),
 		make_param<int>("minDisparity","int"),
 		make_param<int>("numberOfDisparities","int"),
 		make_param<int>("SADWindowSize","int")
-		
   }, getValidDisparityROI);
+  Nan::SetMethod(target, "getValidDisparityROI", calib3d_general_callback::callback);
 
 
   
-  overload->addStaticOverload("calib3d", "", "validateDisparity", {
+  overload->addOverload("calib3d", "", "validateDisparity", {
 		make_param<IOArray*>("disparity","IOArray"),
 		make_param<IOArray*>("cost","IOArray"),
 		make_param<int>("minDisparity","int"),
 		make_param<int>("numberOfDisparities","int"),
 		make_param<int>("disp12MaxDisp","int",1)
-					 
   }, validateDisparity);
+  Nan::SetMethod(target, "validateDisparity", calib3d_general_callback::callback);
 
 
 
-  overload->addStaticOverload("calib3d", "", "reprojectImageTo3D", {
+  overload->addOverload("calib3d", "", "reprojectImageTo3D", {
 		make_param<IOArray*>("disparity","IOArray"),
 		make_param<IOArray*>("_3dImage","IOArray"),
 		make_param<IOArray*>("Q","IOArray"),
-		make_param<bool>("handleMissingValues","boolean",false),
-		make_param<int>("ddepth","int", -1)
-  
+		make_param<bool>("handleMissingValues","bool",false),
+		make_param<int>("ddepth","int", -1)  
   }, reprojectImageTo3D);
+  Nan::SetMethod(target, "reprojectImageTo3D", calib3d_general_callback::callback);
 
 
 
-  overload->addStaticOverload("calib3d", "", "sampsonDistance", {
+  overload->addOverload("calib3d", "", "sampsonDistance", {
 		make_param<IOArray*>("pt1","IOArray"),
 		make_param<IOArray*>("pt2","IOArray"),
 		make_param<IOArray*>("F","IOArray")
-
   }, sampsonDistance);
+  Nan::SetMethod(target, "sampsonDistance", calib3d_general_callback::callback);
 
 
 
-  overload->addStaticOverload("calib3d", "", "", {
+  overload->addOverload("calib3d", "", "estimateAffine3D", {
 		make_param<IOArray*>("src","IOArray"),
 		make_param<IOArray*>("dst","IOArray"),
 		make_param<IOArray*>("out","IOArray"), 
 		make_param<IOArray*>("inliers","IOArray"),
 		make_param<double>("ransacThreshold","double", 3),
 		make_param<double>("confidence","double", 0.99)
-			
   }, estimateAffine3D);
+  Nan::SetMethod(target, "estimateAffine3D", calib3d_general_callback::callback);
 
 
 
-  overload->addStaticOverload("calib3d", "", "decomposeHomographyMat", {
+  overload->addOverload("calib3d", "", "decomposeHomographyMat", {
 		make_param<IOArray*>("H","IOArray"),
 		make_param<IOArray*>("K","IOArray"),
 		make_param<IOArray*>("rotations","IOArray"),
 		make_param<IOArray*>("translations","IOArray"),
 		make_param<IOArray*>("normals","IOArray"),
-			
-  
   }, decomposeHomographyMat);
+  Nan::SetMethod(target, "decomposeHomographyMat", calib3d_general_callback::callback);
 
-  //#include StereoMatcher
-  
-  
-  //#include StereoBM
-
-  
-  //#include StereoSGBM
+  StereoMatcher::Init(target, overload);
+  StereoBM::Init(target, overload);
+  StereoSGBM::Init(target, overload);
   //! @} calib3d
 
-  //#include fisheye
+
+  auto fisheye_ns = Nan::New<v8::Object>();
+  target->Set(Nan::New("fisheye").ToLocalChecked(), fisheye_ns);
+  fisheye::Init(fisheye_ns, overload);
+  
 
 
 
@@ -504,11 +543,11 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 }
 
   POLY_METHOD(calib3d::Rodrigues) {
-	  auto src = info.at<IOArray*>(0);
-	  auto dst = info.at<IOArray*>(1);
-	  auto jacobian = info.at<IOArray*>(2);
+	  auto src = info.at<IOArray*>(0)->GetInputArray();
+	  auto dst = info.at<IOArray*>(1)->GetOutputArray();
+	  auto jacobian = info.at<IOArray*>(2)->GetOutputArray();
 
-	  cv::Rodrigues(src->GetInputArray(), dst->GetOutputArray(), jacobian->GetOutputArray());
+	  cv::Rodrigues(src, dst, jacobian);
   }
 
   POLY_METHOD(calib3d::findHomography_adv) {

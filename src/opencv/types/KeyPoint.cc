@@ -56,7 +56,7 @@ void KeyPoint::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 	//	CV_OUT std::vector<Point2f>& points2f,
 	//	const std::vector<int>& keypointIndexes = std::vector<int>());
 	overload->addOverload("keypoint", "KeyPoint", "convert", {
-		make_param<std::shared_ptr<std::vector<std::shared_ptr<KeyPoint>>>>("keypoints","Array<KeyPoint"),
+		make_param<std::shared_ptr<std::vector<std::shared_ptr<KeyPoint>>>>("keypoints","Array<KeyPoint>"),
 		make_param<std::shared_ptr<std::vector<std::shared_ptr<Point2f>>>>("points2f","Array<Point2f>"),
 		make_param<std::shared_ptr<std::vector<int>>>("keypointIndexes","Array<int>",std::shared_ptr<std::vector<int>>())
 	}, convert_keypoint);
@@ -97,6 +97,7 @@ void KeyPoint::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 }
 
 v8::Local<v8::Function> KeyPoint::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
 }
 

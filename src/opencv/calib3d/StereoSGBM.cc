@@ -10,6 +10,9 @@ namespace stereosgbm_general_callback {
 	}
 }
 
+Nan::Persistent<FunctionTemplate> StereoSGBM::constructor;
+
+
 void StereoSGBM::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	stereosgbm_general_callback::overload = overload;
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(stereosgbm_general_callback::callback);
@@ -27,6 +30,7 @@ void StereoSGBM::Init(Handle<Object> target, std::shared_ptr<overload_resolution
 	SetObjectProperty(StereoSGBMMode, "MODE_SGBM", 0);
 	SetObjectProperty(StereoSGBMMode, "MODE_HH", 1);
 	SetObjectProperty(StereoSGBMMode, "MODE_SGBM_3WAY", 2);
+	overload->add_type_alias("StereoSGBMMode", "int");
 
 
 	overload->addStaticOverload("stereosgbm", "", "create", {
@@ -59,7 +63,10 @@ void StereoSGBM::Init(Handle<Object> target, std::shared_ptr<overload_resolution
 	overload->addOverload("stereosgbm", "", "setMode", { make_param<int>("mode","int") }, setMode);
 
 }
-
+v8::Local<v8::Function> StereoSGBM::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
+	return Nan::New(constructor)->GetFunction();
+}
 
 POLY_METHOD(StereoSGBM::create) {
 	auto minDisparity = info.at<int>(0);

@@ -14,6 +14,7 @@ namespace trackedelement_general_callback {
 Nan::Persistent<FunctionTemplate> TrackedElement::constructor;
 
  v8::Local<v8::Function> TrackedElement::get_constructor() {
+	 assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
 }
 

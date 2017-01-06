@@ -20,7 +20,6 @@ void TermCriteria::Init(Handle<Object> target, std::shared_ptr<overload_resoluti
 	auto itpl = ctor->InstanceTemplate();
 	itpl->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("TermCriteria").ToLocalChecked());
-	ctor->Inherit(Nan::New(TermCriteria::constructor));
 
 	overload->register_type<TermCriteria>(ctor, "termcriteria", "TermCriteria");
 
@@ -30,8 +29,11 @@ void TermCriteria::Init(Handle<Object> target, std::shared_ptr<overload_resoluti
 	SetObjectProperty(TermCriteriaType, "COUNT", 1);
 	SetObjectProperty(TermCriteriaType, "MAX_ITER", cv::TermCriteria::COUNT);
 	SetObjectProperty(TermCriteriaType, "EPS", 2);
+	overload->add_type_alias("TermCriteriaType", "int");
 
-	//type: TermCriteriaType, maxCount : _st.int, epsilon : _st.double
+
+	overload->addOverloadConstructor("termcriteria", "TermCriteria", {}, New_no_params);
+	
 	overload->addOverloadConstructor("termcriteria", "TermCriteria", {
 			make_param<int>("type","TermCriteriaType"),
 			make_param<int>("maxCount","int"),
@@ -45,8 +47,11 @@ void TermCriteria::Init(Handle<Object> target, std::shared_ptr<overload_resoluti
 }
 
 v8::Local<v8::Function> TermCriteria::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
 }
+
+
 
 std::shared_ptr<TermCriteria> TermCriteria::New(int type, int maxCount, double epsilon) {
 	auto ret = std::make_shared<TermCriteria>();
@@ -54,10 +59,18 @@ std::shared_ptr<TermCriteria> TermCriteria::New(int type, int maxCount, double e
 	return ret;
 }
 
+POLY_METHOD(TermCriteria::New_no_params) {
+	auto ret = new TermCriteria();
+	ret->_termCriteria = std::make_shared<cv::TermCriteria>();
+	ret->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
 POLY_METHOD(TermCriteria::New) {
 	auto ret = new TermCriteria();
 	ret->_termCriteria = std::make_shared<cv::TermCriteria>(info.at<int>(0), info.at<int>(1), info.at<double>(2));
-	info.SetReturnValue(ret);
+	ret->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
 }
 
 NAN_GETTER(TermCriteria::type_getter) {

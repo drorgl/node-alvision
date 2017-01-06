@@ -22,6 +22,7 @@ FileNode::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 };
 
 v8::Local<v8::Function> FileNode::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
 }
 

@@ -21,6 +21,7 @@ KalmanFilter::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 };
 
 v8::Local<v8::Function> KalmanFilter::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
 }
 

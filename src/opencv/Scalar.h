@@ -4,15 +4,15 @@
 #include "../alvision.h"
 
 template <typename T>
-class Scalar : public or::ObjectWrap {
+class Scalar_ : public or::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Scalar::New);
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Scalar_::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
-		overload->register_type<Scalar<T>>(ctor, "scalar", name);
+		overload->register_type<Scalar_<T>>(ctor, "scalar", name);
 
 
 		Nan::SetMethod(ctor, "all", all);
@@ -27,6 +27,7 @@ public:
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	virtual v8::Local<v8::Function> get_constructor() {
+		assert(!constructor.IsEmpty() && "constructor is empty");
 		return Nan::New(constructor)->GetFunction();
 	}
 
@@ -36,8 +37,8 @@ public:
 			Nan::ThrowTypeError("Cannot instantiate without new");
 
 
-		Scalar *scalar;
-		scalar = new Scalar();
+		
+		auto scalar = new Scalar_();
 
 		scalar->Wrap(info.Holder());
 
@@ -60,6 +61,12 @@ public:
 
 //declare variables
 template <typename T>
-Nan::Persistent<FunctionTemplate> Scalar<T>::constructor;
+Nan::Persistent<FunctionTemplate> Scalar_<T>::constructor;
+
+typedef typename Scalar_<cv::Scalar> Scalar;
+
+namespace ScalarInit {
+	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
+}
 
 #endif

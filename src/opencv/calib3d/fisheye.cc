@@ -28,6 +28,7 @@ fisheye::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(FISHEYE_CALIB, "CALIB_FIX_K3", 64);
 	SetObjectProperty(FISHEYE_CALIB, "CALIB_FIX_K4", 128);
 	SetObjectProperty(FISHEYE_CALIB, "CALIB_FIX_INTRINSIC", 256);
+	overload->add_type_alias("FISHEYE_CALIB", "int");
 
 
 	overload->addStaticOverload("calib3d", "", "projectPoints", {

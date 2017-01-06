@@ -15,6 +15,7 @@ namespace simpleblobdetectorparams_general_callback {
 Nan::Persistent<FunctionTemplate> SimpleBlobDetectorParams::constructor;
 
 v8::Local<v8::Function> SimpleBlobDetectorParams::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(SimpleBlobDetectorParams::constructor)->GetFunction();
 }
 

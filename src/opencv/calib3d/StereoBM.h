@@ -8,6 +8,10 @@ class StereoBM : public StereoMatcher {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
+	static Nan::Persistent<FunctionTemplate> constructor;
+
+	virtual v8::Local<v8::Function> get_constructor();
+
 	static POLY_METHOD(create);
 	static POLY_METHOD(getPreFilterType);
 	static POLY_METHOD(setPreFilterType);

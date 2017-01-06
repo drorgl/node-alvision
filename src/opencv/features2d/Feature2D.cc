@@ -12,6 +12,8 @@ namespace feature2d_general_callback {
 	}
 }
 
+Nan::Persistent<FunctionTemplate> Feature2D::constructor;
+
 void Feature2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	feature2d_general_callback::overload = overload;
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(feature2d_general_callback::callback);
@@ -22,6 +24,7 @@ void Feature2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution>
 	ctor->Inherit(Nan::New(Algorithm::constructor));
 
 	overload->register_type<Feature2D>(ctor, "feature2d", "Feature2D");
+	overload->add_type_alias("FeatureDetector", "Feature2D");
 
 	// CV_WRAP virtual void detect(InputArray image,
 	//	CV_OUT std::vector<KeyPoint>& keypoints,
@@ -71,6 +74,11 @@ void Feature2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution>
 	//CV_WRAP virtual bool empty() const;
 	overload->addOverload("features2d", "Feature2D", "empty", {}, empty);
 
+}
+
+v8::Local<v8::Function> Feature2D::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
+	return Nan::New(constructor)->GetFunction();
 }
 
 

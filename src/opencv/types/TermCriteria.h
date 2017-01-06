@@ -15,6 +15,7 @@ public:
 
 	virtual v8::Local<v8::Function> get_constructor(); 
 
+	static POLY_METHOD(New_no_params);
 	static POLY_METHOD(New);
 
 	static NAN_GETTER(type_getter);

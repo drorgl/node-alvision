@@ -25,6 +25,7 @@ public:
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	virtual v8::Local<v8::Function> get_constructor() {
+		assert(!constructor.IsEmpty() && "constructor is empty");
 		return Nan::New(constructor)->GetFunction();
 	}
 

@@ -24,6 +24,7 @@ Algorithm::Init(Handle<Object> target, std::shared_ptr<overload_resolution> over
 };
 
 v8::Local<v8::Function> Algorithm::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
 }
 

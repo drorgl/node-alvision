@@ -11,6 +11,8 @@ namespace stereomatcher_general_callback {
 	}
 }
 
+Nan::Persistent<FunctionTemplate> StereoMatcher::constructor;
+
 void StereoMatcher::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	stereomatcher_general_callback::overload = overload;
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(stereomatcher_general_callback::callback);
@@ -51,6 +53,10 @@ void StereoMatcher::Init(Handle<Object> target, std::shared_ptr<overload_resolut
 	overload->addOverload("stereomatcher", "", "setDisp12MaxDiff", { make_param<int>("disp12MaxDiff","int") }, StereoMatcher::setDisp12MaxDiff);
 }
 
+v8::Local<v8::Function> StereoMatcher::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
+	return Nan::New(constructor)->GetFunction();
+}
 
 POLY_METHOD(StereoMatcher::compute) {
 	auto left = info.at<IOArray*>(0)->GetInputArray();

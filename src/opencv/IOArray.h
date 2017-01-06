@@ -6,7 +6,7 @@
 
 class IOArray : public or::ObjectWrap {
 public:
-	std::shared_ptr<cv::_InputArray> _ioarray;
+	std::shared_ptr<cv::_InputOutputArray> _ioarray;
 
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
@@ -17,12 +17,12 @@ public:
 
 	static POLY_METHOD(New);
 
-	virtual cv::InputArray GetInputArray();
-	virtual cv::InputArrayOfArrays GetInputArrayOfArrays();
-	virtual cv::OutputArray GetOutputArray();
-	virtual cv::OutputArrayOfArrays GetOutputArrayOfArrays();
-	virtual cv::InputOutputArray GetInputOutputArray();
-	virtual cv::InputOutputArrayOfArrays GetInputOutputArrayOfArrays();
+	virtual cv::_InputArray GetInputArray();
+	virtual cv::_InputArray GetInputArrayOfArrays();
+	virtual cv::_OutputArray GetOutputArray();
+	virtual cv::_OutputArray GetOutputArrayOfArrays();
+	virtual cv::_InputOutputArray GetInputOutputArray();
+	virtual cv::_InputOutputArray GetInputOutputArrayOfArrays();
 };
 
 #endif

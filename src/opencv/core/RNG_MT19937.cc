@@ -28,6 +28,7 @@ RNG_MT19937::Init(Handle<Object> target, std::shared_ptr<overload_resolution> ov
 };
 
 v8::Local<v8::Function> RNG_MT19937::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
 }
 

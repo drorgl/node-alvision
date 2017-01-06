@@ -26,6 +26,7 @@ public:
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	virtual v8::Local<v8::Function> get_constructor() {
+		assert(!constructor.IsEmpty() && "constructor is empty");
 		return Nan::New(constructor)->GetFunction();
 	}
 
@@ -53,5 +54,9 @@ public:
 //declare variables
 template <typename T>
 Nan::Persistent<FunctionTemplate> Mat_<T>::constructor;
+
+namespace Mat_Init {
+	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
+}
 
 #endif
