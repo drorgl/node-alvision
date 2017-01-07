@@ -2,24 +2,81 @@
 #define _ALVISION_SCALAR_H_
 
 #include "../alvision.h"
+#include "Vec.h"
+
+namespace scalar_general_callback {
+	extern std::shared_ptr<overload_resolution> overload;
+	NAN_METHOD(callback);
+}
+
 
 template <typename T>
 class Scalar_ : public or::ObjectWrap {
 public:
+	typedef typename T::value_type TVT;
+
+	static std::string Scalar_<T>::name;
+
+
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Scalar_::New);
+		Scalar_<T>::name = name;
+		scalar_general_callback::overload = overload;
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(scalar_general_callback::callback);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
 		overload->register_type<Scalar_<T>>(ctor, "scalar", name);
 
-
-		Nan::SetMethod(ctor, "all", all);
+		////! various constructors
+		//Scalar_();
+		overload->addOverloadConstructor("scalar", name, {}, New_no_params);
+		//Scalar_(_Tp v0, _Tp v1, _Tp v2 = 0, _Tp v3 = 0);
+		overload->addOverloadConstructor("scalar", name, {
+			make_param<TVT>("v0","Number"),
+			make_param<TVT>("v1","Number"),
+			make_param<TVT>("v2","Number",0),
+			make_param<TVT>("v3","Number",0)
+		}, New_v0_v1_v2_v3);
+		//Scalar_(_Tp v0);
+		overload->addOverloadConstructor("scalar", name, {
+			make_param<TVT>("v0","Number")
+		}, New_v0);
+		//
+		//template<typename _Tp2, int cn>
+		//Scalar_(const Vec<_Tp2, cn>& v);
+		//2,3,4,6,8
+		overload->addOverloadConstructor("scalar", name, { make_param<Vec<cv::Vec<TVT,2>>*>("v",Vec<cv::Vec<TVT,2>>::name) }, New_vec_2);
+		overload->addOverloadConstructor("scalar", name, { make_param<Vec<cv::Vec<TVT,3>>*>("v",Vec<cv::Vec<TVT,3>>::name) }, New_vec_3);
+		overload->addOverloadConstructor("scalar", name, { make_param<Vec<cv::Vec<TVT,4>>*>("v",Vec<cv::Vec<TVT,4>>::name) }, New_vec_4);
+		overload->addOverloadConstructor("scalar", name, { make_param<Vec<cv::Vec<TVT,6>>*>("v",Vec<cv::Vec<TVT,6>>::name) }, New_vec_6);
+		//overload->addOverloadConstructor("scalar", name, { make_param<Vec<cv::Vec<TVT,8>>*>("v",Vec<cv::Vec<TVT,8>>::name) }, New_vec_8);
+		//
+		////! returns a scalar with all elements set to v0
+		//static Scalar_<_Tp> all(_Tp v0);
+		overload->addStaticOverload("scalar", name, "all", {
+			make_param<TVT>("v0","Number")
+		}, all);
+		
+		////! conversion to another data type
+		//template<typename T2> operator Scalar_<T2>() const;
+		//
+		////! per-element product
+		//Scalar_<_Tp> mul(const Scalar_<_Tp>& a, double scale = 1) const;
+		overload->addOverload("scalar", name, "mul", {
+			make_param<Scalar_<T>*>("a",name),
+			make_param<double>("scale","double",1)
+		}, mul);
+		
+		//// returns (v0, -v1, -v2, -v3)
+		//Scalar_<_Tp> conj() const;
+		overload->addOverload("scalar", name, "conj", {}, conj);
+		//
+		//// returns true iff v1 == v2 == v3 == 0
+		//bool isReal() const;
+		overload->addOverload("scalar", name, "isReal", {}, isReal);
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
-
-		
 	}
 
 	std::shared_ptr<T> _scalar;
@@ -31,30 +88,108 @@ public:
 		return Nan::New(constructor)->GetFunction();
 	}
 
+	template<typename... Args>
+	static std::shared_ptr<Scalar_<T>> create(Args&&... args) {
+		auto scalar = std::make_shared<Scalar_<T>>();
+		scalar->_scalar = std::shared_ptr<T>(new T(std::forward<Args>(args)...));
+		return scalar;
+	}
+	
+	static std::shared_ptr<Scalar_<T>> all(double v0) {
+		auto scalar = std::make_shared< Scalar_<T>>();
+		scalar->_scalar = std::make_shared<T>(T::all(v0));
+		return scalar;
+	}
 
-	static NAN_METHOD(New) {
-		if (info.This()->InternalFieldCount() == 0)
-			Nan::ThrowTypeError("Cannot instantiate without new");
-
-
-		
-		auto scalar = new Scalar_();
-
+	static POLY_METHOD(New_no_params) {
+		auto scalar = new Scalar_<T>();
+		scalar->_scalar = std::make_shared<T>();
 		scalar->Wrap(info.Holder());
-
 		info.GetReturnValue().Set(info.Holder());
 	}
 
-	static NAN_METHOD(all) {
-		return Nan::ThrowError("not implemented");
+	static POLY_METHOD(New_v0_v1_v2_v3) {
+		auto scalar = new Scalar_<T>();
+		scalar->_scalar = std::make_shared<T>(info.at<TVT>(0), info.at<TVT>(1), info.at<TVT>(2), info.at<TVT>(3));
+		scalar->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
 	}
 	
-	static v8::Local<v8::Object> all(double v0) {
-		//TODO: implement!
-		return Nan::New("not implemented").ToLocalChecked().As<v8::Object>();
-		//cv::Scalar::all()
+	static POLY_METHOD(New_v0) {
+		auto scalar = new Scalar_<T>();
+		scalar->_scalar = std::make_shared<T>(info.at<TVT>(0));
+		scalar->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
 	}
-
+	
+	static POLY_METHOD(New_vec_2) {
+		auto scalar = new Scalar_<T>();
+		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 2>>*>(0)->_vec);
+		scalar->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+	
+	static POLY_METHOD(New_vec_3) {
+		auto scalar = new Scalar_<T>();
+		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 3>>*>(0)->_vec);
+		scalar->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+	
+	static POLY_METHOD(New_vec_4) {
+		auto scalar = new Scalar_<T>();
+		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 4>>*>(0)->_vec);
+		scalar->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+	
+	static POLY_METHOD(New_vec_6) {
+		auto scalar = new Scalar_<T>();
+		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 6>>*>(0)->_vec);
+		scalar->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+	
+	static POLY_METHOD(New_vec_8) {
+		auto scalar = new Scalar_<T>();
+		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 8>>*>(0)->_vec);
+		scalar->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+	
+	static POLY_METHOD(all) {
+		auto scalar = new Scalar_<T>();
+		scalar->_scalar = std::make_shared<T>(info.at<TVT>(0));
+		
+		info.SetReturnValue(scalar);
+	}
+	
+	static POLY_METHOD(mul) {
+		auto this_ = *info.This<Scalar_<T>*>()->_scalar;
+		
+		auto a = info.at<Scalar_<T>*>(0)->_scalar;
+		auto scale = info.at<double>(1);
+		
+		auto ret = new Scalar_<T>();
+		ret->_scalar = std::make_shared<T>(this_.mul(*a, scale));
+		
+		info.SetReturnValue(ret);
+	}
+	
+	static POLY_METHOD(conj) {
+		auto this_ = *info.This<Scalar_<T>*>()->_scalar;
+	
+		auto ret = new Scalar_<T>();
+		ret->_scalar = std::make_shared<T>(this_.conj());
+	
+		info.SetReturnValue(ret);
+	}
+	
+	static POLY_METHOD(isReal) {
+		auto this_ = *info.This<Scalar_<T>*>()->_scalar;
+	
+		info.SetReturnValue(this_.isReal());
+	}
 	
 };
 
@@ -63,7 +198,12 @@ public:
 template <typename T>
 Nan::Persistent<FunctionTemplate> Scalar_<T>::constructor;
 
-typedef typename Scalar_<cv::Scalar> Scalar;
+template <typename T>
+std::string Scalar_<T>::name;
+
+
+
+typedef typename Scalar_<cv::Scalar_<double>> Scalar;
 
 namespace ScalarInit {
 	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

@@ -94,13 +94,13 @@ init(Handle<Object> target) {
 	alvision::packet::Init(target,overload);
 	alvision::stream::Init(target,overload);
 	Constants::Init(target,overload);
-	highgui::Init(target,overload);
+	
 
 	Cuda::Init(target,overload);
 
 	flann::Init(target,overload);
 
-	cvtest::Init(target, overload);
+
 
 	SizeInit::Init(target, overload);
 	
@@ -121,6 +121,7 @@ init(Handle<Object> target) {
 
 	MatxInit::Init(target, overload);
 
+	VecInit::Init(target, overload);
 	ScalarInit::Init(target, overload);
 
 	Mat_Init::Init(target, overload);
@@ -165,17 +166,18 @@ init(Handle<Object> target) {
 
 	videoio::Init(target, overload);
 
-	VecInit::Init(target, overload);
+	 
 	
 	TrackedPtr<cv::Mat>::Init(target, "TrackedPtr<Mat>", overload);
 
 	
 	TrackedElement::Init(target, overload);
 
-	Affine3<cv::Affine3d>::Init(target, "Affine3d", overload);
-	Affine3<cv::Affine3f>::Init(target, "Affine3f", overload);
-
+	AffineInit::Init(target, overload);
+	
 	calib3d::Init(target, overload);
+	cv_test::Init(target, overload);
+	highgui::Init(target, overload);
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 

@@ -8,7 +8,7 @@
 						'VCCLCompilerTool' : {
 							'WarningLevel' : 0,
 							'WholeProgramOptimization' : 'false',
-							'AdditionalOptions' : ['/EHsc'],
+							'AdditionalOptions' : ['/EHsc','/bigobj'],
 							'ExceptionHandling' : 1,
 							 #  / EHsc
 						}

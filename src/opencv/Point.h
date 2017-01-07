@@ -6,7 +6,9 @@
 template <typename T>
 class Point_ : public or::ObjectWrap {
 public:
+	static std::string Point_<T>::name;
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
+		Point_<T>::name = name;
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Point_::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
@@ -57,6 +59,9 @@ public:
 //declare variables
 template <typename T>
 Nan::Persistent<FunctionTemplate> Point_<T>::constructor;
+
+template <typename T>
+std::string Point_<T>::name;
 
 
 typedef typename Point_<cv::Point2i> Point2i;

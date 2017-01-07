@@ -40,7 +40,7 @@ public:
 		overload->register_type<Affine3<T>>(ctor, "affine3", name);
 
 			
-		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
+		
 
 
 
@@ -178,6 +178,7 @@ public:
 	//	//operator Eigen::Transform < T, 3, Eigen::Affine > () const;
 	//	//#endif
 
+			target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 	}
 
 	std::shared_ptr<T> _affine3;
@@ -419,5 +420,11 @@ Nan::Persistent<FunctionTemplate> Affine3<T>::constructor;
 
 template<typename T>
 std::string Affine3<T>::name;
+
+
+
+namespace AffineInit {
+	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
+}
 
 #endif

@@ -672,7 +672,8 @@ export namespace cvtest {
 
     interface IrandomSize {
         (rng: _core.RNG, maxSizeLog: _st.double): _types.Size;
-        (rng: _core.RNG, minDims: _st.int, maxDims: _st.int, maxSizeLog: _st.double, sz: Array<_st.int>): void;
+        //(rng: _core.RNG, minDims: _st.int, maxDims: _st.int, maxSizeLog: _st.double, sz: Array<_st.int>): void;
+        (rng: _core.RNG, minDims: _st.int, maxDims: _st.int, maxSizeLog: _st.double): Array<_st.int>;
     }
 
     export var randomSize: IrandomSize = alvision_module.cvtest.randomSize;

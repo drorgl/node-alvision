@@ -26,9 +26,11 @@ namespace matrix_general_callback {
 
 Nan::Persistent<FunctionTemplate> Matrix::constructor;
 
+std::string Matrix::name;
 
 void
 Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	Matrix::name = "Mat";
 	matrix_general_callback::overload = overload;
 	//overload->addStaticOverload("highgui", "", "stopLoop", {}, highgui::stopLoop);
 	//Nan::SetMethod(target, "stopLoop", matrix_general_callback::highgui_callback);
@@ -299,6 +301,11 @@ cv::_InputOutputArray	Matrix::GetInputOutputArrayOfArrays() {
 	return *_mat;
 }
 
+std::shared_ptr<Matrix> Matrix::Mat() {
+	auto ret = std::make_shared<Matrix>();
+	ret->_mat = std::make_shared<cv::Mat>();
+	return ret;
+}
 
 
 POLY_METHOD(Matrix::New) {

@@ -126,14 +126,14 @@
 		, "src/opencv/calib3d.cc"
 		, "src/opencv/calib3d.h"
 		
-		, "src/opencv/calib3d/fisheye.cc",
-		, "src/opencv/calib3d/fisheye.h",
-		, "src/opencv/calib3d/StereoBM.h",
-		, "src/opencv/calib3d/StereoBM.cc",
-		, "src/opencv/calib3d/StereoMatcher.h",
-		, "src/opencv/calib3d/StereoMatcher.cc",
-		, "src/opencv/calib3d/StereoSGBM.h",
-		, "src/opencv/calib3d/StereoSGBM.cc",
+		, "src/opencv/calib3d/fisheye.cc"
+		, "src/opencv/calib3d/fisheye.h"
+		, "src/opencv/calib3d/StereoBM.h"
+		, "src/opencv/calib3d/StereoBM.cc"
+		, "src/opencv/calib3d/StereoMatcher.h"
+		, "src/opencv/calib3d/StereoMatcher.cc"
+		, "src/opencv/calib3d/StereoSGBM.h"
+		, "src/opencv/calib3d/StereoSGBM.cc"
 		
 		
 		, "src/opencv/features2d/Feature2D.h"
@@ -193,11 +193,11 @@
 		, "src/opencv/Range.cc"
 		, "src/opencv/Range.h"
 		
-		, "src/opencv/types/TermCriteria.h",
-		, "src/opencv/types/TermCriteria.cc",
+		, "src/opencv/types/TermCriteria.h"
+		, "src/opencv/types/TermCriteria.cc"
 		
-		, "src/opencv/types/KeyPoint.h",
-		, "src/opencv/types/KeyPoint.cc",
+		, "src/opencv/types/KeyPoint.h"
+		, "src/opencv/types/KeyPoint.cc"
 		
 		, "src/opencv/Vec.cc"
 		, "src/opencv/Vec.h"
@@ -546,6 +546,7 @@
 			'../opencv.module/opencv.gyp:highgui',
 			'../opencv.module/opencv.gyp:ml',
 			'../opencv.module/opencv.gyp:flann',
+			'../opencv.module/opencv.gyp:ts',
 			'../node-overload-resolution/binding.gyp:node-overload-resolution',
 			#'../opencv.module/sources/3rdparty/3rdparty.gyp:zlib',
 			#'../ffmpeg/ffmpeg.gyp:compat',

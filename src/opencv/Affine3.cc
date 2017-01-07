@@ -43,3 +43,11 @@ namespace affine3_general_callback {
 //	info.GetReturnValue().Set(info.Holder());
 //}
 //
+
+
+
+void AffineInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	Affine3<cv::Affine3d>::Init(target, "Affine3d", overload);
+	Affine3<cv::Affine3f>::Init(target, "Affine3f", overload);
+
+}

@@ -7,6 +7,7 @@
 
 class Matrix : public IOArray {
 public:
+	static std::string name;
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
 	std::shared_ptr<cv::Mat> _mat;
@@ -21,6 +22,8 @@ public:
 	virtual cv::_OutputArray GetOutputArrayOfArrays();
 	virtual cv::_InputOutputArray GetInputOutputArray();
 	virtual cv::_InputOutputArray GetInputOutputArrayOfArrays();
+
+	static std::shared_ptr<Matrix> Mat();
 
 	//export interface MatStatic {
 		//public:
