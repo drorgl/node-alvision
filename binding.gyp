@@ -68,6 +68,10 @@
 		, "src/alvision.h"
 		, "src/safecast.h"
 		
+		, "src/opencv/array_accessors/array_accessor_base.h"
+		, "src/opencv/array_accessors/Matrix_array_accessor.h"
+		, "src/opencv/array_accessors/Matx_array_accessor.h"
+		
 		, "src/opencv/imgproc.cc"
 		, "src/opencv/imgproc.h"
 		

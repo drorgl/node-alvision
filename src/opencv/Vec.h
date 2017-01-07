@@ -434,12 +434,13 @@ public:
 	//}
 
 	static POLY_METHOD(ptr) {
-		auto tptr = new TrackedPtr<T>();
-		tptr->_from = info.This<Vec<T>*>()->_vec;
-		tptr->_Ttype = info.at<std::string>(0);
-		tptr->_i0 = safe_cast<int>(info.at<int>(1));
-
-		info.SetReturnValue(tptr);
+		throw std::exception("not implemented");
+		//auto tptr = new TrackedPtr<T>();
+		//tptr->_from = info.This<Vec<T>*>()->_vec;
+		//tptr->_Ttype = info.at<std::string>(0);
+		//tptr->_i0 = safe_cast<int>(info.at<int>(1));
+		//
+		//info.SetReturnValue(tptr);
 	}
 	static POLY_METHOD(at) {
 		auto mat = info.This<Matrix*>()->_mat;

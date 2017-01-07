@@ -1107,15 +1107,16 @@ POLY_METHOD(Matrix::total) {
 	info.SetReturnValue(safe_cast<int>(mat->total()));
 }
 POLY_METHOD(Matrix::ptr) {
-	auto mat = info.This<Matrix*>()->_mat;
-
-	//ptr<T>(T: string, i0?: _st.int /* = 0*/): TrackedPtr<T>;
-	auto tptr = new TrackedPtr<cv::Mat>();
-	tptr->_from = mat;
-	tptr->_Ttype = info.at<std::string>(0);
-	tptr->_i0 = safe_cast<int>(info.at<int>(1));
-
-	info.SetReturnValue(tptr);
+	throw std::exception("not implemented");
+	//auto mat = info.This<Matrix*>()->_mat;
+	//
+	////ptr<T>(T: string, i0?: _st.int /* = 0*/): TrackedPtr<T>;
+	//auto tptr = new TrackedPtr<cv::Mat>();
+	//tptr->_from = mat;
+	//tptr->_Ttype = info.at<std::string>(0);
+	//tptr->_i0 = safe_cast<int>(info.at<int>(1));
+	//
+	//info.SetReturnValue(tptr);
 }
 POLY_METHOD(Matrix::at) {
 	//at<T>(T: string, i0 : _st.int, i1 ? : _st.int, i2 ? : _st.int) : TrackedElement<T>;

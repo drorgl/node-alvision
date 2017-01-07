@@ -105,11 +105,6 @@ init(Handle<Object> target) {
 	SizeInit::Init(target, overload);
 	
 
-	
-
-	
-	
-
 	ml::Init(target, overload);
 	superres::Init(target, overload);
 
@@ -119,9 +114,10 @@ init(Handle<Object> target) {
 
 	core::Init(target, overload);
 
-	MatxInit::Init(target, overload);
+	
 
 	VecInit::Init(target, overload);
+	MatxInit::Init(target, overload);
 	ScalarInit::Init(target, overload);
 
 	Mat_Init::Init(target, overload);

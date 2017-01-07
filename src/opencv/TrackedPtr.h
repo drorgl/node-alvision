@@ -2,6 +2,7 @@
 #define _ALVISION_TRACKED_PTR_H_
 
 #include "../alvision.h"
+#include "array_accessors/array_accessor_base.h"
 
 namespace trackedptr_general_callback {
 	extern std::shared_ptr<overload_resolution> overload;
@@ -21,6 +22,9 @@ public:
 
 		overload->register_type<TrackedPtr<T>>(ctor, "trackedptr", name);
 
+		//Nan::SetIndexedPropertyHandler(ctor, indexed_getter, indexed_setter);
+		//Nan::SetAccessor(ctor, Nan::New("length").ToLocalChecked(), index_length);
+
 		overload->addOverloadConstructor("trackedptr", name,{}, New_no_parameters);
 	}
 
@@ -35,9 +39,34 @@ public:
 		throw std::exception("internal class use only");
 	}
 	
-	std::shared_ptr<T> _from;
-	std::string _Ttype;
-	int _i0;
+	std::shared_ptr<array_accessor_base> _from;
+	//std::string _Ttype;
+	//int _i0;
+
+	static NAN_GETTER(index_length) {
+		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
+		auto length = this_->_from->length();
+	}
+
+	static NAN_INDEX_SETTER(indexed_setter) {
+		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
+		if ((index > this_->_from->length()) || (index < 0)) {
+			Nan::ThrowRangeError("index out of range");
+		}
+
+		this_->_from->set(index, value);
+
+		info.GetReturnValue().Set(info.This());
+	}
+
+	static NAN_INDEX_GETTER(indexed_getter) {
+		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
+		if ((index > this_->_from->length()) || (index < 0)) {
+			Nan::ThrowRangeError("index out of range");
+		}
+
+		info.GetReturnValue().Set(this_->_from->get(index));
+	}
 };
 
 template<typename T>

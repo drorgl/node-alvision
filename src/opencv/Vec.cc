@@ -36,7 +36,7 @@ void VecInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 	Vec<cv::Vec4d>::Init(target, "Vec4d", overload);
 	Vec<cv::Vec6d>::Init(target, "Vec6d", overload);
 
-	TrackedPtr<cv::Vec2b>::Init(target, "TrackedPtr<Vec2b>", overload);
+	/*TrackedPtr<cv::Vec2b>::Init(target, "TrackedPtr<Vec2b>", overload);
 	TrackedPtr<cv::Vec3b>::Init(target, "TrackedPtr<Vec3b>", overload);
 	TrackedPtr<cv::Vec4b>::Init(target, "TrackedPtr<Vec4b>", overload);
 	TrackedPtr<cv::Vec2s>::Init(target, "TrackedPtr<Vec2s>", overload);
@@ -57,5 +57,5 @@ void VecInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 	TrackedPtr<cv::Vec2d>::Init(target, "TrackedPtr<Vec2d>", overload);
 	TrackedPtr<cv::Vec3d>::Init(target, "TrackedPtr<Vec3d>", overload);
 	TrackedPtr<cv::Vec4d>::Init(target, "TrackedPtr<Vec4d>", overload);
-	TrackedPtr<cv::Vec6d>::Init(target, "TrackedPtr<Vec6d>", overload);
+	TrackedPtr<cv::Vec6d>::Init(target, "TrackedPtr<Vec6d>", overload);*/
 }

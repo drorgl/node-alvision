@@ -3,11 +3,25 @@
 //#include "OpenCV.h"
 #include "../alvision.h"
 
+#include "IOArray.h"
+#include "Vec.h"
+
+namespace matx_general_callback {
+	extern std::shared_ptr<overload_resolution> overload;
+	NAN_METHOD(callback);
+}
+
 template <typename T>
 class Matx : public or::ObjectWrap {
 public:
+	typedef typename T::value_type TVT;
+	enum {
+		TCOLS = T::cols
+	};
+
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Matx<T>::New);
+		matx_general_callback::overload = overload;
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(matx_general_callback::callback);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
@@ -15,48 +29,105 @@ public:
 		Matx<T>::name = name;
 		overload->register_type<Matx<T>>(ctor, "matx", name);
 		
-
-		//ctor->Inherit(?);
-
-
+		assert(!IOArray::constructor.IsEmpty() && "cannot initialize derived class before base class");
+		ctor->Inherit(Nan::New(IOArray::constructor));
 
 
-
-
-
-
-//		export interface MatxStatic<T> {
 //			new () : Matx<T>;
+		overload->addOverloadConstructor("matx", name, {}, New_no_params);
 //			new (v0: T) : Matx<T>; //!< 1x1 matrix
+		overload->addOverloadConstructor("matx", name, {make_param<TVT>("v0","Number")}, New_v0);
 //			new (v0: T, v1 : T) : Matx<T>; //!< 1x2 or 2x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number") }, New_v0_v1);
 //			new (v0: T, v1 : T, v2 : T) : Matx<T>; //!< 1x3 or 3x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number") }, New_v0_v1_v2);
 //			new (v0: T, v1 : T, v2 : T, v3 : T) : Matx<T>; //!< 1x4, 2x2 or 4x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number") 
+		}, New_v0_v1_v2_v3);
 //			new (v0: T, v1 : T, v2 : T, v3 : T, v4 : T) : Matx<T>; //!< 1x5 or 5x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number"),make_param<TVT>("v4","Number")
+		}, New_v0_v1_v2_v3_v4);
+
 //			new (v0: T, v1 : T, v2 : T, v3 : T, v4 : T, v5 : T) : Matx<T>; //!< 1x6, 2x3, 3x2 or 6x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number"),make_param<TVT>("v4","Number"),make_param<TVT>("v5","Number")
+		}, New_v0_v1_v2_v3_v4_v5);
+
 //			new (v0: T, v1 : T, v2 : T, v3 : T, v4 : T, v5 : T, v6 : T) : Matx<T>; //!< 1x7 or 7x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number"),make_param<TVT>("v4","Number"),make_param<TVT>("v5","Number"),make_param<TVT>("v6","Number")
+		}, New_v0_v1_v2_v3_v4_v5_v6);
+
 //			new (v0: T, v1 : T, v2 : T, v3 : T, v4 : T, v5 : T, v6 : T, v7 : T) : Matx<T>; //!< 1x8, 2x4, 4x2 or 8x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number"),make_param<TVT>("v4","Number"),make_param<TVT>("v5","Number"),make_param<TVT>("v6","Number")
+			,make_param<TVT>("v7","Number")
+		}, New_v0_v1_v2_v3_v4_v5_v6_v7);
+
 //			new (v0: T, v1 : T, v2 : T, v3 : T, v4 : T, v5 : T, v6 : T, v7 : T, v8 : T) : Matx<T>; //!< 1x9, 3x3 or 9x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number"),make_param<TVT>("v4","Number"),make_param<TVT>("v5","Number"),make_param<TVT>("v6","Number")
+			,make_param<TVT>("v7","Number"),make_param<TVT>("v8","Number")
+		}, New_v0_v1_v2_v3_v4_v5_v6_v7_v8);
+
 //			new (v0: T, v1 : T, v2 : T, v3 : T, v4 : T, v5 : T, v6 : T, v7 : T, v8 : T, v9 : T) : Matx<T>; //!< 1x10, 2x5 or 5x2 or 10x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number"),make_param<TVT>("v4","Number"),make_param<TVT>("v5","Number"),make_param<TVT>("v6","Number")
+			,make_param<TVT>("v7","Number"),make_param<TVT>("v8","Number"),make_param<TVT>("v9","Number")
+		}, New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9);
+
 //			new(v0 : T, v1 : T, v2 : T, v3 : T,
 //				v4 : T, v5 : T, v6 : T, v7 : T,
 //				v8 : T, v9 : T, v10 : T, v11 : T) : Matx<T>; //!< 1x12, 2x6, 3x4, 4x3, 6x2 or 12x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number"),make_param<TVT>("v4","Number"),make_param<TVT>("v5","Number"),make_param<TVT>("v6","Number")
+			,make_param<TVT>("v7","Number"),make_param<TVT>("v8","Number"),make_param<TVT>("v9","Number"),make_param<TVT>("v10","Number"),make_param<TVT>("v11","Number")
+		}, New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9_v10_v11);
+
 //			new(v0 : T, v1 : T, v2 : T, v3 : T,
 //				v4 : T, v5 : T, v6 : T, v7 : T,
 //				v8 : T, v9 : T, v10 : T, v11 : T,
 //				v12 : T, v13 : T) : Matx<T>; //!< 1x14, 2x7, 7x2 or 14x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number"),make_param<TVT>("v4","Number"),make_param<TVT>("v5","Number"),make_param<TVT>("v6","Number")
+			,make_param<TVT>("v7","Number"),make_param<TVT>("v8","Number"),make_param<TVT>("v9","Number"),make_param<TVT>("v10","Number"),make_param<TVT>("v11","Number")
+			,make_param<TVT>("v12","Number"),make_param<TVT>("v13","Number")
+		}, New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9_v10_v11_v12_v13);
+
 //			new(v0 : T, v1 : T, v2 : T, v3 : T,
 //				v4 : T, v5 : T, v6 : T, v7 : T,
 //				v8 : T, v9 : T, v10 : T, v11 : T,
 //				v12, _v13 : T, v14 : T, v15 : T) : Matx<T>; //!< 1x16, 4x4 or 16x1 matrix
+		overload->addOverloadConstructor("matx", name, { make_param<TVT>("v0","Number"),make_param<TVT>("v1","Number"),make_param<TVT>("v2","Number")
+			,make_param<TVT>("v3","Number"),make_param<TVT>("v4","Number"),make_param<TVT>("v5","Number"),make_param<TVT>("v6","Number")
+			,make_param<TVT>("v7","Number"),make_param<TVT>("v8","Number"),make_param<TVT>("v9","Number"),make_param<TVT>("v10","Number"),make_param<TVT>("v11","Number")
+			,make_param<TVT>("v12","Number"),make_param<TVT>("v13","Number"),make_param<TVT>("v14","Number"),make_param<TVT>("v15","Number")
+		}, New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9_v10_v11_v12_v13_v14_v15);
+
 //			new(vals : Array<T>) : Matx<T>; //!< initialize from a plain array
+		overload->addOverloadConstructor("matx", name, { make_param<std::shared_ptr<std::vector<TVT>>>("vals","Array<Number>") }, New_vals);
 //
 //			all(alpha : T) : Matx<T>;
+		overload->addStaticOverload("matx", name, "all", { make_param<TVT>("alpha","Number") }, all);
+		Nan::SetMethod(ctor, "all", matx_general_callback::callback);
 //			zeros() : Matx<T>;
+		overload->addStaticOverload("matx", name, "zeros", { }, zeros);
+		Nan::SetMethod(ctor, "zeros", matx_general_callback::callback);
 //			ones() : Matx<T>;
+		overload->addStaticOverload("matx", name, "ones", {}, ones);
+		Nan::SetMethod(ctor, "ones", matx_general_callback::callback);
 //			eye() : Matx<T>;
+		overload->addStaticOverload("matx", name, "eye", {}, eye);
+		Nan::SetMethod(ctor, "eye", matx_general_callback::callback);
 //			//diag(const diag_type& d): Matx<T>;
 //			randu(a : T, b : T) : Matx<T>;
+		overload->addStaticOverload("matx", name, "randu", { make_param<TVT>("a","Number"), make_param<TVT>("b","Number") }, randu);
+		Nan::SetMethod(ctor, "randu", matx_general_callback::callback);
 //			randn(a: T, b : T) : Matx<T>;
+		overload->addStaticOverload("matx", name, "randn", { make_param<TVT>("a","Number"), make_param<TVT>("b","Number") }, randn);
+		Nan::SetMethod(ctor, "randn", matx_general_callback::callback);
 //
 //
 //
@@ -66,6 +137,8 @@ public:
 //			//        return Matx<_Tp, m, n>(a, b, Matx_AddOp());
 //			//}
 //			op_Addition(a: Matx<T>, b : Matx<T>) : Matx<T>;
+		overload->addStaticOverload("matx", name, "op_Addition", { make_param<Matx<T>*>("a",name), make_param<Matx<T>*>("b",name) }, op_Addition_matx_matx);
+		Nan::SetMethod(ctor, "op_Addition", matx_general_callback::callback);
 //
 //			//template < typename _Tp, int m, int n> static inline
 //			//Matx < _Tp, m, n > operator - (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
@@ -73,6 +146,8 @@ public:
 //			//        return Matx<_Tp, m, n>(a, b, Matx_SubOp());
 //			//}
 //			op_Substraction(a: Matx<T>, b : Matx<T>) : Matx<T>;
+		overload->addStaticOverload("matx", name, "op_Substraction", { make_param<Matx<T>*>("a",name), make_param<Matx<T>*>("b",name) }, op_Substraction_matx_matx);
+		Nan::SetMethod(ctor, "op_Substraction", matx_general_callback::callback);
 //
 //			//template < typename _Tp, int m, int n> static inline
 //			//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, n>& a, int alpha)
@@ -80,6 +155,8 @@ public:
 //			//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
 //			//}
 //			op_Multiplication(a: Matx<T>, alpha : _st.int) : Matx<T>;
+		overload->addStaticOverload("matx", name, "op_Multiplication", { make_param<Matx<T>*>("a",name), make_param<double>("alpha","Number") }, op_Multiplication_matx_number);
+		Nan::SetMethod(ctor, "op_Multiplication", matx_general_callback::callback);
 //
 //			//template < typename _Tp, int m, int n> static inline
 //			//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, n>& a, float alpha)
@@ -101,6 +178,8 @@ public:
 //			//        return Matx<_Tp, m, n>(a, alpha, Matx_ScaleOp());
 //			//}
 //			op_Multiplication(alpha: _st.int, a : Matx<T>) : Matx<T>;
+		overload->addStaticOverload("matx", name, "op_Multiplication", { make_param<double>("alpha","Number"), make_param<Matx<T>*>("a",name) }, op_Multiplication_number_matx);
+		Nan::SetMethod(ctor, "op_Multiplication", matx_general_callback::callback);
 //
 //			//template < typename _Tp, int m, int n> static inline
 //			//Matx < _Tp, m, n > operator * (float alpha, const Matx<_Tp, m, n>& a)
@@ -122,6 +201,8 @@ public:
 //			//        return Matx<_Tp, m, n>(a, -1, Matx_ScaleOp());
 //			//}
 //			op_Substraction(a: Matx<T>) : Matx<T>;
+		overload->addStaticOverload("matx", name, "op_Substraction", { make_param<Matx<T>*>("a",name) }, op_Substraction_matx_negative);
+		Nan::SetMethod(ctor, "op_Substraction", matx_general_callback::callback);
 //
 //			//template < typename _Tp, int m, int n, int l> static inline
 //			//Matx < _Tp, m, n > operator * (const Matx<_Tp, m, l>& a, const Matx<_Tp, l, n>& b)
@@ -129,6 +210,8 @@ public:
 //			//        return Matx<_Tp, m, n>(a, b, Matx_MatMulOp());
 //			//}
 //			op_Multiplication(a: Matx<T>, b : Matx<T>) : Matx<T>;
+		overload->addStaticOverload("matx", name, "op_Multiplication", { make_param<Matx<T>*>("a",name), make_param<Matx<T>*>("b",name) }, op_Multiplication_matx_matx);
+		Nan::SetMethod(ctor, "op_Multiplication", matx_general_callback::callback);
 //
 //			//template < typename _Tp, int m, int n> static inline
 //			//Vec < _Tp, m > operator * (const Matx<_Tp, m, n>& a, const Vec<_Tp, n>& b)
@@ -137,6 +220,8 @@ public:
 //			//return (const Vec<_Tp, m>&)(c);
 //			//}
 //			op_Multiplication(a: Matx<T>, b : Vec<T>) : Matx<T>;
+		overload->addStaticOverload("matx", name, "op_Multiplication", { make_param<Matx<T>*>("a",name), make_param<Vec<cv::Vec<TVT,TCOLS>>*>("b",Vec<cv::Vec<TVT,TCOLS>>::name) }, op_Multiplication_matx_vec);
+		Nan::SetMethod(ctor, "op_Multiplication", matx_general_callback::callback);
 //
 //			//template < typename _Tp, int m, int n> static inline
 //			//bool operator == (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
@@ -146,6 +231,8 @@ public:
 //			//return true;
 //			//}
 //			op_Equals(a: Matx<T>, b : Matx<T>) : boolean;
+		overload->addStaticOverload("matx", name, "op_Equals", { make_param<Matx<T>*>("a",name), make_param<Matx<T>*>("b",name) }, op_Equals_matx_matx);
+		Nan::SetMethod(ctor, "op_Equals", matx_general_callback::callback);
 //
 //			//template < typename _Tp, int m, int n> static inline
 //			//bool operator != (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
@@ -153,10 +240,14 @@ public:
 //			//        return !(a == b);
 //			//}
 //			op_NotEquals(a: Matx<T>, b : Matx<T>) : boolean;
+		overload->addStaticOverload("matx", name, "op_NotEquals", { make_param<Matx<T>*>("a",name), make_param<Matx<T>*>("b",name) }, op_NotEquals_matx_matx);
+		Nan::SetMethod(ctor, "op_NotEquals", matx_general_callback::callback);
 //
 //
 //			//template < typename _Tp, int m, int n> static inline
 //			norm(m ? : Matx<T>) : _st.double;
+		overload->addStaticOverload("matx", name, "norm", { make_param<Matx<T>*>("a",name)}, norm_matx);
+		Nan::SetMethod(ctor, "norm", matx_general_callback::callback);
 //			//double norm(const Matx<_Tp, m, n>& M)
 //			//    {
 //			//        return std::sqrt(normL2Sqr<_Tp, double>(M.val, m * n));
@@ -186,14 +277,22 @@ public:
 //			//    public:
 //			//enum { depth = DataType<_Tp>::depth,
 //		depth: _st.int;
+		Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("depth").ToLocalChecked(), depth_getter);
 //			//    rows = m,
 //			rows() : _st.int;
+		overload->addOverload("matx", name, "rows", { }, rows);
+		Nan::SetPrototypeMethod(ctor, "rows", matx_general_callback::callback);
 //			//    cols = n,
 //			cols() : _st.int;
+		overload->addOverload("matx", name, "cols", {}, cols);
+		Nan::SetPrototypeMethod(ctor, "cols", matx_general_callback::callback);
 //			//    channels = rows * cols,
 //		channels: _st.int;
+		Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("channels").ToLocalChecked(), channels_getter);
 //			//    type = CV_MAKETYPE(depth, channels),
 //			type() : _st.int;
+		overload->addOverload("matx", name, "type", {}, type);
+		Nan::SetPrototypeMethod(ctor, "type", matx_general_callback::callback);
 //			//    shortdim = (m < n ? m : n)
 //			//     };
 //
@@ -206,9 +305,13 @@ public:
 //
 //			//! dot product computed with the default precision
 //			dot(v: Matx<T>) : T
+		overload->addOverload("matx", name, "dot", { make_param<Matx<T>*>("a",name) }, dot_matx);
+		Nan::SetPrototypeMethod(ctor, "dot", matx_general_callback::callback);
 //
 //				//! dot product computed in double-precision arithmetics
 //				ddot(v : Matx<T>) : _st.double;
+		overload->addOverload("matx", name, "ddot", { make_param<Matx<T>*>("a",name) }, ddot_matx);
+		Nan::SetPrototypeMethod(ctor, "ddot", matx_general_callback::callback);
 //
 //			//! conversion to another data type
 //			//template < typename T2> operator Matx<T2, m, n>() const;
@@ -233,6 +336,11 @@ public:
 //
 //			//! invert the matrix
 //			inv(method ? : _base.DecompTypes /*= DECOMP_LU*//*, bool * p_is_ok = NULL*/) : Matx<T>
+		overload->addOverload("matx", name, "inv", { 
+			make_param<int>("method","DecompTypes",cv::DECOMP_LU), 
+			make_param<std::shared_ptr<or::Callback>>("cb","Function", nullptr)
+		}, inv_method);
+		Nan::SetPrototypeMethod(ctor, "inv", matx_general_callback::callback);
 //
 //
 //				////! solve linear system
@@ -266,16 +374,29 @@ public:
 //
 //			//_Tp val[m * n]; //< matrix elements
 //		val: T[];
+		Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("val").ToLocalChecked(), val_getter); //TrackedPtr
 //
 //
 //
 //
 //
 //			op_Addition(other: Matx<T> | _st.int | _st.double | _st.float) : Matx<T>;
+		overload->addOverload("matx", name, "op_Addition", {make_param<Matx<T>*>("other",name)}, op_addition_matx);
+		overload->addOverload("matx", name, "op_Addition", {make_param<double>("other","Number")}, op_addition_double);
+		Nan::SetPrototypeMethod(ctor, "op_Addition", matx_general_callback::callback);
 //			op_Substraction(other: Matx<T> | _st.int | _st.double | _st.float) : Matx<T>;
+		overload->addOverload("matx", name, "op_Substraction", { make_param<Matx<T>*>("other",name) }, op_Substraction_matx);
+		overload->addOverload("matx", name, "op_Substraction", { make_param<double>("other","Number") }, op_Substraction_double);
+		Nan::SetPrototypeMethod(ctor, "op_Substraction", matx_general_callback::callback);
+
 //			op_Multiplication(other: Matx<T> | _st.int | _st.double | _st.float) : Matx<T>;
+		overload->addOverload("matx", name, "op_Multiplication", { make_param<Matx<T>*>("other",name) },   op_Multiplication_matx);
+		overload->addOverload("matx", name, "op_Multiplication", { make_param<double>("other","Number") }, op_Multiplication_double);
+		Nan::SetPrototypeMethod(ctor, "op_Multiplication", matx_general_callback::callback);
 //
 //			mul(a: Matx<T>) : Matx<T>;
+		overload->addOverload("matx", name, "mul", { make_param<Matx<T>*>("a",name) }, mul_matx);
+		Nan::SetPrototypeMethod(ctor, "mul", matx_general_callback::callback);
 //			//template < typename _Tp, int m, int n> inline
 //			//Matx < _Tp, m, n > Matx<_Tp, m, n>::mul(const Matx<_Tp, m, n>& a) const
 //			//    {
@@ -312,11 +433,489 @@ public:
 
 
 
+	static POLY_METHOD(New_no_params) {
+		auto matx = new Matx<T>();
+		matx->_matx = std::make_shared<T>();
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+
+	static POLY_METHOD(New_v0) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+	
+	static POLY_METHOD(New_v0_v1) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2_v3) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2_v3_v4) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2_v3_v4_v5) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2_v3_v4_v5_v6) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+	
+	static POLY_METHOD(New_v0_v1_v2_v3_v4_v5_v6_v7) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2_v3_v4_v5_v6_v7_v8) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9_v10_v11) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9_v10_v11_v12_v13) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9_v10_v11_v12_v13_v14_v15) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(New_vals) {
+		auto matx = new Matx<T>();
+
+		TVT values[T::channels];
+		for (auto i = 0; i < T::channels; i++) {
+			values[i] = info.at<TVT>(i);
+		}
+
+		matx->_matx = std::make_shared<T>((TVT*)&values);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+
+	static POLY_METHOD(all) {
+		auto matx = new Matx<T>();
+
+		matx->_matx = std::make_shared<T>(T::all( info.at<TVT>(0)));
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(zeros) {
+		auto matx = new Matx<T>();
+
+		matx->_matx = std::make_shared<T>(T::zeros());
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(ones) {
+		auto matx = new Matx<T>();
+
+		matx->_matx = std::make_shared<T>(T::ones());
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(eye) {
+		auto matx = new Matx<T>();
+
+		matx->_matx = std::make_shared<T>(T::eye());
+
+		info.SetReturnValue(matx);
+
+		//matx->Wrap(info.Holder());
+		//info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(randu) {
+		auto matx = new Matx<T>();
+
+		matx->_matx = std::make_shared<T>(T::randu(info.at<TVT>(0), info.at<TVT>(1)));
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(randn) {
+		auto matx = new Matx<T>();
+
+		matx->_matx = std::make_shared<T>(T::randn(info.at<TVT>(0), info.at<TVT>(1)));
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(op_Addition_matx_matx) {
+		auto matx = new Matx<T>();
+
+		auto a = *info.at<Matx<T>*>(0)->_matx;
+		auto b = *info.at<Matx<T>*>(1)->_matx;
+
+		matx->_matx = std::make_shared<T>(a + b);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(op_Substraction_matx_matx) {
+		auto matx = new Matx<T>();
+
+		auto a = *info.at<Matx<T>*>(0)->_matx;
+		auto b = *info.at<Matx<T>*>(1)->_matx;
+
+		matx->_matx = std::make_shared<T>(a - b);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(op_Multiplication_matx_number) {
+		auto matx = new Matx<T>();
+
+		auto a = *info.at<Matx<T>*>(0)->_matx;
+		auto b = info.at<double>(1);
+
+		matx->_matx = std::make_shared<T>(a * b);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(op_Multiplication_number_matx) {
+		auto matx = new Matx<T>();
+
+		auto a = info.at<double>(0);
+		auto b = *info.at<Matx<T>*>(1)->_matx;
+
+		matx->_matx = std::make_shared<T>(a * b);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(op_Substraction_matx_negative) {
+		auto matx = new Matx<T>();
+
+		auto a = *info.at<Matx<T>*>(0)->_matx;
+
+		matx->_matx = std::make_shared<T>(-a);
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+
+	static POLY_METHOD(op_Multiplication_matx_matx) {
+		auto matx = new Matx<T>();
+
+		auto a = *info.at<Matx<T>*>(0)->_matx;
+		auto b = *info.at<Matx<T>*>(1)->_matx;
+
+		matx->_matx = std::make_shared<T>(a.mul( b));
+		matx->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(op_Multiplication_matx_vec) {
+		throw std::exception("not implemented");
+		//auto matx = new Matx<T>();
+		//
+		//auto a = *info.at<Matx<T>*>(0)->_matx;
+		//auto b = *info.at < Vec<cv::Vec<TVT, TCOLS>>*>(1)->_vec;
+		//
+		//matx->_matx = std::make_shared<T>(a * b);
+		//matx->Wrap(info.Holder());
+		//info.GetReturnValue().Set(info.Holder());
+	}
+
+	static POLY_METHOD(op_Equals_matx_matx) {
+		auto matx = new Matx<T>();
+
+		auto a = *info.at<Matx<T>*>(0)->_matx;
+		auto b = *info.at<Matx<T>*>(1)->_matx;
+
+		info.SetReturnValue(a == b);
+	}
+
+	static POLY_METHOD(op_NotEquals_matx_matx) {
+		auto matx = new Matx<T>();
+
+		auto a = *info.at<Matx<T>*>(0)->_matx;
+		auto b = *info.at<Matx<T>*>(1)->_matx;
+
+		info.SetReturnValue(a != b);
+	}
+
+	static POLY_METHOD(norm_matx) {
+		auto matx = new Matx<T>();
+
+		auto m = *info.at<Matx<T>*>(0)->_matx;
+
+		info.SetReturnValue(cv::norm( m ));
+	}
+
+	static NAN_GETTER(depth_getter) {
+		auto this_ = or ::ObjectWrap::Unwrap<Matx<T>>(info.This())->_matx;
+		info.GetReturnValue().Set(Nan::New(this_->depth));
+	}
 
 	
-	
+	static POLY_METHOD(rows) {
+		auto this_ = info.This<Matx<T>*>()->_matx;
+		info.SetReturnValue(this_->rows);
+	}
 
-	
+	static POLY_METHOD(cols) {
+		auto this_ = info.This<Matx<T>*>()->_matx;
+		info.SetReturnValue(this_->cols);
+	}
+
+	static NAN_GETTER(channels_getter) {
+		auto this_ = or ::ObjectWrap::Unwrap<Matx<T>>(info.This())->_matx;
+		info.GetReturnValue().Set(Nan::New(this_->channels));
+	}
+
+
+	static POLY_METHOD(type) {
+		auto this_ = info.This<Matx<T>*>()->_matx;
+		info.SetReturnValue(this_->type);
+	}
+
+	static POLY_METHOD(dot_matx) {
+		auto this_ = info.This<Matx<T>*>()->_matx;
+		info.SetReturnValue(this_->dot(*info.at<Matx<T>*>(0)->_matx));
+	}
+
+	static POLY_METHOD(ddot_matx) {
+		auto this_ = info.This<Matx<T>*>()->_matx;
+		info.SetReturnValue(this_->ddot(*info.at<Matx<T>*>(0)->_matx));
+	}
+
+	static POLY_METHOD(inv_method) {
+		throw std::exception("not implemented");
+
+		//todo, execute only for certain matx types
+
+		//auto this_ = info.This<Matx<T>*>()->_matx;
+		//bool p_is_ok;
+		//auto p_is_ok_cb = info.at<std::shared_ptr< or ::Callback>>(1);
+		//auto res = this_->inv(info.at<int>(0), &p_is_ok);
+		//
+		//auto ret = new Matx<T>();
+		//ret->_matx = std::make_shared<T>(res);
+		//
+		//p_is_ok_cb->Call({ or ::make_value(p_is_ok) });
+		//
+		//info.SetReturnValue(ret);
+	}
+
+	static NAN_GETTER(val_getter) {
+		auto this_ = or ::ObjectWrap::Unwrap<Matx<T>>(info.This())->_matx;
+		auto tptr = new TrackedPtr<T>();
+		tptr->_from = this_;
+		//tptr->_Ttype = TVT;
+		throw std::exception("not implemented");
+
+		//info.SetReturnValue(tptr);
+	}
+
+	static POLY_METHOD(op_addition_matx) {
+		auto this_ = *info.This<Matx<T>*>()->_matx;
+		auto other = *info.at<Matx<T>*>(0)->_matx;
+
+		auto ret = new Matx<T>();
+		ret->_matx = std::make_shared<T>(this_ + other);
+
+		info.SetReturnValue(ret);
+	}
+
+	static POLY_METHOD(op_addition_double) {
+		auto this_ = *info.This<Matx<T>*>()->_matx;
+		auto other = T::all(info.at<double>(0));
+
+		auto ret = new Matx<T>();
+		ret->_matx = std::make_shared<T>(this_ + other);
+
+		info.SetReturnValue(ret);
+	}
+
+	static POLY_METHOD(op_Substraction_matx) {
+		auto this_ = *info.This<Matx<T>*>()->_matx;
+		auto other = *info.at<Matx<T>*>(0)->_matx;
+
+		auto ret = new Matx<T>();
+		ret->_matx = std::make_shared<T>(this_ - other);
+
+		info.SetReturnValue(ret);
+	}
+
+	static POLY_METHOD(op_Substraction_double) {
+		auto this_ = *info.This<Matx<T>*>()->_matx;
+		auto other = T::all(info.at<double>(0));
+
+		auto ret = new Matx<T>();
+		ret->_matx = std::make_shared<T>(this_ - other);
+
+		info.SetReturnValue(ret);
+	}
+
+
+	static POLY_METHOD(op_Multiplication_matx) {
+		auto this_ = *info.This<Matx<T>*>()->_matx;
+		auto other = *info.at<Matx<T>*>(0)->_matx;
+
+		auto ret = new Matx<T>();
+		ret->_matx = std::make_shared<T>(this_.mul( other));
+
+		info.SetReturnValue(ret);
+	}
+
+	static POLY_METHOD(op_Multiplication_double) {
+		auto this_ = *info.This<Matx<T>*>()->_matx;
+		auto other = info.at<double>(0);
+
+		auto ret = new Matx<T>();
+		ret->_matx = std::make_shared<T>(this_ * other);
+
+		info.SetReturnValue(ret);
+	}
+
+	static POLY_METHOD(mul_matx) {
+		auto this_ = *info.This<Matx<T>*>()->_matx;
+		auto other = *info.at<Matx<T>*>(0)->_matx;
+
+		auto ret = new Matx<T>();
+		ret->_matx = std::make_shared<T>(this_.mul( other));
+
+		info.SetReturnValue(ret);
+	}
+
+
 };
 
 
