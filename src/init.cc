@@ -59,6 +59,13 @@
 #include "opencv/TrackedPtr.h"	
 #include "opencv/TrackedElement.h"	
 
+#include "opencv/core/Algorithm.h"
+#include "opencv/features2d/Feature2D.h"
+#include "opencv/features2d/SimpleBlobDetector.h"
+
+#include "opencv/types/TermCriteria.h"
+#include "opencv/types/KeyPoint.h"
+
 extern "C"{ 
 void
 init(Handle<Object> target) {
@@ -79,6 +86,8 @@ init(Handle<Object> target) {
 	overload->add_type_alias("MatrixType", "int");
 
 	IOArray::Init(target, overload);
+	TermCriteria::Init(target, overload);
+	KeyPoint::Init(target, overload);
 
 	Matrix::Init(target,overload);
 	alvision::ffmpeg::Init(target,overload);
@@ -93,38 +102,10 @@ init(Handle<Object> target) {
 
 	cvtest::Init(target, overload);
 
-	Size2i::Init(target,"Size2i" ,overload);
-	Size2f::Init(target, "Size2f",overload);
-	Size2d::Init(target, "Size2d",overload);
-	Size::Init(target, "Size", overload);
+	SizeInit::Init(target, overload);
+	
 
-
-	Vec<cv::Vec2b>::Init(target,"Vec2b",overload);
-	Vec<cv::Vec3b>::Init(target,"Vec3b",overload);
-	Vec<cv::Vec4b>::Init(target,"Vec4b",overload);
-	Vec<cv::Vec2s>::Init(target,"Vec2s",overload);
-	Vec<cv::Vec3s>::Init(target,"Vec3s",overload);
-	Vec<cv::Vec4s>::Init(target,"Vec4s",overload);
-	Vec<cv::Vec2w>::Init(target,"Vec2w",overload);
-	Vec<cv::Vec3w>::Init(target,"Vec3w",overload);
-	Vec<cv::Vec4w>::Init(target,"Vec4w",overload);
-	Vec<cv::Vec2i>::Init(target,"Vec2i",overload);
-	Vec<cv::Vec3i>::Init(target,"Vec3i",overload);
-	Vec<cv::Vec4i>::Init(target,"Vec4i",overload);
-	Vec<cv::Vec6i>::Init(target,"Vec6i",overload);
-	Vec<cv::Vec8i>::Init(target,"Vec8i",overload);
-	Vec<cv::Vec2f>::Init(target,"Vec2f",overload);
-	Vec<cv::Vec3f>::Init(target,"Vec3f",overload);
-	Vec<cv::Vec4f>::Init(target,"Vec4f",overload);
-	Vec<cv::Vec6f>::Init(target,"Vec6f",overload);
-	Vec<cv::Vec2d>::Init(target,"Vec2d",overload);
-	Vec<cv::Vec3d>::Init(target,"Vec3d",overload);
-	Vec<cv::Vec4d>::Init(target,"Vec4d",overload);
-	Vec<cv::Vec6d>::Init(target,"Vec6d",overload);
-
-	//cv::Vec6d x;
-	//auto xx = x[0];
-
+	
 
 	
 	
@@ -132,79 +113,17 @@ init(Handle<Object> target) {
 	ml::Init(target, overload);
 	superres::Init(target, overload);
 
-	calib3d::Init(target, overload);
+	
 
 	MatExpr::Init(target, overload);
 
 	core::Init(target, overload);
 
-	//Matx<cv::Matx
-	Matx<cv::Matx12f>::Init(target,"Matx12f",overload);
-	Matx<cv::Matx12d>::Init(target,"Matx12d",overload);
-	Matx<cv::Matx13f>::Init(target,"Matx13f",overload);
-	Matx<cv::Matx13d>::Init(target,"Matx13d",overload);
-	Matx<cv::Matx14f>::Init(target,"Matx14f",overload);
-	Matx<cv::Matx14d>::Init(target,"Matx14d",overload);
-	Matx<cv::Matx16f>::Init(target,"Matx16f",overload);
-	Matx<cv::Matx16d>::Init(target,"Matx16d",overload);
-	Matx<cv::Matx21f>::Init(target,"Matx21f",overload);
-	Matx<cv::Matx21d>::Init(target,"Matx21d",overload);
-	Matx<cv::Matx31f>::Init(target,"Matx31f",overload);
-	Matx<cv::Matx31d>::Init(target,"Matx31d",overload);
-	Matx<cv::Matx41f>::Init(target,"Matx41f",overload);
-	Matx<cv::Matx41d>::Init(target,"Matx41d",overload);
-	Matx<cv::Matx61f>::Init(target,"Matx61f",overload);
-	Matx<cv::Matx61d>::Init(target,"Matx61d",overload);
-	Matx<cv::Matx22f>::Init(target,"Matx22f",overload);
-	Matx<cv::Matx22d>::Init(target,"Matx22d",overload);
-	Matx<cv::Matx23f>::Init(target,"Matx23f",overload);
-	Matx<cv::Matx23d>::Init(target,"Matx23d",overload);
-	Matx<cv::Matx32f>::Init(target,"Matx32f",overload);
-	Matx<cv::Matx32d>::Init(target,"Matx32d",overload);
-	Matx<cv::Matx33f>::Init(target,"Matx33f",overload);
-	Matx<cv::Matx33d>::Init(target,"Matx33d",overload);
-	Matx<cv::Matx34f>::Init(target,"Matx34f",overload);
-	Matx<cv::Matx34d>::Init(target,"Matx34d",overload);
-	Matx<cv::Matx43f>::Init(target,"Matx43f",overload);
-	Matx<cv::Matx43d>::Init(target,"Matx43d",overload);
-	Matx<cv::Matx44f>::Init(target,"Matx44f",overload);
-	Matx<cv::Matx44d>::Init(target,"Matx44d",overload);
-	Matx<cv::Matx66f>::Init(target,"Matx66f",overload);
-	Matx<cv::Matx66d>::Init(target,"Matx66d",overload);
+	MatxInit::Init(target, overload);
 
-	Scalar<cv::Scalar>::Init(target, "Scalar", overload);
+	ScalarInit::Init(target, overload);
 
-	Mat_<uchar >	::Init(target,"Mat1b",overload);
-	Mat_<cv::Vec2b >::Init(target,"Mat2b",overload);
-	Mat_<cv::Vec3b >::Init(target,"Mat3b",overload);
-	Mat_<cv::Vec4b >::Init(target,"Mat4b",overload);
-	
-	Mat_<short >     ::Init(target,"Mat1s",overload);
-	Mat_<cv::Vec2s > ::Init(target,"Mat2s",overload);
-	Mat_<cv::Vec3s > ::Init(target,"Mat3s",overload);
-	Mat_<cv::Vec4s > ::Init(target,"Mat4s",overload);
-	
-	Mat_<ushort >    ::Init(target,"Mat1w",overload);
-	Mat_<cv::Vec2w > ::Init(target,"Mat2w",overload);
-	Mat_<cv::Vec3w > ::Init(target,"Mat3w",overload);
-	Mat_<cv::Vec4w > ::Init(target,"Mat4w",overload);
-	
-	Mat_<int    >    ::Init(target,"Mat1i",overload);
-	Mat_<cv::Vec2i > ::Init(target,"Mat2i",overload);
-	Mat_<cv::Vec3i > ::Init(target,"Mat3i",overload);
-	Mat_<cv::Vec4i > ::Init(target,"Mat4i",overload);
-	
-	Mat_<float  >	 ::Init(target,"Mat1f",overload);
-	Mat_<cv::Vec2f > ::Init(target,"Mat2f",overload);
-	Mat_<cv::Vec3f > ::Init(target,"Mat3f",overload);
-	Mat_<cv::Vec4f > ::Init(target,"Mat4f",overload);
-	
-	Mat_<double >    ::Init(target,"Mat1d",overload);
-	Mat_<cv::Vec2d > ::Init(target,"Mat2d",overload);
-	Mat_<cv::Vec3d > ::Init(target,"Mat3d",overload);
-	Mat_<cv::Vec4d>  ::Init(target,"Mat4d",overload);
-
-	Mat_<cv::Point2f>::Init(target, "MatPoint2f", overload);
+	Mat_Init::Init(target, overload);
 
 	persistence::Init(target, overload);
 
@@ -231,6 +150,11 @@ init(Handle<Object> target) {
 
 	Range::Init(target, "Range", overload);
 
+
+	Feature2D::Init(target, overload);
+	SimpleBlobDetector::Init(target, overload);
+
+
 	imgcodecs::Init(target, overload);
 	imgproc::Init(target, overload);
 
@@ -241,29 +165,8 @@ init(Handle<Object> target) {
 
 	videoio::Init(target, overload);
 
-
-	TrackedPtr<cv::Vec2b>::Init(target,"TrackedPtr<Vec2b>",overload);
-	TrackedPtr<cv::Vec3b>::Init(target,"TrackedPtr<Vec3b>",overload);
-	TrackedPtr<cv::Vec4b>::Init(target,"TrackedPtr<Vec4b>",overload);
-	TrackedPtr<cv::Vec2s>::Init(target,"TrackedPtr<Vec2s>",overload);
-	TrackedPtr<cv::Vec3s>::Init(target,"TrackedPtr<Vec3s>",overload);
-	TrackedPtr<cv::Vec4s>::Init(target,"TrackedPtr<Vec4s>",overload);
-	TrackedPtr<cv::Vec2w>::Init(target,"TrackedPtr<Vec2w>",overload);
-	TrackedPtr<cv::Vec3w>::Init(target,"TrackedPtr<Vec3w>",overload);
-	TrackedPtr<cv::Vec4w>::Init(target,"TrackedPtr<Vec4w>",overload);
-	TrackedPtr<cv::Vec2i>::Init(target,"TrackedPtr<Vec2i>",overload);
-	TrackedPtr<cv::Vec3i>::Init(target,"TrackedPtr<Vec3i>",overload);
-	TrackedPtr<cv::Vec4i>::Init(target,"TrackedPtr<Vec4i>",overload);
-	TrackedPtr<cv::Vec6i>::Init(target,"TrackedPtr<Vec6i>",overload);
-	TrackedPtr<cv::Vec8i>::Init(target,"TrackedPtr<Vec8i>",overload);
-	TrackedPtr<cv::Vec2f>::Init(target,"TrackedPtr<Vec2f>",overload);
-	TrackedPtr<cv::Vec3f>::Init(target,"TrackedPtr<Vec3f>",overload);
-	TrackedPtr<cv::Vec4f>::Init(target,"TrackedPtr<Vec4f>",overload);
-	TrackedPtr<cv::Vec6f>::Init(target,"TrackedPtr<Vec6f>",overload);
-	TrackedPtr<cv::Vec2d>::Init(target,"TrackedPtr<Vec2d>",overload);
-	TrackedPtr<cv::Vec3d>::Init(target,"TrackedPtr<Vec3d>",overload);
-	TrackedPtr<cv::Vec4d>::Init(target,"TrackedPtr<Vec4d>",overload);
-	TrackedPtr<cv::Vec6d>::Init(target,"TrackedPtr<Vec6d>",overload);
+	VecInit::Init(target, overload);
+	
 	TrackedPtr<cv::Mat>::Init(target, "TrackedPtr<Mat>", overload);
 
 	
@@ -271,6 +174,8 @@ init(Handle<Object> target) {
 
 	Affine3<cv::Affine3d>::Init(target, "Affine3d", overload);
 	Affine3<cv::Affine3f>::Init(target, "Affine3f", overload);
+
+	calib3d::Init(target, overload);
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 

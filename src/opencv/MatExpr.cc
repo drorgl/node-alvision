@@ -57,26 +57,26 @@ MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<MatExpr*>("a","MatExpr"),make_param<Scalar*>("s","Scalar") }, MatExpr::op_Addition_static_matexpr_scalar);
 	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<MatExpr*>("a","MatExpr"),make_param<MatExpr*>("b","MatExpr") }, MatExpr::op_Addition_static_matexpr_matexpr);
 	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<MatExpr*>("a","MatExpr"),make_param<double>("b","double") }, MatExpr::op_Addition_static_matexpr_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<Scalar*>("s","Scalar"),make_param("b","MatExpr") }, MatExpr::op_Addition_static_scalar_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<Scalar*>("s","Scalar"),make_param("b","Mat") }, MatExpr::op_Addition_static_scalar_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<double>("a","double"),make_param("b","Mat") }, MatExpr::op_Addition_static_double_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<double>("a","double"),make_param("b","MatExpr") }, MatExpr::op_Addition_static_double_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<Scalar*>("s","Scalar"),make_param<MatExpr*>("b","MatExpr") }, MatExpr::op_Addition_static_scalar_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<Scalar*>("s","Scalar"),make_param<Matrix*>("b","Mat") }, MatExpr::op_Addition_static_scalar_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::op_Addition_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Addition", { make_param<double>("a","double"),make_param<MatExpr*>("b","MatExpr") }, MatExpr::op_Addition_static_double_matexpr);
 	Nan::SetMethod(ctor, "op_Addition", matexpr_general_callback::callback);
 
 
 	//op_Substraction(a: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int, b ? : Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","Mat"),make_param("b","Mat") },		MatExpr::op_Substraction_static_mat_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","Mat"),make_param("s","Scalar") },	MatExpr::op_Substraction_static_mat_scalar);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","Mat"),make_param("b","double") },	MatExpr::op_Substraction_static_mat_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","Mat"),make_param("b","MatExpr") },	MatExpr::op_Substraction_static_mat_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","MatExpr"),make_param("b","Mat") },	MatExpr::op_Substraction_static_matexpr_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","MatExpr"),make_param("s","Scalar") }, MatExpr::op_Substraction_static_matexpr_scalar);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","MatExpr"),make_param("b","MatExpr") }, MatExpr::op_Substraction_static_matexpr_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","MatExpr"),make_param("b","double") }, MatExpr::op_Substraction_static_matexpr_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("s","Scalar"),make_param("b","MatExpr") }, MatExpr::op_Substraction_static_scalar_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("s","Scalar"),make_param("b","Mat") }, MatExpr::op_Substraction_static_scalar_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","double"),make_param("b","Mat") }, MatExpr::op_Substraction_static_double_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","double"),make_param("b","MatExpr") }, MatExpr::op_Substraction_static_double_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") },		MatExpr::op_Substraction_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<Matrix*>("a","Mat"),make_param<Scalar*>("s","Scalar") },	MatExpr::op_Substraction_static_mat_scalar);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") },	MatExpr::op_Substraction_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<Matrix*>("a","Mat"),make_param<MatExpr*>("b","MatExpr") },	MatExpr::op_Substraction_static_mat_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<MatExpr*>("a","MatExpr"),make_param<Matrix*>("b","Mat") },	MatExpr::op_Substraction_static_matexpr_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<MatExpr*>("a","MatExpr"),make_param<Scalar*>("s","Scalar") }, MatExpr::op_Substraction_static_matexpr_scalar);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<MatExpr*>("a","MatExpr"),make_param<MatExpr*>("b","MatExpr") }, MatExpr::op_Substraction_static_matexpr_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<MatExpr*>("a","MatExpr"),make_param<double>("b","double") }, MatExpr::op_Substraction_static_matexpr_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<Scalar*>("s","Scalar"),make_param<MatExpr*>("b","MatExpr") }, MatExpr::op_Substraction_static_scalar_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<Scalar*>("s","Scalar"),make_param<Matrix*>("b","Mat") }, MatExpr::op_Substraction_static_scalar_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::op_Substraction_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", { make_param<double>("a","double"),make_param<MatExpr*>("b","MatExpr") }, MatExpr::op_Substraction_static_double_matexpr);
 
 
 	overload->addStaticOverload("matexpr", "MatExpr", "op_Substraction", {}, MatExpr::op_Substraction_static_mat);
@@ -86,126 +86,126 @@ MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 
 	//op_Multiplication(a: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int, b : Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","Mat"),make_param("b","Mat") },			MatExpr::op_Multiplication_static_mat_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","Mat"),make_param("s","Scalar") },		MatExpr::op_Multiplication_static_mat_scalar);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","Mat"),make_param("b","double") },		MatExpr::op_Multiplication_static_mat_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","Mat"),make_param("b","MatExpr") },		MatExpr::op_Multiplication_static_mat_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","MatExpr"),make_param("b","Mat") },		MatExpr::op_Multiplication_static_matexpr_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","MatExpr"),make_param("s","Scalar") },	MatExpr::op_Multiplication_static_matexpr_scalar);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","MatExpr"),make_param("b","MatExpr") }, MatExpr::op_Multiplication_static_matexpr_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","MatExpr"),make_param("b","double") },	MatExpr::op_Multiplication_static_matexpr_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("s","Scalar"),make_param("b","MatExpr") },	MatExpr::op_Multiplication_static_scalar_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("s","Scalar"),make_param("b","Mat") },		MatExpr::op_Multiplication_static_scalar_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","double"),make_param("b","Mat") },		MatExpr::op_Multiplication_static_double_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","double"),make_param("b","MatExpr") },	MatExpr::op_Multiplication_static_double_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") },			MatExpr::op_Multiplication_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<Matrix*>("a","Mat"),make_param<Scalar*>("s","Scalar") },		MatExpr::op_Multiplication_static_mat_scalar);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") },		MatExpr::op_Multiplication_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<Matrix*>("a","Mat"),make_param<MatExpr*>("b","MatExpr") },		MatExpr::op_Multiplication_static_mat_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<MatExpr*>("a","MatExpr"),make_param<Matrix*>("b","Mat") },		MatExpr::op_Multiplication_static_matexpr_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<MatExpr*>("a","MatExpr"),make_param<Scalar*>("s","Scalar") },	MatExpr::op_Multiplication_static_matexpr_scalar);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<MatExpr*>("a","MatExpr"),make_param<MatExpr*>("b","MatExpr") }, MatExpr::op_Multiplication_static_matexpr_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<MatExpr*>("a","MatExpr"),make_param<double>("b","double") },	MatExpr::op_Multiplication_static_matexpr_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<Scalar*>("s","Scalar"),make_param<MatExpr*>("b","MatExpr") },	MatExpr::op_Multiplication_static_scalar_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<Scalar*>("s","Scalar"),make_param<Matrix*>("b","Mat") },		MatExpr::op_Multiplication_static_scalar_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") },		MatExpr::op_Multiplication_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<double>("a","double"),make_param<MatExpr*>("b","MatExpr") },	MatExpr::op_Multiplication_static_double_matexpr);
 	Nan::SetMethod(ctor, "op_Multiplication", matexpr_general_callback::callback);
 
 	//op_Division(a: Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int, b : Mat | _types.Scalar | MatExpr | _st.double | _st.float | _st.int) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","Mat"),make_param("b","Mat") },			MatExpr::op_Division_static_mat_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","Mat"),make_param("s","Scalar") },		MatExpr::op_Division_static_mat_scalar);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","Mat"),make_param("b","double") },		MatExpr::op_Division_static_mat_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","Mat"),make_param("b","MatExpr") },		MatExpr::op_Division_static_mat_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","MatExpr"),make_param("b","Mat") },		MatExpr::op_Division_static_matexpr_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","MatExpr"),make_param("s","Scalar") },	MatExpr::op_Division_static_matexpr_scalar);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","MatExpr"),make_param("b","MatExpr") },	MatExpr::op_Division_static_matexpr_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","MatExpr"),make_param("b","double") },	MatExpr::op_Division_static_matexpr_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("s","Scalar"),make_param("b","MatExpr") },	MatExpr::op_Division_static_scalar_matexpr);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("s","Scalar"),make_param("b","Mat") },		MatExpr::op_Division_static_scalar_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","double"),make_param("b","Mat") },		MatExpr::op_Division_static_double_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param("a","double"),make_param("b","MatExpr") },	MatExpr::op_Division_static_double_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") },			MatExpr::op_Division_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<Matrix*>("a","Mat"),make_param<Scalar*>("s","Scalar") },		MatExpr::op_Division_static_mat_scalar);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") },		MatExpr::op_Division_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<Matrix*>("a","Mat"),make_param<MatExpr*>("b","MatExpr") },		MatExpr::op_Division_static_mat_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<MatExpr*>("a","MatExpr"),make_param<Matrix*>("b","Mat") },		MatExpr::op_Division_static_matexpr_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<MatExpr*>("a","MatExpr"),make_param<Scalar*>("s","Scalar") },	MatExpr::op_Division_static_matexpr_scalar);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<MatExpr*>("a","MatExpr"),make_param<MatExpr*>("b","MatExpr") },	MatExpr::op_Division_static_matexpr_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<MatExpr*>("a","MatExpr"),make_param<double>("b","double") },	MatExpr::op_Division_static_matexpr_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<Scalar*>("s","Scalar"),make_param<MatExpr*>("b","MatExpr") },	MatExpr::op_Division_static_scalar_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<Scalar*>("s","Scalar"),make_param<Matrix*>("b","Mat") },		MatExpr::op_Division_static_scalar_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") },		MatExpr::op_Division_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Division", { make_param<double>("a","double"),make_param<MatExpr*>("b","MatExpr") },	MatExpr::op_Division_static_double_matexpr);
 	Nan::SetMethod(ctor, "op_Division", matexpr_general_callback::callback);
 
 	//op_LessThan(a: Mat, b : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThan", { make_param("a","Mat"),make_param("b","Mat") }, MatExpr::op_LessThan_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThan", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") }, MatExpr::op_LessThan_static_mat_mat);
 	//op_LessThan(a: Mat, s : _st.double) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThan", { make_param("a","Mat"),make_param("b","double") }, MatExpr::op_LessThan_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThan", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") }, MatExpr::op_LessThan_static_mat_double);
 	//op_LessThan(s: _st.double, a : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThan", { make_param("a","double"),make_param("b","Mat") }, MatExpr::op_LessThan_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThan", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::op_LessThan_static_double_mat);
 	Nan::SetMethod(ctor, "op_LessThan", matexpr_general_callback::callback);
 
 
 	//op_LessThenOrEqual(a: Mat, b : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThenOrEqual", { make_param("a","Mat"),make_param("b","Mat") }, MatExpr::op_LessThenOrEqual_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThenOrEqual", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") }, MatExpr::op_LessThenOrEqual_static_mat_mat);
 	//op_LessThenOrEqual(a: Mat, s : _st.double) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThenOrEqual", { make_param("a","Mat"),make_param("b","double") }, MatExpr::op_LessThenOrEqual_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThenOrEqual", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") }, MatExpr::op_LessThenOrEqual_static_mat_double);
 	//op_LessThenOrEqual(s: _st.double, a : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThenOrEqual", { make_param("a","double"),make_param("b","Mat") }, MatExpr::op_LessThenOrEqual_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_LessThenOrEqual", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::op_LessThenOrEqual_static_double_mat);
 	Nan::SetMethod(ctor, "op_LessThenOrEqual", matexpr_general_callback::callback);
 
 
 	//op_Equals(a: Mat, b : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Equals", { make_param("a","Mat"),make_param("b","Mat") }, MatExpr::op_Equals_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Equals", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") }, MatExpr::op_Equals_static_mat_mat);
 	//op_Equals(a: Mat, s : _st.double) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Equals", { make_param("a","Mat"),make_param("b","double") }, MatExpr::op_Equals_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Equals", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") }, MatExpr::op_Equals_static_mat_double);
 	//op_Equals(s: _st.double, a : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Equals", { make_param("a","double"),make_param("b","Mat") }, MatExpr::op_Equals_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Equals", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::op_Equals_static_double_mat);
 	Nan::SetMethod(ctor, "op_Equals", matexpr_general_callback::callback);
 
 	//op_NotEquals(a: Mat, b : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_NotEquals", { make_param("a","Mat"),make_param("b","Mat") }, MatExpr::op_NotEquals_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_NotEquals", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") }, MatExpr::op_NotEquals_static_mat_mat);
 	//op_NotEquals(a: Mat, s : _st.double) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_NotEquals", { make_param("a","Mat"),make_param("b","double") }, MatExpr::op_NotEquals_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_NotEquals", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") }, MatExpr::op_NotEquals_static_mat_double);
 	//op_NotEquals(s: _st.double, a : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_NotEquals", { make_param("a","double"),make_param("b","Mat") }, MatExpr::op_NotEquals_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_NotEquals", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::op_NotEquals_static_double_mat);
 	Nan::SetMethod(ctor, "op_NotEquals", matexpr_general_callback::callback);
 
 	//op_GreaterThanOrEqual(a: Mat, b : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThanOrEqual", { make_param("a","Mat"),make_param("b","Mat") }, MatExpr::op_GreaterThanOrEqual_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThanOrEqual", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") }, MatExpr::op_GreaterThanOrEqual_static_mat_mat);
 	//op_GreaterThanOrEqual(a: Mat, s : _st.double) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThanOrEqual", { make_param("a","Mat"),make_param("b","double") }, MatExpr::op_GreaterThanOrEqual_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThanOrEqual", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") }, MatExpr::op_GreaterThanOrEqual_static_mat_double);
 	//op_GreaterThanOrEqual(s: _st.double, a : Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThanOrEqual", { make_param("a","double"),make_param("b","Mat") }, MatExpr::op_GreaterThanOrEqual_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThanOrEqual", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::op_GreaterThanOrEqual_static_double_mat);
 	Nan::SetMethod(ctor, "op_GreaterThanOrEqual", matexpr_general_callback::callback);
 
 	//op_GreaterThan(a: Mat | MatExpr | _st.double, b : Mat | MatExpr | _st.double) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThan", { make_param("a","Mat"),make_param("b","Mat") }, MatExpr::op_GreaterThan_static_mat_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThan", { make_param("a","Mat"),make_param("b","double") }, MatExpr::op_GreaterThan_static_mat_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThan", { make_param("a","double"),make_param("b","Mat") }, MatExpr::op_GreaterThan_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThan", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") }, MatExpr::op_GreaterThan_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThan", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") }, MatExpr::op_GreaterThan_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_GreaterThan", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::op_GreaterThan_static_double_mat);
 	Nan::SetMethod(ctor, "op_GreaterThan", matexpr_general_callback::callback);
 
 	//op_And(a: Mat | MatExpr | _types.Scalar, b : Mat | MatExpr | _types.Scalar) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_And", { make_param("a","Mat"),make_param("b","Mat") },    MatExpr::op_And_static_mat_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_And", { make_param("a","Mat"),make_param("b","Scalar") }, MatExpr::op_And_static_mat_scalar);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_And", { make_param("a","Scalar"),make_param("b","Mat") }, MatExpr::op_And_static_scalar_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_And", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") },    MatExpr::op_And_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_And", { make_param<Matrix*>("a","Mat"),make_param<Scalar*>("b","Scalar") }, MatExpr::op_And_static_mat_scalar);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_And", { make_param<Scalar*>("a","Scalar"),make_param<Matrix*>("b","Mat") }, MatExpr::op_And_static_scalar_mat);
 	Nan::SetMethod(ctor, "op_And", matexpr_general_callback::callback);
 
 	//op_Or(a: Mat | MatExpr | _types.Scalar, b : Mat | MatExpr | _types.Scalar) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Or", { make_param("a","Mat"),make_param("b","Mat") },		MatExpr::op_Or_static_mat_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Or", { make_param("a","Mat"),make_param("b","Scalar") },	MatExpr::op_Or_static_mat_scalar);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Or", { make_param("a","Scalar"),make_param("b","Mat") },	MatExpr::op_Or_static_scalar_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Or", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") },		MatExpr::op_Or_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Or", { make_param<Matrix*>("a","Mat"),make_param<Scalar*>("b","Scalar") },	MatExpr::op_Or_static_mat_scalar);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Or", { make_param<Scalar*>("a","Scalar"),make_param<Matrix*>("b","Mat") },	MatExpr::op_Or_static_scalar_mat);
 	Nan::SetMethod(ctor, "op_Or", matexpr_general_callback::callback);
 
 	//op_Xor(a: Mat | MatExpr | _types.Scalar, b : Mat | MatExpr | _types.Scalar) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Xor", { make_param("a","Mat"),make_param("b","Mat") },	MatExpr::op_Xor_static_mat_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Xor", { make_param("a","Mat"),make_param("b","Scalar") }, MatExpr::op_Xor_static_mat_scalar);
-	overload->addStaticOverload("matexpr", "MatExpr", "op_Xor", { make_param("a","Scalar"),make_param("b","Mat") }, MatExpr::op_Xor_static_scalar_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Xor", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") },	MatExpr::op_Xor_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Xor", { make_param<Matrix*>("a","Mat"),make_param<Scalar*>("b","Scalar") }, MatExpr::op_Xor_static_mat_scalar);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_Xor", { make_param<Scalar*>("a","Scalar"),make_param<Matrix*>("b","Mat") }, MatExpr::op_Xor_static_scalar_mat);
 	Nan::SetMethod(ctor, "op_Xor", matexpr_general_callback::callback);
 
 
 	//op_BinaryNot(m: Mat) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "op_BinaryNot", { make_param("m","Mat") }, MatExpr::op_BinaryNot_static_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "op_BinaryNot", { make_param<Matrix*>("m","Mat") }, MatExpr::op_BinaryNot_static_mat);
 	Nan::SetMethod(ctor, "op_BinaryNot", matexpr_general_callback::callback);
 
 
 	//min(a: Mat | MatExpr | _types.Scalar | _st.double, b : Mat | MatExpr | _types.Scalar | _st.double) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "min", { make_param("a","Mat"),make_param("b","Mat") }, MatExpr::min_static_mat_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "min", { make_param("a","Mat"),make_param("b","double") }, MatExpr::min_static_mat_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "min", { make_param("a","double"),make_param("b","Mat") }, MatExpr::min_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "min", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") }, MatExpr::min_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "min", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") }, MatExpr::min_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "min", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::min_static_double_mat);
 	Nan::SetMethod(ctor, "min", matexpr_general_callback::callback);
 
 
 	//max(a: Mat | MatExpr | _types.Scalar | _st.double, b : Mat | MatExpr | _types.Scalar | _st.double) : MatExpr{ }
-	overload->addStaticOverload("matexpr", "MatExpr", "max", { make_param("a","Mat"),make_param("b","Mat") },	 MatExpr::max_static_mat_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "max", { make_param("a","Mat"),make_param("b","double") }, MatExpr::max_static_mat_double);
-	overload->addStaticOverload("matexpr", "MatExpr", "max", { make_param("a","double"),make_param("b","Mat") }, MatExpr::max_static_double_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "max", { make_param<Matrix*>("a","Mat"),make_param<Matrix*>("b","Mat") },	 MatExpr::max_static_mat_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "max", { make_param<Matrix*>("a","Mat"),make_param<double>("b","double") }, MatExpr::max_static_mat_double);
+	overload->addStaticOverload("matexpr", "MatExpr", "max", { make_param<double>("a","double"),make_param<Matrix*>("b","Mat") }, MatExpr::max_static_double_mat);
 	Nan::SetMethod(ctor, "max", matexpr_general_callback::callback);
 
 
 	//abs(m: Mat) : MatExpr{ }
 	//abs(e: MatExpr) : MatExpr{ }
 
-	overload->addStaticOverload("matexpr", "MatExpr", "abs", { make_param("m","Mat") },		MatExpr::abs_static_mat);
-	overload->addStaticOverload("matexpr", "MatExpr", "abs", { make_param("e","MatExpr") }, MatExpr::abs_static_matexpr);
+	overload->addStaticOverload("matexpr", "MatExpr", "abs", { make_param<Matrix*>("m","Mat") },		MatExpr::abs_static_mat);
+	overload->addStaticOverload("matexpr", "MatExpr", "abs", { make_param<MatExpr*>("e","MatExpr") }, MatExpr::abs_static_matexpr);
 	Nan::SetMethod(ctor, "abs", matexpr_general_callback::callback);
 
 
@@ -262,39 +262,39 @@ MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	Nan::SetPrototypeMethod(ctor, "op_Addition", matexpr_general_callback::callback);
 
 	//op_Substraction(other: Mat | MatExpr | _types.Scalar | _st.double) : MatExpr{ }
-	overload->addOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","Mat") }, MatExpr::op_Substraction_mat);
-	overload->addOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","MatExpr") }, MatExpr::op_Substraction_matexpr);
-	overload->addOverload("matexpr", "MatExpr", "op_Substraction", { make_param("a","Scalar") }, MatExpr::op_Substraction_scalar);
+	overload->addOverload("matexpr", "MatExpr", "op_Substraction", { make_param<Matrix*>("a","Mat") }, MatExpr::op_Substraction_mat);
+	overload->addOverload("matexpr", "MatExpr", "op_Substraction", { make_param<MatExpr*>("a","MatExpr") }, MatExpr::op_Substraction_matexpr);
+	overload->addOverload("matexpr", "MatExpr", "op_Substraction", { make_param<Scalar*>("a","Scalar") }, MatExpr::op_Substraction_scalar);
 	Nan::SetPrototypeMethod(ctor, "op_Substraction", matexpr_general_callback::callback);
 
 	//op_Multiplication(other: Mat | MatExpr | _types.Scalar | _st.double) : MatExpr{ }
-	overload->addOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","Mat") }, MatExpr::op_Multiplication_mat);
-	overload->addOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","MatExpr") }, MatExpr::op_Multiplication_matexpr);
-	overload->addOverload("matexpr", "MatExpr", "op_Multiplication", { make_param("a","Scalar") }, MatExpr::op_Multiplication_scalar);
+	overload->addOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<Matrix*>("a","Mat") }, MatExpr::op_Multiplication_mat);
+	overload->addOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<MatExpr*>("a","MatExpr") }, MatExpr::op_Multiplication_matexpr);
+	overload->addOverload("matexpr", "MatExpr", "op_Multiplication", { make_param<Scalar*>("a","Scalar") }, MatExpr::op_Multiplication_scalar);
 	Nan::SetPrototypeMethod(ctor, "op_Multiplication", matexpr_general_callback::callback);
 
 	//op_Division(other: Mat | MatExpr | _types.Scalar | _st.double) : MatExpr{ }
-	overload->addOverload("matexpr", "MatExpr", "op_Division", { make_param("a","Mat") }, MatExpr::op_Division_mat);
-	overload->addOverload("matexpr", "MatExpr", "op_Division", { make_param("a","MatExpr") }, MatExpr::op_Division_matexpr);
-	overload->addOverload("matexpr", "MatExpr", "op_Division", { make_param("a","Scalar") }, MatExpr::op_Division_scalar);
+	overload->addOverload("matexpr", "MatExpr", "op_Division", { make_param<Matrix*>("a","Mat") }, MatExpr::op_Division_mat);
+	overload->addOverload("matexpr", "MatExpr", "op_Division", { make_param<MatExpr*>("a","MatExpr") }, MatExpr::op_Division_matexpr);
+	overload->addOverload("matexpr", "MatExpr", "op_Division", { make_param<Scalar*>("a","Scalar") }, MatExpr::op_Division_scalar);
 	Nan::SetPrototypeMethod(ctor, "op_Division", matexpr_general_callback::callback);
 
 	//op_And(other: Mat | MatExpr | _types.Scalar | _st.double) : MatExpr{ }
-	overload->addOverload("matexpr", "MatExpr", "op_And", { make_param("a","Mat") }, MatExpr::op_And_mat);
-	overload->addOverload("matexpr", "MatExpr", "op_And", { make_param("a","MatExpr") }, MatExpr::op_And_matexpr);
-	overload->addOverload("matexpr", "MatExpr", "op_And", { make_param("a","Scalar") }, MatExpr::op_And_scalar);
+	overload->addOverload("matexpr", "MatExpr", "op_And", { make_param<Matrix*>("a","Mat") }, MatExpr::op_And_mat);
+	overload->addOverload("matexpr", "MatExpr", "op_And", { make_param<MatExpr*>("a","MatExpr") }, MatExpr::op_And_matexpr);
+	overload->addOverload("matexpr", "MatExpr", "op_And", { make_param<Scalar*>("a","Scalar") }, MatExpr::op_And_scalar);
 	Nan::SetPrototypeMethod(ctor, "op_And", matexpr_general_callback::callback);
 
 	//op_Or(other: Mat | MatExpr | _types.Scalar | _st.double) : MatExpr{ }
-	overload->addOverload("matexpr", "MatExpr", "op_Or", { make_param("a","Mat") }, MatExpr::op_Or_mat);
-	overload->addOverload("matexpr", "MatExpr", "op_Or", { make_param("a","MatExpr") }, MatExpr::op_Or_matexpr);
-	overload->addOverload("matexpr", "MatExpr", "op_Or", { make_param("a","Scalar") }, MatExpr::op_Or_scalar);
+	overload->addOverload("matexpr", "MatExpr", "op_Or", { make_param<Matrix*>("a","Mat") }, MatExpr::op_Or_mat);
+	overload->addOverload("matexpr", "MatExpr", "op_Or", { make_param<MatExpr*>("a","MatExpr") }, MatExpr::op_Or_matexpr);
+	overload->addOverload("matexpr", "MatExpr", "op_Or", { make_param<Scalar*>("a","Scalar") }, MatExpr::op_Or_scalar);
 	Nan::SetPrototypeMethod(ctor, "op_Or", matexpr_general_callback::callback);
 
 	//op_Xor(other: Mat | MatExpr | _types.Scalar | _st.double) : MatExpr{ }
-	overload->addOverload("matexpr", "MatExpr", "op_Xor", { make_param("a","Mat") }, MatExpr::op_Xor_mat);
-	overload->addOverload("matexpr", "MatExpr", "op_Xor", { make_param("a","MatExpr") }, MatExpr::op_Xor_matexpr);
-	overload->addOverload("matexpr", "MatExpr", "op_Xor", { make_param("a","Scalar") }, MatExpr::op_Xor_scalar);
+	overload->addOverload("matexpr", "MatExpr", "op_Xor", { make_param<Matrix*>("a","Mat") }, MatExpr::op_Xor_mat);
+	overload->addOverload("matexpr", "MatExpr", "op_Xor", { make_param<MatExpr*>("a","MatExpr") }, MatExpr::op_Xor_matexpr);
+	overload->addOverload("matexpr", "MatExpr", "op_Xor", { make_param<Scalar*>("a","Scalar") }, MatExpr::op_Xor_scalar);
 	Nan::SetPrototypeMethod(ctor, "op_Xor", matexpr_general_callback::callback);
 
 	//op_BinaryNot() : MatExpr{ }
