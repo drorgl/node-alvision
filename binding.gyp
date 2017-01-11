@@ -70,7 +70,9 @@
 		
 		, "src/opencv/array_accessors/array_accessor_base.h"
 		, "src/opencv/array_accessors/Matrix_array_accessor.h"
+		, "src/opencv/array_accessors/Matrix_array_accessor.cc"
 		, "src/opencv/array_accessors/Matx_array_accessor.h"
+		, "src/opencv/array_accessors/Vec_array_accessor.h"
 		
 		, "src/opencv/imgproc.cc"
 		, "src/opencv/imgproc.h"
@@ -97,6 +99,8 @@
 		
 		, "src/opencv/Mat_.cc"
 		, "src/opencv/Mat_.h"
+		
+		, "src/opencv/Complex.h"
 		
 		, "src/opencv/Point.h"
 		, "src/opencv/Point3.h"

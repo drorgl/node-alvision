@@ -39,6 +39,12 @@ public:
 		return val;
 	}
 
+	static std::shared_ptr<Point_<T>> from(T point) {
+		auto pt = std::make_shared<Point_<T>>();
+		pt->_point = std::make_shared<T>(std::move(point));
+		return pt;
+	}
+
 	static NAN_METHOD(New) {
 		if (info.This()->InternalFieldCount() == 0)
 			Nan::ThrowTypeError("Cannot instantiate without new");

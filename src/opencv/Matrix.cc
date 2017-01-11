@@ -14,6 +14,8 @@
 #include "Point.h"
 #include "Point3.h"
 
+#include "array_accessors/Matrix_array_accessor.h"
+
 namespace matrix_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
@@ -248,7 +250,7 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	overload->addOverload("matrix", "Mat", "total", {}, Matrix::total);
 	Nan::SetPrototypeMethod(ctor, "total", matrix_general_callback::callback);
 
-	overload->addOverload("matrix", "Mat", "ptr", {make_param<std::string>("type","String"),make_param<int>("i0","int",0)}, Matrix::ptr);
+	overload->addOverload("matrix", "Mat", "ptr", {make_param<std::string>("type","String"),make_param<int>("i0","int",0),make_param<int>("i1","int",0),make_param<int>("i2","int",0) }, Matrix::ptr);
 	Nan::SetPrototypeMethod(ctor, "ptr", matrix_general_callback::callback);
 
 	overload->addOverload("matrix", "Mat", "at", { make_param<std::string>("type","String"),make_param<int>("i0","int"),make_param<int>("i1","int",Nan::Null()), make_param<int>("i2","int",Nan::Null()) }, Matrix::at);
@@ -1107,28 +1109,17 @@ POLY_METHOD(Matrix::total) {
 	info.SetReturnValue(safe_cast<int>(mat->total()));
 }
 POLY_METHOD(Matrix::ptr) {
-	throw std::exception("not implemented");
-	//auto mat = info.This<Matrix*>()->_mat;
-	//
-	////ptr<T>(T: string, i0?: _st.int /* = 0*/): TrackedPtr<T>;
-	//auto tptr = new TrackedPtr<cv::Mat>();
-	//tptr->_from = mat;
-	//tptr->_Ttype = info.at<std::string>(0);
-	//tptr->_i0 = safe_cast<int>(info.at<int>(1));
-	//
-	//info.SetReturnValue(tptr);
+	auto mat = info.This<Matrix*>()->_mat;
+	
+	auto tptr = new TrackedPtr<Matrix>();
+	tptr->_from = std::make_shared<Matrix_array_accessor>( mat, info.at<std::string>(0), info.at<int>(1), info.at<int>(2), info.at<int>(3));
+	info.SetReturnValue(tptr);
 }
 POLY_METHOD(Matrix::at) {
-	//at<T>(T: string, i0 : _st.int, i1 ? : _st.int, i2 ? : _st.int) : TrackedElement<T>;
-
 	auto mat = info.This<Matrix*>()->_mat;
 
-	auto tat = new TrackedElement();
-	tat->_from = mat;
-	tat->_Ttype = info.at<std::string>(0);
-	tat->_i0 = safe_cast<int>(info.at<int>(1));
-	tat->_i1 = safe_cast<int>(info.at<int>(2));
-	tat->_i2 = safe_cast<int>(info.at<int>(3));
+	auto tat = new TrackedElement<Matrix>();
+	tat->_from = std::make_shared<Matrix_array_accessor>(mat, info.at<std::string>(0), info.at<int>(1), info.at<int>(2), info.at<int>(3));
 
 	info.SetReturnValue(tat);
 }

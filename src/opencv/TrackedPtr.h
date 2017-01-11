@@ -15,17 +15,19 @@ public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		trackedptr_general_callback::overload = overload;
 
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(vec_general_callback::callback);
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(trackedptr_general_callback::callback);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
 		overload->register_type<TrackedPtr<T>>(ctor, "trackedptr", name);
 
-		//Nan::SetIndexedPropertyHandler(ctor, indexed_getter, indexed_setter);
-		//Nan::SetAccessor(ctor, Nan::New("length").ToLocalChecked(), index_length);
+		Nan::SetIndexedPropertyHandler(ctor->InstanceTemplate(), indexed_getter, indexed_setter);
+		Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("length").ToLocalChecked(), index_length);
 
 		overload->addOverloadConstructor("trackedptr", name,{}, New_no_parameters);
+
+		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 	}
 
 	static Nan::Persistent<FunctionTemplate> constructor;
@@ -36,20 +38,21 @@ public:
 	}
 
 	static POLY_METHOD(New_no_parameters) {
-		throw std::exception("internal class use only");
+		auto tptr  = new TrackedPtr<T>();
+
+		tptr->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
 	}
 	
 	std::shared_ptr<array_accessor_base> _from;
-	//std::string _Ttype;
-	//int _i0;
 
 	static NAN_GETTER(index_length) {
-		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
+		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.This());
 		auto length = this_->_from->length();
 	}
 
 	static NAN_INDEX_SETTER(indexed_setter) {
-		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
+		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.This());
 		if ((index > this_->_from->length()) || (index < 0)) {
 			Nan::ThrowRangeError("index out of range");
 		}
@@ -60,7 +63,7 @@ public:
 	}
 
 	static NAN_INDEX_GETTER(indexed_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
+		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.This());
 		if ((index > this_->_from->length()) || (index < 0)) {
 			Nan::ThrowRangeError("index out of range");
 		}

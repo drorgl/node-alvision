@@ -3,8 +3,10 @@
 //#include "OpenCV.h"
 #include "../alvision.h"
 
+#include <typeinfo>
+#include <class_typename.h>
 #include "IOArray.h"
-#include "Vec.h"
+#include "array_accessors/Matx_array_accessor.h"
 
 namespace matx_general_callback {
 	extern std::shared_ptr<overload_resolution> overload;
@@ -22,7 +24,7 @@ public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		matx_general_callback::overload = overload;
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(matx_general_callback::callback);
-		constructor.Reset(ctor);
+		Matx<T>::constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
@@ -211,16 +213,6 @@ public:
 //			//}
 //			op_Multiplication(a: Matx<T>, b : Matx<T>) : Matx<T>;
 		overload->addStaticOverload("matx", name, "op_Multiplication", { make_param<Matx<T>*>("a",name), make_param<Matx<T>*>("b",name) }, op_Multiplication_matx_matx);
-		Nan::SetMethod(ctor, "op_Multiplication", matx_general_callback::callback);
-//
-//			//template < typename _Tp, int m, int n> static inline
-//			//Vec < _Tp, m > operator * (const Matx<_Tp, m, n>& a, const Vec<_Tp, n>& b)
-//			//    {
-//			//        Matx<_Tp, m, 1> c(a, b, Matx_MatMulOp());
-//			//return (const Vec<_Tp, m>&)(c);
-//			//}
-//			op_Multiplication(a: Matx<T>, b : Vec<T>) : Matx<T>;
-		overload->addStaticOverload("matx", name, "op_Multiplication", { make_param<Matx<T>*>("a",name), make_param<Vec<cv::Vec<TVT,TCOLS>>*>("b",Vec<cv::Vec<TVT,TCOLS>>::name) }, op_Multiplication_matx_vec);
 		Nan::SetMethod(ctor, "op_Multiplication", matx_general_callback::callback);
 //
 //			//template < typename _Tp, int m, int n> static inline
@@ -741,17 +733,6 @@ public:
 		info.GetReturnValue().Set(info.Holder());
 	}
 
-	static POLY_METHOD(op_Multiplication_matx_vec) {
-		throw std::exception("not implemented");
-		//auto matx = new Matx<T>();
-		//
-		//auto a = *info.at<Matx<T>*>(0)->_matx;
-		//auto b = *info.at < Vec<cv::Vec<TVT, TCOLS>>*>(1)->_vec;
-		//
-		//matx->_matx = std::make_shared<T>(a * b);
-		//matx->Wrap(info.Holder());
-		//info.GetReturnValue().Set(info.Holder());
-	}
 
 	static POLY_METHOD(op_Equals_matx_matx) {
 		auto matx = new Matx<T>();
@@ -816,32 +797,15 @@ public:
 		info.SetReturnValue(this_->ddot(*info.at<Matx<T>*>(0)->_matx));
 	}
 
-	static POLY_METHOD(inv_method) {
-		throw std::exception("not implemented");
-
-		//todo, execute only for certain matx types
-
-		//auto this_ = info.This<Matx<T>*>()->_matx;
-		//bool p_is_ok;
-		//auto p_is_ok_cb = info.at<std::shared_ptr< or ::Callback>>(1);
-		//auto res = this_->inv(info.at<int>(0), &p_is_ok);
-		//
-		//auto ret = new Matx<T>();
-		//ret->_matx = std::make_shared<T>(res);
-		//
-		//p_is_ok_cb->Call({ or ::make_value(p_is_ok) });
-		//
-		//info.SetReturnValue(ret);
-	}
-
+	
+	static POLY_METHOD(inv_method);
+	
 	static NAN_GETTER(val_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<Matx<T>>(info.This())->_matx;
-		auto tptr = new TrackedPtr<T>();
-		tptr->_from = this_;
-		//tptr->_Ttype = TVT;
-		throw std::exception("not implemented");
+		auto this_ = or ::ObjectWrap::Unwrap<Matx<T>>(info.This());
 
-		//info.SetReturnValue(tptr);
+		auto tptr = new TrackedPtr<T>();
+		tptr->_from = std::make_shared<Matx_array_accessor<T,TVT>>(this_->_matx, GetTypeName<TVT>());
+		info.GetReturnValue().Set(tptr->Wrap());
 	}
 
 	static POLY_METHOD(op_addition_matx) {
@@ -926,6 +890,39 @@ Nan::Persistent<FunctionTemplate> Matx<T>::constructor;
 template <typename T>
 std::string Matx<T>::name;
 
+//inv implementation, a bit tricky because it only compiles for float and double where rows = cols
+template<typename T, typename MAT_TYPE, class = void>
+class inv_imp {
+public:
+	static POLY_METHOD(run) {
+		throw std::exception("inv is unavailable for this type");
+	}
+};
+
+template<typename T, typename MAT_TYPE>
+class inv_imp<T,MAT_TYPE, typename std::enable_if<(std::is_same<cv::Matx<float, T::rows, T::rows>, MAT_TYPE>::value) || (std::is_same<cv::Matx<double, T::rows, T::rows>, MAT_TYPE>::value)>::type>{
+public:
+	static POLY_METHOD(run) {
+		auto this_ = info.This<Matx<T>*>()->_matx;
+		bool p_is_ok;
+		auto p_is_ok_cb = info.at<std::shared_ptr< or ::Callback>>(1);
+		auto res = this_->inv(info.at<int>(0), &p_is_ok);
+	
+		auto ret = new Matx<T>();
+		ret->_matx = std::make_shared<T>(res);
+	
+		p_is_ok_cb->Call({ or ::make_value(p_is_ok) });
+	
+		info.SetReturnValue(ret);
+	}
+};
+
+template<typename T>
+POLY_METHOD(Matx<T>::inv_method) {
+	inv_imp<T, T::mat_type>::run(info);
+}
+
+
 typedef typename Matx<cv::Matx12f> Matx12f;
 typedef typename Matx<cv::Matx12d> Matx12d;
 typedef typename Matx<cv::Matx13f> Matx13f;
@@ -958,6 +955,9 @@ typedef typename Matx<cv::Matx44f> Matx44f;
 typedef typename Matx<cv::Matx44d> Matx44d;
 typedef typename Matx<cv::Matx66f> Matx66f;
 typedef typename Matx<cv::Matx66d> Matx66d;
+
+
+
 
 namespace MatxInit {
 	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

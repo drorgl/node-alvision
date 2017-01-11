@@ -94,6 +94,8 @@ public:
 		
 		//op_Multiplication(affine: Affine3<_st.float>, vector : _matx.Vec3f) : _matx.Vec3f;
 		overload->addStaticOverload("affine3", name, "op_Multiplication", { make_param<Affine3<T>*>("affine",Affine3<T>::name), make_param<Vec3*>("vector",Vec3::name) }, op_Multiplication_affine3_vec3);
+		overload->addStaticOverload("affine3", name, "op_Multiplication", { make_param<Affine3<T>*>("affine1",Affine3<T>::name), make_param<Affine3<T>*>("affine2",Affine3<T>::name) }, op_Multiplication_affine3_affine3);
+		Nan::SetMethod(ctor, "op_Multiplication", affine3_general_callback::callback);
 		//op_Multiplication(affine: Affine3<_st.double>, vector : _matx.Vec3d) : _matx.Vec3d;
 			
 		//member
@@ -277,6 +279,16 @@ public:
 
 		auto aff = new Affine3<T>();
 		aff->_affine3 = std::shared_ptr<T>(new T((*affine->_affine3) * (*vec->_vec)));
+
+		info.SetReturnValue(aff);
+	}
+
+	static POLY_METHOD(op_Multiplication_affine3_affine3) {
+		auto affine1 = info.at<Affine3<T>*>(0);
+		auto affine2 = info.at<Affine3<T>*>(1);
+
+		auto aff = new Affine3<T>();
+		aff->_affine3 = std::shared_ptr<T>(new T((*affine1->_affine3) * (*affine2->_affine3)));
 
 		info.SetReturnValue(aff);
 	}
