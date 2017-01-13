@@ -6,6 +6,10 @@
 #include "ffmpeg/packet.h"
 #include "ffmpeg/stream.h"
 
+#include "opencv/base.h"
+
+#include "opencv/UMatrix.h"
+
 #include "opencv/HighGUI.h"
 #include "opencv/Constants.h"
 #include "opencv/Cuda.h"
@@ -81,15 +85,21 @@ init(Handle<Object> target) {
 	overload->add_type_alias("int", "Number");
 	overload->add_type_alias("double", "Number");
 	overload->add_type_alias("float", "Number");
+	overload->add_type_alias("uint64_t", "Number");
+	overload->add_type_alias("uint", "Number");
+	overload->add_type_alias("unsigned", "Number");
 	overload->add_type_alias("bool", "Boolean");
 	overload->add_type_alias("size_t", "int");
 	overload->add_type_alias("MatrixType", "int");
+
+	base::Init(target, overload);
 
 	IOArray::Init(target, overload);
 	TermCriteria::Init(target, overload);
 	KeyPoint::Init(target, overload);
 
 	Matrix::Init(target,overload);
+	UMatrix::Init(target, overload);
 	TrackedPtr<Matrix>::Init(target, "TrackedPtr_Mat", overload);
 	//TrackedElement<Matrix>::Init(target, overload);
 
@@ -115,17 +125,20 @@ init(Handle<Object> target) {
 
 	MatExpr::Init(target, overload);
 
-	core::Init(target, overload);
-
-	
 	MatxInit::Init(target, overload);
 	VecInit::Init(target, overload);
 
 	//cv::Vec3d::mat_type
-	
-	ScalarInit::Init(target, overload);
 
+	ScalarInit::Init(target, overload);
 	Mat_Init::Init(target, overload);
+
+	core::Init(target, overload);
+
+	
+	
+
+	
 
 	persistence::Init(target, overload);
 

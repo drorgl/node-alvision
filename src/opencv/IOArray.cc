@@ -12,9 +12,11 @@ namespace general_callback {
 
 
 Nan::Persistent<FunctionTemplate> IOArray::constructor;
+std::string IOArray::name;
 
 void IOArray::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	general_callback::overload = overload;
+	IOArray::name = "IOArray";
 
 	//Class
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(general_callback::ioarray_callback);

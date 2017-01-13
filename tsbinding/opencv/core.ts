@@ -892,11 +892,11 @@ export var batchDistance: IbatchDistance = alvision_module.batchDistance;
     */
 
 interface Inormalize {
-    (src: _st.InputArray, Inputdst: _st.OutputArray, alpha: _st.double /*= 1*/, beta: _st.double /*= 0*/,
+    (src: _st.InputArray, dst: _st.InputOutputArray, alpha: _st.double /*= 1*/, beta: _st.double /*= 0*/,
         norm_type: _st.int  /*= NORM_L2*/, dtype: _st.int /* = -1 */, mask: _st.InputArray /* = noArray()*/): void;
     (src: _mat.SparseMat, dst: _mat.SparseMat, alpha: _st.double, normType: _st.int): void;
 
-    <T>(v: _matx.Vec<T>): _matx.Vec<T>;
+    //why is this here: ??? <T>(v: _matx.Vec<T>): _matx.Vec<T>;
 }
 
 export var normalize: Inormalize = alvision_module.normalize;
@@ -1101,7 +1101,7 @@ export var merge: Imerge = alvision_module.merge;
 export interface Isplit{
     (m: _st.InputArray, mv: _st.OutputArrayOfArrays): void;
 
-    (src: _mat.Mat, mvbegin: _mat.Mat): void;
+    (src: _mat.Mat, mvbegin: Array<_mat.Mat>): void;
 }
 
 export var split: Isplit = alvision_module.split;
@@ -1180,14 +1180,11 @@ export interface MixChannelsFromTo {
     @param npairs number of index pairs in fromTo.
     */
     export interface ImixChannels{
-        (src: _st.InputArrayOfArrays, dst: _st.InputOutputArrayOfArrays ,
-            fromTo: MixChannelsFromTo, npairs: _st.size_t ): void;
-        (src: _st.InputArrayOfArrays, dst: _st.InputOutputArrayOfArrays ,
-            fromTo: MixChannelsFromTo): void;
+        (src: _st.InputArrayOfArrays, dst: _st.InputOutputArrayOfArrays, fromTo: MixChannelsFromTo, npairs: _st.size_t ): void;
+        (src: _st.InputArrayOfArrays, dst: _st.InputOutputArrayOfArrays, fromTo: MixChannelsFromTo): void;
 
-        (src: Array<_mat.Mat> | _mat.Mat, nsrcs: _st.size_t, dst: Array<_mat.Mat> | _mat.Mat, ndsts: _st.size_t,
-            fromTo: MixChannelsFromTo, npairs: _st.size_t): void;
-        (src: Array<_mat.Mat> | _mat.Mat, dst: Array<_mat.Mat> | _mat.Mat, fromTo: MixChannelsFromTo): void;
+        (src: Array<_mat.Mat>, nsrcs: _st.size_t, dst: Array<_mat.Mat>, ndsts: _st.size_t, fromTo: MixChannelsFromTo, npairs: _st.size_t): void;
+        (src: Array<_mat.Mat>, dst: Array<_mat.Mat>, fromTo: MixChannelsFromTo): void;
 }
 
 export var mixChannels: ImixChannels = alvision_module.mixChannels;
@@ -1227,7 +1224,7 @@ export var extractChannel: IextractChannel = alvision_module.extractChannel;
     @todo document
     */
 interface IinsertChannel {
-    (src: _st.InputArray, Inputdst: _st.OutputArray, coi : _st.int): void;
+    (src: _st.InputArray, dst: _st.InputOutputArray, coi : _st.int): void;
 }
 
 export var insertChannel: IinsertChannel = alvision_module.insertChannel;
@@ -1266,7 +1263,7 @@ export var insertChannel: IinsertChannel = alvision_module.insertChannel;
     @sa transpose , repeat , completeSymm
     */
 interface Iflip {
-    (src: _st.InputArray, dst: _st.OutputArray, flipCode : _st.int);
+    (src: _st.InputArray, dst: _st.OutputArray, flipCode: _st.int): void;
 }
 
 export var flip: Iflip = alvision_module.flip;
@@ -1327,7 +1324,7 @@ export var repeat: Irepeat = alvision_module.repeat;
     */
 
 interface Ihconcat {
-    (src : _mat.Mat, nsrc : _st.size_t, dst: _st.OutputArray): void;
+    (src : Array<_mat.Mat>, nsrc : _st.size_t, dst: _st.OutputArray): void;
     (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray): void;
     (src : _st.InputArrayOfArrays, dst: _st.OutputArray): void;
 }
@@ -1459,7 +1456,7 @@ export interface Ivconcat {
 
     (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray): void;
 
-    (src: _mat.Mat, nsrc: _st.size_t, dst: _st.OutputArray): void;
+    (src: Array<_mat.Mat>, nsrc: _st.size_t, dst: _st.OutputArray): void;
 }
 
 export var vconcat: Ivconcat = alvision_module.vconcat;
@@ -1687,7 +1684,7 @@ interface Icompare {
     (src1: _st.InputArray, src2: _st.InputArray | Number, dst: _st.OutputArray, cmpop: _base.CmpTypes | _st.int): void;
 }
 
-export var compare: Icompare = alvision_module.comapre;
+export var compare: Icompare = alvision_module.compare;
 
     //CV_EXPORTS_W void compare(src1 : _st.InputArray, src2 : _st.InputArray, dst : _st.OutputArray, int cmpop);
 
@@ -2451,7 +2448,7 @@ export var eigen: Ieigen = alvision_module.eigen;
 
 export interface IcalcCovarMatrix {
     (samples: _st.InputArray , covar: _st.OutputArray,
-        Inputmean: _st.OutputArray, flags: _st.int, ctype?: _st.int /* = CV_64F*/): void;
+        mean: _st.InputOutputArray, flags: _st.int, ctype?: _st.int /* = CV_64F*/): void;
     (samples: Array<_mat.Mat>, covar: _mat.Mat, mean: _mat.Mat,
         flags: _st.int, ctype?: _st.int /* = CV_64F*/): void;
 }
@@ -2472,15 +2469,19 @@ export var calcCovarMatrix: IcalcCovarMatrix = alvision_module.calcCovarMatrix;
     //CV_EXPORTS_W void PCACompute(data : _st.InputArray, mean : _st.InputOutputArray,
         //OutputArray eigenvectors, int maxComponents = 0);
 
-export interface IPCACompute {
+export interface IPCACompute_variance {
     (data: _st.InputArray, mean: _st.InputOutputArray,
         eigenvectors: _st.OutputArray, retainedVariance: _st.double): void;
 
-    PCACompute(data: _st.InputArray, mean: _st.InputOutputArray,
+}
+export var PCACompute_variance: IPCACompute_variance = alvision_module.PCACompute_variance;
+
+export interface IPCACompute_maxComponents{
+    (data: _st.InputArray, mean: _st.InputOutputArray,
         eigenvectors: _st.OutputArray, maxComponents: _st.int  /* = 0*/): void;
 }
+export var PCACompute_maxComponents: IPCACompute_maxComponents = alvision_module.PCACompute_maxComponents;
 
-export var PCACompute: IPCACompute = alvision_module.PCACompute;
 
     /** wrap PCA::operator() */
     //CV_EXPORTS_W void PCACompute(data : _st.InputArray, Inputmean : _st.OutputArray,
@@ -2794,8 +2795,8 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
     */
 
     interface ImulSpectrums{
-        (a : _st.InputArray, b : _st.InputArray, c : _st.OutputArray,
-            flags: _st.int, conjB : boolean /*= false*/);
+        (a: _st.InputArray, b: _st.InputArray, c: _st.OutputArray,
+            flags: _st.int, conjB: boolean /*= false*/): void;
 }
 
     export var mulSpectrums: ImulSpectrums = alvision_module.mulSpectrums;
@@ -2861,7 +2862,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
     */
 
     interface Irandu {
-        (Inputdst: _st.OutputArray, low : _st.InputArray | Number, high : _st.InputArray | Number): void;
+        (dst: _st.InputOutputArray, low : _st.InputArray | Number, high : _st.InputArray | Number): void;
     }
     
     export var randu: Irandu = alvision_module.randu;
@@ -2881,7 +2882,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
     */
     
     interface Irandn{
-        (Inputdst: _st.OutputArray, mean: _st.InputArray, stddev : _st.InputArray): void;
+        (dst: _st.InputOutputArray, mean: _st.InputArray, stddev : _st.InputArray): void;
     }
 
     export var randn: Irandn = alvision_module.randn;
@@ -2901,7 +2902,7 @@ export var Mahalanobis: IMahalanobis = alvision_module.Mahalanobis;
     */
     
     interface IrandShuffle{
-        (Inputdst: _st.OutputArray, iterFactor: _st.double /* = 1.*/, rng: RNG /*= 0*/): void;
+        (dst: _st.InputOutputArray, iterFactor: _st.double /* = 1.*/, rng: RNG /*= 0*/): void;
     }
 
     export var randShuffle: IrandShuffle = alvision_module.randShuffle;

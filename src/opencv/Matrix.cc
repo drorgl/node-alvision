@@ -1153,14 +1153,20 @@ POLY_METHOD(Matrix::data) {
 	info.GetReturnValue().Set(buf.ToLocalChecked());
 }
 POLY_METHOD(Matrix::size) {
-	throw std::exception("not implemented");
-	//auto mat = info.This<Matrix*>()->_mat;
-	//mat->size
+	auto mat = info.This<Matrix*>()->_mat;
+	
+	auto size = new Size();
+	size->_size = std::make_shared<cv::Size>(mat->size());
+	info.GetReturnValue().Set(size->Wrap());
 }
 
 NAN_PROPERTY_GETTER(Matrix::step) {
-	throw std::exception("not implemented");
-	//auto mat = info.This<Matrix*>()->_mat;
-	//info.GetReturnValue().Set(mat->step);
+	auto mat = or ::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+
+	auto ret = Nan::New<v8::Array>();
+	for (auto i = 0; i < mat->dims; i++) {
+		ret->Set(i, Nan::New((int)mat->step[i]));
+	}
+	info.GetReturnValue().Set(ret);
 }
 

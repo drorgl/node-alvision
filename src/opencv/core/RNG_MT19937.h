@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class RNG_MT19937: public or::ObjectWrap {
+class RNG_MT19937 : public or ::ObjectWrap{
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
@@ -14,12 +14,19 @@ public:
 
 	virtual v8::Local<v8::Function> get_constructor();
 
+	static POLY_METHOD(New);
+	static POLY_METHOD(New_seed);
+	static POLY_METHOD(next);
+	static POLY_METHOD(next_int);
+	static POLY_METHOD(next_unsigned);
+	static POLY_METHOD(next_float);
+	static POLY_METHOD(next_double);
+	static POLY_METHOD(run_n);
+	static POLY_METHOD(run);
+	static POLY_METHOD(uniform);
 
-	static NAN_METHOD(New);
-	static NAN_METHOD(fill);
-	static NAN_METHOD(genInt);
-	static NAN_METHOD(genDouble);
-	static NAN_METHOD(genNext);
+
+
 
 
 

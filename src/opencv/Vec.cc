@@ -33,6 +33,12 @@ POLY_METHOD(Vec<cv::Vec4d>::conj) {
 
 void VecInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	//Matx bases
+	Matx<cv::Vec<uchar, 1>::mat_type>::Init(target, "Matx1b", overload);
+	Matx<cv::Vec<short, 1>::mat_type>::Init(target, "Matx1s", overload);
+	Matx<cv::Vec<ushort, 1>::mat_type>::Init(target, "Matx1w", overload);
+	Matx<cv::Vec<int, 1>::mat_type>::Init(target, "Matx1i", overload);
+	Matx<cv::Vec<float, 1>::mat_type>::Init(target, "Matx1f", overload);
+	Matx<cv::Vec<double, 1>::mat_type>::Init(target, "Matx1d", overload);
 	Matx<cv::Vec2b::mat_type>::Init(target, "Matx2b", overload);
 	Matx<cv::Vec3b::mat_type>::Init(target, "Matx3b", overload);
 	Matx<cv::Vec4b::mat_type>::Init(target, "Matx4b", overload);
@@ -81,25 +87,30 @@ void VecInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 
 
 
-
+	Vec<cv::Vec<uchar, 1>>::Init(target, "Vec1b", overload);
 	Vec<cv::Vec2b>::Init(target, "Vec2b", overload);
 	Vec<cv::Vec3b>::Init(target, "Vec3b", overload);
 	Vec<cv::Vec4b>::Init(target, "Vec4b", overload);
+	Vec<cv::Vec<short,1>>::Init(target, "Vec1s", overload);
 	Vec<cv::Vec2s>::Init(target, "Vec2s", overload);
 	Vec<cv::Vec3s>::Init(target, "Vec3s", overload);
 	Vec<cv::Vec4s>::Init(target, "Vec4s", overload);
+	Vec<cv::Vec<ushort, 1>>::Init(target, "Vec1w", overload);
 	Vec<cv::Vec2w>::Init(target, "Vec2w", overload);
 	Vec<cv::Vec3w>::Init(target, "Vec3w", overload);
 	Vec<cv::Vec4w>::Init(target, "Vec4w", overload);
+	Vec<cv::Vec<int, 1>>::Init(target, "Vec1i", overload);
 	Vec<cv::Vec2i>::Init(target, "Vec2i", overload);
 	Vec<cv::Vec3i>::Init(target, "Vec3i", overload);
 	Vec<cv::Vec4i>::Init(target, "Vec4i", overload);
 	Vec<cv::Vec6i>::Init(target, "Vec6i", overload);
 	Vec<cv::Vec8i>::Init(target, "Vec8i", overload);
+	Vec<cv::Vec<float, 1>>::Init(target, "Vec1f", overload);
 	Vec<cv::Vec2f>::Init(target, "Vec2f", overload);
 	Vec<cv::Vec3f>::Init(target, "Vec3f", overload);
 	Vec<cv::Vec4f>::Init(target, "Vec4f", overload);
 	Vec<cv::Vec6f>::Init(target, "Vec6f", overload);
+	Vec<cv::Vec<double, 1>>::Init(target, "Vec1d", overload);
 	Vec<cv::Vec2d>::Init(target, "Vec2d", overload);
 	Vec<cv::Vec3d>::Init(target, "Vec3d", overload);
 	Vec<cv::Vec4d>::Init(target, "Vec4d", overload);

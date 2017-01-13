@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class Algorithm: public or::ObjectWrap {
+class Algorithm : public or ::ObjectWrap{
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
@@ -15,9 +15,16 @@ public:
 
 	virtual v8::Local<v8::Function> get_constructor();
 
-	static NAN_METHOD(New);
-
-	static NAN_METHOD(load);
+	static POLY_METHOD(New);
+	static POLY_METHOD(read);
+	static POLY_METHOD(load);
+	static POLY_METHOD(loadFromString);
+	static POLY_METHOD(clear);
+	static POLY_METHOD(write);
+	static POLY_METHOD(read_member);
+	static POLY_METHOD(empty);
+	static POLY_METHOD(save);
+	static POLY_METHOD(getDefaultName);
 
 };
 

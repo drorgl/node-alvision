@@ -111,6 +111,9 @@
 		, "src/opencv/Scalar.cc"
 		, "src/opencv/Scalar.h"
 		
+		, "src/opencv/base.cc"
+		, "src/opencv/base.h"
+		
 		, "src/opencv/core.cc"
 		, "src/opencv/core.h"
 		, "src/opencv/core/RNG.cc"
@@ -127,6 +130,14 @@
 		, "src/opencv/core/MinProblemSolver.h"
 		, "src/opencv/core/DMatch.cc"
 		, "src/opencv/core/DMatch.h"
+		, "src/opencv/core/PCA.h"
+		, "src/opencv/core/PCA.cc"
+		, "src/opencv/core/LDA.h"
+		, "src/opencv/core/LDA.cc"
+		, "src/opencv/core/SVD.h"
+		, "src/opencv/core/SVD.cc"
+		
+		
 		
 		, "src/opencv/Affine3.cc"
 		, "src/opencv/Affine3.h"
@@ -167,6 +178,9 @@
 		
         , "src/opencv/Matrix.cc"
 		, "src/opencv/Matrix.h"
+        , "src/opencv/UMatrix.cc"
+		, "src/opencv/UMatrix.h"
+
 		, "src/opencv/Constants.cc"
 		, "src/opencv/Constants.h"
 		, "src/opencv/HighGUI.cc"

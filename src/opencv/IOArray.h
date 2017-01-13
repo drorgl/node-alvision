@@ -6,6 +6,7 @@
 
 class IOArray : public or::ObjectWrap {
 public:
+	static std::string name;
 	std::shared_ptr<cv::_InputOutputArray> _ioarray;
 
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

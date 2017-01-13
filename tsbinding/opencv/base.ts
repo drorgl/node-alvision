@@ -458,7 +458,8 @@ export function assert(expr: () => boolean) {
 
 export function CV_Assert(expr: () => boolean) {
     if (!expr()) {
-        error(cv.Error.Code.StsAssert, expr.toString(), "", "", -1);
+        throw new Error("error executing " + expr.toString());
+        //error(cv.Error.Code.StsAssert, expr.toString(), "", "", -1);
     }
 }
 

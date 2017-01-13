@@ -423,7 +423,24 @@ public:
 		return Nan::New(constructor)->GetFunction();
 	}
 
-
+	virtual cv::_InputArray GetInputArray() {
+		return *_matx;
+	}
+	virtual cv::_InputArray GetInputArrayOfArrays() {
+		return *_matx;
+	}
+	virtual cv::_OutputArray GetOutputArray() {
+		return *_matx;
+	}
+	virtual cv::_OutputArray GetOutputArrayOfArrays() {
+		return *_matx;
+	}
+	virtual cv::_InputOutputArray GetInputOutputArray() {
+		return *_matx;
+	}
+	virtual cv::_InputOutputArray GetInputOutputArrayOfArrays() {
+		return *_matx;
+	}
 
 	static POLY_METHOD(New_no_params) {
 		auto matx = new Matx<T>();
