@@ -2,6 +2,7 @@
 #include "../IOArray.h"
 #include "../persistence/FileStorage.h"
 #include "../persistence/FileNode.h"
+#include "../Matrix.h"
 
 namespace svd_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -18,6 +19,7 @@ Nan::Persistent<FunctionTemplate> SVD::constructor;
 
 void
 SVD::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	svd_general_callback::overload = overload;
 	//Class
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(svd_general_callback::callback);
 	constructor.Reset(ctor);
@@ -73,6 +75,7 @@ SVD::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 			make_param<IOArray*>( "vt","IOArray"),
 			make_param<int>("flags","SVDFlags", 0)
 	}, compute_u_vt);
+	Nan::SetMethod(ctor, "compute", svd_general_callback::callback);
 	//compute(src: _st.InputArray, w : _st.OutputArray,
 	//	u : _st.OutputArray, vt : _st.OutputArray, flags ? : SVDFlags /* = 0*/) : void;
 
@@ -99,6 +102,7 @@ SVD::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 		make_param<IOArray*>("rhs","IOArray"),
 		make_param<IOArray*>("dst","IOArray")
 	}, backSubst_w_u_vt_rhs);
+	Nan::SetMethod(ctor, "backSubst", svd_general_callback::callback);
 	//backSubst(w: _st.InputArray, u : _st.InputArray,
 	//	vt : _st.InputArray, rhs : _st.InputArray,
 	//	dst : _st.OutputArray) : void;
@@ -117,6 +121,7 @@ SVD::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 		make_param<IOArray*>("src","IOArray"),
 		make_param<IOArray*>("dst","IOArray")
 	}, solveZ);
+	Nan::SetMethod(ctor, "solveZ", svd_general_callback::callback);
 	//solveZ(src: _st.InputArray, dst : _st.OutputArray) : void;
 	//}
 	//
@@ -140,6 +145,7 @@ SVD::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 		make_param<IOArray*>("src","IOArray"),
 		make_param<int>("flags","SVDFlags", 0)
 	},run );
+	Nan::SetPrototypeMethod(ctor, "run", svd_general_callback::callback);
 		//   SVD & operator()(src : _st.InputArray, flags : _st.int /* = 0*/);
 		//
 
@@ -170,6 +176,7 @@ SVD::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 		make_param<IOArray*>("rhs","IOArray"),
 		make_param<IOArray*>("dst","IOArray")
 	}, backSubst);
+	Nan::SetPrototypeMethod(ctor, "backSubst", svd_general_callback::callback);
 		//   void backSubst(rhs : _st.InputArray, dst : _st.OutputArray ) const;
 		//
 		//   /** @todo document */
@@ -209,47 +216,94 @@ v8::Local<v8::Function> SVD::get_constructor() {
 
 
 POLY_METHOD(SVD::New){
-	throw std::exception("not implemented");
+	auto svd = new SVD();
+	svd->_svd = std::make_shared<cv::SVD>();
+
+	svd->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(SVD::New_array){
-	throw std::exception("not implemented");
+	auto svd = new SVD();
+	svd->_svd = std::make_shared<cv::SVD>(info.at<IOArray*>(0)->GetInputArray(), info.at<int>(1));
+
+	svd->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(SVD::compute_u_vt){
-	throw std::exception("not implemented");
+	auto src	= info.at<IOArray*>(0)->GetInputArray(); 
+	auto w		= info.at<IOArray*>(1)->GetOutputArray();
+	auto u		= info.at<IOArray*>(2)->GetOutputArray();
+	auto vt		= info.at<IOArray*>(3)->GetOutputArray();
+	auto flags  = info.at<int>(4);
+
+	cv::SVD::compute(src, w, u, vt, flags);
 }
 POLY_METHOD(SVD::compute){
-	throw std::exception("not implemented");
+	auto src = info.at<IOArray*>(0)->GetInputArray();
+	auto w = info.at<IOArray*>(1)->GetOutputArray();
+	auto flags = info.at<int>(2);
+
+	cv::SVD::compute(src, w, flags);
 }
 POLY_METHOD(SVD::backSubst_w_u_vt_rhs){
-	throw std::exception("not implemented");
+	auto w		= info.at<IOArray*>(0)->GetInputArray (); 
+	auto u		= info.at<IOArray*>(1)->GetInputArray ();
+	auto vt		= info.at<IOArray*>(2)->GetInputArray ();
+	auto rhs	= info.at<IOArray*>(3)->GetInputArray ();
+	auto dst	= info.at<IOArray*>(4)->GetOutputArray();
+	cv::SVD::backSubst(w, u, vt, rhs, dst);
 }
 POLY_METHOD(SVD::solveZ){
-	throw std::exception("not implemented");
+	auto src = info.at<IOArray*>(0)->GetInputArray ();
+	auto dst = info.at<IOArray*>(1)->GetOutputArray();
+	cv::SVD::solveZ(src, dst);
 }
 POLY_METHOD(SVD::run){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<SVD*>()->_svd;
+	auto src = info.at<IOArray*>(0)->GetInputArray();
+	auto flags = info.at<int>(1);
+	auto ret = this_(src, flags);;
+
+	auto svd = new SVD();
+	svd->_svd = std::make_shared<cv::SVD>(ret);
+	info.SetReturnValue(svd);
 }
 POLY_METHOD(SVD::backSubst){
+	//auto this_ = *info.This<SVD*>()->_svd;
+	//auto rhs  = info.at<IOArray*>(0)->GetInputArray (); 
+	//auto dst  = info.at<IOArray*>(1)->GetOutputArray();
+	//
+	//this_.backSubst()
 	throw std::exception("not implemented");
 }
 
 
 NAN_GETTER(SVD::u_getter){
-	throw std::exception("not implemented");
+	auto this_ = or ::ObjectWrap::Unwrap<SVD>(info.This())->_svd;
+	auto ret = new Matrix();
+	ret->_mat = std::make_shared<cv::Mat>(this_->u);
+	info.GetReturnValue().Set(ret->Wrap());
+
 }
 NAN_SETTER(SVD::u_setter){
 	throw std::exception("not implemented");
 }
 
 NAN_GETTER(SVD::w_getter){
-	throw std::exception("not implemented");
+	auto this_ = or ::ObjectWrap::Unwrap<SVD>(info.This())->_svd;
+	auto ret = new Matrix();
+	ret->_mat = std::make_shared<cv::Mat>(this_->w);
+	info.GetReturnValue().Set(ret->Wrap());
 }
 NAN_SETTER(SVD::w_setter){
 	throw std::exception("not implemented");
 }
 
 NAN_GETTER(SVD::vt_getter){
-	throw std::exception("not implemented");
+	auto this_ = or ::ObjectWrap::Unwrap<SVD>(info.This())->_svd;
+	auto ret = new Matrix();
+	ret->_mat = std::make_shared<cv::Mat>(this_->vt);
+	info.GetReturnValue().Set(ret->Wrap());
 }
 NAN_SETTER(SVD::vt_setter){
 	throw std::exception("not implemented");

@@ -3167,8 +3167,18 @@ POLY_METHOD(core::idct){throw std::exception("not implemented");}
 POLY_METHOD(core::mulSpectrums){throw std::exception("not implemented");}
 POLY_METHOD(core::getOptimalDFTSize){throw std::exception("not implemented");}
 POLY_METHOD(core::theRNG){throw std::exception("not implemented");}
-POLY_METHOD(core::randu){throw std::exception("not implemented");}
-POLY_METHOD(core::randu_number){throw std::exception("not implemented");}
+POLY_METHOD(core::randu){
+	auto dst = info.at<IOArray*>(0)->GetInputOutputArray();
+	auto low = info.at<IOArray*>(1)->GetInputArray();
+	auto high = info.at<IOArray*>(2)->GetInputArray();
+	cv::randu(dst, low, high);
+}
+POLY_METHOD(core::randu_number){
+	auto dst = info.at<IOArray*>(0)->GetInputOutputArray();
+	auto low  = info.at<double>(1);
+	auto high = info.at<double>(2);
+	cv::randu(dst, low, high);
+}
 POLY_METHOD(core::randn){throw std::exception("not implemented");}
 POLY_METHOD(core::randShuffle){throw std::exception("not implemented");}
 POLY_METHOD(core::kmeans){throw std::exception("not implemented");}

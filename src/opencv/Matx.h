@@ -713,8 +713,7 @@ public:
 		auto b = info.at<double>(1);
 
 		matx->_matx = std::make_shared<T>(a * b);
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(matx);
 	}
 
 	static POLY_METHOD(op_Multiplication_number_matx) {
@@ -724,8 +723,7 @@ public:
 		auto b = *info.at<Matx<T>*>(1)->_matx;
 
 		matx->_matx = std::make_shared<T>(a * b);
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(matx);
 	}
 
 	static POLY_METHOD(op_Substraction_matx_negative) {
@@ -746,8 +744,7 @@ public:
 		auto b = *info.at<Matx<T>*>(1)->_matx;
 
 		matx->_matx = std::make_shared<T>(a.mul( b));
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(matx);
 	}
 
 

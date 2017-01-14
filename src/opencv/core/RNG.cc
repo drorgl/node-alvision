@@ -39,28 +39,37 @@ RNG::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 	//new (state: _st.uint64) : RNG;
 
 	overload->addOverload("rng", "RNG", "next", {}, next_uint);
+	Nan::SetPrototypeMethod(ctor, "next", rng_general_callback::callback);
 	//next() : _st.uint;
 	overload->addOverload("rng", "RNG", "uchar", {}, next_uchar);
+	Nan::SetPrototypeMethod(ctor, "uchar", rng_general_callback::callback);
 	//uchar() : _st.uchar;
 	//schar() : _st.schar;
 	overload->addOverload("rng", "RNG", "ushort", {}, next_ushort);
+	Nan::SetPrototypeMethod(ctor, "ushort", rng_general_callback::callback);
 	//ushort() : _st.ushort;
 	overload->addOverload("rng", "RNG", "short", {}, next_short);
+	Nan::SetPrototypeMethod(ctor, "short", rng_general_callback::callback);
 	//short() : _st.short;
 	overload->addOverload("rng", "RNG", "unsigned", {}, next_unsigned);
+	Nan::SetPrototypeMethod(ctor, "unsigned", rng_general_callback::callback);
 	overload->addOverload("rng", "RNG", "unsigned", { make_param<uint>("upperBoundary","uint") }, unsigned_upperBoundary);
 	//unsigned(upperBoundary ? : _st.uint) : _st.uint;
 	overload->addOverload("rng", "RNG", "int", {}, next_int);
+	Nan::SetPrototypeMethod(ctor, "int", rng_general_callback::callback);
 	//int() : _st.int;
 	overload->addOverload("rng", "RNG", "float", {}, next_float);
+	Nan::SetPrototypeMethod(ctor, "float", rng_general_callback::callback);
 	//float() : _st.float;
 	overload->addOverload("rng", "RNG", "double", {}, next_double);
+	Nan::SetPrototypeMethod(ctor, "double", rng_general_callback::callback);
 	//double() : _st.double;
 
 	overload->addOverload("rng", "RNG", "uniform", {
 		make_param<double>("a","double"),
 		make_param<double>("b","double")
 	}, uniform);
+	Nan::SetPrototypeMethod(ctor, "uniform", rng_general_callback::callback);
 	//uniform(a : _st.int, b : _st.int) : _st.int;
 	overload->addOverload("rng", "RNG", "fill", {
 		make_param<IOArray*>("mat","IOArray"),
@@ -69,6 +78,7 @@ RNG::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 		make_param<IOArray*>("b","IOArray"),
 		make_param<bool>("saturateRange","bool", false)
 	}, fill_array);
+	Nan::SetPrototypeMethod(ctor, "fill", rng_general_callback::callback);
 
 	overload->addOverload("rng", "RNG", "fill", {
 		make_param<IOArray*>("mat","IOArray"),
@@ -81,6 +91,7 @@ RNG::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) 
 
 
 	overload->addOverload("rng", "RNG", "gaussian", { make_param<double>("sigma","double") }, gaussian);
+	Nan::SetPrototypeMethod(ctor, "gaussian", rng_general_callback::callback);
 	//gaussian(sigma: _st.double) : _st.double;
 
 	Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("state").ToLocalChecked(), state_getter);
@@ -99,55 +110,86 @@ v8::Local<v8::Function> RNG::get_constructor() {
 
 POLY_METHOD(RNG::New) {
 	auto rng = new RNG();
+	rng->_rng = std::make_shared<cv::RNG>();
 
 	rng->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 
 POLY_METHOD(RNG::New_state){
-	throw std::exception("not implemented");
+	auto rng = new RNG();
+	rng->_rng = std::make_shared<cv::RNG>(info.at<uint64_t>(0));
+
+	rng->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
 }
 
 POLY_METHOD(RNG::next_uint){
-	throw std::exception("not implemented");
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue(this_->next());
 }
 POLY_METHOD(RNG::next_uchar){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue((uchar)this_());
 }
 POLY_METHOD(RNG::next_ushort){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue((ushort)this_());
 }
 POLY_METHOD(RNG::next_short){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue((short)this_());
 }
 POLY_METHOD(RNG::next_unsigned){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue((unsigned)this_());
 }
 POLY_METHOD(RNG::unsigned_upperBoundary){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue((unsigned)this_(info.at<uint>(0)));
 }
 POLY_METHOD(RNG::next_int){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue((int)this_());
 }
 POLY_METHOD(RNG::next_float){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue((float)this_());
 }
 POLY_METHOD(RNG::next_double){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue((double)this_());
 }
 POLY_METHOD(RNG::uniform){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue(this_.uniform(info.at<double>(0),info.at<double>(1)));
 }
 POLY_METHOD(RNG::fill_array){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	auto mat = info.at<IOArray*>(0);
+	auto distType = info.at<int>(1);
+	auto a = info.at<IOArray*>(2);
+	auto b = info.at<IOArray*>(3);
+	auto saturateRange = info.at<bool>(4);
+
+	this_.fill(mat->GetInputOutputArray(), distType, a->GetInputArray(), b->GetInputArray(), saturateRange);
 }
 POLY_METHOD(RNG::fill_number){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	auto mat = info.at<IOArray*>(0);
+	auto distType = info.at<int>(1);
+	auto a = info.at<double>(2);
+	auto b = info.at<double>(3);
+	auto saturateRange = info.at<bool>(4);
+
+	this_.fill(mat->GetInputOutputArray(), distType, a, b, saturateRange);
 }
 POLY_METHOD(RNG::gaussian){
-	throw std::exception("not implemented");
+	auto this_ = *info.This<RNG*>()->_rng;
+	info.SetReturnValue(this_.gaussian(info.at<double>(0)));
 }
 
 NAN_GETTER(RNG::state_getter){
-	throw std::exception("not implemented");
+	auto this_ = or::ObjectWrap::Unwrap<RNG>(info.This())->_rng;
+	info.GetReturnValue().Set((double)this_->state);
 }
