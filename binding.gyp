@@ -103,7 +103,9 @@
 		, "src/opencv/Complex.h"
 		
 		, "src/opencv/Point.h"
+		, "src/opencv/Point.cc"
 		, "src/opencv/Point3.h"
+		, "src/opencv/Point3.cc"
 		
 		, "src/opencv/imgcodecs.cc"
 		, "src/opencv/imgcodecs.h"

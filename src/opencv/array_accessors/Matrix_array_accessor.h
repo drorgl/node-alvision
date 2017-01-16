@@ -15,7 +15,7 @@ using namespace std::literals::string_literals;
 
 class Matrix_array_accessor : public array_accessor_base {
 private:
-	static std::map<std::string, std::function<v8::Local<v8::Value>(int, cv::Mat)>>  _get_accessors;
+	static std::map<std::string, std::function<v8::Local<v8::Value>(int, cv::Mat&)>>  _get_accessors;
 	static std::map<std::string, std::function<void(cv::Mat&, int, v8::Local<v8::Value>)>> _set_accessors;
 	static std::map<std::string, std::function<size_t()>>  _sizeof_accessors;
 

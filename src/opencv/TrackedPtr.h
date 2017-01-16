@@ -47,28 +47,39 @@ public:
 	std::shared_ptr<array_accessor_base> _from;
 
 	static NAN_GETTER(index_length) {
-		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.This());
+		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
 		auto length = this_->_from->length();
+		info.GetReturnValue().Set(length);
 	}
 
 	static NAN_INDEX_SETTER(indexed_setter) {
-		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.This());
+		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
 		if ((index > this_->_from->length()) || (index < 0)) {
 			Nan::ThrowRangeError("index out of range");
 		}
 
-		this_->_from->set(index, value);
+		try {
+			this_->_from->set(index, value);
+		}
+		catch (std::exception &ex) {
+			Nan::ThrowRangeError(ex.what());
+		}
 
 		info.GetReturnValue().Set(info.This());
 	}
 
 	static NAN_INDEX_GETTER(indexed_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.This());
+		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
 		if ((index > this_->_from->length()) || (index < 0)) {
 			Nan::ThrowRangeError("index out of range");
 		}
 
-		info.GetReturnValue().Set(this_->_from->get(index));
+		try {
+			info.GetReturnValue().Set(this_->_from->get(index));
+		}
+		catch (std::exception &ex) {
+			Nan::ThrowRangeError(ex.what());
+		}
 	}
 };
 

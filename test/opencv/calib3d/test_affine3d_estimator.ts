@@ -93,12 +93,13 @@ class CV_Affine3D_EstTest extends alvision.cvtest.BaseTest
         fpts.ptr<alvision.Point3f>("Point3f")[2] = new alvision.Point3f(rngIn(1, 2), rngIn(3, 4), rngIn(5, 6));
         fpts.ptr<alvision.Point3f>("Point3f")[3] = new alvision.Point3f(rngIn(3, 4), rngIn(1, 2), rngIn(5, 6));
 
-        
+        //console.log(fpts.ptr<alvision.Point3f>("Point3f"));
         alvision.transformOp<alvision.Point3f>(fpts.ptr<alvision.Point3f>("Point3f"), tpts.ptr<alvision.Point3f>("Point3f"), new WrapAff(aff));
         //alvision.transform(fpts.ptr<alvision.Point3f>("Point3f"), fpts.ptr<alvision.Point3f>("Point3f") + 4, tpts.ptr<alvision.Point3f>("Point3f"), WrapAff(aff));
 
         var aff_est = new alvision.Mat();
-        var outliers = new Array<alvision.uchar>();
+        //var outliers = new Array<alvision.uchar>();
+        var outliers = new alvision.Mat();
         alvision.estimateAffine3D(fpts, tpts, aff_est, outliers);
 
         const thres = 1e-3;

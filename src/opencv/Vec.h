@@ -23,6 +23,7 @@ public:
 
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		vec_general_callback::overload = overload;
+		Vec<T>::name = name;
 
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(vec_general_callback::callback);
 		Vec<T>::constructor.Reset(ctor);
@@ -36,7 +37,7 @@ public:
 		ctor->Inherit(Nan::New(Matx<mat_type>::constructor));
 
 		overload->register_type<Vec<T>>(ctor, "vec", name);
-		Vec<T>::name = name;
+		
 
 		overload->addOverloadConstructor("vec", name, {}, New_no_parameters);
 		//Vec();
@@ -178,8 +179,8 @@ public:
 		return Nan::New(constructor)->GetFunction();
 	}
 
-	static std::shared_ptr<Vec<T>> from(T &vec_) {
-		auto vec = std::make_shared<Vec<T>>();
+	static Vec<T>* from(T &vec_) {
+		auto vec = new Vec<T>();
 		vec->_vec = std::make_shared<T>(vec_);
 		vec->_matx = vec->_vec;
 		return vec;

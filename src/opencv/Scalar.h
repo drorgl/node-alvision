@@ -10,12 +10,13 @@ namespace scalar_general_callback {
 }
 
 
-template <typename T>
-class Scalar_ : public or::ObjectWrap {
+template <class T>
+class Scalar_ : public Vec<cv::Vec<typename T::value_type, 4>>{
 public:
 	typedef typename T::value_type TVT;
+	typedef typename Vec<cv::Vec<TVT, 4>> TVEC;
 
-	static std::string Scalar_<T>::name;
+	//static std::string Scalar_<T>::name;
 
 
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
@@ -25,6 +26,9 @@ public:
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
+
+		assert(!TVEC::constructor.IsEmpty() && "cannot initialize derived class before base class");
+		ctor->Inherit(Nan::New(TVEC::constructor));
 
 		overload->register_type<Scalar_<T>>(ctor, "scalar", name);
 
@@ -92,18 +96,25 @@ public:
 	static std::shared_ptr<Scalar_<T>> create(Args&&... args) {
 		auto scalar = std::make_shared<Scalar_<T>>();
 		scalar->_scalar = std::shared_ptr<T>(new T(std::forward<Args>(args)...));
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
 		return scalar;
 	}
 	
 	static std::shared_ptr<Scalar_<T>> all(double v0) {
 		auto scalar = std::make_shared< Scalar_<T>>();
 		scalar->_scalar = std::make_shared<T>(T::all(v0));
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
 		return scalar;
 	}
 
 	static POLY_METHOD(New_no_params) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>();
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
+
 		scalar->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
@@ -111,6 +122,9 @@ public:
 	static POLY_METHOD(New_v0_v1_v2_v3) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>(info.at<TVT>(0), info.at<TVT>(1), info.at<TVT>(2), info.at<TVT>(3));
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
+
 		scalar->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
@@ -118,6 +132,9 @@ public:
 	static POLY_METHOD(New_v0) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>(info.at<TVT>(0));
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
+
 		scalar->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
@@ -125,6 +142,9 @@ public:
 	static POLY_METHOD(New_vec_2) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 2>>*>(0)->_vec);
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
+
 		scalar->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
@@ -132,6 +152,9 @@ public:
 	static POLY_METHOD(New_vec_3) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 3>>*>(0)->_vec);
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
+
 		scalar->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
@@ -139,6 +162,9 @@ public:
 	static POLY_METHOD(New_vec_4) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 4>>*>(0)->_vec);
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
+
 		scalar->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
@@ -146,6 +172,9 @@ public:
 	static POLY_METHOD(New_vec_6) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 6>>*>(0)->_vec);
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
+
 		scalar->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
@@ -153,6 +182,9 @@ public:
 	static POLY_METHOD(New_vec_8) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>(*info.at<Vec<cv::Vec<TVT, 8>>*>(0)->_vec);
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
+
 		scalar->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
@@ -160,6 +192,9 @@ public:
 	static POLY_METHOD(all) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>(info.at<TVT>(0));
+		scalar->_vec = scalar->_scalar;
+		scalar->_matx = scalar->_scalar;
+
 		
 		info.SetReturnValue(scalar);
 	}
@@ -198,8 +233,8 @@ public:
 template <typename T>
 Nan::Persistent<FunctionTemplate> Scalar_<T>::constructor;
 
-template <typename T>
-std::string Scalar_<T>::name;
+//template <typename T>
+//std::string Scalar_<T>::name;
 
 
 

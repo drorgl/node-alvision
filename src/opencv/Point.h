@@ -39,8 +39,8 @@ public:
 		return val;
 	}
 
-	static std::shared_ptr<Point_<T>> from(T point) {
-		auto pt = std::make_shared<Point_<T>>();
+	static Point_<T>* from(T point) {
+		auto pt = new Point_<T>();
 		pt->_point = std::make_shared<T>(std::move(point));
 		return pt;
 	}
@@ -74,5 +74,9 @@ typedef typename Point_<cv::Point2i> Point2i;
 typedef typename Point_<cv::Point2f> Point2f;
 typedef typename Point_<cv::Point2d> Point2d;
 typedef typename Point_<cv::Point>   Point;
+
+namespace PointInit {
+	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
+}
 
 #endif

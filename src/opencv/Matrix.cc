@@ -732,19 +732,19 @@ POLY_METHOD(Matrix::New_point_Point_copyData  ){
 
 POLY_METHOD(Matrix::New_point3_Point3i_copyData){
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3i*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3i*>(0)->_point3, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_point3_Point3f_copyData){
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3f*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3f*>(0)->_point3, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_point3_Point3d_copyData){
 	auto *mat = new Matrix();
-	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3d*>(0)->_point, info.at<bool>(1));
+	mat->_mat = std::make_shared<cv::Mat>(*info.at<Point3d*>(0)->_point3, info.at<bool>(1));
 	mat->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }

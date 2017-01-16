@@ -3,51 +3,51 @@
 #include <value_converter.h>
 #include "../Vec.h"
 #include "../Point.h"
+#include "../Point3.h"
 #include "../Complex.h"
 
-
-std::map<std::string, std::function<v8::Local<v8::Value>(int, cv::Mat)> > Matrix_array_accessor::_get_accessors = {
+std::map<std::string, std::function<v8::Local<v8::Value>(int, cv::Mat&)> > Matrix_array_accessor::_get_accessors = {
 		{ "Vec2d",
 				[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Vec<cv::Vec2d> > >>();
+			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec2d> * >>();
 			return converter->convert(Vec<cv::Vec2d>::from(mat.at<cv::Vec2d>(index)));
 		} },
 		{ "Vec3d",
 		[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Vec<cv::Vec3d> > >>();
+			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec3d> * >>();
 			return converter->convert(Vec<cv::Vec3d>::from(mat.at<cv::Vec3d>(index)));
 		} },
 		{ "Vec4b",
 		[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Vec<cv::Vec4b> > >>();
+			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec4b>* >>();
 			return converter->convert(Vec<cv::Vec4b>::from(mat.at<cv::Vec4b>(index)));
 		} },
 		{ "Vec4s",
 		[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Vec<cv::Vec4s> > >>();
+			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec4s>* >>();
 			return converter->convert(Vec<cv::Vec4s>::from(mat.at<cv::Vec4s>(index)));
 		} },
 		{ "Point3f",
 		[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Point_<cv::Point3f> > >>();
+			auto converter = std::make_unique < or ::value_converter<Point3_<cv::Point3f>* > >();
 			return converter->convert(
-				Point_<cv::Point3f>::from(mat.at<cv::Point3f>(index)));
+				Point3_<cv::Point3f>::from(mat.at<cv::Point3f>(index)));
 		} },
 		{ "Point3i",
 		[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Point_<cv::Point3i> > >>();
+			auto converter = std::make_unique < or ::value_converter<Point3_<cv::Point3i>* > >();
 			return converter->convert(
-				Point_<cv::Point3i>::from(mat.at<cv::Point3i>(index)));
+				Point3_<cv::Point3i>::from(mat.at<cv::Point3i>(index)));
 		} },
 		{ "Point2f",
 		[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Point_<cv::Point2f> > >>();
+			auto converter = std::make_unique < or ::value_converter<Point_<cv::Point2f>* >>();
 			return converter->convert(
 				Point_<cv::Point2f>::from(mat.at<cv::Point2f>(index)));
 		} },
 		{ "Point2d",
 		[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Point_<cv::Point2d> > >>();
+			auto converter = std::make_unique < or ::value_converter<Point_<cv::Point2d>* >>();
 			return converter->convert(
 				Point_<cv::Point2d>::from(mat.at<cv::Point2d>(index)));
 		} },
@@ -103,13 +103,13 @@ std::map<std::string, std::function<v8::Local<v8::Value>(int, cv::Mat)> > Matrix
 		} },
 		{ "Complexd",
 		[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Complex_<cv::Complexd> > >>();
+			auto converter = std::make_unique < or ::value_converter<Complex_<cv::Complexd>*>>();
 			return converter->convert(
 				Complex_<cv::Complexd>::from(mat.at<cv::Complexd>(index)));
 		} },
 		{ "Complexf",
 		[](int index, cv::Mat& mat) {
-			auto converter = std::make_unique < or ::value_converter<std::shared_ptr<Complex_<cv::Complexf> > >>();
+			auto converter = std::make_unique < or ::value_converter<Complex_<cv::Complexf>*>>();
 			return converter->convert(
 				Complex_<cv::Complexf>::from(mat.at<cv::Complexf>(index)));
 		}}
@@ -119,37 +119,37 @@ std::map<std::string, std::function<void(cv::Mat&, int, v8::Local<v8::Value>)> >
 	{
 	"Vec2d", 
 	[](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Vec<cv::Vec2d>>>>();
+		auto converter = std::make_unique< or ::value_converter<Vec<cv::Vec2d>*>>();
 		mat.at<cv::Vec2d>(index) = *converter->convert(value)->_vec;
 	} 
 	}, 
 	{
 	"Vec3d", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Vec<cv::Vec3d>>>>();
+		auto converter = std::make_unique< or ::value_converter<Vec<cv::Vec3d>*>>();
 		mat.at<cv::Vec3d>(index) = *converter->convert(value)->_vec;
 	} }, {
 	"Vec4b", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Vec<cv::Vec4b>>>>();
+		auto converter = std::make_unique< or ::value_converter<Vec<cv::Vec4b>*>>();
 		mat.at<cv::Vec4b>(index) = *converter->convert(value)->_vec;
 	} }, {
 	"Vec4s", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Vec<cv::Vec4s>>>>();
+		auto converter = std::make_unique< or ::value_converter<Vec<cv::Vec4s>*>>();
 		mat.at<cv::Vec4s>(index) = *converter->convert(value)->_vec;
 	} }, {
 	"Point3f", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Point_<cv::Point3f>>>>();
-		mat.at<cv::Point3f>(index) = *converter->convert(value)->_point;
+		auto converter = std::make_unique< or ::value_converter<Point3_<cv::Point3f>*>>();
+		mat.at<cv::Point3f>(index) = *converter->convert(value)->_point3;
 	} }, {
 	"Point3i", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Point_<cv::Point3i>>>>();
-		mat.at<cv::Point3i>(index) = *converter->convert(value)->_point;
+		auto converter = std::make_unique< or ::value_converter<Point3_<cv::Point3i>*>>();
+		mat.at<cv::Point3i>(index) = *converter->convert(value)->_point3;
 	} }, {
 	"Point2f", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Point_<cv::Point2f>>>>();
+		auto converter = std::make_unique< or ::value_converter<Point_<cv::Point2f>*>>();
 		mat.at<cv::Point2f>(index) = *converter->convert(value)->_point;
 	} }, {
 	"Point2d", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Point_<cv::Point2d>>>>();
+		auto converter = std::make_unique< or ::value_converter<Point_<cv::Point2d>*>>();
 		mat.at<cv::Point2d>(index) = *converter->convert(value)->_point;
 	} }, {
 	"double", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
@@ -193,11 +193,11 @@ std::map<std::string, std::function<void(cv::Mat&, int, v8::Local<v8::Value>)> >
 		mat.at<int>(index) = converter->convert(value);
 	} }, {
 	"Complexd", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Complex_<cv::Complexd>>>>();
+		auto converter = std::make_unique< or ::value_converter<Complex_<cv::Complexd>*>>();
 		mat.at<cv::Complexd>(index) = *converter->convert(value)->_complex;
 	} }, {
 	"Complexf", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
-		auto converter = std::make_unique< or ::value_converter<std::shared_ptr<Complex_<cv::Complexf>>>>();
+		auto converter = std::make_unique< or ::value_converter<Complex_<cv::Complexf>*>>();
 		mat.at<cv::Complexf>(index) = *converter->convert(value)->_complex;
 	}
 	}
@@ -301,10 +301,7 @@ Matrix_array_accessor::Matrix_array_accessor(std::shared_ptr<cv::Mat> mat, std::
 		_max_size = 0;
 	}
 	else {
-		_max_size = 1;
-		for (auto i = 0; i < _mat->dims; i++) {
-			_max_size *= _mat->step.p[i];
-		}
+		_max_size = _mat->dataend - _mat->datastart;
 	}
 
 	_pre_index = _i0 *(_mat->dims > 0) ? _mat->step.p[0] : 0
@@ -316,21 +313,33 @@ Matrix_array_accessor::Matrix_array_accessor(std::shared_ptr<cv::Mat> mat, std::
 }
 
 int Matrix_array_accessor::length() {
-	return (_max_size - _pre_index);
+	return ((_max_size - _pre_index) / _sizeof);
 }
 
 v8::Local<v8::Value> Matrix_array_accessor::get(int index) {
-	if ((_pre_index + index) >= _max_size) {
+	if (index > ((_max_size - _pre_index) / _sizeof)) {
 		throw std::exception("index out of bounds");
 	}
 
-	if (((index + _pre_index) + _sizeof) > _max_size) {
+	auto byte_index = (index * _sizeof);
+
+	if ((byte_index + _pre_index) > _max_size) {
 		throw std::exception("index out of bounds for type specified");
 	}
 
-	return _get_accessors[_type](_pre_index + index, *_mat);
+	return _get_accessors[_type](index, *_mat);
 }
 
 void Matrix_array_accessor::set(int index, v8::Local<v8::Value> value) {
-	_set_accessors[_type](*_mat, (_pre_index + index), value);
+	if (index > ((_max_size - _pre_index) / _sizeof)) {
+		throw std::exception("index out of bounds");
+	}
+
+	auto byte_index = (index * _sizeof);
+
+	if ((byte_index + _pre_index) > _max_size) {
+		throw std::exception("index out of bounds for type specified");
+	}
+
+	_set_accessors[_type](*_mat,index, value);
 }

@@ -3166,7 +3166,12 @@ POLY_METHOD(core::dct){throw std::exception("not implemented");}
 POLY_METHOD(core::idct){throw std::exception("not implemented");}
 POLY_METHOD(core::mulSpectrums){throw std::exception("not implemented");}
 POLY_METHOD(core::getOptimalDFTSize){throw std::exception("not implemented");}
-POLY_METHOD(core::theRNG){throw std::exception("not implemented");}
+POLY_METHOD(core::theRNG){
+	auto rng = new RNG();
+	rng->_rng = std::make_shared<cv::RNG>(cv::theRNG());
+
+	info.SetReturnValue(rng);
+}
 POLY_METHOD(core::randu){
 	auto dst = info.at<IOArray*>(0)->GetInputOutputArray();
 	auto low = info.at<IOArray*>(1)->GetInputArray();

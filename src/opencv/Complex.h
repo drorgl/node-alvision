@@ -39,8 +39,8 @@ public:
 		return val;
 	}
 
-	static std::shared_ptr<Complex_<T>> from(T point) {
-		auto pt = std::make_shared<Complex_<T>>();
+	static Complex_<T>* from(T point) {
+		auto pt = new Complex_<T>();
 		pt->_complex = std::make_shared<T>(std::move(point));
 		return pt;
 	}
