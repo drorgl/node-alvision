@@ -88,7 +88,7 @@ init(Handle<Object> target) {
 	base::Init(target, overload);
 
 	IOArray::Init(target, overload);
-	types::Init(target, overload);
+	
 
 	Matrix::Init(target,overload);
 	UMatrix::Init(target, overload);
@@ -119,7 +119,7 @@ init(Handle<Object> target) {
 
 	MatxInit::Init(target, overload);
 	VecInit::Init(target, overload);
-
+	types::Init(target, overload);
 	//cv::Vec3d::mat_type
 	
 	Mat_Init::Init(target, overload);
