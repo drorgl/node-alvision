@@ -196,6 +196,10 @@
 		
         , "src/opencv/Matrix.cc"
 		, "src/opencv/Matrix.h"
+		
+		, "src/opencv/MatOp.cc"
+		, "src/opencv/MatOp.h"
+		
         , "src/opencv/UMatrix.cc"
 		, "src/opencv/UMatrix.h"
 

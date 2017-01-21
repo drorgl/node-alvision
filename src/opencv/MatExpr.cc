@@ -1,6 +1,7 @@
 #include "MatExpr.h"
-#include "Scalar.h"
+#include "types/Scalar.h"
 #include "Matrix.h"
+#include "MatOp.h"
 
 namespace matexpr_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -37,7 +38,7 @@ MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 	//new(const MatOp* _op, int _flags, const Mat& _a = Mat(), const Mat& _b = Mat(),
 	//	const Mat& _c = Mat(), double _alpha = 1, double _beta = 1, const Scalar& _s = Scalar());
-	overload->addOverloadConstructor("matexpr", "MatExpr", { make_param("_op","MatOp"), make_param<int>("_flags","int"), make_param<Matrix*>("_a","Mat",Nan::Null()),make_param<Matrix*>("_b","Mat",Nan::Null()),
+	overload->addOverloadConstructor("matexpr", "MatExpr", { make_param<MatOp*>("_op","MatOp"), make_param<int>("_flags","int"), make_param<Matrix*>("_a","Mat",Nan::Null()),make_param<Matrix*>("_b","Mat",Nan::Null()),
 		make_param<Matrix*>("_c","Mat",Nan::Null()),make_param<double>("_alpha","double",1), make_param<double>("_beta","double",1), make_param<Scalar*>("_s","Scalar",Nan::Null()) }, MatExpr::New_matop_int_mat_mat);
 
 	//new (_op: MatOp, _flags : _st.int, _a ? : Mat, _b ? : Mat) : MatExpr{ }

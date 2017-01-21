@@ -61,7 +61,7 @@
 
 #include "opencv/types.h"
 
-
+#include "opencv/MatOp.h"
 
 extern "C"{ 
 void
@@ -114,7 +114,7 @@ init(Handle<Object> target) {
 	superres::Init(target, overload);
 
 	
-
+	MatOp::Init(target, overload);
 	MatExpr::Init(target, overload);
 
 	MatxInit::Init(target, overload);
