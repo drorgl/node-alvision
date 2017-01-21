@@ -50,9 +50,9 @@ StereoBM::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 	overload->addOverload("stereobm", "", "", {}, getSmallerBlockSize);
 	overload->addOverload("stereobm", "", "", { make_param<int>("blockSize","int") }, setSmallerBlockSize);
 	overload->addOverload("stereobm", "", "", {}, getROI1);
-	overload->addOverload("stereobm", "", "", { make_param<Rect<cv::Rect>*>("roi1",Rect<cv::Rect>::name) }, setROI1);
+	overload->addOverload("stereobm", "", "", { make_param<Rect*>("roi1",Rect::name) }, setROI1);
 	overload->addOverload("stereobm", "", "", {}, getROI2);
-	overload->addOverload("stereobm", "", "", { make_param<Rect<cv::Rect>*>("roi2",Rect<cv::Rect>::name) }, setROI2);
+	overload->addOverload("stereobm", "", "", { make_param<Rect*>("roi2",Rect::name) }, setROI2);
 
 
 };
@@ -130,7 +130,7 @@ POLY_METHOD(StereoBM::getROI1) {
 }
 POLY_METHOD(StereoBM::setROI1) {
 	auto this_ = info.This<StereoBM*>();
-	this_->_algorithm.dynamicCast<cv::StereoBM>()->setROI1(*info.at<Rect<cv::Rect>*>(0)->_rect);
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setROI1(*info.at<Rect*>(0)->_rect);
 }
 POLY_METHOD(StereoBM::getROI2) {
 	auto this_ = info.This<StereoBM*>();
@@ -139,5 +139,5 @@ POLY_METHOD(StereoBM::getROI2) {
 }
 POLY_METHOD(StereoBM::setROI2) {
 	auto this_ = info.This<StereoBM*>();
-	this_->_algorithm.dynamicCast<cv::StereoBM>()->setROI2(*info.at<Rect<cv::Rect>*>(0)->_rect);
+	this_->_algorithm.dynamicCast<cv::StereoBM>()->setROI2(*info.at<Rect*>(0)->_rect);
 }

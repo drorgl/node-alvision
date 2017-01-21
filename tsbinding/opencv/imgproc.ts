@@ -1396,7 +1396,7 @@ export var medianBlur: ImedianBlur = alvision_module.medianBlur;
 interface IGaussianBlur{
     (src: _st.InputArray, dst: _st.OutputArray, ksize: _types.Size,
         sigmaX: _st.double, sigmaY?: _st.double /* = 0*/,
-        borderType?: _base.BorderTypes | _st.int /* = BORDER_DEFAULT*/);
+        borderType?: _base.BorderTypes | _st.int /* = BORDER_DEFAULT*/): void;
 }
 
 export var GaussianBlur: IGaussianBlur = alvision_module.GaussianBlur;
@@ -2002,7 +2002,7 @@ export var preCornerDetect: IpreCornerDetect = alvision_module.preCornerDetect;
      */
 
 interface IcornerSubPix{
-    (image: _st.InputArray, Inputcorners: _st.OutputArray,
+    (image: _st.InputArray, corners: _st.InputOutputArray,
         winSize: _types.Size, zeroZone: _types.Size,
         criteria: _types.TermCriteria): void;
 }
@@ -3002,7 +3002,7 @@ export var accumulateSquare: IaccumulateSquare = alvision_module.accumulateSquar
 
 interface IaccumulateProduct{
     (src1: _st.InputArray, src2: _st.InputArray,
-        Inputdst: _st.OutputArray, Mask: _st.InputArray /* = noArray()*/): void;
+        dst: _st.InputOutputArray, Mask: _st.InputArray /* = noArray()*/): void;
 }
 
 export var accumulateProduct: IaccumulateProduct = alvision_module.accumulateProduct;
@@ -3031,7 +3031,7 @@ export var accumulateProduct: IaccumulateProduct = alvision_module.accumulatePro
      */
 
 interface IaccumulateWeighted {
-    (src: _st.InputArray, Inputdst: _st.OutputArray,
+    (src: _st.InputArray, dst: _st.InputOutputArray,
         alpha : _st.double, mask: _st.InputArray /* = noArray()*/): void;
 }
 

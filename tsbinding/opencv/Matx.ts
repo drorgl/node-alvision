@@ -774,7 +774,7 @@ export interface VecStatic<T> {
 //    v1 = v1 * v2;
 //    return v1;
 //}
-    //norm(m?: Vec<T>): _st.double;
+    norm(m?: Vec<T>): _st.double;
 }
 
 //template < typename _Tp, int cn> class Vec : public Matx < _Tp, cn, 1 >

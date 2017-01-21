@@ -464,8 +464,8 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 
   overload->addOverload("calib3d", "", "getValidDisparityROI", {
-		make_param<Rect<cv::Rect>*>("roi1",Rect<cv::Rect>::name),
-		make_param<Rect<cv::Rect>*>("roi2",Rect<cv::Rect>::name),
+		make_param<Rect*>("roi1",Rect::name),
+		make_param<Rect*>("roi2",Rect::name),
 		make_param<int>("minDisparity","int"),
 		make_param<int>("numberOfDisparities","int"),
 		make_param<int>("SADWindowSize","int")
@@ -908,10 +908,10 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 			alpha, *newImageSize,
 			&validPixROI1, &validPixROI2);
 
-		auto rect1 = new Rect<cv::Rect>();
+		auto rect1 = new Rect();
 		rect1->_rect = std::make_shared<cv::Rect>(validPixROI1);
 
-		auto rect2 = new Rect<cv::Rect>();
+		auto rect2 = new Rect();
 		rect2->_rect = std::make_shared<cv::Rect>(validPixROI2);
 
 		cb->Call({or::make_value(rect1), or::make_value(rect2)});
@@ -979,9 +979,9 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 			Q, alpha, *newImgSize,
 			&cvroi1, &cvroi2, flags);
 
-		auto roi1 = new Rect<cv::Rect>();
+		auto roi1 = new Rect();
 		roi1->_rect = std::make_shared<cv::Rect>(cvroi1);
-		auto roi2 = new Rect<cv::Rect>();
+		auto roi2 = new Rect();
 		roi2->_rect = std::make_shared<cv::Rect>(cvroi2);
 
 		cb->Call({make_value(roi1), make_value(roi2)});
@@ -1245,8 +1245,8 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   }
 
   POLY_METHOD(calib3d::getValidDisparityROI) {
-	auto roi1					= info.at<Rect<cv::Rect>*>(0)->_rect;
-	auto roi2					= info.at<Rect<cv::Rect>*>(1)->_rect;
+	auto roi1					= info.at<Rect*>(0)->_rect;
+	auto roi2					= info.at<Rect*>(1)->_rect;
 	auto minDisparity			= info.at<int>(2);
 	auto numberOfDisparities	= info.at<int>(3);
 	auto SADWindowSize			= info.at<int>(4);
@@ -1259,7 +1259,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		SADWindowSize);
 
 	//ret = Rect
-	auto rect_ret = new Rect<cv::Rect>();
+	auto rect_ret = new Rect();
 	rect_ret->_rect = std::make_shared<cv::Rect>(ret);
 
 	info.SetReturnValue(rect_ret);

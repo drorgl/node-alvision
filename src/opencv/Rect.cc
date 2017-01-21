@@ -1,33 +1,9 @@
-//#include "Size.h"
+#include "Rect.h"
 
-// Nan::Persistent<FunctionTemplate> Size::constructor;
-//
-//
-//Size::Init(Handle<Object> target, std::string name) {
-//	
-//
-//	//Class
-//	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Size::New);
-//	constructor.Reset(ctor);
-//	ctor->InstanceTemplate()->SetInternalFieldCount(1);
-//	ctor->SetClassName(Nan::New("Size").ToLocalChecked());
-//
-//
-//	target->Set(Nan::New("Size").ToLocalChecked(), ctor->GetFunction());
-//};
-//
-//template <typename T>
-//NAN_METHOD(Size::New) {
-//
-//	if (info.This()->InternalFieldCount() == 0)
-//		Nan::ThrowTypeError("Cannot instantiate without new");
-//
-//
-//	Size *size;
-//	size = new Size();
-//
-//	size->Wrap(info.Holder());
-//
-//	info.GetReturnValue().Set(info.Holder());
-//}
-//
+void RectInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	Rect2i::Init(target, "Rect2i", overload);
+	Rect2f::Init(target, "Rect2f", overload);
+	Rect2d::Init(target, "Rect2d", overload);
+	Rect::Init(target, "Rect", overload);
+
+}

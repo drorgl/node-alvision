@@ -44,6 +44,8 @@ void TermCriteria::Init(Handle<Object> target, std::shared_ptr<overload_resoluti
 	Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("type").ToLocalChecked(), type_getter);
 	Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("maxCount").ToLocalChecked(), maxCount_getter);
 	Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("epsilon").ToLocalChecked(), epsilon_getter);
+
+	target->Set(Nan::New("TermCriteria").ToLocalChecked(), ctor->GetFunction());
 }
 
 v8::Local<v8::Function> TermCriteria::get_constructor() {

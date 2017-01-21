@@ -4,20 +4,20 @@
 #include "../alvision.h"
 
 template <typename T>
-class Rect : public or::ObjectWrap {
+class Rect_ : public or::ObjectWrap {
 public:
 	static std::string name;
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
-		Rect<T>::name = name;
-		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Rect::New);
+		Rect_<T>::name = name;
+		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Rect_<T>::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
-		overload->register_type<Rect>(ctor, "rect", name);
+		overload->register_type<Rect_<T>>(ctor, "rect", name);
 
-		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "width").ToLocalChecked(), Rect::width);
-		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "height").ToLocalChecked(), Rect::height);
+		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "width").ToLocalChecked(),  Rect_<T>::width);
+		Nan::SetAccessor(ctor->InstanceTemplate(),Nan::New( "height").ToLocalChecked(), Rect_<T>::height);
 		
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
@@ -38,8 +38,7 @@ public:
 			Nan::ThrowTypeError("Cannot instantiate without new");
 
 
-		Rect<T> *rect;
-		rect = new Rect<T>();
+		auto rect = new Rect_<T>();
 
 		rect->Wrap(info.Holder());
 
@@ -59,10 +58,21 @@ public:
 
 //declare variables
 template <typename T>
-Nan::Persistent<FunctionTemplate> Rect<T>::constructor;
+Nan::Persistent<FunctionTemplate> Rect_<T>::constructor;
 
 template <typename T>
-std::string Rect<T>::name;
+std::string Rect_<T>::name;
+
+
+typedef Rect_<cv::Rect_<int>> Rect2i;
+typedef Rect_<cv::Rect_<float>> Rect2f;
+typedef Rect_<cv::Rect_<double>> Rect2d;
+typedef Rect2i Rect;
+
+
+namespace RectInit {
+	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
+}
 
 
 

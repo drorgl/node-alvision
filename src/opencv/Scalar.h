@@ -61,6 +61,7 @@ public:
 		overload->addStaticOverload("scalar", name, "all", {
 			make_param<TVT>("v0","Number")
 		}, all);
+		Nan::SetMethod(ctor, "all", scalar_general_callback::callback);
 		
 		////! conversion to another data type
 		//template<typename T2> operator Scalar_<T2>() const;
@@ -71,14 +72,17 @@ public:
 			make_param<Scalar_<T>*>("a",name),
 			make_param<double>("scale","double",1)
 		}, mul);
+		Nan::SetPrototypeMethod(ctor, "mul", scalar_general_callback::callback);
 		
 		//// returns (v0, -v1, -v2, -v3)
 		//Scalar_<_Tp> conj() const;
 		overload->addOverload("scalar", name, "conj", {}, conj);
+		Nan::SetPrototypeMethod(ctor, "conj", scalar_general_callback::callback);
 		//
 		//// returns true iff v1 == v2 == v3 == 0
 		//bool isReal() const;
 		overload->addOverload("scalar", name, "isReal", {}, isReal);
+		Nan::SetPrototypeMethod(ctor, "isReal", scalar_general_callback::callback);
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 	}

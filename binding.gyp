@@ -76,6 +76,22 @@
 		
 		, "src/opencv/imgproc.cc"
 		, "src/opencv/imgproc.h"
+
+		, "src/opencv/imgproc/CLAHE.cc"
+		, "src/opencv/imgproc/CLAHE.h"
+		, "src/opencv/imgproc/GeneralizedHough.cc"
+		, "src/opencv/imgproc/GeneralizedHough.h"
+		, "src/opencv/imgproc/GeneralizedHoughBallard.cc"
+		, "src/opencv/imgproc/GeneralizedHoughBallard.h"
+		, "src/opencv/imgproc/GeneralizedHoughGuil.cc"
+		, "src/opencv/imgproc/GeneralizedHoughGuil.h"
+		, "src/opencv/imgproc/LineIterator.cc"
+		, "src/opencv/imgproc/LineIterator.h"
+		, "src/opencv/imgproc/LineSegmentDetector.cc"
+		, "src/opencv/imgproc/LineSegmentDetector.h"
+		, "src/opencv/imgproc/Subdiv2D.cc"
+		, "src/opencv/imgproc/Subdiv2D.h"
+		
 		
 		, "src/opencv/shape.cc"
 		, "src/opencv/shape.h"
@@ -214,11 +230,17 @@
 		, "src/opencv/Rect.cc"
 		, "src/opencv/Rect.h"
 		
+		, "src/opencv/RotatedRect.cc"
+		, "src/opencv/RotatedRect.h"
+		
 		, "src/opencv/Range.cc"
 		, "src/opencv/Range.h"
 		
 		, "src/opencv/types/TermCriteria.h"
 		, "src/opencv/types/TermCriteria.cc"
+		
+		, "src/opencv/types/Moments.h"
+		, "src/opencv/types/Moments.cc"
 		
 		, "src/opencv/types/KeyPoint.h"
 		, "src/opencv/types/KeyPoint.cc"
@@ -316,6 +338,8 @@
 		,'tsbinding/opencv/HighGUI.ts'
 		,'tsbinding/opencv/imgcodecs.ts'
 		,'tsbinding/opencv/imgproc.ts'
+		
+		
 		,'tsbinding/opencv/mat.ts'
 		,'tsbinding/opencv/Matx.ts'
 		,'tsbinding/opencv/persistence.ts'

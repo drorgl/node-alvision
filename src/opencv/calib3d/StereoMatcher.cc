@@ -51,6 +51,8 @@ void StereoMatcher::Init(Handle<Object> target, std::shared_ptr<overload_resolut
 	overload->addOverload("stereomatcher", "", "setSpeckleRange", { make_param<int>("speckleRange","int") }, StereoMatcher::setSpeckleRange);
 	overload->addOverload("stereomatcher", "", "getDisp12MaxDiff", {}, StereoMatcher::getDisp12MaxDiff);
 	overload->addOverload("stereomatcher", "", "setDisp12MaxDiff", { make_param<int>("disp12MaxDiff","int") }, StereoMatcher::setDisp12MaxDiff);
+
+	target->Set(Nan::New("StereoMatcher").ToLocalChecked(), ctor->GetFunction());
 }
 
 v8::Local<v8::Function> StereoMatcher::get_constructor() {

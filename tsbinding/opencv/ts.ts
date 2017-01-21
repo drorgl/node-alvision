@@ -67,6 +67,29 @@ let okColor = chalk.green.bold;
 //#include "opencv2/core/utility.hpp"
 
 export namespace cvtest {
+    interface ITestCase {
+        test_case_name: string;
+        test_name: string;
+        class: typeof CUDA_TEST;
+    }
+
+    var _test_cases: { [test_case_name: string]: ITestCase } = {};
+
+    export function CUDA_TEST_P(test_case_name: string, test_name: string) {
+        return function (
+            target: typeof CUDA_TEST // The class the decorator is declared on
+        ) {
+            _test_cases[test_case_name] = {
+                test_case_name: test_case_name,
+                test_name: test_name,
+                class: target
+            };
+
+            console.log("registering " + test_case_name + " - " + test_name);
+            //) called on: ", target);
+        }
+    }
+
 
     export abstract class BaseTest {
         //public:
@@ -210,6 +233,7 @@ export namespace cvtest {
         //
         //    // updates progress bar
         protected update_progress(progress: _st.int, test_case_idx: _st.int, count: _st.int, dt: _st.double): _st.int {
+            //console.log(this.get_name();)
             var width: _st.int = 60 - this.get_name().length;
             if (count > 0) {
                 var t = Math.round((test_case_idx.valueOf() * width.valueOf()) / count.valueOf());
@@ -278,8 +302,14 @@ export namespace cvtest {
 
     //export namespace cuda {
     export class CUDA_TEST extends TestWithParam {
-        constructor(public test_case_name: string, public test_name: string) {
+        public test_case_name: string;
+        public test_name: string;
+
+        constructor(test_case_name_: string, test_name_: string) {
             super();
+            this.test_case_name = test_case_name_;
+            this.test_name = test_name_;
+            this.name = this.test_name;
         }
 
         TestBody(): void {
@@ -302,18 +332,28 @@ export namespace cvtest {
     }
 
     export function INSTANTIATE_TEST_CASE_P(casename: string, testname: string, cbTestClassFactory: (test_case_name: string, test_name: string) => TestWithParam, values: Combine) {
-        var instance = cbTestClassFactory(testname, testname);
+        //var instance = cbTestClassFactory(testname, testname);
+        if (!_test_cases[testname]) {
+            throw new Error("Unable to instantiate " + testname + ", wasn't defined");
+        }
 
-        var nextValue = values.nextSet()
+        let nextValue = values.nextSet()
 
-        var test_number = 0;
+        let test_number = 0;
 
         while (nextValue != null) {
-            for (var i = 0; i < nextValue.length; i++) {
+            let testcase = _test_cases[testname];
+            console.log("creating instance ", testcase.test_case_name, testcase.test_name);
+            let instance = new testcase.class(testcase.test_case_name, testcase.test_name);
+
+            for (let i = 0; i < nextValue.length; i++) {
                 instance.SET_PARAM(i, nextValue[i]);
             }
 
-            instance.run(test_number);
+            console.log("executing case ", test_number, nextValue);
+
+            //instance.run(test_number);
+            instance.TestBody();
             test_number++;
 
             nextValue = values.nextSet();
@@ -429,7 +469,7 @@ export namespace cvtest {
         constructor(public values: Array<Array<any>>) {
             this.NumberOfParameters = values.length;
             this.counters = new Array<number>(this.NumberOfParameters);
-            this.counters.forEach((v, i, a) => a[i] = 0);
+            this.counters.fill(0);
         }
 
         public NumberOfParameters: number;
@@ -444,7 +484,12 @@ export namespace cvtest {
             //retrieve next set
             var retval = new Array<any>(this.NumberOfParameters);
             for (var i = 0; i < this.NumberOfParameters; i++) {
-                retval[i] = this.values[i][this.counters[i]];
+                if (this.values[i] &&  this.values[i].length > this.counters[i]) {
+                    retval[i] = this.values[i][this.counters[i]];
+                } else {
+                    retval[i] = null;
+                }
+                
             }
 
             //advance counters
@@ -586,11 +631,11 @@ export namespace cvtest {
         //TODO:!!
     }
 
-    export function CUDA_TEST_P(test_case_name: string, test_name: string, cb: () => void) {
-        cb();
-        //tape...
-        //TODO:!!
-    }
+    //export function CUDA_TEST_P(test_case_name: string, test_name: string, cb: () => void) {
+    //    cb();
+    //    //tape...
+    //    //TODO:!!
+    //}
 
 
     export function SCOPED_TRACE(message: string): void {

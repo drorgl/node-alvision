@@ -115,7 +115,7 @@ init(Handle<Object> target) {
 
 
 
-	SizeInit::Init(target, overload);
+	
 	
 
 	ml::Init(target, overload);
@@ -146,14 +146,10 @@ init(Handle<Object> target) {
 	SparseMat::Init(target, overload);
 
 	PointInit::Init(target, overload);
-
 	Point3Init::Init(target, overload);
+	SizeInit::Init(target, overload);
 	
-	Rect<cv::Rect2i>::Init(target, "Rect2i", overload);
-	Rect<cv::Rect2f>::Init(target, "Rect2f", overload);
-	Rect<cv::Rect2d>::Init(target, "Rect2d", overload);
-	
-	Rect<cv::Rect>::Init(target, "Rect", overload);
+	RectInit::Init(target, overload);
 
 
 	Range::Init(target, "Range", overload);

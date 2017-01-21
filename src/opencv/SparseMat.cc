@@ -3,10 +3,11 @@
 
 Nan::Persistent<FunctionTemplate> SparseMat::constructor;
 
+std::string SparseMat::name;
 
 void
 SparseMat::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
-	
+	name = "SparseMat";
 
 	//Class
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(SparseMat::New);
