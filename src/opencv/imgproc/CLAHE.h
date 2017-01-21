@@ -6,7 +6,13 @@
 
 class CLAHE : public Algorithm {
 public:
+	static std::string name;
+
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
+
+	static Nan::Persistent<FunctionTemplate> constructor;
+
+	virtual v8::Local<v8::Function> get_constructor();
 
 	static POLY_METHOD(apply);
 	static POLY_METHOD(setClipLimit);

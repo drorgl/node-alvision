@@ -116,18 +116,12 @@
 		, "src/opencv/Mat_.cc"
 		, "src/opencv/Mat_.h"
 		
-		, "src/opencv/Complex.h"
-		
-		, "src/opencv/Point.h"
-		, "src/opencv/Point.cc"
-		, "src/opencv/Point3.h"
-		, "src/opencv/Point3.cc"
+
+
 		
 		, "src/opencv/imgcodecs.cc"
 		, "src/opencv/imgcodecs.h"
 		
-		, "src/opencv/Scalar.cc"
-		, "src/opencv/Scalar.h"
 		
 		, "src/opencv/base.cc"
 		, "src/opencv/base.h"
@@ -146,8 +140,6 @@
 		, "src/opencv/core/Algorithm.h"
 		, "src/opencv/core/MinProblemSolver.cc"
 		, "src/opencv/core/MinProblemSolver.h"
-		, "src/opencv/core/DMatch.cc"
-		, "src/opencv/core/DMatch.h"
 		, "src/opencv/core/PCA.h"
 		, "src/opencv/core/PCA.cc"
 		, "src/opencv/core/LDA.h"
@@ -155,7 +147,14 @@
 		, "src/opencv/core/SVD.h"
 		, "src/opencv/core/SVD.cc"
 		
-		
+		, "src/opencv/core/opengl.h"
+		, "src/opencv/core/opengl.cc"
+		, "src/opencv/core/opengl/Texture2D.h"
+		, "src/opencv/core/opengl/Texture2D.cc"
+		, "src/opencv/core/opengl/Buffer.h"
+		, "src/opencv/core/opengl/Buffer.cc"
+		, "src/opencv/core/opengl/Arrays.h"
+		, "src/opencv/core/opengl/Arrays.cc"
 		
 		, "src/opencv/Affine3.cc"
 		, "src/opencv/Affine3.h"
@@ -182,6 +181,7 @@
 		
 		
 		
+		
 		, "src/opencv/MatExpr.cc"
 		, "src/opencv/MatExpr.h"
 		
@@ -203,6 +203,9 @@
 		, "src/opencv/Constants.h"
 		, "src/opencv/HighGUI.cc"
 		, "src/opencv/HighGUI.h"
+		, "src/opencv/HighGUI/QtFont.cc"
+		, "src/opencv/HighGUI/QtFont.h"
+
 		
 		, "src/opencv/superres.cc"
 		, "src/opencv/superres.h"
@@ -223,27 +226,34 @@
 		
 		, "src/opencv/flann.cc"
 		, "src/opencv/flann.h"
+
+		, "src/opencv/types.cc"
+		, "src/opencv/types.h"
+
 		
-		, "src/opencv/Size.cc"
-		, "src/opencv/Size.h"
-		
-		, "src/opencv/Rect.cc"
-		, "src/opencv/Rect.h"
-		
-		, "src/opencv/RotatedRect.cc"
-		, "src/opencv/RotatedRect.h"
-		
-		, "src/opencv/Range.cc"
-		, "src/opencv/Range.h"
-		
+		, "src/opencv/types/Size.cc"
+		, "src/opencv/types/Size.h"
+		, "src/opencv/types/DMatch.cc"
+		, "src/opencv/types/DMatch.h"
+		, "src/opencv/types/Rect.cc"
+		, "src/opencv/types/Rect.h"
+		, "src/opencv/types/RotatedRect.cc"
+		, "src/opencv/types/RotatedRect.h"
+		, "src/opencv/types/Range.cc"
+		, "src/opencv/types/Range.h"
 		, "src/opencv/types/TermCriteria.h"
 		, "src/opencv/types/TermCriteria.cc"
-		
 		, "src/opencv/types/Moments.h"
 		, "src/opencv/types/Moments.cc"
-		
 		, "src/opencv/types/KeyPoint.h"
 		, "src/opencv/types/KeyPoint.cc"
+		, "src/opencv/types/Complex.h"		
+		, "src/opencv/types/Point.h"
+		, "src/opencv/types/Point.cc"
+		, "src/opencv/types/Point3.h"
+		, "src/opencv/types/Point3.cc"
+		, "src/opencv/types/Scalar.cc"
+		, "src/opencv/types/Scalar.h"
 		
 		, "src/opencv/Vec.cc"
 		, "src/opencv/Vec.h"

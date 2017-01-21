@@ -1,8 +1,8 @@
 #ifndef _ALVISION_POINT3_H_
 #define _ALVISION_POINT3_H_
 //#include "OpenCV.h"
-#include "../alvision.h"
-#include "Vec.h"
+#include "../../alvision.h"
+#include "../Vec.h"
 
 namespace point3_general_callback {
 	extern std::shared_ptr<overload_resolution> overload;

@@ -1,7 +1,7 @@
 #ifndef _ALVISION_RECT_H_
 #define _ALVISION_RECT_H_
 //#include "OpenCV.h"
-#include "../alvision.h"
+#include "../../alvision.h"
 
 template <typename T>
 class Rect_ : public or::ObjectWrap {

@@ -1,7 +1,6 @@
 #include "core.h"
 #include "Matrix.h"
 #include "UMatrix.h"
-#include "Scalar.h"
 #include "SparseMat.h"
 #include "types/TermCriteria.h"
 
@@ -10,6 +9,19 @@
 #include "core/SVD.h"
 #include "core/RNG.h"
 #include "core/RNG_MT19937.h"
+
+#include "core/opengl.h"
+
+#include "core/Algorithm.h"
+
+#include "core/RNG.h"
+#include "core/RNG_MT19937.h"
+
+#include "core/ConjGradSolver.h"
+#include "core/DownhillSolver.h"
+#include "core/MinProblemSolver.h"
+
+#include "types/Scalar.h"
 
 namespace core_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -52,6 +64,7 @@ core::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload)
 	RNG::Init(target, overload);
 	RNG_MT19937::Init(target, overload);
 
+	opengl::Init(target, overload);
     //export interface IException //: public std::exception
     //{
     //  

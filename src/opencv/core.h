@@ -3,16 +3,7 @@
 //#include "OpenCV.h"
 #include "../alvision.h"
 
-#include "core/Algorithm.h"
 
-#include "core/RNG.h"
-#include "core/RNG_MT19937.h"
-
-#include "core/ConjGradSolver.h"
-#include "core/DownhillSolver.h"
-#include "core/MinProblemSolver.h"
-
-#include "core/DMatch.h"
 
 
 class core : public or ::ObjectWrap{

@@ -1,7 +1,7 @@
 #include "fisheye.h"
 #include "../IOArray.h"
 #include "../Affine3.h"
-#include "../Size.h"
+#include "../types/Size.h"
 #include "../types/TermCriteria.h"
 
 namespace fisheye_general_callback {

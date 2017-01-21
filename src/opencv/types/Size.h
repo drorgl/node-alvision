@@ -1,7 +1,7 @@
 #ifndef _ALVISION_SIZE_H_
 #define _ALVISION_SIZE_H_
 
-#include "../alvision.h"
+#include "../../alvision.h"
 
 #include "Point.h"
 

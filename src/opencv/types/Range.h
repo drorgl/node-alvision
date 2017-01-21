@@ -1,7 +1,7 @@
 #ifndef _ALVISION_RANGE_H_
 #define _ALVISION_RANGE_H_
 //#include "OpenCV.h"
-#include "../alvision.h"
+#include "../../alvision.h"
 
 class Range : public or::ObjectWrap {
 public:

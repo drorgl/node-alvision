@@ -1,7 +1,7 @@
 #ifndef _ALVISION_POINT_H_
 #define _ALVISION_POINT_H_
 //#include "OpenCV.h"
-#include "../alvision.h"
+#include "../../alvision.h"
 
 template <typename T>
 class Point_ : public or::ObjectWrap {

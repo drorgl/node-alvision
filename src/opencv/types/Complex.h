@@ -1,7 +1,7 @@
 #ifndef _ALVISION_COMPLEX_H_
 #define _ALVISION_COMPLEX_H_
 
-#include "../alvision.h"
+#include "../../alvision.h"
 
 template <typename T>
 class Complex_ : public or::ObjectWrap {

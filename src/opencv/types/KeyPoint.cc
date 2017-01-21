@@ -1,6 +1,6 @@
 #include "KeyPoint.h"
-#include "../Point.h"
-#include "../Size.h"
+#include "Point.h"
+#include "Size.h"
 
 namespace keypoint_general_callback {
 	std::shared_ptr<overload_resolution> overload;

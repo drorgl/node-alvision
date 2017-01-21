@@ -12,6 +12,10 @@ namespace clahe_general_callback {
 	}
 }
 
+Nan::Persistent<FunctionTemplate> CLAHE::constructor;
+
+std::string CLAHE::name;
+
 void
 CLAHE::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	clahe_general_callback::overload = overload;
@@ -22,7 +26,7 @@ CLAHE::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload
 	ctor->SetClassName(Nan::New("CLAHE").ToLocalChecked());
 	ctor->Inherit(Nan::New(Algorithm::constructor));
 
-	overload->register_type<CLAHE>(ctor, "generalizedhough", "CLAHE");
+	overload->register_type<CLAHE>(ctor, "clahe", "CLAHE");
 
 	//export interface CLAHE extends Algorithm
 	//{
@@ -48,6 +52,11 @@ CLAHE::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload
 
 	target->Set(Nan::New("CLAHE").ToLocalChecked(), ctor->GetFunction());
 
+}
+
+v8::Local<v8::Function> CLAHE::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
+	return Nan::New(constructor)->GetFunction();
 }
 
 

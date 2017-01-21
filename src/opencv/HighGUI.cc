@@ -1,6 +1,10 @@
 #include "HighGUI.h"
+
+#include "types/Scalar.h"
 #include "Matrix.h"
-#include "Point.h"
+#include "types/Point.h"
+#include "HighGUI/QtFont.h"
+#include "core/opengl/Texture2D.h"
 
 namespace highgui_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -16,6 +20,8 @@ void
 highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	highgui_general_callback::overload = overload;
 
+	QtFont::Init(target, overload);
+
 	//enum WindowFlags
 	auto WindowFlags = CreateNamedObject(target, "WindowFlags");
 	SetObjectProperty(WindowFlags, "WINDOW_NORMAL", (0x00000000));
@@ -24,14 +30,16 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(WindowFlags, "WINDOW_FULLSCREEN", (1));
 	SetObjectProperty(WindowFlags, "WINDOW_FREERATIO", (0x00000100));
 	SetObjectProperty(WindowFlags, "WINDOW_KEEPRATIO", (0x00000000));
+	overload->add_type_alias("WindowFlags", "int");
 
 
 	//enum WindowPropertyFlags
-	auto WindowPropertyFlags = CreateNamedObject(target, "WindowPropertyFlags ");
+	auto WindowPropertyFlags = CreateNamedObject(target, "WindowPropertyFlags");
 	SetObjectProperty(WindowPropertyFlags, "WND_PROP_FULLSCREEN", (0));
 	SetObjectProperty(WindowPropertyFlags, "WND_PROP_AUTOSIZE", (1));
 	SetObjectProperty(WindowPropertyFlags, "WND_PROP_ASPECT_RATIO", (2));
 	SetObjectProperty(WindowPropertyFlags, "WND_PROP_OPENGL", (3));
+	overload->add_type_alias("WindowPropertyFlags", "int");
 
 
 	//enum MouseEventTypes {
@@ -48,17 +56,19 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(MouseEventTypes, "EVENT_MBUTTONDBLCLK", (9));
 	SetObjectProperty(MouseEventTypes, "EVENT_MOUSEWHEEL", (10));
 	SetObjectProperty(MouseEventTypes, "EVENT_MOUSEHWHEEL", (11));
+	overload->add_type_alias("MouseEventTypes", "int");
 
 
 	//! Mouse Event Flags see cv::MouseCallback
 	//enum MouseEventFlags {
-	auto MouseEventFlags = CreateNamedObject(target, "MouseEventFlags ");
+	auto MouseEventFlags = CreateNamedObject(target, "MouseEventFlags");
 	SetObjectProperty(MouseEventFlags, "EVENT_FLAG_LBUTTON", (1));
 	SetObjectProperty(MouseEventFlags, "EVENT_FLAG_RBUTTON", (2));
 	SetObjectProperty(MouseEventFlags, "EVENT_FLAG_MBUTTON", (4));
 	SetObjectProperty(MouseEventFlags, "EVENT_FLAG_CTRLKEY", (8));
 	SetObjectProperty(MouseEventFlags, "EVENT_FLAG_SHIFTKEY", (16));
 	SetObjectProperty(MouseEventFlags, "EVENT_FLAG_ALTKEY", (32));
+	overload->add_type_alias("MouseEventFlags", "int");
 
 	//! Qt font weight
 	//enum QtFontWeights {
@@ -68,6 +78,7 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(QtFontWeights, "QT_FONT_DEMIBOLD", (63));
 	SetObjectProperty(QtFontWeights, "QT_FONT_BOLD", (75));
 	SetObjectProperty(QtFontWeights, "QT_FONT_BLACK", (87));
+	overload->add_type_alias("QtFontWeights", "int");
 
 	//! Qt font style
 	//enum QtFontStyles {
@@ -75,19 +86,26 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(QtFontStyles, "QT_STYLE_NORMAL", (0));
 	SetObjectProperty(QtFontStyles, "QT_STYLE_ITALIC", (1));
 	SetObjectProperty(QtFontStyles, "QT_STYLE_OBLIQUE", (2));
+	overload->add_type_alias("QtFontStyles", "int");
 
 	//! Qt "button" type
 	//enum QtButtonTypes {
-	auto QtButtonTypes = CreateNamedObject(target, "QtButtonTypes ");
+	auto QtButtonTypes = CreateNamedObject(target, "QtButtonTypes");
 	SetObjectProperty(QtButtonTypes, "QT_PUSH_BUTTON", 0);
 	SetObjectProperty(QtButtonTypes, "QT_CHECKBOX", 1);
 	SetObjectProperty(QtButtonTypes, "QT_RADIOBOX", 2);
+	overload->add_type_alias("QtButtonTypes", "int");
 
 
-	overload->addStaticOverload("highgui", "", "namedWindow", { make_param<std::string>("winname","String"),make_param<int>("flags","int",cv::WINDOW_AUTOSIZE) }, highgui::namedWindow);
+	overload->addStaticOverload("highgui", "", "namedWindow", { 
+		make_param<std::string>("winname","String"),
+		make_param<int>("flags","int",cv::WINDOW_AUTOSIZE) 
+	}, highgui::namedWindow);
 	Nan::SetMethod(target, "namedWindow", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "destroyWindow", { make_param<std::string>("winname","String") }, highgui::destroyWindow);
+	overload->addStaticOverload("highgui", "", "destroyWindow", { 
+		make_param<std::string>("winname","String")
+	}, highgui::destroyWindow);
 	Nan::SetMethod(target, "destroyWindow", highgui_general_callback::callback);
 
 
@@ -99,64 +117,124 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	Nan::SetMethod(target, "startWindowThread", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "waitKey", {make_param<>("delay","Number",0)}, highgui::waitKey);
+	overload->addStaticOverload("highgui", "", "waitKey", {
+		make_param<int>("delay","int",0)
+	}, highgui::waitKey);
 	Nan::SetMethod(target, "waitKey", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "resizeWindow", { make_param<std::string>("winname","String"), make_param<int>("width","int"), make_param<int>("height","int") }, highgui::resizeWindow);
+	overload->addStaticOverload("highgui", "", "resizeWindow", { 
+		make_param<std::string>("winname","String"), 
+		make_param<int>("width","int"), 
+		make_param<int>("height","int")
+	}, highgui::resizeWindow);
 	Nan::SetMethod(target, "resizeWindow", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "moveWindow", { make_param<std::string>("winname","String"), make_param<int>("x","int"), make_param<int>("y","int") }, highgui::moveWindow);
+	overload->addStaticOverload("highgui", "", "moveWindow", { 
+		make_param<std::string>("winname","String"),
+		make_param<int>("x","int"), 
+		make_param<int>("y","int") 
+	}, highgui::moveWindow);
 	Nan::SetMethod(target, "moveWindow", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setWindowProperty", { make_param<std::string>("winname","String"), make_param<int>("prop_id","int"), make_param<double>("prop_value","double") }, highgui::setWindowProperty);
+	overload->addStaticOverload("highgui", "", "setWindowProperty", {
+		make_param<std::string>("winname","String"),
+		make_param<int>("prop_id","int"), 
+		make_param<double>("prop_value","double")
+	}, highgui::setWindowProperty);
 	Nan::SetMethod(target, "setWindowProperty", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "setWindowTitle", { make_param<std::string>("winname","String"), make_param<std::string>("title","String")}, highgui::setWindowTitle);
+	overload->addStaticOverload("highgui", "", "setWindowTitle", { 
+		make_param<std::string>("winname","String"),
+		make_param<std::string>("title","String")
+	}, highgui::setWindowTitle);
 	Nan::SetMethod(target, "setWindowTitle", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "getWindowProperty", { make_param<std::string>("winname","String"), make_param<int>("prop_id","int") }, highgui::getWindowProperty);
+	overload->addStaticOverload("highgui", "", "getWindowProperty", { 
+		make_param<std::string>("winname","String"), 
+		make_param<int>("prop_id","int") 
+	}, highgui::getWindowProperty);
 	Nan::SetMethod(target, "getWindowProperty", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setMouseCallback", { make_param<std::string>("winname","String"), make_param("onMouse","Function"),make_param("userdata","Object",Nan::Null()) }, highgui::setMouseCallback);
+	overload->addStaticOverload("highgui", "", "setMouseCallback", { 
+		make_param<std::string>("winname","String"), 
+		make_param<std::shared_ptr<or::Callback>>("onMouse","Function"),
+		make_param("userdata","Object",Nan::Null())
+	}, highgui::setMouseCallback);
 	Nan::SetMethod(target, "setMouseCallback", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "getMouseWheelDelta", { make_param<int>("flags","int") }, highgui::getMouseWheelDelta);
+	overload->addStaticOverload("highgui", "", "getMouseWheelDelta", { 
+		make_param<int>("flags","int") 
+	}, highgui::getMouseWheelDelta);
 	Nan::SetMethod(target, "getMouseWheelDelta", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "createTrackbar", { make_param<std::string>("trackbarname","String"),make_param<std::string>("winname","String"),
-		make_param("count","Number"),make_param("onChange","Function", Nan::Null()),
-		make_param("value","Number",0),make_param("userdata","Object",Nan::Null()) }, highgui::createTrackbar);
+	overload->addStaticOverload("highgui", "", "createTrackbar", { 
+		make_param<std::string>("trackbarname","String"),
+		make_param<std::string>("winname","String"),
+		make_param<int>("count","int"),
+		make_param<std::shared_ptr<or::Callback>>("onChange","Function", nullptr),
+		make_param<int>("value","int",0),
+		make_param("userdata","Object",Nan::Null()) 
+	}, highgui::createTrackbar);
 	Nan::SetMethod(target, "createTrackbar", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "getTrackbarPos", { make_param<std::string>("trackbarname","String"), make_param<std::string>("winname","String") }, highgui::getTrackbarPos);
+	overload->addStaticOverload("highgui", "", "getTrackbarPos", { 
+		make_param<std::string>("trackbarname","String"),
+		make_param<std::string>("winname","String")
+	}, highgui::getTrackbarPos);
 	Nan::SetMethod(target, "getTrackbarPos", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setTrackbarPos", { make_param<std::string>("trackbarname","String"), make_param<std::string>("winname","String"), make_param<int>("pos","int") }, highgui::setTrackbarPos);
+	overload->addStaticOverload("highgui", "", "setTrackbarPos", { 
+		make_param<std::string>("trackbarname","String"), 
+		make_param<std::string>("winname","String"), 
+		make_param<int>("pos","int")
+	}, highgui::setTrackbarPos);
 	Nan::SetMethod(target, "setTrackbarPos", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setTrackbarMax", { make_param<std::string>("trackbarname","String"), make_param<std::string>("winname","String"), make_param<int>("maxval","int") }, highgui::setTrackbarMax);
+	overload->addStaticOverload("highgui", "", "setTrackbarMax", { 
+		make_param<std::string>("trackbarname","String"), 
+		make_param<std::string>("winname","String"), 
+		make_param<int>("maxval","int")
+	}, highgui::setTrackbarMax);
 	Nan::SetMethod(target, "setTrackbarMax", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setTrackbarMin", { make_param<std::string>("trackbarname","String"), make_param<std::string>("winname","String"), make_param<int>("minval","int") }, highgui::setTrackbarMin);
+	overload->addStaticOverload("highgui", "", "setTrackbarMin", { 
+		make_param<std::string>("trackbarname","String"),
+		make_param<std::string>("winname","String"), 
+		make_param<int>("minval","int") 
+	}, highgui::setTrackbarMin);
 	Nan::SetMethod(target, "setTrackbarMin", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "imshow", { make_param<std::string>("winname","String"), make_param("tex","Texture2D") },  highgui::imshowTex);
-	overload->addStaticOverload("highgui", "", "imshow", { make_param<std::string>("winname","String"), make_param("tex","InputArray") }, highgui::imshowMat);
+	overload->addStaticOverload("highgui", "", "imshow", { 
+		make_param<std::string>("winname","String"),
+		make_param<Texture2D*>("tex","Texture2D") 
+	},  highgui::imshowTex);
+	overload->addStaticOverload("highgui", "", "imshow", {
+		make_param<std::string>("winname","String"),
+		make_param<IOArray*>("tex","IOArray") 
+	}, highgui::imshowMat);
 	Nan::SetMethod(target, "imshow", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "setOpenGlDrawCallback", { make_param<std::string>("winname","String"), make_param("onOpenGlDraw","Function"), make_param("userdata","Object",Nan::Null()) }, highgui::setOpenGlDrawCallback);
+	overload->addStaticOverload("highgui", "", "setOpenGlDrawCallback", {
+		make_param<std::string>("winname","String"), 
+		make_param<std::shared_ptr<or::Callback>>("onOpenGlDraw","Function"), 
+		make_param("userdata","Object",Nan::Null())
+	}, highgui::setOpenGlDrawCallback);
 	Nan::SetMethod(target, "setOpenGlDrawCallback", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setOpenGlContext", { make_param<std::string>("winname","String") }, highgui::setOpenGlContext);
+	overload->addStaticOverload("highgui", "", "setOpenGlContext", { 
+		make_param<std::string>("winname","String") 
+	}, highgui::setOpenGlContext);
 	Nan::SetMethod(target, "setOpenGlContext", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "updateWindow", { make_param<std::string>("winname","String") }, highgui::updateWindow);
+	overload->addStaticOverload("highgui", "", "updateWindow", { 
+		make_param<std::string>("winname","String")
+	}, highgui::updateWindow);
 	Nan::SetMethod(target, "updateWindow", highgui_general_callback::callback);
 
 	overload->addStaticOverload("highgui", "", "fontQt", { 
@@ -169,29 +247,52 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	}, highgui::fontQt);
 	Nan::SetMethod(target, "fontQt", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "addText", { make_param<Matrix*>("img","Mat"),make_param<std::string>("text","String"),make_param<Point*>("org",Point::name),make_param("font","QtFont") }, highgui::addText);
+	overload->addStaticOverload("highgui", "", "addText", {
+		make_param<Matrix*>("img","Mat"),
+		make_param<std::string>("text","String"),
+		make_param<Point*>("org",Point::name),
+		make_param<QtFont*>("font","QtFont") }, highgui::addText);
 	Nan::SetMethod(target, "addText", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "displayOverlay", { make_param<std::string>("winname","String"),make_param<std::string>("text","String"),make_param<>("delayms","Number",0)}, highgui::displayOverlay);
+	overload->addStaticOverload("highgui", "", "displayOverlay", { 
+		make_param<std::string>("winname","String"),
+		make_param<std::string>("text","String"),
+		make_param<int>("delayms","int",0)
+	}, highgui::displayOverlay);
 	Nan::SetMethod(target, "displayOverlay", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "displayStatusBar", { make_param<std::string>("winname","String"),make_param<std::string>("text","String"),make_param<>("delayms","Number",0) }, highgui::displayStatusBar);
+	overload->addStaticOverload("highgui", "", "displayStatusBar", { 
+		make_param<std::string>("winname","String"),
+		make_param<std::string>("text","String"),
+		make_param<int>("delayms","int",0) 
+	}, highgui::displayStatusBar);
 	Nan::SetMethod(target, "displayStatusBar", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "saveWindowParameters", { make_param<std::string>("windowName","String") }, highgui::saveWindowParameters);
+	overload->addStaticOverload("highgui", "", "saveWindowParameters", { 
+		make_param<std::string>("windowName","String") 
+	}, highgui::saveWindowParameters);
 	Nan::SetMethod(target, "saveWindowParameters", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "loadWindowParameters", { make_param<std::string>("windowName","String") }, highgui::loadWindowParameters);
+	overload->addStaticOverload("highgui", "", "loadWindowParameters", { 
+		make_param<std::string>("windowName","String") 
+	}, highgui::loadWindowParameters);
 	Nan::SetMethod(target, "loadWindowParameters", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "startLoop", { make_param("pt2Func","Function") }, highgui::startLoop);
+	overload->addStaticOverload("highgui", "", "startLoop", { 
+		make_param<std::shared_ptr<or::Callback>>("pt2Func","Function")
+	}, highgui::startLoop);
 	Nan::SetMethod(target, "startLoop", highgui_general_callback::callback);
 
 	overload->addStaticOverload("highgui", "", "stopLoop", {}, highgui::stopLoop);
 	Nan::SetMethod(target, "stopLoop", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "createButton", {make_param<std::string>("bar_name","String"),make_param("on_change","Function"),
-		make_param("userdata","Object",Nan::Null()),make_param<int>("type","int",cv::QT_PUSH_BUTTON),make_param<>("initial_button_state","Boolean",false) }, highgui::createButton);
+	overload->addStaticOverload("highgui", "", "createButton", {
+		make_param<std::string>("bar_name","String"),
+		make_param<std::shared_ptr<or::Callback>>("on_change","Function"),
+		make_param("userdata","Object",Nan::Null()),
+		make_param<int>("type","int",cv::QT_PUSH_BUTTON),
+		make_param<bool>("initial_button_state","Boolean",false)
+	}, highgui::createButton);
 	Nan::SetMethod(target, "createButton", highgui_general_callback::callback);
 
 };

@@ -1,6 +1,6 @@
 #include "GeneralizedHough.h"
 #include "../IOArray.h"
-#include "../Point.h"
+#include "../types/Point.h"
 
 namespace generalizedhough_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -12,6 +12,10 @@ namespace generalizedhough_general_callback {
 	}
 }
 
+Nan::Persistent<FunctionTemplate> GeneralizedHough::constructor;
+
+std::string GeneralizedHough::name;
+
 void
 GeneralizedHough::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	generalizedhough_general_callback::overload = overload;
@@ -19,7 +23,7 @@ GeneralizedHough::Init(Handle<Object> target, std::shared_ptr<overload_resolutio
 	constructor.Reset(ctor);
 	auto itpl = ctor->InstanceTemplate();
 	itpl->SetInternalFieldCount(1);
-	ctor->SetClassName(Nan::New("StereoMatcher").ToLocalChecked());
+	ctor->SetClassName(Nan::New("GeneralizedHough").ToLocalChecked());
 	ctor->Inherit(Nan::New(Algorithm::constructor));
 
 	overload->register_type<GeneralizedHough>(ctor, "generalizedhough", "GeneralizedHough");
@@ -104,6 +108,12 @@ GeneralizedHough::Init(Handle<Object> target, std::shared_ptr<overload_resolutio
 	//};
 
 	target->Set(Nan::New("GeneralizedHough").ToLocalChecked(), ctor->GetFunction());
+}
+
+
+v8::Local<v8::Function> GeneralizedHough::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
+	return Nan::New(constructor)->GetFunction();
 }
 
 POLY_METHOD(GeneralizedHough::setTemplate){throw std::exception("not implemented");}

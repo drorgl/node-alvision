@@ -10,6 +10,10 @@ namespace linesegmentdetector_general_callback {
 	}
 }
 
+Nan::Persistent<FunctionTemplate> LineSegmentDetector::constructor;
+
+std::string LineSegmentDetector::name;
+
 void
 LineSegmentDetector::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	linesegmentdetector_general_callback::overload = overload;
@@ -85,6 +89,11 @@ LineSegmentDetector::Init(Handle<Object> target, std::shared_ptr<overload_resolu
 
 	target->Set(Nan::New("LineSegmentDetector").ToLocalChecked(), ctor->GetFunction());
 
+}
+
+v8::Local<v8::Function> LineSegmentDetector::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
+	return Nan::New(constructor)->GetFunction();
 }
 
 

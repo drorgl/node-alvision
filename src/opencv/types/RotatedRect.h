@@ -1,7 +1,7 @@
 #ifndef _ALVISION_ROTATEDRECT_H_
 #define _ALVISION_ROTATEDRECT_H_
 //#include "OpenCV.h"
-#include "../alvision.h"
+#include "../../alvision.h"
 
 
 class RotatedRect : public or ::ObjectWrap{

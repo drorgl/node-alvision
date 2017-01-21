@@ -45,12 +45,14 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(MorphTypes, "MORPH_TOPHAT", 5);
 	SetObjectProperty(MorphTypes, "MORPH_BLACKHAT", 6);
 	SetObjectProperty(MorphTypes, "MORPH_HITMISS", 7);
+	overload->add_type_alias("MorphTypes", "int");
 
 
 	auto MorphShapes = CreateNamedObject(target, "MorphShapes");
 	SetObjectProperty(MorphShapes, "MORPH_RECT", 0);
 	SetObjectProperty(MorphShapes, "MORPH_CROSS", 1);
 	SetObjectProperty(MorphShapes, "MORPH_ELLIPSE", 2);
+	overload->add_type_alias("MorphShapes", "int");
 
 
 	auto InterpolationFlags = CreateNamedObject(target, "InterpolationFlags");
@@ -62,12 +64,14 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(InterpolationFlags, "INTER_MAX", 7);
 	SetObjectProperty(InterpolationFlags, "WARP_FILL_OUTLIERS", 8);
 	SetObjectProperty(InterpolationFlags, "WARP_INVERSE_MAP", 16);
+	overload->add_type_alias("InterpolationFlags", "int");
 
 	auto InterpolationMasks = CreateNamedObject(target, "InterpolationMasks");
 	SetObjectProperty(InterpolationMasks, "INTER_BITS", 5);
 	SetObjectProperty(InterpolationMasks, "INTER_BITS2", cv::INTER_BITS * 2);
 	SetObjectProperty(InterpolationMasks, "INTER_TAB_SIZE", 1 << cv::INTER_BITS);
 	SetObjectProperty(InterpolationMasks, "INTER_TAB_SIZE2", cv::INTER_TAB_SIZE * cv::INTER_TAB_SIZE);
+	overload->add_type_alias("InterpolationMasks", "int");
 
 
 	auto DistanceTypes = CreateNamedObject(target, "DistanceTypes");
@@ -79,12 +83,14 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(DistanceTypes, "DIST_FAIR", 5);
 	SetObjectProperty(DistanceTypes, "DIST_WELSCH", 6);
 	SetObjectProperty(DistanceTypes, "DIST_HUBER", 7);
+	overload->add_type_alias("DistanceTypes", "int");
 
 
 	auto DistanceTransformMasks = CreateNamedObject(target, "DistanceTransformMasks");
 	SetObjectProperty(DistanceTransformMasks, "DIST_MASK_3", 3);
 	SetObjectProperty(DistanceTransformMasks, "DIST_MASK_5", 5);
 	SetObjectProperty(DistanceTransformMasks, "DIST_MASK_PRECISE", 0);
+	overload->add_type_alias("DistanceTransformMasks", "int");
 
 
 	auto ThresholdTypes = CreateNamedObject(target, "ThresholdTypes");
@@ -96,35 +102,42 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(ThresholdTypes, "THRESH_MASK", 7);
 	SetObjectProperty(ThresholdTypes, "THRESH_OTSU", 8);
 	SetObjectProperty(ThresholdTypes, "THRESH_TRIANGLE", 16);
+	overload->add_type_alias("ThresholdTypes", "int");
 
 	auto AdaptiveThresholdTypes = CreateNamedObject(target, "AdaptiveThresholdTypes");
 	SetObjectProperty(AdaptiveThresholdTypes, "ADAPTIVE_THRESH_MEAN_C", 0);
 	SetObjectProperty(AdaptiveThresholdTypes, "ADAPTIVE_THRESH_GAUSSIAN_C", 1);
+	overload->add_type_alias("AdaptiveThresholdTypes", "int");
 
 
 	auto UndistortTypes = CreateNamedObject(target, "UndistortTypes");
 	SetObjectProperty(UndistortTypes, "PROJ_SPHERICAL_ORTHO", 0);
 	SetObjectProperty(UndistortTypes, "PROJ_SPHERICAL_EQRECT", 1);
+	overload->add_type_alias("UndistortTypes", "int");
 
 	auto GrabCutClasses = CreateNamedObject(target, "GrabCutClasses");
 	SetObjectProperty(GrabCutClasses, "GC_BGD", 0);
 	SetObjectProperty(GrabCutClasses, "GC_FGD", 1);
 	SetObjectProperty(GrabCutClasses, "GC_PR_BGD", 2);
 	SetObjectProperty(GrabCutClasses, "GC_PR_FGD", 3);
+	overload->add_type_alias("GrabCutClasses", "int");
 
 	auto GrabCutModes = CreateNamedObject(target, "GrabCutModes");
 	SetObjectProperty(GrabCutModes, "GC_INIT_WITH_RECT", 0);
 	SetObjectProperty(GrabCutModes, "GC_INIT_WITH_MASK", 1);
 	SetObjectProperty(GrabCutModes, "GC_EVAL", 2);
+	overload->add_type_alias("GrabCutModes", "int");
 
 
 	auto DistanceTransformLabelTypes = CreateNamedObject(target, "DistanceTransformLabelTypes");
 	SetObjectProperty(DistanceTransformLabelTypes, "DIST_LABEL_CCOMP", 0);
 	SetObjectProperty(DistanceTransformLabelTypes, "DIST_LABEL_PIXEL", 1);
+	overload->add_type_alias("DistanceTransformLabelTypes", "int");
 
 	auto FloodFillFlags = CreateNamedObject(target, "FloodFillFlags");
 	SetObjectProperty(FloodFillFlags, "FLOODFILL_FIXED_RANGE", 1 << 16);
 	SetObjectProperty(FloodFillFlags, "FLOODFILL_MASK_ONLY", 1 << 17);
+	overload->add_type_alias("FloodFillFlags", "int");
 
    
 	auto ConnectedComponentsTypes = CreateNamedObject(target, "ConnectedComponentsTypes");
@@ -134,6 +147,7 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(ConnectedComponentsTypes, "CC_STAT_HEIGHT", 3);
 	SetObjectProperty(ConnectedComponentsTypes, "CC_STAT_AREA", 4);
 	SetObjectProperty(ConnectedComponentsTypes, "CC_STAT_MAX", 5);
+	overload->add_type_alias("ConnectedComponentsTypes", "int");
 
 
 	auto RetrievalModes = CreateNamedObject(target, "RetrievalModes");
@@ -142,6 +156,7 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(RetrievalModes, "RETR_CCOMP", 2);
 	SetObjectProperty(RetrievalModes, "RETR_TREE", 3);
 	SetObjectProperty(RetrievalModes, "RETR_FLOODFILL", 4);
+	overload->add_type_alias("RetrievalModes", "int");
 
 
 	auto ContourApproximationModes = CreateNamedObject(target, "ContourApproximationModes");
@@ -149,18 +164,21 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(ContourApproximationModes, "CHAIN_APPROX_SIMPLE", 2);
 	SetObjectProperty(ContourApproximationModes, "CHAIN_APPROX_TC89_L1", 3);
 	SetObjectProperty(ContourApproximationModes, "CHAIN_APPROX_TC89_KCOS", 4);
+	overload->add_type_alias("ContourApproximationModes", "int");
 
 	auto HoughModes = CreateNamedObject(target, "HoughModes");
 	SetObjectProperty(HoughModes, "HOUGH_STANDARD", 0);
 	SetObjectProperty(HoughModes, "HOUGH_PROBABILISTIC", 1);
 	SetObjectProperty(HoughModes, "HOUGH_MULTI_SCALE", 2);
 	SetObjectProperty(HoughModes, "HOUGH_GRADIENT", 3);
+	overload->add_type_alias("HoughModes", "int");
 
 
 	auto LineSegmentDetectorModes = CreateNamedObject(target, "LineSegmentDetectorModes");
 	SetObjectProperty(LineSegmentDetectorModes, "LSD_REFINE_NONE", 0);
 	SetObjectProperty(LineSegmentDetectorModes, "LSD_REFINE_STD", 1);
 	SetObjectProperty(LineSegmentDetectorModes, "LSD_REFINE_ADV", 2);
+	overload->add_type_alias("LineSegmentDetectorModes", "int");
 
 
 	auto HistCompMethods = CreateNamedObject(target, "HistCompMethods");
@@ -171,6 +189,7 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	SetObjectProperty(HistCompMethods, "HISTCMP_HELLINGER", cv::HISTCMP_BHATTACHARYYA);
 	SetObjectProperty(HistCompMethods, "HISTCMP_CHISQR_ALT", 4);
 	SetObjectProperty(HistCompMethods, "HISTCMP_KL_DIV", 5);
+	overload->add_type_alias("HistCompMethods", "int");
 
 	auto ColorConversionCodes = CreateNamedObject(target, "ColorConversionCodes");
 	SetObjectProperty(ColorConversionCodes, "COLOR_BGR2BGRA", 0);
@@ -376,11 +395,13 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
     SetObjectProperty(ColorConversionCodes, "COLOR_BayerRG2RGB_EA", cv::COLOR_BayerBG2BGR_EA);
     SetObjectProperty(ColorConversionCodes, "COLOR_BayerGR2RGB_EA", cv::COLOR_BayerGB2BGR_EA);
     SetObjectProperty(ColorConversionCodes, "COLOR_COLORCVT_MAX", 139);
+	overload->add_type_alias("ColorConversionCodes", "int");
 
 	auto RectanglesIntersectTypes = CreateNamedObject(target, "RectanglesIntersectTypes");
 	SetObjectProperty(RectanglesIntersectTypes, "INTERSECT_NONE", 0);
 	SetObjectProperty(RectanglesIntersectTypes, "INTERSECT_PARTIAL", 1);
 	SetObjectProperty(RectanglesIntersectTypes, "INTERSECT_FULL", 2);
+	overload->add_type_alias("RectanglesIntersectTypes", "int");
 
 
 	GeneralizedHough::Init(target, overload);
@@ -498,7 +519,7 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<int>("dx","int"),
 		make_param<int>("dy","int"),
 		make_param<int>("ksize","int"),
-		make_param<bool>("normalize","boolean", false),
+		make_param<bool>("normalize","bool", false),
 		make_param<int>("ktype","int", CV_32F)
 	}, getDerivKernels);
 
@@ -716,7 +737,7 @@ overload->addOverload("imgproc", "", "boxFilter", {
 		make_param<int>("ddepth","int"),
 		make_param<Size*>("ksize",Size::name),
 		make_param<Point*>("anchor",Point::name, Point::create(-1, -1)),
-		make_param<bool>("normalize","boolean", true),
+		make_param<bool>("normalize","bool", true),
 		make_param<int>("borderType","BorderTypes",cv:: BORDER_DEFAULT)
 }, boxFilter);
 
@@ -759,7 +780,7 @@ overload->addOverload("imgproc", "", "sqrBoxFilter", {
 		make_param<int>("ddepth","int"),
 		make_param<Size*>("ksize",Size::name),
 		make_param<Point*>("anchor",Point::name , Point::create(-1,-1)),
-		make_param<bool>("normalize","boolean", true),
+		make_param<bool>("normalize","bool", true),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, sqrBoxFilter);
 
@@ -1152,7 +1173,7 @@ overload->addOverload("imgproc", "", "Canny", {
 		make_param<double>("threshold1","double"), 
 		make_param<double>("threshold2","double"),
 		make_param<int>("apertureSize","int", 3),
-		make_param<bool>("L2gradient","boolean", false)
+		make_param<bool>("L2gradient","bool", false)
 }, Canny);
 
 //interface ICanny {
@@ -1449,7 +1470,7 @@ overload->addOverload("imgproc", "", "goodFeaturesToTrack", {
 		make_param<double>("minDistance","double"),
 		make_param<IOArray*>("mask","IOArray",IOArray:: noArray()),
 		make_param<int>("blockSize","int", 3),
-		make_param<bool>("useHarrisDetector","boolean", false),
+		make_param<bool>("useHarrisDetector","bool", false),
 		make_param<double>("k","double", 0.04)
 }, goodFeaturesToTrack);
 
@@ -2138,7 +2159,7 @@ overload->addOverload("imgproc", "", "convertMaps", {
 	make_param<IOArray*>("dstmap1","IOArray"),
 	make_param<IOArray*>("dstmap2","IOArray"),
 	make_param<int>("dstmap1type","int"),
-	make_param<bool>("nninterpolation","boolean", false)
+	make_param<bool>("nninterpolation","bool", false)
 }, convertMaps);
 
 //interface IconvertMaps{
@@ -3159,7 +3180,7 @@ overload->addOverload("imgproc", "", "initWideAngleProjMap", {
 overload->addOverload("imgproc", "", "getDefaultNewCameraMatrix", {
 	make_param<IOArray*>("cameraMatrix","IOArray"),
 	make_param<Size*>("imgSize",Size::name, Size::create()),
-	make_param<bool>("centerPrincipalPoint","boolean",false)
+	make_param<bool>("centerPrincipalPoint","bool",false)
 }, getDefaultNewCameraMatrix);
 
 
@@ -3340,8 +3361,8 @@ overload->addOverload("imgproc", "", "calcHist", {
 	make_param<int>("dims","int"),
 	make_param<std::shared_ptr<std::vector<int>>>("histSize","Array<int>"),
 	make_param<std::shared_ptr<std::vector<float>>>("ranges","Array<float>"),
-	make_param<bool>("uniform","boolean", true),
-	make_param<bool>("accumulate","boolean", false)
+	make_param<bool>("uniform","bool", true),
+	make_param<bool>("accumulate","bool", false)
 }, calcHist_array);
 
 overload->addOverload("imgproc", "", "calcHist", {
@@ -3352,8 +3373,8 @@ overload->addOverload("imgproc", "", "calcHist", {
 	make_param<int>("dims","int"),
 	make_param<std::shared_ptr<std::vector<int>>>("histSize","Array<int>"),
 	make_param<std::shared_ptr<std::vector<float>>>("ranges","Array<float>"),
-	make_param<bool>("uniform","boolean", true),
-	make_param<bool>("accumulate","boolean", false)
+	make_param<bool>("uniform","bool", true),
+	make_param<bool>("accumulate","bool", false)
 }, calcHist_sparsemat);
 
 overload->addOverload("imgproc", "", "calcHist", {
@@ -3363,7 +3384,7 @@ overload->addOverload("imgproc", "", "calcHist", {
 	make_param<IOArray*>("hist","IOArray"),
 	make_param<std::shared_ptr<std::vector<int>>>("histSize","Array<int>"),
 	make_param<std::shared_ptr<std::vector<float>>>("ranges","Array<float>"),
-	make_param<bool>("accumulate","boolean", false)
+	make_param<bool>("accumulate","bool", false)
 }, calcHist_mat);
 
 //interface IcalcHist{
@@ -3458,7 +3479,7 @@ overload->addOverload("imgproc", "", "calcBackProject", {
 	make_param<IOArray*>("backProject","IOArray"),
 	make_param<std::shared_ptr<std::vector<float>>>("ranges","Array<float>"),
 	make_param<double>("scale","double", 1),
-	make_param<bool>("uniform","boolean", true)
+	make_param<bool>("uniform","bool", true)
 },calcBackProject );
 
 overload->addOverload("imgproc", "", "calcBackProject", {
@@ -3468,7 +3489,7 @@ overload->addOverload("imgproc", "", "calcBackProject", {
 	make_param<IOArray*>("backProject","IOArray"),
 	make_param<std::shared_ptr<std::vector<float>>>("ranges","Array<float>"),
 	make_param<double>("scale","double",1),
-	make_param<bool>("uniform","boolean", true)
+	make_param<bool>("uniform","bool", true)
 },calcBackProject_sparsemat );
 
 overload->addOverload("imgproc", "", "calcBackProject", {
@@ -4147,7 +4168,7 @@ overload->addOverload("imgproc", "", "demosaicing", {
 
 overload->addOverload("imgproc", "", "moments", {
 	make_param<IOArray*>("array","IOArray"),
-	make_param<bool>("binaryImage","boolean", false)
+	make_param<bool>("binaryImage","bool", false)
 }, moments);
 
 //interface Imoments {
@@ -4184,7 +4205,7 @@ overload->addOverload("imgproc", "", "HuMoments", {
 
 overload->addOverload("imgproc", "", "HuMoments", {
 	make_param<Moments*>("m",Moments::name), 
-	make_param<Matrix*>("hu","Matrix")
+	make_param<Matrix*>("hu","Mat")
 }, HuMoments);
 
 
@@ -4412,7 +4433,7 @@ overload->addOverload("imgproc", "", "approxPolyDP", {
 	make_param<IOArray*>("curve","IOArray"),
 	make_param<IOArray*>("approxCurve","IOArray"),
 	make_param<double>("epsilon","double"),
-	make_param<bool>("closed","boolean")
+	make_param<bool>("closed","bool")
 }, approxPolyDP);
 
 //interface IapproxPolyDP{
@@ -4437,7 +4458,7 @@ overload->addOverload("imgproc", "", "approxPolyDP", {
 
 overload->addOverload("imgproc", "", "arcLength", {
 	make_param<IOArray*>("curve","IOArray"),
-	make_param<bool>("closed","boolean")
+	make_param<bool>("closed","bool")
 }, arcLength);
 
 
@@ -4504,7 +4525,7 @@ overload->addOverload("imgproc", "", "boundingRect", {
 
 overload->addOverload("imgproc", "", "contourArea", {
 	make_param<IOArray*>("contour","IOArray"),
-	make_param<bool>("oriented","boolean", false)
+	make_param<bool>("oriented","bool", false)
 }, contourArea);
 
 //interface IcontourArea{
@@ -4679,8 +4700,8 @@ overload->addOverload("imgproc", "", "matchShapes", {
 overload->addOverload("imgproc", "", "convexHull", {
 	make_param<IOArray*>("points","IOArray"),
 	make_param<IOArray*>(  "hull","IOArray"),
-	make_param<bool>("clockwise","boolean", false),
-	make_param<bool>("returnPoints","boolean", true)
+	make_param<bool>("clockwise","bool", false),
+	make_param<bool>("returnPoints","bool", true)
 }, convexHull);
 
 //interface IconvexHull{
@@ -4752,7 +4773,7 @@ overload->addOverload("imgproc", "", "intersectConvexConvex", {
 	make_param<IOArray*>( "_p1","IOArray"),
 	make_param<IOArray*>( "_p2","IOArray"),
 	make_param<IOArray*>("_p12","IOArray"), 
-	make_param<bool>("handleNested","boolean", true)
+	make_param<bool>("handleNested","bool", true)
 }, intersectConvexConvex);
 
 //interface IintersectConvexConvex {
@@ -4867,7 +4888,7 @@ overload->addOverload("imgproc", "", "fitLine", {
 overload->addOverload("imgproc", "", "pointPolygonTest", {
 	make_param<IOArray*>("contour","IOArray"),
 	make_param<Point2f*>("pt",Point2f::name) , 
-	make_param<bool>("measureDist","boolean")
+	make_param<bool>("measureDist","bool")
 }, pointPolygonTest);
 
 //interface IpointPolygonTest{
@@ -4976,6 +4997,7 @@ SetObjectProperty(ColormapTypes, "COLORMAP_HSV", 9);
 SetObjectProperty(ColormapTypes, "COLORMAP_PINK", 10);
 SetObjectProperty(ColormapTypes, "COLORMAP_HOT", 11);
 SetObjectProperty(ColormapTypes, "COLORMAP_PARULA", 12);
+overload->add_type_alias("ColormapTypes", "int");
 
 
     /** @brief Applies a GNU Octave/MATLAB equivalent colormap on a given image.
@@ -5474,7 +5496,7 @@ overload->addOverload("imgproc", "", "fillPoly", {
 overload->addOverload("imgproc", "", "polylines", {
 	make_param<IOArray*>("img","IOArray"),
 	make_param<IOArray*>("pts","IOArray"),
-	make_param<bool>("isClosed","boolean"),
+	make_param<bool>("isClosed","bool"),
 	make_param<Scalar*>("color",Scalar::name),
 	make_param<int>("thickness","int", 1),
 	make_param<int>("lineType","LineTypes",cv:: LINE_8),
@@ -5485,7 +5507,7 @@ overload->addOverload("imgproc", "", "polylines", {
 	make_param<Matrix*>("img","Mat"),
 	make_param<std::shared_ptr<std::vector<Point*>>>("pts","Array<Point>"),
 	make_param<int>("ncontours","int"),
-	make_param<bool>("isClosed","boolean"),
+	make_param<bool>("isClosed","bool"),
 	make_param<Scalar*>("color",Scalar::name),
 	make_param<int>("thickness","int", 1),
 	make_param<int>("lineType","LineTypes",cv:: LINE_8),
@@ -5724,7 +5746,7 @@ overload->addOverload("imgproc", "", "putText", {
 	make_param<Scalar*>("color",Scalar::name),
 	make_param<int>("thickness","int", 1),
 	make_param<int>("lineType","LineTypes",cv::LINE_8),
-	make_param<bool>("bottomLeftOrigin","boolean", false)
+	make_param<bool>("bottomLeftOrigin","bool", false)
 }, putText);
 
 //    interface IputText {

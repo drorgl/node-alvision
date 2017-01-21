@@ -1,9 +1,9 @@
 #ifndef _ALVISION_HIGHGUI_H_
 #define _ALVISION_HIGHGUI_H_
 
-#include "Scalar.h"
 
 #include "../alvision.h"
+
 
 
 class highgui : public or::ObjectWrap {
@@ -80,20 +80,20 @@ public:
 	static POLY_METHOD(updateWindow);// : IupdateWindow = alvision_module.updateWindow;
 	
 
-	class QtFont
-	{
-		//const char* nameFont;  //!< Name of the font
-		//Scalar      color;     //!< Color of the font. Scalar(blue_component, green_component, red_component[, alpha_component])
-		//int         font_face; //!< See cv::QtFontStyles
-		//const int*  ascii;     //!< font data and metrics
-		//const int*  greek;
-		//const int*  cyrillic;
-		//float       hscale, vscale;
-		//float       shear;     //!< slope coefficient: 0 - normal, >0 - italic
-		//int         thickness; //!< See cv::QtFontWeights
-		//float       dx;        //!< horizontal interval between letters
-		//int         line_type; //!< PointSize
-	};
+//	class QtFont
+//	{
+//		//const char* nameFont;  //!< Name of the font
+//		//Scalar      color;     //!< Color of the font. Scalar(blue_component, green_component, red_component[, alpha_component])
+//		//int         font_face; //!< See cv::QtFontStyles
+//		//const int*  ascii;     //!< font data and metrics
+//		//const int*  greek;
+//		//const int*  cyrillic;
+//		//float       hscale, vscale;
+//		//float       shear;     //!< slope coefficient: 0 - normal, >0 - italic
+//		//int         thickness; //!< See cv::QtFontWeights
+//		//float       dx;        //!< horizontal interval between letters
+//		//int         line_type; //!< PointSize
+//	};
 
 	
 	static POLY_METHOD(fontQt);// : IfontQt = alvision_module.fontQt;

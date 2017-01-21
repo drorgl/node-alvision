@@ -1,8 +1,8 @@
 #ifndef _ALVISION_SCALAR_H_
 #define _ALVISION_SCALAR_H_
 
-#include "../alvision.h"
-#include "Vec.h"
+#include "../../alvision.h"
+#include "../Vec.h"
 
 namespace scalar_general_callback {
 	extern std::shared_ptr<overload_resolution> overload;

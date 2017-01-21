@@ -8,8 +8,8 @@
 #include <string>
 #include <value_converter.h>
 #include "../Vec.h"
-#include "../Point.h"
-#include "../Complex.h"
+#include "../types/Point.h"
+#include "../types/Complex.h"
 
 using namespace std::literals::string_literals;
 

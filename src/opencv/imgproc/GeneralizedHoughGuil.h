@@ -6,7 +6,13 @@
 
 class GeneralizedHoughGuil : public GeneralizedHough {
 public:
+	static std::string name;
+
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
+
+	static Nan::Persistent<FunctionTemplate> constructor;
+
+	virtual v8::Local<v8::Function> get_constructor();
 
 	static POLY_METHOD(setXi);
 	static POLY_METHOD(getXi);

@@ -16,8 +16,6 @@
 #include "opencv/flann.h"
 #include "opencv/cvtest.h"
 
-#include "opencv/Size.h"
-
 #include "opencv/Vec.h"
 
 #include "opencv/ml.h"
@@ -32,7 +30,6 @@
 #include "opencv/core.h"
 
 #include "opencv/Matx.h"
-#include "opencv/Scalar.h"
 
 #include "opencv/Mat_.h"
 
@@ -41,8 +38,6 @@
 #include "opencv/MatND.h"
 #include "opencv/SparseMat.h"
 
-#include "opencv/Point.h"
-#include "opencv/Point3.h"
 
 #include "opencv/imgcodecs.h"
 #include "opencv/imgproc.h"
@@ -57,9 +52,6 @@
 
 #include "opencv/IOArray.h"
 
-#include "opencv/Range.h"
-#include "opencv/Rect.h"
-
 #include "opencv/TrackedPtr.h"	
 #include "opencv/TrackedElement.h"	
 
@@ -67,8 +59,9 @@
 #include "opencv/features2d/Feature2D.h"
 #include "opencv/features2d/SimpleBlobDetector.h"
 
-#include "opencv/types/TermCriteria.h"
-#include "opencv/types/KeyPoint.h"
+#include "opencv/types.h"
+
+
 
 extern "C"{ 
 void
@@ -95,8 +88,7 @@ init(Handle<Object> target) {
 	base::Init(target, overload);
 
 	IOArray::Init(target, overload);
-	TermCriteria::Init(target, overload);
-	KeyPoint::Init(target, overload);
+	types::Init(target, overload);
 
 	Matrix::Init(target,overload);
 	UMatrix::Init(target, overload);
@@ -129,8 +121,7 @@ init(Handle<Object> target) {
 	VecInit::Init(target, overload);
 
 	//cv::Vec3d::mat_type
-
-	ScalarInit::Init(target, overload);
+	
 	Mat_Init::Init(target, overload);
 
 	core::Init(target, overload);
@@ -144,15 +135,6 @@ init(Handle<Object> target) {
 
 	MatND::Init(target, overload);
 	SparseMat::Init(target, overload);
-
-	PointInit::Init(target, overload);
-	Point3Init::Init(target, overload);
-	SizeInit::Init(target, overload);
-	
-	RectInit::Init(target, overload);
-
-
-	Range::Init(target, "Range", overload);
 
 
 	Feature2D::Init(target, overload);

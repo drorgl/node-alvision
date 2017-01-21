@@ -2,17 +2,17 @@
 #include "Constants.h"
 
 #include "IOArray.h"
-#include "Size.h"
-#include "Scalar.h"
+#include "types/Size.h"
+#include "types/Scalar.h"
 #include "MatExpr.h"
-#include "Range.h"
-#include "Rect.h"
+#include "types/Range.h"
+#include "types/Rect.h"
 #include "TrackedPtr.h"
 #include "TrackedElement.h"
 #include "Vec.h"
 #include "Matx.h"
-#include "Point.h"
-#include "Point3.h"
+#include "types/Point.h"
+#include "types/Point3.h"
 
 #include "array_accessors/Matrix_array_accessor.h"
 

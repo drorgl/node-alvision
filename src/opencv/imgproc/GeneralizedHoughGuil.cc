@@ -12,6 +12,10 @@ namespace generalizedhoughguil_general_callback {
 	}
 }
 
+Nan::Persistent<FunctionTemplate> GeneralizedHoughGuil::constructor;
+
+std::string GeneralizedHoughGuil::name;
+
 void
 GeneralizedHoughGuil::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	generalizedhoughguil_general_callback::overload = overload;
@@ -19,7 +23,7 @@ GeneralizedHoughGuil::Init(Handle<Object> target, std::shared_ptr<overload_resol
 	constructor.Reset(ctor);
 	auto itpl = ctor->InstanceTemplate();
 	itpl->SetInternalFieldCount(1);
-	ctor->SetClassName(Nan::New("StereoMatcher").ToLocalChecked());
+	ctor->SetClassName(Nan::New("GeneralizedHoughGuil").ToLocalChecked());
 	ctor->Inherit(Nan::New(GeneralizedHough::constructor));
 
 	overload->register_type<GeneralizedHoughGuil>(ctor, "generalizedhoughguil", "GeneralizedHoughGuil");
@@ -108,7 +112,12 @@ GeneralizedHoughGuil::Init(Handle<Object> target, std::shared_ptr<overload_resol
 
 
 
-	target->Set(Nan::New("GeneralizedHoughBallard").ToLocalChecked(), ctor->GetFunction());
+	target->Set(Nan::New("GeneralizedHoughGuil").ToLocalChecked(), ctor->GetFunction());
+}
+
+v8::Local<v8::Function> GeneralizedHoughGuil::get_constructor() {
+	assert(!constructor.IsEmpty() && "constructor is empty");
+	return Nan::New(constructor)->GetFunction();
 }
 
 

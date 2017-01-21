@@ -25,7 +25,7 @@ LineIterator::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 	itpl->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("LineIterator").ToLocalChecked());
 
-	overload->register_type<LineIterator>(ctor, "linesegmentdetector", "LineIterator");
+	overload->register_type<LineIterator>(ctor, "lineiterator", "LineIterator");
 
 
 	
@@ -80,7 +80,7 @@ LineIterator::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 		make_param<Point*>("pt1",Point::name),
 		make_param<Point*>("pt2",Point::name),
 		make_param<int>("connectivity","int", 8),
-		make_param<bool>("leftToRight","boolean", false)
+		make_param<bool>("leftToRight","bool", false)
 	},New_pt );
 //     
 //}

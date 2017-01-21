@@ -2,9 +2,9 @@
 
 #include <value_converter.h>
 #include "../Vec.h"
-#include "../Point.h"
-#include "../Point3.h"
-#include "../Complex.h"
+#include "../types/Point.h"
+#include "../types/Point3.h"
+#include "../types/Complex.h"
 
 std::map<std::string, std::function<v8::Local<v8::Value>(int, cv::Mat&)> > Matrix_array_accessor::_get_accessors = {
 		{ "Vec2d",
