@@ -25,7 +25,7 @@ MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	constructor.Reset(ctor);
 	ctor->InstanceTemplate()->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("MatExpr").ToLocalChecked());
-
+	ctor->Inherit(Nan::New(IOArray::constructor));
 	overload->register_type<MatExpr>(ctor, "matexpr", "MatExpr");
 
 
@@ -311,6 +311,26 @@ MatExpr::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 v8::Local<v8::Function> MatExpr::get_constructor() {
 	assert(!constructor.IsEmpty() && "constructor is empty");
 	return Nan::New(constructor)->GetFunction();
+}
+
+
+cv::_InputArray					MatExpr::GetInputArray() {
+	return *_matExpr;
+}
+cv::_InputArray			MatExpr::GetInputArrayOfArrays() {
+	return *_matExpr;
+}
+cv::_OutputArray					MatExpr::GetOutputArray() {
+	return *_matExpr;
+}
+cv::_OutputArray			MatExpr::GetOutputArrayOfArrays() {
+	return *_matExpr;
+}
+cv::_InputOutputArray			MatExpr::GetInputOutputArray() {
+	return *_matExpr;
+}
+cv::_InputOutputArray	MatExpr::GetInputOutputArrayOfArrays() {
+	return *_matExpr;
 }
 
 

@@ -2,10 +2,10 @@
 #include "IOArray.h"
 #include "Matrix.h"
 #include "Vec.h"
-#include "Size.h"
-#include "Rect.h"
+#include "types/Size.h"
+#include "types/Rect.h"
 #include "types/TermCriteria.h"
-#include "Point.h"
+#include "types/Point.h"
 #include "features2d/Feature2D.h"
 #include "features2d/SimpleBlobDetector.h"
 

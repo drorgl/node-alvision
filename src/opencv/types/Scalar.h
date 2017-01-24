@@ -104,6 +104,26 @@ public:
 		scalar->_matx = scalar->_scalar;
 		return scalar;
 	}
+
+	virtual cv::_InputArray GetInputArray() {
+		return *_scalar;
+	}
+	virtual cv::_InputArray GetInputArrayOfArrays() {
+		return *_scalar;
+	}
+	virtual cv::_OutputArray GetOutputArray() {
+		return *_scalar;
+	}
+	virtual cv::_OutputArray GetOutputArrayOfArrays() {
+		return *_scalar;
+	}
+	virtual cv::_InputOutputArray GetInputOutputArray() {
+		return *_scalar;
+	}
+	virtual cv::_InputOutputArray GetInputOutputArrayOfArrays() {
+		return *_scalar;
+	}
+
 	
 	static std::shared_ptr<Scalar_<T>> all(double v0) {
 		auto scalar = std::make_shared< Scalar_<T>>();
@@ -113,6 +133,7 @@ public:
 		return scalar;
 	}
 
+	
 	static POLY_METHOD(New_no_params) {
 		auto scalar = new Scalar_<T>();
 		scalar->_scalar = std::make_shared<T>();
@@ -195,7 +216,7 @@ public:
 	
 	static POLY_METHOD(all) {
 		auto scalar = new Scalar_<T>();
-		scalar->_scalar = std::make_shared<T>(info.at<TVT>(0));
+		scalar->_scalar = std::make_shared<T>(T::all(info.at<TVT>(0)));
 		scalar->_vec = scalar->_scalar;
 		scalar->_matx = scalar->_scalar;
 

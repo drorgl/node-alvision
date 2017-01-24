@@ -1,10 +1,10 @@
 ﻿#include "imgproc.h"
 #include "IOArray.h"
-#include "Size.h"
-#include "Scalar.h"
+#include "types/Size.h"
+#include "types/Scalar.h"
 #include "SparseMat.h"
-#include "Rect.h"
-#include "RotatedRect.h"
+#include "types/Rect.h"
+#include "types/RotatedRect.h"
 #include "types/TermCriteria.h"
 #include "types/Moments.h"
 #include "imgproc/GeneralizedHough.h"
@@ -446,8 +446,8 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<double>("log_eps", "double", 0),
 		make_param<double>("density_th", "double", 0.7),
 		make_param<int>("n_bins", "int", 1024)
-	
 	}, createLineSegmentDetector );
+	Nan::SetMethod(target, "createLineSegmentDetector", imgproc_general_callback::callback);
 
     //interface IcreateLineSegmentDetector {
     //    (
@@ -487,6 +487,7 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<double>("sigma","double"),
 		make_param<int>("ktype","int",CV_64F)
 	}, getGaussianKernel);
+	Nan::SetMethod(target, "getGaussianKernel", imgproc_general_callback::callback);
 
     //interface IgetGaussianKernel {
     //    (ksize: _st.int, sigma: _st.double, ktype: _st.int /* = CV_64F*/): _mat.Mat;
@@ -522,6 +523,7 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<bool>("normalize","bool", false),
 		make_param<int>("ktype","int", CV_32F)
 	}, getDerivKernels);
+	Nan::SetMethod(target, "getDerivKernels", imgproc_general_callback::callback);
 
     //interface IgetDerivKernels {
     //    (kx: _st.OutputArray, ky: _st.OutputArray ,
@@ -553,6 +555,7 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<double>("psi","double",CV_PI * 0.5),
 		make_param<int>("ktype","int", CV_64F)
 	}, getGaborKernel);
+	Nan::SetMethod(target, "getGaborKernel", imgproc_general_callback::callback);
 
     //interface IgetGaborKernel{
     //    (ksize: _types.Size, sigma: _st.double, theta: _st.double, lambd: _st.double,
@@ -564,6 +567,7 @@ imgproc::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 //! returns "magic" border value for erosion and dilation. It is automatically transformed to Scalar::all(-DBL_MAX) for dilation.
 
 	overload->addOverload("imgproc", "", "morphologyDefaultBorderValue", {}, morphologyDefaultBorderValue);
+	Nan::SetMethod(target, "morphologyDefaultBorderValue", imgproc_general_callback::callback);
 //export function morphologyDefaultBorderValue(): _types.Scalar  { return _types.Scalar.all(_st.DBL_MAX); }
 
     /** @brief Returns a structuring element of the specified size and shape for morphological operations.
@@ -584,6 +588,7 @@ overload->addOverload("imgproc", "", "getStructuringElement", {
 		make_param<Size*>("ksize",Size::name),
 		make_param<Point*>("anchor",Point::name ,Point::create(-1, -1))
 }, getStructuringElement);
+	Nan::SetMethod(target, "getStructuringElement", imgproc_general_callback::callback);
 
 //interface IgetStructuringElement {
 //    (shape: _st.int, ksize: _types.Size, anchor: _types.Point /* = Point(-1, -1)*/): _mat.Mat;
@@ -609,6 +614,7 @@ overload->addOverload("imgproc", "", "medianBlur", {
 	make_param<IOArray*>("dst","IOArray"),
 	make_param<int>("ksize","int")
 }, medianBlur);
+	Nan::SetMethod(target, "medianBlur", imgproc_general_callback::callback);
 
 //interface ImedianBlur {
 //    (src: _st.InputArray, dst: _st.OutputArray, ksize: _st.int  ): void;
@@ -643,6 +649,7 @@ overload->addOverload("imgproc", "", "GaussianBlur", {
 		make_param<double>("sigmaY","double", 0),
 		make_param<int>("borderType","BorderTypes",cv::BORDER_DEFAULT)
 }, GaussianBlur);
+	Nan::SetMethod(target, "GaussianBlur", imgproc_general_callback::callback);
 
 //interface IGaussianBlur{
 //    (src: _st.InputArray, dst: _st.OutputArray, ksize: _types.Size,
@@ -693,6 +700,7 @@ overload->addOverload("imgproc", "", "bilateralFilter", {
 		make_param<double>("sigmaSpace","double"),
 		make_param<int>("borderType","BorderTypes",cv:: BORDER_DEFAULT)
 }, bilateralFilter);
+	Nan::SetMethod(target, "bilateralFilter", imgproc_general_callback::callback);
 
 //interface IbilateralFilter{
 //    (src: _st.InputArray, dst: _st.OutputArray, d: _st.int,
@@ -740,6 +748,7 @@ overload->addOverload("imgproc", "", "boxFilter", {
 		make_param<bool>("normalize","bool", true),
 		make_param<int>("borderType","BorderTypes",cv:: BORDER_DEFAULT)
 }, boxFilter);
+	Nan::SetMethod(target, "boxFilter", imgproc_general_callback::callback);
 
 //interface IboxFilter {
 //    (src: _st.InputArray, dst: _st.OutputArray, ddepth: _st.int,
@@ -783,6 +792,7 @@ overload->addOverload("imgproc", "", "sqrBoxFilter", {
 		make_param<bool>("normalize","bool", true),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, sqrBoxFilter);
+	Nan::SetMethod(target, "sqrBoxFilter", imgproc_general_callback::callback);
 
 //interface IsqrBoxFilter {
 //    (_src: _st.InputArray, _dst: _st.OutputArray, ddepth: _st.int,
@@ -825,6 +835,7 @@ overload->addOverload("imgproc", "", "blur", {
 		make_param<Point*>("anchor",Point::name,Point::create(-1,-1)),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, blur);
+	Nan::SetMethod(target, "blur", imgproc_general_callback::callback);
 
 //export interface Iblur {
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -878,6 +889,7 @@ overload->addOverload("imgproc", "", "filter2D", {
 		make_param<double>("delta","double", 0),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, filter2D);
+	Nan::SetMethod(target, "filter2D", imgproc_general_callback::callback);
 
 //interface Ifilter2D {
 //    (src: _st.InputArray, dst: _st.OutputArray, ddepth: _st.int,
@@ -919,6 +931,7 @@ overload->addOverload("imgproc", "", "sepFilter2D", {
 		make_param<double>("delta","double", 0),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, sepFilter2D);
+	Nan::SetMethod(target, "sepFilter2D", imgproc_general_callback::callback);
 
 //interface IsepFilter2D {
 //    (src: _st.InputArray, dst: _st.OutputArray, ddepth: _st.int,
@@ -990,6 +1003,7 @@ overload->addOverload("imgproc", "", "Sobel", {
 		make_param<double>("delta","double", 0),
 		make_param<int>("borderType","BorderTypes",cv:: BORDER_DEFAULT)
 }, Sobel);
+	Nan::SetMethod(target, "Sobel", imgproc_general_callback::callback);
 
 //interface ISobel {
 //    (src: _st.InputArray, dst: _st.OutputArray, ddepth: _st.int,
@@ -1030,6 +1044,7 @@ overload->addOverload("imgproc", "", "spatialGradient", {
 		make_param<int>("ksize","int", 3),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, spatialGradient);
+	Nan::SetMethod(target, "spatialGradient", imgproc_general_callback::callback);
 
 //interface IspatialGradient {
 //    (src: _st.InputArray, dx : _st.OutputArray,
@@ -1076,6 +1091,7 @@ overload->addOverload("imgproc", "", "Scharr", {
 		make_param<double>("delta","double", 0),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, Scharr);
+	Nan::SetMethod(target, "Scharr", imgproc_general_callback::callback);
 
 //interface IScharr {
 //    (src: _st.InputArray, dst: _st.OutputArray, ddepth: _st.int,
@@ -1127,6 +1143,7 @@ overload->addOverload("imgproc", "", "Laplacian", {
 		make_param<double>("delta","double", 0),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, Laplacian);
+	Nan::SetMethod(target, "Laplacian", imgproc_general_callback::callback);
 
 //interface ILaplacian{
 //    (src: _st.InputArray, dst: _st.OutputArray, ddepth: _st.int,
@@ -1175,6 +1192,7 @@ overload->addOverload("imgproc", "", "Canny", {
 		make_param<int>("apertureSize","int", 3),
 		make_param<bool>("L2gradient","bool", false)
 }, Canny);
+	Nan::SetMethod(target, "Canny", imgproc_general_callback::callback);
 
 //interface ICanny {
 //    (image: _st.InputArray, edges : _st.OutputArray,
@@ -1209,6 +1227,7 @@ overload->addOverload("imgproc", "", "cornerMinEigenVal", {
 		make_param<int>("ksize","int", 3),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, cornerMinEigenVal);
+	Nan::SetMethod(target, "cornerMinEigenVal", imgproc_general_callback::callback);
 
 //interface IcornerMinEigenVal{
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -1251,6 +1270,7 @@ overload->addOverload("imgproc", "", "cornerHarris", {
 		make_param<double>("k","double"),
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, cornerHarris);
+	Nan::SetMethod(target, "cornerHarris", imgproc_general_callback::callback);
 
 //interface IcornerHarris {
 //    (src: _st.InputArray, dst: _st.OutputArray, blockSize: _st.int,
@@ -1301,6 +1321,7 @@ overload->addOverload("imgproc", "", "cornerEigenValsAndVecs", {
 		make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 
 }, cornerEigenValsAndVecs);
+	Nan::SetMethod(target, "cornerEigenValsAndVecs", imgproc_general_callback::callback);
 
 //interface IcornerEigenValsAndVecs{
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -1345,6 +1366,7 @@ overload->addOverload("imgproc", "", "preCornerDetect", {
 		make_param<int>("ksize","int"),
 		make_param<int>("borderType","int",cv::BORDER_DEFAULT)
 }, preCornerDetect);
+	Nan::SetMethod(target, "preCornerDetect", imgproc_general_callback::callback);
 
 //interface IpreCornerDetect{
 //    (src: _st.InputArray, dst: _st.OutputArray, ksize: _st.int,
@@ -1404,6 +1426,7 @@ overload->addOverload("imgproc", "", "cornerSubPix", {
 		make_param<Size*>("zeroZone",Size::name),
 		make_param<TermCriteria*>("criteria","TermCriteria")
 }, cornerSubPix);
+	Nan::SetMethod(target, "cornerSubPix", imgproc_general_callback::callback);
 
 //interface IcornerSubPix{
 //    (image: _st.InputArray, Inputcorners: _st.OutputArray,
@@ -1473,6 +1496,7 @@ overload->addOverload("imgproc", "", "goodFeaturesToTrack", {
 		make_param<bool>("useHarrisDetector","bool", false),
 		make_param<double>("k","double", 0.04)
 }, goodFeaturesToTrack);
+	Nan::SetMethod(target, "goodFeaturesToTrack", imgproc_general_callback::callback);
 
 
 //interface IgoodFeaturesToTrack{
@@ -1531,6 +1555,7 @@ overload->addOverload("imgproc", "", "HoughLines", {
 		make_param<double>("min_theta","double", 0),
 		make_param<double>("max_theta","double", CV_PI)
 }, HoughLines);
+	Nan::SetMethod(target, "HoughLines", imgproc_general_callback::callback);
 
 
 //interface IHoughLines{
@@ -1637,6 +1662,7 @@ overload->addOverload("imgproc", "", "HoughLinesP", {
 	make_param<double>("minLineLength","double", 0),
 	make_param<double>("maxLineGap","double", 0)
 }, HoughLinesP);
+Nan::SetMethod(target, "HoughLinesP", imgproc_general_callback::callback);
 
 //interface IHoughLinesP {
 //    (image: _st.InputArray, lines: _st.OutputArray,
@@ -1734,6 +1760,7 @@ overload->addOverload("imgproc", "", "HoughCircles", {
 		make_param<int>("minRadius","int", 0), 
 		make_param<int>("maxRadius","int", 0)
 }, HoughCircles);
+Nan::SetMethod(target, "HoughCircles", imgproc_general_callback::callback);
 
 //interface IHoughCircles{
 //    (image: _st.InputArray, circles : _st.OutputArray,
@@ -1791,6 +1818,7 @@ overload->addOverload("imgproc", "", "erode", {
 	make_param<int>("borderType","BorderTypes",cv:: BORDER_CONSTANT),
 	make_param<Scalar*>("borderValue",Scalar::name, morphologyDefaultBorderValue_all())
 }, erode);
+Nan::SetMethod(target, "erode", imgproc_general_callback::callback);
 
 //interface Ierode{
 //    (src: _st.InputArray, dst: _st.OutputArray, kernel: _st.InputArray,
@@ -1837,6 +1865,7 @@ overload->addOverload("imgproc", "", "dilate", {
 		make_param<int>("borderType","BorderTypes",cv::BORDER_CONSTANT),
 		make_param<Scalar*>("borderValue",Scalar::name,morphologyDefaultBorderValue_all())
 }, dilate);
+Nan::SetMethod(target, "dilate", imgproc_general_callback::callback);
 
 
 //interface Idilate{
@@ -1885,6 +1914,7 @@ overload->addOverload("imgproc", "", "morphologyEx", {
 		make_param<int>("borderType","int",cv:: BORDER_CONSTANT),
 		make_param<Scalar*>("borderValue",Scalar::name,morphologyDefaultBorderValue_all())
 }, morphologyEx);
+Nan::SetMethod(target, "morphologyEx", imgproc_general_callback::callback);
 
 
 //interface ImorphologyEx{
@@ -1951,6 +1981,7 @@ overload->addOverload("imgproc", "", "resize", {
 	make_param<double>("fy","double", 0),
 	make_param<int>("interpolation","InterpolationFlags",cv:: INTER_LINEAR)
 }, resize);
+Nan::SetMethod(target, "resize", imgproc_general_callback::callback);
 
 
 //interface Iresize{
@@ -1999,6 +2030,7 @@ overload->addOverload("imgproc", "", "warpAffine", {
 		make_param<int>("borderMode","BorderTypes",cv::BORDER_CONSTANT),
 		make_param<Scalar*>("borderValue",Scalar::name, Scalar::create())
 }, warpAffine);
+Nan::SetMethod(target, "warpAffine", imgproc_general_callback::callback);
 
 //interface IwarpAffine{
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -2048,6 +2080,7 @@ overload->addOverload("imgproc", "", "warpPerspective", {
 		make_param<int>("borderMode","int",cv:: BORDER_CONSTANT),
 		make_param<Scalar*>("borderValue",Scalar::name, Scalar::create())
 }, warpPerspective);
+Nan::SetMethod(target, "warpPerspective", imgproc_general_callback::callback);
 
 //interface IwarpPerspective{
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -2105,6 +2138,7 @@ overload->addOverload("imgproc", "", "remap", {
 		make_param<int>("borderMode","BorderTypes",cv::BORDER_CONSTANT),
 		make_param<Scalar*>("borderValue",Scalar::name, Scalar::create())
 }, remap);
+Nan::SetMethod(target, "remap", imgproc_general_callback::callback);
 
 
 //interface Iremap{
@@ -2161,6 +2195,7 @@ overload->addOverload("imgproc", "", "convertMaps", {
 	make_param<int>("dstmap1type","int"),
 	make_param<bool>("nninterpolation","bool", false)
 }, convertMaps);
+Nan::SetMethod(target, "convertMaps", imgproc_general_callback::callback);
 
 //interface IconvertMaps{
 //    (Map1: _st.InputArray, Map2: _st.InputArray,
@@ -2199,6 +2234,7 @@ overload->addOverload("imgproc", "", "getRotationMatrix2D", {
 		make_param<double>("angle","double"), 
 		make_param<double>("scale","double")
 }, getRotationMatrix2D);
+Nan::SetMethod(target, "getRotationMatrix2D", imgproc_general_callback::callback);
 
 //interface IgetRotationMatrix2D{
 //    (center : _types.Point2f, angle : _st.double, scale : _st.double ): _mat.Mat;
@@ -2258,6 +2294,7 @@ overload->addOverload("imgproc", "", "invertAffineTransform", {
 	make_param<IOArray*>( "M","IOArray"),
 	make_param<IOArray*>("iM","IOArray")
 }, invertAffineTransform);
+Nan::SetMethod(target, "invertAffineTransform", imgproc_general_callback::callback);
 
 //interface IinvertAffineTransform {
 //    (M: _st.InputArray, iM : _st.OutputArray ): void;
@@ -2287,6 +2324,7 @@ overload->addOverload("imgproc", "", "getPerspectiveTransform", {
 	make_param<IOArray*>("src","IOArray"),
 	make_param<IOArray*>("dst","IOArray")
 }, getPerspectiveTransform_mat);
+Nan::SetMethod(target, "getPerspectiveTransform", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "getPerspectiveTransform", {
 	make_param<std::shared_ptr<std::vector<Point2f*>>>("src","Array<Point2f>"), 
@@ -2307,6 +2345,7 @@ overload->addOverload("imgproc", "", "getAffineTransform", {
 	make_param<IOArray*>("src","IOArray"),
 	make_param<IOArray*>("dst","IOArray")
 }, getAffineTransform_mat);
+Nan::SetMethod(target, "getAffineTransform", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "getAffineTransform", {
 	make_param<std::shared_ptr<std::vector<Point2f*>>>("src","Array<Point2f>"),
@@ -2353,6 +2392,7 @@ overload->addOverload("imgproc", "", "getRectSubPix", {
 	make_param<IOArray*>("patch","IOArray"),
 	make_param<int>("patchType","int", -1)
 }, getRectSubPix);
+Nan::SetMethod(target, "getRectSubPix", imgproc_general_callback::callback);
 
 //interface IgetRectSubPix{
 //    (image: _st.InputArray, patchSize : _types.Size,
@@ -2393,6 +2433,7 @@ overload->addOverload("imgproc", "", "logPolar", {
 		make_param<double>("M","double"),
 		make_param<int>("flags","InterpolationFlags")
 }, logPolar);
+Nan::SetMethod(target, "logPolar", imgproc_general_callback::callback);
 
 //interface IlogPolar{
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -2427,6 +2468,7 @@ overload->addOverload("imgproc", "", "linearPolar", {
 	make_param<double>("MaxRadius","double"),
 	make_param<int>("flags","int")
 }, linearPolar);
+Nan::SetMethod(target, "linearPolar", imgproc_general_callback::callback);
 
 //interface IlinearPolar{
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -2510,6 +2552,7 @@ overload->addOverload("imgproc", "", "integral", {
 	make_param<int>( "sdepth","int", -1), 
 	make_param<int>("sqdepth","int", -1)
 }, integral_tilted);
+Nan::SetMethod(target, "integral", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "integral", {
 	make_param<IOArray*>(  "src","IOArray"),
@@ -2573,6 +2616,7 @@ overload->addOverload("imgproc", "", "accumulate", {
 	make_param<IOArray*>( "dst","IOArray"),
 	make_param<IOArray*>("mask","IOArray",IOArray::noArray())
 }, accumulate);
+Nan::SetMethod(target, "accumulate", imgproc_general_callback::callback);
 
 //interface Iaccumulate{
 //    (src: _st.InputArray, dst: _st.InputOutputArray,
@@ -2606,6 +2650,7 @@ overload->addOverload("imgproc", "", "accumulateSquare", {
 	make_param<IOArray*>( "dst","IOArray"),
 	make_param<IOArray*>("mask","IOArray",IOArray::noArray())
 }, accumulateSquare);
+Nan::SetMethod(target, "accumulateSquare", imgproc_general_callback::callback);
 
 
 //interface IaccumulateSquare {
@@ -2641,6 +2686,7 @@ overload->addOverload("imgproc", "", "accumulateProduct", {
 	make_param<IOArray*>( "dst","IOArray"),
 	make_param<IOArray*>("Mask","IOArray", IOArray::noArray())
 }, accumulateProduct);
+Nan::SetMethod(target, "accumulateProduct", imgproc_general_callback::callback);
 
 //interface IaccumulateProduct{
 //    (src1: _st.InputArray, src2: _st.InputArray,
@@ -2679,6 +2725,7 @@ overload->addOverload("imgproc", "", "accumulateWeighted", {
 	make_param<double>("alpha","double"),
 	make_param<IOArray*>("mask","IOArray",IOArray::noArray())
 }, accumulateWeighted);
+Nan::SetMethod(target, "accumulateWeighted", imgproc_general_callback::callback);
 
 //interface IaccumulateWeighted {
 //    (src: _st.InputArray, dst: _st.InputOutputArray,
@@ -2732,6 +2779,7 @@ overload->addOverload("imgproc", "", "phaseCorrelate", {
 	make_param<IOArray*>("window","IOArray", IOArray::noArray()),
 	make_param<std::shared_ptr<or::Callback>>("cb","Function")// ? : (response : _st.double) = > void
 }, phaseCorrelate);
+Nan::SetMethod(target, "phaseCorrelate", imgproc_general_callback::callback);
 
 //interface IphaseCorrelate{
 //    (src1: _st.InputArray, src2: _st.InputArray,
@@ -2765,6 +2813,7 @@ overload->addOverload("imgproc", "", "createHanningWindow", {
 	make_param<Size*>("winSize",Size::name),
 	make_param<int>("type","MatrixType")
 }, createHanningWindow);
+Nan::SetMethod(target, "createHanningWindow", imgproc_general_callback::callback);
 
 //interface IcreateHanningWindow{
 //    (dst: _st.OutputArray, winSize: _types.Size, type : _cvdef.MatrixType): void;
@@ -2810,6 +2859,7 @@ overload->addOverload("imgproc", "", "threshold", {
 	make_param<double>("Maxval","double"),
 	make_param<int>("type","ThresholdTypes")
 }, threshold);
+Nan::SetMethod(target, "threshold", imgproc_general_callback::callback);
 
 //interface Ithreshold {
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -2857,6 +2907,7 @@ overload->addOverload("imgproc", "", "adaptiveThreshold", {
 	make_param<int>("blockSize","int"),
 	make_param<double>("C","double")
 }, adaptiveThreshold);
+Nan::SetMethod(target, "adaptiveThreshold", imgproc_general_callback::callback);
 
 //interface IadaptiveThreshold{
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -2902,6 +2953,7 @@ overload->addOverload("imgproc", "", "pyrDown", {
 	make_param<Size*>("dstsize",Size::name , Size::create()),
 	make_param<int>("borderType","BorderTypes",cv::BORDER_DEFAULT)
 }, pyrDown);
+Nan::SetMethod(target, "pyrDown", imgproc_general_callback::callback);
 
 
 //interface IpyrDown{
@@ -2938,6 +2990,7 @@ overload->addOverload("imgproc", "", "pyrUp", {
 	make_param<Size*>("dstsize",Size::name, Size::create()),
 	make_param<int>("borderType","int",cv::BORDER_DEFAULT)
 }, pyrUp);
+Nan::SetMethod(target, "pyrUp", imgproc_general_callback::callback);
 
 
 //interface IpyrUp{
@@ -2968,6 +3021,7 @@ overload->addOverload("imgproc", "", "buildPyramid", {
 	make_param<int>("maxlevel","int"),
 	make_param<int>("borderType","int",cv:: BORDER_DEFAULT)
 }, buildPyramid);
+Nan::SetMethod(target, "buildPyramid", imgproc_general_callback::callback);
 
 //interface IbuildPyramid{
 //    (src: _st.InputArray, dst : _st.OutputArrayOfArrays ,
@@ -3022,6 +3076,7 @@ overload->addOverload("imgproc", "", "undistort", {
 		make_param<IOArray*>("distCoeffs","IOArray"),
 		make_param<IOArray*>("newCameraMatrix","IOArray", IOArray::noArray())
 }, undistort);
+Nan::SetMethod(target, "undistort", imgproc_general_callback::callback);
 
 //interface Iundistort{
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -3110,6 +3165,7 @@ overload->addOverload("imgproc", "", "initUndistortRectifyMap", {
 	make_param<IOArray*>("map1","IOArray"),
 	make_param<IOArray*>("map2","IOArray")
 }, initUndistortRectifyMap);
+Nan::SetMethod(target, "initUndistortRectifyMap", imgproc_general_callback::callback);
 //
 //interface IinitUndistortRectifyMap {
 //    (cameraMatrix: _st.InputArray, distCoeffs: _st.InputArray,
@@ -3139,6 +3195,7 @@ overload->addOverload("imgproc", "", "initWideAngleProjMap", {
 	make_param<int>("projType","int",cv ::PROJ_SPHERICAL_EQRECT),
 	make_param<double>("alpha","double", 0)
 }, initWideAngleProjMap);
+Nan::SetMethod(target, "initWideAngleProjMap", imgproc_general_callback::callback);
 
 //interface IinitWideAngleProjMap{
 //    (cameraMatrix: _st.InputArray, distCoeffs: _st.InputArray,
@@ -3182,6 +3239,7 @@ overload->addOverload("imgproc", "", "getDefaultNewCameraMatrix", {
 	make_param<Size*>("imgSize",Size::name, Size::create()),
 	make_param<bool>("centerPrincipalPoint","bool",false)
 }, getDefaultNewCameraMatrix);
+Nan::SetMethod(target, "getDefaultNewCameraMatrix", imgproc_general_callback::callback);
 
 
 //interface IgetDefaultNewCameraMatrix{
@@ -3240,6 +3298,7 @@ overload->addOverload("imgproc", "", "undistortPoints", {
 	make_param<IOArray*>("R","IOArray", IOArray::noArray() ),
 	make_param<IOArray*>("P","IOArray", IOArray::noArray())
 }, undistortPoints);
+Nan::SetMethod(target, "undistortPoints", imgproc_general_callback::callback);
 
 
 //interface IundistortPoints{
@@ -3364,6 +3423,7 @@ overload->addOverload("imgproc", "", "calcHist", {
 	make_param<bool>("uniform","bool", true),
 	make_param<bool>("accumulate","bool", false)
 }, calcHist_array);
+Nan::SetMethod(target, "calcHist", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "calcHist", {
 	make_param<std::shared_ptr<std::vector<Matrix*>>>("images","Array<Mat>"),
@@ -3481,6 +3541,7 @@ overload->addOverload("imgproc", "", "calcBackProject", {
 	make_param<double>("scale","double", 1),
 	make_param<bool>("uniform","bool", true)
 },calcBackProject );
+Nan::SetMethod(target, "calcBackProject", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "calcBackProject", {
 	make_param<std::shared_ptr<std::vector<Matrix*>>>("images","Array<Mat>"),
@@ -3562,6 +3623,7 @@ overload->addOverload("imgproc", "", "compareHist", {
 	make_param<IOArray*>("H2","IOArray"), 
 	make_param<int>("method","HistCompMethods")
 },compareHist );
+Nan::SetMethod(target, "compareHist", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "compareHist", {
 	make_param<SparseMat*>("H1",SparseMat::name), 
@@ -3602,6 +3664,7 @@ overload->addOverload("imgproc", "", "equalizeHist", {
 	make_param<IOArray*>("src","IOArray"),
 	make_param<IOArray*>("dst","IOArray")
 }, equalizeHist);
+Nan::SetMethod(target, "equalizeHist", imgproc_general_callback::callback);
 
 //interface IequalizeHist{
 //    (src: _st.InputArray, dst: _st.OutputArray): void;
@@ -3653,6 +3716,7 @@ overload->addOverload("imgproc", "", "EMD", {
 	make_param<std::shared_ptr<or::Callback>>("cb","Function",nullptr),// ? : (lowerBound : _st.float) = > void,
 	make_param<IOArray*>("flow","IOArray", IOArray:: noArray())
 }, EMD);
+Nan::SetMethod(target, "EMD", imgproc_general_callback::callback);
 //
 //    interface IEMD {
 //        (signature1 : _st.InputArray, signature2 : _st.InputArray,
@@ -3704,6 +3768,7 @@ overload->addOverload("imgproc", "", "watershed", {
 	make_param<IOArray*>(  "image","IOArray"),
 	make_param<IOArray*>("markers","IOArray")
 }, watershed);
+Nan::SetMethod(target, "watershed", imgproc_general_callback::callback);
 
 //    interface Iwatershed{
 //        (image: _st.InputArray, markers: _st.InputOutputArray): void;
@@ -3761,6 +3826,7 @@ overload->addOverload("imgproc", "", "pyrMeanShiftFiltering", {
 	make_param<int>("maxLevel","int", 1),
 	make_param<TermCriteria*>("termCriteria","TermCriteria",TermCriteria::New(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 5, 1))
 }, pyrMeanShiftFiltering);
+Nan::SetMethod(target, "pyrMeanShiftFiltering", imgproc_general_callback::callback);
 
 //interface IpyrMeanShiftFiltering {
 //    (src: _st.InputArray, dst: _st.OutputArray,
@@ -3811,6 +3877,7 @@ overload->addOverload("imgproc", "", "grabCut", {
 	make_param<int>("iterCount","int"),
 	make_param<int>("mode","GrabCutModes",cv::GC_EVAL)
 }, grabCut);
+Nan::SetMethod(target, "grabCut", imgproc_general_callback::callback);
 
 //interface IgrabCut{
 //    (img : _st.InputArray, mask: _st.InputOutputArray, rect: _types.Rect,
@@ -3914,6 +3981,7 @@ overload->addOverload("imgproc", "", "distanceTransform", {
 	make_param<int>("maskSize","int"),
 	make_param<int>("dstType","int", CV_32F)
 },distanceTransform );
+Nan::SetMethod(target, "distanceTransform", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "distanceTransform", {
 	make_param<IOArray*>("src","IOArray"),
@@ -4041,6 +4109,7 @@ overload->addOverload("imgproc", "", "floodFill", {
 	make_param<Scalar*>("upDiff",Scalar::name, Scalar::create()),
 	make_param<int>("flags","int", 4)
 },floodFill_mask );
+Nan::SetMethod(target, "floodFill", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "floodFill", {
 	make_param<IOArray*>("image","IOArray"),
@@ -4120,6 +4189,7 @@ overload->addOverload("imgproc", "", "cvtColor", {
 	make_param<int>("code","ColorConversionCodes"),
 	make_param<int>("dstCn","int", 0)
 }, cvtColor);
+Nan::SetMethod(target, "cvtColor", imgproc_general_callback::callback);
 
 //interface IcvtColor{
 //    (src: _st.InputArray, dst: _st.OutputArray, code: ColorConversionCodes | _st.int, dstCn?: _st.int /*= 0*/): void;
@@ -4139,6 +4209,7 @@ overload->addOverload("imgproc", "", "demosaicing", {
 	make_param<int>("code","int"),
 	make_param<int>("dcn","int", 0)
 }, demosaicing);
+Nan::SetMethod(target, "demosaicing", imgproc_general_callback::callback);
 
 //interface Idemosaicing{
 //    (_src: _st.InputArray, _dst: _st.OutputArray, code : _st.int, dcn? : _st.int/* = 0*/): void;
@@ -4170,6 +4241,7 @@ overload->addOverload("imgproc", "", "moments", {
 	make_param<IOArray*>("array","IOArray"),
 	make_param<bool>("binaryImage","bool", false)
 }, moments);
+Nan::SetMethod(target, "moments", imgproc_general_callback::callback);
 
 //interface Imoments {
 //    (array: _st.InputArray , binaryImage? : boolean /* = false*/): _types.Moments;
@@ -4202,6 +4274,7 @@ overload->addOverload("imgproc", "", "HuMoments", {
 	make_param<Moments*>("moments",Moments::name), 
 	make_param<std::shared_ptr<std::vector<double>>>("hu","Array<double>")
 }, HuMoments_array);
+Nan::SetMethod(target, "HuMoments", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "HuMoments", {
 	make_param<Moments*>("m",Moments::name), 
@@ -4267,6 +4340,7 @@ SetObjectProperty(TemplateMatchModes, "TM_CCOEFF_NORMED", 5);
 		make_param<int>("method","int"),
 		make_param<IOArray*>("mask","IOArray",IOArray:: noArray())
 	}, matchTemplate);
+	Nan::SetMethod(target, "matchTemplate", imgproc_general_callback::callback);
 
 //
 //    interface ImatchTemplate{
@@ -4304,6 +4378,7 @@ overload->addOverload("imgproc", "", "connectedComponents", {
 	make_param<int>("connectivity","int", 8),
 	make_param<int>("ltype","int", CV_32S)
 }, connectedComponents);
+	Nan::SetMethod(target, "connectedComponents", imgproc_general_callback::callback);
 
 //interface IconnectedComponents{
 //    (image: _st.InputArray, labels : _st.OutputArray,
@@ -4336,6 +4411,7 @@ overload->addOverload("imgproc", "", "connectedComponentsWithStats", {
 	make_param<int>("connectivity","int", 8),
 	make_param<int>("ltype","int",CV_32S)
 }, connectedComponentsWithStats);
+	Nan::SetMethod(target, "connectedComponentsWithStats", imgproc_general_callback::callback);
 
 //interface IconnectedComponentsWithStats {
 //    (image: _st.InputArray, labels: _st.OutputArray,
@@ -4387,6 +4463,7 @@ overload->addOverload("imgproc", "", "findContours", {
 	make_param<int>("method","ContourApproximationModes"),
 	make_param<Point*>("offset",Point::name,Point::create())
 }, findContours_hierarchy);
+	Nan::SetMethod(target, "findContours", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "findContours", {
 	make_param<IOArray*>("image","IOArray"),
@@ -4435,6 +4512,7 @@ overload->addOverload("imgproc", "", "approxPolyDP", {
 	make_param<double>("epsilon","double"),
 	make_param<bool>("closed","bool")
 }, approxPolyDP);
+Nan::SetMethod(target, "approxPolyDP", imgproc_general_callback::callback);
 
 //interface IapproxPolyDP{
 //    (curve : _st.InputArray,
@@ -4460,6 +4538,7 @@ overload->addOverload("imgproc", "", "arcLength", {
 	make_param<IOArray*>("curve","IOArray"),
 	make_param<bool>("closed","bool")
 }, arcLength);
+Nan::SetMethod(target, "arcLength", imgproc_general_callback::callback);
 
 
 //interface IarcLength {
@@ -4482,6 +4561,7 @@ overload->addOverload("imgproc", "", "arcLength", {
 overload->addOverload("imgproc", "", "boundingRect", {
 	make_param<IOArray*>("points","IOArray")
 }, boundingRect);
+Nan::SetMethod(target, "boundingRect", imgproc_general_callback::callback);
 
 //interface IboundingRect{
 //    (points: _st.InputArray): _types.Rect;
@@ -4527,6 +4607,7 @@ overload->addOverload("imgproc", "", "contourArea", {
 	make_param<IOArray*>("contour","IOArray"),
 	make_param<bool>("oriented","bool", false)
 }, contourArea);
+Nan::SetMethod(target, "contourArea", imgproc_general_callback::callback);
 
 //interface IcontourArea{
 //    (contour : _st.InputArray, oriented? : boolean /* = false*/): _st.double;
@@ -4549,6 +4630,7 @@ overload->addOverload("imgproc", "", "contourArea", {
 overload->addOverload("imgproc", "", "minAreaRect", {
 	make_param<IOArray*>("points","IOArray")
 }, minAreaRect);
+Nan::SetMethod(target, "minAreaRect", imgproc_general_callback::callback);
 
 
 //interface IminAreaRect{
@@ -4576,6 +4658,7 @@ overload->addOverload("imgproc", "", "boxPoints", {
 	make_param<RotatedRect*>("box",RotatedRect::name), 
 	make_param<IOArray*>("points","IOArray")
 }, boxPoints);
+Nan::SetMethod(target, "boxPoints", imgproc_general_callback::callback);
 
 //interface IboxPoints{
 //    (box : _types.RotatedRect, points : _st.OutputArray): void;
@@ -4599,6 +4682,7 @@ overload->addOverload("imgproc", "", "minEnclosingCircle", {
 	make_param<IOArray*>("points","IOArray"),
 	make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (center : _types.Point2f,radius : _st.float) = > void
 }, minEnclosingCircle);
+Nan::SetMethod(target, "minEnclosingCircle", imgproc_general_callback::callback);
 
 //interface IminEnclosingCircle{
 //    (points: _st.InputArray, cb: (center: _types.Point2f,radius : _st.float) => void): void;
@@ -4636,6 +4720,7 @@ overload->addOverload("imgproc", "", "minEnclosingTriangle", {
 	make_param<IOArray*>("points","IOArray"),
 	make_param<IOArray*>("triangle","IOArray")
 }, minEnclosingTriangle);
+Nan::SetMethod(target, "minEnclosingTriangle", imgproc_general_callback::callback);
 
 //interface IminEnclosingTriangle {
 //    (points: _st.InputArray , triangle : _st.OutputArray): _st.double;
@@ -4661,6 +4746,7 @@ overload->addOverload("imgproc", "", "matchShapes", {
 	make_param<int>("method","ShapeMatchModes"),
 	make_param<double>("parameter","double")
 }, matchShapes);
+Nan::SetMethod(target, "matchShapes", imgproc_general_callback::callback);
 
 //interface ImatchShapes {
 //    (contour1: _st.InputArray, contour2: _st.InputArray ,
@@ -4703,6 +4789,7 @@ overload->addOverload("imgproc", "", "convexHull", {
 	make_param<bool>("clockwise","bool", false),
 	make_param<bool>("returnPoints","bool", true)
 }, convexHull);
+Nan::SetMethod(target, "convexHull", imgproc_general_callback::callback);
 
 //interface IconvexHull{
 //    (points: _st.InputArray, hull: _st.OutputArray ,
@@ -4737,6 +4824,7 @@ overload->addOverload("imgproc", "", "convexityDefects", {
 	make_param<IOArray*>("convexhull","IOArray"),
 	make_param<IOArray*>("convexityDefects","IOArray")
 }, convexityDefects);
+Nan::SetMethod(target, "convexityDefects", imgproc_general_callback::callback);
 
 //interface IconvexityDefects {
 //    (contour: _st.InputArray, convexhull: _st.InputArray, convexityDefects: _st.OutputArray  ): void;
@@ -4757,6 +4845,7 @@ overload->addOverload("imgproc", "", "convexityDefects", {
 overload->addOverload("imgproc", "", "isContourConvex", {
 	make_param<IOArray*>("contour","IOArray")
 }, isContourConvex);
+Nan::SetMethod(target, "isContourConvex", imgproc_general_callback::callback);
 
 
 //interface IisContourConvex {
@@ -4775,6 +4864,7 @@ overload->addOverload("imgproc", "", "intersectConvexConvex", {
 	make_param<IOArray*>("_p12","IOArray"), 
 	make_param<bool>("handleNested","bool", true)
 }, intersectConvexConvex);
+Nan::SetMethod(target, "intersectConvexConvex", imgproc_general_callback::callback);
 
 //interface IintersectConvexConvex {
 //    (_p1: _st.InputArray, _p2: _st.InputArray ,
@@ -4805,6 +4895,7 @@ overload->addOverload("imgproc", "", "intersectConvexConvex", {
 overload->addOverload("imgproc", "", "fitEllipse", {
 	make_param<IOArray*>("points","IOArray")
 }, fitEllipse);
+Nan::SetMethod(target, "fitEllipse", imgproc_general_callback::callback);
 
 //interface IfitEllipse{
 //    (points: _st.InputArray): _types.RotatedRect;
@@ -4857,6 +4948,7 @@ overload->addOverload("imgproc", "", "fitLine", {
 	make_param<double>("reps","double"), 
 	make_param<double>("aeps","double")
 }, fitLine);
+Nan::SetMethod(target, "fitLine", imgproc_general_callback::callback);
 
 //interface IfitLine{
 //    (points: _st.InputArray, line: _st.OutputArray , distType: _st.int,
@@ -4890,6 +4982,7 @@ overload->addOverload("imgproc", "", "pointPolygonTest", {
 	make_param<Point2f*>("pt",Point2f::name) , 
 	make_param<bool>("measureDist","bool")
 }, pointPolygonTest);
+Nan::SetMethod(target, "pointPolygonTest", imgproc_general_callback::callback);
 
 //interface IpointPolygonTest{
 //    (contour: _st.InputArray, pt: _types.Point2f , measureDist : boolean ): _st.double;
@@ -4919,6 +5012,7 @@ overload->addOverload("imgproc", "", "rotatedRectangleIntersection", {
 	make_param<RotatedRect*>("rect2","RotatedRect"),
 	make_param<IOArray*>("intersectingRegion","IOArray")
 }, rotatedRectangleIntersection);
+Nan::SetMethod(target, "rotatedRectangleIntersection", imgproc_general_callback::callback);
 
 
 //interface IrotatedRectangleIntersection{
@@ -4936,6 +5030,7 @@ overload->addOverload("imgproc", "", "createCLAHE", {
 	make_param<double>("clipLimit","double", 40.0),
 	make_param<Size*>("tileGridSize",Size::name, Size::create(8, 8))
 }, createCLAHE);
+Nan::SetMethod(target, "createCLAHE", imgproc_general_callback::callback);
 
 //interface IcreateCLAHE{
 //    (clipLimit?: _st.double /*= 40.0*/, tileGridSize?: _types.Size /* = Size(8, 8)*/) : CLAHE
@@ -4949,6 +5044,7 @@ overload->addOverload("imgproc", "", "createCLAHE", {
     //! Detects position only without traslation and rotation
 
 overload->addOverload("imgproc", "", "createGeneralizedHoughBallard", {}, createGeneralizedHoughBallard);
+Nan::SetMethod(target, "createGeneralizedHoughBallard", imgproc_general_callback::callback);
 
 //export var createGeneralizedHoughBallard: () => GeneralizedHoughBallard = alvision_module.createGeneralizedHoughBallard;
 
@@ -4957,6 +5053,7 @@ overload->addOverload("imgproc", "", "createGeneralizedHoughBallard", {}, create
     //! Guil, N., González-Linares, J.M. and Zapata, E.L. (1999). Bidimensional shape detection using an invariant approach. Pattern Recognition 32 (6): 1025-1038.
     //! Detects position, traslation and rotation
 overload->addOverload("imgproc", "", "createGeneralizedHoughGuil", {}, createGeneralizedHoughGuil);
+Nan::SetMethod(target, "createGeneralizedHoughGuil", imgproc_general_callback::callback);
 
 //export var createGeneralizedHoughGuil: () => GeneralizedHoughGuil = alvision_module.createGeneralizedHoughGuil;
 //    CV_EXPORTS Ptr< GeneralizedHoughGuil > createGeneralizedHoughGuil();
@@ -4970,6 +5067,7 @@ overload->addOverload("imgproc", "", "blendLinear", {
 	make_param<IOArray*>("weights2","IOArray"),
 	make_param<IOArray*>("dst","IOArray")
 }, blendLinear);
+Nan::SetMethod(target, "blendLinear", imgproc_general_callback::callback);
 
     //interface IblendLinear {
     //    (src1: _st.InputArray, src2: _st.InputArray, weights1 : _st.InputArray, weights2 : _st.InputArray, dst: //_st.OutputArray): void;
@@ -5013,6 +5111,7 @@ overload->add_type_alias("ColormapTypes", "int");
 		make_param<IOArray*>("dst","IOArray"), 
 		make_param<int>("colormap","ColormapTypes")
 	}, applyColorMap);
+	Nan::SetMethod(target, "applyColorMap", imgproc_general_callback::callback);
 
 
 //    interface IapplyColorMap{
@@ -5054,6 +5153,7 @@ overload->addOverload("imgproc", "", "line", {
 	make_param<int>("lineType","LineTypes", cv:: LINE_8),
 	make_param<int>("shift","int", 0)
 }, line);
+	Nan::SetMethod(target, "line", imgproc_general_callback::callback);
 
 //    interface Iline{
 //        (img: _st.InputOutputArray, pt1: _types.Point, pt2: _types.Point, color: _types.Scalar,
@@ -5090,6 +5190,7 @@ overload->addOverload("imgproc", "", "arrowedLine", {
 	make_param<int>("shift","int", 0),
 	make_param<double>("tipLength","double", 0.1)
 }, arrowedLine);
+	Nan::SetMethod(target, "arrowedLine", imgproc_general_callback::callback);
 
 //interface IarrowedLine{
 //    (img: _st.InputOutputArray, pt1: _types.Point, pt2: _types.Point, color: _types.Scalar,
@@ -5142,6 +5243,7 @@ overload->addOverload("imgproc", "", "rectangle", {
 	make_param<int>("lineType","LineTypes",cv:: LINE_8),
 	make_param<int>("shift","int", 0)
 }, rectangle);
+	Nan::SetMethod(target, "rectangle", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "rectangle", {
 	make_param<IOArray*>("img","IOArray"),
@@ -5191,6 +5293,7 @@ overload->addOverload("imgproc", "", "circle", {
 	make_param<int>("lineType","LineTypes",cv::LINE_8),
 	make_param<int>("shift","int", 0)
 }, circle);
+Nan::SetMethod(target, "circle", imgproc_general_callback::callback);
 
 //    interface Icircle{
 //        (img: _st.InputOutputArray, center: _types.Point, radius : _st.int,
@@ -5259,6 +5362,7 @@ overload->addOverload("imgproc", "", "ellipse", {
 	make_param<int>("thickness","int", 1),
 	make_param<int>("lineType","LineTypes",cv:: LINE_8)
 }, ellipse);
+Nan::SetMethod(target, "ellipse", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "ellipse", {
 	make_param<IOArray*>("img","IOArray"),
@@ -5324,6 +5428,7 @@ SetObjectProperty(MarkerTypes, "MARKER_TRIANGLE_DOWN", 6);
 		make_param<int>( "thickness","int",1),
 		make_param<int>( "line_type","int", 8)
 	}, drawMarker);
+	Nan::SetMethod(target, "drawMarker", imgproc_general_callback::callback);
 
 //    interface IdrawMarker{
 //        (img: _mat.Mat, position: _types.Point, color: _types.Scalar,
@@ -5377,6 +5482,7 @@ overload->addOverload("imgproc", "", "fillConvexPoly", {
 	make_param<int>("lineType","LineTypes",cv:: LINE_8),
 	make_param<int>("shift","int", 0)
 },fillConvexPoly );
+	Nan::SetMethod(target, "fillConvexPoly", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "fillConvexPoly", {
 	make_param<Matrix*>("img","Mat"),
@@ -5439,6 +5545,7 @@ overload->addOverload("imgproc", "", "fillPoly", {
 	make_param<int>("shift","int" , 0),
 	make_param<Point*>("offset",Point::name, Point::create())
 }, fillPoly);
+Nan::SetMethod(target, "fillPoly", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "fillPoly", {
 	make_param<Matrix*>("img","Mat"),
@@ -5502,6 +5609,7 @@ overload->addOverload("imgproc", "", "polylines", {
 	make_param<int>("lineType","LineTypes",cv:: LINE_8),
 	make_param<int>("shift","int", 0)
 },polylines );
+Nan::SetMethod(target, "polylines", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "polylines", {
 	make_param<Matrix*>("img","Mat"),
@@ -5613,6 +5721,7 @@ overload->addOverload("imgproc", "", "drawContours", {
 	make_param<int>("maxLevel","int", INT_MAX),
 	make_param<Point*>("offset",Point::name, Point::create())
 }, drawContours);
+Nan::SetMethod(target, "drawContours", imgproc_general_callback::callback);
 
 
 //        interface IdrawContours {
@@ -5647,6 +5756,7 @@ overload->addOverload("imgproc", "", "clipLine", {
 		make_param<Point*>("pt2",Point::name),
 		make_param<std::shared_ptr< or ::Callback>>("cb","Function")// ? : (pt1 : _types.Point, pt2 : _types.Point) = > void
 },clipLine_size );
+Nan::SetMethod(target, "clipLine", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "clipLine", {
 	make_param<Rect*>("imgRect",Rect::name),
@@ -5704,6 +5814,7 @@ overload->addOverload("imgproc", "", "ellipse2Poly", {
 		make_param<int>("delta","int"),
 		make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (pts : Array<_types.Point>) = > void
 }, ellipse2Poly);
+Nan::SetMethod(target, "ellipse2Poly", imgproc_general_callback::callback);
 
 //    interface Iellipse2Poly{
 //        (center : _types.Point, axes : _types.Size, angle : _st.int,
@@ -5748,6 +5859,7 @@ overload->addOverload("imgproc", "", "putText", {
 	make_param<int>("lineType","LineTypes",cv::LINE_8),
 	make_param<bool>("bottomLeftOrigin","bool", false)
 }, putText);
+Nan::SetMethod(target, "putText", imgproc_general_callback::callback);
 
 //    interface IputText {
 //        (img : _st.InputOutputArray, text: string, org : _types.Point,
@@ -5816,6 +5928,7 @@ overload->addOverload("imgproc", "", "getTextSize", {
 	make_param<int>("thickness","int"),
 	make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (baseLine : _st.int) = > void
 }, getTextSize);
+Nan::SetMethod(target, "getTextSize", imgproc_general_callback::callback);
 
 //    interface IgetTextSize{
 //        (text: string, fontFace: _core.HersheyFonts |  _st.int,
@@ -5831,7 +5944,7 @@ overload->addOverload("imgproc", "", "getTextSize", {
 
 LineIterator::Init(target, overload);
 
-target->Set(Nan::New("CV_FILLED ").ToLocalChecked(), Nan::New(-1));
+target->Set(Nan::New("CV_FILLED").ToLocalChecked(), Nan::New(-1));
 //export const CV_FILLED = -1;
 
 
@@ -5844,7 +5957,7 @@ target->Set(Nan::New("CV_FILLED ").ToLocalChecked(), Nan::New(-1));
 //    public contour: any;//CvSeq ; /**<optional component boundary (the contour might have child contours corresponding /to /the holes)*/
 //}
 
-target->Set(Nan::New("CV_CANNY_L2_GRADIENT ").ToLocalChecked(), Nan::New((1 << 31)));
+target->Set(Nan::New("CV_CANNY_L2_GRADIENT").ToLocalChecked(), Nan::New((1 << 31)));
 //export const CV_CANNY_L2_GRADIENT = (1 << 31);
 
 auto ShapeOrientation = CreateNamedObject(target, "ShapeOrientation");
@@ -5876,7 +5989,22 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
  POLY_METHOD(imgproc::morphologyDefaultBorderValue){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::getStructuringElement){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::medianBlur){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::GaussianBlur){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::GaussianBlur){
+	 auto src			=info.at<IOArray*>(0)->GetInputArray();
+	 auto dst			=info.at<IOArray*>(1)->GetOutputArray();
+	 auto ksize			=info.at<Size*>(2)->_size;
+	 auto sigmaX		=info.at<double>(3);
+	 auto sigmaY		=info.at<double>(4);
+	 auto borderType	= info.at<int>(5);
+	 
+	 cv::GaussianBlur(
+		 src,
+		 dst,
+		 *ksize,
+		 sigmaX,
+		 sigmaY,
+		 borderType);
+ }
  POLY_METHOD(imgproc::bilateralFilter){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::boxFilter){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::sqrBoxFilter){throw std::exception("not implemented");}

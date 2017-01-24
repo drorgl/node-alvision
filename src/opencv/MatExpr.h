@@ -2,9 +2,9 @@
 #define _ALVISION_MATEXPR_H_
 //#include "OpenCV.h"
 #include "../alvision.h"
+#include "IOArray.h"
 
-
-class MatExpr : public or::ObjectWrap {
+class MatExpr : public IOArray {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
@@ -13,6 +13,13 @@ public:
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	virtual v8::Local<v8::Function> get_constructor(); 
+
+	virtual cv::_InputArray GetInputArray();
+	virtual cv::_InputArray GetInputArrayOfArrays();
+	virtual cv::_OutputArray GetOutputArray();
+	virtual cv::_OutputArray GetOutputArrayOfArrays();
+	virtual cv::_InputOutputArray GetInputOutputArray();
+	virtual cv::_InputOutputArray GetInputOutputArrayOfArrays();
 
 
 	//constructors

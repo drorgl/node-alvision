@@ -90,14 +90,7 @@ init(Handle<Object> target) {
 	IOArray::Init(target, overload);
 	
 
-	Matrix::Init(target,overload);
-	UMatrix::Init(target, overload);
-	TrackedPtr<Matrix>::Init(target, "TrackedPtr_Mat", overload);
-	//TrackedElement<Matrix>::Init(target, overload);
-
-	alvision::ffmpeg::Init(target,overload);
-	alvision::packet::Init(target,overload);
-	alvision::stream::Init(target,overload);
+	
 	Constants::Init(target,overload);
 	
 
@@ -121,6 +114,15 @@ init(Handle<Object> target) {
 	VecInit::Init(target, overload);
 	types::Init(target, overload);
 	//cv::Vec3d::mat_type
+
+	Matrix::Init(target, overload);
+	UMatrix::Init(target, overload);
+	TrackedPtr<Matrix>::Init(target, "TrackedPtr_Mat", overload);
+	//TrackedElement<Matrix>::Init(target, overload);
+
+	alvision::ffmpeg::Init(target, overload);
+	alvision::packet::Init(target, overload);
+	alvision::stream::Init(target, overload);
 	
 	Mat_Init::Init(target, overload);
 

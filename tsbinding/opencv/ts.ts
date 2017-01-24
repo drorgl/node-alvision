@@ -97,6 +97,7 @@ export namespace cvtest {
         constructor() {
             this.ts = new TS();
             this.test_case_count = -1;
+            this.name = "";
         }
         //    
         //

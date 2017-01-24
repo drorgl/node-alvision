@@ -3189,6 +3189,7 @@ POLY_METHOD(core::randu){
 	auto dst = info.at<IOArray*>(0)->GetInputOutputArray();
 	auto low = info.at<IOArray*>(1)->GetInputArray();
 	auto high = info.at<IOArray*>(2)->GetInputArray();
+
 	cv::randu(dst, low, high);
 }
 POLY_METHOD(core::randu_number){
