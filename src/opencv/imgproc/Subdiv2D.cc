@@ -1,6 +1,6 @@
 #include "Subdiv2D.h"
-#include "../Rect.h"
-#include "../Point.h"
+#include "../types/Rect.h"
+#include "../types/Point.h"
 
 namespace subdiv2d_general_callback {
 	std::shared_ptr<overload_resolution> overload;

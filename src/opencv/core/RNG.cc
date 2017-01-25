@@ -129,64 +129,64 @@ POLY_METHOD(RNG::next_uint){
 	info.SetReturnValue(this_->next());
 }
 POLY_METHOD(RNG::next_uchar){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue((uchar)this_());
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue((uchar)this_->operator uchar());
 }
 POLY_METHOD(RNG::next_ushort){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue((ushort)this_());
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue((ushort)this_->operator ushort());
 }
 POLY_METHOD(RNG::next_short){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue((short)this_());
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue((short)this_->operator short());
 }
 POLY_METHOD(RNG::next_unsigned){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue((unsigned)this_());
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue((unsigned)this_->operator unsigned());
 }
 POLY_METHOD(RNG::unsigned_upperBoundary){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue((unsigned)this_(info.at<uint>(0)));
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue((unsigned)this_->operator()(info.at<uint>(0)));
 }
 POLY_METHOD(RNG::next_int){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue((int)this_());
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue((int)this_->operator int());
 }
 POLY_METHOD(RNG::next_float){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue((float)this_());
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue((float)this_->operator float());
 }
 POLY_METHOD(RNG::next_double){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue((double)this_());
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue((double)this_->operator double());
 }
 POLY_METHOD(RNG::uniform){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue(this_.uniform(info.at<double>(0),info.at<double>(1)));
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue(this_->uniform(info.at<double>(0),info.at<double>(1)));
 }
 POLY_METHOD(RNG::fill_array){
-	auto this_ = *info.This<RNG*>()->_rng;
+	auto this_ = info.This<RNG*>()->_rng;
 	auto mat = info.at<IOArray*>(0);
 	auto distType = info.at<int>(1);
 	auto a = info.at<IOArray*>(2);
 	auto b = info.at<IOArray*>(3);
 	auto saturateRange = info.at<bool>(4);
 
-	this_.fill(mat->GetInputOutputArray(), distType, a->GetInputArray(), b->GetInputArray(), saturateRange);
+	this_->fill(mat->GetInputOutputArray(), distType, a->GetInputArray(), b->GetInputArray(), saturateRange);
 }
 POLY_METHOD(RNG::fill_number){
-	auto this_ = *info.This<RNG*>()->_rng;
+	auto this_ = info.This<RNG*>()->_rng;
 	auto mat = info.at<IOArray*>(0);
 	auto distType = info.at<int>(1);
 	auto a = info.at<double>(2);
 	auto b = info.at<double>(3);
 	auto saturateRange = info.at<bool>(4);
 
-	this_.fill(mat->GetInputOutputArray(), distType, a, b, saturateRange);
+	this_->fill(mat->GetInputOutputArray(), distType, a, b, saturateRange);
 }
 POLY_METHOD(RNG::gaussian){
-	auto this_ = *info.This<RNG*>()->_rng;
-	info.SetReturnValue(this_.gaussian(info.at<double>(0)));
+	auto this_ = info.This<RNG*>()->_rng;
+	info.SetReturnValue(this_->gaussian(info.at<double>(0)));
 }
 
 NAN_GETTER(RNG::state_getter){

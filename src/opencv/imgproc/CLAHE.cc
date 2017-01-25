@@ -1,6 +1,6 @@
 #include "CLAHE.h"
 #include "../IOArray.h"
-#include "../Size.h"
+#include "../types/Size.h"
 
 namespace clahe_general_callback {
 	std::shared_ptr<overload_resolution> overload;

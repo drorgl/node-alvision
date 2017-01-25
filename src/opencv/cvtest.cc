@@ -2,10 +2,10 @@
 #include <opencv2/ts.hpp>
 
 #include "Matrix.h"
-#include "Scalar.h"
+#include "types/Scalar.h"
 #include "core/RNG.h"
-#include "Size.h"
-#include "Point.h"
+#include "types/Size.h"
+#include "types/Point.h"
 
 namespace cvtest_general_callback {
 	std::shared_ptr<overload_resolution> overload;

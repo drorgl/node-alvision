@@ -84,6 +84,9 @@ init(Handle<Object> target) {
 	overload->add_type_alias("bool", "Boolean");
 	overload->add_type_alias("size_t", "int");
 	overload->add_type_alias("MatrixType", "int");
+	overload->add_type_alias("uchar", "Number");
+	overload->add_type_alias("short", "Number");
+	overload->add_type_alias("ushort", "Number");
 
 	base::Init(target, overload);
 

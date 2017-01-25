@@ -1,5 +1,5 @@
 #include "StereoBM.h"
-#include "../Rect.h"
+#include "../types/Rect.h"
 
 namespace stereobm_general_callback {
 	std::shared_ptr<overload_resolution> overload;

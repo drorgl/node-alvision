@@ -88,7 +88,7 @@ class BuildWarpAffineMaps extends alvision.cvtest.CUDA_TEST
     }
 };
 
-//CUDA_TEST_P(BuildWarpAffineMaps, Accuracy)
+@alvision.cvtest.CUDA_TEST_P('BuildWarpAffineMaps', 'Accuracy')
 class BuildWarpAffineMaps_Accuracy extends BuildWarpAffineMaps
 {
     public TestBody(): void {

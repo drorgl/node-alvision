@@ -73,6 +73,7 @@
 		, "src/opencv/array_accessors/Matrix_array_accessor.cc"
 		, "src/opencv/array_accessors/Matx_array_accessor.h"
 		, "src/opencv/array_accessors/Vec_array_accessor.h"
+		, "src/opencv/array_accessors/value_adapters.h"
 		
 		, "src/opencv/imgproc.cc"
 		, "src/opencv/imgproc.h"

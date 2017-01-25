@@ -1689,7 +1689,7 @@ alvision.cvtest.TEST('Core_Add', 'AddToColumnWhen4Rows', () => {
     //m1.col(1) += 10;
     alvision.MatExpr.op_Addition(m1.col(1), 10).toMat().copyTo(m1.col(1));
 
-    var m2 = new alvision.Mat (new alvision.Mat1d(4, 2[ 1, 12, 3, 14, 5, 16, 7, 18]));
+    var m2 = new alvision.Mat (new alvision.Mat1d(4, 2,[ 1, 12, 3, 14, 5, 16, 7, 18]));
 
     alvision.ASSERT_EQ(0, alvision.countNonZero(alvision.MatExpr.op_Substraction( m1 , m2).toMat()));
 });

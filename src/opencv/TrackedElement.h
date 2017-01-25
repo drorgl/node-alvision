@@ -12,24 +12,29 @@ namespace trackedelement_general_callback {
 template <typename T>
 class TrackedElement : public or ::ObjectWrap{
 public:
-	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	static std::string name;
+	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		trackedelement_general_callback::overload = overload;
+		TrackedElement<T>::name = name;
 
 		//Class
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(trackedelement_general_callback::tracked_ptr_callback);
 		constructor.Reset(ctor);
 		auto itpl = ctor->InstanceTemplate();
 		itpl->SetInternalFieldCount(1);
-		ctor->SetClassName(Nan::New("TrackedElement").ToLocalChecked());
+		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
-		overload->register_type<TrackedElement>(ctor, "trackedelement", "TrackedElement");
+		overload->register_type<TrackedElement<T>>(ctor, "trackedelement", name);
 
 
-		overload->addOverloadConstructor("tracked_element", "TrackedElement",{}, TrackedElement::New);
-		overload->addOverload("tracked_element", "TrackedElement", "get", {}, get);
-		overload->addOverload("tracked_element", "TrackedElement", "set", {make_param<T>("val",T::name)}, set);
+		overload->addOverloadConstructor("tracked_element", name,{}, TrackedElement::New);
 
-		target->Set(Nan::New("TrackedElement").ToLocalChecked(), ctor->GetFunction());
+		overload->addOverload("tracked_element", name, "get", {}, get);
+		Nan::SetPrototypeMethod(ctor, "get", trackedelement_general_callback::tracked_ptr_callback);
+		overload->addOverload("tracked_element", name, "set", {}, set);
+		Nan::SetPrototypeMethod(ctor, "set", trackedelement_general_callback::tracked_ptr_callback);
+
+		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 	}
 
 	static Nan::Persistent<FunctionTemplate> constructor;
@@ -41,7 +46,10 @@ public:
 
 
 	static POLY_METHOD(New) {
-		return Nan::ThrowError("TrackedElement cannot be created manually, its part of the Alvision internal module");
+		auto telem = new TrackedElement<T>();
+
+		telem->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
 	}
 
 
@@ -49,18 +57,33 @@ public:
 
 	static POLY_METHOD(get) {
 		auto this_ = info.This<TrackedElement<T>*>();
+		if (this_->_from == nullptr) {
+			throw std::exception("TrackedElement is empty");
+		}
 		info.GetReturnValue().Set(this_->_from->get(0));
 	}
 	static POLY_METHOD(set) {
+		
 		auto this_ = info.This<TrackedElement<T>*>();
-		this_->_from->set(0,info.at<T>(0));
-		info.SetReturnValue(info.at<T>(0));
+
+		if (this_->_from == nullptr) {
+			throw std::exception("TrackedElement is empty");
+		}
+
+		if (info.Length() != 1) {
+			throw std::exception("set should be passed a value");
+		}
+
+
+		this_->_from->set(0,info[0]);
+		info.GetReturnValue().Set(info[0]);
 	}
 };
 
 template<typename T>
 Nan::Persistent<FunctionTemplate> TrackedElement<T>::constructor;
 
-
+template<typename T>
+std::string TrackedElement<T>::name;
 
 #endif

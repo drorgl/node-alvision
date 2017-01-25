@@ -1,6 +1,6 @@
 #include "LineIterator.h"
 #include "../Matrix.h"
-#include "../Point.h"
+#include "../types/Point.h"
 
 namespace lineiterator_general_callback {
 	std::shared_ptr<overload_resolution> overload;

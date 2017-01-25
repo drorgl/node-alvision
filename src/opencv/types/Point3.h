@@ -191,6 +191,7 @@ public:
 			//}
 			//norm(pt: Point3_<T>) : _st.double;
 			overload->addStaticOverload("point3", name, "norm", {make_param<Point3_<T>*>("pt",name)},norm);
+			Nan::SetMethod(ctor, "norm", point3_general_callback::callback);
 
 			//template < typename _Tp> static inline
 			//bool operator == (const Point3_<_Tp>& a, const Point3_<_Tp>& b)
@@ -202,6 +203,7 @@ public:
 				make_param<Point3_<T>*>("pt1",name),
 				make_param<Point3_<T>*>("pt2",name)
 			}, op_Equals);
+			Nan::SetMethod(ctor, "op_Equals", point3_general_callback::callback);
 
 
 			//template < typename _Tp> static inline
@@ -214,6 +216,7 @@ public:
 				make_param<Point3_<T>*>("pt1",name),
 				make_param<Point3_<T>*>("pt2",name)
 			}, op_NotEquals);
+			Nan::SetMethod(ctor, "op_NotEquals", point3_general_callback::callback);
 
 
 			//template < typename _Tp> static inline
@@ -226,6 +229,7 @@ public:
 				make_param<Point3_<T>*>("pt1",name),
 				make_param<Point3_<T>*>("pt2",name)
 			}, op_Addition);
+			Nan::SetMethod(ctor, "op_Addition", point3_general_callback::callback);
 
 			//template < typename _Tp> static inline
 			//Point3_ < _Tp > operator - (const Point3_<_Tp>& a, const Point3_<_Tp>& b)
@@ -237,7 +241,7 @@ public:
 				make_param<Point3_<T>*>("pt1",name),
 				make_param<Point3_<T>*>("pt2",name)
 			}, op_Substraction_pt1_pt2);
-
+			Nan::SetMethod(ctor, "op_Substraction", point3_general_callback::callback);
 
 			//template < typename _Tp> static inline
 			//Point3_ < _Tp > operator - (const Point3_<_Tp>& a)
@@ -248,6 +252,7 @@ public:
 			overload->addStaticOverload("point3", name, "op_Substraction", {
 				make_param<Point3_<T>*>("pt",name)
 			}, op_Substraction);
+			Nan::SetMethod(ctor, "op_Substraction", point3_general_callback::callback);
 
 
 
@@ -261,6 +266,7 @@ public:
 				make_param<Point3_<T>*>("pt1",name),
 				make_param<double>("b","Number")
 			}, op_Multiplication_pt_b);
+			Nan::SetMethod(ctor, "op_Multiplication", point3_general_callback::callback);
 
 			//template < typename _Tp> static inline
 			//Point3_ < _Tp > operator * (int a, const Point3_<_Tp>& b)
@@ -272,6 +278,7 @@ public:
 				make_param<double>("a","Number"),
 				make_param<Point3_<T>*>("pt2",name)
 			}, op_Multiplication_a_pt);
+			Nan::SetMethod(ctor, "op_Multiplication", point3_general_callback::callback);
 
 			//template < typename _Tp> static inline
 			//Point3_ < _Tp > operator * (const Point3_<_Tp>& a, float b)
@@ -334,6 +341,7 @@ public:
 				make_param<Point3_<T>*>("pt1",name),
 				make_param<double>("b","Number")
 			}, op_Division_pt_b);
+			Nan::SetMethod(ctor, "op_Division", point3_general_callback::callback);
 
 			//op_Division(a: Point3_<T>, b : _st.int) : Point3_<T>;
 
@@ -363,13 +371,15 @@ public:
 			//! dot product
 			//dot(pt : Point3_<T>) : T;
 			overload->addOverload("point3", name, "dot", { make_param<Point3_<T>*>("pt",name) }, dot);
-
+			Nan::SetPrototypeMethod(ctor, "dot", point3_general_callback::callback);
 			//! dot product computed in double-precision arithmetics
 			//ddot(pt : Point3_<T>) : _st.double;
 			overload->addOverload("point3", name, "ddot", { make_param<Point3_<T>*>("pt",name) }, ddot);
+			Nan::SetPrototypeMethod(ctor, "ddot", point3_general_callback::callback);
 			//! cross product of the 2 3D points
 			//cross(pt : Point3_<T>) : Point3_<T>;
 			overload->addOverload("point3", name, "cross", { make_param<Point3_<T>*>("pt",name) }, cross);
+			Nan::SetPrototypeMethod(ctor, "cross", point3_general_callback::callback);
 
 			Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("x").ToLocalChecked(), x_getter, x_setter);
 		//x: T;
@@ -380,29 +390,35 @@ public:
 			//_Tp x, y, z; //< the point coordinates
 
 			overload->addOverload("point3", name, "norm", {}, norm_instance);
+			Nan::SetPrototypeMethod(ctor, "norm", point3_general_callback::callback);
 			//norm() : _st.double;
 
 
 			//op_Equals(other: Point3_<T>) : boolean;
 			overload->addOverload("point3", name, "op_Equals", { make_param<Point3_<T>*>("pt",name) }, op_Equals_other);
+			Nan::SetPrototypeMethod(ctor, "op_Equals", point3_general_callback::callback);
 
 
 			//op_NotEquals(other: Point3_<T>) : boolean;
 			overload->addOverload("point3", name, "op_NotEquals", { make_param<Point3_<T>*>("pt",name) }, op_NotEquals_other);
+			Nan::SetPrototypeMethod(ctor, "op_NotEquals", point3_general_callback::callback);
 
 			//op_Addition(other: Point3_<T>) : Point3_<T>;
 			overload->addOverload("point3", name, "op_Addition", { make_param<Point3_<T>*>("pt",name) }, op_Addition_other);
+			Nan::SetPrototypeMethod(ctor, "op_Addition", point3_general_callback::callback);
 
 			//op_Substraction(other: Point3_<T>) : Point3_<T>;
 			overload->addOverload("point3", name, "op_Substraction", { make_param<Point3_<T>*>("pt",name) }, op_Substraction_other);
+			Nan::SetPrototypeMethod(ctor, "op_Substraction", point3_general_callback::callback);
 
 			//op_Multiplication(other: _st.int | _st.float | _st.double | number) : Point3_<T>;
 			overload->addOverload("point3", name, "op_Multiplication", {make_param<double>("other","Number")}, op_Multiplication_other_number);
-
+			Nan::SetPrototypeMethod(ctor, "op_Multiplication", point3_general_callback::callback);
 
 			//op_Multiplication(other: _matx.Matx<T>) : Point3_<T>;
 			//op_Division(other: _st.int | _st.float | _st.double) : Point3_<T>;
 			overload->addOverload("point3", name, "op_Division", { make_param<double>("other","Number") }, op_Division_other_number);
+			Nan::SetPrototypeMethod(ctor, "op_Division", point3_general_callback::callback);
 
 		//}
 

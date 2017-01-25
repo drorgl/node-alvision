@@ -1146,7 +1146,7 @@ interface IstereoCalibrate {
         cameraMatrix2: _st.InputOutputArray, distCoeffs2: _st.InputOutputArray ,
         imageSize: _types.Size, R: _st.OutputArray, T: _st.OutputArray, E: _st.OutputArray, F: _st.OutputArray ,
         flags? : CALIB | _st.int /* = CALIB_FIX_INTRINSIC*/,
-        criteria?: _types.TermCriteria /* = TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, 30, 1e-6)*/)  : double;
+        criteria?: _types.TermCriteria /* = TermCriteria(TermCriteria::COUNT + TermCriteria::EPS, 30, 1e-6)*/)  : _st.double;
 }
 export var stereoCalibrate: IstereoCalibrate = alvision_module.stereoCalibrate;
 

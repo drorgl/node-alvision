@@ -506,11 +506,11 @@ class CxCore_DXTBaseTest extends alvision.cvtest.ArrayTest
 
 
     get_test_array_types_and_sizes(test_case_idx: alvision.int, sizes: Array<Array<alvision.Size>>, types: Array<Array<alvision.int>>): void {
-        var rng = this.ts.get_rng();
-        var bits = alvision.cvtest.randInt(rng).valueOf();
-        var depth = alvision.cvtest.randInt(rng).valueOf() % 2 + alvision.MatrixType.CV_32F;
-        var cn = !this.allow_complex || !(bits & 256) ? 1 : 2;
-        var size = new alvision.Size();
+        let rng = this.ts.get_rng();
+        let bits = alvision.cvtest.randInt(rng).valueOf();
+        let depth = alvision.cvtest.randInt(rng).valueOf() % 2 + alvision.MatrixType.CV_32F;
+        let cn = !this.allow_complex || !(bits & 256) ? 1 : 2;
+        let size = new alvision.Size();
         super.get_test_array_types_and_sizes(test_case_idx, sizes, types);
 
         this.flags = bits & (alvision.DftFlags.DFT_INVERSE | alvision.DftFlags.DFT_SCALE | alvision.DftFlags.DFT_ROWS |  CV_DXT_MUL_CONJ);
@@ -563,7 +563,7 @@ class CxCore_DXTBaseTest extends alvision.cvtest.ArrayTest
             size = new alvision.Size(size.width.valueOf() / 2 + 1, size.height);
 
             if (this.flags.valueOf() & alvision.DftFlags.DFT_INVERSE) {
-                if (cn == 2) {
+                if (cn.valueOf() == 2) {
                     types[this.OUTPUT][0] = depth;
                     sizes[this.INPUT][0] = size;
                 }
@@ -574,7 +574,7 @@ class CxCore_DXTBaseTest extends alvision.cvtest.ArrayTest
                 if (this.allow_complex)
                     types[this.OUTPUT][0] = depth + 8;
 
-                if (cn == 2) {
+                if (cn.valueOf() == 2) {
                     types[this.INPUT][0] = depth;
                     types[this.TEMP][1] = types[this.TEMP][0];
                     sizes[this.TEMP][1] = size;

@@ -17,16 +17,17 @@ namespace vec_general_callback {
 template <typename T>
 class Vec : public Matx<T>{
 public:
+	typedef typename Vec<T> VecT;
 	typedef typename T::value_type TVT;
 	typedef typename T::mat_type mat_type;
 
 
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		vec_general_callback::overload = overload;
-		Vec<T>::name = name;
+		VecT::name = name;
 
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(vec_general_callback::callback);
-		Vec<T>::constructor.Reset(ctor);
+		VecT::constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);
 		ctor->SetClassName(Nan::New(name).ToLocalChecked());
 
@@ -36,7 +37,7 @@ public:
 		//}
 		ctor->Inherit(Nan::New(Matx<mat_type>::constructor));
 
-		overload->register_type<Vec<T>>(ctor, "vec", name);
+		overload->register_type<VecT>(ctor, "vec", name);
 		
 
 		overload->addOverloadConstructor("vec", name, {}, New_no_parameters);
@@ -70,7 +71,7 @@ public:
 		overload->addOverloadConstructor("vec", name, { make_param<std::shared_ptr<std::vector<TVT>>>("values","Array<Number>") }, New_values);
 
 		//Vec(const Vec<_Tp, cn>& v);
-		overload->addOverloadConstructor("vec", name, { make_param<Vec<T>*>("v",name) }, New_vec);
+		overload->addOverloadConstructor("vec", name, { make_param<VecT*>("v",name) }, New_vec);
 
 		//static Vec all(_Tp alpha);
 		overload->addStaticOverload("vec", name, "all", { make_param<TVT>("alpha",name) }, all_T);
@@ -78,7 +79,7 @@ public:
 
 		////! per-element multiplication
 		//Vec mul(const Vec<_Tp, cn>& v) const;
-		overload->addOverload("vec", name, "mul", { make_param < Vec<T>*>("v",name) }, mul_vec);
+		overload->addOverload("vec", name, "mul", { make_param < VecT*>("v",name) }, mul_vec);
 		Nan::SetPrototypeMethod(ctor, "mul", vec_general_callback::callback);
 
 		////! conjugation (makes sense for complex numbers and quaternions)
@@ -93,7 +94,7 @@ public:
 		//For other dimensionalities the exception is raised
 		//*/
 		//Vec cross(const Vec& v) const;
-		overload->addOverload("vec", name, "cross", { make_param < Vec<T>*>("v",name) }, cross_vec);
+		overload->addOverload("vec", name, "cross", { make_param < VecT*>("v",name) }, cross_vec);
 		Nan::SetPrototypeMethod(ctor, "cross", vec_general_callback::callback);
 		////! conversion to another data type
 		//template<typename T2> operator Vec<T2, cn>() const;
@@ -106,8 +107,8 @@ public:
 		//overload->addOverload("vec", name, "ptr", { make_param<std::string>("type","String"),make_param<int>("i0","int",0),make_param<int>("i1","int",0),make_param<int>("i2","int",0) }, ptr);
 		//Nan::SetPrototypeMethod(ctor, "ptr", vec_general_callback::callback);
 		//
-		//overload->addOverload("vec", name, "at", { make_param<std::string>("type","String"),make_param<int>("i0","int"),make_param<int>("i1","int",0),make_param<int>("i2","int",0) }, at);
-		//Nan::SetPrototypeMethod(ctor, "at", vec_general_callback::callback);
+		overload->addOverload("vec", name, "at", { make_param<int>("i0","int"),make_param<int>("i1","int",0),make_param<int>("i2","int",0) }, at);
+		Nan::SetPrototypeMethod(ctor, "at", vec_general_callback::callback);
 
 
 
@@ -116,32 +117,32 @@ public:
 		//template<typename _T2> Vec(const Matx<_Tp, cn, 1>& a, _T2 alpha, Matx_ScaleOp);
 
 
-		//op_Addition(a: Vec<T> | _st.float | _st.double | _st.int, b : Vec<T> | _st.float | _st.double | _st.int) : Vec<T>;
-		overload->addStaticOverload("vec", name, "op_Addition", { make_param<T*>("a",name), make_param<T*>("b",name) }, op_Addition_vec_vec);
-		overload->addStaticOverload("vec", name, "op_Addition", { make_param<double>("a","Number"), make_param<T*>("b",name) }, op_Addition_num_vec);
-		overload->addStaticOverload("vec", name, "op_Addition", { make_param<T*>("a",name), make_param<double>("b","Number") }, op_Addition_vec_num);
+		//op_Addition(a: VecT | _st.float | _st.double | _st.int, b : VecT | _st.float | _st.double | _st.int) : VecT;
+		overload->addStaticOverload("vec", name, "op_Addition", { make_param<VecT*>("a",name), make_param<VecT*>("b",name) }, op_Addition_vec_vec);
+		overload->addStaticOverload("vec", name, "op_Addition", { make_param<double>("a","Number"), make_param<VecT*>("b",name) }, op_Addition_num_vec);
+		overload->addStaticOverload("vec", name, "op_Addition", { make_param<VecT*>("a",name), make_param<double>("b","Number") }, op_Addition_vec_num);
 
 		Nan::SetMethod(ctor, "op_Addition", vec_general_callback::callback);
-		//op_Multiplication(a: Vec<T> | _st.float | _st.double | _st.int, b : Vec<T> | _st.float | _st.double | _st.int) : Vec<T>;
-		/*overload->addStaticOverload("vec", name, "op_Multiplication", { make_param<T*>("a",name), make_param<T*>("b",name) },			 op_Multiplication_vec_vec);
-		overload->addStaticOverload("vec", name, "op_Multiplication", { make_param<double>("a","Number"), make_param<T*>("b",name) }, op_Multiplication_num_vec);*/
-		overload->addStaticOverload("vec", name, "op_Multiplication", { make_param<T*>("a",name), make_param<double>("b","Number") }, op_Multiplication_vec_num);
+		//op_Multiplication(a: VecT | _st.float | _st.double | _st.int, b : VecT | _st.float | _st.double | _st.int) : VecT;
+		/*overload->addStaticOverload("vec", name, "op_Multiplication", { make_param<VecT*>("a",name), make_param<VecT*>("b",name) },			 op_Multiplication_vec_vec);
+		overload->addStaticOverload("vec", name, "op_Multiplication", { make_param<double>("a","Number"), make_param<VecT*>("b",name) }, op_Multiplication_num_vec);*/
+		overload->addStaticOverload("vec", name, "op_Multiplication", { make_param<VecT*>("a",name), make_param<double>("b","Number") }, op_Multiplication_vec_num);
 
 		Nan::SetMethod(ctor, "op_Multiplication", vec_general_callback::callback);
 
 
-		//op_Division(a: Vec<T> | _st.float | _st.double | _st.int, b : Vec<T> | _st.float | _st.double | _st.int) : Vec<T>;
-		/*overload->addStaticOverload("vec", name, "op_Division", { make_param<T*>("a",name), make_param<T*>("b",name) },          op_Division_vec_vec);
-		overload->addStaticOverload("vec", name, "op_Division", { make_param<double>("a","Number"), make_param<T*>("b",name) }, op_Division_num_vec);*/
-		overload->addStaticOverload("vec", name, "op_Division", { make_param<T*>("a",name), make_param<double>("b","Number") }, op_Division_vec_num);
+		//op_Division(a: VecT | _st.float | _st.double | _st.int, b : VecT | _st.float | _st.double | _st.int) : VecT;
+		/*overload->addStaticOverload("vec", name, "op_Division", { make_param<VecT*>("a",name), make_param<VecT*>("b",name) },          op_Division_vec_vec);
+		overload->addStaticOverload("vec", name, "op_Division", { make_param<double>("a","Number"), make_param<VecT*>("b",name) }, op_Division_num_vec);*/
+		overload->addStaticOverload("vec", name, "op_Division", { make_param<VecT*>("a",name), make_param<double>("b","Number") }, op_Division_vec_num);
 
 		Nan::SetMethod(ctor, "op_Division", vec_general_callback::callback);
 
 
-		//op_Substraction(a: Vec<T> | _st.float | _st.double | _st.int, b: Vec<T> | _st.float | _st.double | _st.int): Vec<T>;
-		overload->addStaticOverload("vec", name, "op_Substraction", { make_param<T*>("a",name), make_param<T*>("b",name) },          op_Substraction_vec_vec);
-		overload->addStaticOverload("vec", name, "op_Substraction", { make_param<double>("a","Number"), make_param<T*>("b",name) }, op_Substraction_num_vec);
-		overload->addStaticOverload("vec", name, "op_Substraction", { make_param<T*>("a",name), make_param<double>("b","Number") }, op_Substraction_vec_num);
+		//op_Substraction(a: VecT | _st.float | _st.double | _st.int, b: VecT | _st.float | _st.double | _st.int): VecT;
+		overload->addStaticOverload("vec", name, "op_Substraction", { make_param<VecT*>("a",name), make_param<VecT*>("b",name) },          op_Substraction_vec_vec);
+		overload->addStaticOverload("vec", name, "op_Substraction", { make_param<double>("a","Number"), make_param<VecT*>("b",name) }, op_Substraction_num_vec);
+		overload->addStaticOverload("vec", name, "op_Substraction", { make_param<VecT*>("a",name), make_param<double>("b","Number") }, op_Substraction_vec_num);
 
 		Nan::SetMethod(ctor, "op_Substraction", vec_general_callback::callback);
 
@@ -152,15 +153,15 @@ public:
 		//			//        Matx<_Tp, m, 1> c(a, b, Matx_MatMulOp());
 		//			//return (const Vec<_Tp, m>&)(c);
 		//			//}
-		//			op_Multiplication(a: Matx<T>, b : Vec<T>) : Matx<T>;
+		//			op_Multiplication(a: Matx<T>, b : VecT) : Matx<T>;
 		overload->addStaticOverload("matx", name, "op_Multiplication", { make_param<Matx<mat_type>*>("a",name), make_param<Vec<cv::Vec<TVT,TCOLS>>*>("b",Vec<cv::Vec<TVT,TCOLS>>::name) }, op_Multiplication_matx_vec);
 		Nan::SetMethod(ctor, "op_Multiplication", matx_general_callback::callback);
 
 			
 
-		////norm(m ? : Vec<T>) : _st.double;
-		//overload->addStaticOverload("vec", name, "norm", { make_param<T*>("m",name) }, norm_vec);
-		//Nan::SetMethod(ctor, "norm", vec_general_callback::callback);
+		////norm(m ? : VecT) : _st.double;
+		overload->addStaticOverload("vec", name, "norm", { make_param<VecT*>("m",name) }, norm_vec);
+		Nan::SetMethod(ctor, "norm", vec_general_callback::callback);
 
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
@@ -170,7 +171,7 @@ public:
 
 	std::shared_ptr<T> _vec;
 
-	//static std::string Vec<T>::name;
+	//static std::string VecT::name;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
@@ -179,15 +180,15 @@ public:
 		return Nan::New(constructor)->GetFunction();
 	}
 
-	static Vec<T>* from(T &vec_) {
-		auto vec = new Vec<T>();
+	static VecT* from(T &vec_) {
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>(vec_);
 		vec->_matx = vec->_vec;
 		return vec;
 	}
 
-	static std::shared_ptr<Vec<T>> all(TVT value) {
-		auto vec = std::make_shared<Vec<T>>();
+	static std::shared_ptr<VecT> all(TVT value) {
+		auto vec = std::make_shared<VecT>();
 		vec->_vec = std::make_shared<T>(T::all(value));
 		vec->_matx = vec->_vec;
 		return vec;
@@ -226,7 +227,7 @@ public:
 	}*/
 
 	static POLY_METHOD(New_no_parameters) {
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>();
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -244,7 +245,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -260,7 +261,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -276,7 +277,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -292,7 +293,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -307,7 +308,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -323,7 +324,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -339,7 +340,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -355,7 +356,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -371,7 +372,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -387,7 +388,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -403,7 +404,7 @@ public:
 			values[i] = info.at<TVT>(i);
 		}
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>((TVT*)&values);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
@@ -415,7 +416,7 @@ public:
 		}
 
 
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 
 		auto vparams = *info.at<std::shared_ptr<std::vector<TVT>>>(0);
 
@@ -435,22 +436,22 @@ public:
 	}
 	static POLY_METHOD(New_vec) {
 
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>(*info.at<Vec<T>*>(0)->_vec);
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>(*info.at<VecT*>(0)->_vec);
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
 	static POLY_METHOD(all_T) {
-		auto vec = new Vec<T>();
+		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>(info.at<TVT>(0));
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
 	static POLY_METHOD(mul_vec) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>(info.This<Vec<T>*>()->_vec->mul(*info.at<Vec<T>*>(0)->_vec));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>(info.This<VecT*>()->_vec->mul(*info.at<VecT*>(0)->_vec));
 		vec->_matx = vec->_vec;
 		vec->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
@@ -460,95 +461,95 @@ public:
 	static POLY_METHOD(cross_vec);
 
 	//static POLY_METHOD(ptr) {
-	//	auto this_ = info.This<Vec<T>*>();
+	//	auto this_ = info.This<VecT*>();
 
-	//	auto tptr = new TrackedPtr<Vec<T>>();
+	//	auto tptr = new TrackedPtr<VecT>();
 	//	tptr->_from = std::make_shared<Vec_array_accessor<T>>(this_->_vec, info.at<std::string>(0), info.at<int>(1), info.at<int>(2), info.at<int>(3));
 	//	info.SetReturnValue(tptr);
 	//}
-	//static POLY_METHOD(at) {
-	//	auto vec = info.This<Vec<T>*>()->_vec;
+	static POLY_METHOD(at) {
+		auto vec = info.This<VecT*>()->_vec;
 
-	//	auto tat = new TrackedElement<Vec<T>>();
-	//	//tat->_from = std::make_shared<Vec_array_accessor<Vec<T>>>( vec, info.at<std::string>(0), info.at<int>(1), info.at<int>(2), info.at<int>(3));
+		auto tat = new TrackedElement<T>();
+		tat->_from = std::make_shared<Vec_array_accessor<T>>( vec, info.at<int>(0), info.at<int>(1), info.at<int>(2));
 
-	//	info.SetReturnValue(tat);
-	//}
+		info.SetReturnValue(tat);
+	}
 	static POLY_METHOD(op_Addition_vec_vec) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>((*info.at<Vec<T>*>(0)->_vec) + (*info.at<Vec<T>*>(0)->_vec));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>((*info.at<VecT*>(0)->_vec) + (*info.at<VecT*>(0)->_vec));
 		vec->_matx = vec->_vec;
 		info.SetReturnValue(vec);
 	}
 	static POLY_METHOD(op_Addition_num_vec) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>(T::all(info.at<double>(0)) + (*info.at<Vec<T>*>(0)->_vec));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>(T::all(info.at<double>(0)) + (*info.at<VecT*>(0)->_vec));
 		vec->_matx = vec->_vec;
 		info.SetReturnValue(vec);
 	}
 	static POLY_METHOD(op_Addition_vec_num) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>((*info.at<Vec<T>*>(0)->_vec) + T::all(info.at<double>(0)));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>((*info.at<VecT*>(0)->_vec) + T::all(info.at<double>(0)));
 		vec->_matx = vec->_vec;
 		info.SetReturnValue(vec);
 	}
 
 
 	/*static POLY_METHOD(op_Multiplication_vec_vec) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>((*info.at<Vec<T>*>(0)->_vec) * (*info.at<Vec<T>*>(0)->_vec));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>((*info.at<VecT*>(0)->_vec) * (*info.at<VecT*>(0)->_vec));
 		info.SetReturnValue(vec);
 	}
 	static POLY_METHOD(op_Multiplication_num_vec) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>((info.at<double>(0)) * (*info.at<Vec<T>*>(0)->_vec));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>((info.at<double>(0)) * (*info.at<VecT*>(0)->_vec));
 		info.SetReturnValue(vec);
 	}*/
 	static POLY_METHOD(op_Multiplication_vec_num) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>((*info.at<Vec<T>*>(0)->_vec) * (info.at<double>(0)));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>((*info.at<VecT*>(0)->_vec) * (info.at<double>(0)));
 		vec->_matx = vec->_vec;
 		info.SetReturnValue(vec);
 	}
 
 
 	/*static POLY_METHOD(op_Division_vec_vec) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>((*info.at<Vec<T>*>(0)->_vec) / (*info.at<Vec<T>*>(0)->_vec));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>((*info.at<VecT*>(0)->_vec) / (*info.at<VecT*>(0)->_vec));
 		info.SetReturnValue(vec);
 	}*/
 	/*static POLY_METHOD(op_Division_num_vec) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>(T::all(info.at<double>(0)) / (*info.at<Vec<T>*>(0)->_vec));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>(T::all(info.at<double>(0)) / (*info.at<VecT*>(0)->_vec));
 		info.SetReturnValue(vec);
 	}*/
 	static POLY_METHOD(op_Division_vec_num) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>((*info.at<Vec<T>*>(0)->_vec) / (info.at<double>(0)));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>((*info.at<VecT*>(0)->_vec) / (info.at<double>(0)));
 		vec->_matx = vec->_vec;
 		info.SetReturnValue(vec);
 	}
 	static POLY_METHOD(op_Substraction_vec_vec) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>((*info.at<Vec<T>*>(0)->_vec) - (*info.at<Vec<T>*>(0)->_vec));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>((*info.at<VecT*>(0)->_vec) - (*info.at<VecT*>(0)->_vec));
 		vec->_matx = vec->_vec;
 		info.SetReturnValue(vec);
 	}
 	static POLY_METHOD(op_Substraction_num_vec) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>(T::all(info.at<double>(0)) - (*info.at<Vec<T>*>(0)->_vec));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>(T::all(info.at<double>(0)) - (*info.at<VecT*>(0)->_vec));
 		vec->_matx = vec->_vec;
 		info.SetReturnValue(vec);
 	}
 	static POLY_METHOD(op_Substraction_vec_num) {
-		auto vec = new Vec<T>();
-		vec->_vec = std::make_shared<T>((*info.at<Vec<T>*>(0)->_vec) - T::all(info.at<double>(0)));
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<T>((*info.at<VecT*>(0)->_vec) - T::all(info.at<double>(0)));
 		vec->_matx = vec->_vec;
 		info.SetReturnValue(vec);
 	}
-	//static POLY_METHOD(norm_vec) {
-	//	
-	//}
+	static POLY_METHOD(norm_vec) {
+		info.SetReturnValue(cv::norm(*info.at<VecT*>(0)->_vec));
+	}
 
 	static POLY_METHOD(op_Multiplication_matx_vec) {
 		auto matx = new Matx<T>();
@@ -560,8 +561,6 @@ public:
 		matx->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
-
-
 
 
 
@@ -595,25 +594,31 @@ POLY_METHOD(conj_imp) {
 
 
 
+template<typename T, int TCN>
+class cross_vec_imp {
+public:
+	static POLY_METHOD(execute) {
+		throw std::exception("cross-product is valid only for 3 channels");
+	}
+};
 
+template<typename T>
+class cross_vec_imp<T, 3> {
+public:
+	typedef typename Vec<cv::Vec<T, 3>> VecT;
+	static POLY_METHOD(execute) {
+		auto vec = new VecT();
+		vec->_vec = std::make_shared<cv::Vec<T, 3>>(info.This<VecT*>()->_vec->cross(*info.at<VecT*>(0)->_vec));
+		vec->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
 
-template<typename T, int TVT>
-POLY_METHOD(cross_vec_imp) {
-	throw std::exception("cross-product is valid only for 3 channels");
-}
-
-template<int TVT>
-POLY_METHOD(cross_vec_imp) {
-	auto vec = new Vec<cv::Vec<TVT, 3>>();
-	vec->_vec = std::make_shared<cv::Vec<TVT, 3>>(info.This<Vec<cv::Vec<TVT, 3>*>()->_vec->cross(*info.at<Vec<cv::Vec<TVT, 3>*>(0)->_vec));
-	vec->Wrap(info.Holder());
-	info.GetReturnValue().Set(info.Holder());
-}
+};
 
 
 
 //template<typename T>
-//POLY_METHOD(Vec<T>::cross_vec) {
+//POLY_METHOD(VecT::cross_vec) {
 //	auto vec = new Vec<cv::Vec<TVT, 3>>();
 //	vec->_vec = std::make_shared<cv::Vec<TVT,3>>(info.This<Vec<cv::Vec<TVT, 3>*>()->_vec->cross(*info.at<Vec<cv::Vec<TVT,3>*>(0)->_vec));
 //	vec->Wrap(info.Holder());
@@ -622,11 +627,11 @@ POLY_METHOD(cross_vec_imp) {
 
 template <typename T>
 POLY_METHOD(Vec<T>::cross_vec) {
-	cross_vec_imp<T, T::channels>(info);
+	cross_vec_imp<typename T::value_type, T::channels>::execute(info);
 }
 
 //template <typename T>
-//std::string Vec<T>::name;
+//std::string VecT::name;
 
 
 typedef typename Vec<cv::Vec2b> Vec2b;

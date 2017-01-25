@@ -140,5 +140,29 @@ void VecInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 	TrackedPtr<cv::Vec6d>::Init(target, "TrackedPtr_Vec6d", overload);
 
 
+	TrackedElement<cv::Vec2b>::Init(target, "TrackedElement_Vec2b", overload);
+	TrackedElement<cv::Vec3b>::Init(target, "TrackedElement_Vec3b", overload);
+	TrackedElement<cv::Vec4b>::Init(target, "TrackedElement_Vec4b", overload);
+	TrackedElement<cv::Vec2s>::Init(target, "TrackedElement_Vec2s", overload);
+	TrackedElement<cv::Vec3s>::Init(target, "TrackedElement_Vec3s", overload);
+	TrackedElement<cv::Vec4s>::Init(target, "TrackedElement_Vec4s", overload);
+	TrackedElement<cv::Vec2w>::Init(target, "TrackedElement_Vec2w", overload);
+	TrackedElement<cv::Vec3w>::Init(target, "TrackedElement_Vec3w", overload);
+	TrackedElement<cv::Vec4w>::Init(target, "TrackedElement_Vec4w", overload);
+	TrackedElement<cv::Vec2i>::Init(target, "TrackedElement_Vec2i", overload);
+	TrackedElement<cv::Vec3i>::Init(target, "TrackedElement_Vec3i", overload);
+	TrackedElement<cv::Vec4i>::Init(target, "TrackedElement_Vec4i", overload);
+	TrackedElement<cv::Vec6i>::Init(target, "TrackedElement_Vec6i", overload);
+	TrackedElement<cv::Vec8i>::Init(target, "TrackedElement_Vec8i", overload);
+	TrackedElement<cv::Vec2f>::Init(target, "TrackedElement_Vec2f", overload);
+	TrackedElement<cv::Vec3f>::Init(target, "TrackedElement_Vec3f", overload);
+	TrackedElement<cv::Vec4f>::Init(target, "TrackedElement_Vec4f", overload);
+	TrackedElement<cv::Vec6f>::Init(target, "TrackedElement_Vec6f", overload);
+	TrackedElement<cv::Vec2d>::Init(target, "TrackedElement_Vec2d", overload);
+	TrackedElement<cv::Vec3d>::Init(target, "TrackedElement_Vec3d", overload);
+	TrackedElement<cv::Vec4d>::Init(target, "TrackedElement_Vec4d", overload);
+	TrackedElement<cv::Vec6d>::Init(target, "TrackedElement_Vec6d", overload);
+
+
 
 }

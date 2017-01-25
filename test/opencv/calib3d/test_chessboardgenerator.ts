@@ -61,6 +61,7 @@ export class ChessBoardGenerator {
     public rendererResolutionMultiplier: alvision.int;
 
     constructor(_patternSize: alvision.Size = new alvision.Size(8, 6)) {
+        this.rvec = new alvision.Mat();
         this.sensorWidth = (32);
         this.sensorHeight = (24);
         this.squareEdgePointsNum = (200);
@@ -320,15 +321,15 @@ export class ChessBoardGenerator {
 
         var n = new alvision.Vec3f();
         for (; ;) {
-            n[0] = rng.uniform(-1., 1.).valueOf();
-            n[1] = rng.uniform(-1., 1.).valueOf();
-            n[2] = rng.uniform(-1., 1.).valueOf();
-            var len =  alvision.Vec3f.norm(n);
+            n.at(0).set( rng.uniform(-1., 1.).valueOf());
+            n.at(1).set( rng.uniform(-1., 1.).valueOf());
+            n.at(2).set( rng.uniform(-1., 1.).valueOf());
+            var len = alvision.Vec3f.norm(n);
             n.at(0).set( n.at(0).get().valueOf() / len.valueOf());
             n.at(1).set( n.at(1).get().valueOf() / len.valueOf());
             n.at(2).set( n.at(2).get().valueOf() / len.valueOf());
 
-            if (n[2] > this.min_cos)
+            if (n.at(2).get() > this.min_cos)
                 break;
         }
 

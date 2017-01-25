@@ -52,7 +52,7 @@ import * as _base from './../../base'
 import * as _affine from './../../Affine'
 import * as _matchers from './matchers';
 
-import * as _circlesgrid from './../../calib3d/circlesgrid.ts';
+import * as _circlesgrid from './../../calib3d/circlesgrid';
 
 //#ifndef __OPENCV_STITCHING_MOTION_ESTIMATORS_HPP__
 //#define __OPENCV_STITCHING_MOTION_ESTIMATORS_HPP__
