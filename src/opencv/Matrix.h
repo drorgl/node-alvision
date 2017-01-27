@@ -294,6 +294,38 @@ public:
 		static POLY_METHOD(New_point3_Point3f_copyData);
 		static POLY_METHOD(New_point3_Point3d_copyData);
 
+
+		static POLY_METHOD(New_vector_Vec2b_copyData);
+		static POLY_METHOD(New_vector_Vec3b_copyData);
+		static POLY_METHOD(New_vector_Vec4b_copyData);
+		static POLY_METHOD(New_vector_Vec2s_copyData);
+		static POLY_METHOD(New_vector_Vec3s_copyData);
+		static POLY_METHOD(New_vector_Vec4s_copyData);
+		static POLY_METHOD(New_vector_Vec2w_copyData);
+		static POLY_METHOD(New_vector_Vec3w_copyData);
+		static POLY_METHOD(New_vector_Vec4w_copyData);
+		static POLY_METHOD(New_vector_Vec2i_copyData);
+		static POLY_METHOD(New_vector_Vec3i_copyData);
+		static POLY_METHOD(New_vector_Vec4i_copyData);
+		static POLY_METHOD(New_vector_Vec6i_copyData);
+		static POLY_METHOD(New_vector_Vec8i_copyData);
+		static POLY_METHOD(New_vector_Vec2f_copyData);
+		static POLY_METHOD(New_vector_Vec3f_copyData);
+		static POLY_METHOD(New_vector_Vec4f_copyData);
+		static POLY_METHOD(New_vector_Vec6f_copyData);
+		static POLY_METHOD(New_vector_Vec2d_copyData);
+		static POLY_METHOD(New_vector_Vec3d_copyData);
+		static POLY_METHOD(New_vector_Vec4d_copyData);
+		static POLY_METHOD(New_vector_Vec6d_copyData);
+
+		static POLY_METHOD(New_vector_Point2i_copyData);
+		static POLY_METHOD(New_vector_Point2f_copyData);
+		static POLY_METHOD(New_vector_Point2d_copyData);
+		
+		static POLY_METHOD(New_vector_Point3i_copyData);
+		static POLY_METHOD(New_vector_Point3f_copyData);
+		static POLY_METHOD(New_vector_Point3d_copyData);
+
 		/** @overload
 		*/
 		//template < typename _Tp> explicit Mat(const MatCommaInitializer_<_Tp>& commaInitializer);
@@ -1388,7 +1420,7 @@ static NAN_PROPERTY_GETTER(dims);
 	//protected:
 	//template < typename _Tp, typename Functor> void forEach_impl(const Functor& operation);
 
-
+	static NAN_GETTER(data);
 };
 
 #endif

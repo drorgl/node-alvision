@@ -88,9 +88,11 @@ init(Handle<Object> target) {
 	overload->add_type_alias("short", "Number");
 	overload->add_type_alias("ushort", "Number");
 
+	//Register
+
 	base::Init(target, overload);
 
-	IOArray::Init(target, overload);
+	IOArray::Register(target, overload);
 	
 
 	
@@ -165,6 +167,13 @@ init(Handle<Object> target) {
 	calib3d::Init(target, overload);
 	cv_test::Init(target, overload);
 	highgui::Init(target, overload);
+
+
+
+
+	//Init
+
+	IOArray::Init(target, overload);
 
 	target->Set(Nan::New("version").ToLocalChecked(), Nan::New("1.0.0").ToLocalChecked());
 

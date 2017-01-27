@@ -50,7 +50,12 @@ export enum IOArrayKind{
     STD_VECTOR_CUDA_GPU_MAT = 13 << KIND_SHIFT
 };
 
-export interface IOArray extends Array<any> {
+export interface IOArrayStatic {
+    new (): IOArray;
+    //new <T>(arr: Array<T>): IOArray;
+}
+
+export interface IOArray {//extends Array<any> {
     kind?(): IOArrayKind;
     getGpuMat?(): _cuda.cuda.GpuMat;
     getMat?(idx?: int /*= -1*/): _mat.Mat; 
@@ -68,12 +73,21 @@ export interface IOArray extends Array<any> {
     cols?(): int;
 }
 
-export interface InputArray extends IOArray {}
-export interface InputArrayOfArrays extends Array<InputArray> { }
-export interface OutputArray extends IOArray { }
-export interface OutputArrayOfArrays extends Array<InputArray> { }
-export interface InputOutputArray extends IOArray {}
-export interface InputOutputArrayOfArrays extends  Array<InputArray> { }
+export var IOArray: IOArrayStatic = alvision_module.IOArray;
+
+export type InputArray = IOArray;
+export type InputArrayOfArrays = IOArray;
+export type OutputArray               = IOArray;
+export type OutputArrayOfArrays       = IOArray;
+export type InputOutputArray          = IOArray;
+export type InputOutputArrayOfArrays  = IOArray;
+
+//export interface InputArray extends IOArray { }
+//export interface InputArrayOfArrays extends Array<InputArray> { }
+//export interface OutputArray extends IOArray { }
+//export interface OutputArrayOfArrays extends Array<InputArray> { }
+//export interface InputOutputArray extends IOArray {}
+//export interface InputOutputArrayOfArrays extends  Array<InputArray> { }
 
 //-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 //

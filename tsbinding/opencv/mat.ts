@@ -957,6 +957,8 @@ including std::sort().
 
         new (buf: Buffer): Mat;
 
+        new (matExpr: MatExpr): Mat;
+
     //! destructor - calls release()
     //~Mat();
 

@@ -16,6 +16,7 @@ class calib3d: public or::ObjectWrap {
 	static POLY_METHOD(matMulDeriv);
 	static POLY_METHOD(composeRT);
 	static POLY_METHOD(projectPoints);
+	static POLY_METHOD(projectPoints_vec_points);
 	static POLY_METHOD(solvePnP);
 	static POLY_METHOD(solvePnPRansac);
 	static POLY_METHOD(initCameraMatrix2D);

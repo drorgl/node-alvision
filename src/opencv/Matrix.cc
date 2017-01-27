@@ -127,6 +127,39 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<Point3f*>("pt","Point3f"),make_param<bool>("copyData","bool",false) }, Matrix::New_point3_Point3f_copyData);
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<Point3d*>("pt","Point3d"),make_param<bool>("copyData","bool",false) }, Matrix::New_point3_Point3d_copyData);
 
+
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec2b*>>>("vec","Array<"s + Vec2b::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec2b_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec3b*>>>("vec","Array<"s + Vec3b::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec3b_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec4b*>>>("vec","Array<"s + Vec4b::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec4b_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec2s*>>>("vec","Array<"s + Vec2s::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec2s_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec3s*>>>("vec","Array<"s + Vec3s::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec3s_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec4s*>>>("vec","Array<"s + Vec4s::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec4s_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec2w*>>>("vec","Array<"s + Vec2w::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec2w_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec3w*>>>("vec","Array<"s + Vec3w::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec3w_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec4w*>>>("vec","Array<"s + Vec4w::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec4w_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec2i*>>>("vec","Array<"s + Vec2i::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec2i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec3i*>>>("vec","Array<"s + Vec3i::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec3i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec4i*>>>("vec","Array<"s + Vec4i::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec4i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec6i*>>>("vec","Array<"s + Vec6i::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec6i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec8i*>>>("vec","Array<"s + Vec8i::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec8i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec2f*>>>("vec","Array<"s + Vec2f::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec2f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec3f*>>>("vec","Array<"s + Vec3f::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec3f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec4f*>>>("vec","Array<"s + Vec4f::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec4f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec6f*>>>("vec","Array<"s + Vec6f::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec6f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec2d*>>>("vec","Array<"s + Vec2d::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec2d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec3d*>>>("vec","Array<"s + Vec3d::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec3d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec4d*>>>("vec","Array<"s + Vec4d::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec4d_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Vec6d*>>>("vec","Array<"s + Vec6d::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Vec6d_copyData);
+
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Point2i*>>>("vec","Array<"s + Point2i::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Point2i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Point2f*>>>("vec","Array<"s + Point2f::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Point2f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Point2d*>>>("vec","Array<"s + Point2d::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Point2d_copyData);
+
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Point3i*>>>("vec","Array<"s + Point3i::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Point3i_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Point3f*>>>("vec","Array<"s + Point3f::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Point3f_copyData);
+	overload->addOverloadConstructor("matrix", "Mat", { make_param<std::shared_ptr<std::vector<Point3d*>>>("vec","Array<"s + Point3d::name + ">"),make_param<bool>("copyData","bool",false) }, Matrix::New_vector_Point3d_copyData);
+
+
 #ifdef HAVE_CUDA
 	overload->addOverloadConstructor("matrix", "Mat", { make_param<GpuMat*>("m","cuda::GpuMat")}, Matrix::New_gpuMat);
 #endif
@@ -271,6 +304,8 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	Nan::SetPrototypeMethod(ctor, "size", matrix_general_callback::callback);
 
 	Nan::SetAccessor(itpl,Nan::New( "step").ToLocalChecked(), Matrix::step);
+
+	Nan::SetAccessor(itpl, Nan::New("data").ToLocalChecked(), Matrix::data);
 
 
 	target->Set(Nan::New("Mat").ToLocalChecked(), ctor->GetFunction());
@@ -749,6 +784,470 @@ POLY_METHOD(Matrix::New_point3_Point3d_copyData){
 	info.GetReturnValue().Set(info.Holder());
 }
 
+POLY_METHOD(Matrix::New_vector_Vec2b_copyData){
+	typedef typename Vec2b VecCV;
+	auto mat = new Matrix();
+	
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+	
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec3b_copyData){
+	typedef typename Vec3b VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec4b_copyData){
+	typedef typename Vec4b VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec2s_copyData){
+	typedef typename Vec2s VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec3s_copyData){
+	typedef typename Vec3s VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec4s_copyData){
+	typedef typename Vec4s VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec2w_copyData){
+	typedef typename Vec2w VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec3w_copyData){
+	typedef typename Vec3w VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec4w_copyData){
+	typedef typename Vec4w VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec2i_copyData){
+	typedef typename Vec2i VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec3i_copyData){
+	typedef typename Vec3i VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec4i_copyData){
+	typedef typename Vec4i VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec6i_copyData){
+	typedef typename Vec6i VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec8i_copyData){
+	typedef typename Vec8i VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec2f_copyData){
+	typedef typename Vec2f VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec3f_copyData){
+	typedef typename Vec3f VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec4f_copyData){
+	typedef typename Vec4f VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec6f_copyData){
+	typedef typename Vec6f VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec2d_copyData){
+	typedef typename Vec2d VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+POLY_METHOD(Matrix::New_vector_Vec3d_copyData){
+	typedef typename Vec3d VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec4d_copyData){
+	typedef typename Vec4d VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Vec6d_copyData){
+	typedef typename Vec6d VecCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
+	std::vector<VecCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const VecCV* vec) {return *vec->_vec; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Point2i_copyData) {
+	typedef typename Point2i PointCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
+	std::vector<PointCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const PointCV* pt) {return *pt->_point; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Point2f_copyData){
+	typedef typename Point2f PointCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
+	std::vector<PointCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const PointCV* pt) {return *pt->_point; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Point2d_copyData){
+	typedef typename Point2d PointCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
+	std::vector<PointCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const PointCV* pt) {return *pt->_point; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Point3i_copyData){
+	typedef typename Point3i PointCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
+	std::vector<PointCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const PointCV* pt) {return *pt->_point3; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Point3f_copyData){
+	typedef typename Point3f PointCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
+	std::vector<PointCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const PointCV* pt) {return *pt->_point3; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(Matrix::New_vector_Point3d_copyData){
+	typedef typename Point3d PointCV;
+	auto mat = new Matrix();
+
+	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
+	std::vector<PointCV::CVT> vec_cv;
+	std::transform(std::begin(vec), std::end(vec), std::back_inserter(vec_cv), [](const PointCV* pt) {return *pt->_point3; });
+
+	auto copyData = info.at<bool>(1);
+
+
+	mat->_mat = std::make_shared<cv::Mat>(vec_cv, copyData);
+	mat->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+
+
+
+
 #ifdef HAVE_CUDA
 POLY_METHOD(Matrix::New_gpuMat) {
 	auto *mat = new Matrix();
@@ -1168,3 +1667,42 @@ NAN_PROPERTY_GETTER(Matrix::step) {
 	info.GetReturnValue().Set(ret);
 }
 
+NAN_GETTER(Matrix::data) {
+	auto mat = or ::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	uchar depth = mat->type() & CV_MAT_DEPTH_MASK;
+
+	std::unique_ptr<Matrix_array_accessor> accessor;
+
+	switch (depth) {
+	case CV_8U: 
+		accessor = std::make_unique<Matrix_array_accessor>(mat, "uchar",0,0,0);
+		break;
+	case CV_8S:  
+		accessor = std::make_unique<Matrix_array_accessor>(mat, "schar", 0, 0, 0);
+		break;
+	case CV_16U:  
+		accessor = std::make_unique<Matrix_array_accessor>(mat, "ushort", 0, 0, 0);
+		break;
+	case CV_16S:  
+		accessor = std::make_unique<Matrix_array_accessor>(mat, "short", 0, 0, 0);
+		break;
+	case CV_32S:  
+		accessor = std::make_unique<Matrix_array_accessor>(mat, "int", 0, 0, 0);
+		break;
+	case CV_32F:  
+		accessor = std::make_unique<Matrix_array_accessor>(mat, "float", 0, 0, 0);
+		break;
+	case CV_64F:  
+		accessor = std::make_unique<Matrix_array_accessor>(mat, "double", 0, 0, 0);
+		break;
+	default:
+		return Nan::ThrowError("unknown mat type");
+	}
+
+	auto vec = Nan::New<v8::Array>();
+	for (auto i = 0; i < accessor->length(); i++) {
+		vec->Set(i, accessor->get(i));
+	}
+
+	info.GetReturnValue().Set(vec);
+}

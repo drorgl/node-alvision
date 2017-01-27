@@ -50,9 +50,9 @@ class BaseElemWiseOp
         maxval = depth < alvision.MatrixType.CV_32S ? alvision.cvtest.getMaxVal(depth) : depth == alvision.MatrixType.CV_32S ? 1000000 : 1000.;
     }
 
-    getRandomSize(rng: alvision.RNG, size: Array<alvision.int>) : void
+    getRandomSize(rng: alvision.RNG) : Array<alvision.int>
     {
-        alvision.cvtest.randomSize(rng, 2, ARITHM_MAX_NDIMS, ARITHM_MAX_SIZE_LOG, size);
+        return alvision.cvtest.randomSize(rng, 2, ARITHM_MAX_NDIMS, ARITHM_MAX_SIZE_LOG);
     }
 
     getRandomType(rng: alvision.RNG ) : alvision.int
@@ -933,9 +933,9 @@ class FlipOp  extends  BaseElemWiseOp
         super(1, BaseElemWiseOpType.FIX_ALPHA + BaseElemWiseOpType.FIX_BETA + BaseElemWiseOpType. FIX_GAMMA, 1, 1, alvision.Scalar.all(0));
         this.flipcode = 0;
     }
-    getRandomSize(rng:alvision.RNG, size:Array<alvision.int>) : void
+    getRandomSize(rng: alvision.RNG) : Array<alvision.int>
     {
-        alvision.cvtest.randomSize(rng, 2, 2, ARITHM_MAX_SIZE_LOG, size);
+        return alvision.cvtest.randomSize(rng, 2, 2, ARITHM_MAX_SIZE_LOG);
     }
     op(src: Array<alvision.Mat>, dst: alvision.Mat, mask: alvision.Mat) : void
     {
@@ -961,9 +961,9 @@ class TransposeOp  extends  BaseElemWiseOp
     constructor() {
         super(1, BaseElemWiseOpType.FIX_ALPHA + BaseElemWiseOpType.FIX_BETA + BaseElemWiseOpType. FIX_GAMMA, 1, 1, alvision.Scalar.all(0))
     }
-    getRandomSize(rng:alvision.RNG, size:Array<alvision.int>) : void
+    getRandomSize(rng: alvision.RNG) : Array<alvision.int>
     {
-        alvision.cvtest.randomSize(rng, 2, 2, ARITHM_MAX_SIZE_LOG, size);
+        return alvision.cvtest.randomSize(rng, 2, 2, ARITHM_MAX_SIZE_LOG);
     }
     op(src: Array<alvision.Mat>, dst: alvision.Mat, mask: alvision.Mat) : void
     {
@@ -984,9 +984,9 @@ class SetIdentityOp  extends  BaseElemWiseOp
     constructor() {
         super(0, BaseElemWiseOpType.FIX_ALPHA + BaseElemWiseOpType.FIX_BETA, 1, 1, alvision.Scalar.all(0))
     }
-    getRandomSize(rng:alvision.RNG, size:Array<alvision.int>) : void
+    getRandomSize(rng: alvision.RNG) : Array<alvision.int>
     {
-        alvision.cvtest.randomSize(rng, 2, 2, ARITHM_MAX_SIZE_LOG, size);
+        return alvision.cvtest.randomSize(rng, 2, 2, ARITHM_MAX_SIZE_LOG);
     }
     op(src: Array<alvision.Mat>, dst: alvision.Mat, mask: alvision.Mat) : void
     {
@@ -1229,7 +1229,7 @@ class CartToPolarToCartOp  extends  BaseElemWiseOp
         var msrc  = [mag, angle, x, y];
         var pairs = [0, 0, 1, 1, 2, 2, 3, 3];
         dst.create(src[0].dims, src[0].size(), alvision.MatrixType.CV_MAKETYPE(src[0].depth(), 4));
-        alvision.mixChannels(msrc, 4, dst, 1, pairs, 4);
+        alvision.mixChannels(msrc, 4, [dst], 1, pairs, 4);
     }
     refop(src: Array<alvision.Mat>, dst:alvision.Mat, mask: alvision.Mat) : void
     {
@@ -1239,7 +1239,7 @@ class CartToPolarToCartOp  extends  BaseElemWiseOp
         var msrc = [mag, angle, src[0], src[1]];
         var pairs = [0, 0, 1, 1, 2, 2, 3, 3];
         dst.create(src[0].dims, src[0].size(), alvision.MatrixType.CV_MAKETYPE(src[0].depth(), 4));
-        alvision.mixChannels(msrc, 4, dst, 1, pairs, 4);
+        alvision.mixChannels(msrc, 4, [dst], 1, pairs, 4);
     }
      generateScalars(depth:alvision.int, rng:alvision.RNG) : void
     {
@@ -1472,8 +1472,7 @@ class ElemWiseTest_accuracy extends alvision.cvtest.TestWithParam// ::testing::T
         var testIdx = 0;
         var rng = new alvision.RNG(ARITHM_RNG_SEED);
         for (testIdx = 0; testIdx < ARITHM_NTESTS; testIdx++) {
-            var size = new Array<alvision.int>();
-            op.getRandomSize(rng, size);
+            var size = op.getRandomSize(rng);
             var type = op.getRandomType(rng);
             var depth = alvision.MatrixType.CV_MAT_DEPTH(type);
             var haveMask = (op.flags.valueOf() & BaseElemWiseOpType.SUPPORT_MASK) != 0 && rng.uniform(0, 4) == 0;

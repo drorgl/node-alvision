@@ -319,6 +319,8 @@ export interface Point_<T> extends _st.IOArray {
     op_Division(other: _st.int | _st.float | _st.double): Point_<T>;
 
     toBuffer(): Buffer;
+
+    setTo(other: Point3_<T>): void;
 }
 
 //    template < typename _Tp> class Point_ {
@@ -707,6 +709,8 @@ export interface Point3_<T> {
     op_Multiplication(other: _st.int | _st.float | _st.double | number): Point3_<T>;
     op_Multiplication(other: _matx.Matx<T>): Point3_<T>;
     op_Division(other: _st.int | _st.float | _st.double): Point3_<T>;
+
+    setTo(other: Point3_<T>): void;
 
 }
 

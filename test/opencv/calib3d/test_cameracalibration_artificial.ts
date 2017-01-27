@@ -261,15 +261,15 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
 
     protected sqSile : alvision.Size2f;
 
-    protected chessboard3D : Array<alvision.Point3f>;
-    protected  boards : Array<alvision.Mat>;  
-    protected  rvecs_exp  : Array<alvision.Mat>;
-    protected  tvecs_exp  : Array<alvision.Mat>;
-    protected  rvecs_spnp : Array<alvision.Mat>;
-    protected  tvecs_spnp : Array<alvision.Mat>;
-    protected objectPoints: Array<Array<alvision.Point3f>>;
-    protected imagePoints_art: Array<Array<alvision.Point2f>>;
-    protected imagePoints_findCb: Array<Array<alvision.Point2f>>;
+    protected chessboard3D: Array<alvision.Point3f> = [];
+    protected boards: Array<alvision.Mat> = [];
+    protected  rvecs_exp  : Array<alvision.Mat> = [];
+    protected  tvecs_exp  : Array<alvision.Mat> = [];
+    protected  rvecs_spnp : Array<alvision.Mat> = [];
+    protected  tvecs_spnp : Array<alvision.Mat> = [];
+    protected objectPoints: Array<Array<alvision.Point3f>> = [[]];
+    protected imagePoints_art: Array<Array<alvision.Point2f>> = [[]];
+    protected imagePoints_findCb: Array<Array<alvision.Point2f>> = [[]];
 
 
     prepareForTest(bg: alvision.Mat, camMat: alvision.Mat, distCoeffs: alvision.Mat, brdsNum: alvision.size_t, cbg: cbgenerator.ChessBoardGenerator) : void
@@ -425,8 +425,8 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest
 
             var distCoeffs = new alvision.Mat1d(1, 5, [k1, k2, p1, p2, k3]);
             //distCoeffs << k1, k2, p1, p2, k3;
-
-            var cbg = new cbgenerator.ChessBoardGenerator (new alvision.Size(9, 8));
+            
+            var cbg = new cbgenerator.ChessBoardGenerator(new alvision.Size(9, 8));
             cbg.min_cos = 0.9;
             cbg.cov = 0.8;
 

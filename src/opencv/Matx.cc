@@ -28,6 +28,7 @@ void MatxInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 	Matx<cv::Matx41d>::Init(target, "Matx41d", overload);
 	Matx<cv::Matx61f>::Init(target, "Matx61f", overload);
 	Matx<cv::Matx61d>::Init(target, "Matx61d", overload);
+	Matx<cv::Matx<int, 2, 2>>::Init(target, "Matx22i", overload);
 	Matx<cv::Matx22f>::Init(target, "Matx22f", overload);
 	Matx<cv::Matx22d>::Init(target, "Matx22d", overload);
 	Matx<cv::Matx23f>::Init(target, "Matx23f", overload);

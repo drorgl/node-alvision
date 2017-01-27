@@ -238,6 +238,7 @@
 		
 		, "src/opencv/types/Size.cc"
 		, "src/opencv/types/Size.h"
+		, "src/opencv/types/Size.imp.h"
 		, "src/opencv/types/DMatch.cc"
 		, "src/opencv/types/DMatch.h"
 		, "src/opencv/types/Rect.cc"
@@ -254,7 +255,9 @@
 		, "src/opencv/types/KeyPoint.cc"
 		, "src/opencv/types/Complex.h"		
 		, "src/opencv/types/Point.h"
+		, "src/opencv/types/Point.imp.h"
 		, "src/opencv/types/Point.cc"
+		, "src/opencv/types/SizeAndPoint.h"
 		, "src/opencv/types/Point3.h"
 		, "src/opencv/types/Point3.cc"
 		, "src/opencv/types/Scalar.cc"

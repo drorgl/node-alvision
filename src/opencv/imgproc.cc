@@ -1,6 +1,7 @@
 ﻿#include "imgproc.h"
 #include "IOArray.h"
 #include "types/Size.h"
+#include "types/Point.h"
 #include "types/Scalar.h"
 #include "SparseMat.h"
 #include "types/Rect.h"

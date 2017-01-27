@@ -172,7 +172,9 @@ export class ChessBoardGenerator {
         var cbHalfHeightEx = cbHalfHeight * (this.patternSize.height.valueOf() + 1) / this.patternSize.height.valueOf();
 
         var pts3d = new Array<alvision.Point3f> (4);
-        var pts2d = new Array<alvision.Point2f> (4);
+        var pts2d = alvision.NewArray(4, () => new alvision.Point2f());
+
+        let i = 0;
         for (; ;) {
             //pts3d[0] = p + pb1 * cbHalfWidthEx + cbHalfHeightEx * pb2;
             //pts3d[1] = p + pb1 * cbHalfWidthEx - cbHalfHeightEx * pb2;
@@ -185,7 +187,7 @@ export class ChessBoardGenerator {
 
 
             /* can remake with better perf */
-            alvision.projectPoints(new alvision.Mat(pts3d), this.rvec, this.tvec, camMat, distCoeffs, pts2d);
+            alvision.projectPoints(pts3d, this.rvec, this.tvec, camMat, distCoeffs, pts2d);
 
             var inrect1 = pts2d[0].x < bg.cols() && pts2d[0].y < bg.rows() && pts2d[0].x > 0 && pts2d[0].y > 0;
             var inrect2 = pts2d[1].x < bg.cols() && pts2d[1].y < bg.rows() && pts2d[1].x > 0 && pts2d[1].y > 0;
@@ -261,7 +263,7 @@ export class ChessBoardGenerator {
             for (var j = 0; j < this.patternSize.height; ++j)
                 if ((i % 2 == 0 && j % 2 == 0) || (i % 2 != 0 && j % 2 != 0)) {
                     var pts_square3d = new Array<alvision.Point3f>();
-                    var pts_square2d = new Array<alvision.Point2f>();
+                    
 
                     var p1 = zero.op_Addition(pb1.op_Multiplication((i + 0) *       sqWidth.valueOf())).op_Addition (  pb2.op_Multiplication((j + 0) *   sqHeight.valueOf()));
                     var p2 = zero.op_Addition(   pb1.op_Multiplication   ((i + 1) * sqWidth.valueOf())) .op_Addition(   pb2.op_Multiplication((j + 0) *  sqHeight.valueOf()) );
@@ -272,7 +274,9 @@ export class ChessBoardGenerator {
                     this.generateEdge(p3, p4, pts_square3d);
                     this.generateEdge(p4, p1, pts_square3d);
 
-                    alvision.projectPoints(new alvision.Mat(pts_square3d), this.rvec, this.tvec, camMat, distCoeffs, pts_square2d);
+                    var pts_square2d = alvision.NewArray(pts_square3d.length,()=>new alvision.Point2f());
+
+                    alvision.projectPoints(pts_square3d, this.rvec, this.tvec, camMat, distCoeffs, pts_square2d);
                     squares_black.length = (squares_black.length + 1);
                     var temp = new Array<alvision.Point2f>();
                     alvision.approxPolyDP(new alvision.Mat(pts_square2d), temp, 1.0, true);
@@ -285,7 +289,7 @@ export class ChessBoardGenerator {
             for (var i = 0; i < this.patternSize.width.valueOf() - 1; ++i)
                 this.corners3d.push(zero.op_Addition( pb1.op_Multiplication((i + 1) * sqWidth.valueOf())).op_Addition( pb2.op_Multiplication((j + 1) * sqHeight.valueOf()) ));
         corners.length = 0;
-        alvision.projectPoints(new alvision.Mat(this.corners3d), this.rvec, this.tvec, camMat, distCoeffs, corners);
+        alvision.projectPoints(this.corners3d, this.rvec, this.tvec, camMat, distCoeffs, corners);
 
         var whole3d = new Array<alvision.Point3f>();
         var whole2d = new Array<alvision.Point2f>();
@@ -293,7 +297,7 @@ export class ChessBoardGenerator {
         this.generateEdge(whole[1], whole[2], whole3d);
         this.generateEdge(whole[2], whole[3], whole3d);
         this.generateEdge(whole[3], whole[0], whole3d);
-        alvision.projectPoints(new alvision.Mat(whole3d), this.rvec, this.tvec, camMat, distCoeffs, whole2d);
+        alvision.projectPoints(whole3d, this.rvec, this.tvec, camMat, distCoeffs, whole2d);
         var temp_whole2d = new Array<alvision.Point2f>();
         alvision.approxPolyDP(new alvision.Mat(whole2d), temp_whole2d, 1.0, true);
 
@@ -333,14 +337,16 @@ export class ChessBoardGenerator {
                 break;
         }
 
-        var n_temp = n; n_temp[0] += 100;
+        var n_temp = new alvision.Vec3f(n); n_temp.at(0).set(n_temp.at(0).get().valueOf() + 100);
+
         var b1 = n.cross(n_temp);
         var b2 = n.cross(b1);
-        var len_b1 =alvision.Vec3f. norm(b1);
-        var len_b2 =alvision.Vec3f. norm(b2);
+        var len_b1 = alvision.Vec3f.norm(b1);
+        var len_b2 = alvision.Vec3f.norm(b2);
 
-        pb1 = new alvision.Point3f(b1.at(0).get().valueOf() / len_b1.valueOf(), b1.at(1).get().valueOf() / len_b1.valueOf(), b1.at(2).get().valueOf() / len_b1.valueOf());
-        pb2 = new alvision.Point3f(b2.at(0).get().valueOf() / len_b1.valueOf(), b2.at(1).get().valueOf() / len_b2.valueOf(), b2.at(2).get().valueOf() / len_b2.valueOf());
+
+        pb1.setTo(new alvision.Point3f(b1.at(0).get().valueOf() / len_b1.valueOf(), b1.at(1).get().valueOf() / len_b1.valueOf(), b1.at(2).get().valueOf() / len_b1.valueOf()));
+        pb2.setTo(new alvision.Point3f(b2.at(0).get().valueOf() / len_b1.valueOf(), b2.at(1).get().valueOf() / len_b2.valueOf(), b2.at(2).get().valueOf() / len_b2.valueOf()));
     }
 
     private rvec: alvision.Mat;

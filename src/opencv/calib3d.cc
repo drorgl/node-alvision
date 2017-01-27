@@ -6,6 +6,7 @@
 #include "types/Rect.h"
 #include "types/TermCriteria.h"
 #include "types/Point.h"
+#include "types/Point3.h"
 #include "features2d/Feature2D.h"
 #include "features2d/SimpleBlobDetector.h"
 
@@ -13,6 +14,7 @@
 #include "calib3d/StereoMatcher.h"
 #include "calib3d/StereoBM.h"
 #include "calib3d/StereoSGBM.h"
+
 
 namespace calib3d_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -142,6 +144,17 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	make_param<IOArray*>("jacobian","IOArray",IOArray::noArray()),
 	make_param<double>("aspectRatio","double",0)
   }, projectPoints);
+
+  overload->addOverload("calib3d", "", "projectPoints", {
+	  make_param<std::shared_ptr<std::vector<Point3f*>>>("objectPoints","Array<Point3f>"),
+	  make_param<IOArray*>("rvec","IOArray"),
+	  make_param<IOArray*>("tvec","IOArray"),
+	  make_param<IOArray*>("cameraMatrix","IOArray"),
+	  make_param<IOArray*>("distCoeffs","IOArray"),
+	  make_param<std::shared_ptr<std::vector<Point2f*>>>("imagePoints","Array<Point2f>"),
+	  make_param<IOArray*>("jacobian","IOArray",IOArray::noArray()),
+	  make_param<double>("aspectRatio","double",0)
+  }, projectPoints_vec_points);
   Nan::SetMethod(target, "projectPoints", calib3d_general_callback::callback);
 
   overload->addOverload("calib3d", "", "solvePnP", {
@@ -663,6 +676,40 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		  jacobian,
 		  aspectRatio
 	  );
+  }
+
+  POLY_METHOD(calib3d::projectPoints_vec_points) {
+	  auto objectPoints = info.at<std::shared_ptr<std::vector<Point3f*>>>(0);
+	  auto rvec = info.at<IOArray*>(1)->GetInputArray();
+	  auto tvec = info.at<IOArray*>(2)->GetInputArray();
+	  auto cameraMatrix = info.at<IOArray*>(3)->GetInputArray();
+	  auto distCoeffs = info.at<IOArray*>(4)->GetInputArray();
+	  auto imagePoints = info.at<std::shared_ptr<std::vector<Point2f*>>>(5);
+	  auto jacobian = info.at<IOArray*>(6)->GetOutputArray();
+	  auto aspectRatio = info.at<double>(7);
+
+	  std::vector<Point3f::CVT > objectPoints_cv;
+	  std::transform(std::begin(*objectPoints), std::end(*objectPoints), std::back_inserter(objectPoints_cv), [](const Point3f* pt) {return *pt->_point3; });
+
+	  std::vector<Point2f::CVT > imagePoints_cv;
+	  std::transform(std::begin(*imagePoints), std::end(*imagePoints), std::back_inserter(imagePoints_cv), [](const Point2f* pt) {return *pt->_point; });
+
+
+	  cv::projectPoints(
+		  objectPoints_cv,
+		  rvec,
+		  tvec,
+		  cameraMatrix,
+		  distCoeffs,
+		  imagePoints_cv,
+		  jacobian,
+		  aspectRatio
+	  );
+
+	  for (auto i = 0; i < imagePoints_cv.size(); i++) {
+		  (*imagePoints)[i]->_point = std::make_shared<Point2f::CVT>((imagePoints_cv)[i]);
+		  //std::swap(*(*imagePoints)[i]->_point, (*vec_cv)[i]);
+	  }
   }
 
   POLY_METHOD(calib3d::solvePnP) {

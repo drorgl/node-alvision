@@ -27,9 +27,11 @@ public:
 		//	throw new std::exception("type is not implemented");
 		//}
 
-		_max_size = _vec->depth * _vec->channels;
-		_pre_index = 0;
+		_max_size = _vec->channels;
+		//_pre_index = 0;
 
+		_pre_index = i0;
+			
 		//_pre_index = _i0 *(_vec->depth > 0) ? _vec->step.p[0] : 0
 		//	+ _i1 *(_vec->depth > 1) ?		  _vec->step.p[1] : 0
 		//	+ _i2 *(_vec->depth > 2) ?		  _vec->step.p[2] : 0;
@@ -44,10 +46,6 @@ public:
 	virtual v8::Local<v8::Value> get(int index) {
 		if ((_pre_index + index) >= _max_size) {
 			throw std::exception("index out of bounds");
-		}
-
-		if (((index + _pre_index) + _sizeof) > _max_size) {
-			throw std::exception("index out of bounds for type specified");
 		}
 
 		return Nan::New((*_vec)[(_pre_index + index)]);

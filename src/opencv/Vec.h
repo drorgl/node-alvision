@@ -17,6 +17,7 @@ namespace vec_general_callback {
 template <typename T>
 class Vec : public Matx<T>{
 public:
+	typedef typename T CVT;
 	typedef typename Vec<T> VecT;
 	typedef typename T::value_type TVT;
 	typedef typename T::mat_type mat_type;
@@ -163,6 +164,7 @@ public:
 		overload->addStaticOverload("vec", name, "norm", { make_param<VecT*>("m",name) }, norm_vec);
 		Nan::SetMethod(ctor, "norm", vec_general_callback::callback);
 
+		Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("data").ToLocalChecked(), data_getter);
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 
@@ -446,15 +448,13 @@ public:
 		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>(info.at<TVT>(0));
 		vec->_matx = vec->_vec;
-		vec->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(vec);
 	}
 	static POLY_METHOD(mul_vec) {
 		auto vec = new VecT();
 		vec->_vec = std::make_shared<T>(info.This<VecT*>()->_vec->mul(*info.at<VecT*>(0)->_vec));
 		vec->_matx = vec->_vec;
-		vec->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(vec);
 	}
 	static POLY_METHOD(conj);
 
@@ -558,11 +558,23 @@ public:
 		auto b = *info.at < Vec<cv::Vec<TVT, TCOLS>>*>(1)->_vec;
 
 		matx->_matx = std::make_shared<T>(a * b);
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+
+		info.SetReturnValue(matx);
 	}
 
+	static NAN_GETTER(data_getter) {
+		auto this_ = or ::ObjectWrap::Unwrap<VecT>(info.This());
+		auto vec = this_->_vec;
 
+		auto data = Nan::New<v8::Array>();
+
+		Vec_array_accessor<T> accessor(vec, 0,0,0);
+		for (auto i = 0; i < accessor.length(); i++) {
+			data->Set(i, accessor.get(i));
+		}
+		info.GetReturnValue().Set(data);
+
+	}
 
 
 
@@ -586,8 +598,7 @@ template<typename T>
 POLY_METHOD(conj_imp) {
 	auto vec = new Vec<T>();
 	vec->_vec = std::make_shared<T>(info.This<Vec<T>*>()->_vec->conj());
-	vec->Wrap(info.Holder());
-	info.GetReturnValue().Set(info.Holder());
+	info.SetReturnValue(vec);
 }
 
 
@@ -609,21 +620,11 @@ public:
 	static POLY_METHOD(execute) {
 		auto vec = new VecT();
 		vec->_vec = std::make_shared<cv::Vec<T, 3>>(info.This<VecT*>()->_vec->cross(*info.at<VecT*>(0)->_vec));
-		vec->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(vec);
 	}
 
 };
 
-
-
-//template<typename T>
-//POLY_METHOD(VecT::cross_vec) {
-//	auto vec = new Vec<cv::Vec<TVT, 3>>();
-//	vec->_vec = std::make_shared<cv::Vec<TVT,3>>(info.This<Vec<cv::Vec<TVT, 3>*>()->_vec->cross(*info.at<Vec<cv::Vec<TVT,3>*>(0)->_vec));
-//	vec->Wrap(info.Holder());
-//	info.GetReturnValue().Set(info.Holder());
-//}
 
 template <typename T>
 POLY_METHOD(Vec<T>::cross_vec) {

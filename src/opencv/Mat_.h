@@ -452,7 +452,8 @@ overload->addOverload("mat_", name, "Element", {
 			mat->_mat = std::make_shared<T>(info.at<int>(0), info.at<int>(1));
 
 			for (auto i = 0; i < srcdata.size(); i++) {
-				mat->_mat->at<TVAL>(i) = *value_adapter<std::remove_reference< TVT>::type, TVAL>::from(srcdata[i]);
+				auto value = *value_adapter<std::remove_reference< TVT>::type, TVAL>::from(srcdata[i]);
+				mat->_mat->at<TVAL>(i) = value;
 			}
 
 

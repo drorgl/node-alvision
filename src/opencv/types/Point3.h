@@ -12,6 +12,7 @@ namespace point3_general_callback {
 template <typename T>
 class Point3_ : public or::ObjectWrap {
 public:
+	typedef typename T CVT;
 	typedef typename T::value_type TVT;
 	typedef typename Vec<cv::Vec<typename T::value_type,3>> Vec3T;
 
@@ -422,7 +423,8 @@ public:
 
 		//}
 
-
+			overload->addOverload("point3", name, "setTo", { make_param<Point3_<T>*>("other",name) }, setTo);
+			Nan::SetPrototypeMethod(ctor, "setTo", point3_general_callback::callback);
 
 		target->Set(Nan::New(name).ToLocalChecked(), ctor->GetFunction());
 
@@ -604,6 +606,7 @@ public:
 	static NAN_SETTER(x_setter){
 		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
 		this_->_point3->x = value->NumberValue();
+		info.GetReturnValue().Set(this_->_point3->x);
 	}
 	static NAN_GETTER(y_getter){
 		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
@@ -612,6 +615,7 @@ public:
 	static NAN_SETTER(y_setter){
 		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
 		this_->_point3->y = value->NumberValue();
+		info.GetReturnValue().Set(this_->_point3->y);
 	}
 	static NAN_GETTER(z_getter){
 		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
@@ -620,6 +624,7 @@ public:
 	static NAN_SETTER(z_setter){
 		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
 		this_->_point3->z = value->NumberValue();
+		info.GetReturnValue().Set(this_->_point3->z);
 	}
 
 	static POLY_METHOD(norm_instance) {
@@ -694,6 +699,12 @@ public:
 		info.SetReturnValue(ret);
 	}
 
+	static POLY_METHOD(setTo) {
+		auto other = info.at<Point3_<T>*>(0)->_point3;
+		auto this_ = info.This<Point3_<T>*>();
+
+		this_->_point3 = std::make_shared<T>(*other);
+	}
 	
 };
 

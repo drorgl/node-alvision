@@ -637,14 +637,17 @@ public:
 		auto matx = new Matx<T>();
 
 		matx->_matx = std::make_shared<T>(T::all( info.at<TVT>(0)));
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+
+		info.SetReturnValue(matx);
 	}
 
 	static POLY_METHOD(zeros) {
 		auto matx = new Matx<T>();
 
 		matx->_matx = std::make_shared<T>(T::zeros());
+
+		info.SetReturnValue(matx);
+
 		matx->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
@@ -653,8 +656,7 @@ public:
 		auto matx = new Matx<T>();
 
 		matx->_matx = std::make_shared<T>(T::ones());
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(matx);
 	}
 
 	static POLY_METHOD(eye) {
@@ -663,25 +665,20 @@ public:
 		matx->_matx = std::make_shared<T>(T::eye());
 
 		info.SetReturnValue(matx);
-
-		//matx->Wrap(info.Holder());
-		//info.GetReturnValue().Set(info.Holder());
 	}
 
 	static POLY_METHOD(randu) {
 		auto matx = new Matx<T>();
 
 		matx->_matx = std::make_shared<T>(T::randu(info.at<TVT>(0), info.at<TVT>(1)));
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(matx);
 	}
 
 	static POLY_METHOD(randn) {
 		auto matx = new Matx<T>();
 
 		matx->_matx = std::make_shared<T>(T::randn(info.at<TVT>(0), info.at<TVT>(1)));
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(matx);
 	}
 
 	static POLY_METHOD(op_Addition_matx_matx) {
@@ -691,8 +688,7 @@ public:
 		auto b = *info.at<Matx<T>*>(1)->_matx;
 
 		matx->_matx = std::make_shared<T>(a + b);
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(matx);
 	}
 
 	static POLY_METHOD(op_Substraction_matx_matx) {
@@ -702,8 +698,7 @@ public:
 		auto b = *info.at<Matx<T>*>(1)->_matx;
 
 		matx->_matx = std::make_shared<T>(a - b);
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(matx);
 	}
 
 	static POLY_METHOD(op_Multiplication_matx_number) {
@@ -732,8 +727,7 @@ public:
 		auto a = *info.at<Matx<T>*>(0)->_matx;
 
 		matx->_matx = std::make_shared<T>(-a);
-		matx->Wrap(info.Holder());
-		info.GetReturnValue().Set(info.Holder());
+		info.SetReturnValue(matx);
 	}
 
 
@@ -937,6 +931,8 @@ POLY_METHOD(Matx<T>::inv_method) {
 }
 
 
+
+
 typedef typename Matx<cv::Matx12f> Matx12f;
 typedef typename Matx<cv::Matx12d> Matx12d;
 typedef typename Matx<cv::Matx13f> Matx13f;
@@ -954,6 +950,7 @@ typedef typename Matx<cv::Matx41d> Matx41d;
 typedef typename Matx<cv::Matx61f> Matx61f;
 typedef typename Matx<cv::Matx61d> Matx61d;
 typedef typename Matx<cv::Matx22f> Matx22f;
+typedef typename Matx<cv::Matx<int,2,2>> Matx22i;
 typedef typename Matx<cv::Matx22d> Matx22d;
 typedef typename Matx<cv::Matx23f> Matx23f;
 typedef typename Matx<cv::Matx23d> Matx23d;

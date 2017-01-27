@@ -71,11 +71,11 @@ std::map<std::string, std::function<v8::Local<v8::Value>(int, cv::Mat&)> > Matri
 			auto converter = std::make_unique < or ::value_converter<char>>();
 			return converter->convert(mat.at<char>(index));
 		} },
-		{ "double",
+		/*{ "double",
 		[](int index, cv::Mat& mat) {
 			auto converter = std::make_unique < or ::value_converter<double>>();
 			return converter->convert(mat.at<double>(index));
-		} },
+		} },*/
 		{ "float",
 		[](int index, cv::Mat& mat) {
 			auto converter = std::make_unique < or ::value_converter<float>>();
@@ -167,11 +167,13 @@ std::map<std::string, std::function<void(cv::Mat&, int, v8::Local<v8::Value>)> >
 	"char", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
 		auto converter = std::make_unique< or ::value_converter<char>>();
 		mat.at<char>(index) = converter->convert(value);
-	} }, {
+	} },
+	/*{
 	"double", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
 		auto converter = std::make_unique< or ::value_converter<double>>();
 		mat.at<double>(index) = converter->convert(value);
-	} }, {
+	} },*/
+	{
 	"float", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
 		auto converter = std::make_unique< or ::value_converter<float>>();
 		mat.at<float>(index) = converter->convert(value);
@@ -252,10 +254,10 @@ std::map<std::string, std::function<size_t()> > Matrix_array_accessor::_sizeof_a
 		"char", 
 		[]() {return sizeof(char);} 
 	}, 
-	{
+	/*{
 		"double", 
 		[]() {return sizeof(double);} 
-	}, 
+	}, */
 	{
 		"float", 
 		[]() {return sizeof(float);}

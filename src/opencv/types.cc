@@ -32,13 +32,17 @@ types::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload
 	Complexd::Init(target, "Complexd", overload);
 	Complexf::Init(target, "Complexf", overload);
 	
+	PointInit::Register(target, overload);
+	SizeInit::Register(target, overload);
+	RectInit::Init(target, overload);
+
 	PointInit::Init(target, overload);
 
 	Point3Init::Init(target, overload);
 
 	SizeInit::Init(target, overload);
 
-	RectInit::Init(target, overload);
+	
 
 	RotatedRect::Init(target, overload);
 
