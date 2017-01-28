@@ -614,6 +614,7 @@
 			'../opencv.module/opencv.gyp:flann',
 			'../opencv.module/opencv.gyp:ts',
 			'../node-overload-resolution/binding.gyp:node-overload-resolution',
+			'../node-addon-tracer/binding.gyp:node-addon-tracer',
 			#'../opencv.module/sources/3rdparty/3rdparty.gyp:zlib',
 			#'../ffmpeg/ffmpeg.gyp:compat',
 			#'../ffmpeg/ffmpeg.gyp:avcodec_p1',

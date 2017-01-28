@@ -63,10 +63,14 @@
 
 #include "opencv/MatOp.h"
 
+#include <tracer.h>
+
 extern "C"{ 
 void
 init(Handle<Object> target) {
 	assert(false);
+	tracer::Init(target);
+
 	auto overload = std::make_shared<overload_resolution>();
 
 	overload->add_type_alias("InputArray", "IOArray");

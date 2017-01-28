@@ -12,6 +12,11 @@ std::map<std::string, std::function<v8::Local<v8::Value>(int, cv::Mat&)> > Matri
 			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec2d> * >>();
 			return converter->convert(Vec<cv::Vec2d>::from(mat.at<cv::Vec2d>(index)));
 		} },
+		{ "Vec2f",
+			[](int index, cv::Mat& mat) {
+			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec2f> * >>();
+			return converter->convert(Vec<cv::Vec2f>::from(mat.at<cv::Vec2f>(index)));
+		} },
 		{ "Vec3d",
 		[](int index, cv::Mat& mat) {
 			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec3d> * >>();
@@ -124,6 +129,13 @@ std::map<std::string, std::function<void(cv::Mat&, int, v8::Local<v8::Value>)> >
 	} 
 	}, 
 	{
+		"Vec2f",
+		[](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
+		auto converter = std::make_unique< or ::value_converter<Vec<cv::Vec2f>*>>();
+		mat.at<cv::Vec2f>(index) = *converter->convert(value)->_vec;
+	}
+	},
+	{
 	"Vec3d", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
 		auto converter = std::make_unique< or ::value_converter<Vec<cv::Vec3d>*>>();
 		mat.at<cv::Vec3d>(index) = *converter->convert(value)->_vec;
@@ -210,6 +222,10 @@ std::map<std::string, std::function<size_t()> > Matrix_array_accessor::_sizeof_a
 		"Vec2d", 
 		[]() {return sizeof(cv::Vec2d);} 
 	}, 
+	{
+		"Vec2f",
+		[]() {return sizeof(cv::Vec2f); }
+	},
 	{
 		"Vec3d", 
 		[]() {return sizeof(cv::Vec2d);} 

@@ -225,7 +225,7 @@ template <typename T>
 	template <typename T>
 	std::shared_ptr<Size_<T>> Size_<T>::Empty() {
 		auto ret = std::make_shared<Size_<T>>();
-		ret->_size = std::make_shared<cv::Size>();
+		ret->_size = std::make_shared<T>();
 		return ret;
 	}
 

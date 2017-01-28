@@ -247,7 +247,7 @@ export class ChessBoardGenerator {
         return new alvision.Size(this.patternSize.width.valueOf() - 1, this.patternSize.height.valueOf() - 1);
     }
 
-    public corners3d: Array<alvision.Point3f>;
+    public corners3d: Array<alvision.Point3f> = [];
 
     generateEdge(p1: alvision.Point3f, p2: alvision.Point3f, out: Array<alvision.Point3f>): void {
         var step = (p2.op_Substraction(p1)).op_Multiplication( (1. / this.squareEdgePointsNum.valueOf()));
@@ -278,8 +278,21 @@ export class ChessBoardGenerator {
 
                     alvision.projectPoints(pts_square3d, this.rvec, this.tvec, camMat, distCoeffs, pts_square2d);
                     squares_black.length = (squares_black.length + 1);
-                    var temp = new Array<alvision.Point2f>();
-                    alvision.approxPolyDP(new alvision.Mat(pts_square2d), temp, 1.0, true);
+                    var temp = alvision.NewArray(pts_square2d.length,()=> new alvision.Point2f());
+                    var tempMat = new alvision.Mat(temp);
+                    alvision.approxPolyDP(new alvision.Mat(pts_square2d), tempMat, 1.0, true);
+                    console.log(tempMat);
+
+                    //copy back from tempMat to temp
+                    let tptr = tempMat.ptr<alvision.Point2f>("Point2f");
+                    for (let i = 0; i < tptr.length; i++) {
+                        temp[i] = tptr[i];
+                    }
+
+                    if (!squares_black[0]) {
+                        squares_black[0] = [];
+                    }
+
                     alvision.transformOp<alvision.Point2f>(temp, squares_black[0],new Mult(this.rendererResolutionMultiplier));
                 }
 
@@ -288,20 +301,37 @@ export class ChessBoardGenerator {
         for (var j = 0; j < this.patternSize.height.valueOf() - 1; ++j)
             for (var i = 0; i < this.patternSize.width.valueOf() - 1; ++i)
                 this.corners3d.push(zero.op_Addition( pb1.op_Multiplication((i + 1) * sqWidth.valueOf())).op_Addition( pb2.op_Multiplication((j + 1) * sqHeight.valueOf()) ));
+
         corners.length = 0;
+        this.corners3d.forEach((v, i, a) => {
+            corners[i] = new alvision.Point2f();
+        });
+
         alvision.projectPoints(this.corners3d, this.rvec, this.tvec, camMat, distCoeffs, corners);
 
         var whole3d = new Array<alvision.Point3f>();
-        var whole2d = new Array<alvision.Point2f>();
+        
         this.generateEdge(whole[0], whole[1], whole3d);
         this.generateEdge(whole[1], whole[2], whole3d);
         this.generateEdge(whole[2], whole[3], whole3d);
         this.generateEdge(whole[3], whole[0], whole3d);
+
+        var whole2d = alvision.NewArray(whole3d.length, ()=> new alvision.Point2f());
+
         alvision.projectPoints(whole3d, this.rvec, this.tvec, camMat, distCoeffs, whole2d);
+        
+        var tempMat = new alvision.Mat(temp);
+        alvision.approxPolyDP(new alvision.Mat(whole2d), tempMat, 1.0, true);
+
         var temp_whole2d = new Array<alvision.Point2f>();
-        alvision.approxPolyDP(new alvision.Mat(whole2d), temp_whole2d, 1.0, true);
+        let tptr = tempMat.ptr<alvision.Point2f>("Point2f");
+        for (let i = 0; i < tptr.length; i++) {
+            temp_whole2d[i] = tptr[i];
+        }
+
 
         var whole_contour = new Array<Array<alvision.Point2f>>(1);
+        whole_contour[0] = [];
         alvision.transformOp(temp_whole2d,whole_contour[0],new Mult(this.rendererResolutionMultiplier));
 
         var result = new alvision.Mat();

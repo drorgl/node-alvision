@@ -28,4 +28,7 @@ void SizeInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 	Size2d::Init(target, "Size2d", overload);
 	//Size::Init(target, "Size", overload);
 
+	Size2i::Empty();
+	Size2f::Empty();
+	Size2d::Empty();
 }

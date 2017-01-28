@@ -6089,7 +6089,16 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
  POLY_METHOD(imgproc::connectedComponentsWithStats){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::findContours_hierarchy){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::findContours){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::approxPolyDP){throw std::exception("not implemented");}
+ 
+POLY_METHOD(imgproc::approxPolyDP){
+	auto curve			= info.at<IOArray*>(0)->GetInputArray();
+	auto approxCurve	= info.at<IOArray*>(1)->GetOutputArray();
+	auto epsilon		= info.at<double>(2) ;
+	auto closed			= info.at<bool>(3) ;
+
+	cv::approxPolyDP(curve, approxCurve, epsilon, closed);
+ }
+
  POLY_METHOD(imgproc::arcLength){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::boundingRect){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::contourArea){throw std::exception("not implemented");}
