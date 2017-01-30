@@ -97,33 +97,33 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	overload->add_type_alias("QtButtonTypes", "int");
 
 
-	overload->addStaticOverload("highgui", "", "namedWindow", { 
+	overload->addOverload("highgui", "", "namedWindow", { 
 		make_param<std::string>("winname","String"),
-		make_param<int>("flags","int",cv::WINDOW_AUTOSIZE) 
+		make_param<int>("flags","WindowFlags",cv::WINDOW_AUTOSIZE) 
 	}, highgui::namedWindow);
 	Nan::SetMethod(target, "namedWindow", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "destroyWindow", { 
+	overload->addOverload("highgui", "", "destroyWindow", { 
 		make_param<std::string>("winname","String")
 	}, highgui::destroyWindow);
 	Nan::SetMethod(target, "destroyWindow", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "destroyAllWindows", {}, highgui::destroyAllWindows);
+	overload->addOverload("highgui", "", "destroyAllWindows", {}, highgui::destroyAllWindows);
 	Nan::SetMethod(target, "destroyAllWindows", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "startWindowThread", {}, highgui::startWindowThread);
+	overload->addOverload("highgui", "", "startWindowThread", {}, highgui::startWindowThread);
 	Nan::SetMethod(target, "startWindowThread", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "waitKey", {
+	overload->addOverload("highgui", "", "waitKey", {
 		make_param<int>("delay","int",0)
 	}, highgui::waitKey);
 	Nan::SetMethod(target, "waitKey", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "resizeWindow", { 
+	overload->addOverload("highgui", "", "resizeWindow", { 
 		make_param<std::string>("winname","String"), 
 		make_param<int>("width","int"), 
 		make_param<int>("height","int")
@@ -131,14 +131,14 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	Nan::SetMethod(target, "resizeWindow", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "moveWindow", { 
+	overload->addOverload("highgui", "", "moveWindow", { 
 		make_param<std::string>("winname","String"),
 		make_param<int>("x","int"), 
 		make_param<int>("y","int") 
 	}, highgui::moveWindow);
 	Nan::SetMethod(target, "moveWindow", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setWindowProperty", {
+	overload->addOverload("highgui", "", "setWindowProperty", {
 		make_param<std::string>("winname","String"),
 		make_param<int>("prop_id","int"), 
 		make_param<double>("prop_value","double")
@@ -146,32 +146,32 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	Nan::SetMethod(target, "setWindowProperty", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "setWindowTitle", { 
+	overload->addOverload("highgui", "", "setWindowTitle", { 
 		make_param<std::string>("winname","String"),
 		make_param<std::string>("title","String")
 	}, highgui::setWindowTitle);
 	Nan::SetMethod(target, "setWindowTitle", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "getWindowProperty", { 
+	overload->addOverload("highgui", "", "getWindowProperty", { 
 		make_param<std::string>("winname","String"), 
 		make_param<int>("prop_id","int") 
 	}, highgui::getWindowProperty);
 	Nan::SetMethod(target, "getWindowProperty", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setMouseCallback", { 
+	overload->addOverload("highgui", "", "setMouseCallback", { 
 		make_param<std::string>("winname","String"), 
 		make_param<std::shared_ptr<or::Callback>>("onMouse","Function"),
 		make_param("userdata","Object",Nan::Null())
 	}, highgui::setMouseCallback);
 	Nan::SetMethod(target, "setMouseCallback", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "getMouseWheelDelta", { 
+	overload->addOverload("highgui", "", "getMouseWheelDelta", { 
 		make_param<int>("flags","int") 
 	}, highgui::getMouseWheelDelta);
 	Nan::SetMethod(target, "getMouseWheelDelta", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "createTrackbar", { 
+	overload->addOverload("highgui", "", "createTrackbar", { 
 		make_param<std::string>("trackbarname","String"),
 		make_param<std::string>("winname","String"),
 		make_param<int>("count","int"),
@@ -181,27 +181,27 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	}, highgui::createTrackbar);
 	Nan::SetMethod(target, "createTrackbar", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "getTrackbarPos", { 
+	overload->addOverload("highgui", "", "getTrackbarPos", { 
 		make_param<std::string>("trackbarname","String"),
 		make_param<std::string>("winname","String")
 	}, highgui::getTrackbarPos);
 	Nan::SetMethod(target, "getTrackbarPos", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setTrackbarPos", { 
+	overload->addOverload("highgui", "", "setTrackbarPos", { 
 		make_param<std::string>("trackbarname","String"), 
 		make_param<std::string>("winname","String"), 
 		make_param<int>("pos","int")
 	}, highgui::setTrackbarPos);
 	Nan::SetMethod(target, "setTrackbarPos", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setTrackbarMax", { 
+	overload->addOverload("highgui", "", "setTrackbarMax", { 
 		make_param<std::string>("trackbarname","String"), 
 		make_param<std::string>("winname","String"), 
 		make_param<int>("maxval","int")
 	}, highgui::setTrackbarMax);
 	Nan::SetMethod(target, "setTrackbarMax", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setTrackbarMin", { 
+	overload->addOverload("highgui", "", "setTrackbarMin", { 
 		make_param<std::string>("trackbarname","String"),
 		make_param<std::string>("winname","String"), 
 		make_param<int>("minval","int") 
@@ -209,35 +209,36 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	Nan::SetMethod(target, "setTrackbarMin", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "imshow", { 
+	overload->addOverload("highgui", "", "imshow", { 
 		make_param<std::string>("winname","String"),
 		make_param<Texture2D*>("tex","Texture2D") 
 	},  highgui::imshowTex);
-	overload->addStaticOverload("highgui", "", "imshow", {
+
+	overload->addOverload("highgui", "", "imshow", {
 		make_param<std::string>("winname","String"),
-		make_param<IOArray*>("tex","IOArray") 
+		make_param<IOArray*>("mat","IOArray") 
 	}, highgui::imshowMat);
 	Nan::SetMethod(target, "imshow", highgui_general_callback::callback);
 
 
-	overload->addStaticOverload("highgui", "", "setOpenGlDrawCallback", {
+	overload->addOverload("highgui", "", "setOpenGlDrawCallback", {
 		make_param<std::string>("winname","String"), 
 		make_param<std::shared_ptr<or::Callback>>("onOpenGlDraw","Function"), 
 		make_param("userdata","Object",Nan::Null())
 	}, highgui::setOpenGlDrawCallback);
 	Nan::SetMethod(target, "setOpenGlDrawCallback", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "setOpenGlContext", { 
+	overload->addOverload("highgui", "", "setOpenGlContext", { 
 		make_param<std::string>("winname","String") 
 	}, highgui::setOpenGlContext);
 	Nan::SetMethod(target, "setOpenGlContext", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "updateWindow", { 
+	overload->addOverload("highgui", "", "updateWindow", { 
 		make_param<std::string>("winname","String")
 	}, highgui::updateWindow);
 	Nan::SetMethod(target, "updateWindow", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "fontQt", { 
+	overload->addOverload("highgui", "", "fontQt", { 
 		make_param<std::string>("nameFont","String"), 
 		make_param<int>("pointSize","int",-1),
 		make_param<Scalar*>("color",Scalar::name,Scalar::all(0)), 
@@ -247,46 +248,46 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	}, highgui::fontQt);
 	Nan::SetMethod(target, "fontQt", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "addText", {
+	overload->addOverload("highgui", "", "addText", {
 		make_param<Matrix*>("img","Mat"),
 		make_param<std::string>("text","String"),
 		make_param<Point*>("org",Point::name),
 		make_param<QtFont*>("font","QtFont") }, highgui::addText);
 	Nan::SetMethod(target, "addText", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "displayOverlay", { 
+	overload->addOverload("highgui", "", "displayOverlay", { 
 		make_param<std::string>("winname","String"),
 		make_param<std::string>("text","String"),
 		make_param<int>("delayms","int",0)
 	}, highgui::displayOverlay);
 	Nan::SetMethod(target, "displayOverlay", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "displayStatusBar", { 
+	overload->addOverload("highgui", "", "displayStatusBar", { 
 		make_param<std::string>("winname","String"),
 		make_param<std::string>("text","String"),
 		make_param<int>("delayms","int",0) 
 	}, highgui::displayStatusBar);
 	Nan::SetMethod(target, "displayStatusBar", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "saveWindowParameters", { 
+	overload->addOverload("highgui", "", "saveWindowParameters", { 
 		make_param<std::string>("windowName","String") 
 	}, highgui::saveWindowParameters);
 	Nan::SetMethod(target, "saveWindowParameters", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "loadWindowParameters", { 
+	overload->addOverload("highgui", "", "loadWindowParameters", { 
 		make_param<std::string>("windowName","String") 
 	}, highgui::loadWindowParameters);
 	Nan::SetMethod(target, "loadWindowParameters", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "startLoop", { 
+	overload->addOverload("highgui", "", "startLoop", { 
 		make_param<std::shared_ptr<or::Callback>>("pt2Func","Function")
 	}, highgui::startLoop);
 	Nan::SetMethod(target, "startLoop", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "stopLoop", {}, highgui::stopLoop);
+	overload->addOverload("highgui", "", "stopLoop", {}, highgui::stopLoop);
 	Nan::SetMethod(target, "stopLoop", highgui_general_callback::callback);
 
-	overload->addStaticOverload("highgui", "", "createButton", {
+	overload->addOverload("highgui", "", "createButton", {
 		make_param<std::string>("bar_name","String"),
 		make_param<std::shared_ptr<or::Callback>>("on_change","Function"),
 		make_param("userdata","Object",Nan::Null()),
@@ -299,11 +300,11 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 
 POLY_METHOD(highgui::namedWindow) {
-	cv::namedWindow(*Nan::Utf8String(info[0]), info[1]->IntegerValue());
+	cv::namedWindow(info.at<std::string>(0), info.at<int>(1));
 }
 
 POLY_METHOD(highgui::destroyWindow) {
-	cv::destroyWindow(*Nan::Utf8String(info[0]));
+	cv::destroyWindow(info.at<std::string>(0));
 }
 
 POLY_METHOD(highgui::destroyAllWindows) {
@@ -316,129 +317,130 @@ POLY_METHOD(highgui::startWindowThread) {
 }
 
 POLY_METHOD(highgui::waitKey) {
-	auto retval = cv::waitKey(info[0]->IntegerValue());
+	auto retval = cv::waitKey(info.at<int>(0));
 	info.GetReturnValue().Set(retval);
 }
 
 POLY_METHOD(highgui::resizeWindow) {
-	cv::resizeWindow(*Nan::Utf8String(info[0]), info[1]->IntegerValue(), info[2]->IntegerValue());
+	cv::resizeWindow(info.at<std::string>(0), info.at<int>(1), info.at<int>(2));
 }
 
 POLY_METHOD(highgui::moveWindow) {
-	cv::moveWindow(*Nan::Utf8String(info[0]), info[1]->IntegerValue(), info[2]->IntegerValue());
+	cv::moveWindow(info.at<std::string>(0), info.at<int>(1), info.at<int>(2));
 }
 
 POLY_METHOD(highgui::setWindowProperty) {
-	cv::setWindowProperty(*Nan::Utf8String(info[0]), info[1]->IntegerValue(), info[2]->NumberValue());
+	cv::setWindowProperty(info.at<std::string>(0), info.at<int>(1), info.at<double>(2));
 }
 
 POLY_METHOD(highgui::setWindowTitle) {
-	cv::setWindowTitle(*Nan::Utf8String(info[0]), *Nan::Utf8String(info[1]));
+	cv::setWindowTitle(info.at<std::string>(0), info.at<std::string>(1));
 }
 
 POLY_METHOD(highgui::getWindowProperty) {
-	auto retval = cv::getWindowProperty(*Nan::Utf8String(info[0]), info[1]->IntegerValue());
+	auto retval = cv::getWindowProperty(info.at<std::string>(0), info.at<int>(1));
 	info.GetReturnValue().Set(retval);
 }
 
 POLY_METHOD(highgui::setMouseCallback) {
 	return Nan::ThrowError("not implemented");
-	//cv::setMouseCallback(*Nan::Utf8String(info[0]), ..., ...);
+	//cv::setMouseCallback(info.at<std::string>(0), ..., ...);
 }
 
 POLY_METHOD(highgui::getMouseWheelDelta){
-	auto retval = cv::getMouseWheelDelta(info[0]->IntegerValue());
+	auto retval = cv::getMouseWheelDelta(info.at<int>(0));
 	info.GetReturnValue().Set(retval);
 }
 
 POLY_METHOD(highgui::createTrackbar) {
 	int val;
-	//auto retval = cv::createTrackbar(*Nan::Utf8String(info[0]),*Nan::Utf8String(info[1]),&val,)
+	//auto retval = cv::createTrackbar(info.at<std::string>(0),info.at<std::string>(1),&val,)
 	return Nan::ThrowError("not implemented");
 }
 
 POLY_METHOD(highgui::getTrackbarPos) {
-	auto retval = cv::getTrackbarPos(*Nan::Utf8String(info[0]), *Nan::Utf8String(info[1]));
+	auto retval = cv::getTrackbarPos(info.at<std::string>(0), info.at<std::string>(1));
 	info.GetReturnValue().Set(retval);
 }
 
 POLY_METHOD(highgui::setTrackbarPos) {
-	cv::setTrackbarPos(*Nan::Utf8String(info[0]), *Nan::Utf8String(info[1]), info[2]->IntegerValue());
+	cv::setTrackbarPos(info.at<std::string>(0), info.at<std::string>(1), info.at<int>(2));
 }
 
 POLY_METHOD(highgui::setTrackbarMax) {
-	cv::setTrackbarMax(*Nan::Utf8String(info[0]), *Nan::Utf8String(info[1]), info[2]->IntegerValue());
+	cv::setTrackbarMax(info.at<std::string>(0), info.at<std::string>(1), info.at<int>(2));
 }
 
 POLY_METHOD(highgui::setTrackbarMin) {
-	cv::setTrackbarMin(*Nan::Utf8String(info[0]), *Nan::Utf8String(info[1]), info[2]->IntegerValue());
+	cv::setTrackbarMin(info.at<std::string>(0), info.at<std::string>(1), info.at<int>(2));
 }
 
 POLY_METHOD(highgui::imshowTex){
-	return Nan::ThrowError("not implemented");
-	//auto tex = info.at<Texture2D*>(1);
-	//cv::imshow(*Nan::Utf8String(info[0]), tex._tex);
+	auto winname = info.at<std::string>(0);
+	auto tex = info.at<Texture2D*>(1);
+	cv::imshow(info.at<std::string>(0), *tex->_texture2d);
 }
 
 POLY_METHOD(highgui::imshowMat){
-	return Nan::ThrowError("not implemented");
-	//auto mat = info.at<Matrix*>(1);
-	//auto winname = info.at<std::string>(0);
-	//cv::imshow(winname, mat->_mat.get());
+	auto winname = info.at<std::string>(0);
+	auto mat = info.at<IOArray*>(1)->GetInputArray();
+	cv::imshow(info.at<std::string>(0), mat);
 }
 
 
 POLY_METHOD(highgui::setOpenGlDrawCallback) {
 	return Nan::ThrowError("not implemented");
-	//cv::setOpenGlDrawCallback(*Nan::Utf8String(info[0]), ..., ...);
+	//cv::setOpenGlDrawCallback(info.at<std::string>(0), ..., ...);
 }
 
 POLY_METHOD(highgui::setOpenGlContext) {
-	cv::setOpenGlContext(*Nan::Utf8String(info[0]));
+	cv::setOpenGlContext(info.at<std::string>(0));
 }
 
 POLY_METHOD(highgui::updateWindow) {
-	cv::updateWindow(*Nan::Utf8String(info[0]));
+	cv::updateWindow(info.at<std::string>(0));
 }
 
 POLY_METHOD(highgui::fontQt) {
-	return Nan::ThrowError("not implemented");
-	//auto color = Nan::ObjectWrap::Unwrap<Scalar>(info[2]);
-	//auto retval = cv::fontQt(*Nan::Utf8String(info[0]), info[1]->IntegerValue(), color._scalar, info[3]->IntegerValue(), info[4]->IntegerValue(), info[5]->IntegerValue());
-	//QtFont font(retval);
-	//return font.Wrap();
+	auto nameFont	= info.at<std::string>(0);
+	auto pointSize	= info.at<int>(1);
+	auto color		= info.at<Scalar*>(2)->_scalar;
+	auto weight		= info.at<int>(3);
+	auto style		= info.at<int>(4);
+	auto spacing	= info.at<int>(5);
+
+	auto font = new QtFont();
+	font->_qtfont = std::make_shared<cv::QtFont>(cv::fontQt(nameFont, pointSize, *color, weight, style, spacing));
+	info.SetReturnValue(font);
 }
 
 POLY_METHOD(highgui::addText) {
-	return Nan::ThrowError("not implemented");
-	//interface IaddText {
-	//	(img : _mat.Mat, text : string, org : _types.Point, font : QtFont) : void;
-	//}
-	//auto mat = Nan::ObjectWrap::Unwrap<Matrix>(info[0]);
-	//auto point = Nan::ObjectWrap::Unwrap<Point>(info[2]);
-	//auto qtfont= Nan::ObjectWrap::Unwrap<QtFont>(info[3]);
-	//cv::addText(mat._mat, *Nan::Utf8String(info[1]), point._point, qtfont._qtfont);
+	auto img	= info.at<Matrix*>(0)->_mat;
+	auto text	= info.at<std::string>(1);
+	auto org	= info.at<Point*>(2)->_point;
+	auto font	= info.at<QtFont*>(3)->_qtfont;
+
+	cv::addText(*img, text, *org, *font);
 }
 
 POLY_METHOD(highgui::displayOverlay) {
-	cv::displayOverlay(*Nan::Utf8String(info[0]), *Nan::Utf8String(info[1]), info[2]->IntegerValue());
+	cv::displayOverlay(info.at<std::string>(0), info.at<std::string>(1), info.at<int>(2));
 }
 
 POLY_METHOD(highgui::displayStatusBar) {
-	cv::displayStatusBar(*Nan::Utf8String(info[0]), *Nan::Utf8String(info[1]), info[2]->IntegerValue());
+	cv::displayStatusBar(info.at<std::string>(0), info.at<std::string>(1), info.at<int>(2));
 }
 
 POLY_METHOD(highgui::saveWindowParameters) {
-	cv::saveWindowParameters(*Nan::Utf8String(info[0]));
+	cv::saveWindowParameters(info.at<std::string>(0));
 }
 
 POLY_METHOD(highgui::loadWindowParameters) {
-	cv::loadWindowParameters(*Nan::Utf8String(info[0]));
+	cv::loadWindowParameters(info.at<std::string>(0));
 }
 
 POLY_METHOD(highgui::startLoop) {
-	//cv::startLoop(...)
-
+	throw std::exception("not implemented");
 }
 
 POLY_METHOD(highgui::stopLoop) {
@@ -446,8 +448,15 @@ POLY_METHOD(highgui::stopLoop) {
 }
 
 POLY_METHOD(highgui::createButton) {
-	return Nan::ThrowError("not implemented");
-	//auto retval = cv::createButton(*Nan::Utf8String(info[0]), ..., ..., info[3]->IntegerValue(), info[4]->BooleanValue());
-	//info.GetReturnValue().Set(retval);
+	//auto bar_name				= info.at<std::string>(0);
+	//auto on_change				= info.at<std::shared_ptr<or::Callback>>(1);
+	//auto userData				= info.at<????>(2);
+	//auto type					= info.at<int>(3);
+	//auto initial_button_state	= info.at<bool>(4);
+	//
+	//auto ret = cv::createButton(bar_name, on_change, userData, type, initial_button_state);
+	//info.SetReturnValue(ret);
+
+	throw std::exception("not implemented");
 }
 

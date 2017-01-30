@@ -363,7 +363,7 @@ export interface Point extends Point2i { }
 export var Point2i: Point_Static<_st.int> = alvision_module.Point2i;
 export var Point2f: Point_Static<_st.float> = alvision_module.Point2f;
 export var Point2d: Point_Static<_st.double> = alvision_module.Point2d;
-export var Point: Point_Static<_st.int> = alvision_module.Point;
+export var Point: Point_Static<_st.int> = alvision_module.Point2i;
 
 
 //typedef Point_< int > Point2i;

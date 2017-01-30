@@ -14,6 +14,8 @@ public:
 
 	virtual v8::Local<v8::Function> get_constructor();
 
+	std::shared_ptr<cv::ogl::Texture2D> _texture2d;
+
 };
 
 #endif

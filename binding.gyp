@@ -64,6 +64,7 @@
 		, "binding.gyp"
 		, "test/ffmpeg.ts"
 		, "test/opencv.ts"
+		, "test/tmp.ts"
         , "src/init.cc"
 		, "src/alvision.h"
 		, "src/safecast.h"

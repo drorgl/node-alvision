@@ -22,7 +22,8 @@
     "arm": "./build_android_alvision",
     "linux": "build_linux_alvision",
     "test": "ts-node test/unit.ts",
-	"test-opencv" : "ts-node test/opencv.ts"
+	"test-opencv" : "ts-node test/opencv.ts",
+	"test-tmp" : "ts-node test/tmp.ts"
   },
   "keywords": [
     "opencv",

@@ -6134,7 +6134,17 @@ POLY_METHOD(imgproc::approxPolyDP){
  POLY_METHOD(imgproc::arrowedLine){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::rectangle){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::rectangle_points){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::circle){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::circle){
+	 auto img		=info.at<IOArray*>(0)->GetInputOutputArray();
+	 auto center	=info.at<Point*>(1)->_point;
+	 auto radius	=info.at<int>(2);
+	 auto color		=info.at<Scalar*>(3)->_scalar;
+	 auto thickness =info.at<int>(4);
+	 auto lineType	=info.at<int>(5);
+	 auto shift		=info.at<int>(6);
+	 cv::circle(img, *center, radius, *color, thickness, lineType, shift);
+
+ }
  POLY_METHOD(imgproc::ellipse){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::ellipse_center){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::drawMarker){throw std::exception("not implemented");}
