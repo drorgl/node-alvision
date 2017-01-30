@@ -1,4 +1,4 @@
-#include "Vec.h"
+#include "Vec.imp.h"
 
 namespace vec_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -30,6 +30,68 @@ POLY_METHOD(Vec<cv::Vec4d>::conj) {
 	conj_imp<cv::Vec4d>(info);
 }
 
+
+
+
+void VecInit::Register(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	Matx<cv::Vec<uchar, 1>::mat_type>	::Register(target, "Matx1b", overload);
+	Matx<cv::Vec<short, 1>::mat_type>	::Register(target, "Matx1s", overload);
+	Matx<cv::Vec<ushort, 1>::mat_type>	::Register(target, "Matx1w", overload);
+	Matx<cv::Vec<int, 1>::mat_type>		::Register(target, "Matx1i", overload);
+	Matx<cv::Vec<float, 1>::mat_type>	::Register(target, "Matx1f", overload);
+	Matx<cv::Vec<double, 1>::mat_type>	::Register(target, "Matx1d", overload);
+	Matx<cv::Vec2b::mat_type>			::Register(target, "Matx2b", overload);
+	Matx<cv::Vec3b::mat_type>			::Register(target, "Matx3b", overload);
+	Matx<cv::Vec4b::mat_type>			::Register(target, "Matx4b", overload);
+	Matx<cv::Vec2s::mat_type>			::Register(target, "Matx2s", overload);
+	Matx<cv::Vec3s::mat_type>			::Register(target, "Matx3s", overload);
+	Matx<cv::Vec4s::mat_type>			::Register(target, "Matx4s", overload);
+	Matx<cv::Vec2w::mat_type>			::Register(target, "Matx2w", overload);
+	Matx<cv::Vec3w::mat_type>			::Register(target, "Matx3w", overload);
+	Matx<cv::Vec4w::mat_type>			::Register(target, "Matx4w", overload);
+	Matx<cv::Vec2i::mat_type>			::Register(target, "Matx2i", overload);
+	Matx<cv::Vec3i::mat_type>			::Register(target, "Matx3i", overload);
+	Matx<cv::Vec4i::mat_type>			::Register(target, "Matx4i", overload);
+	Matx<cv::Vec6i::mat_type>			::Register(target, "Matx6i", overload);
+	Matx<cv::Vec8i::mat_type>			::Register(target, "Matx8i", overload);
+	Matx<cv::Vec2f::mat_type>			::Register(target, "Matx2f", overload);
+	Matx<cv::Vec3f::mat_type>			::Register(target, "Matx3f", overload);
+	Matx<cv::Vec4f::mat_type>			::Register(target, "Matx4f", overload);
+	Matx<cv::Vec6f::mat_type>			::Register(target, "Matx6f", overload);
+	Matx<cv::Vec2d::mat_type>			::Register(target, "Matx2d", overload);
+	Matx<cv::Vec3d::mat_type>			::Register(target, "Matx3d", overload);
+	Matx<cv::Vec4d::mat_type>			::Register(target, "Matx4d", overload);
+	Matx<cv::Vec6d::mat_type>			::Register(target, "Matx6d", overload);
+
+	Vec<cv::Vec<uchar, 1>> ::Register(target, "Vec1b", overload);
+	Vec<cv::Vec2b>		   ::Register(target, "Vec2b", overload);
+	Vec<cv::Vec3b>	       ::Register(target, "Vec3b", overload);
+	Vec<cv::Vec4b>	       ::Register(target, "Vec4b", overload);
+	Vec<cv::Vec<short, 1>> ::Register(target, "Vec1s", overload);
+	Vec<cv::Vec2s>		   ::Register(target, "Vec2s", overload);
+	Vec<cv::Vec3s>		   ::Register(target, "Vec3s", overload);
+	Vec<cv::Vec4s>		   ::Register(target, "Vec4s", overload);
+	Vec<cv::Vec<ushort, 1>>::Register(target, "Vec1w", overload);
+	Vec<cv::Vec2w>		   ::Register(target, "Vec2w", overload);
+	Vec<cv::Vec3w>		   ::Register(target, "Vec3w", overload);
+	Vec<cv::Vec4w>		   ::Register(target, "Vec4w", overload);
+	Vec<cv::Vec<int, 1>>   ::Register(target, "Vec1i", overload);
+	Vec<cv::Vec2i>		   ::Register(target, "Vec2i", overload);
+	Vec<cv::Vec3i>		   ::Register(target, "Vec3i", overload);
+	Vec<cv::Vec4i>		   ::Register(target, "Vec4i", overload);
+	Vec<cv::Vec6i>		   ::Register(target, "Vec6i", overload);
+	Vec<cv::Vec8i>		   ::Register(target, "Vec8i", overload);
+	Vec<cv::Vec<float, 1>> ::Register(target, "Vec1f", overload);
+	Vec<cv::Vec2f>		   ::Register(target, "Vec2f", overload);
+	Vec<cv::Vec3f>		   ::Register(target, "Vec3f", overload);
+	Vec<cv::Vec4f>		   ::Register(target, "Vec4f", overload);
+	Vec<cv::Vec6f>		   ::Register(target, "Vec6f", overload);
+	Vec<cv::Vec<double, 1>>::Register(target, "Vec1d", overload);
+	Vec<cv::Vec2d>		   ::Register(target, "Vec2d", overload);
+	Vec<cv::Vec3d>		   ::Register(target, "Vec3d", overload);
+	Vec<cv::Vec4d>		   ::Register(target, "Vec4d", overload);
+	Vec<cv::Vec6d>		   ::Register(target, "Vec6d", overload);
+}
 
 void VecInit::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
 	//Matx bases

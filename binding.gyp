@@ -186,8 +186,7 @@
 		, "src/opencv/MatExpr.cc"
 		, "src/opencv/MatExpr.h"
 		
-		, "src/opencv/Matx.cc"
-		, "src/opencv/Matx.h"
+		
 		
 		, "src/opencv/MatND.cc"
 		, "src/opencv/MatND.h"
@@ -265,6 +264,11 @@
 		
 		, "src/opencv/Vec.cc"
 		, "src/opencv/Vec.h"
+		, "src/opencv/Vec.imp.h"
+		, "src/opencv/Matx.cc"
+		, "src/opencv/Matx.h"
+		, "src/opencv/Matx.imp.h"
+		, "src/opencv/MatxAndVec.h"
 
 		, "src/opencv/video/KalmanFilter.cc"
 		, "src/opencv/video/KalmanFilter.h"

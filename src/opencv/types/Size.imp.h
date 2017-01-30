@@ -106,6 +106,7 @@ template <typename T>
 			make_param<Size_<T>*>("a",Size_<T>::name),
 			make_param<TVT>("b","Number"),
 		}, op_Multiplication);
+		Nan::SetMethod(ctor, "op_Multiplication", size_general_callback::callback);
 			//op_Multiplication(a: Size_<T>, b : T) : Size_<T>;
 
 			//template < typename _Tp> static inline
@@ -127,6 +128,7 @@ template <typename T>
 			make_param<Size_<T>*>("a",Size_<T>::name),
 			make_param<TVT>("b","Number"),
 		}, op_Division);
+		Nan::SetMethod(ctor, "op_Division", size_general_callback::callback);
 
 			//op_Division(a: Size_<T>, b : T) : Size_<T>;
 
@@ -149,6 +151,7 @@ template <typename T>
 			make_param<Size_<T>*>("a",Size_<T>::name),
 			make_param<Size_<T>*>("b",Size_<T>::name),
 		}, op_Addition);
+		Nan::SetMethod(ctor, "op_Addition", size_general_callback::callback);
 
 			//op_Addition(a: Size_<T>, b : Size_<T>) : Size_<T>;
 
@@ -171,6 +174,7 @@ template <typename T>
 			make_param<Size_<T>*>("a",Size_<T>::name),
 			make_param<Size_<T>*>("b",Size_<T>::name),
 		}, op_Substraction);
+		Nan::SetMethod(ctor, "op_Substraction", size_general_callback::callback);
 
 			//op_Substraction(a: Size_<T>, b : Size_<T>) : Size_<T>;
 
@@ -191,6 +195,7 @@ template <typename T>
 		//export interface Size_<T> {
 			//! the area (width*height)
 		overload->addOverload("size", name, "area", {}, area);
+		Nan::SetPrototypeMethod(ctor, "area", size_general_callback::callback);
 			//area() : T;
 
 		//width: T;

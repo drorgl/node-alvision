@@ -4,6 +4,7 @@
 #include "../alvision.h"
 #include "Matx.h"
 #include "Vec.h"
+#include "Matrix.h"
 
 #include <string>
 using namespace std::literals::string_literals;

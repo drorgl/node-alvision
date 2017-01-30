@@ -119,6 +119,9 @@ init(Handle<Object> target) {
 	MatOp::Init(target, overload);
 	MatExpr::Init(target, overload);
 
+	MatxInit::Register(target, overload);
+	VecInit::Register(target, overload);
+
 	MatxInit::Init(target, overload);
 	VecInit::Init(target, overload);
 	types::Init(target, overload);

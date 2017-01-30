@@ -1,5 +1,6 @@
 ﻿#include "imgproc.h"
 #include "IOArray.h"
+#include "Matrix.h"
 #include "types/Size.h"
 #include "types/Point.h"
 #include "types/Scalar.h"
@@ -5718,7 +5719,7 @@ overload->addOverload("imgproc", "", "drawContours", {
 	make_param<Scalar*>("color",Scalar::name),
 	make_param<int>("thickness","int", 1),
 	make_param<int>("lineType","LineTypes",cv:: LINE_8),
-	make_param<IOArray*>("hierarchy","IOArray"),
+	make_param<IOArray*>("hierarchy","IOArray", IOArray::noArray()),
 	make_param<int>("maxLevel","int", INT_MAX),
 	make_param<Point*>("offset",Point::name, Point::create())
 }, drawContours);
@@ -6029,7 +6030,16 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
  POLY_METHOD(imgproc::erode){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::dilate){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::morphologyEx){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::resize){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::resize){
+	 auto src			= info.at<IOArray*>(0)->GetInputArray();
+	 auto dst			= info.at<IOArray*>(1)->GetOutputArray();
+	 auto dsize			= *info.at<Size*>(2)->_size;
+	 auto fx			= info.at<double>(3);
+	 auto fy			= info.at<double>(4);
+	 auto interpolation = info.at<int>(5);
+
+	 cv::resize(src, dst, dsize, fx, fy, interpolation);
+ }
  POLY_METHOD(imgproc::warpAffine){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::warpPerspective){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::remap){throw std::exception("not implemented");}
@@ -6134,7 +6144,29 @@ POLY_METHOD(imgproc::approxPolyDP){
  POLY_METHOD(imgproc::fillPoly_mat){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::polylines){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::polylines_mat){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::drawContours){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::drawContours){
+		auto image		= info.at<IOArray*>(0)->GetInputOutputArray();
+		auto contours	= info.at<IOArray*>(1)->GetInputArrayOfArrays();
+		auto contourIdx = info.at<int>(2);
+		auto color		= *info.at<Scalar*>(3)->_scalar;
+		auto thickness	= info.at<int>(4);
+		auto lineType	= info.at<int>(5);
+		auto hierarchy	= info.at<IOArray*>(6)->GetInputArray();
+		auto maxLevel	= info.at<int>(7);
+		auto offset		= *info.at<Point*>(8)->_point;
+
+		cv::drawContours(
+			image,
+			contours,
+			contourIdx,
+			color,
+			thickness,
+			lineType,
+			hierarchy,
+			maxLevel,
+			offset
+		);
+}
  POLY_METHOD(imgproc::clipLine_size){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::clipLine_rect){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::ellipse2Poly){throw std::exception("not implemented");}

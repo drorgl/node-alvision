@@ -3088,9 +3088,26 @@ POLY_METHOD(core::countNonZero){throw std::exception("not implemented");}
 POLY_METHOD(core::findNonZero){throw std::exception("not implemented");}
 POLY_METHOD(core::mean){throw std::exception("not implemented");}
 POLY_METHOD(core::meanStdDev){throw std::exception("not implemented");}
-POLY_METHOD(core::norm){throw std::exception("not implemented");}
-POLY_METHOD(core::norm_src2){throw std::exception("not implemented");}
-POLY_METHOD(core::norm_simple){throw std::exception("not implemented");}
+POLY_METHOD(core::norm){
+	auto src1		= info.at<IOArray*>(0)->GetInputArray();
+	auto normType = info.at<int>(1);
+	auto mask = info.at<IOArray*>(2)->GetInputArray();
+
+	info.SetReturnValue(cv::norm(src1, normType, mask));
+}
+POLY_METHOD(core::norm_src2){
+	auto src1		= info.at<IOArray*>(0)->GetInputArray();
+	auto src2		= info.at<IOArray*>(1)->GetInputArray();
+	auto normType	= info.at<int>(2);
+	auto mask		= info.at<IOArray*>(3)->GetInputArray();
+
+	info.SetReturnValue(cv::norm(src1, src2, normType, mask));
+}
+POLY_METHOD(core::norm_simple){
+	auto src		= *info.at<SparseMat*>(0)->_sparseMat;
+	auto normType	= info.at<int>(1);
+	info.SetReturnValue(cv::norm(src, normType));
+}
 POLY_METHOD(core::PSNR){throw std::exception("not implemented");}
 POLY_METHOD(core::batchDistance){throw std::exception("not implemented");}
 POLY_METHOD(core::normalize){throw std::exception("not implemented");}
