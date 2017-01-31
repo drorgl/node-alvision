@@ -91,6 +91,7 @@ init(Handle<Object> target) {
 	overload->add_type_alias("uchar", "Number");
 	overload->add_type_alias("short", "Number");
 	overload->add_type_alias("ushort", "Number");
+	overload->add_type_alias("char", "String");
 
 	//Register
 

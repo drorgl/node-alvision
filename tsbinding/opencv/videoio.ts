@@ -108,7 +108,7 @@ enum CAP{ CAP_ANY          = 0,     // autodetect
      };
 
 // generic properties (based on DC1394 properties)
-export enum CAP_PROP{
+export enum CAP_PROP_GENERIC{
         CAP_PROP_POS_MSEC = 0,
        CAP_PROP_POS_FRAMES     =1,
        CAP_PROP_POS_AVI_RATIO  =2,

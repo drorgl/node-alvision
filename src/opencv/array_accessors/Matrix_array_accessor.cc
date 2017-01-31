@@ -22,6 +22,11 @@ std::map<std::string, std::function<v8::Local<v8::Value>(int, cv::Mat&)> > Matri
 			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec3d> * >>();
 			return converter->convert(Vec<cv::Vec3d>::from(mat.at<cv::Vec3d>(index)));
 		} },
+		{ "Vec3b",
+			[](int index, cv::Mat& mat) {
+			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec3b> * >>();
+			return converter->convert(Vec<cv::Vec3b>::from(mat.at<cv::Vec3b>(index)));
+		} },
 		{ "Vec4b",
 		[](int index, cv::Mat& mat) {
 			auto converter = std::make_unique < or ::value_converter<Vec<cv::Vec4b>* >>();
@@ -139,7 +144,13 @@ std::map<std::string, std::function<void(cv::Mat&, int, v8::Local<v8::Value>)> >
 	"Vec3d", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
 		auto converter = std::make_unique< or ::value_converter<Vec<cv::Vec3d>*>>();
 		mat.at<cv::Vec3d>(index) = *converter->convert(value)->_vec;
-	} }, {
+	} }, 
+	{
+		"Vec3b", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
+		auto converter = std::make_unique< or ::value_converter<Vec<cv::Vec3b>*>>();
+		mat.at<cv::Vec3b>(index) = *converter->convert(value)->_vec;
+	} },
+	{
 	"Vec4b", [](cv::Mat &mat, int index, v8::Local<v8::Value> value) {
 		auto converter = std::make_unique< or ::value_converter<Vec<cv::Vec4b>*>>();
 		mat.at<cv::Vec4b>(index) = *converter->convert(value)->_vec;
@@ -231,6 +242,10 @@ std::map<std::string, std::function<size_t()> > Matrix_array_accessor::_sizeof_a
 		[]() {return sizeof(cv::Vec2d);} 
 	}, 
 	{
+		"Vec3b",
+		[]() {return sizeof(cv::Vec2b); }
+	},
+	{
 		"Vec4b", 
 		[]() {return sizeof(cv::Vec2d);} 
 	}, 
@@ -311,7 +326,7 @@ std::map<std::string, std::function<size_t()> > Matrix_array_accessor::_sizeof_a
 
 Matrix_array_accessor::Matrix_array_accessor(std::shared_ptr<cv::Mat> mat, std::string type, int i0, int i1, int i2) : _mat(mat), _type(type), _i0(i0), _i1(i1), _i2(i2) {
 	if (_get_accessors.count(type) == 0) {
-		throw new std::exception("type is not implemented");
+		throw std::runtime_error("type " + type +  " is not implemented");
 	}
 
 	//calculate maximum byte size for mat

@@ -189,9 +189,9 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
                 return;
             }
 
-            let N0 = cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT);
-            cap.set(alvision.CAP_PROP.CAP_PROP_POS_FRAMES, 0);
-            let N = cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT);
+            let N0 = cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_FRAME_COUNT);
+            cap.set(alvision.CAP_PROP_GENERIC.CAP_PROP_POS_FRAMES, 0);
+            let N = cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_FRAME_COUNT);
 
             // See the same hack in CV_VideoIOTest::SpecificVideoTest for explanation.
             var allowed_extra_frames = 0;
@@ -209,14 +209,14 @@ class CV_PositioningTest  extends alvision.cvtest.BaseTest
             {
                 var idx = alvision.theRNG().uniform(0, n_frames);
 
-                if( !cap.set(alvision.CAP_PROP.CAP_PROP_POS_FRAMES, idx) )
+                if (!cap.set(alvision.CAP_PROP_GENERIC.CAP_PROP_POS_FRAMES, idx) )
                 {
                     this.ts.printf(alvision.cvtest.TSConstants.LOG, "\nError: cannot seek to frame %d.\n", idx);
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_OUTPUT);
                     return;
                 }
 
-                let idx1 = cap.get(alvision.CAP_PROP.CAP_PROP_POS_FRAMES);
+                let idx1 = cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_POS_FRAMES);
 
                 let img = new alvision.Mat();
                 cap.read(img);

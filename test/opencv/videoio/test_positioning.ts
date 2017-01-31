@@ -93,7 +93,7 @@ run_test(method : METHOD) : void{
             failed_videos++; continue;
         }
 
-        cap.set(alvision.CAP_PROP.CAP_PROP_POS_FRAMES, 0);
+        cap.set(alvision.CAP_PROP_GENERIC.CAP_PROP_POS_FRAMES, 0);
 
         this.generate_idx_seq(cap, method);
 
@@ -103,7 +103,7 @@ run_test(method : METHOD) : void{
         {
             var flag = false;
 
-            cap.set(alvision.CAP_PROP.CAP_PROP_POS_FRAMES, this.idx[(j)]);
+            cap.set(alvision.CAP_PROP_GENERIC.CAP_PROP_POS_FRAMES, this.idx[(j)]);
 
             /* IplImage* frame = cvRetrieveFrame(cap);
 
@@ -119,7 +119,7 @@ run_test(method : METHOD) : void{
                 flag = !flag;
             } */
 
-            var val = cap.get(alvision.CAP_PROP.CAP_PROP_POS_FRAMES);
+            var val = cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_POS_FRAMES);
 
             if (this.idx[(j)] != val) {
                 if (!(failed_frames || failed_positions)) {
@@ -151,7 +151,7 @@ run_test(method : METHOD) : void{
 
 generate_idx_seq(cap: alvision.VideoCapture, method: alvision.int ) : void{
     this.idx.length = 0;
-    var N = cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT);
+    var N = cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_FRAME_COUNT);
     switch (method) {
         case METHOD.PROGRESSIVE:
             {

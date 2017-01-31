@@ -447,7 +447,7 @@ class CV_VideoIOTest extends alvision.cvtest.BaseTest {
         writer.release();
         var cap = new alvision.VideoCapture(video_file);
 
-        var FRAME_COUNT = cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT);
+        var FRAME_COUNT = cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_FRAME_COUNT);
 
         var allowed_extra_frames = 0;
 

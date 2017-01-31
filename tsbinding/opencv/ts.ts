@@ -1326,6 +1326,9 @@ export namespace cvtest {
 
             this.rng = new _core.RNG();
 
+            //what is the logic for the data_path?...
+            //this.data_path = "";
+
             this.current_test_info = {
                 // pointer to the test
                 test: null,

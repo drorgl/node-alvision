@@ -259,11 +259,11 @@ export interface ItransformOp<T> {
 }
 
 export function transformOp<T>(srcarr: Array<T>, dstarr: Array<T>, op: ItransformOp<T>) {
-    if (!srcarr || !(srcarr instanceof Array)) {
+    if (!srcarr || (!srcarr.hasOwnProperty("length"))) {
         throw new Error("srcarr is not an initialized array");
     }
 
-    if (!dstarr || !(dstarr instanceof Array)) {
+    if (!dstarr || (!dstarr.hasOwnProperty("length"))) {
         throw new Error("dstarr is not an initialized array");
     }
     for (var i = 0; i < srcarr.length; i++) {

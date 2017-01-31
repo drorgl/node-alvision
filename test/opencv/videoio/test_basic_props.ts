@@ -70,6 +70,7 @@ alvision.cvtest.TEST('Videoio_Video', 'prop_resolution',()=>
 {
     const n = ext.length;//sizeof(ext)/sizeof(ext[0]);
     const src_dir = alvision.cvtest.TS.ptr().get_data_path();
+    console.log("src_dir", src_dir);
 
     alvision.cvtest.TS.ptr().printf(alvision.cvtest.TSConstants.LOG, "\n\nSource files directory: %s\n", (src_dir+"video/"));
 
@@ -85,8 +86,8 @@ alvision.cvtest.TEST('Videoio_Video', 'prop_resolution',()=>
             return;
         }
 
-        alvision.ASSERT_EQ(672, cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_WIDTH));
-        alvision.ASSERT_EQ(384, cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_HEIGHT));
+        alvision.ASSERT_EQ(672, cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_FRAME_WIDTH));
+        alvision.ASSERT_EQ(384, cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_FRAME_HEIGHT));
     }
 });
 
@@ -138,7 +139,7 @@ alvision.cvtest.TEST('Videoio_Video', 'DISABLED_prop_fps',()=>
             return;
         }
 
-        alvision.ASSERT_EQ(24, cap.get(alvision.CAP_PROP.CAP_PROP_FPS));
+        alvision.ASSERT_EQ(24, cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_FPS));
     }
 });
 
@@ -158,7 +159,7 @@ alvision.cvtest.TEST('Videoio_Video', 'prop_framecount', () => {
             return;
         }
 
-        alvision.ASSERT_EQ(125, cap.get(alvision.CAP_PROP.CAP_PROP_FRAME_COUNT));
+        alvision.ASSERT_EQ(125, cap.get(alvision.CAP_PROP_GENERIC.CAP_PROP_FRAME_COUNT));
     }
 });
 
