@@ -6089,7 +6089,14 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
  POLY_METHOD(imgproc::distanceTransform_labels){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::floodFill_mask){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::floodFill){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::cvtColor){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::cvtColor){
+		auto src	= info.at<IOArray*>(0)->GetInputArray();
+		auto dst	= info.at<IOArray*>(1)->GetOutputArray();
+		auto code	= info.at<int>(2);
+		auto dstCn  = info.at<int>(3);
+		
+		cv::cvtColor(src, dst, code, dstCn);
+ }
  POLY_METHOD(imgproc::demosaicing){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::moments){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::HuMoments_array){throw std::exception("not implemented");}

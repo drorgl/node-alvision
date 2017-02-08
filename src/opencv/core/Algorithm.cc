@@ -17,7 +17,7 @@ Nan::Persistent<FunctionTemplate> Algorithm::constructor;
 
 void
 Algorithm::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
-
+	algorithm_general_callback::overload = overload;
 
 	//Class
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(algorithm_general_callback::callback);
@@ -26,6 +26,8 @@ Algorithm::Init(Handle<Object> target, std::shared_ptr<overload_resolution> over
 	ctor->SetClassName(Nan::New("Algorithm").ToLocalChecked());
 
 	overload->register_type<Algorithm>(ctor, "algorithm", "Algorithm");
+
+	overload->addOverloadConstructor("algorithm", "Algorithm", {}, New);
 
 
 	overload->addStaticOverload("algorithm", "Algorithm", "read", {

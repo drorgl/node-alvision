@@ -292,7 +292,7 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<std::shared_ptr<or::Callback>>("on_change","Function"),
 		make_param("userdata","Object",Nan::Null()),
 		make_param<int>("type","int",cv::QT_PUSH_BUTTON),
-		make_param<bool>("initial_button_state","Boolean",false)
+		make_param<bool>("initial_button_state","bool",false)
 	}, highgui::createButton);
 	Nan::SetMethod(target, "createButton", highgui_general_callback::callback);
 

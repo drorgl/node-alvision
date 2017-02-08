@@ -1,4 +1,7 @@
 #include "calib3d.h"
+
+#include <iterator>
+
 #include "IOArray.h"
 #include "Matrix.h"
 #include "Vec.h"

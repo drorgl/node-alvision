@@ -1,6 +1,8 @@
 #include "Matrix.h"
 #include "Constants.h"
 
+#include <iterator>
+
 #include "IOArray.h"
 #include "types/Size.h"
 #include "types/Scalar.h"

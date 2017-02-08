@@ -123,6 +123,8 @@
 		
 		, "src/opencv/imgcodecs.cc"
 		, "src/opencv/imgcodecs.h"
+		, "src/opencv/imgcodecs/IimwriteParameter.cc"
+		, "src/opencv/imgcodecs/IimwriteParameter.h"
 		
 		
 		, "src/opencv/base.cc"
@@ -174,20 +176,51 @@
 		, "src/opencv/calib3d/StereoSGBM.cc"
 		
 		
-		, "src/opencv/features2d/Feature2D.h"
+		, "src/opencv/features2d.h"
+		, "src/opencv/features2d.cc"
+
+		, "src/opencv/features2d/AgastFeatureDetector.cc"
+		, "src/opencv/features2d/AgastFeatureDetector.h"
+		, "src/opencv/features2d/AKAZE.cc"
+		, "src/opencv/features2d/AKAZE.h"
+		, "src/opencv/features2d/BFMatcher.cc"
+		, "src/opencv/features2d/BFMatcher.h"
+		, "src/opencv/features2d/BOWImgDescriptorExtractor.cc"
+		, "src/opencv/features2d/BOWImgDescriptorExtractor.h"
+		, "src/opencv/features2d/BOWKMeansTrainer.cc"
+		, "src/opencv/features2d/BOWKMeansTrainer.h"
+		, "src/opencv/features2d/BOWTrainer.cc"
+		, "src/opencv/features2d/BOWTrainer.h"
+		, "src/opencv/features2d/BRISK.cc"
+		, "src/opencv/features2d/BRISK.h"
+		, "src/opencv/features2d/DescriptorCollection.cc"
+		, "src/opencv/features2d/DescriptorCollection.h"
+		, "src/opencv/features2d/DescriptorMatcher.cc"
+		, "src/opencv/features2d/DescriptorMatcher.h"
+		, "src/opencv/features2d/FastFeatureDetector.cc"
+		, "src/opencv/features2d/FastFeatureDetector.h"
 		, "src/opencv/features2d/Feature2D.cc"
-		, "src/opencv/features2d/SimpleBlobDetector.h"
+		, "src/opencv/features2d/Feature2D.h"
+		, "src/opencv/features2d/FlannBasedMatcher.cc"
+		, "src/opencv/features2d/FlannBasedMatcher.h"
+		, "src/opencv/features2d/GFTTDetector.cc"
+		, "src/opencv/features2d/GFTTDetector.h"
+		, "src/opencv/features2d/KAZE.cc"
+		, "src/opencv/features2d/KAZE.h"
+		, "src/opencv/features2d/KeyPointsFilter.cc"
+		, "src/opencv/features2d/KeyPointsFilter.h"
+		, "src/opencv/features2d/MSER.cc"
+		, "src/opencv/features2d/MSER.h"
+		, "src/opencv/features2d/ORB.cc"
+		, "src/opencv/features2d/ORB.h"
 		, "src/opencv/features2d/SimpleBlobDetector.cc"
-		, "src/opencv/features2d/SimpleBlobDetectorParams.h"
+		, "src/opencv/features2d/SimpleBlobDetector.h"
 		, "src/opencv/features2d/SimpleBlobDetectorParams.cc"
-		
-		
-		
+		, "src/opencv/features2d/SimpleBlobDetectorParams.h"
+
 		
 		, "src/opencv/MatExpr.cc"
 		, "src/opencv/MatExpr.h"
-		
-		
 		
 		, "src/opencv/MatND.cc"
 		, "src/opencv/MatND.h"

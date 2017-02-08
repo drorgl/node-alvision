@@ -17,7 +17,7 @@
 #include "utilities/stacktrace.h"
 
 #include "overload_resolution.h"
-
+#include <fstream>
 
 
 using namespace v8;
@@ -104,6 +104,20 @@ inline void SetObjectProperty(v8::Local<v8::Object> obj, std::string propertyNam
 //inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, std::string defaultValue) {
 //	return std::make_shared<overload_info>(parameterName, type, defaultValue);
 //}
+
+inline bool file_exists(const std::string& name) {
+	std::ifstream f(name.c_str());
+	return f.good();
+}
+
+inline std::string string_replace(std::string subject, const std::string& search, const std::string& replace) {
+	size_t pos = 0;
+	while ((pos = subject.find(search, pos)) != std::string::npos) {
+		subject.replace(pos, search.length(), replace);
+		pos += replace.length();
+	}
+	return subject;
+}
 
 #endif
 

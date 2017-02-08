@@ -53,13 +53,19 @@ import fs = require('fs');
 //#include "opencv2/calib3d.hpp"
 //#include < iostream >
 
+function logAllProperties(obj) {
+    if (obj == null) return; // recursive approach
+    console.log(Object.getOwnPropertyNames(obj));
+    logAllProperties(Object.getPrototypeOf(obj));
+}
+
+
 alvision.cvtest.TEST('Calib3d_Affine3f', 'accuracy', () => {
     var rvec = new alvision.Vec3d(0.2, 0.5, 0.3);
     var affine = new alvision.Affine3d(rvec);
 
     var expected = new alvision.Mat();
     alvision.Rodrigues(rvec, expected);
-
 
     alvision.ASSERT_EQ(0, alvision.cvtest.norm(alvision.MatExpr.op_NotEquals( new alvision.Mat(affine.matrix, false).colRange(0, 3).rowRange(0, 3),  expected).toMat(), alvision.NormTypes.NORM_L2));
     alvision.ASSERT_EQ(0, alvision.cvtest.norm(alvision.MatExpr.op_NotEquals(new alvision.Mat(affine.linear()) , expected).toMat(), alvision.NormTypes.NORM_L2));

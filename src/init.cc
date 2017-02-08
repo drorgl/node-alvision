@@ -56,12 +56,12 @@
 #include "opencv/TrackedElement.h"	
 
 #include "opencv/core/Algorithm.h"
-#include "opencv/features2d/Feature2D.h"
-#include "opencv/features2d/SimpleBlobDetector.h"
 
 #include "opencv/types.h"
 
 #include "opencv/MatOp.h"
+
+#include "opencv/features2d.h"
 
 #include <tracer.h>
 
@@ -152,9 +152,6 @@ init(Handle<Object> target) {
 	SparseMat::Init(target, overload);
 
 
-	Feature2D::Init(target, overload);
-	SimpleBlobDetector::Init(target, overload);
-
 
 	imgcodecs::Init(target, overload);
 	imgproc::Init(target, overload);
@@ -171,13 +168,15 @@ init(Handle<Object> target) {
 	
 
 	AffineInit::Init(target, overload);
+
+	features2d::Init(target, overload);
 	
 	calib3d::Init(target, overload);
 	cv_test::Init(target, overload);
 	highgui::Init(target, overload);
 
 
-
+	
 
 	//Init
 

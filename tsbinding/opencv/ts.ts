@@ -604,12 +604,24 @@ export namespace cvtest {
 
 
     export function TEST_F(test_case_name: string, test_name: string, cb: () => void) {
-        cb();
+        console.log("testing", test_case_name, test_name);
+        try {
+            cb();
+            console.log(test_case_name, test_name, okColor("Passed"));
+        } catch (e) {
+            if (e instanceof Error) {
+                let err = <Error>e;
+                console.log("Error Running ", test_case_name, test_name, errorColor(err.message), err.stack);
+            } else {
+                console.log("Error Running ", test_case_name, test_name, e);
+            }
+        }
         //tape(
         //TODO:!!
     }
 
     export function TEST(test_case_name: string, test_name: string, cb: () => void) {
+        console.log("testing", test_case_name, test_name);
         try {
             cb();
             console.log(test_case_name, test_name,okColor( "Passed"));
@@ -627,7 +639,18 @@ export namespace cvtest {
     }
 
     export function TEST_P(test_case_name: string, test_name: string, cb: () => void) {
-        cb();
+        console.log("testing", test_case_name, test_name);
+        try {
+            cb();
+            console.log(test_case_name, test_name, okColor("Passed"));
+        } catch (e) {
+            if (e instanceof Error) {
+                let err = <Error>e;
+                console.log("Error Running ", test_case_name, test_name, errorColor(err.message), err.stack);
+            } else {
+                console.log("Error Running ", test_case_name, test_name, e);
+            }
+        }
         //tape(
         //TODO:!!
     }
@@ -1327,7 +1350,7 @@ export namespace cvtest {
             this.rng = new _core.RNG();
 
             //what is the logic for the data_path?...
-            //this.data_path = "";
+            this.data_path = (process.env["OPENCV_TEST_DATA_PATH"] || path.join( process.cwd(), "../" , "opencv_extra/", "testdata/","cv/"));
 
             this.current_test_info = {
                 // pointer to the test

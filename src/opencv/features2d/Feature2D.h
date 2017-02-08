@@ -8,9 +8,14 @@ class Feature2D : public Algorithm {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
+	static std::string name;
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	virtual v8::Local<v8::Function> get_constructor();
+
+	static std::shared_ptr<Feature2D> New();
+
+	static POLY_METHOD(New);
 
 	static POLY_METHOD(detect_a);
 	static POLY_METHOD(detect_b);
@@ -25,5 +30,6 @@ public:
 };
 
 typedef Feature2D FeatureDetector;
+typedef Feature2D DescriptorExtractor;
 
 #endif

@@ -85,65 +85,65 @@ std::shared_ptr<SimpleBlobDetectorParams> SimpleBlobDetectorParams::create() {
 }
 
 
-POLY_METHOD(SimpleBlobDetectorParams::New) {}
+POLY_METHOD(SimpleBlobDetectorParams::New) { throw std::exception("not implemented"); }
 
-NAN_GETTER(SimpleBlobDetectorParams::thresholdStep_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::thresholdStep_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::thresholdStep_getter) { return Nan::ThrowError("not implemented"); }
+NAN_SETTER(SimpleBlobDetectorParams::thresholdStep_setter){ return Nan::ThrowError("not implemented"); }
 
-NAN_GETTER(SimpleBlobDetectorParams::minThreshold_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::minThreshold_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::minThreshold_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::minThreshold_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::maxThreshold_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::maxThreshold_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::maxThreshold_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::maxThreshold_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::minRepeatability_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::minRepeatability_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::minRepeatability_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::minRepeatability_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::minDistBetweenBlobs_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::minDistBetweenBlobs_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::minDistBetweenBlobs_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::minDistBetweenBlobs_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::filterByColor_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::filterByColor_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::filterByColor_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::filterByColor_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::blobColor_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::blobColor_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::blobColor_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::blobColor_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::filterByArea_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::filterByArea_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::filterByArea_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::filterByArea_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::minArea_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::minArea_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::minArea_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::minArea_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::maxArea_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::maxArea_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::maxArea_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::maxArea_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::filterByCircularity_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::filterByCircularity_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::filterByCircularity_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::filterByCircularity_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::minCircularity_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::minCircularity_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::minCircularity_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::minCircularity_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::maxCircularity_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::maxCircularity_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::maxCircularity_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::maxCircularity_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::filterByInertia_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::filterByInertia_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::filterByInertia_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::filterByInertia_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::minInertiaRatio_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::minInertiaRatio_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::minInertiaRatio_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::minInertiaRatio_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::maxInertiaRatio_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::maxInertiaRatio_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::maxInertiaRatio_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::maxInertiaRatio_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::filterByConvexity_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::filterByConvexity_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::filterByConvexity_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::filterByConvexity_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::minConvexity_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::minConvexity_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::minConvexity_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::minConvexity_setter){return Nan::ThrowError("not implemented");}
 
-NAN_GETTER(SimpleBlobDetectorParams::maxConvexity_getter){}
-NAN_SETTER(SimpleBlobDetectorParams::maxConvexity_setter){}
+NAN_GETTER(SimpleBlobDetectorParams::maxConvexity_getter){return Nan::ThrowError("not implemented");}
+NAN_SETTER(SimpleBlobDetectorParams::maxConvexity_setter){return Nan::ThrowError("not implemented");}
 
 
-POLY_METHOD(SimpleBlobDetectorParams::read) {}
-POLY_METHOD(SimpleBlobDetectorParams::write) {}
+POLY_METHOD(SimpleBlobDetectorParams::read) { throw std::exception("not implemented"); }
+POLY_METHOD(SimpleBlobDetectorParams::write) { throw std::exception("not implemented"); }

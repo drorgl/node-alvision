@@ -53,6 +53,11 @@ v8::Local<v8::Function> TermCriteria::get_constructor() {
 	return Nan::New(constructor)->GetFunction();
 }
 
+std::shared_ptr<TermCriteria> TermCriteria::New() {
+	auto ret = std::make_shared<TermCriteria>();
+	ret->_termCriteria = std::make_shared<cv::TermCriteria>();
+	return ret;
+}
 
 
 std::shared_ptr<TermCriteria> TermCriteria::New(int type, int maxCount, double epsilon) {

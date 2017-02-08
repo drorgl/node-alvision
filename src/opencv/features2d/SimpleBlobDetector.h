@@ -16,6 +16,7 @@ public:
 	static std::shared_ptr<SimpleBlobDetector> create(std::shared_ptr<SimpleBlobDetectorParams> params   = SimpleBlobDetectorParams::create());
 
 	static POLY_METHOD(New);
+	static POLY_METHOD(create);
 
 };
 
