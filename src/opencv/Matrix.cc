@@ -1366,7 +1366,7 @@ POLY_METHOD(Matrix::copyTo_masked) {
 POLY_METHOD(Matrix::convertTo) {
 	auto mat = info.This<Matrix*>()->_mat;
 	auto outputArray = info.at<IOArray*>(0)->GetOutputArray();
-	mat->convertTo(outputArray, info.at<double>(1), info.at<double>(2),info.at<double>(3) );
+	mat->convertTo(outputArray, info.at<int>(1), info.at<double>(2),info.at<double>(3) );
 
 	info.GetReturnValue().SetUndefined();
 }

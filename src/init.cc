@@ -142,14 +142,14 @@ init(Handle<Object> target) {
 	core::Init(target, overload);
 
 	
-	
+	MatND::Init(target, overload);
+	SparseMat::Init(target, overload);
 
 	
 
 	persistence::Init(target, overload);
 
-	MatND::Init(target, overload);
-	SparseMat::Init(target, overload);
+	
 
 
 

@@ -155,6 +155,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<IOArray*>("cameraMatrix","IOArray"),
 	  make_param<IOArray*>("distCoeffs","IOArray"),
 	  make_param<std::shared_ptr<std::vector<Point2f*>>>("imagePoints","Array<Point2f>"),
+	  make_param<std::shared_ptr<or::Callback>>("cb","Function"), //imagePoints: Array<Point2f>
 	  make_param<IOArray*>("jacobian","IOArray",IOArray::noArray()),
 	  make_param<double>("aspectRatio","double",0)
   }, projectPoints_vec_points);
@@ -688,8 +689,9 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  auto cameraMatrix = info.at<IOArray*>(3)->GetInputArray();
 	  auto distCoeffs = info.at<IOArray*>(4)->GetInputArray();
 	  auto imagePoints = info.at<std::shared_ptr<std::vector<Point2f*>>>(5);
-	  auto jacobian = info.at<IOArray*>(6)->GetOutputArray();
-	  auto aspectRatio = info.at<double>(7);
+	  auto cb = info.at<std::shared_ptr< or ::Callback>>(6);
+	  auto jacobian = info.at<IOArray*>(7)->GetOutputArray();
+	  auto aspectRatio = info.at<double>(8);
 
 	  std::vector<Point3f::CVT > objectPoints_cv;
 	  std::transform(std::begin(*objectPoints), std::end(*objectPoints), std::back_inserter(objectPoints_cv), [](const Point3f* pt) {return *pt->_point3; });
@@ -709,10 +711,14 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		  aspectRatio
 	  );
 
-	  for (auto i = 0; i < imagePoints_cv.size(); i++) {
-		  (*imagePoints)[i]->_point = std::make_shared<Point2f::CVT>((imagePoints_cv)[i]);
-		  //std::swap(*(*imagePoints)[i]->_point, (*vec_cv)[i]);
-	  }
+	  std::shared_ptr<std::vector<Point2f*>> ret_imagePoints = std::make_shared<std::vector<Point2f*>>();
+	  std::transform(std::begin(imagePoints_cv), std::end(imagePoints_cv), std::back_inserter(*ret_imagePoints), [](const Point2f::CVT &pt) {
+		  auto npt = new Point2f();
+		  npt->_point = std::make_shared<Point2f::CVT>(pt);
+		  return npt;
+	  });
+
+	  cb->Call({ make_value(ret_imagePoints) });
   }
 
   POLY_METHOD(calib3d::solvePnP) {

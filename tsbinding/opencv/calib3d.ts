@@ -587,12 +587,20 @@ perspective transformation (and also compute the derivatives) in the ideal zero-
  */
 
 interface IprojectPoints{
-    (objectPoints: _st.InputArray ,
-        rvec: _st.InputArray, tvec: _st.InputArray ,
-        cameraMatrix: _st.InputArray, distCoeffs: _st.InputArray ,
-        imagePoints: _st.OutputArray ,
+    (objectPoints: _st.InputArray,
+        rvec: _st.InputArray, tvec: _st.InputArray,
+        cameraMatrix: _st.InputArray, distCoeffs: _st.InputArray,
+        imagePoints: _st.OutputArray,
         jacobian?: _st.OutputArray /* = noArray()*/,
-        aspectRatio?: _st.double /* = 0*/ ) : void  
+        aspectRatio?: _st.double /* = 0*/): void;
+
+    (objectPoints: Array<_types.Point3f>,
+        rvec: _st.InputArray, tvec: _st.InputArray,
+        cameraMatrix: _st.InputArray, distCoeffs: _st.InputArray,
+        imagePoints: Array<_types.Point2f>,
+        cb:(imagePoints: Array<_types.Point2f>) => void,
+        jacobian?: _st.OutputArray /* = noArray()*/,
+        aspectRatio?: _st.double /* = 0*/): void  
 }
 
 export var projectPoints: IprojectPoints = alvision_module.projectPoints;

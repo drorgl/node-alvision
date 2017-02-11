@@ -26,6 +26,8 @@ public:
 
 
 	static NAN_GETTER(nodes_getter);
+	static NAN_PROPERTY_GETTER(indexed_getter);
+	static NAN_PROPERTY_SETTER(indexed_setter);
 
 
 	static POLY_METHOD(write_int		 );
