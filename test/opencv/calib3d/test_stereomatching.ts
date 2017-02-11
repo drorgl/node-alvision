@@ -427,7 +427,7 @@ class CV_StereoMatchingTest  extends alvision.cvtest.BaseTest
         errors.forEach((it, i, a) => {
             if (fs)
                 for (var i = 0; i < ERROR_KINDS_COUNT; i++ )
-                    fs.write(ERROR_PREFIXES[i] + errName,it);
+                    fs.writeFloat(ERROR_PREFIXES[i] + errName,it);
             else
                 for (var i = 0; i < ERROR_KINDS_COUNT; i++ )
                     this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s = %f\n", ERROR_PREFIXES[i] + errName, it);
@@ -488,15 +488,15 @@ class CV_StereoMatchingTest  extends alvision.cvtest.BaseTest
             leftDisp, rightDisp, rmss, badPxlsFractions, qualityEvalParams);
 
         if (isWrite) {
-            fs.writeScalar(this.caseNames[caseIdx.valueOf()]);
-            fs.writeScalar("{");
+            fs.writeScalarString(this.caseNames[caseIdx.valueOf()]);
+            fs.writeScalarString("{");
             //fs << caseNames[caseIdx] << "{";
             //cvWriteComment( fs.fs, RMS_STR, 0 );
             this.writeErrors(RMS_STR, rmss, fs);
             //cvWriteComment( fs.fs, BAD_PXLS_FRACTION_STR, 0 );
             this.writeErrors(BAD_PXLS_FRACTION_STR, badPxlsFractions, fs);
             //fs << "}"; // datasetName
-            fs.writeScalar("}");
+            fs.writeScalarString("}");
         }
         else // compare
         {
@@ -554,7 +554,7 @@ class CV_StereoMatchingTest  extends alvision.cvtest.BaseTest
                 return;
             }
             
-            resFS.writeScalar("stereo_matching");resFS.writeScalar( "{");
+            resFS.writeScalarString("stereo_matching");resFS.writeScalarString( "{");
         }
 
         var progress = 0, caseCount = this.caseNames.length;
@@ -604,7 +604,7 @@ class CV_StereoMatchingTest  extends alvision.cvtest.BaseTest
         }
 
         if (isWrite)
-            resFS.writeScalar("}");
+            resFS.writeScalarString("}");
             //resFS << "}"; // "stereo_matching"
 
         this.ts.set_failed_test_info(code);

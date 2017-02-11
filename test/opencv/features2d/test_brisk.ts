@@ -73,11 +73,11 @@ class CV_BRISKTest extends alvision.cvtest.BaseTest
         //Ptr < FeatureDetector > detector = BRISK::create();
         var detector = alvision.BRISK.create();
 
-        var keypoints1 = new Array<alvision.KeyPoint>();
-        var keypoints2 = new Array<alvision.KeyPoint>();
+        var keypoints1 : Array<alvision.KeyPoint> = [new alvision.KeyPoint()];
+        var keypoints2 : Array<alvision.KeyPoint> = [new alvision.KeyPoint()];
 
-        detector.detect(image1, (kp) => { keypoints1 = kp;});
-        detector.detect(image2, (kp) => { keypoints2 = kp; });
+        detector.detect(image1,keypoints1, (kp) => { keypoints1 = kp;});
+        detector.detect(image2, keypoints2, (kp) => { keypoints2 = kp; });
 
         for (var i = 0; i < keypoints1.length; ++i)
         {

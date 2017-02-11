@@ -538,13 +538,13 @@ class CV_EMTest_SaveLoad  extends alvision.cvtest.BaseTest {
             let fs = new alvision.FileStorage(filename, alvision.FileStorageMode.WRITE);
             try
             {
-                fs.writeScalar("em");
-                fs.writeScalar("{");
+                fs.writeScalarString("em");
+                fs.writeScalarString("{");
                 //fs << "em" << "{";
 
                 em.write(fs);
                 //fs << "}";
-                fs.writeScalar("}");
+                fs.writeScalarString("}");
             }
             catch(e)
             {
@@ -625,9 +625,9 @@ run(iii: alvision.int): void
                 let sample = samples.row(i);
                 let resp = responses.at<alvision.float>("float", i).get();
                 if(resp == 0)
-                    samples0.push(sample);
+                    samples0.push("Mat",sample);
                 else
-                    samples1.push(sample);
+                    samples1.push("Mat",sample);
             }
         }
         let model0 = alvision.ml.EM.create();

@@ -98,8 +98,8 @@ class CV_FastTest  extends alvision.cvtest.BaseTest
                     this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA);
                     return;
                 }
-                fs.write("exp_kps1", kps1);
-                fs.write("exp_kps2" , kps2);
+                fs.writeMat("exp_kps1", kps1);
+                fs.writeMat("exp_kps2" , kps2);
                 fs.release();
                 fs.open(xml, alvision.FileStorageMode.READ);
                 if (!fs.isOpened()) {

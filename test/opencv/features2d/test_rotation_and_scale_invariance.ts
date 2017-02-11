@@ -219,7 +219,7 @@ class DetectorRotationInvarianceTest extends alvision.cvtest.BaseTest {
         }
 
         var keypoints0 = new Array<alvision.KeyPoint>();
-        this.featureDetector.detect(image0, (kp) => { keypoints0 = kp; });
+        this.featureDetector.detect(image0,[], (kp) => { keypoints0 = kp; });
         if(keypoints0.length < 15)
             alvision.CV_Error(alvision.cv.Error.Code.StsAssert , "Detector gives too few points in a test image\n");
 
@@ -229,7 +229,7 @@ class DetectorRotationInvarianceTest extends alvision.cvtest.BaseTest {
             var H = rotateImage(image0, angle, image1, mask1);
 
             var keypoints1 = new Array<alvision.KeyPoint>();
-            this.featureDetector.detect(image1, (kp) => { keypoints1 = kp; }, mask1);
+            this.featureDetector.detect(image1,[], (kp) => { keypoints1 = kp; }, mask1);
 
             var matches = new Array<alvision.DMatch>();
             matchKeyPoints(keypoints0, H, keypoints1, matches);
@@ -331,10 +331,10 @@ class DescriptorRotationInvarianceTest  extends alvision.cvtest.BaseTest
 
         var keypoints0 = new Array<alvision.KeyPoint>();
         var descriptors0 = new alvision.Mat();
-        this.featureDetector.detect(image0, (kp) => { keypoints0 = kp; });
+        this.featureDetector.detect(image0,[], (kp) => { keypoints0 = kp; });
         if(keypoints0.length < 15)
             alvision.CV_Error(alvision.cv.Error.Code.StsAssert, "Detector gives too few points in a test image\n");
-        this.descriptorExtractor.compute(image0, keypoints0, descriptors0);
+        this.descriptorExtractor.compute(image0, [],(kp)=>{ keypoints0 = kp }, descriptors0);
 
         var bfmatcher = new alvision.BFMatcher (this.normType);
 
@@ -347,7 +347,7 @@ class DescriptorRotationInvarianceTest  extends alvision.cvtest.BaseTest
             var keypoints1 = new Array<alvision.KeyPoint>();
             rotateKeyPoints(keypoints0, H, (angle), keypoints1);
             var descriptors1 = new alvision.Mat();
-            this.descriptorExtractor.compute(image1, keypoints1, descriptors1);
+            this.descriptorExtractor.compute(image1, [], (kp) => { keypoints1 = kp; }, descriptors1);
 
             var descMatches = new Array<alvision.DMatch>();
             bfmatcher.match(descriptors0, descriptors1, (matches_) => { descMatches = matches_; });
@@ -409,7 +409,7 @@ class DetectorScaleInvarianceTest extends alvision.cvtest.BaseTest {
         }
 
         var keypoints0 = new Array<alvision.KeyPoint>();
-        this.featureDetector.detect(image0, (kp) => { keypoints0 = kp; });
+        this.featureDetector.detect(image0,[], (kp) => { keypoints0 = kp; });
         if (keypoints0.length < 15)
             alvision.CV_Error(alvision.cv.Error.Code.StsAssert, "Detector gives too few points in a test image\n");
 
@@ -419,7 +419,7 @@ class DetectorScaleInvarianceTest extends alvision.cvtest.BaseTest {
             alvision.resize(image0, image1, new alvision.Size(), 1. / scale, 1. / scale);
 
             var keypoints1 = new Array<alvision.KeyPoint>(), osiKeypoints1 = new Array<alvision.KeyPoint>(); // osi - original size image
-            this.featureDetector.detect(image1, (kp) => { keypoints1 = kp; });
+            this.featureDetector.detect(image1,[], (kp) => { keypoints1 = kp; });
             if (keypoints1.length < 15)
                 alvision.CV_Error(alvision.cv.Error.Code.StsAssert, "Detector gives too few points in a test image\n");
 
@@ -520,11 +520,11 @@ class DescriptorScaleInvarianceTest  extends alvision.cvtest.BaseTest
         }
 
         var keypoints0 = new Array<alvision.KeyPoint>();
-        this.featureDetector.detect(image0, (kp) => { keypoints0 = kp; });
+        this.featureDetector.detect(image0,null, (kp) => { keypoints0 = kp; });
         if(keypoints0.length < 15)
             alvision.CV_Error(alvision.cv.Error.Code.StsAssert, "Detector gives too few points in a test image\n");
         var descriptors0 = new alvision.Mat();
-        this.descriptorExtractor.compute(image0, keypoints0, descriptors0);
+        this.descriptorExtractor.compute(image0, null, (kp) => { keypoints0 = kp; }, descriptors0);
 
         var bfmatcher = new alvision.BFMatcher (this.normType);
         for(var scaleIdx = 1; scaleIdx <= 3; scaleIdx++)
@@ -537,7 +537,7 @@ class DescriptorScaleInvarianceTest  extends alvision.cvtest.BaseTest
             var keypoints1 = new Array<alvision.KeyPoint>();
             scaleKeyPoints(keypoints0, keypoints1, 1.0/scale);
             var descriptors1 = new alvision.Mat();
-            this.descriptorExtractor.compute(image1, keypoints1, descriptors1);
+            this.descriptorExtractor.compute(image1, null, (kp) => { keypoints1 = kp; }, descriptors1);
 
             var descMatches = new Array<alvision.DMatch>();
             bfmatcher.match(descriptors0, descriptors1, (matches_) => { descMatches = matches_; });

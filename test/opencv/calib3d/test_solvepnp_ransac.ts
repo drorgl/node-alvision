@@ -138,7 +138,7 @@ class CV_solvePnPRansac_Test  extends alvision.cvtest.BaseTest
 
         var projectedPoints = new Array<alvision.Point2f>();
         projectedPoints.length = (points.length);
-        alvision.projectPoints(new alvision.Mat(points), trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints);
+        alvision.projectPoints(points, trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints, (ipt)=>projectedPoints = ipt);
         for (var i = 0; i < projectedPoints.length; i++)
         {
             if (i % 20 == 0)
@@ -248,8 +248,7 @@ class CV_solvePnP_Test extends CV_solvePnPRansac_Test
             opoints = points;
 
         var projectedPoints = new Array<alvision.Point2f>() ;
-        projectedPoints.length = (opoints.length);
-        alvision.projectPoints(new alvision.Mat(opoints), trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints);
+        alvision.projectPoints(opoints, trueRvec, trueTvec, intrinsics, distCoeffs, projectedPoints, (ipt)=>projectedPoints = ipt);
 
         alvision.solvePnP(opoints, projectedPoints, intrinsics, distCoeffs, rvec, tvec,
             false, method);

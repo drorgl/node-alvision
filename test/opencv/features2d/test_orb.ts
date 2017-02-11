@@ -68,9 +68,9 @@ alvision.cvtest.TEST('Features2D_ORB', '_1996',()=>
     alvision.fillConvexPoly(roi, poly, new alvision.Scalar(255));
 
     var keypoints = new Array<alvision.KeyPoint>();
-    fd.detect(image,(kp)=> keypoints = kp, roi);
+    fd.detect(image,null,(kp)=> keypoints = kp, roi);
     var descriptors = new alvision.Mat();
-    fd.compute(image, keypoints, descriptors);
+    fd.compute(image, null, (kp) => { keypoints = kp; }, descriptors);
 
     //image.setTo(Scalar(255,255,255), roi);
 

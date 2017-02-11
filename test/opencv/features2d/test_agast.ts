@@ -111,8 +111,8 @@ class CV_AgastTest extends alvision.cvtest.BaseTest
                 return;
             }
 
-            fs.write("exp_kps1", kps1);
-            fs.write("exp_kps2", kps2);
+            fs.writeMat("exp_kps1", kps1);
+            fs.writeMat("exp_kps2", kps2);
             fs.release();
             fs.open(xml, alvision.FileStorageMode.READ);
             if (!fs.isOpened()) {

@@ -508,7 +508,7 @@ alvision.cvtest.TEST('Features2d_DMatch', 'read_write', () => {
     var fs = new alvision.FileStorage(".xml", alvision.FileStorageMode.WRITE + alvision.FileStorageMode.MEMORY);
     var matches = new Array<alvision.DMatch>();
     matches.push(new alvision.DMatch(1, 2, 3, 4.5));
-    fs.write("Match", matches);
+    fs.writeDMatches("Match", matches);
     var str = fs.releaseAndGetString();
     alvision.ASSERT_NE(str.indexOf("4.5"), -1 );
 });

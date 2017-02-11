@@ -72,8 +72,8 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
 
             // Create the original (and random) camera matrix, rotation, and translation
             //alvision.Vec2d f, c;
-            var f = new alvision.Vec2d(new Array[2]);
-            var c = new alvision.Vec2d(new Array[2]);
+            var f = new alvision.Vec2d();//new Array[2]);
+            var c = new alvision.Vec2d();//new Array[2]);
 
             rng.fill(f, alvision.DistType.UNIFORM, 300, 1000);
             rng.fill(c, alvision.DistType.UNIFORM, 150, 600);
@@ -97,7 +97,7 @@ class CV_DecomposeProjectionMatrixTest  extends alvision.cvtest.BaseTest
 
 
             // Compose the projection matrix
-            var P = new alvision.Matx34d(3, 4); //34
+            var P = new alvision.Matx34d();//3, 4); //34
             alvision.hconcat(alvision.Matx33d.op_Multiplication( origK ,origR),alvision.Matx33d.op_Multiplication( origK , origT), P);
 
 

@@ -132,7 +132,7 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
         var image = new alvision.Mat();
         var keypoints = new Array<alvision.KeyPoint>();
         try {
-            this.fdetector.detect(image, (kp) => { keypoints = kp; });
+            this.fdetector.detect(image,[], (kp) => { keypoints = kp; });
         }
         catch (e) {
             this.ts.printf(alvision.cvtest.TSConstants.LOG, "detect() on empty image must not generate exception (1).\n");
@@ -173,7 +173,7 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
 
         // Compute keypoints.
         var calcKeypoints = new Array<alvision.KeyPoint>();
-        this.fdetector.detect(image, (kp) => { calcKeypoints = kp; });
+        this.fdetector.detect(image,[], (kp) => { calcKeypoints = kp; });
 
         if (fs.isOpened()) // Compare computed and valid keypoints.
         {
@@ -200,12 +200,12 @@ class CV_FeatureDetectorTest  extends alvision.cvtest.BaseTest
                 return;
             }
             else {
-                fs.writeScalar("detector_params");
-                fs.writeScalar("{");
+                fs.writeScalarString("detector_params");
+                fs.writeScalarString("{");
                 this.fdetector.write(fs);
-                fs.writeScalar( "}");
+                fs.writeScalarString( "}");
 
-                fs.write("keypoints", calcKeypoints);
+                fs.writeKeyPoints("keypoints", calcKeypoints);
                 //write(fs, "keypoints", calcKeypoints);
             }
         }

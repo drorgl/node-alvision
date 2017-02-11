@@ -225,15 +225,15 @@ class CV_CalibrateCameraArtificialTest extends alvision.cvtest.BaseTest {
         rvecs_est: Array<alvision.Mat>, tvecs_est: Array<alvision.Mat>): alvision.double {
         const eye33 = alvision.Mat.eye(3, 3, alvision.MatrixType.CV_64F);
         const zero15 = alvision.Mat.zeros(1, 5, alvision.MatrixType.CV_64F);
-        var _chessboard3D = new alvision.Mat(cb3d);
+        //var _chessboard3D = new alvision.Mat(cb3d);
 
         var uv_est = new Array<alvision.Point2f>();
         var uv_exp = new Array<alvision.Point2f>();
         var res = 0;
 
         for (var i = 0; i < this.rvecs_exp.length; ++i) {
-            alvision.projectPoints(_chessboard3D, _rvecs_exp[i], _tvecs_exp[i], eye33, zero15, uv_exp);
-            alvision.projectPoints(_chessboard3D, rvecs_est[i], tvecs_est[i], eye33, zero15, uv_est);
+            alvision.projectPoints(cb3d, _rvecs_exp[i], _tvecs_exp[i], eye33, zero15, uv_exp,(ipt)=>uv_exp = ipt);
+            alvision.projectPoints(cb3d, rvecs_est[i], tvecs_est[i], eye33, zero15,   uv_est, (ipt)=>uv_est = ipt);
             for (var j = 0; j < cb3d.length; ++j)
                 res += alvision.Point.norm(alvision.Point.op_Substraction(uv_exp[i], uv_est[i])).valueOf();
         }

@@ -83,7 +83,7 @@ class CV_FeatureDetectorKeypointsTest  extends alvision.cvtest.BaseTest
         }
 
         var keypoints = new Array<alvision.KeyPoint>();
-        this.detector.detect(image, (kp) => { keypoints = kp; });
+        this.detector.detect(image,null, (kp) => { keypoints = kp; });
 
         if(keypoints.length == 0)
         {

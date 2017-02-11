@@ -92,7 +92,7 @@ class FAST_Accuracy extends FAST
         if (!alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.GLOBAL_ATOMICS)) {
             try {
                 let keypoints = new Array<alvision.KeyPoint>();
-                fast.detect(alvision.loadMat(image), (kp) => { keypoints = kp; });
+                fast.detect(alvision.loadMat(image),[], (kp) => { keypoints = kp; });
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsNotImplemented, e.code);
@@ -100,7 +100,7 @@ class FAST_Accuracy extends FAST
         }
         else {
             let keypoints = new Array<alvision.KeyPoint>();
-            fast.detect(alvision.loadMat(image), (kp) => { keypoints = kp; });
+            fast.detect(alvision.loadMat(image), [],(kp) => { keypoints = kp; });
 
             let keypoints_gold = new Array<alvision.KeyPoint>();
             alvision.FAST(image, (kp) => { keypoints_gold = kp; }, this.threshold, this.nonmaxSuppression);

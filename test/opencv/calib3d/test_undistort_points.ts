@@ -27,19 +27,19 @@ class CV_UndistortTest extends alvision.cvtest.BaseTest {
         points.length = 500;
         this.generate3DPointCloud(points);
         var projectedPoints = new Array<alvision.Point2f>();
-        projectedPoints.length = points.length;
+        
 
         var modelMembersCount = [4, 5, 8];
         for (var idx = 0; idx < 3; idx++)
         {
             this.generateDistCoeffs(distCoeffs, modelMembersCount[idx]);
-            alvision.projectPoints(new alvision.Mat(points), alvision.Mat.zeros(3, 1, alvision.MatrixType.CV_64FC1), alvision.Mat.zeros(3, 1, alvision.MatrixType.CV_64FC1),
-                intrinsics, distCoeffs, projectedPoints);
+            alvision.projectPoints(points, alvision.Mat.zeros(3, 1, alvision.MatrixType.CV_64FC1), alvision.Mat.zeros(3, 1, alvision.MatrixType.CV_64FC1),
+                intrinsics, distCoeffs, projectedPoints, (ipt)=>projectedPoints = ipt);
 
             //vector < Point2f > realUndistortedPoints;
             var realUndistortedPoints = new Array<alvision.Point2f>();
-            alvision.projectPoints(new alvision.Mat(points), alvision.Mat.zeros(3, 1, alvision.MatrixType.CV_64FC1), alvision.Mat.zeros(3, 1, alvision.MatrixType.CV_64FC1),
-                intrinsics, alvision.Mat.zeros(4, 1, alvision.MatrixType.CV_64FC1), realUndistortedPoints);
+            alvision.projectPoints(points, alvision.Mat.zeros(3, 1, alvision.MatrixType.CV_64FC1), alvision.Mat.zeros(3, 1, alvision.MatrixType.CV_64FC1),
+                intrinsics, alvision.Mat.zeros(4, 1, alvision.MatrixType.CV_64FC1), realUndistortedPoints, (ipt)=>realUndistortedPoints = ipt);
 
 
             var undistortedPoints = new alvision.Mat();
