@@ -1,14 +1,64 @@
 {
-	
+	'variables':{
+		'shared_runtime%': 'true',
+	},
 	'target_defaults' : {
 		 # enable exceptions for all targets
+		 
 		'conditions' : [
 			['1==1', {
+					'configurations': {
+						'Release':{
+							'target_conditions':[
+								['1==1',{
+									'msvs_settings': {
+										'VCCLCompilerTool': {
+											'RuntimeTypeInfo': 'true',
+											'RuntimeLibrary': 2, # MultiThreadedDLL (/MD)
+											#'AdditionalOptions' :['/MD']
+										}
+									}
+								}],
+								['"true"=="true"', {
+									'msvs_settings': {
+										'VCCLCompilerTool': {
+											'RuntimeLibrary': 2, # MultiThreadedDLL (/MD)
+											'AdditionalOptions' :['/MD']
+										}
+									}
+								}]
+							]
+						},
+						'Debug':{
+							'target_conditions':[
+								['1==1',{
+									'msvs_settings':{
+										'VCCLCompilerTool': {
+											'RuntimeTypeInfo': 'true',
+											'RuntimeLibrary': 3, # MultiThreadedDebugDLL (/MDd)
+											#'AdditionalOptions' :['/MDd']
+										 }
+									}
+								}],
+								['shared_runtime=="true"', {
+									'msvs_settings':{
+										'VCCLCompilerTool': {
+											'RuntimeLibrary': 3, # MultiThreadedDebugDLL (/MDd)
+											'AdditionalOptions' :['/MDd']
+										 }
+									}
+								}]
+							]
+						}
+					 },
+			
+			
 					'msvs_settings' : {
 						'VCCLCompilerTool' : {
 							'WarningLevel' : 0,
 							'WholeProgramOptimization' : 'false',
-							'AdditionalOptions' : ['/EHsc','/bigobj'],
+							'RuntimeTypeInfo': 'true',
+							'AdditionalOptions' : ['/EHsc'],
 							'ExceptionHandling' : 1,
 							 #  / EHsc
 						}

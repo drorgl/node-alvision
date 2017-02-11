@@ -8,10 +8,19 @@ public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
 	static Nan::Persistent<FunctionTemplate> constructor;
+	static std::string name;
 
 	std::shared_ptr<cv::KeyPoint> _keyPoint;
 
 	virtual v8::Local<v8::Function> get_constructor();
+
+	template<typename... Args>
+	static std::shared_ptr<KeyPoint> create(Args&&... args) {
+		auto val = std::make_shared<KeyPoint>();
+		val->_keyPoint = std::shared_ptr<cv::KeyPoint>(new cv::KeyPoint(std::forward<Args>(args)...));
+		return val;
+	}
+
 
 
 	static POLY_METHOD(New_no_params);

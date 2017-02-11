@@ -6017,7 +6017,17 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
  POLY_METHOD(imgproc::spatialGradient){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::Scharr){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::Laplacian){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::Canny){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::Canny){
+		auto image			=info.at<IOArray*>(0)->GetInputArray();
+		auto edges			=info.at<IOArray*>(1)->GetOutputArray();
+		auto threshold1		=info.at<double>(2);
+		auto threshold2		=info.at<double>(3);
+		auto apertureSize	=info.at<int>(4);
+		auto L2gradient		=info.at<bool>(5);
+
+		cv::Canny(image, edges, threshold1, threshold2, apertureSize, L2gradient);
+
+ }
  POLY_METHOD(imgproc::cornerMinEigenVal){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::cornerHarris){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::cornerEigenValsAndVecs){throw std::exception("not implemented");}

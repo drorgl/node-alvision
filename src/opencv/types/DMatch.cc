@@ -2,10 +2,11 @@
 
 Nan::Persistent<FunctionTemplate> DMatch::constructor;
 
+std::string DMatch::name;
 
 void
 DMatch::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
-	
+	DMatch::name = "DMatch";
 
 	//Class
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(DMatch::New);

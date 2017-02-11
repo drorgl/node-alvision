@@ -442,7 +442,7 @@ public:
 
 	template<typename... Args>
 	static std::shared_ptr<Point3_<T>> create(Args&&... args) {
-		auto val = std::make_shared<Point_<T>>();
+		auto val = std::make_shared<Point3_<T>>();
 		val->_point3 = std::shared_ptr<T>(new T(std::forward<Args>(args)...));
 		return val;
 	}

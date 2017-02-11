@@ -1433,6 +1433,7 @@ export interface Mat extends _st.IOArray
 
     //! internal function
     //void push_back_(const void* elem);
+    push<T>(Ttype: string, value: T): void;
 
     /** @brief Adds elements to the bottom of the matrix.
 
@@ -2292,7 +2293,7 @@ export var Mat2d : Mat_Static<_matx.Vec2d > = alvision_module.Mat2d ;
 export var Mat3d : Mat_Static<_matx.Vec3d > = alvision_module.Mat3d ;
 export var Mat4d: Mat_Static<_matx.Vec4d> = alvision_module.Mat4d;
 
-export var MatPoint2f: Mat_Static<_types.Point2f> = alvision_module.Point2f;
+export var MatPoint2f: Mat_Static<_types.Point2f> = alvision_module.MatPoint2f;
 
 //export interface Matb extends Mat_<_st.uchar> { }
 //export interface Mats extends Mat_<_st.short> { }

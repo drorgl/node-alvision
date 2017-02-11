@@ -23,7 +23,13 @@ public:
 	virtual cv::_InputOutputArray GetInputOutputArray();
 	virtual cv::_InputOutputArray GetInputOutputArrayOfArrays();
 
-	static std::shared_ptr<Matrix> Mat();
+	template<typename... Args>
+	static std::shared_ptr<Matrix> create(Args&&... args) {
+		auto val = std::make_shared<Matrix>();
+		val->_mat = std::shared_ptr<cv::Mat>(new cv::Mat(std::forward<Args>(args)...));
+		return val;
+	}
+
 
 	//export interface MatStatic {
 		//public:

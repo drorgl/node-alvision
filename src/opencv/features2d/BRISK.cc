@@ -26,7 +26,7 @@ BRISK::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload
 
 
 
-
+	overload->addOverloadConstructor("brisk", "BRISK", {}, New);
 
 //	//! @addtogroup features2d_main
 //	//! @{
@@ -74,7 +74,7 @@ BRISK::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload
 
 
 
-
+	Nan::SetMethod(ctor, "create", brisk_general_callback::callback);
 
 
 target->Set(Nan::New("BRISK").ToLocalChecked(), ctor->GetFunction());
@@ -89,5 +89,31 @@ v8::Local<v8::Function> BRISK::get_constructor() {
 }
 
 
-POLY_METHOD(BRISK::create_a){throw std::exception("not implemented");}
-POLY_METHOD(BRISK::create_b){throw std::exception("not implemented");}
+POLY_METHOD(BRISK::New) {
+	auto ret = new BRISK();
+
+	ret->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+
+POLY_METHOD(BRISK::create_a){
+	auto thresh = info.at<int>(0);
+	auto octaves = info.at<int>(1);
+	auto patternScale = info.at<float>(2);
+
+	auto ret = new BRISK();
+	ret->_algorithm = cv::BRISK::create(thresh, octaves, patternScale);
+
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(BRISK::create_b){
+	auto radiusList = info.at<std::shared_ptr<std::vector<float>>>(0);
+	auto numberList = info.at<std::shared_ptr<std::vector<int>>>(1);
+	auto dMax = info.at<float>(2);
+	auto dMin = info.at<float>(3);
+	auto indexChange = info.at<std::shared_ptr<std::vector<int>>>(3);
+
+	auto ret = new BRISK();
+	ret->_algorithm = cv::BRISK::create(*radiusList, *numberList, dMax, dMin, *indexChange);
+	info.SetReturnValue(ret);
+}

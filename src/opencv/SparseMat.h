@@ -15,6 +15,14 @@ public:
 
 	virtual v8::Local<v8::Function> get_constructor();
 
+	template<typename... Args>
+	static std::shared_ptr<SparseMat> create(Args&&... args) {
+		auto val = std::make_shared<SparseMat>();
+		val->_sparseMat = std::shared_ptr<cv::SparseMat>(new cv::SparseMat(std::forward<Args>(args)...));
+		return val;
+	}
+
+
 
 	static NAN_METHOD(New);
 	

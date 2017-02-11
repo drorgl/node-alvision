@@ -1,6 +1,7 @@
 #include "Feature2D.h"
 #include "../IOArray.h"
 #include "../types/KeyPoint.h"
+#include <iterator>
 
 namespace feature2d_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -131,10 +132,12 @@ void Feature2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution>
 	//	InputArray mask = noArray());
 	overload->addOverload("feature2d", Feature2D::name, "detect", {
 		make_param<IOArray*>("image","IOArray"),
-		make_param<std::shared_ptr<std::vector<std::shared_ptr<KeyPoint>>>>("keypoints","Array<KeyPoint>"),
+		make_param<std::shared_ptr<std::vector<KeyPoint*>>>("keypoints","Array<KeyPoint>"),
+		make_param<std::shared_ptr<or::Callback>>("cb","Function"),//"keypoints","Array<KeyPoint>"), //std::vector<std::shared_ptr<KeyPoint>>
 		make_param<IOArray*>("mask","IOArray",IOArray::noArray())
 
 	}, detect_a);
+	Nan::SetPrototypeMethod(ctor, "detect", feature2d_general_callback::callback);
 
 
 
@@ -142,26 +145,46 @@ void Feature2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution>
 	//virtual void detect(InputArrayOfArrays images,
 	//	std::vector<std::vector<KeyPoint> >& keypoints,
 	//	InputArrayOfArrays masks = noArray());
-	overload->addOverload("feature2d", Feature2D::name, "detect", {}, detect_b);
+	overload->addOverload("feature2d", Feature2D::name, "detect", {
+		make_param<std::shared_ptr<std::vector<IOArray*>>>("image","Array<IOArray>"),
+		make_param<std::shared_ptr< or ::Callback>>("cb","Function"),//"keypoints","Array<KeyPoint>"), //std::vector<std::shared_ptr<KeyPoint>>
+		make_param<std::shared_ptr<std::vector<IOArray*>>>("mask","Array<IOArray>",nullptr)
+	}, detect_b);
 	//
 	//
 	//CV_WRAP virtual void compute(InputArray image,
 	//	CV_OUT CV_IN_OUT std::vector<KeyPoint>& keypoints,
 	//	OutputArray descriptors);
-	overload->addOverload("feature2d", Feature2D::name, "compute", {}, compute_a);
+	overload->addOverload("feature2d", Feature2D::name, "compute", {
+		make_param<IOArray*>("image","IOArray"),
+		make_param<std::shared_ptr<std::vector<KeyPoint*>>>("keypoints","Array<KeyPoint>"),
+		make_param<std::shared_ptr<or::Callback>>("cb","Function"),//array of keypoints
+		make_param<IOArray*>("descriptors","IOArray")
+	}, compute_a);
 	//
 	//
 	//virtual void compute(InputArrayOfArrays images,
 	//	std::vector<std::vector<KeyPoint> >& keypoints,
 	//	OutputArrayOfArrays descriptors);
-	overload->addOverload("feature2d", Feature2D::name, "compute", {}, compute_b);
+	overload->addOverload("feature2d", Feature2D::name, "compute", {
+		make_param<std::shared_ptr<std::vector<IOArray*>>>("image","IOArray"),
+		make_param<std::shared_ptr<std::vector<std::shared_ptr<std::vector<KeyPoint*>>>>>("keypoints","Array<Array<KeyPoint>>"),
+		make_param<std::shared_ptr< or ::Callback>>("cb","Function"),//array of array of keypoints
+		make_param<std::shared_ptr<std::vector<IOArray*>>>("descriptors","IOArray")
+	}, compute_b);
 	//
 	///** Detects keypoints and computes the descriptors */
 	//CV_WRAP virtual void detectAndCompute(InputArray image, InputArray mask,
 	//	CV_OUT std::vector<KeyPoint>& keypoints,
 	//	OutputArray descriptors,
 	//	bool useProvidedKeypoints = false);
-	overload->addOverload("feature2d", Feature2D::name, "detectAndCompute", {}, detectAndCompute);
+	overload->addOverload("feature2d", Feature2D::name, "detectAndCompute", {
+		make_param<IOArray*>("image","IOArray"),
+		make_param<IOArray*>("mask","IOArray"),
+		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (keypoints : Array<_types.KeyPoint>) = >void,
+		make_param<IOArray*>("descriptors","IOArray"),
+		make_param<bool>("useProvidedKeypoints","bool", false)
+	}, detectAndCompute);
 	//
 	//CV_WRAP virtual int descriptorSize() const;
 	overload->addOverload("feature2d", Feature2D::name, "descriptorSize", {}, descriptorSize);
@@ -199,7 +222,29 @@ POLY_METHOD(Feature2D::New) {
 }
 
 
-POLY_METHOD(Feature2D::detect_a) {throw std::exception("not implemented");}
+POLY_METHOD(Feature2D::detect_a) {
+	auto this_ = info.This<Feature2D*>();
+	auto image = info.at<IOArray*>(0)->GetInputArray();
+	auto kp = *info.at<std::shared_ptr<std::vector<KeyPoint*>>>(1);
+	auto cb = info.at<std::shared_ptr< or ::Callback>>(2);
+	auto mask = info.at<IOArray*>(3)->GetInputArray();
+
+	std::unique_ptr<std::vector<cv::KeyPoint>> vec_kp = std::make_unique<std::vector<cv::KeyPoint>>();
+	std::transform(std::begin(kp), std::end(kp), std::back_inserter(*vec_kp), [](const KeyPoint* kpi) {return *kpi->_keyPoint; });
+
+
+	auto feature2d_inst = this_->_algorithm.dynamicCast<cv::Feature2D>();
+	feature2d_inst->detect(image, *vec_kp, mask);
+
+	std::shared_ptr<std::vector<KeyPoint*>> new_kp = std::make_shared<std::vector<KeyPoint*>>();
+	std::transform(std::begin(*vec_kp), std::end(*vec_kp), std::back_inserter(*new_kp), [](const cv::KeyPoint &kpi) {
+		auto nkpi = new KeyPoint();
+		nkpi->_keyPoint = std::make_shared<cv::KeyPoint>(kpi);
+		return nkpi;
+	});
+
+	cb->Call({or::make_value( new_kp) });
+}
 POLY_METHOD(Feature2D::detect_b) {throw std::exception("not implemented");}
 POLY_METHOD(Feature2D::compute_a) {throw std::exception("not implemented");}
 POLY_METHOD(Feature2D::compute_b) {throw std::exception("not implemented");}

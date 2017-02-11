@@ -14,7 +14,7 @@
 							'VCCLCompilerTool': {
 							  'WholeProgramOptimization' : 'false',
 							  #'AdditionalOptions': ['/w'], #['/wd4244' ,'/wd4018','/wd4133' ,'/wd4090'] #GL- was added because the forced optimization coming from node-gyp is disturbing the weird coding style from ffmpeg
-							  'RuntimeLibrary': 3, # dll debug
+							  'RuntimeLibrary': 3, # dll debug BUILD_WITH_STATIC_CRT
 							  'ExceptionHandling' : 1 #/EHsc
 							},
 							'VCLinkerTool': {
@@ -38,7 +38,7 @@
 							'VCCLCompilerTool': {
 							  'WholeProgramOptimization' : 'false',
 							   #'AdditionalOptions': ['/w'], #['/wd4244' ,'/wd4018','/wd4133' ,'/wd4090'] #GL- was added because the forced optimization coming from node-gyp is disturbing the weird coding style from ffmpeg
-							  'RuntimeLibrary': 2, # dll release
+							  'RuntimeLibrary': 2, # dll release BUILD_WITH_STATIC_CRT
 							  'ExceptionHandling' : 1 #/EHsc
 							},
 							'VCLinkerTool': {

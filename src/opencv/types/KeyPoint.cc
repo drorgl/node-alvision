@@ -14,14 +14,17 @@ namespace keypoint_general_callback {
 
 Nan::Persistent<FunctionTemplate> KeyPoint::constructor;
 
+std::string KeyPoint::name;
+
 void KeyPoint::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	KeyPoint::name = "KeyPoint";
 	keypoint_general_callback::overload = overload;
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(keypoint_general_callback::callback);
 	constructor.Reset(ctor);
 	auto itpl = ctor->InstanceTemplate();
 	itpl->SetInternalFieldCount(1);
 	ctor->SetClassName(Nan::New("KeyPoint").ToLocalChecked());
-	ctor->Inherit(Nan::New(KeyPoint::constructor));
+	//ctor->Inherit(Nan::New(KeyPoint::constructor));
 
 	overload->register_type<KeyPoint>(ctor, "keypoint", "KeyPoint");
 
@@ -94,6 +97,8 @@ void KeyPoint::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 	//CV_PROP_RW int class_id; //!< object class (if the keypoints need to be clustered by an object they belong to)
 	Nan::SetAccessor(ctor->InstanceTemplate(), Nan::New("class_id").ToLocalChecked(), class_id_getter, class_id_setter);
 
+	target->Set(Nan::New("KeyPoint").ToLocalChecked(), ctor->GetFunction());
+
 }
 
 v8::Local<v8::Function> KeyPoint::get_constructor() {
@@ -106,7 +111,9 @@ v8::Local<v8::Function> KeyPoint::get_constructor() {
 POLY_METHOD(KeyPoint::New_no_params) {
 	auto ret = new KeyPoint();
 	ret->_keyPoint = std::make_shared<cv::KeyPoint>();
-	info.SetReturnValue(ret);
+
+	ret->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(KeyPoint::New_point2f) {
 	auto   _pt		= info.at<Point2f*>(0)->_point;

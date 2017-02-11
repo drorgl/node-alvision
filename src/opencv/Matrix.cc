@@ -340,11 +340,6 @@ cv::_InputOutputArray	Matrix::GetInputOutputArrayOfArrays() {
 	return *_mat;
 }
 
-std::shared_ptr<Matrix> Matrix::Mat() {
-	auto ret = std::make_shared<Matrix>();
-	ret->_mat = std::make_shared<cv::Mat>();
-	return ret;
-}
 
 
 POLY_METHOD(Matrix::New) {

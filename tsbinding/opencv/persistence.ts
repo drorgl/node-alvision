@@ -532,19 +532,19 @@ export interface FileStorage
 
     
 
-    write(name: string, value: _st.int  ): void;
-    write(name: string, value: _st.float  ): void;
-    write(name: string, value: _st.double  ): void;
-    write(name : string, value : string): void;
-    write(name : string, value : _mat.Mat): void;
-    write(name : string, value : _mat.SparseMat): void;
-    write(name: string, value: Array<_types.KeyPoint> ): void;
-    write(name: string, value: Array<_types.DMatch> ): void;
+    writeInt(name: string, value: _st.int  ): void;
+    writeFloat(name: string, value: _st.float  ): void;
+    writeDouble(name: string, value: _st.double  ): void;
+    writeString(name : string, value : string): void;
+    writeMat(name : string, value : _mat.Mat): void;
+    writeSparseMat(name : string, value : _mat.SparseMat): void;
+    writeKeyPoints(name: string, value: Array<_types.KeyPoint> ): void;
+    writeDMatches(name: string, value: Array<_types.DMatch> ): void;
 
-    writeScalar(value: _st.int ): void;
-    writeScalar(value: _st.float ): void;
-    writeScalar(value: _st.double ): void;
-    writeScalar( value : string): void;
+    writeScalarInt(value: _st.int ): void;
+    writeScalarFloat(value: _st.float ): void;
+    writeScalarDouble(value: _st.double ): void;
+    writeScalarString( value : string): void;
 
     };
 

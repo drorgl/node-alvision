@@ -1,4 +1,7 @@
 ﻿#include "features2d.h"
+
+#include <iterator>
+
 #include "IOArray.h"
 #include "types/KeyPoint.h"
 #include "types/DMatch.h"
@@ -35,6 +38,7 @@ namespace features2d_general_callback {
 
 void
 features2d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	features2d_general_callback::overload = overload;
 	KeyPointsFilter::Init(target, overload);
 	Feature2D::Init(target, overload);
 	BRISK::Init(target, overload);
@@ -270,6 +274,7 @@ overload->addOverload("features2d", "", "drawKeypoints", {
 	make_param<Scalar*>("color",Scalar::name,Scalar::all(-1)),
 	make_param<int>("flags","DrawMatchesFlags",cv::DrawMatchesFlags::DEFAULT)
 }, drawKeypoints);
+Nan::SetMethod(target, "drawKeypoints", features2d_general_callback::callback);
 //CV_EXPORTS_W void drawKeypoints( InputArray image, const std::vector<KeyPoint>& keypoints, InputOutputArray outImage,
 //                               const Scalar& color=Scalar::all(-1), int flags=DrawMatchesFlags::DEFAULT );
 
@@ -386,7 +391,18 @@ POLY_METHOD(features2d::FAST_a){throw std::exception("not implemented");}
 POLY_METHOD(features2d::FAST_b){throw std::exception("not implemented");}
 POLY_METHOD(features2d::AGAST_a){throw std::exception("not implemented");}
 POLY_METHOD(features2d::AGAST_b){throw std::exception("not implemented");}
-POLY_METHOD(features2d::drawKeypoints){throw std::exception("not implemented");}
+POLY_METHOD(features2d::drawKeypoints){
+	auto image		= info.at<IOArray*>(0)->GetInputArray();
+	auto keypoints	= *info.at<std::shared_ptr<std::vector<KeyPoint*>>>(1);
+	auto outImage = info.at<IOArray*>(2)->GetInputOutputArray();
+	auto color = info.at<Scalar*>(3)->_scalar;
+	auto flags = info.at<int>(4);
+
+	std::unique_ptr<std::vector<cv::KeyPoint>> vec_kp = std::make_unique<std::vector<cv::KeyPoint>>();
+	std::transform(std::begin(keypoints), std::end(keypoints), std::back_inserter(*vec_kp), [](const KeyPoint* kpi) {return *kpi->_keyPoint; });
+
+	cv::drawKeypoints(image, *vec_kp, outImage, *color, flags);
+}
 POLY_METHOD(features2d::drawMatches){throw std::exception("not implemented");}
 POLY_METHOD(features2d::drawMatchesKnn){throw std::exception("not implemented");}
 POLY_METHOD(features2d::evaluateFeatureDetector){throw std::exception("not implemented");}

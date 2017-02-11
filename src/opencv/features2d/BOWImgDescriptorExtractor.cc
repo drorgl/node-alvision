@@ -95,7 +95,7 @@ BOWImgDescriptorExtractor::Init(Handle<Object> target, std::shared_ptr<overload_
 		make_param<std::shared_ptr<std::vector<KeyPoint*>>>("keypoints","Array<KeyPoint>"),
 		make_param<IOArray*>("imgDescriptor",IOArray::name),
 		make_param<std::shared_ptr<std::vector<std::shared_ptr<std::vector<int>>>>>("pointIdxsOfClusters","Array<Array<KeyPoint>>",nullptr),
-		make_param<Matrix*>("descriptors",Matrix::name,Matrix::Mat())
+		make_param<Matrix*>("descriptors",Matrix::name,Matrix::create())
 	}, compute_img);
 //		/** @overload
 //		@param keypointDescriptors Computed descriptors to match with vocabulary.

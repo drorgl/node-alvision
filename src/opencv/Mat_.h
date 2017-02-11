@@ -421,13 +421,13 @@ overload->addOverload("mat_", name, "Element", {
 			mat->Wrap(info.Holder());
 			info.GetReturnValue().Set(info.Holder());
 		}
-		static POLY_METHOD(New_rows_cols_value		){
-			auto mat = new Mat_<T,TVT>();
-			mat->_mat = std::make_shared<T>(info.at<int>(0), info.at<int>(1), info.at<TCT>(2));
-
-			mat->Wrap(info.Holder());
-			info.GetReturnValue().Set(info.Holder());
-		}
+		static POLY_METHOD(New_rows_cols_value);
+		//	auto mat = new Mat_<T,TVT>();
+		//	mat->_mat = std::make_shared<T>(info.at<int>(0), info.at<int>(1), info.at<TCT>(2));
+		//
+		//	mat->Wrap(info.Holder());
+		//	info.GetReturnValue().Set(info.Holder());
+		//}
 		static POLY_METHOD(New_size					){
 			auto mat = new Mat_<T,TVT>();
 			mat->_mat = std::make_shared<T>(*info.at<Size*>(0)->_size);
@@ -554,6 +554,50 @@ Nan::Persistent<FunctionTemplate> Mat_<T,TVT>::constructor;
 
 template <typename T, typename TVT>
 std::string Mat_<T, TVT>::name;
+
+//template <typename T, typename TVT>
+//Nan::NAN_METHOD_RETURN_TYPE Mat_<T, TVT>::New_rows_cols_value(POLY_METHOD_ARGS_TYPE info) {
+//
+//}
+
+
+
+
+
+
+template<typename T, typename TVT>
+class New_rows_cols_value_imp {
+public:
+	typedef typename T::channel_type TCT;
+
+	static POLY_METHOD(execute) {
+		auto mat = new Mat_<T, TVT>();
+		mat->_mat = std::make_shared<T>(info.at<int>(0), info.at<int>(1), info.at<TCT>(2));
+
+		mat->Wrap(info.Holder());
+		info.GetReturnValue().Set(info.Holder());
+	}
+};
+
+template<>
+class New_rows_cols_value_imp<cv::Mat_<cv::Point2f>, Point_<cv::Point2f>*> {
+public:
+	static POLY_METHOD(execute) {
+		throw std::exception("this constructor is not implemented for Mat_<Point2f>");
+	}
+
+};
+
+
+
+template <typename T, typename TVT>
+POLY_METHOD((Mat_<T, TVT>::New_rows_cols_value)) {
+	New_rows_cols_value_imp<T, TVT>::execute(info);
+}
+
+
+
+
 
 namespace Mat_Init {
 	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

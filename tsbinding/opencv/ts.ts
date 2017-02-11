@@ -621,6 +621,10 @@ export namespace cvtest {
     }
 
     export function TEST(test_case_name: string, test_name: string, cb: () => void) {
+        if (test_case_name.startsWith("DISABLED_") || test_name.startsWith("DISABLED_")) {
+            console.log("skipping disabled test", test_case_name, test_name);
+            return;
+        }
         console.log("testing", test_case_name, test_name);
         try {
             cb();

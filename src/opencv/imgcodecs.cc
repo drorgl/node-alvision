@@ -247,14 +247,14 @@ imgcodecs::Init(Handle<Object> target, std::shared_ptr<overload_resolution> over
 	overload->addOverload("imgcodecs", "", "imdecode", {
 		make_param<IOArray*>("buf","IOArray"),
 		make_param<int>("flags","ImreadModes"),
-		make_param<Matrix*>("dst","Mat",Matrix::Mat())
+		make_param<Matrix*>("dst","Mat",Matrix::create())
 	},imdecode_dst );
 	Nan::SetMethod(target, "imdecode", imgcodecs_general_callback::callback);
 
 	overload->addOverload("imgcodecs", "", "imdecode", {
 		make_param<std::shared_ptr<std::vector<uint8_t>>>("buf","Buffer"),
 		make_param<int>("flags","ImreadModes"),
-		make_param<Matrix*>("dst","Mat",Matrix::Mat())
+		make_param<Matrix*>("dst","Mat",Matrix::create())
 	},imdecode );
 
 	//interface Iimdecode {

@@ -487,40 +487,53 @@ export function CV_DbgAssert(expr: () =>boolean){
 }
 
 export function ASSERT_TRUE(val: boolean, msg?) {
+    if (val != true) {
+        throw new Error("assert " + (msg || "") + val.toString() + " != true");
+    }
+}
+
+export function ASSERT_EQ(val: any, expected: any, msg?: string) {
+    if (!(val == expected)) {
+        throw new Error("assert " + (msg || "") + val.toString() + " == "  + expected.toString())
+    } 
+}
+
+export function ASSERT_NE(val: any, expected: any, msg?: string) {
+    if (!(val != expected)) {
+        throw new Error("assert " + (msg || "") + val.toString() + " != " + expected.toString())
+    } 
+}
+
+
+    export function ASSERT_LT(low: any, high: any, msg?: string) {
+    if (!(low < high)) {
+        throw new Error("assert " + (msg || "") + low.toString() + " < " + high.toString())
+    }
+}
+
+    export function ASSERT_LE(low: any, high: any, msg?: string) {
+    if (!(low <= high)) {
+        throw new Error("assert " + (msg || "") + low.toString() + " <= " + high.toString())
+    }
+}
+
+    export function ASSERT_GT(low: any, high: any, msg?: string) {
+        if (!(low > high)) {
+            throw new Error("assert " + (msg || "") + low.toString() + " > " + high.toString())
+        }
+}
+
+    export function ASSERT_GE(low: any, high: any, msg?: string) {
+        if (!(low >= high)) {
+            throw new Error("assert " + (msg || "") + low.toString() + " >= " + high.toString())
+        }
+}
+
+    export function EXPECT_TRUE(val: boolean, msg?: string) {
     CV_Assert(() => val);
-    //TODO: what to do with failed msg??
 }
 
-export function ASSERT_EQ(val: any, expected: any,msg? : string) {
-    CV_Assert(() => val == expected);
-}
-
-export function ASSERT_NE(val: any, expected: any) {
-    CV_Assert(() => val != expected);
-}
-
-
-export function ASSERT_LT(low: any, high: any) {
-    CV_Assert(() => low < high);
-}
-
-export function ASSERT_LE(low: any, high: any) {
-    CV_Assert(() => low <= high);
-}
-
-export function ASSERT_GT(low: any, high: any) {
-    CV_Assert(() => low > high);
-}
-
-export function ASSERT_GE(low: any, high: any) {
-    CV_Assert(() => low >= high);
-}
-
-export function EXPECT_TRUE(val: boolean) {
-    CV_Assert(() => val);
-}
-
-export function EXPECT_FALSE(val: boolean) {
+export function EXPECT_FALSE(val: boolean, msg? : string) {
     CV_Assert(() => !val);
 }
 

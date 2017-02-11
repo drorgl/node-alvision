@@ -12,6 +12,7 @@ public:
 
 	virtual v8::Local<v8::Function> get_constructor();
 
+	static POLY_METHOD(New);
 	static POLY_METHOD(create_a);
 	static POLY_METHOD(create_b);
 };

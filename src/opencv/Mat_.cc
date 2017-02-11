@@ -42,5 +42,5 @@ void Mat_Init::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 	Mat_<cv::Mat_<cv::Vec3d >	, Vec<cv::Vec3d>*> ::Init(target, "Mat3d" ,Vec<cv::Vec3d>::name, overload);
 	Mat_<cv::Mat_<cv::Vec4d>	, Vec<cv::Vec4d>*>  ::Init(target, "Mat4d",Vec<cv::Vec4d>::name, overload);
 
-	//Mat_<cv::Mat_<cv::Point2f>>::Init(target, "MatPoint2f", overload);
+	Mat_<cv::Mat_<cv::Point2f>  , Point_<cv::Point2f>*>::Init(target, "MatPoint2f", Point_<cv::Point2f>::name, overload);
 }

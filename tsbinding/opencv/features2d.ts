@@ -160,6 +160,7 @@ interface Feature2D extends _core.Algorithm
     matrix with non-zero values in the region of interest.
      */
     detect(image: _st.InputArray,
+        keypoints: Array<_types.KeyPoint>,
         cb: (keypoints: Array<_types.KeyPoint>) => void,
         mask?: _st.InputArray /*= noArray()*/): void;
 
@@ -187,7 +188,7 @@ interface Feature2D extends _core.Algorithm
      */
     compute(image: _st.InputArray,
         keypoints: Array<_types.KeyPoint>,
-        //cb: (keypoints: Array<_types.KeyPoint>)=>void,
+        cb: (keypoints: Array<_types.KeyPoint>)=>void,
         descriptors: _st.OutputArray ): void;
 
     /** @overload
@@ -201,7 +202,8 @@ interface Feature2D extends _core.Algorithm
     descriptor for keypoint j-th keypoint.
     */
     compute(images: _st.InputArrayOfArrays ,
-         keypoints : Array<Array<_types.KeyPoint>>,
+        keypoints: Array<Array<_types.KeyPoint>>,
+         cb: (keypoints: Array<Array<_types.KeyPoint>>)=>void,
          descriptors: _st.OutputArrayOfArrays  ): void;
 
     /** Detects keypoints and computes the descriptors */
@@ -1252,8 +1254,8 @@ cv2.DRAW_MATCHES_FLAGS_NOT_DRAW_SINGLE_POINTS
  */
 
 interface IdrawKeypoints {
-//    (InputArray image, const Array<KeyPoint>& keypoints, InputOutputArray outImage,
-//                               const Scalar& color=Scalar::all(-1), int flags= DrawMatchesFlags::DEFAULT): void;
+    (image: _st.InputArray, keypoints: Array<_types.KeyPoint>, outImage: _st.InputOutputArray ,
+        color?: _types.Scalar /*=Scalar::all(-1)*/, flags?: _st.int /*= DrawMatchesFlags::DEFAULT*/): void;
 }
 
 export var drawKeypoints: IdrawKeypoints = alvision_module.drawKeypoints;

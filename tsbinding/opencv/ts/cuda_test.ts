@@ -222,7 +222,7 @@ function minMaxLocGold(src: _mat.Mat, cb:(minVal_: _st.double, maxVal_: _st.doub
         }
     }
 
-    cb(minVal, maxVal, minLoc, maxLoc);
+    cb(minVal, maxVal, [minLoc], [maxLoc]);
     //if (minVal_) *minVal_ = minVal;
     //if (maxVal_) *maxVal_ = maxVal;
     //

@@ -141,7 +141,7 @@ cv_test::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	overload->addOverload("cvtest", "", "copy", {
 		make_param<Matrix*>("src",Matrix::name),
 		make_param<Matrix*>("dst",Matrix::name),
-		make_param<Matrix*>("mask",Matrix::name,Matrix::Mat()),
+		make_param<Matrix*>("mask",Matrix::name,Matrix::create()),
 		make_param<bool>("invertMask","bool", false)
 	}, copy);
 	Nan::SetMethod(testns, "copy", cvtest_general_callback::callback);
@@ -149,7 +149,7 @@ cv_test::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	overload->addOverload("cvtest", "", "set", {
 		make_param<Matrix*>("dst",Matrix::name),
 		make_param<Scalar*>("gamma","Scalar" ),
-		make_param<Matrix*>("mask",Matrix::name,Matrix:: Mat())
+		make_param<Matrix*>("mask",Matrix::name,Matrix:: create())
 	}, set);
 	Nan::SetMethod(testns, "set", cvtest_general_callback::callback);
 	//
@@ -297,7 +297,7 @@ cv_test::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	//Scalar mean(const Mat& src, const Mat& mask = Mat());
 	overload->addOverload("cvtest", "", "mean", {
 		make_param<Matrix*>("src",Matrix::name),
-		make_param<Matrix*>("mask",Matrix::name,Matrix::Mat())
+		make_param<Matrix*>("mask",Matrix::name,Matrix::create())
 	}, mean);
 	Nan::SetMethod(testns, "mean", cvtest_general_callback::callback);
 
