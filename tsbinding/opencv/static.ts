@@ -71,6 +71,10 @@ export interface IOArray {//extends Array<any> {
     type?(): int;
     rows?(): int;
     cols?(): int;
+
+    channels?(): int;
+    getGpuMatRef?(): _cuda.cuda.GpuMat;
+    setTo?(value: InputArray | _types.Scalar | int, mask?: InputArray /*= noArray()*/): void;
 }
 
 export var IOArray: IOArrayStatic = alvision_module.IOArray;
@@ -626,9 +630,13 @@ export function cvGetTickCount()  : number {
     return time[0] * 1e9 + time[1]
 }
 
+export var getTickCount = cvGetTickCount;
+
 export function cvGetTickFrequency(): number {
     return 1e9;
 }
+
+export var getTickFrequency = cvGetTickFrequency;
 
 export function arrcopy<D, S>(dst: Array<D>, src: Array<S>, len: number): void {
     for (var i = 0; i < len; i++) {

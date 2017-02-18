@@ -5,7 +5,9 @@
 
 class Range : public or::ObjectWrap {
 public:
+	static std::string name;
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
+		Range::name = name;
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Range::New);
 		constructor.Reset(ctor);
 		ctor->InstanceTemplate()->SetInternalFieldCount(1);

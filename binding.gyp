@@ -12,6 +12,7 @@
 							# This magical incantation is necessary because VC++ will compile
 							# object files to same directory... even if they have the same name!
 							'VCCLCompilerTool': {
+							  'AdditionalOptions': ['/bigobj'],	
 							  'WholeProgramOptimization' : 'false',
 							  #'AdditionalOptions': ['/w'], #['/wd4244' ,'/wd4018','/wd4133' ,'/wd4090'] #GL- was added because the forced optimization coming from node-gyp is disturbing the weird coding style from ffmpeg
 							  'RuntimeLibrary': 3, # dll debug BUILD_WITH_STATIC_CRT
@@ -36,6 +37,7 @@
 							# This magical incantation is necessary because VC++ will compile
 							# object files to same directory... even if they have the same name!
 							'VCCLCompilerTool': {
+							  'AdditionalOptions': ['/bigobj'],
 							  'WholeProgramOptimization' : 'false',
 							   #'AdditionalOptions': ['/w'], #['/wd4244' ,'/wd4018','/wd4133' ,'/wd4090'] #GL- was added because the forced optimization coming from node-gyp is disturbing the weird coding style from ffmpeg
 							  'RuntimeLibrary': 2, # dll release BUILD_WITH_STATIC_CRT
@@ -176,6 +178,15 @@
 		, "src/opencv/calib3d/StereoSGBM.cc"
 		
 		
+		, "src/opencv/objdetect.h"
+		, "src/opencv/objdetect.cc"
+		, "src/opencv/objdetect/BaseCascadeClassifier.cc"
+		, "src/opencv/objdetect/BaseCascadeClassifier.h"
+		, "src/opencv/objdetect/CascadeClassifier.cc"
+		, "src/opencv/objdetect/CascadeClassifier.h"
+		, "src/opencv/objdetect/HOGDescriptor.cc"
+		, "src/opencv/objdetect/HOGDescriptor.h"	
+		
 		, "src/opencv/features2d.h"
 		, "src/opencv/features2d.cc"
 
@@ -259,8 +270,14 @@
 		, "src/opencv/Cuda.h"
 		, "src/opencv/cuda/DeviceInfo.cc"
 		, "src/opencv/cuda/DeviceInfo.h"
+		, "src/opencv/cuda/CudaEvent.cc"
+		, "src/opencv/cuda/CudaEvent.h"
 		, "src/opencv/cuda/GpuMat.cc"
 		, "src/opencv/cuda/GpuMat.h"
+		, "src/opencv/cuda/HostMem.cc"
+		, "src/opencv/cuda/HostMem.h"
+		, "src/opencv/cuda/CudaStream.cc"
+		, "src/opencv/cuda/CudaStream.h"
 		
 		, "src/opencv/flann.cc"
 		, "src/opencv/flann.h"
@@ -633,6 +650,8 @@
 		,'test/opencv/viz/test_tutorial3.ts'
 		,'test/opencv/viz/test_viz3d.ts'
 
+		,'test/demos/utility.ts'
+		,'test/demos/pedestrian_detection.ts'
 		
         ]
 	  , 'dependencies':[
@@ -651,6 +670,10 @@
 			'../opencv.module/opencv.gyp:ml',
 			'../opencv.module/opencv.gyp:flann',
 			'../opencv.module/opencv.gyp:ts',
+			'../opencv.module/opencv.gyp:shape',
+			'../opencv.module/opencv.gyp:superres',
+			'../opencv.module/opencv.gyp:videostab',
+			'../opencv.module/opencv.gyp:stitching',
 			'../node-overload-resolution/binding.gyp:node-overload-resolution',
 			'../node-addon-tracer/binding.gyp:node-addon-tracer',
 			#'../opencv.module/sources/3rdparty/3rdparty.gyp:zlib',

@@ -1,5 +1,4 @@
-//TODO: implement!
-
+//TODO: implement
 ///*M///////////////////////////////////////////////////////////////////////////////////////
 ////
 ////  IMPORTANT: READ BEFORE DOWNLOADING, COPYING, INSTALLING OR USING.
@@ -43,7 +42,7 @@
 
 //import tape = require("tape");
 //import path = require("path");
-//
+
 //import async = require("async");
 //import alvision = require("../../../tsbinding/alvision");
 //import util = require('util');
@@ -85,19 +84,17 @@
 //        else {
 //            var fn = _fs.getFirstTopLevelNode();
 
-//            fn[DIST_E] >> eps.dist;
-//            fn[S_E] >> eps.s;
-//            fn[NO_PAIR_E] >> eps.noPair;
+//            this.eps.dist = fn.nodes[DIST_E].readFloat();
+//            this.eps.s = fn.nodes[S_E].readFloat();
+//            this.eps.noPair = fn.nodes[NO_PAIR_E].readFloat();
 //            //        fn[TOTAL_NO_PAIR_E] >> eps.totalNoPair;
 
 //            // read detectors
 //            if (fn[DETECTOR_NAMES].size() != 0) {
-//                var it = fn[DETECTOR_NAMES].begin();
-//                for (; it != fn[DETECTOR_NAMES].end();) {
-//                    String _name;
-//                    it >> _name;
-//                    detectorNames.push(_name);
-//                    readDetector(fn[DETECTORS][_name]);
+//                for (let it of fn[DETECTOR_NAMES].data) {
+//                    let _name = it.readString();
+//                    this.detectorNames.push(_name);
+//                    this.readDetector(fn[DETECTORS][_name]);
 //                }
 //            }
 //            this.test_case_count = this.detectorNames.length;
@@ -105,13 +102,11 @@
 //            // read images filenames and images
 //            var dataPath = this.ts.get_data_path();
 //            if (fn[IMAGE_FILENAMES].size() != 0) {
-//                for (FileNodeIterator it = fn[IMAGE_FILENAMES].begin(); it != fn[IMAGE_FILENAMES].end(); )
-//                {
-//                    String filename;
-//                    it >> filename;
-//                    imageFilenames.push(filename);
+//                for (let it of fn[IMAGE_FILENAMES].data){
+//                    let filename = it.readString();
+//                    this.imageFilenames.push(filename);
 //                    var img = alvision.imread(dataPath + filename, 1);
-//                    images.push(img);
+//                    this.images.push(img);
 //                }
 //            }
 //        }
@@ -119,17 +114,17 @@
 //    }
 //    run(startFrom: alvision.int): void {
 //        var dataPath = this.ts.get_data_path();
-//        var vs_filename = dataPath + getValidationFilename();
+//        var vs_filename = dataPath + this.getValidationFilename();
 
-//        this.write_results = !validationFS.open(vs_filename, alvision.FileStorageMode.READ);
+//        this.write_results = !this.validationFS.open(vs_filename, alvision.FileStorageMode.READ);
 
 //        var code: alvision.int;
 
 //        if (!this.write_results) {
-//            code = this.prepareData(validationFS);
+//            code = this.prepareData(this.validationFS);
 //        }
 //        else {
-//            var fs0 = new alvision.FileStorage(dataPath + configFilename, alvision.FileStorageMode.READ);
+//            var fs0 = new alvision.FileStorage(dataPath + this.configFilename, alvision.FileStorageMode.READ);
 //            code = this.prepareData(fs0);
 //        }
 
@@ -139,76 +134,82 @@
 //        }
 
 //        if (this.write_results) {
-//            validationFS.release();
-//            validationFS.open(vs_filename, alvision.FileStorageMode.WRITE);
-//            validationFS << FileStorage::getDefaultObjectName(validationFilename) << "{";
+//            this.validationFS.release();
+//            this.validationFS.open(vs_filename, alvision.FileStorageMode.WRITE);
+//            this.validationFS.writeScalarString(alvision.FileStorage.getDefaultObjectName(this.validationFilename));
+//            this.validationFS.writeScalarString("{");
 
-//            validationFS << DIST_E << eps.dist;
-//            validationFS << S_E << eps.s;
-//            validationFS << NO_PAIR_E << eps.noPair;
+//            this.validationFS.writeFloat(DIST_E, this.eps.dist);
+//            this.validationFS.writeFloat(S_E, this.eps.s);
+//            this.validationFS.writeFloat(NO_PAIR_E, this.eps.noPair);
 //            //    validationFS << TOTAL_NO_PAIR_E << eps.totalNoPair;
 
 //            // write detector names
-//            validationFS << DETECTOR_NAMES << "[";
-//            Array<string>::const_iterator nit = detectorNames.begin();
-//            for (; nit != detectorNames.end(); ++nit) {
-//                validationFS << *nit;
+//            this.validationFS.writeScalarString(DETECTOR_NAMES);
+//            this.validationFS.writeScalarString("[");
+
+//            for (let nit of this.detectorNames) {
+//                this.validationFS.writeScalarString(nit);
 //            }
-//            validationFS << "]"; // DETECTOR_NAMES
+//            this.validationFS.writeScalarString( "]"); // DETECTOR_NAMES
 
 //            // write detectors
-//            validationFS << DETECTORS << "{";
-//            assert(detectorNames.size() == detectorFilenames.size());
-//            nit = detectorNames.begin();
-//            for (int di = 0; nit != detectorNames.end(); ++nit, di++ )
-//            {
-//                validationFS << *nit << "{";
-//                writeDetector(validationFS, di);
-//                validationFS << "}";
+//            this.validationFS.writeScalarString(DETECTORS);
+//            this.validationFS.writeScalarString("{");
+//            alvision.assert(() => this.detectorNames.length == this.detectorFilenames.length);
+//            for (let nit of this.detectorNames) {
+//                this.validationFS.writeScalarString(nit);
+//                this.validationFS.writeScalarString("{");
+//                this.writeDetector(this.validationFS, di);
+//                this.validationFS.writeScalarString("}");
 //            }
-//            validationFS << "}";
+
+//            this.validationFS.writeScalarString("}");
 
 //            // write image filenames
-//            validationFS << IMAGE_FILENAMES << "[";
-//            Array<string>::const_iterator it = imageFilenames.begin();
-//            for (int ii = 0; it != imageFilenames.end(); ++it, ii++ )
-//            {
-//                char buf[10];
-//                sprintf(buf, "%s%d", "img_", ii);
-//                //cvWriteComment( validationFS.fs, buf, 0 );
-//                validationFS << *it;
-//            }
-//            validationFS << "]"; // IMAGE_FILENAMES
+//            this.validationFS.writeScalarString(IMAGE_FILENAMES);
+//            this.validationFS.writeScalarString("[");
 
-//            validationFS << VALIDATION << "{";
+//            let ii = 0;
+//            for (let it of this.imageFilenames) {
+//                let buf = util.format("%s%d", "img_", ii);
+//                //cvWriteComment( validationFS.fs, buf, 0 );
+//                this.validationFS.writeScalarString(it);
+//                ii++;
+//            }
+
+//            this.validationFS.writeScalarString( "]"); // IMAGE_FILENAMES
+
+//            this.validationFS.writeScalarString(VALIDATION);
+//            this.validationFS.writeScalarString("{");
 //        }
 
-//        int progress = 0;
-//        for (int di = 0; di < test_case_count; di++ )
+//        let progress = 0;
+//        for (let di = 0; di < this.test_case_count; di++ )
 //        {
-//            progress = update_progress(progress, di, test_case_count, 0);
-//            if (write_results)
-//                validationFS << detectorNames[di] << "{";
-//            Array < Array < Rect > > objects;
-//            int temp_code = runTestCase(di, objects);
+//            progress = this.update_progress(progress, di, this.test_case_count, 0).valueOf();
+//            if (this.write_results)
+//                this.validationFS << detectorNames[di] << "{";
+//            let objects : Array<Array<alvision.Rect>> = []
+//            let temp_code = this.runTestCase(di, objects);
 
-//            if (!write_results && temp_code == alvision.cvtest.FailureCode.OK)
-//                temp_code = validate(di, objects);
+//            if (!this.write_results && temp_code == alvision.cvtest.FailureCode.OK)
+//                temp_code = this.validate(di, objects);
 
 //            if (temp_code != alvision.cvtest.FailureCode.OK)
 //                code = temp_code;
 
-//            if (write_results)
-//                validationFS << "}"; // detectorNames[di]
+//            if (this.write_results)
+//                this.validationFS.writeScalarString( "}"); // detectorNames[di]
 //        }
 
-//        if (write_results) {
-//            validationFS << "}"; // VALIDATION
-//            validationFS << "}"; // getDefaultObjectName
+//        if (this.write_results) {
+//            this.validationFS.writeScalarString( "}"); // VALIDATION
+//            this.validationFS.writeScalarString( "}"); // getDefaultObjectName
 //        }
 
-//        if (test_case_count <= 0 || imageFilenames.size() <= 0) {
-//            ts .console.log(util.format(alvision.cvtest.TSConstants.LOG, "validation file is not determined or not correct");
+//        if (this.test_case_count <= 0 || this.imageFilenames.length <= 0) {
+//            this.ts.printf(alvision.cvtest.TSConstants.LOG, "validation file is not determined or not correct");
 //            code = alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
 //        }
 //        this.ts.set_failed_test_info(code);
@@ -222,37 +223,38 @@
 //    writeDetector(fs: alvision.FileStorage, di: alvision.int): void {
 //    }
 //    runTestCase(detectorIdx: alvision.int, objects: Array<Array<alvision.Rect>>): alvision.int {
-//        string dataPath = ts .get_data_path(), detectorFilename;
-//        if (!detectorFilenames[detectorIdx].empty())
-//            detectorFilename = dataPath + detectorFilenames[detectorIdx];
-//        console.log(util.format("detector %s\n", detectorFilename);
+//        let dataPath = this.ts .get_data_path(), detectorFilename : string;
+//        if (this.detectorFilenames[detectorIdx.valueOf()])
+//            detectorFilename = dataPath + this.detectorFilenames[detectorIdx.valueOf()];
+//        console.log(util.format("detector %s\n", detectorFilename));
 
-//        for (int ii = 0; ii < (int)imageFilenames.size(); ++ii )
+//        for (let ii = 0; ii < this.imageFilenames.length; ++ii )
 //        {
-//            Array < Rect > imgObjects;
-//            Mat image = images[ii];
+//            let imgObjects: Array<alvision.Rect>;
+//            let image = this.images[ii];
 //            if (image.empty()) {
-//                char msg[30];
-//                sprintf(msg, "%s %d %s", "image ", ii, " can not be read");
-//                ts .console.log(util.format(alvision.cvtest.TSConstants.LOG, msg);
+//                let msg =util.format("%s %d %s", "image ", ii, " can not be read");
+//                this.ts.printf(alvision.cvtest.TSConstants.LOG, msg);
 //                return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
 //            }
-//            int code = detectMultiScale(detectorIdx, image, imgObjects);
+//            let code = this.detectMultiScale(detectorIdx, image, imgObjects);
 //            if (code != alvision.cvtest.FailureCode.OK)
 //                return code;
 
 //            objects.push(imgObjects);
 
-//            if (write_results) {
-//                char buf[10];
-//                sprintf(buf, "%s%d", "img_", ii);
-//                string imageIdxStr = buf;
-//                validationFS << imageIdxStr << "[:";
-//                for (Array<Rect>::const_iterator it = imgObjects.begin();
-//                    it != imgObjects.end(); ++it) {
-//                    validationFS << it .x << it .y << it .width << it .height;
+//            if (this.write_results) {
+//                let buf = util.format( "%s%d", "img_", ii);
+//                let imageIdxStr = buf;
+//                this.validationFS.writeScalarString(imageIdxStr)
+//                this.validationFS.writeScalarString("[:");
+//                for (let it of imgObjects){
+//                    this.validationFS.writeScalarInt(it.x);
+//                    this.validationFS.writeScalarInt(it.y);
+//                    this.validationFS.writeScalarInt(it.width);
+//                    this.validationFS.writeScalarInt(it.height);
 //                }
-//                validationFS << "]"; // imageIdxStr
+//                this.validationFS.writeScalarString( "]"); // imageIdxStr
 //            }
 //        }
 //        return alvision.cvtest.FailureCode.OK;
@@ -260,26 +262,23 @@
 //    detectMultiScale(di: alvision.int, img: alvision.Mat, objects: Array<alvision.Rect>): alvision.int {
 //    }
 //    validate(detectorIdx: alvision.int, objects: Array<Array<alvision.Rect>>): alvision.int {
-//        assert(imageFilenames.size() == objects.size());
-//        int imageIdx = 0;
-//        int totalNoPair = 0, totalValRectCount = 0;
+//        alvision.assert(() => this.imageFilenames.length == objects.length);
+//        let imageIdx = 0;
+//        let totalNoPair = 0, totalValRectCount = 0;
 
-//        for (Array<Array<Rect>>::const_iterator it = objects.begin();
-//            it != objects.end(); ++it, imageIdx++) // for image
-//        {
-//            Size imgSize = images[imageIdx].size();
-//            float dist = min(imgSize.height, imgSize.width) * eps.dist;
-//            float wDiff = imgSize.width * eps.s;
-//            float hDiff = imgSize.height * eps.s;
+//        for (let it of objects) {
+//            let imgSize = this.images[imageIdx].size();
+//            let dist = Math.min(imgSize.height.valueOf(), imgSize.width) * this.eps.dist.valueOf();
+//            let wDiff = imgSize.width.valueOf() * this.eps.s.valueOf();
+//            let hDiff = imgSize.height.valueOf() * this.eps.s.valueOf();
 
-//            int noPair = 0;
+//            let noPair = 0;
 
 //            // read validation rectangles
-//            char buf[10];
-//            sprintf(buf, "%s%d", "img_", imageIdx);
-//            string imageIdxStr = buf;
-//            FileNode node = validationFS.getFirstTopLevelNode()[VALIDATION][detectorNames[detectorIdx]][imageIdxStr];
-//            Array < Rect > valRects;
+//            let buf = util.format("%s%d", "img_", imageIdx);
+//            let imageIdxStr = buf;
+//            let node = this.validationFS.getFirstTopLevelNode()[VALIDATION][this.detectorNames[detectorIdx.valueOf()]][imageIdxStr];
+//            let valRects: Array<alvision.Rect> = [];
 //            if (node.size() != 0) {
 //                for (FileNodeIterator it2 = node.begin(); it2 != node.end(); )
 //                {
@@ -288,46 +287,51 @@
 //                    valRects.push(r);
 //                }
 //            }
-//            totalValRectCount += (int)valRects.size();
+//            totalValRectCount += valRects.length;
 
 //            // compare rectangles
-//            Array < uchar > map(valRects.size(), 0);
-//            for (Array<Rect>::const_iterator cr = it .begin();
-//                cr != it .end(); ++cr) {
+//            let map = alvision.NewArray<alvision.uchar>(valRects.length, ()=>0);
+//            for (let cr of it){
 //                // find nearest rectangle
-//                Point2f cp1 = Point2f(cr .x + (float)cr.width / 2.0f, cr .y + (float)cr.height / 2.0f );
-//                int minIdx = -1, vi = 0;
-//                float minDist = (float)norm(Point(imgSize.width, imgSize.height));
-//                for (Array<Rect>::const_iterator vr = valRects.begin();
-//                    vr != valRects.end(); ++vr, vi++) {
-//                    Point2f cp2 = Point2f(vr .x + (float)vr.width / 2.0f, vr .y + (float)vr.height / 2.0f );
-//                    float curDist = (float)norm(cp1 - cp2);
+//                let cp1 =new alvision. Point2f(cr.x.valueOf() + cr.width.valueOf() / 2.0, cr.y.valueOf() + cr.height.valueOf() / 2.0 );
+//                let minIdx = -1, vi = 0;
+//                let minDist = alvision.norm(new alvision.Point(imgSize.width, imgSize.height));
+//                for (let vr of valRects){
+//                    let cp2 = new alvision.Point2f(vr.x + vr.width / 2.0, vr.y + vr.height / 2.0 );
+//                    let curDist = alvision.norm(cp1.op_Substraction(cp2));
 //                    if (curDist < minDist) {
 //                        minIdx = vi;
 //                        minDist = curDist;
 //                    }
+//                    vi++;
 //                }
 //                if (minIdx == -1) {
 //                    noPair++;
 //                }
 //                else {
-//                    Rect vr = valRects[minIdx];
-//                    if (map[minIdx] != 0 || (minDist > dist) || (abs(cr .width - vr.width) > wDiff) ||
-//                        (abs(cr .height - vr.height) > hDiff))
+//                    let vr = valRects[minIdx];
+//                    if (map[minIdx] != 0 || (minDist > dist) || (Math.abs(cr.width.valueOf() - vr.width.valueOf()) > wDiff) ||
+//                        (Math.abs(cr.height.valueOf() - vr.height.valueOf()) > hDiff))
 //                        noPair++;
 //                    else
 //                        map[minIdx] = 1;
 //                }
+
+
+//                imageIdx++
+
 //            }
 //            noPair += (int)count_if(map.begin(), map.end(), isZero);
 //            totalNoPair += noPair;
 
-//            EXPECT_LE(noPair, Math.round(valRects.size() * eps.noPair) + 1)
+//            alvision.EXPECT_LE(noPair, Math.round(valRects.size() * eps.noPair) + 1)
 //                << "detector " << detectorNames[detectorIdx] << " has overrated count of rectangles without pair on "
 //                << imageFilenames[imageIdx] << " image";
 
 //            if (::testing::Test::HasFailure())
 //            break;
+
+
 //        }
 
 //        alvision.EXPECT_LE(totalNoPair, Math.round(totalValRectCount * eps./*total*/noPair) + 1)
@@ -346,6 +350,14 @@
 //    //    float noPair;
 //    //    //float totalNoPair;
 //    //} eps;
+
+//    protected eps: {
+//        dist: alvision.float;
+//        s: alvision.float;
+//        noPair: alvision.float;
+//        totalNoPair: alvision.float;
+//    };
+
 //    protected detectorNames: Array<string>;
 //    protected detectorFilenames: Array<string>;
 //    protected imageFilenames: Array<string>;
@@ -360,974 +372,813 @@
 //function isZero(i: alvision.uchar): boolean { return i == 0; }
 
 
-////----------------------------------------------- CascadeDetectorTest -----------------------------------
-//class CV_CascadeDetectorTest extends CV_DetectorTest
-//{
-//    constructor() {
-//        super();
-//        this.validationFilename = "cascadeandhog/cascade.xml";
-//        this.configFilename = "cascadeandhog/_cascade.xml";
-//    }
-
-//    readDetector(fn: alvision.FileNode): void {
-//        String filename;
-//        int flag;
-       
-//        fn[FILENAME] >> filename;
-//        this.detectorFilenames.push(filename);
-//        fn[C_SCALE_CASCADE] >> flag;
-//        if (flag)
-//            flags.push(0);
-//        else
-//            flags.push(CASCADE_SCALE_IMAGE);
-//    }
-//    writeDetector(fs: alvision.FileStorage, di: alvision.int  ): void {
-//        var sc = this.flags[di.valueOf()] & CASCADE_SCALE_IMAGE ? 0 : 1;
-//        fs.write(FILENAME, this.detectorFilenames[di]);
-//        //fs << FILENAME << detectorFilenames[di];
-//        fs.write(C_SCALE_CASCADE, sc);
-//        //fs << C_SCALE_CASCADE << sc;
-//    }
-//    detectMultiScale(di: alvision.int, img: alvision.Mat, objects: Array<alvision.Rect> ): alvision.int {
-//        var dataPath = this.ts.get_data_path();//, filename;
-//        var filename = dataPath + detectorFilenames[di];
-//        const pattern = "haarcascade_frontalface_default.xml";
-
-//        if (filename.size() >= pattern.size() &&
-//            strcmp(filename + (filename.size() - pattern.size()),
-//                pattern) == 0)
-//            return this.detectMultiScale_C(filename, di, img, objects);
-
-//        var cascade = new CascadeClassifier (filename);
-//        if (cascade.empty()) {
-//            this.ts.printf(alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
-//            return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
-//        }
-//        var grayImg = new alvision.Mat();
-//        alvision.cvtColor(img, grayImg,alvision.ColorConversionCodes. COLOR_BGR2GRAY);
-//        alvision.equalizeHist(grayImg, grayImg);
-//        cascade.detectMultiScale(grayImg, objects, 1.1, 3, flags[di]);
-//        return alvision.cvtest.FailureCode.OK;
-//    }
-//    detectMultiScale_C(filename: string, di: alvision.int, img: alvision.Mat, objects: Array<alvision.Rect> ): alvision.int {
-//        c_cascade: CvHaarClassifierCascade = (cvLoadHaarClassifierCascade(filename, alvision.Size(0, 0)));
-//        storage: CvMemStorage = (cvCreateMemStorage());
-
-//        if (!c_cascade) {
-//            ts.printf(alvision.cvtest.TSConstants.LOG, "cascade %s can not be opened");
-//            return alvision.cvtest.FailureCode.FAIL_INVALID_TEST_DATA;
-//        }
-//        var grayImg = new alvision.Mat();
-//        alvision.cvtColor(img, grayImg, COLOR_BGR2GRAY);
-//        alvision.equalizeHist(grayImg, grayImg);
-
-//        var c_gray = grayImg;
-//        var rs = cvHaarDetectObjects(&c_gray, c_cascade, storage, 1.1, 3, flags[di]);
-
-//        objects.clear();
-//        for (var i = 0; i < rs.total; i++ )
-//        {
-//            var r = *(Rect *)cvGetSeqElem(rs, i);
-//            objects.push(r);
-//        }
-
-//        return alvision.cvtest.FailureCode.OK;
-//    }
-//    protected flags: Array<alvision.int>;
-//};
-
-
-
-
-
-
-//int CV_CascadeDetectorTest::detectMultiScale( int di, const Mat& img,
-//                                              Array<Rect>& objects)
-//{
-  
-//}
-
 ////----------------------------------------------- HOGDetectorTest -----------------------------------
 //class CV_HOGDetectorTest extends CV_DetectorTest
 //{
-//public:
-//    CV_HOGDetectorTest();
-//protected:
-//    virtual void readDetector( const FileNode& fn );
-//    virtual void writeDetector( FileStorage& fs, int di );
-//    virtual int detectMultiScale( int di, const Mat& img, Array<Rect>& objects );
+//    constructor() {
+//        super();
+//        this.validationFilename = "cascadeandhog/hog.xml";
+//    }
+//    readDetector(fn: alvision.FileNode ) : void {
+//        let filename = "";
+//        if (fn[FILENAME].size() != 0)
+//            filename = fn.nodes[FILENAME].readString();
+//        this.detectorFilenames.push(filename);
+//}
+//    writeDetector(fs: alvision.FileStorage, di: alvision.int): void {
+//        fs.writeString(FILENAME,this.detectorFilenames[di.valueOf()])
+//    }
+//    detectMultiScale(di: alvision.int, img: alvision.Mat, objects: Array<alvision.Rect>): alvision.int {
+//        let hog = new alvision.HOGDescriptor();
+//        if (this.detectorFilenames[di.valueOf()].empty())
+//            hog.setSVMDetector(alvision.HOGDescriptor.getDefaultPeopleDetector());
+//        else
+//            alvision.assert(()=>false);
+//        hog.detectMultiScale(img,(locs)=> objects = locs);
+//        return alvision.cvtest.FailureCode.OK;
+//    }
 //};
 
-//CV_HOGDetectorTest::CV_HOGDetectorTest()
-//{
-//    validationFilename = "cascadeandhog/hog.xml";
-//}
 
-//void CV_HOGDetectorTest::readDetector( const FileNode& fn )
-//{
-//    String filename;
-//    if( fn[FILENAME].size() != 0 )
-//        fn[FILENAME] >> filename;
-//    detectorFilenames.push( filename);
-//}
-
-//void CV_HOGDetectorTest::writeDetector( FileStorage& fs, int di )
-//{
-//    fs << FILENAME << detectorFilenames[di];
-//}
-
-//int CV_HOGDetectorTest::detectMultiScale( int di, const Mat& img,
-//                                              Array<Rect>& objects)
-//{
-//    HOGDescriptor hog;
-//    if( detectorFilenames[di].empty() )
-//        hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
-//    else
-//        assert(0);
-//    hog.detectMultiScale(img, objects);
-//    return alvision.cvtest.FailureCode.OK;
-//}
 
 ////----------------------------------------------- HOGDetectorReadWriteTest -----------------------------------
-//TEST(Objdetect_HOGDetectorReadWrite, regression)
-//{
+//alvision.cvtest.TEST('Objdetect_HOGDetectorReadWrite', 'regression', () => {
 //    // Inspired by bug #2607
-//    Mat img;
-//    img = imread(alvision.cvtest.TS.ptr().get_data_path() + "/cascadeandhog/images/karen-and-rob.png");
-//    ASSERT_FALSE(img.empty());
+//    let img = new alvision.Mat();
+//    img = alvision.imread(alvision.cvtest.TS.ptr().get_data_path() + "/cascadeandhog/images/karen-and-rob.png");
+//    alvision.ASSERT_FALSE(img.empty());
 
-//    HOGDescriptor hog;
-//    hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+//    let hog = new alvision.HOGDescriptor();
+//    hog.setSVMDetector(alvision.HOGDescriptor.getDefaultPeopleDetector());
 
-//    string tempfilename = alvision.tempfile(".xml");
-//    FileStorage fs(tempfilename, alvision.FileStorageMode.WRITE);
+//    let tempfilename = alvision.tempfile(".xml");
+//    let fs = new alvision.FileStorage (tempfilename, alvision.FileStorageMode.WRITE);
 //    hog.write(fs, "myHOG");
 
 //    fs.open(tempfilename, alvision.FileStorageMode.READ);
-//    remove(tempfilename);
+//    alvision.remove(tempfilename);
 
-//    FileNode n = fs["opencv_storage"]["myHOG"];
+//    let n = fs.nodes["opencv_storage"].nodes["myHOG"];
 
-//    ASSERT_NO_THROW(hog.read(n));
-//}
+//    alvision.ASSERT_NO_THROW(()=>hog.read(n));
+//});
 
 
 
-//TEST(Objdetect_CascadeDetector, regression) { CV_CascadeDetectorTest test; test.safe_run(); }
-//TEST(Objdetect_HOGDetector, regression) { CV_HOGDetectorTest test; test.safe_run(); }
+//alvision.cvtest.TEST('Objdetect_HOGDetector', 'regression', () => { let test = new CV_HOGDetectorTest (); test.safe_run(); });
 
 
 ////----------------------------------------------- HOG SSE2 compatible test -----------------------------------
 
-//class HOGDescriptorTester :
-//    public alvision.HOGDescriptor
+//class HOGDescriptorTester extends alvision.HOGDescriptor
 //{
-//    HOGDescriptor* actual_hog;
-//    alvision.cvtest.TS* ts;
-//    mutable bool failed;
+//    public actual_hog: alvision.HOGDescriptor;
+//    public ts: alvision.cvtest.TS;
+//    public failed: boolean;
 
-//public:
-//    HOGDescriptorTester(HOGDescriptor& instance) :
-//        alvision.HOGDescriptor(instance), actual_hog(&instance),
-//        ts(alvision.cvtest.TS.ptr()), failed(false)
-//    { }
-
-//    virtual void computeGradient(const Mat& img, Mat& grad, Mat& qangle,
-//        Size paddingTL, Size paddingBR) const;
-
-//    virtual void detect(const Mat& img,
-//        Array<Point>& hits, Array<double>& weights, double hitThreshold = 0.0,
-//        Size winStride = Size(), Size padding = Size(),
-//        const Array<Point>& locations = Array<Point>()) const;
-
-//    virtual void detect(const Mat& img, Array<Point>& hits, double hitThreshold = 0.0,
-//        Size winStride = Size(), Size padding = Size(),
-//        const Array<Point>& locations = Array<Point>()) const;
-
-//    virtual void compute(InputArray img, Array<float>& descriptors,
-//        Size winStride = Size(), Size padding = Size(),
-//        const Array<Point>& locations = Array<Point>()) const;
-
-//    bool is_failed() const;
-//};
-
-//struct HOGCacheTester
-//{
-//    struct BlockData
-//    {
-//        BlockData() : histOfs(0), imgOffset() {}
-//        int histOfs;
-//        Point imgOffset;
-//    };
-
-//    struct PixData
-//    {
-//        size_t gradOfs, qangleOfs;
-//        int histOfs[4];
-//        float histWeights[4];
-//        float gradWeight;
-//    };
-
-//    HOGCacheTester();
-//    HOGCacheTester(const HOGDescriptorTester* descriptor,
-//        const Mat& img, Size paddingTL, Size paddingBR,
-//        bool useCache, Size cacheStride);
-//    virtual ~HOGCacheTester() { }
-//    virtual void init(const HOGDescriptorTester* descriptor,
-//        const Mat& img, Size paddingTL, Size paddingBR,
-//        bool useCache, Size cacheStride);
-
-//    Size windowsInImage(Size imageSize, Size winStride) const;
-//    Rect getWindow(Size imageSize, Size winStride, int idx) const;
-
-//    const float* getBlock(Point pt, float* buf);
-//    virtual void normalizeBlockHistogram(float* histogram) const;
-
-//    Array<PixData> pixData;
-//    Array<BlockData> blockData;
-
-//    bool useCache;
-//    Array<int> ymaxCached;
-//    Size winSize, cacheStride;
-//    Size nblocks, ncells;
-//    int blockHistogramSize;
-//    int count1, count2, count4;
-//    Point imgoffset;
-//    Mat_<float> blockCache;
-//    Mat_<uchar> blockCacheFlags;
-
-//    Mat grad, qangle;
-//    const HOGDescriptorTester* descriptor;
-//};
-
-//HOGCacheTester::HOGCacheTester()
-//{
-//    useCache = false;
-//    blockHistogramSize = count1 = count2 = count4 = 0;
-//    descriptor = 0;
-//}
-
-//HOGCacheTester::HOGCacheTester(const HOGDescriptorTester* _descriptor,
-//    const Mat& _img, Size _paddingTL, Size _paddingBR,
-//    bool _useCache, Size _cacheStride)
-//{
-//    init(_descriptor, _img, _paddingTL, _paddingBR, _useCache, _cacheStride);
-//}
-
-//void HOGCacheTester::init(const HOGDescriptorTester* _descriptor,
-//    const Mat& _img, Size _paddingTL, Size _paddingBR,
-//    bool _useCache, Size _cacheStride)
-//{
-//    descriptor = _descriptor;
-//    cacheStride = _cacheStride;
-//    useCache = _useCache;
-
-//    descriptor.computeGradient(_img, grad, qangle, _paddingTL, _paddingBR);
-//    imgoffset = _paddingTL;
-
-//    winSize = descriptor.winSize;
-//    Size blockSize = descriptor.blockSize;
-//    Size blockStride = descriptor.blockStride;
-//    Size cellSize = descriptor.cellSize;
-//    int i, j, nbins = descriptor.nbins;
-//    int rawBlockSize = blockSize.width*blockSize.height;
-
-//    nblocks = Size((winSize.width - blockSize.width)/blockStride.width + 1,
-//                   (winSize.height - blockSize.height)/blockStride.height + 1);
-//    ncells = Size(blockSize.width/cellSize.width, blockSize.height/cellSize.height);
-//    blockHistogramSize = ncells.width*ncells.height*nbins;
-
-//    if( useCache )
-//    {
-//        Size cacheSize((grad.cols - blockSize.width)/cacheStride.width+1,
-//                       (winSize.height/cacheStride.height)+1);
-//        blockCache.create(cacheSize.height, cacheSize.width*blockHistogramSize);
-//        blockCacheFlags.create(cacheSize);
-//        size_t cacheRows = blockCache.rows;
-//        ymaxCached.resize(cacheRows);
-//        for(size_t ii = 0; ii < cacheRows; ii++ )
-//            ymaxCached[ii] = -1;
+//    constructor(instance: alvision.HOGDescriptor) {
+//        super(instance);
+//        this.actual_hog = instance;
+//        this.ts = alvision.cvtest.TS.ptr();
+//        this.failed = false;
 //    }
 
-//    Mat_<float> weights(blockSize);
-//    float sigma = (float)descriptor.getWinSigma();
-//    float scale = 1.f/(sigma*sigma*2);
+//    computeGradient(img: alvision.Mat, grad: alvision.Mat, qangle: alvision.Mat,
+//        paddingTL: alvision.Size, paddingBR: alvision.Size ): void {
+//        alvision.CV_Assert(()=>img.type() == alvision.MatrixType.CV_8U || img.type() == alvision.MatrixType.CV_8UC3);
 
-//    for(i = 0; i < blockSize.height; i++)
-//        for(j = 0; j < blockSize.width; j++)
-//        {
-//            float di = i - blockSize.height*0.5f;
-//            float dj = j - blockSize.width*0.5f;
-//            weights(i,j) = Math.exp(-(di*di + dj*dj)*scale);
-//        }
+//        let gradsize = new alvision.Size (img.cols().valueOf() + paddingTL.width.valueOf() + paddingBR.width.valueOf(),
+//            img.rows().valueOf() + paddingTL.height.valueOf() + paddingBR.height.valueOf());
+//        grad.create(gradsize, alvision.MatrixType.CV_32FC2);  // <magnitude*(1-alpha), magnitude*alpha>
+//        qangle.create(gradsize, alvision.MatrixType.CV_8UC2); // [0..nbins-1] - quantized gradient orientation
+//        let wholeSize = new alvision.Size();
+//        let roiofs = new alvision.Point();
+//        img.locateROI(wholeSize, roiofs);
 
-//    blockData.resize(nblocks.width*nblocks.height);
-//    pixData.resize(rawBlockSize*3);
+//        //int i, x, y;
+//        let cn = img.channels();
 
-//    // Initialize 2 lookup tables, pixData & blockData.
-//    // Here is why:
-//    //
-//    // The detection algorithm runs in 4 nested loops (at each pyramid layer):
-//    //  loop over the windows within the input image
-//    //    loop over the blocks within each window
-//    //      loop over the cells within each block
-//    //        loop over the pixels in each cell
-//    //
-//    // As each of the loops runs over a 2-dimensional array,
-//    // we could get 8(!) nested loops in total, which is very-very slow.
-//    //
-//    // To speed the things up, we do the following:
-//    //   1. loop over windows is unrolled in the HOGDescriptor::{compute|detect} methods;
-//    //         inside we compute the current search window using getWindow() method.
-//    //         Yes, it involves some overhead (function call + couple of divisions),
-//    //         but it's tiny in fact.
-//    //   2. loop over the blocks is also unrolled. Inside we use pre-computed blockData[j]
-//    //         to set up gradient and histogram pointers.
-//    //   3. loops over cells and pixels in each cell are merged
-//    //       (since there is no overlap between cells, each pixel in the block is processed once)
-//    //      and also unrolled. Inside we use PixData[k] to access the gradient values and
-//    //      update the histogram
-//    //
-//    count1 = count2 = count4 = 0;
-//    for( j = 0; j < blockSize.width; j++ )
-//        for( i = 0; i < blockSize.height; i++ )
-//        {
-//            PixData* data = 0;
-//            float cellX = (j+0.5f)/cellSize.width - 0.5f;
-//            float cellY = (i+0.5f)/cellSize.height - 0.5f;
-//            int icellX0 = Math.floor(cellX);
-//            int icellY0 = Math.floor(cellY);
-//            int icellX1 = icellX0 + 1, icellY1 = icellY0 + 1;
-//            cellX -= icellX0;
-//            cellY -= icellY0;
+//        let _lut = new alvision.Matf_<float> (1, 256);
+//        const float* lut = &_lut(0, 0);
 
-//            if( (unsigned)icellX0 < (unsigned)ncells.width &&
-//                (unsigned)icellX1 < (unsigned)ncells.width )
-//            {
-//                if( (unsigned)icellY0 < (unsigned)ncells.height &&
-//                    (unsigned)icellY1 < (unsigned)ncells.height )
-//                {
-//                    data = &pixData[rawBlockSize*2 + (count4++)];
-//                    data.histOfs[0] = (icellX0*ncells.height + icellY0)*nbins;
-//                    data.histWeights[0] = (1.f - cellX)*(1.f - cellY);
-//                    data.histOfs[1] = (icellX1*ncells.height + icellY0)*nbins;
-//                    data.histWeights[1] = cellX*(1.f - cellY);
-//                    data.histOfs[2] = (icellX0*ncells.height + icellY1)*nbins;
-//                    data.histWeights[2] = (1.f - cellX)*cellY;
-//                    data.histOfs[3] = (icellX1*ncells.height + icellY1)*nbins;
-//                    data.histWeights[3] = cellX*cellY;
-//                }
-//                else
-//                {
-//                    data = &pixData[rawBlockSize + (count2++)];
-//                    if( (unsigned)icellY0 < (unsigned)ncells.height )
-//                    {
-//                        icellY1 = icellY0;
-//                        cellY = 1.f - cellY;
-//                    }
-//                    data.histOfs[0] = (icellX0*ncells.height + icellY1)*nbins;
-//                    data.histWeights[0] = (1.f - cellX)*cellY;
-//                    data.histOfs[1] = (icellX1*ncells.height + icellY1)*nbins;
-//                    data.histWeights[1] = cellX*cellY;
-//                    data.histOfs[2] = data.histOfs[3] = 0;
-//                    data.histWeights[2] = data.histWeights[3] = 0;
+//        if (this.gammaCorrection)
+//            for (let i = 0; i < 256; i++)
+//                _lut(0, i) = Math.sqrt(i);
+//        else
+//            for (let i = 0; i < 256; i++)
+//                _lut(0, i) = i;
+
+//        AutoBuffer < int > mapbuf(gradsize.width + gradsize.height + 4);
+//        int * xmap = (int *)mapbuf + 1;
+//        int * ymap = xmap + gradsize.width + 2;
+
+//        const  borderType =alvision.BorderTypes. BORDER_REFLECT_101;
+
+//        for (let x = -1; x < gradsize.width.valueOf() + 1; x++)
+//            xmap[x] = borderInterpolate(x - paddingTL.width + roiofs.x,
+//                wholeSize.width, borderType) - roiofs.x;
+//        for (y = -1; y < gradsize.height + 1; y++)
+//            ymap[y] = borderInterpolate(y - paddingTL.height + roiofs.y,
+//                wholeSize.height, borderType) - roiofs.y;
+
+//        // x- & y- derivatives for the whole row
+//        let width = gradsize.width;
+//        AutoBuffer < float > _dbuf(width * 4);
+//        float * dbuf = _dbuf;
+//        let Dx      = new alvision.Mat(1, width, alvision.MatrixType.CV_32F, dbuf);
+//        let Dy      = new alvision.Mat(1, width, alvision.MatrixType.CV_32F, dbuf + width);
+//        let Mag     = new alvision.Mat(1, width, alvision.MatrixType.CV_32F, dbuf + width * 2);
+//        let Angle   = new alvision.Mat(1, width, alvision.MatrixType.CV_32F, dbuf + width * 3);
+
+//        let _nbins = nbins;
+//        let angleScale = (_nbins / Math.PI);
+//        for (let y = 0; y < gradsize.height; y++) {
+//            const imgPtr  = img.ptr<alvision.uchar>("uchar",ymap[y]);
+//            const prevPtr = img.ptr<alvision.uchar>("uchar",ymap[y - 1]);
+//            const nextPtr = img.ptr<alvision.uchar>("uchar",ymap[y + 1]);
+//            let gradPtr = grad.ptr<alvision.float>("float",y);
+//            let qanglePtr = qangle.ptr<alvision.uchar>("uchar",y);
+
+//            if (cn == 1) {
+//                for (let x = 0; x < width; x++) {
+//                    let x1 = xmap[x];
+//                    dbuf[x] = (lut[imgPtr[xmap[x + 1]]] - lut[imgPtr[xmap[x - 1]]]);
+//                    dbuf[width + x] = (lut[nextPtr[x1]] - lut[prevPtr[x1]]);
 //                }
 //            }
-//            else
-//            {
-//                if( (unsigned)icellX0 < (unsigned)ncells.width )
-//                {
-//                    icellX1 = icellX0;
-//                    cellX = 1.f - cellX;
-//                }
+//            else {
+//                for (let x = 0; x < width; x++) {
+//                    let  x1 = xmap[x] * 3;
+//                    // dx0, dy0, dx, dy, mag0, mag;
+//                    const uchar* p2 = imgPtr + xmap[x + 1] * 3;
+//                    const uchar* p0 = imgPtr + xmap[x - 1] * 3;
 
-//                if( (unsigned)icellY0 < (unsigned)ncells.height &&
-//                    (unsigned)icellY1 < (unsigned)ncells.height )
-//                {
-//                    data = &pixData[rawBlockSize + (count2++)];
-//                    data.histOfs[0] = (icellX1*ncells.height + icellY0)*nbins;
-//                    data.histWeights[0] = cellX*(1.f - cellY);
-//                    data.histOfs[1] = (icellX1*ncells.height + icellY1)*nbins;
-//                    data.histWeights[1] = cellX*cellY;
-//                    data.histOfs[2] = data.histOfs[3] = 0;
-//                    data.histWeights[2] = data.histWeights[3] = 0;
-//                }
-//                else
-//                {
-//                    data = &pixData[count1++];
-//                    if( (unsigned)icellY0 < (unsigned)ncells.height )
-//                    {
-//                        icellY1 = icellY0;
-//                        cellY = 1.f - cellY;
+//                    let dx0 = lut[p2[2]] - lut[p0[2]];
+//                    let dy0 = lut[nextPtr[x1 + 2]] - lut[prevPtr[x1 + 2]];
+//                    let mag0 = dx0 * dx0 + dy0 * dy0;
+
+//                    let dx = lut[p2[1]] - lut[p0[1]];
+//                    let dy = lut[nextPtr[x1 + 1]] - lut[prevPtr[x1 + 1]];
+//                    let mag = dx * dx + dy * dy;
+
+//                    if (mag0 < mag) {
+//                        dx0 = dx;
+//                        dy0 = dy;
+//                        mag0 = mag;
 //                    }
-//                    data.histOfs[0] = (icellX1*ncells.height + icellY1)*nbins;
-//                    data.histWeights[0] = cellX*cellY;
-//                    data.histOfs[1] = data.histOfs[2] = data.histOfs[3] = 0;
-//                    data.histWeights[1] = data.histWeights[2] = data.histWeights[3] = 0;
+
+//                    dx = lut[p2[0]] - lut[p0[0]];
+//                    dy = lut[nextPtr[x1]] - lut[prevPtr[x1]];
+//                    mag = dx * dx + dy * dy;
+
+//                    if (mag0 < mag) {
+//                        dx0 = dx;
+//                        dy0 = dy;
+//                        mag0 = mag;
+//                    }
+
+//                    dbuf[x] = dx0;
+//                    dbuf[x + width] = dy0;
 //                }
 //            }
-//            data.gradOfs = (grad.cols*i + j)*2;
-//            data.qangleOfs = (qangle.cols*i + j)*2;
-//            data.gradWeight = weights(i,j);
+
+//            alvision.cartToPolar(Dx, Dy, Mag, Angle, false);
+//            for (let x = 0; x < width; x++) {
+//                let mag = dbuf[x + width * 2], angle = dbuf[x + width * 3] * angleScale - 0.5f;
+//                let hidx = Math.floor(angle);
+//                angle -= hidx;
+//                gradPtr[x * 2] = mag * (1.f - angle);
+//                gradPtr[x * 2 + 1] = mag * angle;
+//                if (hidx < 0)
+//                    hidx += _nbins;
+//                else if (hidx >= _nbins)
+//                    hidx -= _nbins;
+//                alvision.assert(()=>hidx < _nbins );
+
+//                qanglePtr[x * 2] = (uchar)hidx;
+//                hidx++;
+//                hidx &= hidx < _nbins ? -1 : 0;
+//                qanglePtr[x * 2 + 1] = (uchar)hidx;
+//            }
 //        }
 
-//    assert( count1 + count2 + count4 == rawBlockSize );
-//    // defragment pixData
-//    for( j = 0; j < count2; j++ )
-//        pixData[j + count1] = pixData[j + rawBlockSize];
-//    for( j = 0; j < count4; j++ )
-//        pixData[j + count1 + count2] = pixData[j + rawBlockSize*2];
-//    count2 += count1;
-//    count4 += count2;
+//        // validation
+//        let actual_mats = alvision.NewArray(2, () => new alvision.Mat());
+//        let reference_mats = [ grad, qangle ];
+//        const args = ["Gradient's", "Qangles's"];
+//        this.actual_hog.computeGradient(img, (grad_, angles_) => { actual_mats[0] = grad_; actual_mats[1] = angles_;}, paddingTL, paddingBR);
 
-//    // initialize blockData
-//    for( j = 0; j < nblocks.width; j++ )
-//        for( i = 0; i < nblocks.height; i++ )
+//        const  eps = 0.0;
+//        for (let i = 0; i < 2; ++i) {
+//            let diff_norm = alvision.cvtest.norm(reference_mats[i], actual_mats[i], alvision.NormTypes.NORM_L2);
+//            if (diff_norm > eps) {
+//                this.ts.printf(alvision.cvtest.TSConstants.LOG, "%s matrices are not equal\nNorm of the difference is %lf\n", args[i], diff_norm);
+//                this.ts.printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
+//                this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+//                this.ts.set_gtest_status();
+//                this.failed = true;
+//                return;
+//            }
+//        }
+//    }
+
+//    detect1(img: alvision.Mat,
+//        hits: Array<alvision.Point>, weights: Array<alvision.double>, hitThreshold: alvision.double ,
+//        winStride: alvision.Size, padding: alvision.Size, locations: Array<alvision.Point> ) : void
 //        {
-//            BlockData& data = blockData[j*nblocks.height + i];
-//            data.histOfs = (j*nblocks.height + i)*blockHistogramSize;
-//            data.imgOffset = Point(j*blockStride.width,i*blockStride.height);
-//        }
-//}
-
-//const float* HOGCacheTester::getBlock(Point pt, float* buf)
-//{
-//    float* blockHist = buf;
-//    assert(descriptor != 0);
-
-//    Size blockSize = descriptor.blockSize;
-//    pt += imgoffset;
-
-//    CV_Assert( (unsigned)pt.x <= (unsigned)(grad.cols - blockSize.width) &&
-//               (unsigned)pt.y <= (unsigned)(grad.rows - blockSize.height) );
-
-//    if( useCache )
-//    {
-//        CV_Assert( pt.x % cacheStride.width == 0 &&
-//                   pt.y % cacheStride.height == 0 );
-//        Point cacheIdx(pt.x/cacheStride.width,
-//                      (pt.y/cacheStride.height) % blockCache.rows);
-//        if( pt.y != ymaxCached[cacheIdx.y] )
-//        {
-//            Mat_<uchar> cacheRow = blockCacheFlags.row(cacheIdx.y);
-//            cacheRow = (uchar)0;
-//            ymaxCached[cacheIdx.y] = pt.y;
-//        }
-
-//        blockHist = &blockCache[cacheIdx.y][cacheIdx.x*blockHistogramSize];
-//        uchar& computedFlag = blockCacheFlags(cacheIdx.y, cacheIdx.x);
-//        if( computedFlag != 0 )
-//            return blockHist;
-//        computedFlag = (uchar)1; // set it at once, before actual computing
-//    }
-
-//    int k, C1 = count1, C2 = count2, C4 = count4;
-//    const float* gradPtr = grad.ptr<float>(pt.y) + pt.x*2;
-//    const uchar* qanglePtr = qangle.ptr(pt.y) + pt.x*2;
-
-//    CV_Assert( blockHist != 0 );
-//    for( k = 0; k < blockHistogramSize; k++ )
-//        blockHist[k] = 0.f;
-
-//    const PixData* _pixData = &pixData[0];
-
-//    for( k = 0; k < C1; k++ )
-//    {
-//        const PixData& pk = _pixData[k];
-//        const float* a = gradPtr + pk.gradOfs;
-//        float w = pk.gradWeight*pk.histWeights[0];
-//        const uchar* h = qanglePtr + pk.qangleOfs;
-//        int h0 = h[0], h1 = h[1];
-//        float* hist = blockHist + pk.histOfs[0];
-//        float t0 = hist[h0] + a[0]*w;
-//        float t1 = hist[h1] + a[1]*w;
-//        hist[h0] = t0; hist[h1] = t1;
-//    }
-
-//    for( ; k < C2; k++ )
-//    {
-//        const PixData& pk = _pixData[k];
-//        const float* a = gradPtr + pk.gradOfs;
-//        float w, t0, t1, a0 = a[0], a1 = a[1];
-//        const uchar* h = qanglePtr + pk.qangleOfs;
-//        int h0 = h[0], h1 = h[1];
-
-//        float* hist = blockHist + pk.histOfs[0];
-//        w = pk.gradWeight*pk.histWeights[0];
-//        t0 = hist[h0] + a0*w;
-//        t1 = hist[h1] + a1*w;
-//        hist[h0] = t0; hist[h1] = t1;
-
-//        hist = blockHist + pk.histOfs[1];
-//        w = pk.gradWeight*pk.histWeights[1];
-//        t0 = hist[h0] + a0*w;
-//        t1 = hist[h1] + a1*w;
-//        hist[h0] = t0; hist[h1] = t1;
-//    }
-
-//    for( ; k < C4; k++ )
-//    {
-//        const PixData& pk = _pixData[k];
-//        const float* a = gradPtr + pk.gradOfs;
-//        float w, t0, t1, a0 = a[0], a1 = a[1];
-//        const uchar* h = qanglePtr + pk.qangleOfs;
-//        int h0 = h[0], h1 = h[1];
-
-//        float* hist = blockHist + pk.histOfs[0];
-//        w = pk.gradWeight*pk.histWeights[0];
-//        t0 = hist[h0] + a0*w;
-//        t1 = hist[h1] + a1*w;
-//        hist[h0] = t0; hist[h1] = t1;
-
-//        hist = blockHist + pk.histOfs[1];
-//        w = pk.gradWeight*pk.histWeights[1];
-//        t0 = hist[h0] + a0*w;
-//        t1 = hist[h1] + a1*w;
-//        hist[h0] = t0; hist[h1] = t1;
-
-//        hist = blockHist + pk.histOfs[2];
-//        w = pk.gradWeight*pk.histWeights[2];
-//        t0 = hist[h0] + a0*w;
-//        t1 = hist[h1] + a1*w;
-//        hist[h0] = t0; hist[h1] = t1;
-
-//        hist = blockHist + pk.histOfs[3];
-//        w = pk.gradWeight*pk.histWeights[3];
-//        t0 = hist[h0] + a0*w;
-//        t1 = hist[h1] + a1*w;
-//        hist[h0] = t0; hist[h1] = t1;
-//    }
-
-//    normalizeBlockHistogram(blockHist);
-
-//    return blockHist;
-//}
-
-//void HOGCacheTester::normalizeBlockHistogram(float* _hist) const
-//{
-//    float* hist = &_hist[0], partSum[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-//    size_t i, sz = blockHistogramSize;
-
-//    for (i = 0; i <= sz - 4; i += 4)
-//    {
-//        partSum[0] += hist[i] * hist[i];
-//        partSum[1] += hist[i+1] * hist[i+1];
-//        partSum[2] += hist[i+2] * hist[i+2];
-//        partSum[3] += hist[i+3] * hist[i+3];
-//    }
-//    float t0 = partSum[0] + partSum[1];
-//    float t1 = partSum[2] + partSum[3];
-//    float sum = t0 + t1;
-//    for( ; i < sz; i++ )
-//        sum += hist[i]*hist[i];
-
-//    float scale = 1.f/(Math.sqrt(sum)+sz*0.1f), thresh = (float)descriptor.L2HysThreshold;
-//    partSum[0] = partSum[1] = partSum[2] = partSum[3] = 0.0f;
-//    for(i = 0; i <= sz - 4; i += 4)
-//    {
-//        hist[i] = Math.min(hist[i]*scale, thresh);
-//        hist[i+1] = Math.min(hist[i+1]*scale, thresh);
-//        hist[i+2] = Math.min(hist[i+2]*scale, thresh);
-//        hist[i+3] = Math.min(hist[i+3]*scale, thresh);
-//        partSum[0] += hist[i]*hist[i];
-//        partSum[1] += hist[i+1]*hist[i+1];
-//        partSum[2] += hist[i+2]*hist[i+2];
-//        partSum[3] += hist[i+3]*hist[i+3];
-//    }
-//    t0 = partSum[0] + partSum[1];
-//    t1 = partSum[2] + partSum[3];
-//    sum = t0 + t1;
-//    for( ; i < sz; i++ )
-//    {
-//        hist[i] = Math.min(hist[i]*scale, thresh);
-//        sum += hist[i]*hist[i];
-//    }
-
-//    scale = 1.f/(Math.sqrt(sum)+1e-3f);
-//    for( i = 0; i < sz; i++ )
-//        hist[i] *= scale;
-//}
-
-//Size HOGCacheTester::windowsInImage(Size imageSize, Size winStride) const
-//{
-//    return Size((imageSize.width - winSize.width)/winStride.width + 1,
-//                (imageSize.height - winSize.height)/winStride.height + 1);
-//}
-
-//Rect HOGCacheTester::getWindow(Size imageSize, Size winStride, int idx) const
-//{
-//    int nwindowsX = (imageSize.width - winSize.width)/winStride.width + 1;
-//    int y = idx / nwindowsX;
-//    int x = idx - nwindowsX*y;
-//    return Rect( x*winStride.width, y*winStride.height, winSize.width, winSize.height );
-//}
-
-//inline bool HOGDescriptorTester::is_failed() const
-//{
-//    return failed;
-//}
-
-//static inline int gcd(int a, int b) { return (a % b == 0) ? b : gcd (b, a % b); }
-
-//void HOGDescriptorTester::detect(const Mat& img,
-//    Array<Point>& hits, Array<double>& weights, double hitThreshold,
-//    Size winStride, Size padding, const Array<Point>& locations) const
-//{
-//    if (failed)
+//            if (this.failed)
 //        return;
 
-//    hits.clear();
-//    if( svmDetector.empty() )
-//        return;
+//        hits.length = 0;
+//if (!this.svmDetector)
+//    return;
 
-//    if( winStride == Size() )
-//        winStride = cellSize;
-//    Size cacheStride(gcd(winStride.width, blockStride.width),
-//                     gcd(winStride.height, blockStride.height));
-//    size_t nwindows = locations.size();
-//    padding.width = (int)alignSize(Math.max(padding.width, 0), cacheStride.width);
-//    padding.height = (int)alignSize(Math.max(padding.height, 0), cacheStride.height);
-//    Size paddedImgSize(img.cols + padding.width*2, img.rows + padding.height*2);
+//if (winStride == Size())
+//    winStride = cellSize;
+//        let cacheStride = new alvision.Size (gcd(winStride.width, blockStride.width),
+//    gcd(winStride.height, blockStride.height));
+//        let nwindows = locations.length;
+//padding.width =  alignSize(Math.max(padding.width, 0), cacheStride.width);
+//padding.height = alignSize(Math.max(padding.height, 0), cacheStride.height);
+//        let paddedImgSize = new alvision.Size (img.cols + padding.width * 2, img.rows + padding.height * 2);
 
-//    HOGCacheTester cache(this, img, padding, padding, nwindows == 0, cacheStride);
+//        let cache = new HOGCacheTester (this, img, padding, padding, nwindows == 0, cacheStride);
 
-//    if( !nwindows )
-//        nwindows = cache.windowsInImage(paddedImgSize, winStride).area();
+//if (!nwindows)
+//    nwindows = cache.windowsInImage(paddedImgSize, winStride).area();
 
-//    const HOGCacheTester::BlockData* blockData = &cache.blockData[0];
+//const HOGCacheTester::BlockData* blockData = &cache.blockData[0];
 
-//    int nblocks = cache.nblocks.area();
-//    int blockHistogramSize = cache.blockHistogramSize;
-//    size_t dsize = getDescriptorSize();
+//let nblocks = cache.nblocks.area();
+//let blockHistogramSize = cache.blockHistogramSize;
+//let dsize = getDescriptorSize();
 
-//    double rho = svmDetector.size() > dsize ? svmDetector[dsize] : 0;
-//    Array<float> blockHist(blockHistogramSize);
+//let rho = svmDetector.size() > dsize ? svmDetector[dsize] : 0;
+//Array < float > blockHist(blockHistogramSize);
 
-//    for( size_t i = 0; i < nwindows; i++ )
-//    {
-//        Point pt0;
-//        if( !locations.empty() )
-//        {
-//            pt0 = locations[i];
-//            if( pt0.x < -padding.width || pt0.x > img.cols + padding.width - winSize.width ||
-//                pt0.y < -padding.height || pt0.y > img.rows + padding.height - winSize.height )
-//                continue;
-//        }
-//        else
-//        {
-//            pt0 = cache.getWindow(paddedImgSize, winStride, (int)i).tl() - Point(padding);
-//            alvision.CV_Assert(pt0.x % cacheStride.width == 0 && pt0.y % cacheStride.height == 0);
-//        }
-//        double s = rho;
-//        const float* svmVec = &svmDetector[0];
-//        int j, k;
-//        for( j = 0; j < nblocks; j++, svmVec += blockHistogramSize )
-//        {
-//            const HOGCacheTester::BlockData& bj = blockData[j];
-//            Point pt = pt0 + bj.imgOffset;
-
-//            const float* vec = cache.getBlock(pt, &blockHist[0]);
-//            for( k = 0; k <= blockHistogramSize - 4; k += 4 )
-//                s += vec[k]*svmVec[k] + vec[k+1]*svmVec[k+1] +
-//                    vec[k+2]*svmVec[k+2] + vec[k+3]*svmVec[k+3];
-//            for( ; k < blockHistogramSize; k++ )
-//                s += vec[k]*svmVec[k];
-//        }
-//        if( s >= hitThreshold )
-//        {
-//            hits.push(pt0);
-//            weights.push(s);
-//        }
-//    }
-
-//    // validation
-//    Array<Point> actual_find_locations;
-//    Array<double> actual_weights;
-//    actual_hog.detect(img, actual_find_locations, actual_weights,
-//        hitThreshold, winStride, padding, locations);
-
-//    if (!std::equal(hits.begin(), hits.end(),
-//        actual_find_locations.begin()))
-//    {
-//        ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Found locations are not equal (see detect function)\n");
-//        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-//        ts.set_gtest_status();
-//        failed = true;
-//        return;
-//    }
-
-//    const double eps = 0.0;
-//    double diff_norm = alvision.cvtest.norm(actual_weights, weights,alvision.NormTypes. NORM_L2);
-//    if (diff_norm > eps)
-//    {
-//        ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Weights for found locations aren't equal.\n"
-//            "Norm of the difference is %lf\n", diff_norm);
-//        ts.printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
-//        failed = true;
-//        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-//        ts.set_gtest_status();
-//        return;
-//    }
-//}
-
-//void HOGDescriptorTester::detect(const Mat& img, Array<Point>& hits, double hitThreshold,
-//    Size winStride, Size padding, const Array<Point>& locations) const
+//for (let i = 0; i < nwindows; i++ )
 //{
-//    Array<double> weightsV;
-//    detect(img, hits, weightsV, hitThreshold, winStride, padding, locations);
+//    let pt0 = new alvision.Point();
+//    if (!locations.empty()) {
+//        pt0 = locations[i];
+//        if (pt0.x < -padding.width || pt0.x > img.cols + padding.width - winSize.width ||
+//            pt0.y < -padding.height || pt0.y > img.rows + padding.height - winSize.height)
+//            continue;
+//    }
+//    else {
+//        pt0 = cache.getWindow(paddedImgSize, winStride, (int)i).tl() - Point(padding);
+//        alvision.CV_Assert(pt0.x % cacheStride.width == 0 && pt0.y % cacheStride.height == 0);
+//    }
+//    let s = rho;
+//    const float* svmVec = &svmDetector[0];
+//    //int j, k;
+//    for (let j = 0; j < nblocks; j++ , svmVec += blockHistogramSize) {
+//        const  bj = blockData[j];
+//        let pt = pt0.op_Addition(bj.imgOffset);
+
+//        const float* vec = cache.getBlock(pt, &blockHist[0]);
+//        for (let k = 0; k <= blockHistogramSize - 4; k += 4)
+//            s += vec[k] * svmVec[k] + vec[k + 1] * svmVec[k + 1] +
+//                vec[k + 2] * svmVec[k + 2] + vec[k + 3] * svmVec[k + 3];
+//        for (; k < blockHistogramSize; k++)
+//            s += vec[k] * svmVec[k];
+//    }
+//    if (s >= hitThreshold) {
+//        hits.push(pt0);
+//        weights.push(s);
+//    }
 //}
 
-//void HOGDescriptorTester::compute(InputArray _img, Array<float>& descriptors,
-//    Size winStride, Size padding, const Array<Point>& locations) const
+//// validation
+//Array < Point > actual_find_locations;
+//Array < double > actual_weights;
+//actual_hog.detect(img, actual_find_locations, actual_weights,
+//    hitThreshold, winStride, padding, locations);
+
+//if (!std::equal(hits.begin(), hits.end(),
+//    actual_find_locations.begin()))
 //{
-//    Mat img = _img.getMat();
-
-//    if( winStride == Size() )
-//        winStride = cellSize;
-//    Size cacheStride(gcd(winStride.width, blockStride.width),
-//        gcd(winStride.height, blockStride.height));
-//    size_t nwindows = locations.size();
-//    padding.width = (int)alignSize(Math.max(padding.width, 0), cacheStride.width);
-//    padding.height = (int)alignSize(Math.max(padding.height, 0), cacheStride.height);
-//    Size paddedImgSize(img.cols + padding.width*2, img.rows + padding.height*2);
-
-//    HOGCacheTester cache(this, img, padding, padding, nwindows == 0, cacheStride);
-
-//    if( !nwindows )
-//        nwindows = cache.windowsInImage(paddedImgSize, winStride).area();
-
-//    const HOGCacheTester::BlockData* blockData = &cache.blockData[0];
-
-//    int nblocks = cache.nblocks.area();
-//    int blockHistogramSize = cache.blockHistogramSize;
-//    size_t dsize = getDescriptorSize();
-//    descriptors.resize(dsize*nwindows);
-
-//    for( size_t i = 0; i < nwindows; i++ )
-//    {
-//        float* descriptor = &descriptors[i*dsize];
-
-//        Point pt0;
-//        if( !locations.empty() )
-//        {
-//            pt0 = locations[i];
-//            if( pt0.x < -padding.width || pt0.x > img.cols + padding.width - winSize.width ||
-//                pt0.y < -padding.height || pt0.y > img.rows + padding.height - winSize.height )
-//                continue;
-//        }
-//        else
-//        {
-//            pt0 = cache.getWindow(paddedImgSize, winStride, (int)i).tl() - Point(padding);
-//            alvision.CV_Assert(pt0.x % cacheStride.width == 0 && pt0.y % cacheStride.height == 0);
-//        }
-
-//        for( int j = 0; j < nblocks; j++ )
-//        {
-//            const HOGCacheTester::BlockData& bj = blockData[j];
-//            Point pt = pt0 + bj.imgOffset;
-
-//            float* dst = descriptor + bj.histOfs;
-//            const float* src = cache.getBlock(pt, dst);
-//            if( src != dst )
-//                for( int k = 0; k < blockHistogramSize; k++ )
-//                    dst[k] = src[k];
-//        }
-//    }
-
-//    // validation
-//    Array<float> actual_descriptors;
-//    actual_hog.compute(img, actual_descriptors, winStride, padding, locations);
-
-//    double diff_norm = alvision.cvtest.norm(actual_descriptors, descriptors,alvision.NormTypes. NORM_L2);
-//    const double eps = 0.0;
-//    if (diff_norm > eps)
-//    {
-//        ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Norm of the difference: %lf\n", diff_norm);
-//        ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Found descriptors are not equal (see compute function)\n");
-//        this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-//        ts.printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
-//        ts.set_gtest_status();
-//        failed = true;
-//        return;
-//    }
+//    this.ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Found locations are not equal (see detect function)\n");
+//    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+//    this.ts.set_gtest_status();
+//    this.failed = true;
+//    return;
 //}
 
-//void HOGDescriptorTester::computeGradient(const Mat& img, Mat& grad, Mat& qangle,
-//   Size paddingTL, Size paddingBR) const
+//const eps = 0.0;
+//let diff_norm = alvision.cvtest.norm(actual_weights, weights, alvision.NormTypes.NORM_L2);
+//if (diff_norm > eps) {
+//    this.ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Weights for found locations aren't equal.\nNorm of the difference is %lf\n", diff_norm);
+//    this.ts.printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
+//    this.failed = true;
+//    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+//    this.ts.set_gtest_status();
+//    return;
+//}
+//}
+
+//    detect2(img: alvision.Mat, hits: Array<alvision.Point>, hitThreshold: alvision.double,
+//        winStride: alvision.Size, padding: alvision.Size, locations: Array<alvision.Point>): void {
+//        let weightsV: Array<alvision.double>;
+//        this.detect1(img, hits, weightsV, hitThreshold, winStride, padding, locations);
+//    }
+
+//    compute(_img: alvision.InputArray, descriptors: Array<alvision.float> ,
+//        winStride: alvision.Size, padding: alvision.Size, locations: Array<alvision.Point>  ) : void 
+//        {
+//            let img = _img.getMat();
+
+//if (winStride == Size())
+//    winStride = cellSize;
+//        let cacheStride = new alvision.Size(gcd(winStride.width, blockStride.width),
+//    gcd(winStride.height, blockStride.height));
+//let nwindows = locations.size();
+//padding.width = (int)alignSize(Math.max(padding.width, 0), cacheStride.width);
+//padding.height = (int)alignSize(Math.max(padding.height, 0), cacheStride.height);
+//        let paddedImgSize = new alvision.Size (img.cols + padding.width * 2, img.rows + padding.height * 2);
+
+//        let cache = new HOGCacheTester (this, img, padding, padding, nwindows == 0, cacheStride);
+
+//if (!nwindows)
+//    nwindows = cache.windowsInImage(paddedImgSize, winStride).area();
+
+//const HOGCacheTester::BlockData* blockData = &cache.blockData[0];
+
+//let nblocks = cache.nblocks.area();
+//let blockHistogramSize = cache.blockHistogramSize;
+//let dsize = getDescriptorSize();
+//descriptors.resize(dsize * nwindows);
+
+//        for (let i = 0; i < nwindows; i++) {
+//            float * descriptor = &descriptors[i * dsize];
+
+//            let pt0 = new alvision.Point();
+//            if (!locations.empty()) {
+//                pt0 = locations[i];
+//                if (pt0.x < -padding.width || pt0.x > img.cols + padding.width - winSize.width ||
+//                    pt0.y < -padding.height || pt0.y > img.rows + padding.height - winSize.height)
+//                    continue;
+//            }
+//            else {
+//                pt0 = cache.getWindow(paddedImgSize, winStride, i).tl() - Point(padding);
+//                alvision.CV_Assert(pt0.x % cacheStride.width == 0 && pt0.y % cacheStride.height == 0);
+//            }
+
+//            for (let j = 0; j < nblocks; j++) {
+//                const bj = blockData[j];
+//                Point pt = pt0 + bj.imgOffset;
+
+//                float * dst = descriptor + bj.histOfs;
+//                const float* src = cache.getBlock(pt, dst);
+//                if (src != dst)
+//                    for (let k = 0; k < blockHistogramSize; k++)
+//                        dst[k] = src[k];
+//            }
+//        }
+
+//// validation
+//        let actual_descriptors: Array<alvision.float>;
+//actual_hog.compute(img, actual_descriptors, winStride, padding, locations);
+
+//let diff_norm = alvision.cvtest.norm(actual_descriptors, descriptors, alvision.NormTypes.NORM_L2);
+//const eps = 0.0;
+//if (diff_norm > eps) {
+//    this.ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Norm of the difference: %lf\n", diff_norm);
+//    this.ts.printf(alvision.cvtest.TSConstants.SUMMARY, "Found descriptors are not equal (see compute function)\n");
+//    this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
+//    this.ts.printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
+//    this.ts.set_gtest_status();
+//    this.failed = true;
+//    return;
+//}
+//}
+
+//    is_failed(): boolean {
+//        return this.failed;
+//    }
+//};
+
+//interface HOGCacheTester_BlockData
 //{
-//    CV_Assert( img.type() == alvision.MatrixType.CV_8U || img.type() == alvision.MatrixType.CV_8UC3 );
+//    //BlockData() : histOfs(0), imgOffset() {}
+//    histOfs: alvision.int;
+//    imgOffset: alvision.Point;
+//};
 
-//    Size gradsize(img.cols + paddingTL.width + paddingBR.width,
-//       img.rows + paddingTL.height + paddingBR.height);
-//    grad.create(gradsize, alvision.MatrixType.CV_32FC2);  // <magnitude*(1-alpha), magnitude*alpha>
-//    qangle.create(gradsize, alvision.MatrixType.CV_8UC2); // [0..nbins-1] - quantized gradient orientation
-//    Size wholeSize;
-//    Point roiofs;
-//    img.locateROI(wholeSize, roiofs);
+//interface HOGCacheTester_PixData
+//{
+//    gradOfs: alvision.size_t;
+//    qangleOfs: alvision.size_t;
+//    histOfs/*[4]*/ : Array<alvision.int>;
+//    histWeights/*[4]*/: Array<alvision.float>;
+//    gradWeight: alvision.float;
+//};
 
-//    int i, x, y;
-//    int cn = img.channels();
+//class HOGCacheTester {
+//    constructor(descriptor?: HOGDescriptorTester,
+//        img?: alvision.Mat, paddingTL?: alvision.Size, paddingBR?: alvision.Size,
+//        useCache?: boolean, cacheStride?: alvision.Size) {
 
-//    Mat_<float> _lut(1, 256);
-//    const float* lut = &_lut(0,0);
+//        this.useCache = false;
+//        this.blockHistogramSize = this.count1 = this.count2 = this.count4 = 0;
+//        this.descriptor = null;
 
-//    if( gammaCorrection )
-//       for( i = 0; i < 256; i++ )
-//           _lut(0,i) = Math.sqrt((float)i);
-//    else
-//       for( i = 0; i < 256; i++ )
-//           _lut(0,i) = (float)i;
+//        if (descriptor) {
 
-//    AutoBuffer<int> mapbuf(gradsize.width + gradsize.height + 4);
-//    int* xmap = (int*)mapbuf + 1;
-//    int* ymap = xmap + gradsize.width + 2;
+//            this.init(descriptor, img, paddingTL, paddingBR, useCache, cacheStride);
+//        }
 
-//    const int borderType = (int)BORDER_REFLECT_101;
+//    }
+//    //virtual ~HOGCacheTester() { }
 
-//    for( x = -1; x < gradsize.width + 1; x++ )
-//       xmap[x] = borderInterpolate(x - paddingTL.width + roiofs.x,
-//           wholeSize.width, borderType) - roiofs.x;
-//    for( y = -1; y < gradsize.height + 1; y++ )
-//       ymap[y] = borderInterpolate(y - paddingTL.height + roiofs.y,
-//           wholeSize.height, borderType) - roiofs.y;
+//    init(_descriptor: HOGDescriptorTester,
+//        _img: alvision.Mat, _paddingTL: alvision.Size, _paddingBR: alvision.Size,
+//        _useCache: boolean, _cacheStride: alvision.Size): void {
+//        this.descriptor = _descriptor;
+//        this.cacheStride = _cacheStride;
+//        this.useCache = _useCache;
 
-//    // x- & y- derivatives for the whole row
-//    int width = gradsize.width;
-//    AutoBuffer<float> _dbuf(width*4);
-//    float* dbuf = _dbuf;
-//    Mat Dx(1, width, alvision.MatrixType.CV_32F, dbuf);
-//    Mat Dy(1, width, alvision.MatrixType.CV_32F, dbuf + width);
-//    Mat Mag(1, width, alvision.MatrixType.CV_32F, dbuf + width*2);
-//    Mat Angle(1, width, alvision.MatrixType.CV_32F, dbuf + width*3);
+//        this.descriptor.computeGradient(_img, this.grad, this.qangle, _paddingTL, _paddingBR);
+//        this.imgoffset = _paddingTL;
 
-//    int _nbins = nbins;
-//    float angleScale = (float)(_nbins/Math.PI);
-//    for( y = 0; y < gradsize.height; y++ )
-//    {
-//       const uchar* imgPtr  = img.ptr(ymap[y]);
-//       const uchar* prevPtr = img.ptr(ymap[y-1]);
-//       const uchar* nextPtr = img.ptr(ymap[y+1]);
-//       float* gradPtr = (float*)grad.ptr(y);
-//       uchar* qanglePtr = (uchar*)qangle.ptr(y);
+//        this.winSize = this.descriptor.winSize;
+//        let blockSize = this.descriptor.blockSize;
+//        let blockStride = this.descriptor.blockStride;
+//        let cellSize = this.descriptor.cellSize;
+//        //int i, j,
+//        let nbins = this.descriptor.nbins;
+//        let rawBlockSize = blockSize.width.valueOf() * blockSize.height.valueOf();
 
-//       if( cn == 1 )
-//       {
-//           for( x = 0; x < width; x++ )
-//           {
-//               int x1 = xmap[x];
-//               dbuf[x] = (float)(lut[imgPtr[xmap[x+1]]] - lut[imgPtr[xmap[x-1]]]);
-//               dbuf[width + x] = (float)(lut[nextPtr[x1]] - lut[prevPtr[x1]]);
-//           }
-//       }
-//       else
-//       {
-//           for( x = 0; x < width; x++ )
-//           {
-//               int x1 = xmap[x]*3;
-//               float dx0, dy0, dx, dy, mag0, mag;
-//                const uchar* p2 = imgPtr + xmap[x+1]*3;
-//               const uchar* p0 = imgPtr + xmap[x-1]*3;
+//        this.nblocks = new alvision.Size((this.winSize.width.valueOf() - blockSize.width.valueOf()) / blockStride.width.valueOf() + 1,
+//            (this.winSize.height.valueOf() - blockSize.height.valueOf()) / blockStride.height.valueOf() + 1);
+//        this.ncells =new alvision. Size(blockSize.width.valueOf() / cellSize.width.valueOf(), blockSize.height.valueOf() / cellSize.height.valueOf());
+//        this.blockHistogramSize = this.ncells.width.valueOf() * this.ncells.height.valueOf() * nbins.valueOf();
 
-//               dx0 = lut[p2[2]] - lut[p0[2]];
-//               dy0 = lut[nextPtr[x1+2]] - lut[prevPtr[x1+2]];
-//               mag0 = dx0*dx0 + dy0*dy0;
+//        if (this.useCache) {
+//            let cacheSize = new alvision.Size((this.grad.cols - blockSize.width) / cacheStride.width + 1,
+//                (this.winSize.height.valueOf() / this.cacheStride.height) + 1);
+//            this.blockCache.create(cacheSize.height, cacheSize.width.valueOf() * blockHistogramSize);
+//            this.blockCacheFlags.create(cacheSize);
+//            let cacheRows = this.blockCache.rows();
+//            this.ymaxCached.length = cacheRows.valueOf();
+//            for (let ii = 0; ii < cacheRows; ii++)
+//                this.ymaxCached[ii] = -1;
+//        }
 
-//               dx = lut[p2[1]] - lut[p0[1]];
-//               dy = lut[nextPtr[x1+1]] - lut[prevPtr[x1+1]];
-//               mag = dx*dx + dy*dy;
+//        let weights = new alvision.Mat_<float>(blockSize);
+//        let sigma = this.descriptor.getWinSigma();
+//        let scale = 1. / (sigma.valueOf() * sigma.valueOf() * 2);
 
-//               if( mag0 < mag )
-//               {
-//                   dx0 = dx;
-//                   dy0 = dy;
-//                   mag0 = mag;
-//               }
+//        for (let i = 0; i < blockSize.height; i++)
+//            for (let j = 0; j < blockSize.width; j++) {
+//                let di = i - blockSize.height.valueOf() * 0.5;
+//                let dj = j - blockSize.width.valueOf() * 0.5;
+//                weights(i, j) = Math.exp(-(di * di + dj * dj) * scale);
+//            }
 
-//               dx = lut[p2[0]] - lut[p0[0]];
-//               dy = lut[nextPtr[x1]] - lut[prevPtr[x1]];
-//               mag = dx*dx + dy*dy;
+//        this.blockData.resize(nblocks.width * nblocks.height);
+//        this.pixData.resize(rawBlockSize * 3);
 
-//               if( mag0 < mag )
-//               {
-//                   dx0 = dx;
-//                   dy0 = dy;
-//                   mag0 = mag;
-//               }
+//        // Initialize 2 lookup tables, pixData & blockData.
+//        // Here is why:
+//        //
+//        // The detection algorithm runs in 4 nested loops (at each pyramid layer):
+//        //  loop over the windows within the input image
+//        //    loop over the blocks within each window
+//        //      loop over the cells within each block
+//        //        loop over the pixels in each cell
+//        //
+//        // As each of the loops runs over a 2-dimensional array,
+//        // we could get 8(!) nested loops in total, which is very-very slow.
+//        //
+//        // To speed the things up, we do the following:
+//        //   1. loop over windows is unrolled in the HOGDescriptor::{compute|detect} methods;
+//        //         inside we compute the current search window using getWindow() method.
+//        //         Yes, it involves some overhead (function call + couple of divisions),
+//        //         but it's tiny in fact.
+//        //   2. loop over the blocks is also unrolled. Inside we use pre-computed blockData[j]
+//        //         to set up gradient and histogram pointers.
+//        //   3. loops over cells and pixels in each cell are merged
+//        //       (since there is no overlap between cells, each pixel in the block is processed once)
+//        //      and also unrolled. Inside we use PixData[k] to access the gradient values and
+//        //      update the histogram
+//        //
+//        this.count1 = this.count2 = this.count4 = 0;
+//        for (let j = 0; j < blockSize.width; j++)
+//            for (let i = 0; i < blockSize.height; i++) {
+//                let data: HOGCacheTester_PixData;
+//                let cellX = (j + 0.5) / cellSize.width.valueOf() - 0.5;
+//                let cellY = (i + 0.5) / cellSize.height.valueOf() - 0.5;
+//                let icellX0 = Math.floor(cellX);
+//                let icellY0 = Math.floor(cellY);
+//                let icellX1 = icellX0 + 1, icellY1 = icellY0 + 1;
+//                cellX -= icellX0;
+//                cellY -= icellY0;
 
-//               dbuf[x] = dx0;
-//               dbuf[x+width] = dy0;
-//           }
-//       }
+//                if (icellX0 < this.ncells.width &&
+//                    icellX1 < this.ncells.width) {
+//                    if (icellY0 < this.ncells.height &&
+//                        icellY1 < this.ncells.height) {
+//                        data = this.pixData[rawBlockSize * 2 + (this.count4++)];
+//                        data.histOfs[0] = (icellX0 * this.ncells.height.valueOf() + icellY0) * nbins.valueOf();
+//                        data.histWeights[0] = (1. - cellX) * (1. - cellY);
+//                        data.histOfs[1] = (icellX1 * this.ncells.height.valueOf() + icellY0) * nbins.valueOf();
+//                        data.histWeights[1] = cellX * (1. - cellY);
+//                        data.histOfs[2] = (icellX0 * this.ncells.height.valueOf() + icellY1) * nbins.valueOf();
+//                        data.histWeights[2] = (1. - cellX) * cellY;
+//                        data.histOfs[3] = (icellX1 * this.ncells.height.valueOf() + icellY1) * nbins.valueOf();
+//                        data.histWeights[3] = cellX * cellY;
+//                    }
+//                    else {
+//                        data = this.pixData[rawBlockSize + (this.count2++)];
+//                        if (icellY0 < this.ncells.height) {
+//                            icellY1 = icellY0;
+//                            cellY = 1. - cellY;
+//                        }
+//                        data.histOfs[0] = (icellX0 * this.ncells.height.valueOf() + icellY1) * nbins.valueOf();
+//                        data.histWeights[0] = (1. - cellX)*cellY;
+//                        data.histOfs[1] = (icellX1 * this.ncells.height.valueOf() + icellY1) * nbins.valueOf();
+//                        data.histWeights[1] = cellX * cellY;
+//                        data.histOfs[2] = data.histOfs[3] = 0;
+//                        data.histWeights[2] = data.histWeights[3] = 0;
+//                    }
+//                }
+//                else {
+//                    if (icellX0 < this.ncells.width) {
+//                        icellX1 = icellX0;
+//                        cellX = 1. - cellX;
+//                    }
 
-//       cartToPolar( Dx, Dy, Mag, Angle, false );
-//       for( x = 0; x < width; x++ )
-//       {
-//           float mag = dbuf[x+width*2], angle = dbuf[x+width*3]*angleScale - 0.5f;
-//           int hidx = Math.floor(angle);
-//           angle -= hidx;
-//           gradPtr[x*2] = mag*(1.f - angle);
-//           gradPtr[x*2+1] = mag*angle;
-//           if( hidx < 0 )
-//               hidx += _nbins;
-//           else if( hidx >= _nbins )
-//               hidx -= _nbins;
-//           assert( (unsigned)hidx < (unsigned)_nbins );
+//                    if (icellY0 < this.ncells.height &&
+//                        icellY1 < this.ncells.height) {
+//                        data = this.pixData[rawBlockSize + (this.count2++)];
+//                        data.histOfs[0] = (icellX1 * this.ncells.height.valueOf() + icellY0) * nbins.valueOf();
+//                        data.histWeights[0] = cellX * (1. - cellY);
+//                        data.histOfs[1] = (icellX1 * this.ncells.height.valueOf() + icellY1) * nbins.valueOf();
+//                        data.histWeights[1] = cellX * cellY;
+//                        data.histOfs[2] = data.histOfs[3] = 0;
+//                        data.histWeights[2] = data.histWeights[3] = 0;
+//                    }
+//                    else {
+//                        data = this.pixData[this.count1++];
+//                        if (icellY0 < this.ncells.height) {
+//                            icellY1 = icellY0;
+//                            cellY = 1. - cellY;
+//                        }
+//                        data.histOfs[0] = (icellX1 * this.ncells.height.valueOf() + icellY1) * nbins.valueOf();
+//                        data.histWeights[0] = cellX * cellY;
+//                        data.histOfs[1] = data.histOfs[2] = data.histOfs[3] = 0;
+//                        data.histWeights[1] = data.histWeights[2] = data.histWeights[3] = 0;
+//                    }
+//                }
+//                data.gradOfs = (grad.cols * i + j) * 2;
+//                data.qangleOfs = (qangle.cols * i + j) * 2;
+//                data.gradWeight = weights(i, j);
+//            }
 
-//           qanglePtr[x*2] = (uchar)hidx;
-//           hidx++;
-//           hidx &= hidx < _nbins ? -1 : 0;
-//           qanglePtr[x*2+1] = (uchar)hidx;
-//       }
+//        alvision.assert(()=>(this.count1.valueOf() + this.count2.valueOf() + this.count4.valueOf()) == rawBlockSize);
+//        // defragment pixData
+//        for (let j = 0; j < this.count2; j++)
+//            this.pixData[j + this.count1.valueOf()] = this.pixData[j + rawBlockSize];
+//        for (let j = 0; j < this.count4; j++)
+//            this.pixData[j + this.count1.valueOf() + this.count2] = this.pixData[j + rawBlockSize * 2];
+//        this.count2 += this.count1.valueOf();
+//        this.count4 += this.count2.valueOf();
+
+//        // initialize blockData
+//        for (let j = 0; j < this.nblocks.width; j++)
+//            for (let i = 0; i < this.nblocks.height; i++) {
+//                let data = this.blockData[j * this.nblocks.height + i];
+//                data.histOfs = (j * this.nblocks.height + i) * blockHistogramSize;
+//                data.imgOffset = new alvision.Point(j * blockStride.width, i * blockStride.height);
+//            }
 //    }
 
-//    // validation
-//    Mat actual_mats[2], reference_mats[2] = { grad, qangle };
-//    const char* args[] = { "Gradient's", "Qangles's" };
-//    actual_hog.computeGradient(img, actual_mats[0], actual_mats[1], paddingTL, paddingBR);
+//    windowsInImage(imageSize: alvision.Size, winStride: alvision.Size): alvision.Size {
 
-//    const double eps = 0.0;
-//    for (i = 0; i < 2; ++i)
-//    {
-//       double diff_norm = alvision.cvtest.norm(reference_mats[i], actual_mats[i],alvision.NormTypes. NORM_L2);
-//       if (diff_norm > eps)
-//       {
-//           ts.printf(alvision.cvtest.TSConstants.LOG, "%s matrices are not equal\n"
-//               "Norm of the difference is %lf\n", args[i], diff_norm);
-//           ts.printf(alvision.cvtest.TSConstants.LOG, "Channels: %d\n", img.channels());
-//           this.ts.set_failed_test_info(alvision.cvtest.FailureCode.FAIL_BAD_ACCURACY);
-//           ts.set_gtest_status();
-//           failed = true;
-//           return;
-//       }
+//        return new alvision.Size((imageSize.width.valueOf() - this.winSize.width.valueOf()) / winStride.width.valueOf() + 1,
+//            (imageSize.height.valueOf() - this.winSize.height.valueOf()) / winStride.height.valueOf() + 1);
+
 //    }
-//}
+//    getWindow(imageSize: alvision.Size, winStride: alvision.Size, idx: alvision.int): alvision.Rect {
 
-//TEST(Objdetect_HOGDetector_Strict, accuracy)
+
+//        let nwindowsX = (imageSize.width.valueOf() - this.winSize.width.valueOf()) / winStride.width.valueOf() + 1;
+//        let y = idx.valueOf() / nwindowsX;
+//        let x = idx.valueOf() - nwindowsX * y;
+//        return new alvision.Rect(x * winStride.width.valueOf(), y * winStride.height.valueOf(), this.winSize.width.valueOf(), this.winSize.height.valueOf());
+
+//    }
+
+//    getBlock(pt: alvision.Point, buf: Array<alvision.float>): Array<alvision.float> {
+//        let blockHist = buf;
+//        alvision.assert(() => this.descriptor != 0);
+
+//        let blockSize = this.descriptor.blockSize;
+//        pt += this.imgoffset;
+
+//        alvision.CV_Assert(() => pt.x <= (grad.cols - blockSize.width.valueOf()) &&
+//            pt.y <= (grad.rows - blockSize.height.valueOf()));
+
+//        if (useCache) {
+//            alvision.CV_Assert(() => pt.x % cacheStride.width == 0 &&
+//                pt.y % cacheStride.height == 0);
+//            let cacheIdx = new alvision.Point(pt.x / cacheStride.width,
+//                (pt.y / cacheStride.height) % blockCache.rows);
+//            if (pt.y != ymaxCached[cacheIdx.y]) {
+//                Mat_ < uchar > cacheRow = blockCacheFlags.row(cacheIdx.y);
+//                cacheRow = (uchar)0;
+//                ymaxCached[cacheIdx.y] = pt.y;
+//            }
+
+//            blockHist = &blockCache[cacheIdx.y][cacheIdx.x * blockHistogramSize];
+//            uchar & computedFlag = blockCacheFlags(cacheIdx.y, cacheIdx.x);
+//            if (computedFlag != 0)
+//                return blockHist;
+//            computedFlag = (uchar)1; // set it at once, before actual computing
+//        }
+
+//        //int k,
+//        let C1 = this.count1, C2 = this.count2, C4 = this.count4;
+//        const gradPtr = this.grad.ptr<alvision.float>("float", pt.y) + pt.x * 2;
+//        const qanglePtr = qangle.ptr(pt.y) + pt.x * 2;
+
+//        alvision.CV_Assert(() => blockHist != 0);
+//        for (k = 0; k < blockHistogramSize; k++)
+//            blockHist[k] = 0.f;
+
+//        const PixData* _pixData = &pixData[0];
+
+//        for (let k = 0; k < C1; k++) {
+//            const PixData& pk = _pixData[k];
+//            const float* a = gradPtr + pk.gradOfs;
+//            let w = pk.gradWeight * pk.histWeights[0];
+//            const uchar* h = qanglePtr + pk.qangleOfs;
+//            let h0 = h[0], h1 = h[1];
+//            float * hist = blockHist + pk.histOfs[0];
+//            let t0 = hist[h0] + a[0] * w;
+//            let t1 = hist[h1] + a[1] * w;
+//            hist[h0] = t0; hist[h1] = t1;
+//        }
+
+//        for (; k < C2; k++) {
+//            const PixData& pk = _pixData[k];
+//            const float* a = gradPtr + pk.gradOfs;
+//            let w, t0, t1, a0 = a[0], a1 = a[1];
+//            const uchar* h = qanglePtr + pk.qangleOfs;
+//            let h0 = h[0], h1 = h[1];
+
+//            float * hist = blockHist + pk.histOfs[0];
+//            w = pk.gradWeight * pk.histWeights[0];
+//            t0 = hist[h0] + a0 * w;
+//            t1 = hist[h1] + a1 * w;
+//            hist[h0] = t0; hist[h1] = t1;
+
+//            hist = blockHist + pk.histOfs[1];
+//            w = pk.gradWeight * pk.histWeights[1];
+//            t0 = hist[h0] + a0 * w;
+//            t1 = hist[h1] + a1 * w;
+//            hist[h0] = t0; hist[h1] = t1;
+//        }
+
+//        for (; k < C4; k++) {
+//            const PixData& pk = _pixData[k];
+//            const float* a = gradPtr + pk.gradOfs;
+//            let w, t0, t1, a0 = a[0], a1 = a[1];
+//            const uchar* h = qanglePtr + pk.qangleOfs;
+//            let h0 = h[0], h1 = h[1];
+
+//            float * hist = blockHist + pk.histOfs[0];
+//            w = pk.gradWeight * pk.histWeights[0];
+//            t0 = hist[h0] + a0 * w;
+//            t1 = hist[h1] + a1 * w;
+//            hist[h0] = t0; hist[h1] = t1;
+
+//            hist = blockHist + pk.histOfs[1];
+//            w = pk.gradWeight * pk.histWeights[1];
+//            t0 = hist[h0] + a0 * w;
+//            t1 = hist[h1] + a1 * w;
+//            hist[h0] = t0; hist[h1] = t1;
+
+//            hist = blockHist + pk.histOfs[2];
+//            w = pk.gradWeight * pk.histWeights[2];
+//            t0 = hist[h0] + a0 * w;
+//            t1 = hist[h1] + a1 * w;
+//            hist[h0] = t0; hist[h1] = t1;
+
+//            hist = blockHist + pk.histOfs[3];
+//            w = pk.gradWeight * pk.histWeights[3];
+//            t0 = hist[h0] + a0 * w;
+//            t1 = hist[h1] + a1 * w;
+//            hist[h0] = t0; hist[h1] = t1;
+//        }
+
+//        this.normalizeBlockHistogram(blockHist);
+
+//        return blockHist;
+//    }
+//    normalizeBlockHistogram(histogram: float *)  : void {
+
+//        float * hist = &_hist[0];
+
+//        let partSum = [0.0, 0.0, 0.0, 0.0];
+//        let sz = this.blockHistogramSize;
+
+//        for (let i = 0; i <= sz - 4; i += 4) {
+//            partSum[0] += hist[i] * hist[i];
+//            partSum[1] += hist[i + 1] * hist[i + 1];
+//            partSum[2] += hist[i + 2] * hist[i + 2];
+//            partSum[3] += hist[i + 3] * hist[i + 3];
+//        }
+//        let t0 = partSum[0] + partSum[1];
+//        let t1 = partSum[2] + partSum[3];
+//        let sum = t0 + t1;
+//        for (; i < sz; i++)
+//            sum += hist[i] * hist[i];
+
+//        let scale = 1. / (Math.sqrt(sum) + sz * 0.1), thresh = this.descriptor.L2HysThreshold;
+//        partSum[0] = partSum[1] = partSum[2] = partSum[3] = 0.0;
+//        for (let i = 0; i <= sz - 4; i += 4) {
+//            hist[i] = Math.min(hist[i] * scale, thresh);
+//            hist[i + 1] = Math.min(hist[i + 1] * scale, thresh);
+//            hist[i + 2] = Math.min(hist[i + 2] * scale, thresh);
+//            hist[i + 3] = Math.min(hist[i + 3] * scale, thresh);
+//            partSum[0] += hist[i] * hist[i];
+//            partSum[1] += hist[i + 1] * hist[i + 1];
+//            partSum[2] += hist[i + 2] * hist[i + 2];
+//            partSum[3] += hist[i + 3] * hist[i + 3];
+//        }
+//        t0 = partSum[0] + partSum[1];
+//        t1 = partSum[2] + partSum[3];
+//        sum = t0 + t1;
+//        for (; i < sz; i++) {
+//            hist[i] = Math.min(hist[i] * scale, thresh);
+//            sum += hist[i] * hist[i];
+//        }
+
+//        scale = 1. / (Math.sqrt(sum) + 1e-3);
+//        for (let i = 0; i < sz; i++)
+//            hist[i] *= scale;
+
+//    }
+
+//    public pixData: Array<HOGCacheTester_PixData>;
+//    public blockData: Array<HOGCacheTester_BlockData>;
+
+//    public useCache: boolean;
+//    public ymaxCached: Array<alvision.int>;
+//    public winSize: alvision.Size;
+//    public cacheStride: alvision.Size;
+//    public nblocks: alvision.Size;
+//    public ncells: alvision.Size;
+//    public blockHistogramSize: alvision.int;
+//    public count1: alvision.int;
+//    public count2: alvision.int;
+//    public count4: alvision.int;
+//    public imgoffset: alvision.Point;
+//    public blockCache: alvision.Mat_<alvision.float>;
+//    public blockCacheFlags: alvision.Mat_<alvision.uchar>;
+
+//    public grad: alvision.Mat;
+//    public qangle: alvision.Mat;
+//    public descriptor: HOGDescriptorTester;
+//};
+
+
+
+
+//function gcd(a: alvision.int, b: alvision.int ) :alvision.int  { return (a.valueOf() % b.valueOf() == 0) ? b : gcd (b, a.valueOf() % b.valueOf()); }
+
+
+
+
+//alvision.cvtest.TEST('Objdetect_HOGDetector_Strict', 'accuracy',()=>
 //{
 //    var ts = alvision.cvtest.TS.ptr();
 //    var rng = this.ts.get_rng();
 
-//    HOGDescriptor actual_hog;
-//    actual_hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
-//    HOGDescriptorTester reference_hog(actual_hog);
+//    let actual_hog = new alvision.HOGDescriptor();
+//    actual_hog.setSVMDetector(alvision.HOGDescriptor.getDefaultPeopleDetector());
+//    let reference_hog = new HOGDescriptorTester (actual_hog);
 
-//    const unsigned int test_case_count = 5;
-//    for (unsigned int i = 0; i < test_case_count && !reference_hog.is_failed(); ++i)
+//    const test_case_count = 5;
+//    for (let i = 0; i < test_case_count && !reference_hog.is_failed(); ++i)
 //    {
 //        // creating a matrix
-//        Size ssize(rng.uniform(1, 10) * actual_hog.winSize.width,
-//            rng.uniform(1, 10) * actual_hog.winSize.height);
+//        let ssize = new alvision.Size (rng.uniform(1, 10) * actual_hog.winSize.width.valueOf(),
+//            rng.uniform(1, 10) * actual_hog.winSize.height.valueOf());
 //        let type = rng.uniform(0, 1) > 0 ? alvision.MatrixType.CV_8UC1 : alvision.MatrixType.CV_8UC3;
-//        Mat image(ssize, type);
+//        let image = new alvision.Mat (ssize, type);
 //        rng.fill(image, alvision.DistType.UNIFORM, 0, 256, true);
 
 //        // checking detect
-//        Array<Point> hits;
-//        Array<double> weights;
-//        reference_hog.detect(image, hits, weights);
+//        let hits: Array<alvision.Point>;
+//        let weights: Array<alvision.double>;
+//        reference_hog.detect(image, (locs, wts) => { hits = locs; weights = wts; });
 
 //        // checking compute
-//        Array<float> descriptors;
-//        reference_hog.compute(image, descriptors);
+//        let descriptors: Array<alvision.float>;
+//        reference_hog.compute(image,(descs)=> descriptors = descs);
 //    }
 // }
+//);

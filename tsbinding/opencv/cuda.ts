@@ -583,6 +583,10 @@ interface Event
 //        Use this function before any other CUDA functions calls. If OpenCV is compiled without CUDA support,
 //        this function returns 0.
 //         */
+        interface IgetCudaEnabledDeviceCount {
+            (): _st.int;
+        }
+        export var getCudaEnabledDeviceCount: IgetCudaEnabledDeviceCount = alvision_module.getCudaEnabledDeviceCount;
 //        CV_EXPORTS int getCudaEnabledDeviceCount();
 //
 //        /** @brief Sets a device and initializes it for the current thread.
@@ -689,7 +693,7 @@ export interface DeviceInfo
     deviceID(): _st.int;
 //
 //            //! ASCII string identifying device
-//            const char* name() const;
+    name(): string;
 //
 //            //! global memory available on device in bytes
 //            size_t totalGlobalMem() const;
@@ -869,7 +873,7 @@ export interface DeviceInfo
 //            This function returns true if the CUDA module can be run on the specified device. Otherwise, it
 //            returns false .
 //             */
-//            bool isCompatible() const;
+    isCompatible(): boolean;
 //
 //            private:
 //            int device_id_;
@@ -877,8 +881,18 @@ export interface DeviceInfo
 
         export var DeviceInfo: DeviceInfoStatic = alvision_module.cuda.DeviceInfo;
 //
+        interface IprintCudaDeviceInfo {
+            (device: _st.int): void;
+        }
+
+        export var printCudaDeviceInfo: IprintCudaDeviceInfo = alvision_module.printCudaDeviceInfo;
 //        CV_EXPORTS void printCudaDeviceInfo(int device);
+        interface IprintShortCudaDeviceInfo {
+            (device: _st.int): void;
+        }
+        export var printShortCudaDeviceInfo: IprintShortCudaDeviceInfo = alvision_module.printShortCudaDeviceInfo;
 //        CV_EXPORTS void printShortCudaDeviceInfo(int device);
+        
 //
 //        //! @} cudacore_init
 //

@@ -62,6 +62,7 @@
 #include "opencv/MatOp.h"
 
 #include "opencv/features2d.h"
+#include "opencv/objdetect.h"
 
 #include <tracer.h>
 
@@ -104,7 +105,7 @@ init(Handle<Object> target) {
 	Constants::Init(target,overload);
 	
 
-	Cuda::Init(target,overload);
+	
 
 	flann::Init(target,overload);
 
@@ -149,7 +150,7 @@ init(Handle<Object> target) {
 
 	persistence::Init(target, overload);
 
-	
+	Cuda::Init(target, overload);
 
 
 
@@ -170,6 +171,7 @@ init(Handle<Object> target) {
 	AffineInit::Init(target, overload);
 
 	features2d::Init(target, overload);
+	objdetect::Init(target, overload);
 	
 	calib3d::Init(target, overload);
 	cv_test::Init(target, overload);

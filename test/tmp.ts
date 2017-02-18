@@ -161,10 +161,13 @@ test.createStream({ objectMode: true }).on('data', (row) => {
 //});
 
   
-let afs = new alvision.FileStorage();
-console.log(afs);
-console.log("isOpened", afs.isOpened);
-console.log(Object.getOwnPropertyNames(afs));
-for (let pn of Object.getOwnPropertyNames(afs)) {
-    console.log(pn, ":", typeof afs[pn]);
-}
+//let afs = new alvision.FileStorage();
+//console.log(afs);
+//console.log("isOpened", afs.isOpened);
+//console.log(Object.getOwnPropertyNames(afs));
+//for (let pn of Object.getOwnPropertyNames(afs)) {
+//    console.log(pn, ":", typeof afs[pn]);
+//}
+
+
+

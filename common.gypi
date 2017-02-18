@@ -39,14 +39,6 @@
 											#'AdditionalOptions' :['/MDd']
 										 }
 									}
-								}],
-								['shared_runtime=="true"', {
-									'msvs_settings':{
-										'VCCLCompilerTool': {
-											'RuntimeLibrary': 3, # MultiThreadedDebugDLL (/MDd)
-											'AdditionalOptions' :['/MDd']
-										 }
-									}
 								}]
 							]
 						}

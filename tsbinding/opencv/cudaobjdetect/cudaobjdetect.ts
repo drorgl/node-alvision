@@ -196,9 +196,9 @@ export interface HOG extends _core.Algorithm
     @param found_locations Detected objects boundaries.
     @param confidences Optional output array for confidences.
      */
-    detectMultiScale(img,
-        found_locations: Array<_types.Rect>,
-        confidences?: Array<_st.double>/*= NULL*/): void;
+    detectMultiScale(img : _st.InputArray,
+        cb:(found_locations: Array<_types.Rect>,
+        confidences?: Array<_st.double>/*= NULL*/)=>void): void;
 
     /** @brief Returns block descriptors computed for the whole image.
 

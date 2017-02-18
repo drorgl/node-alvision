@@ -201,7 +201,7 @@ It provides easy interface to:
     };
 
     //! Flags for cv::setWindowProperty / cv::getWindowProperty
-    enum WindowPropertyFlags {
+    export enum WindowPropertyFlags {
         WND_PROP_FULLSCREEN = 0, //!< fullscreen property    (can be WINDOW_NORMAL or WINDOW_FULLSCREEN).
         WND_PROP_AUTOSIZE = 1, //!< autosize property      (can be WINDOW_NORMAL or WINDOW_AUTOSIZE).
         WND_PROP_ASPECT_RATIO = 2, //!< window's aspect ration (can be set to WINDOW_FREERATIO or WINDOW_KEEPRATIO).

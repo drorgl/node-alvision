@@ -419,6 +419,8 @@ export enum FileStorageMode
 //    //! the destructor. calls release()
 //    virtual ~FileStorage();
 
+    getDefaultObjectName(filename : string): string;
+
     }
 
 ///** @brief XML/YAML file storage class that encapsulates all the information necessary for writing or reading
@@ -521,7 +523,7 @@ export interface FileStorage
 //    @param filename Name of a file
 //    @returns The normalized object name.
 //     */
-//    static String getDefaultObjectName(const String& filename);
+
 
 //    Ptr<CvFileStorage> fs; //!< the underlying C FileStorage structure
 //    String elname; //!< the currently written element

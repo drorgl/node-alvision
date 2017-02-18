@@ -23,7 +23,8 @@
     "linux": "build_linux_alvision",
     "test": "ts-node test/unit.ts",
 	"test-opencv" : "ts-node test/opencv.ts",
-	"test-tmp" : "ts-node test/tmp.ts"
+	"test-tmp" : "ts-node test/tmp.ts",
+	"demo-pedestrian_detection" : "ts-node test/demos/pedestrian_detection.ts"
   },
   "keywords": [
     "opencv",

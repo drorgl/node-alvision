@@ -130,10 +130,13 @@ using a Boosted Cascade of Simple Features. IEEE CVPR, 2001. The paper is availa
 
 //! class for grouping object candidates, detected by Cascade Classifier, HOG etc.
 //! instance of the class is to be passed to cv::partition (see cxoperations.hpp)
-interface SimilarRects
+class SimilarRects
 {
+
 //public:
-//    SimilarRects(double _eps) : eps(_eps) {}
+    constructor(_eps: _st.double) {
+        this.eps = _eps;
+}
 //    inline bool operator()(const Rect& r1, const Rect& r2) const
 //    {
 //        double delta = eps*(std::min(r1.width, r2.width) + std::min(r1.height, r2.height))*0.5;
@@ -142,7 +145,7 @@ interface SimilarRects
 //            std::abs(r1.x + r1.width - r2.x - r2.width) <= delta &&
 //            std::abs(r1.y + r1.height - r2.y - r2.height) <= delta;
 //    }
-//    double eps;
+    public eps: _st.double;
 };
 
 /** @brief Groups the object candidate rectangles.
@@ -160,8 +163,18 @@ locations. The similarity is defined by eps. When eps=0 , no clustering is done 
 clusters containing less than or equal to groupThreshold rectangles are rejected. In each other
 cluster, the average rectangle is computed and put into the output rectangle list.
  */
+interface IgroupRectangles {
+    (rectList: Array<_types.Rect>, groupThreshold: _st.int, eps?: _st.double /* = 0.2*/): void;
+    (rectList: Array<_types.Rect>, cb: (rectList: Array<_types.Rect>, weights: Array<_st.int>) => void, groupThreshold: _st.int, eps?: _st.double /* = 0.2*/): void;
+    (rectList: Array<_types.Rect>, groupThreshold: _st.int, eps: _st.double, cb: (weights: Array<_st.int>, levelWeights: Array<_st.double>)=>void): void;
+}
+
+export var groupRectangles: IgroupRectangles = alvision_module.groupRectangles;
+
 //CV_EXPORTS   void groupRectangles(std::vector<Rect>& rectList, int groupThreshold, double eps = 0.2);
 ///** @overload */
+
+
 //CV_EXPORTS_W void groupRectangles(CV_IN_OUT std::vector<Rect>& rectList, CV_OUT std::vector<int>& weights,
 //                                  int groupThreshold, double eps = 0.2);
 ///** @overload */
@@ -171,13 +184,20 @@ cluster, the average rectangle is computed and put into the output rectangle lis
 //CV_EXPORTS   void groupRectangles(std::vector<Rect>& rectList, std::vector<int>& rejectLevels,
 //                                  std::vector<double>& levelWeights, int groupThreshold, double eps = 0.2);
 ///** @overload */
+interface IgroupRectangles_meanshift {
+    (rectList: Array<_types.Rect>, foundWeights: Array<_st.double> ,
+        foundScales: Array<_st.double> ,
+        detectThreshold?: _st.double /*= 0.0*/, winDetSize?: _types.Size /*  = Size(64, 128)*/): void;
+}
+
+export var groupRectangles_meanshift: IgroupRectangles_meanshift = alvision_module.groupRectangles_meanshift;
 //CV_EXPORTS   void groupRectangles_meanshift(std::vector<Rect>& rectList, std::vector<double>& foundWeights,
 //                                            std::vector<double>& foundScales,
 //                                            double detectThreshold = 0.0, Size winDetSize = Size(64, 128));
 //
 //template<> CV_EXPORTS void DefaultDeleter<CvHaarClassifierCascade>::operator ()(CvHaarClassifierCascade* obj) const;
 
-enum CASCADE { CASCADE_DO_CANNY_PRUNING    = 1,
+export enum CASCADE { CASCADE_DO_CANNY_PRUNING    = 1,
        CASCADE_SCALE_IMAGE         = 2,
        CASCADE_FIND_BIGGEST_OBJECT = 4,
        CASCADE_DO_ROUGH_SEARCH     = 8
@@ -187,14 +207,18 @@ interface BaseCascadeClassifier extends _core.Algorithm
 {
 //public:
 //    virtual ~BaseCascadeClassifier();
+    empty(): boolean;
 //    virtual bool empty() const = 0;
+    load(filename: string): boolean;
 //    virtual bool load( const String& filename ) = 0;
+    detectMultiScale(image: _st.InputArray, cb: (objects: Array<_types.Rect>, numDetections: Array<_st.int>, levelWeights: Array<_st.double>) => void, scaleFactor: _st.double, minNeighbors: _st.int, flags: _st.int, minSize: _types.Size, maxSize: _types.Size): void;
 //    virtual void detectMultiScale( InputArray image,
 //                           CV_OUT std::vector<Rect>& objects,
 //                           double scaleFactor,
 //                           int minNeighbors, int flags,
 //                           Size minSize, Size maxSize ) = 0;
 //
+
 //    virtual void detectMultiScale( InputArray image,
 //                           CV_OUT std::vector<Rect>& objects,
 //                           CV_OUT std::vector<int>& numDetections,
@@ -211,10 +235,11 @@ interface BaseCascadeClassifier extends _core.Algorithm
 //                                   Size minSize, Size maxSize,
 //                                   bool outputRejectLevels ) = 0;
 //
-//    virtual bool isOldFormatCascade() const = 0;
-//    virtual Size getOriginalWindowSize() const = 0;
-//    virtual int getFeatureType() const = 0;
-//    virtual void* getOldCascade() = 0;
+
+    isOldFormatCascade(): boolean;
+    getOriginalWindowSize(): _types.Size;
+    getFeatureType(): _st.int;
+    getOldCascade(): void;
 //
 //    class CV_EXPORTS MaskGenerator
 //    {
@@ -354,67 +379,86 @@ class DetectionROI {
     public confidences: Array<_st.double>;
 }
 
-interface HOGDescriptor
+interface HOGDescriptorStatic {
+    new (): HOGDescriptor;
+    //    CV_WRAP HOGDescriptor() : winSize(64,128), blockSize(16,16), blockStride(8,8),
+    //        cellSize(8,8), nbins(9), derivAperture(1), winSigma(-1),
+    //        histogramNormType(HOGDescriptor::L2Hys), L2HysThreshold(0.2), gammaCorrection(true),
+    //        free_coef(-1.f), nlevels(HOGDescriptor::DEFAULT_NLEVELS), signedGradient(false)
+    //    {}
+    //
+    new (_winSize: _types.Size, _blockSize: _types.Size, _blockStride: _types.Size,
+        _cellSize: _types.Size, _nbins: _st.int, _derivAperture?: _st.int /*= 1*/, _winSigma?: _st.double /*= -1*/,
+        _histogramNormType?: _st.int /*= HOGDescriptor::L2Hys*/,
+        _L2HysThreshold?: _st.double /*= 0.2*/, _gammaCorrection?: boolean /*= false*/,
+        _nlevels?: _st.int /*= HOGDescriptor::DEFAULT_NLEVELS*/, _signedGradient?: boolean/*= false*/): HOGDescriptor;
+    //    CV_WRAP HOGDescriptor(Size _winSize, Size _blockSize, Size _blockStride,
+    //                  Size _cellSize, int _nbins, int _derivAperture=1, double _winSigma=-1,
+    //                  int _histogramNormType=HOGDescriptor::L2Hys,
+    //                  double _L2HysThreshold=0.2, bool _gammaCorrection=false,
+    //                  int _nlevels=HOGDescriptor::DEFAULT_NLEVELS, bool _signedGradient=false)
+    //    : winSize(_winSize), blockSize(_blockSize), blockStride(_blockStride), cellSize(_cellSize),
+    //    nbins(_nbins), derivAperture(_derivAperture), winSigma(_winSigma),
+    //    histogramNormType(_histogramNormType), L2HysThreshold(_L2HysThreshold),
+    //    gammaCorrection(_gammaCorrection), free_coef(-1.f), nlevels(_nlevels), signedGradient(_signedGradient)
+    //    {}
+    //
+    new (filename: string): HOGDescriptor;
+    //    CV_WRAP HOGDescriptor(const String& filename)
+    //    {
+    //        load(filename);
+    //    }
+    //
+    //    HOGDescriptor(const HOGDescriptor& d)
+    //    {
+    //        d.copyTo(*this);
+    //    }
+    //
+    //    virtual ~HOGDescriptor() {}
+    //
+    getDefaultPeopleDetector(): Array<_st.float>;
+    getDaimlerPeopleDetector(): Array<_st.float>;
+
+    L2Hys: number;
+    DEFAULT_NLEVELS: number;
+}
+
+
+export interface HOGDescriptor
 {
+    
 //public:
 //    enum { L2Hys = 0
 //         };
 //    enum { DEFAULT_NLEVELS = 64
 //         };
 //
-//    CV_WRAP HOGDescriptor() : winSize(64,128), blockSize(16,16), blockStride(8,8),
-//        cellSize(8,8), nbins(9), derivAperture(1), winSigma(-1),
-//        histogramNormType(HOGDescriptor::L2Hys), L2HysThreshold(0.2), gammaCorrection(true),
-//        free_coef(-1.f), nlevels(HOGDescriptor::DEFAULT_NLEVELS), signedGradient(false)
-//    {}
-//
-//    CV_WRAP HOGDescriptor(Size _winSize, Size _blockSize, Size _blockStride,
-//                  Size _cellSize, int _nbins, int _derivAperture=1, double _winSigma=-1,
-//                  int _histogramNormType=HOGDescriptor::L2Hys,
-//                  double _L2HysThreshold=0.2, bool _gammaCorrection=false,
-//                  int _nlevels=HOGDescriptor::DEFAULT_NLEVELS, bool _signedGradient=false)
-//    : winSize(_winSize), blockSize(_blockSize), blockStride(_blockStride), cellSize(_cellSize),
-//    nbins(_nbins), derivAperture(_derivAperture), winSigma(_winSigma),
-//    histogramNormType(_histogramNormType), L2HysThreshold(_L2HysThreshold),
-//    gammaCorrection(_gammaCorrection), free_coef(-1.f), nlevels(_nlevels), signedGradient(_signedGradient)
-//    {}
-//
-//    CV_WRAP HOGDescriptor(const String& filename)
-//    {
-//        load(filename);
-//    }
-//
-//    HOGDescriptor(const HOGDescriptor& d)
-//    {
-//        d.copyTo(*this);
-//    }
-//
-//    virtual ~HOGDescriptor() {}
-//
-//    CV_WRAP size_t getDescriptorSize() const;
-//    CV_WRAP bool checkDetectorSize() const;
-//    CV_WRAP double getWinSigma() const;
-//
-//    CV_WRAP virtual void setSVMDetector(InputArray _svmdetector);
-//
-//    virtual bool read(FileNode& fn);
-//    virtual void write(FileStorage& fs, const String& objname) const;
-//
-//    CV_WRAP virtual bool load(const String& filename, const String& objname = String());
-//    CV_WRAP virtual void save(const String& filename, const String& objname = String()) const;
-//    virtual void copyTo(HOGDescriptor& c) const;
-//
-//    CV_WRAP virtual void compute(InputArray img,
-//                         CV_OUT std::vector<float>& descriptors,
-//                         Size winStride = Size(), Size padding = Size(),
-//                         const std::vector<Point>& locations = std::vector<Point>()) const;
-//
+
+    getDescriptorSize(): _st.size_t;
+    checkDetectorSize(): boolean;
+    getWinSigma(): _st.double;
+
+    setSVMDetector( _svmdetector : _st.InputArray): void;
+
+    read(fn: _persistence.FileNode): boolean;
+    write(fs: _persistence.FileStorage, objname: string ): void;
+
+    load(filename :string , objname? : string /* = String()*/): boolean;
+    save(filename :string , objname? : string /* = String()*/): void;
+    copyTo(c: HOGDescriptor): void;
+
+    compute(img: _st.InputArray,
+        cb: (descriptors: Array<_st.float>)=>void,
+        winStride?: _types.Size /*  = Size()*/, padding?: _types.Size /*  = Size()*/,
+        locations?: Array<_types.Point> /*= std::vector<Point>()*/) : void;
+            
 //    //! with found weights output
-//    CV_WRAP virtual void detect(const Mat& img, CV_OUT std::vector<Point>& foundLocations,
-//                        CV_OUT std::vector<double>& weights,
-//                        double hitThreshold = 0, Size winStride = Size(),
-//                        Size padding = Size(),
-//                        const std::vector<Point>& searchLocations = std::vector<Point>()) const;
+    detect(img: _mat.Mat, cb: (foundLocations: Array<_types.Point> ,
+        weights: Array<_st.double> ) =>void,
+        hitThreshold?: _st.double /*= 0*/, winStride?: _types.Size /* = Size()*/,
+        padding?: _types.Size /* = Size()*/,
+        searchLocations?: Array<_types.Point> /*= std::vector<Point>()*/): void;
+
 //    //! without found weights output
 //    virtual void detect(const Mat& img, CV_OUT std::vector<Point>& foundLocations,
 //                        double hitThreshold = 0, Size winStride = Size(),
@@ -422,65 +466,65 @@ interface HOGDescriptor
 //                        const std::vector<Point>& searchLocations=std::vector<Point>()) const;
 //
 //    //! with result weights output
-//    CV_WRAP virtual void detectMultiScale(InputArray img, CV_OUT std::vector<Rect>& foundLocations,
-//                                  CV_OUT std::vector<double>& foundWeights, double hitThreshold = 0,
-//                                  Size winStride = Size(), Size padding = Size(), double scale = 1.05,
-//                                  double finalThreshold = 2.0,bool useMeanshiftGrouping = false) const;
+    detectMultiScale(img: _st.InputArray, cb: (foundLocations: Array<_types.Rect>,
+        foundWeights: Array<_st.double>) => void, hitThreshold?: _st.double /*= 0*/,
+        winStride?: _types.Size /* = Size()*/, padding?: _types.Size /* = Size()*/, scale?: _st.double /* = 1.05*/,
+        finalThreshold?: _st.double /* = 2.0*/, useMeanshiftGrouping?: boolean  /*= false*/): void;
 //    //! without found weights output
 //    virtual void detectMultiScale(InputArray img, CV_OUT std::vector<Rect>& foundLocations,
 //                                  double hitThreshold = 0, Size winStride = Size(),
 //                                  Size padding = Size(), double scale = 1.05,
 //                                  double finalThreshold = 2.0, bool useMeanshiftGrouping = false) const;
 //
-//    CV_WRAP virtual void computeGradient(const Mat& img, CV_OUT Mat& grad, CV_OUT Mat& angleOfs,
-//                                 Size paddingTL = Size(), Size paddingBR = Size()) const;
+    computeGradient(img: _mat.Mat, cb: (grad: _mat.Mat, angleOfs: _mat.Mat )=>void,
+        paddingTL?: _types.Size /* = Size()*/, paddingBR?: _types.Size /* = Size()*/): void;
+
+
 //
-//    CV_WRAP static std::vector<float> getDefaultPeopleDetector();
-//    CV_WRAP static std::vector<float> getDaimlerPeopleDetector();
-//
-//    CV_PROP Size winSize;
-//    CV_PROP Size blockSize;
-//    CV_PROP Size blockStride;
-//    CV_PROP Size cellSize;
-//    CV_PROP int nbins;
-//    CV_PROP int derivAperture;
-//    CV_PROP double winSigma;
-//    CV_PROP int histogramNormType;
-//    CV_PROP double L2HysThreshold;
-//    CV_PROP bool gammaCorrection;
-//    CV_PROP std::vector<float> svmDetector;
-//    UMat oclSvmDetector;
-//    float free_coef;
-//    CV_PROP int nlevels;
-//    CV_PROP bool signedGradient;
+    winSize: _types.Size;
+    blockSize: _types.Size;
+    blockStride: _types.Size;
+    cellSize: _types.Size;
+    nbins: _st.int;
+    derivAperture: _st.int;
+    winSigma: _st.double;
+    histogramNormType: _st.int;
+    L2HysThreshold: _st.double;
+    gammaCorrection: boolean;
+    svmDetector: Array<_st.float> ;
+    oclSvmDetector: _mat.UMat;
+    free_coef: _st.float;
+    nlevels: _st.int;
+    signedGradient: boolean;
 //
 //
 //    //! evaluate specified ROI and return confidence value for each location
-//    virtual void detectROI(const cv::Mat& img, const std::vector<cv::Point> &locations,
-//                                   CV_OUT std::vector<cv::Point>& foundLocations, CV_OUT std::vector<double>& confidences,
-//                                   double hitThreshold = 0, cv::Size winStride = Size(),
-//                                   cv::Size padding = Size()) const;
-//
+    detectROI(img: _mat.Mat, locations: Array<_types.Point>,
+        cb: (foundLocations: Array<_types.Point>, confidences: Array<_st.double>)=>void,
+        hitThreshold?: _st.double /*= 0*/, winStride?: _types.Size /*= Size()*/,
+        padding?: _types.Size /*= Size()*/): void;
+
 //    //! evaluate specified ROI and return confidence value for each location in multiple scales
-//    virtual void detectMultiScaleROI(const cv::Mat& img,
-//                                                       CV_OUT std::vector<cv::Rect>& foundLocations,
-//                                                       std::vector<DetectionROI>& locations,
-//                                                       double hitThreshold = 0,
-//                                                       int groupThreshold = 0) const;
-//
+
+    detectMultiScaleROI(img: _mat.Mat,
+        cb: (foundLocations: Array<_types.Rect>)=>void ,
+            locations: Array<DetectionROI>,
+            hitThreshold?: _st.double /*= 0*/,
+            groupThreshold?: _st.int /*  = 0*/): void ;
+
 //    //! read/parse Dalal's alt model file
-//    void readALTModel(String modelfile);
-//    void groupRectangles(std::vector<cv::Rect>& rectList, std::vector<double>& weights, int groupThreshold, double eps) const;
+    readALTModel(modelfile : string): void ;
+    groupRectangles(rectList: Array<_types.Rect>, weights: Array<_st.double>, groupThreshold: _st.int, eps: _st.double): void;
 };
 
+export var HOGDescriptor: HOGDescriptorStatic = alvision_module.HOGDescriptor;
+HOGDescriptor.L2Hys = 0;
+HOGDescriptor.DEFAULT_NLEVELS = 64;
 //! @} objdetect
 
 //}
 //
 //#include "opencv2/objdetect/detection_based_tracker.hpp"
 //
-//#ifndef DISABLE_OPENCV_24_COMPATIBILITY
-//#include "opencv2/objdetect/objdetect_c.h"
-//#endif
 //
 //#endif

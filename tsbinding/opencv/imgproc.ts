@@ -5639,6 +5639,10 @@ export var LineIterator: LineIteratorStatic = alvision_module.LineIterator;
 
 //#endif
 
+export function CV_RGB(r: _st.double, g: _st.double, b: _st.double) {
+    return new _types.Scalar(b, g, r, 0)
+}
+
 export const CV_FILLED = -1;
 
 
