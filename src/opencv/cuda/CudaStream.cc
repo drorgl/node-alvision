@@ -125,9 +125,9 @@ namespace cuda {
 		return Nan::New(constructor)->GetFunction();
 	}
 
+
 	std::shared_ptr<Stream> Stream::Null() {
 		auto ret = std::make_shared<Stream>();
-		ret->_stream = std::make_shared<cv::cuda::Stream>();
 
 		return ret;
 	}
@@ -135,8 +135,8 @@ namespace cuda {
 
 	POLY_METHOD(Stream::New) { 
 		auto ret = new Stream();
-		
 		ret->_stream = std::make_shared<cv::cuda::Stream>();
+
 
 		ret->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());

@@ -72,7 +72,7 @@ export interface IOArray {//extends Array<any> {
     rows?(): int;
     cols?(): int;
 
-    channels?(): int;
+    //channels?(): int;
     getGpuMatRef?(): _cuda.cuda.GpuMat;
     setTo?(value: InputArray | _types.Scalar | int, mask?: InputArray /*= noArray()*/): void;
 }

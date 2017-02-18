@@ -19,7 +19,7 @@ export class FrameSource {
         return new ImageSource(fileName, flags);
     }
     static video(fileName: string): FrameSource {
-        return new VideoSource(fileName);
+        return new FFMPEGSource(fileName);
     }
     static camera(device: alvision.int, width: alvision.int = -1, height: alvision.int = -1): FrameSource {
         return new CameraSource(device, width, height);
@@ -52,7 +52,8 @@ class PairFrameSource {
 
 
 export function THROW_EXCEPTION(msg) {
-    throw new Error(msg);
+    //throw new Error(msg);
+    console.error(msg);
 }
 
 ////////////////////////////////////
@@ -80,21 +81,23 @@ export class BaseApp {
         }
 
         const num_devices = alvision.cuda.getCudaEnabledDeviceCount();
-        if (num_devices <= 0)
+        if (num_devices <= 0) {
+            this.has_gpu = false;
             THROW_EXCEPTION("No GPU found or the OpenCV library was compiled without CUDA support");
+        }else{
+            if (this.device_ < 0 || this.device_ >= num_devices)
+                THROW_EXCEPTION("Incorrect device ID : " + this.device_);
 
-        if (this.device_ < 0 || this.device_ >= num_devices)
-            THROW_EXCEPTION("Incorrect device ID : " + this.device_);
-
-        let dev_info = new alvision.cuda.DeviceInfo(this.device_);
-        if (!dev_info.isCompatible())
-            THROW_EXCEPTION("GPU module wasn't built for GPU #" + this.device_ + " " + dev_info.name() + ", CC " + dev_info.majorVersion() + '.' + dev_info.minorVersion());
+            let dev_info = new alvision.cuda.DeviceInfo(this.device_);
+            if (!dev_info.isCompatible())
+                THROW_EXCEPTION("GPU module wasn't built for GPU #" + this.device_ + " " + dev_info.name() + ", CC " + dev_info.majorVersion() + '.' + dev_info.minorVersion());
 
 
-        console.log("Initializing device... ");
-        alvision.cuda.setDevice(this.device_);
-        alvision.cuda.printShortCudaDeviceInfo(this.device_);
-
+            console.log("Initializing device... ");
+            alvision.cuda.setDevice(this.device_);
+            alvision.cuda.printShortCudaDeviceInfo(this.device_);
+            this.has_gpu = true;
+        } 
 
 
         this.runAppLogic();
@@ -120,6 +123,7 @@ export class BaseApp {
     }
 
     protected sources_: Array<FrameSource> = [];
+    protected has_gpu: boolean;
 
     private parseFrameSourcesCmdArgs(i: number, argc: alvision.int, argv: string[]): number {
         let arg = argv[i.valueOf()];
@@ -220,7 +224,7 @@ export function RUN_APP(app: BaseApp) {
     try {
         app.run(process.argv.length, process.argv);
     } catch (e) {
-        console.error("Error executing application", e);
+        console.error("Error executing application", e, e.stack);
     }
 }
 
@@ -277,9 +281,55 @@ class VideoSource extends FrameSource {
     }
 
     protected fileName_: string;
-    protected vc_: alvision.VideoCapture;
+    protected vc_: alvision.VideoCapture = new alvision.VideoCapture();
 };
 
+
+class FFMPEGSource extends FrameSource {
+    constructor(fileName: string) {
+        super();
+        this.fileName_ = fileName;
+        alvision.ffmpeg.OpenAsInput(fileName, null, null, (err, ffmi) => {
+            if (err) {
+                THROW_EXCEPTION("Can't open " + fileName + err);
+                return;
+            }
+            this.ffm = ffmi;
+            let streams = ffmi.GetStreams();
+            this.ffstreams = {}
+            console.log(streams);
+            streams.forEach((item, idx) => {
+                this.ffstreams[item.id] = item;
+            });
+
+        });
+    }
+
+    next(frame: alvision.Mat): void {
+        while (this.ffm.ReadPacket(this.ffpacket)) {
+            let stream = this.ffstreams[this.ffpacket.streamid];
+            if (stream.mediatype == alvision.mediatype.video) {
+                if (stream.Decode(this.ffpacket, stream, frame)) {
+                    return;
+                }
+            }
+        }
+    }
+
+
+    reset(): void {
+        this.ffm.Close();
+        this.ffm = null;
+        this.ffpacket = null;
+        this.ffstreams = {};
+
+    }
+
+    protected fileName_: string;
+    protected ffm: alvision.ffmpeg;
+    protected ffpacket: alvision.packet = new alvision.packet();
+    protected ffstreams: { [id: string]: alvision.stream } ;
+};
 
 
 ////////////////////////////////////

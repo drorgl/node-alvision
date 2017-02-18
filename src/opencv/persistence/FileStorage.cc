@@ -20,7 +20,7 @@ namespace filestorage_general_callback {
 
 
 Nan::Persistent<FunctionTemplate> FileStorage::constructor;
-
+std::string FileStorage::name = "FileStorage";
 
 void
 FileStorage::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {

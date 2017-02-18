@@ -185,7 +185,9 @@
 		, "src/opencv/objdetect/CascadeClassifier.cc"
 		, "src/opencv/objdetect/CascadeClassifier.h"
 		, "src/opencv/objdetect/HOGDescriptor.cc"
-		, "src/opencv/objdetect/HOGDescriptor.h"	
+		, "src/opencv/objdetect/HOGDescriptor.h"
+		, "src/opencv/objdetect/DetectionROI.h"
+		, "src/opencv/objdetect/DetectionROI.cc"
 		
 		, "src/opencv/features2d.h"
 		, "src/opencv/features2d.cc"

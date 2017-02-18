@@ -5,7 +5,10 @@
 
 class HOGDescriptor : public or::ObjectWrap{
 public:
+	static std::string name;
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
+
+	std::shared_ptr<cv::HOGDescriptor> _hogDescriptor;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
@@ -17,7 +20,8 @@ public:
 	static POLY_METHOD(getDescriptorSize	   );
 	static POLY_METHOD(checkDetectorSize	   );
 	static POLY_METHOD(getWinSigma			   );
-	static POLY_METHOD(setSVMDetector		   );
+	static POLY_METHOD(setSVMDetector_ioarray);
+	static POLY_METHOD(setSVMDetector_float);
 	static POLY_METHOD(read					   );
 	static POLY_METHOD(write				   );
 	static POLY_METHOD(load					   );

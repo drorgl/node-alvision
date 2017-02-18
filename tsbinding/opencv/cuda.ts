@@ -313,7 +313,7 @@ import * as _base from './Base';
 //            Allocator * allocator;
         };
 
-        export var GpuMat: GpuMatStatic = alvision_module.GpuMat;
+        export var GpuMat: GpuMatStatic = alvision_module.cuda.GpuMat;
 
         /** @brief Creates a continuous matrix.
         
@@ -341,7 +341,7 @@ import * as _base from './Base';
             (rows: _st.int, cols: _st.int, type: _st.int, arr: _st.OutputArray ): void;
         }
 
-        export var ensureSizeIsEnough: IensureSizeIsEnough = alvision_module.ensureSizeIsEnough;
+        export var ensureSizeIsEnough: IensureSizeIsEnough = alvision_module.cuda.ensureSizeIsEnough;
 
 //        CV_EXPORTS void ensureSizeIsEnough(int rows, int cols, int type, OutputArray arr);
 //
@@ -450,7 +450,7 @@ export interface HostMem extends _st.IOArray
 //            AllocType alloc_type;
         };
 
-        export var HostMem: HostMemStatic = alvision_module.HostMem;
+        export var HostMem: HostMemStatic = alvision_module.cuda.HostMem;
 
 //
 //        /** @brief Page-locks the memory of matrix and maps it for the device(s).
@@ -531,7 +531,7 @@ export interface HostMem extends _st.IOArray
             //            friend class DefaultDeviceInitializer;
         }
 
-        export var Stream: StreamStatic = alvision_module.Stream;
+        export var Stream: StreamStatic = alvision_module.cuda.Stream;
 
 //
 interface Event
@@ -586,7 +586,7 @@ interface Event
         interface IgetCudaEnabledDeviceCount {
             (): _st.int;
         }
-        export var getCudaEnabledDeviceCount: IgetCudaEnabledDeviceCount = alvision_module.getCudaEnabledDeviceCount;
+        export var getCudaEnabledDeviceCount: IgetCudaEnabledDeviceCount = alvision_module.cuda.getCudaEnabledDeviceCount;
 //        CV_EXPORTS int getCudaEnabledDeviceCount();
 //
 //        /** @brief Sets a device and initializes it for the current thread.
@@ -598,7 +598,7 @@ interface Event
         interface IsetDevice {
             (device: _st.int): void;
         }
-        export var setDevice: IsetDevice = alvision_module.setDevice;
+        export var setDevice: IsetDevice = alvision_module.cuda.setDevice;
 //        CV_EXPORTS void setDevice(int device);
 //
 //        /** @brief Returns the current device index set by cuda::setDevice or initialized by default.
@@ -885,12 +885,12 @@ export interface DeviceInfo
             (device: _st.int): void;
         }
 
-        export var printCudaDeviceInfo: IprintCudaDeviceInfo = alvision_module.printCudaDeviceInfo;
+        export var printCudaDeviceInfo: IprintCudaDeviceInfo = alvision_module.cuda.printCudaDeviceInfo;
 //        CV_EXPORTS void printCudaDeviceInfo(int device);
         interface IprintShortCudaDeviceInfo {
             (device: _st.int): void;
         }
-        export var printShortCudaDeviceInfo: IprintShortCudaDeviceInfo = alvision_module.printShortCudaDeviceInfo;
+        export var printShortCudaDeviceInfo: IprintShortCudaDeviceInfo = alvision_module.cuda.printShortCudaDeviceInfo;
 //        CV_EXPORTS void printShortCudaDeviceInfo(int device);
         
 //

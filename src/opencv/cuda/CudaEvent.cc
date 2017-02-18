@@ -62,7 +62,9 @@ namespace cuda {
 		//
 		//            //! records an event
 		//            void record(Stream & stream = Stream::Null());
+#ifdef HAVE_CUDA
 		overload->addOverload("event", "Event", "record", { make_param<Stream*>("stream",Stream::name, Stream::Null()) }, record);
+#endif
 		//
 		//            //! queries an event's status
 		//            bool queryIfComplete() const;

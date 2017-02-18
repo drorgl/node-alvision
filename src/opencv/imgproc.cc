@@ -6149,7 +6149,17 @@ POLY_METHOD(imgproc::approxPolyDP){
  POLY_METHOD(imgproc::applyColorMap){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::line){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::arrowedLine){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::rectangle){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::rectangle){
+	 auto img = *info.at<Matrix*>(0)->_mat;
+	 auto rec = *info.at<Rect*>(1)->_rect;
+	 auto color = *info.at<Scalar*>(2)->_scalar;
+	 auto thickness = info.at<int>(3);
+	 auto lineType = info.at<int>(4);
+	 auto shift = info.at<int>(5);
+
+	 cv::rectangle(img, rec, color, thickness, lineType, shift);
+ 
+ }
  POLY_METHOD(imgproc::rectangle_points){throw std::exception("not implemented");}
  POLY_METHOD(imgproc::circle){
 	 auto img		=info.at<IOArray*>(0)->GetInputOutputArray();

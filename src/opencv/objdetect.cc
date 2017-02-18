@@ -2,6 +2,7 @@
 #include "objdetect/BaseCascadeClassifier.h"
 #include "objdetect/CascadeClassifier.h"
 #include "objdetect/HOGDescriptor.h"
+#include "objdetect/DetectionROI.h"
 
 namespace objdetect_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -90,15 +91,7 @@ objdetect::Init(Handle<Object> target, std::shared_ptr<overload_resolution> over
 
 	//////////////// HOG (Histogram-of-Oriented-Gradients) Descriptor and Object Detector //////////////
 
-	//! struct for detection region of interest (ROI)
-	//class DetectionROI {
-	//	//! scale(size) of the bounding box
-	//	public scale: _st.double;
-	//	//! set of requrested locations to be evaluated
-	//	public locations: Array<_types.Point>;
-	//	//! vector that will contain confidence values for each location
-	//	public confidences: Array<_st.double>;
-	//}
+	DetectionROI::Init(target, overload);
 
 	HOGDescriptor::Init(target, overload);
 

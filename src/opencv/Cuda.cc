@@ -24,6 +24,8 @@ Nan::Persistent<Object> Cuda::cudaObject;
 
 void
 Cuda::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	cuda_general_callback::overload = overload;
+
 	Local<Object> cuda = Nan::New<Object>();
 
 	cudaObject.Reset(cuda);
@@ -133,6 +135,7 @@ Cuda::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload)
 		//        this function returns 0.
 		//         */
 		overload->addOverload("cuda", "", "getCudaEnabledDeviceCount", {}, getCudaEnabledDeviceCount);
+		Nan::SetMethod(cuda, "getCudaEnabledDeviceCount", cuda_general_callback::callback);
 		//interface IgetCudaEnabledDeviceCount {
 		//	() : _st.int;
 		//}
@@ -258,7 +261,10 @@ POLY_METHOD(Cuda::setBufferPoolConfig) { throw std::exception("not implemented")
 POLY_METHOD(Cuda::setBufferPoolUsage){throw std::exception("not implemented");}
 POLY_METHOD(Cuda::registerPageLocked){throw std::exception("not implemented");}
 POLY_METHOD(Cuda::unregisterPageLocked){throw std::exception("not implemented");}
-POLY_METHOD(Cuda::getCudaEnabledDeviceCount){throw std::exception("not implemented");}
+POLY_METHOD(Cuda::getCudaEnabledDeviceCount){
+	auto res = cv::cuda::getCudaEnabledDeviceCount();
+	info.SetReturnValue(res);
+}
 POLY_METHOD(Cuda::setDevice){throw std::exception("not implemented");}
 POLY_METHOD(Cuda::getDevice){throw std::exception("not implemented");}
 POLY_METHOD(Cuda::resetDevice){throw std::exception("not implemented");}

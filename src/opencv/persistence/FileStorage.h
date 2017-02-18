@@ -6,6 +6,7 @@
 
 class FileStorage: public or::ObjectWrap {
 public:
+	static std::string name;
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
 	std::shared_ptr<cv::FileStorage> _fileStorage;
