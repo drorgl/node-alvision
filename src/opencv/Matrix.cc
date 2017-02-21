@@ -256,7 +256,7 @@ Matrix::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overloa
 	Nan::SetPrototypeMethod(ctor, "resize", matrix_general_callback::callback);
 
 
-	overload->addOverload("matrix", "Mat", "roi", { make_param<Rect*>("roi","Rect")}, Matrix::roi_rect);
+	overload->addOverload("matrix", "Mat", "roi", { make_param<Rect*>("roi",Rect::name)}, Matrix::roi_rect);
 	overload->addOverload("matrix", "Mat", "roi", { make_param<std::shared_ptr<std::vector<Range*>>>("ranges","Array<Range>") }, Matrix::roi_ranges);
 	Nan::SetPrototypeMethod(ctor, "roi", matrix_general_callback::callback);
 

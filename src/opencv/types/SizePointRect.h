@@ -2,11 +2,16 @@
 #define _ALVISION_SIZE_AND_POINT_H_
 
 #include "../../alvision.h"
-#include "Rect.h"
 #include "../Vec.h"
 
 template <typename T>
 class Point_;
+
+template <typename T>
+class Size_;
+
+template <typename T>
+class Rect_;
 
 
 template <typename T>
@@ -25,7 +30,10 @@ public:
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
-	virtual v8::Local<v8::Function> get_constructor();
+	virtual v8::Local<v8::Function> get_constructor() {
+		assert(!constructor.IsEmpty() && "constructor is empty");
+		return Nan::New(constructor)->GetFunction();
+	}
 
 	template<typename... Args>
 	static std::shared_ptr<Size_<T>> create(Args&&... args) {
@@ -84,7 +92,11 @@ public:
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
-	virtual v8::Local<v8::Function> get_constructor();
+	virtual v8::Local<v8::Function> get_constructor() {
+		assert(!constructor.IsEmpty() && "constructor is empty");
+		return Nan::New(constructor)->GetFunction();
+	}
+
 
 
 	template<typename... Args>
@@ -144,5 +156,55 @@ public:
 
 
 };
+
+
+
+
+
+template <typename T>
+class Rect_ : public or ::ObjectWrap{
+public:
+	typedef typename T::value_type TVT;
+	typedef typename Point_<cv::Point_<TVT>> PointT;
+	typedef typename Size_<cv::Size_<TVT>> SizeT;
+	static std::string name;
+	static void Register(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload);
+	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload);
+
+	std::shared_ptr<T> _rect;
+
+	static Nan::Persistent<FunctionTemplate> constructor;
+
+	virtual v8::Local<v8::Function> get_constructor() {
+		assert(!constructor.IsEmpty() && "constructor is empty");
+		return Nan::New(constructor)->GetFunction();
+	}
+
+
+
+	static POLY_METHOD(New);
+	static POLY_METHOD(New_x_y_width_height);
+	static POLY_METHOD(New_rect);
+	static POLY_METHOD(New_point_size);
+	static POLY_METHOD(New_point_point);
+	static POLY_METHOD(op_And);
+	static POLY_METHOD(tl);
+	static POLY_METHOD(br);
+	static POLY_METHOD(size);
+	static POLY_METHOD(area);
+
+	static NAN_GETTER(x_getter);
+	static NAN_SETTER(x_setter);
+	static NAN_GETTER(y_getter);
+	static NAN_SETTER(y_setter);
+	static NAN_GETTER(width_getter);
+	static NAN_SETTER(width_setter);
+	static NAN_GETTER(height_getter);
+	static NAN_SETTER(height_setter);
+
+
+};
+
+
 
 #endif

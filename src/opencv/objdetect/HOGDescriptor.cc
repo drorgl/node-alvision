@@ -1,5 +1,6 @@
 #include "HOGDescriptor.h"
 #include "../types/Size.h"
+#include "../types/Rect.h"
 #include "../persistence/FileNode.h"
 #include "../persistence/FileStorage.h"
 #include "../types/Point.h"

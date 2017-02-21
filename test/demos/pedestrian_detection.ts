@@ -21,15 +21,15 @@ class App extends BaseApp
             this.sources_.push(FrameSource.video(path.join(opencv_extra,base_path, "data/pedestrian_detection.avi")));
         }
 
-        const scale = 1.05;
-        const nlevels = 13;
+        const scale = 1.10;
+        const nlevels = 5;
         const gr_threshold = 0;
 
         const hit_threshold = 0;
         const gamma_corr = false;
 
         const win_size = new alvision.Size(48, 96);
-        const win_stride = new alvision.Size(16, 16);
+        const win_stride = new alvision.Size(8, 8);
 
         const detector = alvision.HOGDescriptor.getDefaultPeopleDetector(); //gpu::HOGDescriptor::getPeopleDetector48x96();
 
@@ -79,9 +79,12 @@ class App extends BaseApp
         while (this.isActive()) {
             const total_start = alvision.getTickCount();
 
-            this.sources_[this.curSource_.valueOf()].next(orig_frame);
+            if (!this.sources_[this.curSource_.valueOf()].next(orig_frame)) {
+                console.log("done");
+                return;
+            }
             alvision.imshow("original", orig_frame);
-            alvision.resize(orig_frame, frame, new alvision.Size(320, 240), 1, 1, alvision.InterpolationFlags.INTER_NEAREST);
+            alvision.resize(orig_frame, frame, new alvision.Size(500, 400), 1, 1, alvision.InterpolationFlags.INTER_NEAREST);
 
             //if (!this.colorInput_)
                 alvision.cvtColor(frame, img,alvision.ColorConversionCodes.COLOR_BGR2GRAY);
@@ -122,7 +125,9 @@ class App extends BaseApp
             this.wait(30);
         }
     }
+
     protected processAppKey(key: alvision.int): void {
+        let keychar = String.fromCharCode(key.valueOf() & 0xff).toUpperCase();
         switch (String.fromCharCode(key.valueOf() & 0xff).toUpperCase()) {
             case " " /*space*/:
                 this.useGpu_ = !this.useGpu_;

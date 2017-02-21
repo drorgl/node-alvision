@@ -91,7 +91,11 @@ export namespace cudabgsegm {
        -   An example on gaussian mixture based background/foreground segmantation can be found at
             opencv_source_code/samples/gpu/bgfg_segm.cpp
      */
-    interface BackgroundSubtractorMOG extends _bgsegm.BackgroundSubtractor {
+    interface BackgroundSubtractorMOGStatic {
+        new (): BackgroundSubtractorMOG;
+    }
+
+    export interface BackgroundSubtractorMOG extends _bgsegm.BackgroundSubtractor {
         //public:
 
         //    using cv::BackgroundSubtractor::apply;
@@ -112,6 +116,8 @@ export namespace cudabgsegm {
         //    virtual double getNoiseSigma() const = 0;
         //    virtual void setNoiseSigma(double noiseSigma) = 0;
     };
+
+    export var BackgroundSubtractorMOG: BackgroundSubtractorMOGStatic = alvision_module.cuda.BackgroundSubtractorMOG;
 
     /** @brief Creates mixture-of-gaussian background subtractor
     
@@ -143,7 +149,11 @@ export namespace cudabgsegm {
     
     @sa BackgroundSubtractorMOG2
      */
-    interface BackgroundSubtractorMOG2 extends _bgsegm.BackgroundSubtractorMOG2 {
+    interface BackgroundSubtractorMOG2Static {
+        new (): BackgroundSubtractorMOG2;
+    }
+
+    export interface BackgroundSubtractorMOG2 extends _bgsegm.BackgroundSubtractorMOG2 {
         //public:
         //    using cv::BackgroundSubtractorMOG2::apply;
         //    using cv::BackgroundSubtractorMOG2::getBackgroundImage;
@@ -152,6 +162,8 @@ export namespace cudabgsegm {
         //
         //    virtual void getBackgroundImage(OutputArray backgroundImage, Stream& stream) const = 0;
     };
+
+    export var BackgroundSubtractorMOG2: BackgroundSubtractorMOG2Static = alvision_module.cuda.BackgroundSubtractorMOG2
 
     /** @brief Creates MOG2 Background Subtractor
     

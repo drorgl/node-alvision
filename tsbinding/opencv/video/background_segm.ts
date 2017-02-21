@@ -69,6 +69,11 @@ import * as _features2d from './../features2d'
 The class is only used to define the common interface for the whole family of background/foreground
 segmentation algorithms.
  */
+
+export interface BackgroundSubtractorStatic {
+    new (): BackgroundSubtractor;
+}
+
 export interface BackgroundSubtractor extends _core.Algorithm
 {
 //public:
@@ -93,29 +98,40 @@ export interface BackgroundSubtractor extends _core.Algorithm
     getBackgroundImage(backgroundImage: _st.OutputArray ): void;
 };
 
+export var BackgroundSubtractor: BackgroundSubtractorStatic = alvision_module.BackgroundSubtractor;
+
 
 /** @brief Gaussian Mixture-based Background/Foreground Segmentation Algorithm.
 
 The class implements the Gaussian mixture model background subtraction described in @cite Zivkovic2004
 and @cite Zivkovic2006 .
  */
+
+export interface BackgroundSubtractorMOG2Static {
+    new (): BackgroundSubtractorMOG2;
+}
+
 export interface BackgroundSubtractorMOG2 extends BackgroundSubtractor
 {
 //public:
 //    /** @brief Returns the number of last frames that affect the background model
 //    */
+    getHistory(): _st.int;
 //    CV_WRAP virtual int getHistory() const = 0;
 //    /** @brief Sets the number of last frames that affect the background model
 //    */
+    setHistory(history: _st.int ): void ;
 //    CV_WRAP virtual void setHistory(int history) = 0;
 //
 //    /** @brief Returns the number of gaussian components in the background model
 //    */
+    getNMixtures(): _st.int;
 //    CV_WRAP virtual int getNMixtures() const = 0;
 //    /** @brief Sets the number of gaussian components in the background model.
 //
 //    The model needs to be reinitalized to reserve memory.
 //    */
+    setNMixtures(nmixtures: _st.int ): void;
 //    CV_WRAP virtual void setNMixtures(int nmixtures) = 0;//needs reinitialization!
 //
 //    /** @brief Returns the "background ratio" parameter of the algorithm
@@ -124,9 +140,11 @@ export interface BackgroundSubtractorMOG2 extends BackgroundSubtractor
 //    considered background and added to the model as a center of a new component. It corresponds to TB
 //    parameter in the paper.
 //     */
+    getBackgroundRatio(): _st.double;
 //    CV_WRAP virtual double getBackgroundRatio() const = 0;
 //    /** @brief Sets the "background ratio" parameter of the algorithm
 //    */
+    setBackgroundRatio(ratio: _st.double ) : void;
 //    CV_WRAP virtual void setBackgroundRatio(double ratio) = 0;
 //
 //    /** @brief Returns the variance threshold for the pixel-model match
@@ -134,9 +152,11 @@ export interface BackgroundSubtractorMOG2 extends BackgroundSubtractor
 //    The main threshold on the squared Mahalanobis distance to decide if the sample is well described by
 //    the background model or not. Related to Cthr from the paper.
 //     */
+    getVarThreshold() : _st.double;
 //    CV_WRAP virtual double getVarThreshold() const = 0;
 //    /** @brief Sets the variance threshold for the pixel-model match
 //    */
+    setVarThreshold(varThreshold: _st.double ): void;
 //    CV_WRAP virtual void setVarThreshold(double varThreshold) = 0;
 //
 //    /** @brief Returns the variance threshold for the pixel-model match used for new mixture component generation
@@ -147,22 +167,30 @@ export interface BackgroundSubtractorMOG2 extends BackgroundSubtractor
 //    value generates more components. A higher Tg value may result in a small number of components but
 //    they can grow too large.
 //     */
+    getVarThresholdGen(): _st.double;
 //    CV_WRAP virtual double getVarThresholdGen() const = 0;
 //    /** @brief Sets the variance threshold for the pixel-model match used for new mixture component generation
 //    */
+    setVarThresholdGen(varThresholdGen: _st.double ): void;
 //    CV_WRAP virtual void setVarThresholdGen(double varThresholdGen) = 0;
 //
 //    /** @brief Returns the initial variance of each gaussian component
 //    */
+    getVarInit(): _st.double;
 //    CV_WRAP virtual double getVarInit() const = 0;
 //    /** @brief Sets the initial variance of each gaussian component
 //    */
+    setVarInit(varInit: _st.double ): void;
 //    CV_WRAP virtual void setVarInit(double varInit) = 0;
 //
+    getVarMin(): _st.double;
 //    CV_WRAP virtual double getVarMin() const = 0;
+    setVarMin(varMin: _st.double ): void;
 //    CV_WRAP virtual void setVarMin(double varMin) = 0;
 //
+    getVarMax(): _st.double;
 //    CV_WRAP virtual double getVarMax() const = 0;
+    setVarMax(varMax: _st.double ): void;
 //    CV_WRAP virtual void setVarMax(double varMax) = 0;
 //
 //    /** @brief Returns the complexity reduction threshold
@@ -171,9 +199,11 @@ export interface BackgroundSubtractorMOG2 extends BackgroundSubtractor
 //    is a default value for all the samples. By setting CT=0 you get an algorithm very similar to the
 //    standard Stauffer&Grimson algorithm.
 //     */
+    getComplexityReductionThreshold(): _st.double;
 //    CV_WRAP virtual double getComplexityReductionThreshold() const = 0;
 //    /** @brief Sets the complexity reduction threshold
 //    */
+    setComplexityReductionThreshold(ct: _st.double ): void;
 //    CV_WRAP virtual void setComplexityReductionThreshold(double ct) = 0;
 //
 //    /** @brief Returns the shadow detection flag
@@ -181,6 +211,7 @@ export interface BackgroundSubtractorMOG2 extends BackgroundSubtractor
 //    If true, the algorithm detects shadows and marks them. See createBackgroundSubtractorMOG2 for
 //    details.
 //     */
+    getDetectShadows(): boolean;
 //    CV_WRAP virtual bool getDetectShadows() const = 0;
 //    /** @brief Enables or disables shadow detection
 //    */
@@ -191,9 +222,11 @@ export interface BackgroundSubtractorMOG2 extends BackgroundSubtractor
 //    Shadow value is the value used to mark shadows in the foreground mask. Default value is 127. Value 0
 //    in the mask always means background, 255 means foreground.
 //     */
+    getShadowValue(): _st.int;
 //    CV_WRAP virtual int getShadowValue() const = 0;
 //    /** @brief Sets the shadow value
 //    */
+    setShadowValue(value: _st.int ): void;
 //    CV_WRAP virtual void setShadowValue(int value) = 0;
 //
 //    /** @brief Returns the shadow threshold
@@ -203,11 +236,15 @@ export interface BackgroundSubtractorMOG2 extends BackgroundSubtractor
 //    is more than twice darker then it is not shadow. See Prati, Mikic, Trivedi and Cucchiarra,
 //    *Detecting Moving Shadows...*, IEEE PAMI,2003.
 //     */
+    getShadowThreshold(): _st.double;
 //    CV_WRAP virtual double getShadowThreshold() const = 0;
 //    /** @brief Sets the shadow threshold
 //    */
+    setShadowThreshold(threshold: _st.double ): void;
 //    CV_WRAP virtual void setShadowThreshold(double threshold) = 0;
 };
+
+export var BackgroundSubtractorMOG2: BackgroundSubtractorMOG2Static = alvision_module.BackgroundSubtractorMOG2;
 
 /** @brief Creates MOG2 Background Subtractor
 
@@ -235,23 +272,31 @@ export var createBackgroundSubtractorMOG2: IcreateBackgroundSubtractorMOG2 = alv
 The class implements the K-nearest neigbours background subtraction described in @cite Zivkovic2006 .
 Very efficient if number of foreground pixels is low.
  */
+export interface BackgroundSubtractorKNNStatic {
+    new (): BackgroundSubtractorKNN;
+}
+
 export interface BackgroundSubtractorKNN extends BackgroundSubtractor
 {
 //public:
 //    /** @brief Returns the number of last frames that affect the background model
 //    */
+    getHistory(): _st.int;
 //    CV_WRAP virtual int getHistory() const = 0;
 //    /** @brief Sets the number of last frames that affect the background model
 //    */
+    setHistory(history: _st.int ): void;
 //    CV_WRAP virtual void setHistory(int history) = 0;
 //
 //    /** @brief Returns the number of data samples in the background model
 //    */
+    getNSamples(): _st.int;
 //    CV_WRAP virtual int getNSamples() const = 0;
 //    /** @brief Sets the number of data samples in the background model.
 //
 //    The model needs to be reinitalized to reserve memory.
 //    */
+    setNSamples(_nN: _st.int ): void;
 //    CV_WRAP virtual void setNSamples(int _nN) = 0;//needs reinitialization!
 //
 //    /** @brief Returns the threshold on the squared distance between the pixel and the sample
@@ -259,9 +304,11 @@ export interface BackgroundSubtractorKNN extends BackgroundSubtractor
 //    The threshold on the squared distance between the pixel and the sample to decide whether a pixel is
 //    close to a data sample.
 //     */
+    getDist2Threshold(): _st.double;
 //    CV_WRAP virtual double getDist2Threshold() const = 0;
 //    /** @brief Sets the threshold on the squared distance
 //    */
+    setDist2Threshold(_dist2Threshold: _st.double ): void;
 //    CV_WRAP virtual void setDist2Threshold(double _dist2Threshold) = 0;
 //
 //    /** @brief Returns the number of neighbours, the k in the kNN.
@@ -269,9 +316,11 @@ export interface BackgroundSubtractorKNN extends BackgroundSubtractor
 //    K is the number of samples that need to be within dist2Threshold in order to decide that that
 //    pixel is matching the kNN background model.
 //     */
+    getkNNSamples(): _st.int;
 //    CV_WRAP virtual int getkNNSamples() const = 0;
 //    /** @brief Sets the k in the kNN. How many nearest neigbours need to match.
 //    */
+    setkNNSamples(_nkNN: _st.int ): void;
 //    CV_WRAP virtual void setkNNSamples(int _nkNN) = 0;
 //
 //    /** @brief Returns the shadow detection flag
@@ -279,6 +328,7 @@ export interface BackgroundSubtractorKNN extends BackgroundSubtractor
 //    If true, the algorithm detects shadows and marks them. See createBackgroundSubtractorKNN for
 //    details.
 //     */
+    getDetectShadows(): boolean;
 //    CV_WRAP virtual bool getDetectShadows() const = 0;
 //    /** @brief Enables or disables shadow detection
 //    */
@@ -289,9 +339,11 @@ export interface BackgroundSubtractorKNN extends BackgroundSubtractor
 //    Shadow value is the value used to mark shadows in the foreground mask. Default value is 127. Value 0
 //    in the mask always means background, 255 means foreground.
 //     */
+    getShadowValue(): _st.int;
 //    CV_WRAP virtual int getShadowValue() const = 0;
 //    /** @brief Sets the shadow value
 //    */
+    setShadowValue(value: _st.int ): void;
 //    CV_WRAP virtual void setShadowValue(int value) = 0;
 //
 //    /** @brief Returns the shadow threshold
@@ -301,11 +353,15 @@ export interface BackgroundSubtractorKNN extends BackgroundSubtractor
 //    is more than twice darker then it is not shadow. See Prati, Mikic, Trivedi and Cucchiarra,
 //    *Detecting Moving Shadows...*, IEEE PAMI,2003.
 //     */
+    getShadowThreshold(): _st.double;
 //    CV_WRAP virtual double getShadowThreshold() const = 0;
 //    /** @brief Sets the shadow threshold
 //     */
+    setShadowThreshold(threshold: _st.double): void;
 //    CV_WRAP virtual void setShadowThreshold(double threshold) = 0;
 };
+
+export var BackgroundSubtractorKNN: BackgroundSubtractorKNNStatic = alvision_module.BackgroundSubtractorKNN;
 
 /** @brief Creates KNN Background Subtractor
 
@@ -315,6 +371,13 @@ whether a pixel is close to that sample. This parameter does not affect the back
 @param detectShadows If true, the algorithm will detect shadows and mark them. It decreases the
 speed a bit, so if you do not need this feature, set the parameter to false.
  */
+
+export interface IcreateBackgroundSubtractorKNN {
+    (history?: _st.int /*= 500*/, dist2Threshold?: _st.double /*= 400.0*/, detectShadows?: boolean /* =true*/): BackgroundSubtractorKNN;
+}
+
+export var createBackgroundSubtractorKNN: IcreateBackgroundSubtractorKNN = alvision_module.createBackgroundSubtractorKNN;
+
 //CV_EXPORTS_W Ptr<BackgroundSubtractorKNN>
 //    createBackgroundSubtractorKNN(int history=500, double dist2Threshold=400.0,
 //                                   bool detectShadows=true);

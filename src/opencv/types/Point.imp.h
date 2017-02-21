@@ -301,12 +301,6 @@ void Point_<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<ov
 
 	
 
-	template <typename T>
-	 v8::Local<v8::Function> Point_<T>::get_constructor() {
-		assert(!constructor.IsEmpty() && "constructor is empty");
-		return Nan::New(constructor)->GetFunction();
-	}
-
 
 	template <typename T>
 	POLY_METHOD(Point_<T>::New) {

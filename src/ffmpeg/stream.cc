@@ -231,6 +231,10 @@ namespace alvision{
 				int height = streamInfo->Get(Nan::New("height").ToLocalChecked())->Int32Value();
 				//pixelformat =
 
+				if (mat->_mat->cols != width || mat->_mat->rows != height) {
+					throw std::exception("mat rows or cols do not match the stream");
+				}
+
 				if (self->_converter == nullptr){
 					self->_converter = ffmpegcpp::swscale::fromVideoCodec(stream->getCodec(), width, height);
 				}

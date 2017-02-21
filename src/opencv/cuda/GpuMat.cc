@@ -1,5 +1,6 @@
 #include "GpuMat.h"
 #include "../types/Size.h"
+#include "../types/Rect.h"
 #include "../types/Scalar.h"
 #include "../types/Range.h"
 #include "CudaStream.h"

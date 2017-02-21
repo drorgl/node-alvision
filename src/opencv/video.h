@@ -3,7 +3,7 @@
 //#include "OpenCV.h"
 #include "../alvision.h"
 
-#include "video/KalmanFilter.h"
+
 
 class video : public or::ObjectWrap {
 public:

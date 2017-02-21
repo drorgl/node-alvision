@@ -2,7 +2,7 @@
 #define _ALVISION_SIZE_H_
 
 #include "../../alvision.h"
-#include "SizeAndPoint.h"
+#include "SizePointRect.h"
 
 
 typedef typename Size_<cv::Size2i> Size2i;

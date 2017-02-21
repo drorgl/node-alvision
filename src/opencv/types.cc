@@ -34,6 +34,9 @@ types::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload
 	
 	PointInit::Register(target, overload);
 	SizeInit::Register(target, overload);
+	RectInit::Register(target, overload);
+
+
 	RectInit::Init(target, overload);
 
 	PointInit::Init(target, overload);

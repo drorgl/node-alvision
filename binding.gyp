@@ -309,7 +309,7 @@
 		, "src/opencv/types/Point.h"
 		, "src/opencv/types/Point.imp.h"
 		, "src/opencv/types/Point.cc"
-		, "src/opencv/types/SizeAndPoint.h"
+		, "src/opencv/types/SizePointRect.h"
 		, "src/opencv/types/Point3.h"
 		, "src/opencv/types/Point3.cc"
 		, "src/opencv/types/Scalar.cc"
@@ -323,6 +323,14 @@
 		, "src/opencv/Matx.imp.h"
 		, "src/opencv/MatxAndVec.h"
 
+		, "src/opencv/video/background_segm/BackgroundSubtractor.cc"
+		, "src/opencv/video/background_segm/BackgroundSubtractor.h"
+		, "src/opencv/video/background_segm/BackgroundSubtractorKNN.cc"
+		, "src/opencv/video/background_segm/BackgroundSubtractorKNN.h"
+		, "src/opencv/video/background_segm/BackgroundSubtractorMOG2.cc"
+		, "src/opencv/video/background_segm/BackgroundSubtractorMOG2.h"
+		, "src/opencv/video/background_segm.cc"
+		, "src/opencv/video/background_segm.h"
 		, "src/opencv/video/KalmanFilter.cc"
 		, "src/opencv/video/KalmanFilter.h"
 		
@@ -654,6 +662,7 @@
 
 		,'test/demos/utility.ts'
 		,'test/demos/pedestrian_detection.ts'
+		,'test/demos/background_subtraction.ts'
 		
         ]
 	  , 'dependencies':[

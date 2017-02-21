@@ -221,11 +221,7 @@ template <typename T>
 	}
 
 
-	template <typename T>
-	v8::Local<v8::Function> Size_<T>::get_constructor() {
-		assert(!constructor.IsEmpty() && "constructor is empty");
-		return Nan::New(constructor)->GetFunction();
-	}
+
 
 	template <typename T>
 	std::shared_ptr<Size_<T>> Size_<T>::Empty() {

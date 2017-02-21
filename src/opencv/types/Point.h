@@ -2,7 +2,7 @@
 #define _ALVISION_POINT_H_
 
 #include "../../alvision.h"
-#include "SizeAndPoint.h"
+#include "SizePointRect.h"
 
 
 

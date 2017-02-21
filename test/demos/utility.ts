@@ -7,8 +7,8 @@ export const opencv_extra = "../opencv_extra/";
 
 export class FrameSource {
 
-    next(frame: alvision.Mat): void {
-
+    next(frame: alvision.Mat): boolean {
+        return false;
     }
 
     reset(): void {
@@ -106,7 +106,6 @@ export class BaseApp {
     isActive(): boolean { return this.active_; }
     wait(delay: alvision.int = 0): void {
         const key = alvision.waitKey(delay);
-
         if ((key.valueOf() & 0xff) == 27 /*escape*/) {
             this.active_ = false;
             return;
@@ -116,7 +115,7 @@ export class BaseApp {
     }
 
     protected runAppLogic(): void { }
-    protected processAppKey(key: alvision.int): void { }
+    protected processAppKey(key: alvision.int): void {}
     protected printAppHelp(): void { }
     protected parseAppCmdArgs(i: number, argc: alvision.int, argv: string[]): number {
         return i;
@@ -241,9 +240,10 @@ class ImageSource extends FrameSource {
             THROW_EXCEPTION("Can't open " + fileName + " image");
     }
 
-    next(frame: alvision.Mat): void {
+    next(frame: alvision.Mat): boolean {
         //frame = img_;
         this.img_.copyTo(frame);
+        return true;
     }
 
     reset(): void {
@@ -264,13 +264,15 @@ class VideoSource extends FrameSource {
             THROW_EXCEPTION("Can't open " + fileName + " video");
     }
 
-    next(frame: alvision.Mat): void {
+    next(frame: alvision.Mat): boolean {
         this.vc_.read(frame);
 
         if (frame.empty()) {
             this.reset();
             this.vc_.read(frame);
+            return true;
         }
+        return false;
     }
 
 
@@ -305,15 +307,16 @@ class FFMPEGSource extends FrameSource {
         });
     }
 
-    next(frame: alvision.Mat): void {
+    next(frame: alvision.Mat): boolean {
         while (this.ffm.ReadPacket(this.ffpacket)) {
             let stream = this.ffstreams[this.ffpacket.streamid];
             if (stream.mediatype == alvision.mediatype.video) {
                 if (stream.Decode(this.ffpacket, stream, frame)) {
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
 
@@ -348,8 +351,9 @@ class CameraSource extends FrameSource {
             this.vc_.set(alvision.CAP_PROP_GENERIC.CAP_PROP_FRAME_HEIGHT, height);
     }
 
-    next(frame: alvision.Mat): void {
+    next(frame: alvision.Mat): boolean {
         this.vc_.read(frame);
+        return true;
     }
 
     reset(): void { }
@@ -371,7 +375,7 @@ class ImagesPatternSource extends FrameSource {
             THROW_EXCEPTION("Can't open " + pattern + " pattern");
     }
 
-    next(frame: alvision.Mat): void {
+    next(frame: alvision.Mat): boolean {
         if (!this.looped_) {
             this.vc_.read(frame);
 
@@ -385,6 +389,8 @@ class ImagesPatternSource extends FrameSource {
             this.looped_ = true;
 
         this.prev_ = this.vc_.get(alvision.CAP_PROP_GENERIC.CAP_PROP_POS_AVI_RATIO);
+
+        return true;
     }
 
     reset(): void {
@@ -474,7 +480,7 @@ class PairFrameSource_1 extends PairFrameSource {
 // Auxiliary functions
 
 function makeGray(src: alvision.InputArray, dst: alvision.OutputArray): void {
-    const scn = src.channels();
+    const scn = (<any>src).channels();
 
     alvision.CV_DbgAssert(() => scn == 1 || scn == 3 || scn == 4);
 

@@ -3074,7 +3074,16 @@ POLY_METHOD(core::swap_mat){throw std::exception("not implemented");}
 POLY_METHOD(core::swap_umat){throw std::exception("not implemented");}
 POLY_METHOD(core::borderInterpolate){throw std::exception("not implemented");}
 POLY_METHOD(core::copyMakeBorder){throw std::exception("not implemented");}
-POLY_METHOD(core::add){throw std::exception("not implemented");}
+POLY_METHOD(core::add){
+	auto src1 = info.at<IOArray*>(0)->GetInputArray();
+	auto src2 = info.at<IOArray*>(1)->GetInputArray();
+	auto dst = info.at<IOArray*>(2)->GetOutputArray();
+	auto mask = info.at<IOArray*>(3)->GetInputArray();
+	auto dtype= info.at<int>(4);
+	
+	cv::add(src1, src2, dst, mask, dtype);
+
+}
 POLY_METHOD(core::subtract){throw std::exception("not implemented");}
 POLY_METHOD(core::multiply){throw std::exception("not implemented");}
 POLY_METHOD(core::divide_mat){throw std::exception("not implemented");}
