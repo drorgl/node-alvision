@@ -3089,7 +3089,17 @@ POLY_METHOD(core::multiply){throw std::exception("not implemented");}
 POLY_METHOD(core::divide_mat){throw std::exception("not implemented");}
 POLY_METHOD(core::divide_scale){throw std::exception("not implemented");}
 POLY_METHOD(core::scaleAdd){throw std::exception("not implemented");}
-POLY_METHOD(core::addWeighted){throw std::exception("not implemented");}
+POLY_METHOD(core::addWeighted){
+	auto src1 = info.at<IOArray*>(0)->GetInputArray();
+	auto alpha = info.at<double>(1);
+	auto src2 = info.at<IOArray*>(2)->GetInputArray();
+	auto beta = info.at<double>(3);
+	auto gamma = info.at<double>(4);
+	auto dst = info.at<IOArray*>(5)->GetOutputArray();
+	auto dtype = info.at<int>(6);
+
+	cv::addWeighted(src1, alpha, src2, beta, gamma, dst, dtype);
+}
 POLY_METHOD(core::convertScaleAbs){throw std::exception("not implemented");}
 POLY_METHOD(core::LUT){throw std::exception("not implemented");}
 POLY_METHOD(core::sum){throw std::exception("not implemented");}

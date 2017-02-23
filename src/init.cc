@@ -63,6 +63,7 @@
 
 #include "opencv/features2d.h"
 #include "opencv/objdetect.h"
+#include "opencv/photo.h"
 
 #include <tracer.h>
 
@@ -177,6 +178,7 @@ init(Handle<Object> target) {
 	cv_test::Init(target, overload);
 	highgui::Init(target, overload);
 
+	photo::Init(target, overload);
 
 	
 

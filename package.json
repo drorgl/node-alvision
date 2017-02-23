@@ -25,7 +25,8 @@
 	"test-opencv" : "ts-node test/opencv.ts",
 	"test-tmp" : "ts-node test/tmp.ts",
 	"demo-pedestrian_detection" : "ts-node test/demos/pedestrian_detection.ts",
-	"demo-background_subtraction" : "ts-node test/demos/background_subtraction.ts"
+	"demo-background_subtraction" : "ts-node test/demos/background_subtraction.ts",
+	"demo-denoising" : "ts-node test/demos/denoising.ts"
   },
   "keywords": [
     "opencv",

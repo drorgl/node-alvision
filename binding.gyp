@@ -352,6 +352,36 @@
 		, "src/opencv/IOArray.cc"
 		, "src/opencv/IOArray.h"
 		
+		, "src/opencv/photo.h"
+		, "src/opencv/photo.cc"
+		, "src/opencv/photo/AlignExposures.cc"
+		, "src/opencv/photo/AlignExposures.h"
+		, "src/opencv/photo/AlignMTB.cc"
+		, "src/opencv/photo/AlignMTB.h"
+		, "src/opencv/photo/CalibrateCRF.cc"
+		, "src/opencv/photo/CalibrateCRF.h"
+		, "src/opencv/photo/CalibrateDebevec.cc"
+		, "src/opencv/photo/CalibrateDebevec.h"
+		, "src/opencv/photo/CalibrateRobertson.cc"
+		, "src/opencv/photo/CalibrateRobertson.h"
+		, "src/opencv/photo/MergeDebevec.cc"
+		, "src/opencv/photo/MergeDebevec.h"
+		, "src/opencv/photo/MergeExposures.cc"
+		, "src/opencv/photo/MergeExposures.h"
+		, "src/opencv/photo/MergeMertens.cc"
+		, "src/opencv/photo/MergeMertens.h"
+		, "src/opencv/photo/MergeRobertson.cc"
+		, "src/opencv/photo/MergeRobertson.h"
+		, "src/opencv/photo/Tonemap.cc"
+		, "src/opencv/photo/Tonemap.h"
+		, "src/opencv/photo/TonemapDrago.cc"
+		, "src/opencv/photo/TonemapDrago.h"
+		, "src/opencv/photo/TonemapDurand.cc"
+		, "src/opencv/photo/TonemapDurand.h"
+		, "src/opencv/photo/TonemapMantiuk.cc"
+		, "src/opencv/photo/TonemapMantiuk.h"
+		, "src/opencv/photo/TonemapReinhard.cc"
+		, "src/opencv/photo/TonemapReinhard.h"
 		
 		, "src/ffmpeg/ffmpeg.cc"
 		, "src/ffmpeg/ffmpeg.h"
@@ -663,6 +693,7 @@
 		,'test/demos/utility.ts'
 		,'test/demos/pedestrian_detection.ts'
 		,'test/demos/background_subtraction.ts'
+		,'test/demos/denoising.ts'
 		
         ]
 	  , 'dependencies':[

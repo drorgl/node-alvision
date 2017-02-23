@@ -118,7 +118,7 @@ export namespace cudaphoto {
      */
     interface IfastNlMeansDenoising {
         (src: _st.InputArray, dst: _st.OutputArray,
-            h: _st.float,
+            h?: _st.float /* = 3*/,
             search_window?: _st.int /* = 21*/,
             block_size?: _st.int /* = 7*/
             /*,Stream & stream = Stream::Null()*/): void;
@@ -154,7 +154,7 @@ export namespace cudaphoto {
      */
     interface IfastNlMeansDenoisingColored {
         (src: _st.InputArray, dst: _st.OutputArray,
-            h_luminance: _st.float, photo_render: _st.float,
+            h_luminance?: _st.float /*=3*/, photo_render?: _st.float /* = 10*/,
             search_window?: _st.int /*= 21*/,
             block_size?: _st.int /*= 7*/
             /*,Stream & stream = Stream::Null()*/): void;
