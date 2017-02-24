@@ -53,6 +53,9 @@ import * as _affine from './Affine'
 import * as _features2d from './features2d'
 import * as _superres_opticalflow from './superres/optical_flow';
 
+export * from './superres/optical_flow';
+export * from "./superres/input_array_utility";
+
 
 //#ifndef __OPENCV_SUPERRES_HPP__
 //#define __OPENCV_SUPERRES_HPP__
@@ -71,7 +74,7 @@ the papers @cite Farsiu03 and @cite Mitzel09 .
 
 //namespace cv
 //{
-export namespace superres {
+//export namespace superres {
 
     //! @addtogroup superres
     //! @{
@@ -195,9 +198,9 @@ export namespace superres {
         
                     //! @brief Dense optical flow algorithm
         /** @see setOpticalFlow */
-        getOpticalFlow(): _superres_opticalflow.super_res_optical_flow.DenseOpticalFlowExt;
+        getOpticalFlow(): _superres_opticalflow.DenseOpticalFlowExt;
                     /** @copybrief getOpticalFlow @see getOpticalFlow */
-        setOpticalFlow(val: _superres_opticalflow.super_res_optical_flow.DenseOpticalFlowExt) : void;
+        setOpticalFlow(val: _superres_opticalflow.DenseOpticalFlowExt) : void;
         //
         //        protected:
         //            SuperResolution();
@@ -247,7 +250,7 @@ export namespace superres {
 
     //! @} superres
 
-}
+//}
 //}
 
 //#endif // __OPENCV_SUPERRES_HPP__

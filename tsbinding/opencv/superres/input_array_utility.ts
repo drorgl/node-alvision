@@ -59,7 +59,7 @@ import * as _persistence from './../persistence';
 //
 //namespace cv
 //{
-export namespace superres_input_array_utility {
+//export namespace superres_input_array_utility {
     interface IarrGetMat {
         (arr: _st.InputArray, buf: _mat.Mat): _mat.Mat;
     }
@@ -89,25 +89,27 @@ export namespace superres_input_array_utility {
         //
 
     interface IconvertToType {
-        (src: _mat.Mat, type: _st.int, buf0: _mat.Mat, buf1: _mat.Mat ): _mat.Mat;
+        (src: _mat.Mat, type: _st.int, buf0: _mat.Mat, buf1: _mat.Mat): _mat.Mat;
+        (src: _mat.UMat, type: _st.int, buf0: _mat.UMat, buf1: _mat.UMat): _mat.UMat;
+        (src: _cuda.cuda.GpuMat, type: _st.int, buf0: _cuda.cuda.GpuMat, buf1: _cuda.cuda.GpuMat): _cuda.cuda.GpuMat;
     }
 
     export var convertToType: IconvertToType = alvision_module.superres.convertToType;
         //Mat convertToType(const Mat& src, int type, Mat& buf0, Mat& buf1);
 
-    interface IconvertToType {
-        (src: _mat.UMat, type: _st.int, buf0: _mat.UMat, buf1: _mat.UMat): _mat.UMat;
-    }
-
-    export var convertToType : IconvertToType = alvision_module.superres.convertToType;
-        //UMat convertToType(const UMat& src, int type, UMat& buf0, UMat& buf1);
-
-    interface IconvertToType {
-        (src: _cuda.cuda.GpuMat, type: _st.int, buf0: _cuda.cuda.GpuMat, buf1: _cuda.cuda.GpuMat ): _cuda.cuda.GpuMat;
-    }
-    export var convertToType: IconvertToType = alvision_module.superres.convertToType;
+    //interface IconvertToType {
+    //    (src: _mat.UMat, type: _st.int, buf0: _mat.UMat, buf1: _mat.UMat): _mat.UMat;
+    //}
+    //
+    //export var convertToType : IconvertToType = alvision_module.superres.convertToType;
+    //    //UMat convertToType(const UMat& src, int type, UMat& buf0, UMat& buf1);
+    //
+    //interface IconvertToType {
+    //    (src: _cuda.cuda.GpuMat, type: _st.int, buf0: _cuda.cuda.GpuMat, buf1: _cuda.cuda.GpuMat ): _cuda.cuda.GpuMat;
+    //}
+    //export var convertToType: IconvertToType = alvision_module.superres.convertToType;
         //cuda::GpuMat convertToType(const cuda::GpuMat& src, int type, cuda::GpuMat& buf0, cuda::GpuMat& buf1);
-    }
+//    }
 //}
 //
 //#endif // __OPENCV_SUPERRES_INPUT_ARRAY_UTILITY_HPP__

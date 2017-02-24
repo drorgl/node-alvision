@@ -293,7 +293,7 @@ class CalTech_HOG extends CalTech
         d_hog.setNumLevels(d_hog.getNumLevels().valueOf() + 32);
 
         var found_locations = new Array<alvision.Rect>();
-        d_hog.detectMultiScale(d_img, found_locations);
+        d_hog.detectMultiScale(d_img,(locs)=> found_locations = locs);
 
        // #if defined (LOG_CASCADE_STATISTIC)
     for (var i = 0; i < found_locations.length; i++)

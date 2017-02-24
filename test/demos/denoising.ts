@@ -69,7 +69,7 @@ class App extends BaseApp
 
             const proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
 
-            if (this.useGpu_)
+            if (this.useGpu_ && this.has_gpu)
                 d_dst.download(dst);
 
             outImg.create(frame.rows(), frame.cols().valueOf() * 2,alvision.MatrixType. CV_8UC3);

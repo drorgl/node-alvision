@@ -56,7 +56,7 @@ import * as _base from './../Base';
 import * as _cuda from './../cuda';
 import * as _persistence from './../persistence';
 
-        export namespace super_res_optical_flow{
+        //export namespace super_res_optical_flow{
 
 //! @addtogroup superres
 //! @{
@@ -228,7 +228,7 @@ export var createOptFlow_PyrLK_CUDA: IcreateOptFlow_PyrLK_CUDA = alvision_module
 
 //! @}
 
-    }
+//    }
 //}
 
 //#endif // __OPENCV_SUPERRES_OPTICAL_FLOW_HPP__

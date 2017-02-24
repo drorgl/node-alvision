@@ -690,10 +690,17 @@
 		,'test/opencv/viz/test_tutorial3.ts'
 		,'test/opencv/viz/test_viz3d.ts'
 
-		,'test/demos/utility.ts'
-		,'test/demos/pedestrian_detection.ts'
 		,'test/demos/background_subtraction.ts'
 		,'test/demos/denoising.ts'
+		,'test/demos/dense_optical_flow.ts'
+		,'test/demos/face_detection.ts'
+		,'test/demos/features2d.ts'
+		,'test/demos/pedestrian_detection.ts'
+		,'test/demos/sparse_optical_flow.ts'
+		,'test/demos/stereo_matching.ts'
+		,'test/demos/stitching.ts'
+		,'test/demos/utility.ts'
+		
 		
         ]
 	  , 'dependencies':[

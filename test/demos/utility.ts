@@ -29,7 +29,7 @@ export class FrameSource {
     }
 };
 
-class PairFrameSource {
+export class PairFrameSource {
     next(frame0: alvision.Mat, frame1: alvision.Mat): void { }
 
     reset(): void { }
@@ -479,7 +479,7 @@ class PairFrameSource_1 extends PairFrameSource {
 ////////////////////////////////////
 // Auxiliary functions
 
-function makeGray(src: alvision.InputArray, dst: alvision.OutputArray): void {
+export function makeGray(src: alvision.InputArray, dst: alvision.OutputArray): void {
     const scn = (<any>src).channels();
 
     alvision.CV_DbgAssert(() => scn == 1 || scn == 3 || scn == 4);

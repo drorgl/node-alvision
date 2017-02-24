@@ -100,7 +100,7 @@ class DegradeFrameSource implements alvision.superres.FrameSource
         addGaussNoise(this.deg_, 10.0);
         addSpikeNoise(this.deg_, 500);
 
-        alvision.superres_input_array_utility.arrCopy(this.deg_, frame);
+        alvision.superres.arrCopy(this.deg_, frame);
     }
     reset(): void {
         this.base_.reset();

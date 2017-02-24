@@ -112,9 +112,9 @@ export * from './opencv/calib3d/fisheye';
 export * from './opencv/ml';
 
 export * from './opencv/stitching';
-export * from './opencv/superres';
-export * from './opencv/superres/optical_flow';
-export * from "./opencv/superres/input_array_utility";
+
+import * as superres_local from './opencv/superres';
+export import superres = superres_local;
 
 
 export * from './opencv/viz';
