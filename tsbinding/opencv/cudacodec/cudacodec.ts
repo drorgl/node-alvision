@@ -70,7 +70,7 @@ import * as _features2d from './../features2d'
  */
 
 //namespace cv {
-  export  namespace cudacodec {
+  //export  namespace cudacodec {
 
 //! @addtogroup cudacodec
 //! @{
@@ -143,7 +143,7 @@ interface EncoderParams
     save(configFile : string): void;
 };
 
-      export var EncoderParams: EncoderParamsStatic = alvision_module.EncoderParams;
+      export var EncoderParams: EncoderParamsStatic = alvision_module.cuda.EncoderParams;
 
 /** @brief Callbacks for CUDA video encoder.
  */
@@ -226,11 +226,11 @@ multiplexing with cudacodec::EncoderCallBack .
  */
 
 
-interface IcreateVideoWriter{
-    (fileName: string, frameSize: _types.Size, fps: _st.double, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter
-}
-
-export var createVideoWriter: IcreateVideoWriter = alvision_module.createVideoWriter;
+//interface IcreateVideoWriter{
+//    (fileName: string, frameSize: _types.Size, fps: _st.double, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter
+//}
+//
+//export var createVideoWriter: IcreateVideoWriter = alvision_module.cuda.createVideoWriter;
 
 //CV_EXPORTS Ptr<VideoWriter> createVideoWriter(const String& fileName, Size frameSize, double fps, SurfaceFormat format = SF_BGR);
 /** @overload
@@ -243,11 +243,11 @@ SF_IYUV , SF_BGR or SF_GRAY). BGR or gray frames will be converted to YV12 forma
 encoding, frames with other formats will be used as is.
 */
 
-interface IcreateVideoWriter{
-    (fileName: string, frameSize: _types.Size, fps: _st.double, params: EncoderParams, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter;
-}
-
-export var createVideoWriter: IcreateVideoWriter = alvision_module.createVideoWriter;
+//interface IcreateVideoWriter{
+//    (fileName: string, frameSize: _types.Size, fps: _st.double, params: EncoderParams, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter;
+//}
+//
+//export var createVideoWriter: IcreateVideoWriter = alvision_module.createVideoWriter;
 
 //CV_EXPORTS Ptr<VideoWriter> createVideoWriter(const String& fileName, Size frameSize, double fps, const EncoderParams& params, SurfaceFormat format = SF_BGR);
 
@@ -262,10 +262,13 @@ encoding, frames with other formats will be used as is.
 */
 
 interface IcreateVideoWriter{
-    (encoderCallback: EncoderCallBack, frameSize: _types.Size, fps: _st.double, format?: SurfaceFormat /*= SF_BGR*/) : VideoWriter;
+    (encoderCallback: EncoderCallBack, frameSize: _types.Size, fps: _st.double, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter;
+    (encoderCallback: EncoderCallBack, frameSize: _types.Size, fps: _st.double, params: EncoderParams, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter;
+    (fileName: string, frameSize: _types.Size, fps: _st.double, params: EncoderParams, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter;
+    (fileName: string, frameSize: _types.Size, fps: _st.double, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter
 }
 
-export var createVideoWriter: IcreateVideoWriter = alvision_module.createVideoWriter;
+export var createVideoWriter: IcreateVideoWriter = alvision_module.cuda.createVideoWriter;
 
 //CV_EXPORTS Ptr<VideoWriter> createVideoWriter(const Ptr<EncoderCallBack>& encoderCallback, Size frameSize, double fps, SurfaceFormat format = SF_BGR);
 /** @overload
@@ -279,10 +282,10 @@ SF_IYUV , SF_BGR or SF_GRAY). BGR or gray frames will be converted to YV12 forma
 encoding, frames with other formats will be used as is.
 */
 
-interface IcreateVideoWriter{
-    (encoderCallback: EncoderCallBack, frameSize: _types.Size, fps: _st.double, params: EncoderParams, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter;
-}
-export var createVideoWriter: IcreateVideoWriter = alvision_module.createVideoWriter;
+//interface IcreateVideoWriter{
+//    (encoderCallback: EncoderCallBack, frameSize: _types.Size, fps: _st.double, params: EncoderParams, format?: SurfaceFormat /*= SF_BGR*/): VideoWriter;
+//}
+//export var createVideoWriter: IcreateVideoWriter = alvision_module.createVideoWriter;
 
 //CV_EXPORTS Ptr<VideoWriter> createVideoWriter(const Ptr<EncoderCallBack>& encoderCallback, Size frameSize, double fps, const EncoderParams& params, SurfaceFormat format = SF_BGR);
 
@@ -381,25 +384,26 @@ FFMPEG is used to read videos. User can implement own demultiplexing with cudaco
 
 interface IcreateVideoReader {
     (filename: string): VideoReader;
+    (source: RawVideoSource): VideoReader;
 }
 
-export var createVideoReader: IcreateVideoReader = alvision_module.createVideoReader;
+export var createVideoReader: IcreateVideoReader = alvision_module.cuda.createVideoReader;
 
 //CV_EXPORTS Ptr<VideoReader> createVideoReader(const String& filename);
 /** @overload
 @param source RAW video source implemented by user.
 */
 
-interface IcreateVideoReader{
-    (source: RawVideoSource) : VideoReader;
-}
-
-export var createVideoReader: IcreateVideoReader = alvision_module.createVideoReader;
+//interface IcreateVideoReader{
+//    (source: RawVideoSource) : VideoReader;
+//}
+//
+//export var createVideoReader: IcreateVideoReader = alvision_module.createVideoReader;
 //CV_EXPORTS Ptr<VideoReader> createVideoReader(const Ptr<RawVideoSource>& source);
 
 //! @}
 
-}
+//}
 //} // namespace cv { namespace cudacodec {
 
 //#endif /* __OPENCV_CUDACODEC_HPP__ */

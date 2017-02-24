@@ -67,7 +67,7 @@ class Video_Reader extends alvision.cvtest.CUDA_TEST
 
         const inputFile = alvision.cvtest.TS.ptr().get_data_path() + "video/" + this.GET_PARAM<string>(1);
 
-        var reader = alvision.cudacodec.createVideoReader(inputFile);
+        var reader = alvision.cuda.createVideoReader(inputFile);
 
         var frame = new alvision.cuda.GpuMat();
 
@@ -99,7 +99,7 @@ class Video_Writer extends alvision.cvtest.CUDA_TEST
         var reader = new alvision.VideoCapture (inputFile);
         alvision.ASSERT_TRUE(reader.isOpened());
 
-        var d_writer: alvision.cudacodec.VideoWriter;
+        var d_writer: alvision.cuda.VideoWriter;
 
         var frame = new alvision.Mat();
         var d_frame = new alvision.cuda.GpuMat();
@@ -112,7 +112,7 @@ class Video_Writer extends alvision.cvtest.CUDA_TEST
             d_frame.upload(frame);
 
             if (d_writer == null)
-                d_writer = alvision.cudacodec.createVideoWriter(outputFile, frame.size(), FPS);
+                d_writer = alvision.cuda.createVideoWriter(outputFile, frame.size(), FPS);
 
             d_writer.write(d_frame);
         }

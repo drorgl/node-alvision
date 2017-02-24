@@ -54,10 +54,10 @@ class App extends BaseApp
 
             if (this.useGpu_ && this.has_gpu) {
                 if (this.colorInput_) {
-                    alvision.cudaphoto.fastNlMeansDenoisingColored(d_src, d_dst);
+                    alvision.cuda.fastNlMeansDenoisingColored(d_src, d_dst);
                 }
                 else {
-                    alvision.cudaphoto.fastNlMeansDenoising(d_src, d_dst);
+                    alvision.cuda.fastNlMeansDenoising(d_src, d_dst);
                 }
             }
             else {

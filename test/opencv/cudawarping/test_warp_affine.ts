@@ -97,7 +97,7 @@ class BuildWarpAffineMaps_Accuracy extends BuildWarpAffineMaps
 
         var xmap = new alvision.cuda.GpuMat();
         var ymap = new alvision.cuda.GpuMat();
-        alvision.cudawarping.buildWarpAffineMaps(M, this.inverse, this.size, xmap, ymap);
+        alvision.cuda.buildWarpAffineMaps(M, this.inverse, this.size, xmap, ymap);
 
         var interpolation = alvision.InterpolationFlags.INTER_NEAREST;
         var borderMode = alvision.BorderTypes.BORDER_CONSTANT;
@@ -229,7 +229,7 @@ class WarpAffine_Accuracy extends WarpAffine
         var val = alvision.randomScalar(0.0, 255.0);
 
         var dst = alvision.createMat(this.size, this.type, this.useRoi);
-        alvision.cudawarping.warpAffine(alvision.loadMat(src, this.useRoi), dst, M, this.size, flags, this.borderType, val);
+        alvision.cuda.warpAffine(alvision.loadMat(src, this.useRoi), dst, M, this.size, flags, this.borderType, val);
 
         var dst_gold = new alvision.Mat();
         warpAffineGold(src, M, this.inverse, this.size, dst_gold, this.interpolation, this.borderType, val);
@@ -283,7 +283,7 @@ class WarpAffineNPP_Accuracy extends WarpAffineNPP
             flags |= alvision.InterpolationFlags.WARP_INVERSE_MAP;
 
         var dst = new alvision.cuda.GpuMat();
-        alvision.cudawarping.warpAffine(alvision.loadMat(src), dst, M, src.size(), flags);
+        alvision.cuda.warpAffine(alvision.loadMat(src), dst, M, src.size(), flags);
 
         var dst_gold = new alvision.Mat();
         warpAffineGold(src, M, this.inverse, src.size(), dst_gold, this.interpolation, alvision.BorderTypes.BORDER_CONSTANT, alvision.Scalar.all(0));

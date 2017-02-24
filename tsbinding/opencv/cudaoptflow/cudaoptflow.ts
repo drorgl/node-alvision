@@ -69,7 +69,7 @@ import * as _cuda from './../cuda';
  */
 
 //namespace cv {
-export namespace cudaoptflow {
+//export namespace cudaoptflow {
 
     //! @addtogroup cudaoptflow
     //! @{
@@ -89,7 +89,7 @@ export namespace cudaoptflow {
         @param flow computed flow image that has the same size as I0 and type CV_32FC2.
         @param stream Stream for the asynchronous version.
          */
-        calc(I0: _st.InputArray, I1: _st.InputArray, flow: _st.InputOutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        calc(I0: _st.InputArray, I1: _st.InputArray, flow: _st.InputOutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     };
 
     /** @brief Base interface for sparse optical flow algorithms.
@@ -111,7 +111,7 @@ export namespace cudaoptflow {
             prevPts: _st.InputArray, nextPts: _st.InputOutputArray,
             status: _st.OutputArray,
             err?: _st.OutputArray /*= cv::noArray()*/,
-            stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            stream?: _cuda.Stream /*= Stream::Null()*/): void;
     };
 
     //
@@ -378,11 +378,11 @@ export namespace cudaoptflow {
 
 
     interface IinterpolateFrames {
-        (frame0: _cuda.cuda.GpuMat, frame1: _cuda.cuda.GpuMat,
-            fu: _cuda.cuda.GpuMat, fv: _cuda.cuda.GpuMat,
-            bu: _cuda.cuda.GpuMat, bv: _cuda.cuda.GpuMat,
-            pos: _st.float, newFrame: _cuda.cuda.GpuMat, buf: _cuda.cuda.GpuMat,
-            stream?: _cuda.cuda.Stream/*= Stream::Null()*/): void;
+        (frame0: _cuda.GpuMat, frame1: _cuda.GpuMat,
+            fu: _cuda.GpuMat, fv: _cuda.GpuMat,
+            bu: _cuda.GpuMat, bv: _cuda.GpuMat,
+            pos: _st.float, newFrame: _cuda.GpuMat, buf: _cuda.GpuMat,
+            stream?: _cuda.Stream/*= Stream::Null()*/): void;
     }
 
     export var interpolateFrames: IinterpolateFrames = alvision_module.cuda.interpolateFrames;
@@ -394,4 +394,4 @@ export namespace cudaoptflow {
     //    Stream& stream = Stream::Null());
 
 
-}
+//}

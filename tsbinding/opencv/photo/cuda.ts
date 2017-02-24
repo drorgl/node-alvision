@@ -58,7 +58,7 @@ import * as _features2d from './../features2d'
 //#include "opencv2/core/cuda.hpp"
 
 //namespace cv {
-export namespace cudaphoto {
+//export namespace cudaphoto {
 
     //! @addtogroup photo_denoise
     //! @{
@@ -173,4 +173,4 @@ export namespace cudaphoto {
     //} // namespace cv { namespace cuda {
 
     //#endif /* __OPENCV_PHOTO_CUDA_HPP__ */
-}
+//}

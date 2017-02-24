@@ -87,7 +87,7 @@ class GoodFeaturesToTrack_Accuracy extends GoodFeaturesToTrack
         let maxCorners = 1000;
         let qualityLevel = 0.01;
 
-        let detector = alvision.cudaimgproc.createGoodFeaturesToTrackDetector(image.type(), maxCorners, qualityLevel, this.minDistance);
+        let detector = alvision.cuda.createGoodFeaturesToTrackDetector(image.type(), maxCorners, qualityLevel, this.minDistance);
 
         let d_pts = new alvision.cuda.GpuMat();
         detector .detect(alvision.loadMat(image), d_pts);
@@ -132,7 +132,7 @@ class GoodFeaturesToTrack_EmptyCorners extends GoodFeaturesToTrack
         let src = new alvision.cuda.GpuMat (100, 100, alvision.MatrixType.CV_8UC1, alvision.Scalar.all(0));
         let corners = new alvision.cuda.GpuMat (1, maxCorners,alvision.MatrixType. CV_32FC2);
 
-        let detector = alvision.cudaimgproc.createGoodFeaturesToTrackDetector(src.type(), maxCorners, qualityLevel, this.minDistance);
+        let detector = alvision.cuda.createGoodFeaturesToTrackDetector(src.type(), maxCorners, qualityLevel, this.minDistance);
 
         detector .detect(src, corners);
 

@@ -163,7 +163,7 @@ class Resize_Accuracy extends Resize
         var src = alvision.randomMat(this.size,this. type);
 
         var dst = alvision.createMat(new alvision.Size(alvision.saturate_cast<alvision.int>(src.cols().valueOf() * this.coeff.valueOf(),"int"), alvision.saturate_cast<alvision.int>(src.rows().valueOf() * this.coeff.valueOf(),"int")), this.type, this.useRoi);
-        alvision.cudawarping.resize(alvision.loadMat(src, this.useRoi), dst,new alvision.Size(), this.coeff, this.coeff, this.interpolation);
+        alvision.cuda.resize(alvision.loadMat(src, this.useRoi), dst,new alvision.Size(), this.coeff, this.coeff, this.interpolation);
 
         var dst_gold = new alvision.Mat();
         resizeGold(src, dst_gold, this.coeff, this.coeff, this.interpolation);
@@ -213,7 +213,7 @@ class ResizeSameAsHost_Accuracy extends ResizeSameAsHost {
  var src = alvision.randomMat(this.size, this.type);
 
         var dst = alvision.createMat(new alvision.Size(alvision.saturate_cast<alvision.int>(src.cols().valueOf() *this. coeff.valueOf(),"int"), alvision.saturate_cast<alvision.int>(src.rows().valueOf() * this.coeff.valueOf(),"int")), this.type, this.useRoi);
-        alvision.cudawarping.resize(alvision.loadMat(src,this. useRoi), dst, new alvision.Size(),this. coeff,this. coeff,this. interpolation);
+        alvision.cuda.resize(alvision.loadMat(src,this. useRoi), dst, new alvision.Size(),this. coeff,this. coeff,this. interpolation);
 
         var dst_gold = new alvision.Mat();
         alvision.resize(src, dst_gold, new alvision.Size(), this.coeff, this.coeff, this.interpolation);

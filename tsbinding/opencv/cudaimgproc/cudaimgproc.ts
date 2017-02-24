@@ -79,7 +79,7 @@ import * as _persistence from './../persistence';
 */
 
 //namespace cv {
-export namespace cudaimgproc {
+//export namespace cudaimgproc {
 
     //! @addtogroup cudaimgproc
     //! @{
@@ -104,9 +104,9 @@ export namespace cudaimgproc {
     @sa cvtColor
      */
     interface IcvtColor {
-        (src: _st.InputArray, dst: _st.OutputArray, code: _imgproc.ColorConversionCodes | _st.int, dcn?: _st.int /* = 0*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, code: _imgproc.ColorConversionCodes | _st.int, dcn?: _st.int /* = 0*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
-    export var cvtColor: IcvtColor = alvision_module.cvtColor;
+    export var cvtColor: IcvtColor = alvision_module.cuda.cvtColor;
     //CV_EXPORTS void cvtColor(InputArray src, OutputArray dst, int code, int dcn = 0, Stream& stream = Stream::Null());
 
     export enum DemosaicTypes {
@@ -157,7 +157,7 @@ export namespace cudaimgproc {
         (src: _st.InputArray, dst: _st.OutputArray, code: _st.int, dcn?: _st.int /* = -1*//*, Stream & stream = Stream::Null()*/): void;
     }
 
-    export var demosaicing: Idemosaicing = alvision_module.demosaicing;
+    export var demosaicing: Idemosaicing = alvision_module.cuda.demosaicing;
 
     //CV_EXPORTS void demosaicing(InputArray src, OutputArray dst, int code, int dcn = -1, Stream& stream = Stream::Null());
 
@@ -173,10 +173,10 @@ export namespace cudaimgproc {
      */
 
     interface IswapChannels {
-        (image: _st.InputOutputArray, dstOrder: Array<_st.int>, stream?: _cuda.cuda.Stream  /* = Stream::Null()*/): void;
+        (image: _st.InputOutputArray, dstOrder: Array<_st.int>, stream?: _cuda.Stream  /* = Stream::Null()*/): void;
     }
 
-    export var swapChannels: IswapChannels = alvision_module.swapChannels;
+    export var swapChannels: IswapChannels = alvision_module.cuda.swapChannels;
     //CV_EXPORTS void swapChannels(InputOutputArray image, const int dstOrder[4], Stream& stream = Stream::Null());
 
     /** @brief Routines for correcting image color gamma.
@@ -234,7 +234,7 @@ export namespace cudaimgproc {
     @param stream Stream for the asynchronous version.
      */
     interface IcalcHist {
-        (src: _st.InputArray, hist: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, hist: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var calcHist: IcalcHist = alvision_module.cuda.calcHist;
     //CV_EXPORTS void calcHist(InputArray src, OutputArray hist, Stream& stream = Stream::Null());
@@ -248,7 +248,7 @@ export namespace cudaimgproc {
     @sa equalizeHist
      */
     interface IequalizeHist {
-        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var equalizeHist: IequalizeHist = alvision_module.cuda.equalizeHist;
     //CV_EXPORTS void equalizeHist(InputArray src, OutputArray dst, Stream& stream = Stream::Null());
@@ -265,7 +265,7 @@ export namespace cudaimgproc {
         @param stream Stream for the asynchronous version.
          */
         apply(src: _st.InputArray, dst: _st.OutputArray): void;
-        apply(src: _st.InputArray, dst: _st.OutputArray, stream: _cuda.cuda.Stream): void;
+        apply(src: _st.InputArray, dst: _st.OutputArray, stream: _cuda.Stream): void;
     };
 
     /** @brief Creates implementation for cuda::CLAHE .
@@ -302,8 +302,8 @@ export namespace cudaimgproc {
      */
 
     interface IhistEven {
-        (src: _st.InputArray, hist: _st.OutputArray, histSize: _st.int, lowerLevel: _st.int, upperLevel: _st.int, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
-        (src: _st.InputArray, hist: Array<_cuda.cuda.GpuMat>, histSize: Array<_st.int>, lowerLevel: Array<_st.int>, upperLevel: Array<_st.int>, stream?: _cuda.cuda.Stream /* = Stream::Null()*/);
+        (src: _st.InputArray, hist: _st.OutputArray, histSize: _st.int, lowerLevel: _st.int, upperLevel: _st.int, stream?: _cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, hist: Array<_cuda.GpuMat>, histSize: Array<_st.int>, lowerLevel: Array<_st.int>, upperLevel: Array<_st.int>, stream?: _cuda.Stream /* = Stream::Null()*/);
     }
 
     export var histEven: IhistEven = alvision_module.cuda.histEven;
@@ -337,14 +337,14 @@ export namespace cudaimgproc {
         @param edges Output edge map. It has the same size and type as image.
         @param stream Stream for the asynchronous version.
          */
-        detect(image: _st.InputArray, edges: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        detect(image: _st.InputArray, edges: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
         /** @overload
         @param dx First derivative of image in the vertical direction. Support only CV_32S type.
         @param dy First derivative of image in the horizontal direction. Support only CV_32S type.
         @param edges Output edge map. It has the same size and type as image.
         @param stream Stream for the asynchronous version.
         */
-        detect(dx: _st.InputArray, dy: _st.InputArray, edges: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        detect(dx: _st.InputArray, dy: _st.InputArray, edges: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
 
         setLowThreshold(low_thresh: _st.double): void;
         getLowThreshold(): _st.double;
@@ -399,7 +399,7 @@ export namespace cudaimgproc {
     
         @sa HoughLines
          */
-        detect(src: _st.InputArray, lines: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        detect(src: _st.InputArray, lines: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     
         /** @brief Downloads results from cuda::HoughLinesDetector::detect to host memory.
     
@@ -408,7 +408,7 @@ export namespace cudaimgproc {
         @param h_votes Optional output array for line's votes.
         @param stream Stream for the asynchronous version.
          */
-        downloadResults(d_lines: _st.InputArray, h_lines: _st.OutputArray, h_votes?: _st.OutputArray /*= noArray()*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        downloadResults(d_lines: _st.InputArray, h_lines: _st.OutputArray, h_votes?: _st.OutputArray /*= noArray()*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
 
         setRho(rho: _st.float): void;
         getRho(): _st.float;
@@ -504,7 +504,7 @@ export namespace cudaimgproc {
     
         @sa HoughCircles
          */
-        detect(src: _st.InputArray, circles: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        detect(src: _st.InputArray, circles: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
 
         setDp(dp: _st.float): void;
         getDp(): _st.float;
@@ -583,7 +583,7 @@ export namespace cudaimgproc {
         CV_32FC1 type.
         @param stream Stream for the asynchronous version.
          */
-        compute(src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream  /*= Stream::Null()*/): void;
+        compute(src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream  /*= Stream::Null()*/): void;
     };
 
     /** @brief Creates implementation for Harris cornerness criteria.
@@ -635,7 +635,7 @@ export namespace cudaimgproc {
         CV_8UC1 and the same size as image ), it specifies the region in which the corners are detected.
         @param stream Stream for the asynchronous version.
          */
-        detect(image: _st.InputArray, corners: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        detect(image: _st.InputArray, corners: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     };
 
     /** @brief Creates implementation for cuda::CornersDetector .
@@ -686,7 +686,7 @@ export namespace cudaimgproc {
     interface ImeanShiftFiltering {
         (src: _st.InputArray, dst: _st.OutputArray, sp: _st.int, sr: _st.int ,
             criteria?: _types.TermCriteria /* = TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 5, 1)*/,
-            stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+            stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var meanShiftFiltering: ImeanShiftFiltering = alvision_module.cuda.meanShiftFiltering;
     //CV_EXPORTS void meanShiftFiltering(InputArray src, OutputArray dst, int sp, int sr,
@@ -711,7 +711,7 @@ export namespace cudaimgproc {
     interface ImeanShiftProc {
         (src: _st.InputArray, dstr: _st.OutputArray, dstsp: _st.OutputArray, sp: _st.int, sr: _st.int ,
             criteria?: _types.TermCriteria /* = TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 5, 1)*/,
-            stream?: _cuda.cuda.Stream /*  = Stream::Null()*/) : void;
+            stream?: _cuda.Stream /*  = Stream::Null()*/) : void;
     }
     export var meanShiftProc: ImeanShiftProc = alvision_module.cuda.meanShiftProc;
     //CV_EXPORTS void meanShiftProc(InputArray src, OutputArray dstr, OutputArray dstsp, int sp, int sr,
@@ -731,7 +731,7 @@ export namespace cudaimgproc {
     interface ImeanShiftSegmentation {
         (src: _st.InputArray, dst: _st.OutputArray, sp: _st.int, sr: _st.int, minsize: _st.int ,
             criteria?: _types.TermCriteria /* = TermCriteria(TermCriteria::MAX_ITER + TermCriteria::EPS, 5, 1)*/,
-            stream?: _cuda.cuda.Stream /* = Stream::Null()*/) : void;
+            stream?: _cuda.Stream /* = Stream::Null()*/) : void;
     }
     export var meanShiftSegmentation: ImeanShiftSegmentation = alvision_module.cuda.meanShiftSegmentation;
     //CV_EXPORTS void meanShiftSegmentation(InputArray src, OutputArray dst, int sp, int sr, int minsize,
@@ -753,7 +753,7 @@ export namespace cudaimgproc {
         x h*, then result must be *W-w+1 x H-h+1*.
         @param stream Stream for the asynchronous version.
          */
-        match(image: _st.InputArray, templ: _st.InputArray, result: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        match(image: _st.InputArray, templ: _st.InputArray, result: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     };
 
     /** @brief Creates implementation for cuda::TemplateMatching .
@@ -806,7 +806,7 @@ export namespace cudaimgproc {
      */
     interface IbilateralFilter {
         (src: _st.InputArray, dst: _st.OutputArray, kernel_size: _st.int, sigma_color: _st.float, sigma_spatial: _st.float,
-            borderMode?: _base.BorderTypes | _st.int /* = BORDER_DEFAULT*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+            borderMode?: _base.BorderTypes | _st.int /* = BORDER_DEFAULT*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var bilateralFilter: IbilateralFilter = alvision_module.cuda.bilateralFilter;
 
@@ -828,7 +828,7 @@ export namespace cudaimgproc {
      */
     interface IblendLinear {
         (img1: _st.InputArray, img2: _st.InputArray, weights1: _st.InputArray, weights2: _st.InputArray ,
-            result: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            result: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var blendLinear: IblendLinear = alvision_module.cuda.blendLinear;
@@ -838,7 +838,7 @@ export namespace cudaimgproc {
 
 //! @}
 
-}
+//}
 //} // namespace cv { namespace cuda {
 
 //#endif /* __OPENCV_CUDAIMGPROC_HPP__ */

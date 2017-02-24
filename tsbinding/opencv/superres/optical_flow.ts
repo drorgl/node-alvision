@@ -165,6 +165,9 @@ import * as _persistence from './../persistence';
         export var createOptFlow_DualTVL1_CUDA: IcreateOptFlow_DualTVL1_CUDA = alvision_module.superres.optical_flow.createOptFlow_DualTVL1_CUDA;
 
 
+        export interface BroxOpticalFlowStatic {
+            new (): BroxOpticalFlow;
+        }
         export interface  BroxOpticalFlow extends DenseOpticalFlowExt
         {
             //! @brief Flow smoothness
@@ -198,6 +201,9 @@ import * as _persistence from './../persistence';
             /** @copybrief getSolverIterations @see getSolverIterations */
             setSolverIterations(val: _st.int): void;
         };
+
+        export var BroxOpticalFlow: BroxOpticalFlowStatic = alvision_module.superres.BroxOpticalFlow;
+
         interface IcreateOptFlow_Brox_CUDA {
             (): BroxOpticalFlow;
         }

@@ -82,7 +82,7 @@ class HistEven_Accuracy extends HistEven
         let hranges = [50.0, 200.0];
 
         let hist = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.histEven(alvision.loadMat(src), hist, hbins,  hranges[0],  hranges[1]);
+        alvision.cuda.histEven(alvision.loadMat(src), hist, hbins,  hranges[0],  hranges[1]);
 
         let hist_gold = new alvision.Mat();
 
@@ -129,7 +129,7 @@ class CalcHist_Accuracy extends CalcHist
         let src = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC1);
 
         let hist = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.calcHist(alvision.loadMat(src), hist);
+        alvision.cuda.calcHist(alvision.loadMat(src), hist);
 
         let hist_gold = new alvision.Mat();
 
@@ -177,7 +177,7 @@ class EqualizeHist_Accuracy extends EqualizeHist
         let src = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC1);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.equalizeHist(alvision.loadMat(src), dst);
+        alvision.cuda.equalizeHist(alvision.loadMat(src), dst);
 
         let dst_gold = new alvision.Mat();
         alvision.equalizeHist(src, dst_gold);
@@ -222,7 +222,7 @@ class CLAHE_Accuracy extends CLAHE
     TestBody() {
         let src = alvision.randomMat(this.size, alvision.MatrixType.CV_8UC1);
 
-        let clahe = alvision.cudaimgproc.createCLAHE(this.clipLimit);
+        let clahe = alvision.cuda.createCLAHE(this.clipLimit);
         let dst = new alvision.cuda.GpuMat();
         clahe.apply(alvision.loadMat(src), dst);
 

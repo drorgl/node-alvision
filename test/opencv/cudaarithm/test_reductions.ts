@@ -85,7 +85,7 @@ class Norm_Accuracy extends Norm
         let src = alvision.randomMat(this.size, this.depth);
         let mask = alvision.randomMat(this.size,alvision.MatrixType. CV_8UC1, 0, 2);
 
-        let val = alvision.cudaarithm.norm(alvision.loadMat(src, this.useRoi), this.normCode, alvision.loadMat(mask, this.useRoi));
+        let val = alvision.cuda.norm(alvision.loadMat(src, this.useRoi), this.normCode, alvision.loadMat(mask, this.useRoi));
 
         let val_gold = alvision.norm(src, this.normCode, mask);
 
@@ -103,7 +103,7 @@ class Norm_Async extends Norm
         let stream = new alvision.cuda.Stream();
 
         let dst = new alvision.cuda.HostMem();
-        alvision.cudaarithm.calcNorm(alvision.loadMat(src, this.useRoi), dst, this.normCode, alvision.loadMat(mask, this.useRoi), stream);
+        alvision.cuda.calcNorm(alvision.loadMat(src, this.useRoi), dst, this.normCode, alvision.loadMat(mask, this.useRoi), stream);
 
         stream.waitForCompletion(() => {
 

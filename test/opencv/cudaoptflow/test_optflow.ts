@@ -81,14 +81,14 @@ class BroxOpticalFlow_Regression extends BroxOpticalFlow {
         alvision.ASSERT_FALSE(frame1.empty());
 
         var brox =
-        alvision.cudaoptflow.BroxOpticalFlow.create(0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale_factor*/,
+        alvision.cuda.BroxOpticalFlow.create(0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale_factor*/,
             10 /*inner_iterations*/, 77 /*outer_iterations*/, 10 /*solver_iterations*/);
 
         var flow = new alvision.cuda.GpuMat();
         brox.calc(alvision.loadMat(frame0), alvision.loadMat(frame1), flow);
 
         var flows = new Array < alvision.cuda.GpuMat >(2);
-        alvision.cudaarithm.split(flow, flows);
+        alvision.cuda.split(flow, flows);
 
         var u = flows[0];
         var v = flows[1];
@@ -163,14 +163,14 @@ class BroxOpticalFlow_OpticalFlowNan extends BroxOpticalFlow
         alvision.resize(frame1, r_frame1, new alvision.Size(1380, 1000));
 
         var  brox =
-        alvision.cudaoptflow.BroxOpticalFlow.create(0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale_factor*/,
+        alvision.cuda.BroxOpticalFlow.create(0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale_factor*/,
             10 /*inner_iterations*/, 77 /*outer_iterations*/, 10 /*solver_iterations*/);
 
         var flow = new alvision.cuda.GpuMat();
         brox.calc(alvision.loadMat(frame0), alvision.loadMat(frame1), flow);
 
         var flows = new Array < alvision.cuda.GpuMat >(2);
-        alvision.cudaarithm.split(flow, flows);
+        alvision.cuda.split(flow, flows);
 
         var u = flows[0];
         var v = flows[1];
@@ -235,7 +235,7 @@ class PyrLKOpticalFlow_Sparse extends PyrLKOpticalFlow
         d_pts.upload(pts_mat);
 
         var pyrLK =
-            alvision.cudaoptflow.SparsePyrLKOpticalFlow.create();
+            alvision.cuda.SparsePyrLKOpticalFlow.create();
 
         var d_nextPts = new alvision.cuda.GpuMat();
         var d_status = new alvision.cuda.GpuMat();
@@ -330,7 +330,7 @@ class FarnebackOpticalFlow_Accuracy extends FarnebackOpticalFlow
         var polySigma = (this.polyN <= 5) ? 1.1 : 1.5;
 
         var farn =
-        alvision.cudaoptflow.FarnebackOpticalFlow.create();
+        alvision.cuda.FarnebackOpticalFlow.create();
         farn.setPyrScale(this.pyrScale);
         farn.setPolyN(this.polyN);
         farn.setPolySigma(polySigma);
@@ -397,7 +397,7 @@ class OpticalFlowDual_TVL1_Accuracy extends OpticalFlowDual_TVL1
         alvision.ASSERT_FALSE(frame1.empty());
 
         var d_alg =
-            alvision.cudaoptflow.OpticalFlowDual_TVL1.create();
+            alvision.cuda.OpticalFlowDual_TVL1.create();
         d_alg.setNumIterations(10);
         d_alg.setGamma(this.gamma);
 

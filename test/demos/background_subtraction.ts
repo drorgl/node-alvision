@@ -35,8 +35,8 @@ class App extends BaseApp
         //let mog_cpu = new alvision.BackgroundSubtractorMOG();
         let mog_cpu  : alvision.BackgroundSubtractorMOG2;
         let knn_cpu  : alvision.BackgroundSubtractorKNN;
-        let mog_gpu  : alvision.cudabgsegm.BackgroundSubtractorMOG;//.MOG_GPU();
-        let mog_gpu2 : alvision.cudabgsegm.BackgroundSubtractorMOG2;
+        let mog_gpu  : alvision.cuda.BackgroundSubtractorMOG;//.MOG_GPU();
+        let mog_gpu2 : alvision.cuda.BackgroundSubtractorMOG2;
 
         let frame = new alvision.Mat(480, 640, alvision.MatrixType.CV_8UC3), fgmask1 = new alvision.Mat(480, 640, alvision.MatrixType.CV_8UC3), fgmask2 = new alvision.Mat(480, 640, alvision.MatrixType.CV_8UC3), filterBuf = new alvision.Mat(), outImg1 = new alvision.Mat(), outImg2 = new alvision.Mat();
         let d_frame: alvision.cuda.GpuMat, d_fgmask1: alvision.cuda.GpuMat, d_fgmask2: alvision.cuda.GpuMat;
@@ -62,8 +62,8 @@ class App extends BaseApp
                 mog_cpu = new alvision.BackgroundSubtractorMOG2();
                 knn_cpu = new alvision.BackgroundSubtractorKNN();
                 if (this.has_gpu) {
-                    mog_gpu = new alvision.cudabgsegm.BackgroundSubtractorMOG();
-                    mog_gpu2 = new alvision.cudabgsegm.BackgroundSubtractorMOG2();
+                    mog_gpu = new alvision.cuda.BackgroundSubtractorMOG();
+                    mog_gpu2 = new alvision.cuda.BackgroundSubtractorMOG2();
                 }
 
                 //this.sources_[this.curSource_.valueOf()].reset();

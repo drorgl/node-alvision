@@ -94,7 +94,7 @@ class MatchTemplate8U_Accuracy extends MatchTemplate8U
         let image = alvision.randomMat(this.size, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U,this. cn));
         let templ = alvision.randomMat(this.templ_size, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U,this. cn));
 
-        let alg = alvision.cudaimgproc.createTemplateMatching(image.type(), this.method);
+        let alg = alvision.cuda.createTemplateMatching(image.type(), this.method);
 
         let dst = new alvision.cuda.GpuMat();
         alg.match(alvision.loadMat(image), alvision.loadMat(templ), dst);
@@ -159,7 +159,7 @@ class MatchTemplate32F_Regression extends MatchTemplate32F
         let image = alvision.randomMat(this.size, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_32F,this. cn));
         let templ = alvision.randomMat(this.templ_size,alvision.MatrixType. CV_MAKETYPE(alvision.MatrixType.CV_32F, this.cn));
 
-        let alg = alvision.cudaimgproc.createTemplateMatching(image.type(), this.method);
+        let alg = alvision.cuda.createTemplateMatching(image.type(), this.method);
 
         let dst = new alvision.cuda.GpuMat();
         alg.match(alvision.loadMat(image), alvision.loadMat(templ), dst);
@@ -215,7 +215,7 @@ class MatchTemplateBlackSource_Accuracy extends MatchTemplateBlackSource {
         let pattern = alvision.readImage("matchtemplate/cat.png");
         alvision.ASSERT_FALSE(pattern.empty());
 
-        let alg = alvision.cudaimgproc.createTemplateMatching(image.type(), this.method);
+        let alg = alvision.cuda.createTemplateMatching(image.type(), this.method);
 
         let d_dst = new alvision.cuda.GpuMat();
         alg.match(alvision.loadMat(image), alvision.loadMat(pattern), d_dst);
@@ -267,7 +267,7 @@ class MatchTemplate_CCOEF_NORMED_Accuracy extends MatchTemplate_CCOEF_NORMED
         let pattern = alvision.readImage(this.patternName);
         alvision.ASSERT_FALSE(pattern.empty());
 
-        let alg = alvision.cudaimgproc.createTemplateMatching(image.type(), alvision.TemplateMatchModes.TM_CCOEFF_NORMED);
+        let alg = alvision.cuda.createTemplateMatching(image.type(), alvision.TemplateMatchModes.TM_CCOEFF_NORMED);
 
         let d_dst = new alvision.cuda.GpuMat();
         alg.match(alvision.loadMat(image), alvision.loadMat(pattern), d_dst);
@@ -322,7 +322,7 @@ class MatchTemplate_CanFindBigTemplate_SQDIFF_NORMED extends MatchTemplate_CanFi
         let templ = alvision.readImage("matchtemplate/template.png");
         alvision.ASSERT_FALSE(templ.empty());
 
-        let alg = alvision.cudaimgproc.createTemplateMatching(scene.type(), alvision.TemplateMatchModes.TM_SQDIFF_NORMED);
+        let alg = alvision.cuda.createTemplateMatching(scene.type(), alvision.TemplateMatchModes.TM_SQDIFF_NORMED);
 
         let d_result = new alvision.cuda.GpuMat();
         alg.match(alvision.loadMat(scene), alvision.loadMat(templ), d_result);
@@ -350,7 +350,7 @@ class MatchTemplate_CanFindBigTemplate_SQDIFF extends MatchTemplate_CanFindBigTe
         let templ = alvision.readImage("matchtemplate/template.png");
         alvision.ASSERT_FALSE(templ.empty());
 
-        let alg = alvision.cudaimgproc.createTemplateMatching(scene.type(), alvision.TemplateMatchModes.TM_SQDIFF);
+        let alg = alvision.cuda.createTemplateMatching(scene.type(), alvision.TemplateMatchModes.TM_SQDIFF);
 
         let d_result = new alvision.cuda.GpuMat();
         alg.match(alvision.loadMat(scene), alvision.loadMat(templ), d_result);

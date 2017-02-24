@@ -57,7 +57,7 @@ export interface IOArrayStatic {
 
 export interface IOArray {//extends Array<any> {
     kind?(): IOArrayKind;
-    getGpuMat?(): _cuda.cuda.GpuMat;
+    getGpuMat?(): _cuda.GpuMat;
     getMat?(idx?: int /*= -1*/): _mat.Mat; 
 
     //create?(sz: _types.Size, type: int, i?: int /*= -1*/, allowTransposed?: boolean /*= false*/, fixedDepthMask?: int /*= 0*/): void;
@@ -73,7 +73,7 @@ export interface IOArray {//extends Array<any> {
     cols?(): int;
 
     //channels?(): int;
-    getGpuMatRef?(): _cuda.cuda.GpuMat;
+    getGpuMatRef?(): _cuda.GpuMat;
     setTo?(value: InputArray | _types.Scalar | int, mask?: InputArray /*= noArray()*/): void;
 }
 

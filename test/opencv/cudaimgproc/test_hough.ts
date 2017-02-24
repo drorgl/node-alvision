@@ -105,7 +105,7 @@ class HoughLines_Accuracy extends HoughLines
         let src = new alvision.Mat (size, alvision.MatrixType.CV_8UC1);
         this.generateLines(src);
 
-        let hough = alvision.cudaimgproc.createHoughLinesDetector(rho, theta, threshold);
+        let hough = alvision.cuda.createHoughLinesDetector(rho, theta, threshold);
 
         let d_lines = new alvision.cuda.GpuMat();
         hough.detect(alvision.loadMat(src, useRoi), d_lines);
@@ -165,7 +165,7 @@ class HoughCircles_Accuracy extends HoughCircles {
         let src = new alvision.Mat (size,alvision.MatrixType. CV_8UC1);
         this.drawCircles(src, circles_gold, true);
 
-        let houghCircles = alvision.cudaimgproc.createHoughCirclesDetector(dp, minDist, cannyThreshold, votesThreshold, minRadius, maxRadius);
+        let houghCircles = alvision.cuda.createHoughCirclesDetector(dp, minDist, cannyThreshold, votesThreshold, minRadius, maxRadius);
 
         let d_circles = new alvision.cuda.GpuMat();
         houghCircles.detect(alvision.loadMat(src, useRoi), d_circles);
@@ -239,7 +239,7 @@ class GeneralizedHough_Ballard extends GeneralizedHough
             templ.copyTo(imageROI);
         }
 
-        let alg = alvision.cudaimgproc.createGeneralizedHoughBallard();
+        let alg = alvision.cuda.createGeneralizedHoughBallard();
         alg.setVotesThreshold(200);
 
         alg.setTemplate(alvision.loadMat(templ, useRoi));

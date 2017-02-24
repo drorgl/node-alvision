@@ -73,7 +73,7 @@ import * as _calib3d from './../calib3d';
  */
 
 //namespace cv {
-export namespace cudastereo {
+//export namespace cudastereo {
 
     //! @addtogroup cudastereo
     //! @{
@@ -90,7 +90,7 @@ export namespace cudastereo {
         //public:
         //using cv::StereoBM::compute;
 
-        compute(left: _st.InputArray, right: _st.InputArray, disparity: _st.OutputArray, stream?: _cuda.cuda.Stream): void;
+        compute(left: _st.InputArray, right: _st.InputArray, disparity: _st.OutputArray, stream?: _cuda.Stream): void;
     };
 
     /** @brief Creates StereoBM object.
@@ -159,7 +159,7 @@ export namespace cudastereo {
         //    using cv::StereoMatcher::compute;
 
         /** @overload */
-        compute(left: _st.InputArray, right: _st.InputArray, disparity: _st.OutputArray, stream?: _cuda.cuda.Stream): void;
+        compute(left: _st.InputArray, right: _st.InputArray, disparity: _st.OutputArray, stream?: _cuda.Stream): void;
 
         /** @brief Enables the stereo correspondence operator that finds the disparity for the specified data cost.
     
@@ -170,7 +170,7 @@ export namespace cudastereo {
         fractional bits.
         @param stream Stream for the asynchronous version.
          */
-        compute(data: _st.InputArray, disparity: _st.OutputArray, stream?: _cuda.cuda.Stream/*= Stream::Null()*/): void;
+        compute(data: _st.InputArray, disparity: _st.OutputArray, stream?: _cuda.Stream/*= Stream::Null()*/): void;
 
         //! number of BP iterations on each level
         getNumIters(): _st.int;
@@ -351,7 +351,7 @@ export var StereoBeliefPropagation: StereoBeliefPropagationStatic = alvision_mod
     @sa reprojectImageTo3D
      */
     interface IreprojectImageTo3D {
-        (disp: _st.InputArray, xyzw: _st.OutputArray, Q: _st.InputArray, dst_cn?: _st.int /*= 4*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (disp: _st.InputArray, xyzw: _st.OutputArray, Q: _st.InputArray, dst_cn?: _st.int /*= 4*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var reprojectImageTo3D: IreprojectImageTo3D = alvision_module.cuda.reprojectImageTo3D;
 
@@ -373,7 +373,7 @@ export var StereoBeliefPropagation: StereoBeliefPropagationStatic = alvision_mod
      */
 
     interface IdrawColorDisp {
-        (src_disp: _st.InputArray, dst_disp: _st.OutputArray, ndisp: _st.int, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src_disp: _st.InputArray, dst_disp: _st.OutputArray, ndisp: _st.int, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var drawColorDisp: IdrawColorDisp = alvision_module.cuda.drawColorDisp;
 //CV_EXPORTS void drawColorDisp(InputArray src_disp, OutputArray dst_disp, int ndisp, Stream& stream = Stream::Null());
@@ -381,6 +381,6 @@ export var StereoBeliefPropagation: StereoBeliefPropagationStatic = alvision_mod
 //! @}
 
 //}
-} // namespace cv { namespace cuda {
+//} // namespace cv { namespace cuda {
 
 //#endif /* __OPENCV_CUDASTEREO_HPP__ */

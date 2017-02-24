@@ -82,7 +82,7 @@ class PyrDown_Accuracy extends PyrDown
         var src = alvision.randomMat(this.size, this.type);
 
         var dst = alvision.createMat(new alvision.Size((this.size.width.valueOf() + 1) / 2, (this.size.height.valueOf() + 1) / 2), this.type, this.useRoi);
-        alvision.cudawarping.pyrDown(alvision.loadMat(src, this.useRoi), dst);
+        alvision.cuda.pyrDown(alvision.loadMat(src, this.useRoi), dst);
 
         var dst_gold = new alvision.Mat();
         alvision.pyrDown(src, dst_gold);
@@ -127,7 +127,7 @@ class PyrUp_Accuracy extends PyrUp
         var src = alvision.randomMat(this.size, this.type);
 
         var dst = alvision.createMat(new alvision.Size(this.size.width.valueOf() * 2, this.size.height.valueOf() * 2), this.type,this. useRoi);
-        alvision.cudawarping.pyrUp(alvision.loadMat(src, this.useRoi), dst);
+        alvision.cuda.pyrUp(alvision.loadMat(src, this.useRoi), dst);
 
         var dst_gold = new alvision.Mat();
         alvision.pyrUp(src, dst_gold);

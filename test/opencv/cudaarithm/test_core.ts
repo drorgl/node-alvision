@@ -94,7 +94,7 @@ class Merge_Accuracy extends Merge
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat();
-                alvision.cudaarithm.merge(d_src, dst);
+                alvision.cuda.merge(d_src, dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -102,7 +102,7 @@ class Merge_Accuracy extends Merge
         }
         else {
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaarithm.merge(d_src, dst);
+            alvision.cuda.merge(d_src, dst);
 
             let dst_gold = new alvision.Mat();
             alvision.merge(src, dst_gold);
@@ -156,7 +156,7 @@ class Split_Accuracy extends Split
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new Array<alvision.cuda.GpuMat>();
-                alvision.cudaarithm.split(alvision.loadMat(src), dst);
+                alvision.cuda.split(alvision.loadMat(src), dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -164,7 +164,7 @@ class Split_Accuracy extends Split
         }
         else {
             let dst = new Array<alvision.cuda.GpuMat>();
-            alvision.cudaarithm.split(alvision.loadMat(src, this.useRoi), dst);
+            alvision.cuda.split(alvision.loadMat(src, this.useRoi), dst);
 
             let dst_gold = new Array<alvision.Mat>();
             alvision.split(src, dst_gold);
@@ -217,7 +217,7 @@ class Transpose_Accuracy extends Transpose
         if (alvision.MatrixType.CV_MAT_DEPTH(this.type) == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat();
-                alvision.cudaarithm.transpose(alvision.loadMat(src), dst);
+                alvision.cuda.transpose(alvision.loadMat(src), dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -225,7 +225,7 @@ class Transpose_Accuracy extends Transpose
         }
         else {
             let dst = alvision.createMat(new alvision.Size(this.size.height, this.size.width), this.type, this.useRoi);
-            alvision.cudaarithm.transpose(alvision.loadMat(src, this.useRoi), dst);
+            alvision.cuda.transpose(alvision.loadMat(src, this.useRoi), dst);
 
             let dst_gold = new alvision.Mat();
             alvision.transpose(src, dst_gold);
@@ -282,7 +282,7 @@ class Flip_Accuracy extends Flip
         let src = alvision.randomMat(this.size, this.type);
 
         let dst = alvision.createMat(this.size, this.type, this.useRoi);
-        alvision.cudaarithm.flip(alvision.loadMat(src, this.useRoi), dst, this.flip_code);
+        alvision.cuda.flip(alvision.loadMat(src, this.useRoi), dst, this.flip_code);
 
         let dst_gold = new alvision.Mat();
         alvision.flip(src, dst_gold, this.flip_code);
@@ -338,7 +338,7 @@ class LUT_OneChannel extends LUT
         let src = alvision.randomMat(this.size, this.type);
         let lut = alvision.randomMat(new alvision.Size(256, 1),alvision.MatrixType. CV_8UC1);
 
-        let lutAlg = alvision.cudaarithm.createLookUpTable(lut);
+        let lutAlg = alvision.cuda.createLookUpTable(lut);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_MAKETYPE(lut.depth(), src.channels()));
         lutAlg.transform(alvision.loadMat(src, this.useRoi), dst);
@@ -357,7 +357,7 @@ class LUT_MultiChannel extends LUT
         let src = alvision.randomMat(this.size, this.type);
         let lut = alvision.randomMat(new alvision.Size(256, 1), alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U, src.channels()));
 
-        let lutAlg = alvision.cudaarithm.createLookUpTable(lut);
+        let lutAlg = alvision.cuda.createLookUpTable(lut);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_MAKETYPE(lut.depth(), src.channels()), this.useRoi);
         lutAlg.transform(alvision.loadMat(src, this.useRoi), dst);
@@ -414,7 +414,7 @@ class CopyMakeBorder_Accuracy extends CopyMakeBorder
         let val = alvision.randomScalar(0, 255);
 
         let dst = alvision.createMat(new alvision.Size(this.size.width.valueOf() + 2 * this.border.valueOf(), this.size.height.valueOf() + 2 * this.border.valueOf()), this.type, this.useRoi);
-        alvision.cudaarithm.copyMakeBorder(alvision.loadMat(src, this.useRoi), dst, this.border, this.border, this.border, this.border, this.borderType, val);
+        alvision.cuda.copyMakeBorder(alvision.loadMat(src, this.useRoi), dst, this.border, this.border, this.border, this.border, this.borderType, val);
 
         let dst_gold = new alvision.Mat();
         alvision.copyMakeBorder(src, dst_gold, this.border, this.border, this.border, this.border, this.borderType, val);

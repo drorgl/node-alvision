@@ -114,7 +114,7 @@ class Blend_Accuracy extends Blend
         let weights2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32F, 0, 1);
 
         let result = new alvision.Mat();
-        alvision.cudaimgproc.blendLinear(alvision.loadMat(img1, this.useRoi), alvision.loadMat(img2, this.useRoi), alvision.loadMat(weights1, this.useRoi), alvision.loadMat(weights2, this.useRoi), result);
+        alvision.cuda.blendLinear(alvision.loadMat(img1, this.useRoi), alvision.loadMat(img2, this.useRoi), alvision.loadMat(weights1, this.useRoi), alvision.loadMat(weights2, this.useRoi), result);
 
         let result_gold = new alvision.Mat();
         if (depth == alvision.MatrixType.CV_8U)

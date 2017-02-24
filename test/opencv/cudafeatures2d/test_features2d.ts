@@ -87,7 +87,7 @@ class FAST_Accuracy extends FAST
         let image = alvision.readImage("features2d/aloe.png", alvision.ImreadModes.IMREAD_GRAYSCALE);
         alvision.ASSERT_FALSE(image.empty());
 
-        let fast = alvision.cudafeatures2d.FastFeatureDetector.create(this.threshold, this.nonmaxSuppression);
+        let fast = alvision.cuda.FastFeatureDetector.create(this.threshold, this.nonmaxSuppression);
 
         if (!alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.GLOBAL_ATOMICS)) {
             try {
@@ -175,7 +175,7 @@ class ORB_Accuracy extends ORB
         mask.roi([new alvision.Range(0, image.rows().valueOf() / 2), new alvision.Range(0, image.cols().valueOf() / 2)]).setTo(alvision.Scalar.all(0));
 
         let orb =
-            alvision.cudafeatures2d.ORB.create(this.nFeatures, this.scaleFactor, this.nLevels, this.edgeThreshold,this. firstLevel,
+            alvision.cuda.ORB.create(this.nFeatures, this.scaleFactor, this.nLevels, this.edgeThreshold,this. firstLevel,
                 this.WTA_K, this.scoreType, this.patchSize, 20,this. blurForDescriptor);
 
         if (!alvision.supportFeature(this.devInfo,alvision.cuda.FeatureSet.GLOBAL_ATOMICS)) {
@@ -300,7 +300,7 @@ class BruteForceMatcher_Match_Single extends BruteForceMatcher
 {
     TestBody() {
         let matcher =
-        alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
+        alvision.cuda.DescriptorMatcher.createBFMatcher(this.normCode);
 
         let mask = new alvision.cuda.GpuMat();
         if (this.useMask) {
@@ -330,7 +330,7 @@ class BruteForceMatcher_Match_Collection extends BruteForceMatcher
 {
     TestBody(){
     let matcher =
-            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
+            alvision.cuda.DescriptorMatcher.createBFMatcher(this.normCode);
 
     let d_train = new alvision.cuda.GpuMat (this.train);
 
@@ -388,7 +388,7 @@ class BruteForceMatcher_KnnMatch_2_Single extends BruteForceMatcher
 {
     TestBody(){
     let  matcher =
-            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
+            alvision.cuda.DescriptorMatcher.createBFMatcher(this.normCode);
 
     const knn = 2;
 
@@ -430,7 +430,7 @@ class BruteForceMatcher_KnnMatch_2_Single extends BruteForceMatcher
 class BruteForceMatcher_KnnMatch_3_Single extends BruteForceMatcher {
     TestBody() {
         let matcher =
-            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
+            alvision.cuda.DescriptorMatcher.createBFMatcher(this.normCode);
 
         const knn = 3;
 
@@ -469,7 +469,7 @@ class BruteForceMatcher_KnnMatch_2_Collection extends BruteForceMatcher
 {
     TestBody(){
     let matcher =
-            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
+            alvision.cuda.DescriptorMatcher.createBFMatcher(this.normCode);
 
     const knn = 2;
 
@@ -535,7 +535,7 @@ class BruteForceMatcher_KnnMatch_3_Collection extends BruteForceMatcher
 {
     TestBody(){
     let matcher =
-            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
+            alvision.cuda.DescriptorMatcher.createBFMatcher(this.normCode);
 
     const knn = 3;
 
@@ -601,7 +601,7 @@ class BruteForceMatcher_RadiusMatch_Single extends BruteForceMatcher
 {
     TestBody(){
     let matcher =
-            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
+            alvision.cuda.DescriptorMatcher.createBFMatcher(this.normCode);
 
     const radius = 1./ this.countFactor.valueOf();
 
@@ -654,7 +654,7 @@ class BruteForceMatcher_RadiusMatch_Collection extends BruteForceMatcher
 {
     TestBody(){
     let matcher =
-            alvision.cudafeatures2d.DescriptorMatcher.createBFMatcher(this.normCode);
+            alvision.cuda.DescriptorMatcher.createBFMatcher(this.normCode);
 
     const n = 3;
     const radius = 1. / this.countFactor.valueOf() * n;

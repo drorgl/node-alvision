@@ -111,7 +111,7 @@ class MOG2_Update extends MOG2
         cap.read(frame);
         alvision.ASSERT_FALSE(frame.empty());
 
-        var mog2 = alvision.cudabgsegm.createBackgroundSubtractorMOG2();
+        var mog2 = alvision.cuda.createBackgroundSubtractorMOG2();
         mog2.setDetectShadows(this.detectShadow);
         var foreground = alvision.createMat(frame.size(), alvision.MatrixType.CV_8UC1, this.useRoi);
 
@@ -156,7 +156,7 @@ class MOG2_getBackgroundImage extends MOG2
 
         var frame = new alvision.Mat();
 
-        var mog2 = alvision.cudabgsegm.createBackgroundSubtractorMOG2();
+        var mog2 = alvision.cuda.createBackgroundSubtractorMOG2();
         mog2.setDetectShadows(this.detectShadow);
         var foreground = new alvision.cuda.GpuMat();
 

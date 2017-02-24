@@ -79,8 +79,8 @@ alvision.cvtest.TEST('CUDA_BruteForceNonLocalMeans', 'Regression', () => {
     var dbgr = new alvision.cuda.GpuMat();
     var dgray = new alvision.cuda.GpuMat();
 
-    alvision.cudaphoto.nonLocalMeans(new alvision.cuda.GpuMat(bgr), dbgr, 20);
-    alvision.cudaphoto.nonLocalMeans(new alvision.cuda.GpuMat(gray), dgray, 20);
+    alvision.cuda.nonLocalMeans(new alvision.cuda.GpuMat(bgr), dbgr, 20);
+    alvision.cuda.nonLocalMeans(new alvision.cuda.GpuMat(gray), dgray, 20);
 
 //    //#if 0
 //    alvision.dumpImage("../gpu/denoising/nlm_denoised_lena_bgr.png",  new alvision.Mat(dbgr));

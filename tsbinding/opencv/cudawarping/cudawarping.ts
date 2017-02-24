@@ -71,7 +71,7 @@ import * as _persistence from './../persistence';
  */
 
 //namespace cv {
-export namespace cudawarping {
+//export namespace cudawarping {
     //! @addtogroup cudawarping
     //! @{
 
@@ -99,7 +99,7 @@ export namespace cudawarping {
     interface Iremap {
         (src: _st.InputArray, dst: _st.OutputArray, xmap: _st.InputArray, ymap: _st.InputArray,
             interpolation: _st.int, borderMode?: _st.int /*= BORDER_CONSTANT*/, borderValue?: _types.Scalar /*= Scalar()*/,
-            stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var remap: Iremap = alvision_module.cuda.remap;
 
@@ -128,7 +128,7 @@ export namespace cudawarping {
 
     interface Iresize {
         (src: _st.InputArray, dst: _st.OutputArray, dsize: _types.Size, fx?: _st.double /*= 0*/, fy?: _st.double /*= 0*/, interpolation?: _st.int /*= INTER_LINEAR*/,
-            stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var resize: Iresize = alvision_module.cuda.resize;
     //CV_EXPORTS void resize(InputArray src, OutputArray dst, Size dsize, double fx=0, double fy=0, int interpolation = INTER_LINEAR, Stream& stream = Stream::Null());
@@ -151,7 +151,7 @@ export namespace cudawarping {
      */
     interface IwarpAffine {
         (src: _st.InputArray, dst: _st.OutputArray, M: _st.InputArray, dsize: _types.Size, flags?: _st.int /*= INTER_LINEAR*/,
-            borderMode?: _st.int /*= BORDER_CONSTANT*/, borderValue?: _types.Scalar /*= Scalar()*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            borderMode?: _st.int /*= BORDER_CONSTANT*/, borderValue?: _types.Scalar /*= Scalar()*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var warpAffine: IwarpAffine = alvision_module.cuda.warpAffine;
 
@@ -170,7 +170,7 @@ export namespace cudawarping {
     @sa cuda::warpAffine , cuda::remap
      */
     interface IbuildWarpAffineMaps {
-        (M: _st.InputArray, inverse: boolean, dsize: _types.Size, xmap: _st.OutputArray, ymap: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (M: _st.InputArray, inverse: boolean, dsize: _types.Size, xmap: _st.OutputArray, ymap: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var buildWarpAffineMaps: IbuildWarpAffineMaps = alvision_module.cuda.buildWarpAffineMaps;
 
@@ -194,7 +194,7 @@ export namespace cudawarping {
      */
     interface IwarpPerspective {
         (src: _st.InputArray, dst: _st.OutputArray, M: _st.InputArray, dsize: _types.Size, flags?: _st.int /*= INTER_LINEAR*/,
-            borderMode?: _st.int /*= BORDER_CONSTANT*/, borderValue?: _types.Scalar /*= Scalar()*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            borderMode?: _st.int /*= BORDER_CONSTANT*/, borderValue?: _types.Scalar /*= Scalar()*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var warpPerspective: IwarpPerspective = alvision_module.cuda.warpPerspective;
     //CV_EXPORTS void warpPerspective(InputArray src, OutputArray dst, InputArray M, Size dsize, int flags = INTER_LINEAR,
@@ -212,7 +212,7 @@ export namespace cudawarping {
     @sa cuda::warpPerspective , cuda::remap
      */
     interface IbuildWarpPerspectiveMaps {
-        (M: _st.InputArray, inverse: boolean, dsize: _types.Size, xmap: _st.OutputArray, ymap: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (M: _st.InputArray, inverse: boolean, dsize: _types.Size, xmap: _st.OutputArray, ymap: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var buildWarpPerspectiveMaps: IbuildWarpPerspectiveMaps = alvision_module.cuda.buildWarpPerspectiveMaps;
     //CV_EXPORTS void buildWarpPerspectiveMaps(InputArray M, bool inverse, Size dsize, OutputArray xmap, OutputArray ymap, Stream& stream = Stream::Null());
@@ -234,7 +234,7 @@ export namespace cudawarping {
      */
     interface Irotate {
         (src: _st.InputArray, dst: _st.OutputArray, dsize: _types.Size, angle: _st.double, xShift?: _st.double /*= 0*/, yShift?: _st.double /*= 0*/,
-            interpolation?: _st.int /*= INTER_LINEAR*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            interpolation?: _st.int /*= INTER_LINEAR*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var rotate: Irotate = alvision_module.cuda.rotate;
 
@@ -251,7 +251,7 @@ export namespace cudawarping {
     @sa pyrDown
      */
     interface IpyrDown {
-        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var pyrDown: IpyrDown = alvision_module.cuda.pyrDown;
 
@@ -265,14 +265,14 @@ export namespace cudawarping {
     @param stream Stream for the asynchronous version.
      */
     interface IpyrUp {
-        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream/*= Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream/*= Stream::Null()*/): void;
     }
     export var pyrUp: IpyrUp = alvision_module.cuda.pyrUp;
 //CV_EXPORTS void pyrUp(InputArray src, OutputArray dst, Stream& stream = Stream::Null());
 
 //! @}
 
-}
+//}
 //} // namespace cv { namespace cuda {
 
 //#endif /* __OPENCV_CUDAWARPING_HPP__ */

@@ -73,7 +73,7 @@ import * as _features2d from './../features2d';
 
 //namespace cv {
 
-export namespace cudafeatures2d {
+//export namespace cudafeatures2d {
 
     //! @addtogroup cudafeatures2d
     //! @{
@@ -128,11 +128,11 @@ BRIEF).
         @param descriptors Descriptors to add. Each descriptors[i] is a set of descriptors from the same
         train image.
          */
-        add(descriptors: Array<_cuda.cuda.GpuMat>): void;
+        add(descriptors: Array<_cuda.GpuMat>): void;
 
         /** @brief Returns a constant link to the train descriptor collection.
          */
-        getTrainDescriptors(): Array<_cuda.cuda.GpuMat>;
+        getTrainDescriptors(): Array<_cuda.GpuMat>;
 
         /** @brief Clears the train descriptor collection.
          */
@@ -177,7 +177,7 @@ BRIEF).
          */
         match(queryDescriptors: _st.InputArray,
             matches: Array<_types.DMatch>,
-            masks?: Array<_cuda.cuda.GpuMat> /*= Array<GpuMat>()*/): void;
+            masks?: Array<_cuda.GpuMat> /*= Array<GpuMat>()*/): void;
 
         /** @brief Finds the best match for each descriptor from a query set (asynchronous version).
     
@@ -199,14 +199,14 @@ BRIEF).
         matchAsync(queryDescriptors: _st.InputArray, trainDescriptors: _st.InputArray,
             matches: _st.OutputArray,
             mask?: _st.InputArray /* = noArray()*/,
-            stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+            stream?: _cuda.Stream /* = Stream::Null()*/): void;
 
         /** @overload
          */
         matchAsync(queryDescriptors: _st.InputArray,
             matches: _st.OutputArray,
-            masks?: Array<_cuda.cuda.GpuMat> /*= Array<GpuMat>()*/,
-            stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            masks?: Array<_cuda.GpuMat> /*= Array<GpuMat>()*/,
+            stream?: _cuda.Stream /*= Stream::Null()*/): void;
 
         /** @brief Converts matches array from internal representation to standard matches vector.
     
@@ -252,7 +252,7 @@ BRIEF).
         knnMatch(queryDescriptors: _st.InputArray,
             matches: Array<Array<_types.DMatch>>,
             k: _st.int,
-            masks?: Array<_cuda.cuda.GpuMat> /* = Array<GpuMat>()*/,
+            masks?: Array<_cuda.GpuMat> /* = Array<GpuMat>()*/,
             compactResult?: boolean /*= false*/): void;
 
         /** @brief Finds the k best matches for each descriptor from a query set (asynchronous version).
@@ -276,15 +276,15 @@ BRIEF).
             matches: _st.OutputArray,
             k: _st.int,
             mask?: _st.InputArray /*= noArray()*/,
-            stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            stream?: _cuda.Stream /*= Stream::Null()*/): void;
 
         /** @overload
          */
         knnMatchAsync(queryDescriptors: _st.InputArray,
             matches: _st.OutputArray,
             k: _st.int,
-            masks?: Array<_cuda.cuda.GpuMat> /*= Array<GpuMat>()*/,
-            stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            masks?: Array<_cuda.GpuMat> /*= Array<GpuMat>()*/,
+            stream?: _cuda.Stream /*= Stream::Null()*/): void;
 
         /** @brief Converts matches array from internal representation to standard matches vector.
     
@@ -335,7 +335,7 @@ BRIEF).
         radiusMatch(queryDescriptors: _st.InputArray,
             matches: Array<Array<_types.DMatch>>,
             maxDistance: _st.float,
-            masks?: Array<_cuda.cuda.GpuMat> /*= Array<GpuMat>()*/,
+            masks?: Array<_cuda.GpuMat> /*= Array<GpuMat>()*/,
             compactResult?: boolean /*= false*/): void;
 
         /** @brief For each query descriptor, finds the training descriptors not farther than the specified distance (asynchronous version).
@@ -360,15 +360,15 @@ BRIEF).
             matches: _st.OutputArray,
             maxDistance: _st.float,
             mask?: _st.InputArray /* = noArray()*/,
-            stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            stream?: _cuda.Stream /*= Stream::Null()*/): void;
 
         /** @overload
          */
         radiusMatchAsync(queryDescriptors: _st.InputArray,
             matches: _st.OutputArray,
             maxDistance: _st.float,
-            masks?: Array<_cuda.cuda.GpuMat> /* = Array<GpuMat>()*/,
-            stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+            masks?: Array<_cuda.GpuMat> /* = Array<GpuMat>()*/,
+            stream?: _cuda.Stream /* = Stream::Null()*/): void;
 
         /** @brief Converts matches array from internal representation to standard matches vector.
     
@@ -409,7 +409,7 @@ BRIEF).
         detectAsync(image: _st.InputArray,
             keypoints: _st.OutputArray,
             mask?: _st.InputArray /* = noArray()*/,
-            stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+            stream?: _cuda.Stream /* = Stream::Null()*/): void;
 
         /** @brief Computes the descriptors for a set of keypoints detected in an image.
     
@@ -421,7 +421,7 @@ BRIEF).
         computeAsync(image: _st.InputArray,
             keypoints: _st.OutputArray,
             descriptors: _st.OutputArray,
-            stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+            stream?: _cuda.Stream /* = Stream::Null()*/): void;
 
         /** Detects keypoints and computes the descriptors. */
         detectAndComputeAsync(image: _st.InputArray,
@@ -429,7 +429,7 @@ BRIEF).
             keypoints: _st.OutputArray,
             descriptors: _st.OutputArray,
             useProvidedKeypoints?: boolean/* = false*/,
-            stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+            stream?: _cuda.Stream /* = Stream::Null()*/): void;
 
         /** Converts keypoints array from internal representation to standard vector. */
         convert(gpu_keypoints: _st.InputArray,
@@ -510,7 +510,7 @@ BRIEF).
 
     //! @}
 
-}
+//}
 //} // namespace cv { namespace cuda {
 
 //#endif /* __OPENCV_CUDAFEATURES2D_HPP__ */

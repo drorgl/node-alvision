@@ -78,7 +78,7 @@ filtering operations on 2D images.
  */
 
 //namespace cv {
-export namespace cudafilters {
+//export namespace cudafilters {
 
     //! @addtogroup cudafilters
     //! @{
@@ -93,7 +93,7 @@ export namespace cudafilters {
         @param dst Output image.
         @param stream Stream for the asynchronous version.
          */
-        apply(src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        apply(src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -418,7 +418,7 @@ export namespace cudafilters {
     export var createMedianFilter: IcreateMedianFilter = alvision_module.cuda.createMedianFilter;
 //CV_EXPORTS Ptr<Filter> createMedianFilter(int srcType, int windowSize, int partition=128);
 
-}
+//}
 //} // namespace cv { namespace cuda {
 
 //#endif /* __OPENCV_CUDAFILTERS_HPP__ */

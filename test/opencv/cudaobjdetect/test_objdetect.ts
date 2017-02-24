@@ -61,7 +61,7 @@ const DUMP = true;
 class HOG extends alvision.cvtest.CUDA_TEST //: testing::TestWithParam<alvision.cuda.DeviceInfo>
 {
     protected devInfo: alvision.cuda.DeviceInfo;
-    protected hog: alvision.cudaobjdetect.HOG;
+    protected hog: alvision.cuda.HOG;
 
 //if (DUMP)
 //    std::ofstream fo;
@@ -83,7 +83,7 @@ class HOG extends alvision.cvtest.CUDA_TEST //: testing::TestWithParam<alvision.
 
         alvision.cuda.setDevice(this.devInfo.deviceID());
 
-        this.hog = alvision.cudaobjdetect.HOG.create();
+        this.hog = alvision.cuda.HOG.create();
     }
 
 //#ifdef DUMP
@@ -230,10 +230,10 @@ class HOG_GetDescriptors extends HOG
 
         this.hog.setWinStride(new alvision.Size(64, 128));
 
-        this.hog.setDescriptorFormat(alvision.cudaobjdetect.DescriptorStorage.DESCR_FORMAT_ROW_BY_ROW);
+        this.hog.setDescriptorFormat(alvision.cuda.DescriptorStorage.DESCR_FORMAT_ROW_BY_ROW);
         this.hog.compute(d_img, descriptors);
 
-        this.hog.setDescriptorFormat(alvision.cudaobjdetect.DescriptorStorage.DESCR_FORMAT_COL_BY_COL);
+        this.hog.setDescriptorFormat(alvision.cuda.DescriptorStorage.DESCR_FORMAT_COL_BY_COL);
         this.hog.compute(d_img, descriptors_by_cols);
 
         // Check size of the result train table
@@ -288,7 +288,7 @@ class CalTech_HOG extends CalTech
         var d_img = new alvision.cuda.GpuMat (this.img);
         var markedImage = new alvision.Mat (this.img.clone());
 
-        var d_hog = alvision.cudaobjdetect.HOG.create();
+        var d_hog = alvision.cuda.HOG.create();
         d_hog.setSVMDetector(d_hog.getDefaultPeopleDetector());
         d_hog.setNumLevels(d_hog.getNumLevels().valueOf() + 32);
 
@@ -344,7 +344,7 @@ class LBP_Read_classifier_Accuracy extends LBP_Read_classifier
         var  d_cascade;
 
         alvision.ASSERT_NO_THROW(() => {
-            d_cascade = alvision.cudaobjdetect.CascadeClassifier.create(classifierXmlPath);
+            d_cascade = alvision.cuda.CascadeClassifier.create(classifierXmlPath);
         });
 
         alvision.ASSERT_FALSE(d_cascade.empty());
@@ -394,7 +394,7 @@ class LBP_classify_Accuracy extends LBP_classify
             alvision.rectangle(markedImage,rects[i],new alvision.Scalar(255, 0, 0));
 
         var gpuClassifier =
-        alvision.cudaobjdetect.CascadeClassifier.create(classifierXmlPath);
+        alvision.cuda.CascadeClassifier.create(classifierXmlPath);
 
         var tested = new alvision.cuda.GpuMat (grey);
         var gpu_rects_buf = new alvision.cuda.GpuMat();

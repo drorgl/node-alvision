@@ -95,7 +95,7 @@ class Add_Array_Accuracy extends Add_Array
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 var dst = new alvision.cuda.GpuMat();
-                alvision.cudaarithm.add(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.add(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -104,7 +104,7 @@ class Add_Array_Accuracy extends Add_Array
         else {
             var dst = alvision.createMat(this.size, this.dtype, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.add(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst,new  alvision.cuda.GpuMat(), this.depth.second);
+            alvision.cuda.add(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst,new  alvision.cuda.GpuMat(), this.depth.second);
 
             var dst_gold = new alvision.Mat (this.size, this.dtype, alvision.Scalar.all(0));
             alvision.add(mat1, mat2, dst_gold, null, this.depth.second);
@@ -162,7 +162,7 @@ class Add_Array_Mask_Accuracy extends Add_Array_Mask
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat();
-                alvision.cudaarithm.add(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.add(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -171,7 +171,7 @@ class Add_Array_Mask_Accuracy extends Add_Array_Mask
         else {
             let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.add(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+            alvision.cuda.add(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.dtype, alvision.Scalar.all(0));
             alvision.add(mat1, mat2, dst_gold, mask, this.depth.second);
@@ -219,7 +219,7 @@ class Add_Scalar_WithOutMask extends Add_Scalar
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat();
-                alvision.cudaarithm.add(alvision.loadMat(mat), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.add(alvision.loadMat(mat), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -228,7 +228,7 @@ class Add_Scalar_WithOutMask extends Add_Scalar
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.add(alvision.loadMat(mat, this.useRoi), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
+            alvision.cuda.add(alvision.loadMat(mat, this.useRoi), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
             alvision.add(mat, val, dst_gold, null, this.depth.second);
@@ -249,7 +249,7 @@ class Add_Scalar_WithMask extends Add_Scalar
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat();
-                alvision.cudaarithm.add(alvision.loadMat(mat), val, dst,new  alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.add(alvision.loadMat(mat), val, dst,new  alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -258,7 +258,7 @@ class Add_Scalar_WithMask extends Add_Scalar
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.add(alvision.loadMat(mat, this.useRoi), val, dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+            alvision.cuda.add(alvision.loadMat(mat, this.useRoi), val, dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
             alvision.add(mat, val, dst_gold, mask, this.depth.second);
@@ -306,7 +306,7 @@ class Add_Scalar_First_WithOutMask extends Add_Scalar_First
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.add(val, alvision.loadMat(mat), dst, new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.add(val, alvision.loadMat(mat), dst, new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -315,7 +315,7 @@ class Add_Scalar_First_WithOutMask extends Add_Scalar_First
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.add(val, alvision.loadMat(mat, this.useRoi), dst, new alvision.cuda.GpuMat(), this.depth.second);
+            alvision.cuda.add(val, alvision.loadMat(mat, this.useRoi), dst, new alvision.cuda.GpuMat(), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
             alvision.add(val, mat, dst_gold, null, this.depth.second);
@@ -336,7 +336,7 @@ class Add_Scalar_First_WithMask extends Add_Scalar_First
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.add(val, alvision.loadMat(mat), dst, new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.add(val, alvision.loadMat(mat), dst, new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -345,7 +345,7 @@ class Add_Scalar_First_WithMask extends Add_Scalar_First
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.add(val, alvision.loadMat(mat, this.useRoi), dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+            alvision.cuda.add(val, alvision.loadMat(mat, this.useRoi), dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
             alvision.add(val, mat, dst_gold, mask,this.depth.second);
@@ -401,7 +401,7 @@ class Subtract_Array_Accuracy extends Subtract_Array
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.subtract(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.subtract(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -410,7 +410,7 @@ class Subtract_Array_Accuracy extends Subtract_Array
         else {
             let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.subtract(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, new alvision.cuda.GpuMat(), this.depth.second);
+            alvision.cuda.subtract(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, new alvision.cuda.GpuMat(), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.dtype, alvision.Scalar.all(0));
             alvision.subtract(mat1, mat2, dst_gold, null, this.depth.second);
@@ -463,7 +463,7 @@ class Subtract_Array_Mask_Accuracy extends Subtract_Array_Mask
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.subtract(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.subtract(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -472,7 +472,7 @@ class Subtract_Array_Mask_Accuracy extends Subtract_Array_Mask
         else {
             let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.subtract(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+            alvision.cuda.subtract(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.dtype, alvision.Scalar.all(0));
             alvision.subtract(mat1, mat2, dst_gold, mask, this.depth.second);
@@ -520,7 +520,7 @@ class Subtract_Scalar_WithOutMask extends Subtract_Scalar
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.subtract(alvision.loadMat(mat), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.subtract(alvision.loadMat(mat), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -529,7 +529,7 @@ class Subtract_Scalar_WithOutMask extends Subtract_Scalar
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.subtract(alvision.loadMat(mat, this.useRoi), val, dst,new alvision.cuda.GpuMat(), this.depth.second);
+            alvision.cuda.subtract(alvision.loadMat(mat, this.useRoi), val, dst,new alvision.cuda.GpuMat(), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
             alvision.subtract(mat, val, dst_gold, null, this.depth.second);
@@ -550,7 +550,7 @@ class Subtract_Scalar_WithMask extends Subtract_Scalar
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.subtract(alvision.loadMat(mat), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.subtract(alvision.loadMat(mat), val, dst, new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -559,7 +559,7 @@ class Subtract_Scalar_WithMask extends Subtract_Scalar
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.subtract(alvision.loadMat(mat, this.useRoi), val, dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
+            alvision.cuda.subtract(alvision.loadMat(mat, this.useRoi), val, dst, alvision.loadMat(mask, this.useRoi), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
             alvision.subtract(mat, val, dst_gold, mask, this.depth.second);
@@ -607,7 +607,7 @@ class Subtract_Scalar_First_WithOutMask extends Subtract_Scalar_First
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.subtract(val, alvision.loadMat(mat), dst,new  alvision.cuda.GpuMat(),this.depth.second);
+                alvision.cuda.subtract(val, alvision.loadMat(mat), dst,new  alvision.cuda.GpuMat(),this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -616,7 +616,7 @@ class Subtract_Scalar_First_WithOutMask extends Subtract_Scalar_First
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.subtract(val,alvision.loadMat(mat, this.useRoi), dst, new alvision.cuda.GpuMat(), this.depth.second);
+            alvision.cuda.subtract(val,alvision.loadMat(mat, this.useRoi), dst, new alvision.cuda.GpuMat(), this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
             alvision.subtract(val, mat, dst_gold, null, this.depth.second);
@@ -637,7 +637,7 @@ class Subtract_Scalar_First_WithMask extends Subtract_Scalar_First
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.subtract(val, alvision.loadMat(mat), dst,new alvision.cuda.GpuMat(), this.depth.second);
+                alvision.cuda.subtract(val, alvision.loadMat(mat), dst,new alvision.cuda.GpuMat(), this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -646,7 +646,7 @@ class Subtract_Scalar_First_WithMask extends Subtract_Scalar_First
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
             dst.setTo(alvision.Scalar.all(0));
-            alvision.cudaarithm.subtract(val, alvision.loadMat(mat, this.useRoi), dst, alvision.loadMat(mask, this.useRoi),this.depth.second);
+            alvision.cuda.subtract(val, alvision.loadMat(mat, this.useRoi), dst, alvision.loadMat(mask, this.useRoi),this.depth.second);
 
             let dst_gold = new alvision.Mat (this.size, this.depth.second, alvision.Scalar.all(0));
             alvision.subtract(val, mat, dst_gold, mask, this.depth.second);
@@ -702,7 +702,7 @@ class Multiply_Array_WithOutScale extends Multiply_Array
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.multiply(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, 1,this.depth.second);
+                alvision.cuda.multiply(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, 1,this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -710,7 +710,7 @@ class Multiply_Array_WithOutScale extends Multiply_Array
         }
         else {
             let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
-            alvision.cudaarithm.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, 1,this.depth.second);
+            alvision.cuda.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, 1,this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.multiply(mat1, mat2, dst_gold, 1, this.depth.second);
@@ -731,7 +731,7 @@ class Multiply_Array_WithScale extends Multiply_Array
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.multiply(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, scale,this.depth.second);
+                alvision.cuda.multiply(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, scale,this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -739,7 +739,7 @@ class Multiply_Array_WithScale extends Multiply_Array
         }
         else {
             let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
-            alvision.cudaarithm.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, scale, this.depth.second);
+            alvision.cuda.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, scale, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.multiply(mat1, mat2, dst_gold, scale, this.depth.second);
@@ -784,7 +784,7 @@ class Multiply_Array_Special_Case_8UC4x_32FC1 extends Multiply_Array_Special
         let mat2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_8UC4, this.useRoi);
-        alvision.cudaarithm.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
+        alvision.cuda.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
 
         let h_dst = new alvision.Mat (dst);
 
@@ -824,7 +824,7 @@ class Multiply_Array_Special_Case_16SC4x_32FC1 extends Multiply_Array_Special
         let mat2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_16SC4, this.useRoi);
-        alvision.cudaarithm.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
+        alvision.cuda.multiply(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
 
         let h_dst = new alvision.Mat (dst);
 
@@ -892,7 +892,7 @@ class Multiply_Scalar_WithOutScale extends Multiply_Scalar {
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.multiply(alvision.loadMat(mat), val, dst, 1, this.depth.second);
+                alvision.cuda.multiply(alvision.loadMat(mat), val, dst, 1, this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -900,7 +900,7 @@ class Multiply_Scalar_WithOutScale extends Multiply_Scalar {
         }
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
-            alvision.cudaarithm.multiply(alvision.loadMat(mat, this.useRoi), val, dst, 1, this.depth.second);
+            alvision.cuda.multiply(alvision.loadMat(mat, this.useRoi), val, dst, 1, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.multiply(mat, val, dst_gold, 1, this.depth.second);
@@ -922,7 +922,7 @@ class Multiply_Scalar_WithScale extends Multiply_Scalar
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.multiply(alvision.loadMat(mat), val, dst, scale, this.depth.second);
+                alvision.cuda.multiply(alvision.loadMat(mat), val, dst, scale, this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -930,7 +930,7 @@ class Multiply_Scalar_WithScale extends Multiply_Scalar
         }
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
-            alvision.cudaarithm.multiply(alvision.loadMat(mat, this.useRoi), val, dst, scale, this.depth.second);
+            alvision.cuda.multiply(alvision.loadMat(mat, this.useRoi), val, dst, scale, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.multiply(mat, val, dst_gold, scale, this.depth.second);
@@ -977,7 +977,7 @@ class Multiply_Scalar_First_WithOutScale extends Multiply_Scalar_First {
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.multiply(val, alvision.loadMat(mat), dst, 1, this.depth.second);
+                alvision.cuda.multiply(val, alvision.loadMat(mat), dst, 1, this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -985,7 +985,7 @@ class Multiply_Scalar_First_WithOutScale extends Multiply_Scalar_First {
         }
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
-            alvision.cudaarithm.multiply(val, alvision.loadMat(mat, this.useRoi), dst, 1, this.depth.second);
+            alvision.cuda.multiply(val, alvision.loadMat(mat, this.useRoi), dst, 1, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.multiply(val, mat, dst_gold, 1, this.depth.second);
@@ -1007,7 +1007,7 @@ class Multiply_Scalar_First_WithScale extends Multiply_Scalar_First
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.multiply(val, alvision.loadMat(mat), dst, scale, this.depth.second);
+                alvision.cuda.multiply(val, alvision.loadMat(mat), dst, scale, this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1015,7 +1015,7 @@ class Multiply_Scalar_First_WithScale extends Multiply_Scalar_First
         }
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
-            alvision.cudaarithm.multiply(val, alvision.loadMat(mat, this.useRoi), dst, scale, this.depth.second);
+            alvision.cuda.multiply(val, alvision.loadMat(mat, this.useRoi), dst, scale, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.multiply(val, mat, dst_gold, scale, this.depth.second);
@@ -1071,7 +1071,7 @@ class Divide_Array_WithOutScale extends Divide_Array
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.divide(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, 1, this.depth.second);
+                alvision.cuda.divide(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, 1, this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1079,7 +1079,7 @@ class Divide_Array_WithOutScale extends Divide_Array
         }
         else {
             let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
-            alvision.cudaarithm.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, 1, this.depth.second);
+            alvision.cuda.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, 1, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.divide(mat1, mat2, dst_gold, 1, this.depth.second);
@@ -1101,7 +1101,7 @@ class Divide_Array_WithScale extends Divide_Array
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.divide(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, scale, this.depth.second);
+                alvision.cuda.divide(alvision.loadMat(mat1), alvision.loadMat(mat2), dst, scale, this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1109,7 +1109,7 @@ class Divide_Array_WithScale extends Divide_Array
         }
         else {
             let dst = alvision.createMat(this.size, this.dtype, this.useRoi);
-            alvision.cudaarithm.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, scale, this.depth.second);
+            alvision.cuda.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst, scale, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.divide(mat1, mat2, dst_gold, scale, this.depth.second);
@@ -1154,7 +1154,7 @@ class Divide_Array_Special_Case_8UC4x_32FC1 extends Divide_Array_Special
         let mat2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1, 1.0, 255.0);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_8UC4, this.useRoi);
-        alvision.cudaarithm.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
+        alvision.cuda.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
 
         let h_dst = new alvision.Mat (dst);
 
@@ -1194,7 +1194,7 @@ class Divide_Array_Special_Case_16SC4x_32FC1 extends Divide_Array_Special
         let mat2 = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1, 1.0, 255.0);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_16SC4, this.useRoi);
-        alvision.cudaarithm.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
+        alvision.cuda.divide(alvision.loadMat(mat1, this.useRoi), alvision.loadMat(mat2, this.useRoi), dst);
 
         let h_dst = new alvision.Mat (dst);
 
@@ -1263,7 +1263,7 @@ class Divide_Scalar_WithOutScale extends Divide_Scalar
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.divide(alvision.loadMat(mat), val, dst, 1, this.depth.second);
+                alvision.cuda.divide(alvision.loadMat(mat), val, dst, 1, this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1271,7 +1271,7 @@ class Divide_Scalar_WithOutScale extends Divide_Scalar
         }
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
-            alvision.cudaarithm.divide(alvision.loadMat(mat, this.useRoi), val, dst, 1, this.depth.second);
+            alvision.cuda.divide(alvision.loadMat(mat, this.useRoi), val, dst, 1, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.divide(mat, val, dst_gold, 1, this.depth.second);
@@ -1292,7 +1292,7 @@ class Divide_Scalar_WithScale extends Divide_Scalar
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.divide(alvision.loadMat(mat), val, dst, scale, this.depth.second);
+                alvision.cuda.divide(alvision.loadMat(mat), val, dst, scale, this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1300,7 +1300,7 @@ class Divide_Scalar_WithScale extends Divide_Scalar
         }
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
-            alvision.cudaarithm.divide(alvision.loadMat(mat, this.useRoi), val, dst, scale, this.depth.second);
+            alvision.cuda.divide(alvision.loadMat(mat, this.useRoi), val, dst, scale, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.divide(mat, val, dst_gold, scale, this.depth.second);
@@ -1348,7 +1348,7 @@ class Divide_Scalar_First_Accuracy extends Divide_Scalar_First
         if ((this.depth.first == alvision.MatrixType.CV_64F || this.depth.second == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.divide(new alvision.Scalar(scale), alvision.loadMat(mat), dst, 1.0, this.depth.second);
+                alvision.cuda.divide(new alvision.Scalar(scale), alvision.loadMat(mat), dst, 1.0, this.depth.second);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1356,7 +1356,7 @@ class Divide_Scalar_First_Accuracy extends Divide_Scalar_First
         }
         else {
             let dst = alvision.createMat(this.size, this.depth.second, this.useRoi);
-            alvision.cudaarithm.divide(new alvision.Scalar(scale), alvision.loadMat(mat, this.useRoi), dst, 1.0, this.depth.second);
+            alvision.cuda.divide(new alvision.Scalar(scale), alvision.loadMat(mat, this.useRoi), dst, 1.0, this.depth.second);
 
             let dst_gold = new alvision.Mat ();
             alvision.divide(scale, mat, dst_gold, this.depth.second);
@@ -1403,7 +1403,7 @@ class AbsDiff_Array extends AbsDiff {
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.absdiff(alvision.loadMat(src1), alvision.loadMat(src2), dst);
+                alvision.cuda.absdiff(alvision.loadMat(src1), alvision.loadMat(src2), dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1411,7 +1411,7 @@ class AbsDiff_Array extends AbsDiff {
         }
         else {
             let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-            alvision.cudaarithm.absdiff(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst);
+            alvision.cuda.absdiff(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst);
 
             let dst_gold = new alvision.Mat ();
             alvision.absdiff(src1, src2, dst_gold);
@@ -1430,7 +1430,7 @@ class AbsDiff_Scalar extends AbsDiff {
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.absdiff(alvision.loadMat(src), val, dst);
+                alvision.cuda.absdiff(alvision.loadMat(src), val, dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1438,7 +1438,7 @@ class AbsDiff_Scalar extends AbsDiff {
         }
         else {
             let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-            alvision.cudaarithm.absdiff(alvision.loadMat(src, this.useRoi), val, dst);
+            alvision.cuda.absdiff(alvision.loadMat(src, this.useRoi), val, dst);
 
             let dst_gold = new alvision.Mat ();
             alvision.absdiff(src, val, dst_gold);
@@ -1458,7 +1458,7 @@ class AbsDiff_Scalar_First extends AbsDiff
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.absdiff(val, alvision.loadMat(src), dst);
+                alvision.cuda.absdiff(val, alvision.loadMat(src), dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1466,7 +1466,7 @@ class AbsDiff_Scalar_First extends AbsDiff
         }
         else {
             let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-            alvision.cudaarithm.absdiff(val, alvision.loadMat(src, this.useRoi), dst);
+            alvision.cuda.absdiff(val, alvision.loadMat(src, this.useRoi), dst);
 
             let dst_gold = new alvision.Mat ();
             alvision.absdiff(val, src, dst_gold);
@@ -1511,7 +1511,7 @@ class Abs_Accuracy extends Abs
         let src = alvision.randomMat(this.size, this.depth);
 
         let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-        alvision.cudaarithm.abs(alvision.loadMat(src, this.useRoi), dst);
+        alvision.cuda.abs(alvision.loadMat(src, this.useRoi), dst);
 
         let dst_gold = alvision.MatExpr.abs(src);
 
@@ -1554,7 +1554,7 @@ class Sqr_Accuracy extends Sqr
         let src = alvision.randomMat(this.size, this.depth, 0, this.depth == alvision.MatrixType.CV_8U ? 16 : 255);
 
         let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-        alvision.cudaarithm.sqr(alvision.loadMat(src, this.useRoi), dst);
+        alvision.cuda.sqr(alvision.loadMat(src, this.useRoi), dst);
 
         let dst_gold = new alvision.Mat ();
         alvision.multiply(src, src, dst_gold);
@@ -1632,7 +1632,7 @@ class Sqrt_Accuracy extends Sqrt
         let src = alvision.randomMat(this.size, this.depth);
 
         let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-        alvision.cudaarithm.sqrt(alvision.loadMat(src, this.useRoi), dst);
+        alvision.cuda.sqrt(alvision.loadMat(src, this.useRoi), dst);
 
         let dst_gold = new alvision.Mat ();
         sqrtGold(src, dst_gold);
@@ -1711,7 +1711,7 @@ class Log_Accuracy extends Log
         let src = alvision.randomMat(this.size, this.depth, 1.0, 255.0);
 
         let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-        alvision.cudaarithm.log(alvision.loadMat(src, this.useRoi), dst);
+        alvision.cuda.log(alvision.loadMat(src, this.useRoi), dst);
 
         let dst_gold = new alvision.Mat ();
         logGold(src, dst_gold);
@@ -1799,7 +1799,7 @@ class Exp_Accuracy extends Exp
         let src = alvision.randomMat(this.size, this.depth, 0.0, 10.0);
 
         let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-        alvision.cudaarithm.exp(alvision.loadMat(src, this.useRoi), dst);
+        alvision.cuda.exp(alvision.loadMat(src, this.useRoi), dst);
 
         let dst_gold = new alvision.Mat ();
         expGold(src, dst_gold);
@@ -1852,7 +1852,7 @@ class Pow_Accuracy extends Pow
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.pow(alvision.loadMat(src), power, dst);
+                alvision.cuda.pow(alvision.loadMat(src), power, dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1860,7 +1860,7 @@ class Pow_Accuracy extends Pow
         }
         else {
             let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-            alvision.cudaarithm.pow(alvision.loadMat(src, this.useRoi), power, dst);
+            alvision.cuda.pow(alvision.loadMat(src, this.useRoi), power, dst);
 
             let dst_gold = new alvision.Mat ();
             alvision.pow(src, power, dst_gold);
@@ -1914,7 +1914,7 @@ class Compare_Array_Accuracy extends Compare_Array
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.compare(alvision.loadMat(src1), alvision.loadMat(src2), dst, this.cmp_code);
+                alvision.cuda.compare(alvision.loadMat(src1), alvision.loadMat(src2), dst, this.cmp_code);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -1922,7 +1922,7 @@ class Compare_Array_Accuracy extends Compare_Array
         }
         else {
             let dst = alvision.createMat(this.size,alvision.MatrixType. CV_8UC1, this.useRoi);
-            alvision.cudaarithm.compare(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst, this.cmp_code);
+            alvision.cuda.compare(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst, this.cmp_code);
 
             let dst_gold = new alvision.Mat ();
             alvision.compare(src1, src2, dst_gold, this.cmp_code);
@@ -2023,7 +2023,7 @@ class Compare_Scalar_Accuracy extends Compare_Scalar
         if (src.depth() == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.compare(alvision.loadMat(src), sc, dst, this.cmp_code);
+                alvision.cuda.compare(alvision.loadMat(src), sc, dst, this.cmp_code);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -2032,7 +2032,7 @@ class Compare_Scalar_Accuracy extends Compare_Scalar
         else {
             let dst = alvision.createMat(this.size, alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_8U, src.channels()), this.useRoi);
 
-            alvision.cudaarithm.compare(alvision.loadMat(src, this.useRoi), sc, dst,this. cmp_code);
+            alvision.cuda.compare(alvision.loadMat(src, this.useRoi), sc, dst,this. cmp_code);
 
             let dst_gold = new alvision.Mat ();
             compareScalarGold(src, sc, dst_gold, this.cmp_code);
@@ -2080,7 +2080,7 @@ class Bitwise_Array_Not extends Bitwise_Array
 {
     TestBody() {
         let dst = new alvision.cuda.GpuMat ();
-        alvision.cudaarithm.bitwise_not(alvision.loadMat(this.src1), dst);
+        alvision.cuda.bitwise_not(alvision.loadMat(this.src1), dst);
 
         let dst_gold = alvision.MatExpr.op_BinaryNot(this.src1).toMat();
 
@@ -2093,7 +2093,7 @@ class Bitwise_Array_Or extends Bitwise_Array
 {
     TestBody() {
         let dst = new alvision.cuda.GpuMat ();
-        alvision.cudaarithm.bitwise_or(alvision.loadMat(this.src1), alvision.loadMat(this.src2), dst);
+        alvision.cuda.bitwise_or(alvision.loadMat(this.src1), alvision.loadMat(this.src2), dst);
 
         let dst_gold = alvision.MatExpr.op_Or(this.src1, this.src2).toMat();
 
@@ -2106,7 +2106,7 @@ class Bitwise_Array_And extends Bitwise_Array
 {
     TestBody() {
         let dst = new alvision.cuda.GpuMat ();
-        alvision.cudaarithm.bitwise_and(alvision.loadMat(this.src1), alvision.loadMat(this.src2), dst);
+        alvision.cuda.bitwise_and(alvision.loadMat(this.src1), alvision.loadMat(this.src2), dst);
 
         let dst_gold = alvision.MatExpr.op_And(this.src1, this.src2).toMat();
 
@@ -2119,7 +2119,7 @@ class Bitwise_Array_Xor extends Bitwise_Array
 {
     TestBody() {
         let dst = new alvision.cuda.GpuMat ();
-        alvision.cudaarithm.bitwise_xor(alvision.loadMat(this.src1), alvision.loadMat(this.src2), dst);
+        alvision.cuda.bitwise_xor(alvision.loadMat(this.src1), alvision.loadMat(this.src2), dst);
 
         let dst_gold = alvision.MatExpr.op_Xor(this.src1 , this.src2).toMat();
 
@@ -2167,7 +2167,7 @@ class Bitwise_Scalar_Or extends Bitwise_Scalar
 {
     TestBody() {
         let dst = new alvision.cuda.GpuMat ();
-        alvision.cudaarithm.bitwise_or(alvision.loadMat(this.src), this.val, dst);
+        alvision.cuda.bitwise_or(alvision.loadMat(this.src), this.val, dst);
 
         let dst_gold = new alvision.Mat ();
         alvision.bitwise_or(this.src, this.val, dst_gold);
@@ -2181,7 +2181,7 @@ class Bitwise_Scalar_And extends Bitwise_Scalar
 {
     TestBody() {
         let dst = new alvision.cuda.GpuMat ();
-        alvision.cudaarithm.bitwise_and(alvision.loadMat(this.src), this.val, dst);
+        alvision.cuda.bitwise_and(alvision.loadMat(this.src), this.val, dst);
 
         let dst_gold = new alvision.Mat ();
         alvision.bitwise_and(this.src, this.val, dst_gold);
@@ -2195,7 +2195,7 @@ class Bitwise_Scalar_Xor extends Bitwise_Scalar
 {
     TestBody() {
         let dst = new alvision.cuda.GpuMat ();
-        alvision.cudaarithm.bitwise_xor(alvision.loadMat(this.src), this.val, dst);
+        alvision.cuda.bitwise_xor(alvision.loadMat(this.src), this.val, dst);
 
         let dst_gold = new alvision.Mat ();
         alvision.bitwise_xor(this.src, this.val, dst_gold);
@@ -2279,7 +2279,7 @@ class RShift_Accuracy extends RShift
         let val = alvision.randomScalar(0.0, 8.0);
 
         let dst = alvision.createMat(this.size, type, this.useRoi);
-        alvision.cudaarithm.rshift(alvision.loadMat(src, this.useRoi), val, dst);
+        alvision.cuda.rshift(alvision.loadMat(src, this.useRoi), val, dst);
 
         let dst_gold = new alvision.Mat ();
         rhiftGold(src, val, dst_gold);
@@ -2368,7 +2368,7 @@ class LShift_Accuracy extends LShift
         let val = alvision.randomScalar(0.0, 8.0);
 
         let dst = alvision.createMat(this.size, type, this.useRoi);
-        alvision.cudaarithm.lshift(alvision.loadMat(src, this.useRoi), val, dst);
+        alvision.cuda.lshift(alvision.loadMat(src, this.useRoi), val, dst);
 
         let dst_gold = new alvision.Mat ();
         lhiftGold(src, val, dst_gold);
@@ -2417,7 +2417,7 @@ class Min_Array extends Min
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.min(alvision.loadMat(src1), alvision.loadMat(src2), dst);
+                alvision.cuda.min(alvision.loadMat(src1), alvision.loadMat(src2), dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -2425,7 +2425,7 @@ class Min_Array extends Min
         }
         else {
             let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-            alvision.cudaarithm.min(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst);
+            alvision.cuda.min(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst);
 
             let dst_gold = new alvision.Mat();
             alvision.min(src1, src2, dst_gold);
@@ -2445,7 +2445,7 @@ class Min_Scalar extends Min
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.min(alvision.loadMat(src), new alvision.Scalar( val), dst);
+                alvision.cuda.min(alvision.loadMat(src), new alvision.Scalar( val), dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -2453,7 +2453,7 @@ class Min_Scalar extends Min
         }
         else {
             let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-            alvision.cudaarithm.min(alvision.loadMat(src, this.useRoi), new alvision.Scalar( val), dst);
+            alvision.cuda.min(alvision.loadMat(src, this.useRoi), new alvision.Scalar( val), dst);
 
             let dst_gold = new alvision.Mat();
             alvision.min(src, new alvision.Scalar(val),dst_gold);
@@ -2501,7 +2501,7 @@ class Max_Array extends Max
         if (this.depth ==alvision.MatrixType. CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.max(alvision.loadMat(src1), alvision.loadMat(src2), dst);
+                alvision.cuda.max(alvision.loadMat(src1), alvision.loadMat(src2), dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -2509,7 +2509,7 @@ class Max_Array extends Max
         }
         else {
             let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-            alvision.cudaarithm.max(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst);
+            alvision.cuda.max(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), dst);
 
 
             let dst_gold = new alvision.Mat();
@@ -2530,7 +2530,7 @@ class Max_Scalar extends Max
         if (this.depth == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.max(alvision.loadMat(src),new alvision.Scalar( val), dst);
+                alvision.cuda.max(alvision.loadMat(src),new alvision.Scalar( val), dst);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -2538,7 +2538,7 @@ class Max_Scalar extends Max
         }
         else {
             let dst = alvision.createMat(this.size, this.depth, this.useRoi);
-            alvision.cudaarithm.max(alvision.loadMat(src, this.useRoi),new alvision.Scalar( val), dst);
+            alvision.cuda.max(alvision.loadMat(src, this.useRoi),new alvision.Scalar( val), dst);
 
             let dst_gold = new alvision.Mat();
             alvision.max(src, new alvision.Scalar(val),dst_gold);
@@ -2594,7 +2594,7 @@ class AddWeighted_Accuracy extends AddWeighted
         if ((this.depth1 ==alvision.MatrixType. CV_64F || this.depth2 == alvision.MatrixType.CV_64F ||this. dst_depth == alvision.MatrixType.CV_64F) && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 let dst = new alvision.cuda.GpuMat ();
-                alvision.cudaarithm.addWeighted(alvision.loadMat(src1), alpha, alvision.loadMat(src2), beta, gamma, dst, this.dst_depth);
+                alvision.cuda.addWeighted(alvision.loadMat(src1), alpha, alvision.loadMat(src2), beta, gamma, dst, this.dst_depth);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -2602,7 +2602,7 @@ class AddWeighted_Accuracy extends AddWeighted
         }
         else {
             let dst = alvision.createMat(this.size, this.dst_depth, this.useRoi);
-            alvision.cudaarithm.addWeighted(alvision.loadMat(src1, this.useRoi), alpha, alvision.loadMat(src2, this.useRoi), beta, gamma, dst, this.dst_depth);
+            alvision.cuda.addWeighted(alvision.loadMat(src1, this.useRoi), alpha, alvision.loadMat(src2, this.useRoi), beta, gamma, dst, this.dst_depth);
 
             let dst_gold = new alvision.Mat ();
             alvision.addWeighted(src1, alpha, src2, beta, gamma, dst_gold, this.dst_depth);
@@ -2659,7 +2659,7 @@ class Threshold_Accuracy extends Threshold
         let thresh = alvision.randomDouble(0.0, maxVal);
 
         let dst = alvision.createMat(src.size(), src.type(), this.useRoi);
-        alvision.cudaarithm.threshold(alvision.loadMat(src, this.useRoi), dst, thresh, maxVal, this.threshOp);
+        alvision.cuda.threshold(alvision.loadMat(src, this.useRoi), dst, thresh, maxVal, this.threshOp);
 
         let dst_gold = new alvision.Mat ();
         alvision.threshold(src, dst_gold, thresh, maxVal, this.threshOp);
@@ -2703,7 +2703,7 @@ class Magnitude_NPP extends Magnitude
         let src = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC2);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
-        alvision.cudaarithm.magnitude(alvision.loadMat(src, this.useRoi), dst);
+        alvision.cuda.magnitude(alvision.loadMat(src, this.useRoi), dst);
 
         let arr = new Array < alvision.Mat >(2);
         alvision.split(src, arr);
@@ -2721,7 +2721,7 @@ class Magnitude_Sqr_NPP extends Magnitude
         let src = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC2);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
-        alvision.cudaarithm.magnitudeSqr(alvision.loadMat(src, this.useRoi), dst);
+        alvision.cuda.magnitudeSqr(alvision.loadMat(src, this.useRoi), dst);
 
         let arr = new Array<alvision.Mat> (2);
         alvision.split(src, arr);
@@ -2741,7 +2741,7 @@ class Magnitude_Accuracy extends Magnitude
         let y = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
-        alvision.cudaarithm.magnitude(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), dst);
+        alvision.cuda.magnitude(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), dst);
 
         let dst_gold = new alvision.Mat ();
         alvision.magnitude(x, y, dst_gold);
@@ -2758,7 +2758,7 @@ class Magnitude_Sqr_Accuracy extends Magnitude
         let y = alvision.randomMat(this. size, alvision.MatrixType.CV_32FC1);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
-        alvision.cudaarithm.magnitudeSqr(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), dst);
+        alvision.cuda.magnitudeSqr(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), dst);
 
         let dst_gold = new alvision.Mat ();
         alvision.magnitude(x, y, dst_gold);
@@ -2809,7 +2809,7 @@ class Phase_Accuracy extends Phase
         let y = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1);
 
         let dst = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
-        alvision.cudaarithm.phase(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), dst, this.angleInDegrees);
+        alvision.cuda.phase(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), dst, this.angleInDegrees);
 
         let dst_gold = new alvision.Mat ();
         alvision.phase(x, y, dst_gold, this.angleInDegrees);
@@ -2856,7 +2856,7 @@ class CartToPolar_Accuracy extends CartToPolar
 
         let mag = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
         let angle = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
-        alvision.cudaarithm.cartToPolar(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), mag, angle, this.angleInDegrees);
+        alvision.cuda.cartToPolar(alvision.loadMat(x, this.useRoi), alvision.loadMat(y, this.useRoi), mag, angle, this.angleInDegrees);
 
         let mag_gold = new alvision.Mat();
         let angle_gold = new alvision.Mat();
@@ -2904,7 +2904,7 @@ class PolarToCart_Accuracy extends PolarToCart
 
         let x = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
         let y = alvision.createMat(this.size, alvision.MatrixType.CV_32FC1, this.useRoi);
-        alvision.cudaarithm.polarToCart(alvision.loadMat(magnitude, this.useRoi), alvision.loadMat(angle, this.useRoi), x, y,this. angleInDegrees);
+        alvision.cuda.polarToCart(alvision.loadMat(magnitude, this.useRoi), alvision.loadMat(angle, this.useRoi), x, y,this. angleInDegrees);
 
         let x_gold = new alvision.Mat();
         let y_gold = new alvision.Mat();

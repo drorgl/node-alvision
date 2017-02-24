@@ -81,7 +81,7 @@ class StereoBM_Regression extends StereoBM
         alvision.ASSERT_FALSE(right_image.empty());
         alvision.ASSERT_FALSE(disp_gold.empty());
 
-        var bm = alvision.cudastereo.createStereoBM(128, 19);
+        var bm = alvision.cuda.createStereoBM(128, 19);
         var disp = new alvision.cuda.GpuMat();
 
         bm.compute(alvision.loadMat(left_image), alvision.loadMat(right_image), disp);
@@ -120,7 +120,7 @@ class StereoBeliefPropagation_Regression extends StereoBeliefPropagation
         alvision.ASSERT_FALSE(right_image.empty());
         alvision.ASSERT_FALSE(disp_gold.empty());
 
-        var bp = alvision.cudastereo.createStereoBeliefPropagation(64, 8, 2, alvision.MatrixType.CV_16S);
+        var bp = alvision.cuda.createStereoBeliefPropagation(64, 8, 2, alvision.MatrixType.CV_16S);
         bp.setMaxDataTerm(25.0);
         bp.setDataWeight(0.1);
         bp.setMaxDiscTerm(15.0);
@@ -172,7 +172,7 @@ class StereoConstantSpaceBP_Regression extends StereoConstantSpaceBP
         alvision.ASSERT_FALSE(right_image.empty());
         alvision.ASSERT_FALSE(disp_gold.empty());
 
-        var csbp = alvision.cudastereo.createStereoConstantSpaceBP(128, 16, 4, 4);
+        var csbp = alvision.cuda.createStereoConstantSpaceBP(128, 16, 4, 4);
         var disp = new alvision.cuda.GpuMat();
 
         csbp.compute(alvision.loadMat(left_image), alvision.loadMat(right_image), disp);
@@ -216,7 +216,7 @@ class ReprojectImageTo3D_Accuracy extends ReprojectImageTo3D
         var Q = alvision.randomMat(new alvision.Size(4, 4), alvision.MatrixType.CV_32FC1, 0.1, 1.0);
 
         var dst = new alvision.cuda.GpuMat();
-        alvision.cudastereo.reprojectImageTo3D(alvision.loadMat(disp, this.useRoi), dst, Q, 3);
+        alvision.cuda.reprojectImageTo3D(alvision.loadMat(disp, this.useRoi), dst, Q, 3);
 
         var dst_gold = new alvision.Mat();
         alvision.reprojectImageTo3D(disp, dst_gold, Q, false);

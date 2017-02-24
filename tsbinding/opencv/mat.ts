@@ -953,7 +953,7 @@ including std::sort().
 
     //! download data from GpuMat
         //explicit Mat(const cuda::GpuMat& m);
-        new (m: _cuda.cuda.GpuMat): Mat;
+        new (m: _cuda.GpuMat): Mat;
 
         new (buf: Buffer): Mat;
 

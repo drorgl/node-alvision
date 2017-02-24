@@ -105,7 +105,7 @@ class GEMM_Accuracy extends GEMM
         if (alvision.MatrixType.CV_MAT_DEPTH(this.type) == alvision.MatrixType.CV_64F && !alvision.supportFeature(this.devInfo, alvision.cuda.FeatureSet.NATIVE_DOUBLE)) {
             try {
                 var dst = new alvision.cuda.GpuMat();
-                alvision.cudaarithm.gemm(alvision.loadMat(src1), alvision.loadMat(src2), alpha, alvision.loadMat(src3), beta, dst, this.flags);
+                alvision.cuda.gemm(alvision.loadMat(src1), alvision.loadMat(src2), alpha, alvision.loadMat(src3), beta, dst, this.flags);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsUnsupportedFormat, e.code);
@@ -114,7 +114,7 @@ class GEMM_Accuracy extends GEMM
         else if (this.type == alvision.MatrixType.CV_64FC2 && this.flags != 0) {
             try {
                 var dst = new alvision.cuda.GpuMat();
-                alvision.cudaarithm.gemm(alvision.loadMat(src1), alvision.loadMat(src2), alpha, alvision.loadMat(src3), beta, dst, this.flags);
+                alvision.cuda.gemm(alvision.loadMat(src1), alvision.loadMat(src2), alpha, alvision.loadMat(src3), beta, dst, this.flags);
             }
             catch (e) {
                 alvision.ASSERT_EQ(alvision.cv.Error.Code.StsNotImplemented, e.code);
@@ -122,7 +122,7 @@ class GEMM_Accuracy extends GEMM
         }
         else {
             var dst = alvision.createMat(this.size, this.type, this.useRoi);
-            alvision.cudaarithm.gemm(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), alpha, alvision.loadMat(src3, this.useRoi), beta, dst, this.flags);
+            alvision.cuda.gemm(alvision.loadMat(src1, this.useRoi), alvision.loadMat(src2, this.useRoi), alpha, alvision.loadMat(src3, this.useRoi), beta, dst, this.flags);
 
             var dst_gold = new alvision.Mat();
             alvision.gemm(src1, src2, alpha, src3, beta, dst_gold, this.flags);
@@ -172,7 +172,7 @@ class MulSpectrums_Simple extends MulSpectrums
 {
     public TestBody(): void {
         var c = new alvision.cuda.GpuMat();
-        alvision.cudaarithm.mulSpectrums(alvision.loadMat(this.a), alvision.loadMat(this.b), c, this.flag, false);
+        alvision.cuda.mulSpectrums(alvision.loadMat(this.a), alvision.loadMat(this.b), c, this.flag, false);
 
         var c_gold = new alvision.Mat();
         alvision.mulSpectrums(this.a, this.b, c_gold, this.flag, false);
@@ -188,7 +188,7 @@ class MulSpectrums_Scaled extends MulSpectrums
         var scale = 1. / this.size.area().valueOf();
 
         var c = new alvision.cuda.GpuMat();
-        alvision.cudaarithm.mulAndScaleSpectrums(alvision.loadMat(this.a), alvision.loadMat(this.b), c, this.flag, scale, false);
+        alvision.cuda.mulAndScaleSpectrums(alvision.loadMat(this.a), alvision.loadMat(this.b), c, this.flag, scale, false);
 
         var c_gold = new alvision.Mat();
         alvision.mulSpectrums(this.a, this.b, c_gold, this.flag, false);
@@ -234,7 +234,7 @@ function testC2C(hint: string, cols: alvision.int, rows: alvision.int, flags: al
             d_b_data.create(1, a.size().area(), alvision.MatrixType. CV_32FC2);
             d_b = new alvision.cuda.GpuMat(a.rows(), a.cols(), alvision.MatrixType.CV_32FC2, d_b_data.ptr<alvision.uchar>("uchar"), a.cols().valueOf() * d_b_data.elemSize().valueOf());
         }
-        alvision.cudaarithm.dft(alvision.loadMat(a), d_b, new alvision.Size(cols, rows), flags);
+        alvision.cuda.dft(alvision.loadMat(a), d_b, new alvision.Size(cols, rows), flags);
 
         alvision.EXPECT_TRUE(!inplace || d_b.ptr<alvision.uchar>("uchar") == d_b_data.ptr<alvision.uchar>("uchar"));
         alvision.ASSERT_EQ(alvision.MatrixType.CV_32F, d_b.depth());
@@ -294,8 +294,8 @@ class Dft_C2C extends Dft {
             d_c = new alvision.cuda.GpuMat(a.rows(), a.cols(), alvision.MatrixType.CV_32F, d_c_data.ptr<alvision.uchar>("uchar"), a.cols().valueOf() * d_c_data.elemSize().valueOf());
         }
 
-        alvision.cudaarithm.dft(alvision.loadMat(a), d_b, new alvision.Size(cols, rows), 0);
-        alvision.cudaarithm.dft(d_b, d_c, new alvision.Size(cols, rows), alvision.DftFlags.DFT_REAL_OUTPUT | alvision.DftFlags.DFT_SCALE);
+        alvision.cuda.dft(alvision.loadMat(a), d_b, new alvision.Size(cols, rows), 0);
+        alvision.cuda.dft(d_b, d_c, new alvision.Size(cols, rows), alvision.DftFlags.DFT_REAL_OUTPUT | alvision.DftFlags.DFT_SCALE);
 
         alvision.EXPECT_TRUE(!inplace || d_b.ptr<alvision.uchar>("uchar") == d_b_data.ptr<alvision.uchar>("uchar"));
         alvision.EXPECT_TRUE(!inplace || d_c.ptr<alvision.uchar>("uchar") == d_c_data.ptr<alvision.uchar>("uchar"));
@@ -403,7 +403,7 @@ class Convolve_Accuracy extends Convolve {
         var src = alvision.randomMat(this.size, alvision.MatrixType.CV_32FC1, 0.0, 100.0);
         var kernel = alvision.randomMat(new alvision.Size(this.ksize, this.ksize), alvision.MatrixType.CV_32FC1, 0.0, 1.0);
 
-        var conv = alvision.cudaarithm.createConvolution();
+        var conv = alvision.cuda.createConvolution();
 
         var dst = new alvision.cuda.GpuMat();
         conv.convolve(alvision.loadMat(src), alvision.loadMat(kernel), dst, this.ccorr);

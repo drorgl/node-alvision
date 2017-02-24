@@ -92,7 +92,7 @@ class Canny_Accuracy extends Canny
         let low_thresh = 50.0;
         let high_thresh = 100.0;
 
-        let canny = alvision.cudaimgproc.createCannyEdgeDetector(low_thresh, high_thresh, this.apperture_size, this.useL2gradient);
+        let canny = alvision.cuda.createCannyEdgeDetector(low_thresh, high_thresh, this.apperture_size, this.useL2gradient);
 
         let edges = new alvision.cuda.GpuMat();
         canny.detect(alvision.loadMat(img, this.useRoi), edges);

@@ -73,8 +73,21 @@ import * as _base from './Base';
   @}
  */
 
+export * from './cudacodec/cudacodec';
+export * from './cudaarithm/cudaarithm';
+export * from './cudaimgproc/cudaimgproc';
+export * from './cudabgsegm/cudabgsegm';
+export * from './cudaoptflow/cudaoptflow';
+export * from './cudaobjdetect/cudaobjdetect';
+export * from './cudawarping/cudawarping';
+export * from './cudastereo/cudastereo';
+export * from './cudafeatures2d/cudafeatures2d';
+export * from './cudafilters/cudafilters';
+export * from './photo/cuda';
+
+
 //namespace cv {
-    export namespace cuda {
+//    export namespace cuda {
 
         //! @addtogroup cudacore_struct
         //! @{
@@ -897,7 +910,7 @@ export interface DeviceInfo
 //        //! @} cudacore_init
 //
 //    }
-} // namespace cv { namespace cuda {
+//} // namespace cv { namespace cuda {
 //
 //
 //#include "opencv2/core/cuda.inl.hpp"

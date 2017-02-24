@@ -115,7 +115,7 @@ export var randomMat: IrandomMat = alvision_module.randomMat;
 //    // GpuMat create
 
 interface IcreateMat {
-    (size : _types.Size, type : _st.int, useRoi? : boolean /* = false*/): _cuda.cuda.GpuMat;
+    (size : _types.Size, type : _st.int, useRoi? : boolean /* = false*/): _cuda.GpuMat;
 }
 
 export var createMat: IcreateMat = alvision_module.createMat;
@@ -124,7 +124,7 @@ export var createMat: IcreateMat = alvision_module.createMat;
 
 
 interface IloadMat{
-    (m: _mat.Mat, useRoi?  : boolean /*= false*/): _cuda.cuda.GpuMat;
+    (m: _mat.Mat, useRoi?  : boolean /*= false*/): _cuda.GpuMat;
 }
 
 export var loadMat: IloadMat = alvision_module.loadMat;
@@ -154,7 +154,7 @@ export var readImageType: IreadImageType = alvision_module.readImageType;
 
 //    //! return true if device supports specified feature and gpu module was built with support the feature.
 interface IsupportFeature {
-    (info: _cuda.cuda.DeviceInfo, feature: _cuda.cuda.FeatureSet): boolean;
+    (info: _cuda.DeviceInfo, feature: _cuda.FeatureSet): boolean;
 }
 export var supportFeature: IsupportFeature = alvision_module.supportFeature;
 //supportFeature(const cv::cuda::DeviceInfo& info, cv::cuda::FeatureSet feature);
@@ -173,7 +173,7 @@ interface DeviceManager
 //        void load(int i);
 //        void loadAll();
 
-    values(): Array<_cuda.cuda.DeviceInfo>;
+    values(): Array<_cuda.DeviceInfo>;
 
 //    private:
 //        std::vector<cv::cuda::DeviceInfo> devices_;

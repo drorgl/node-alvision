@@ -33,9 +33,9 @@ class App extends BaseApp
 
         const detector = alvision.HOGDescriptor.getDefaultPeopleDetector(); //gpu::HOGDescriptor::getPeopleDetector48x96();
 
-        let gpu_hog: alvision.cudaobjdetect.HOG;
+        let gpu_hog: alvision.cuda.HOG;
         if (this.has_gpu && this.useGpu_) {
-            gpu_hog = alvision.cudaobjdetect.HOG.create(win_size, new alvision.Size(16, 16), new alvision.Size(8, 8), new alvision.Size(8, 8), 9)
+            gpu_hog = alvision.cuda.HOG.create(win_size, new alvision.Size(16, 16), new alvision.Size(8, 8), new alvision.Size(8, 8), 9)
         }
 
         //gpu::HOGDescriptor gpu_hog(win_size, Size(16, 16), Size(8, 8), Size(8, 8), 9,

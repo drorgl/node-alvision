@@ -74,7 +74,7 @@ import * as _persistence from './../persistence';
     //UMat arrGetUMat(InputArray arr, UMat& buf);
 
     interface IarrGetGpuMat {
-        (arr: _st.InputArray, buf: _cuda.cuda.GpuMat): _cuda.cuda.GpuMat;
+        (arr: _st.InputArray, buf: _cuda.GpuMat): _cuda.GpuMat;
     }
     export var arrGetGpuMat: IarrGetGpuMat = alvision_module.superres.arrGetGpuMat;
     //cuda::GpuMat arrGetGpuMat(InputArray arr, cuda::GpuMat& buf);
@@ -91,7 +91,7 @@ import * as _persistence from './../persistence';
     interface IconvertToType {
         (src: _mat.Mat, type: _st.int, buf0: _mat.Mat, buf1: _mat.Mat): _mat.Mat;
         (src: _mat.UMat, type: _st.int, buf0: _mat.UMat, buf1: _mat.UMat): _mat.UMat;
-        (src: _cuda.cuda.GpuMat, type: _st.int, buf0: _cuda.cuda.GpuMat, buf1: _cuda.cuda.GpuMat): _cuda.cuda.GpuMat;
+        (src: _cuda.GpuMat, type: _st.int, buf0: _cuda.GpuMat, buf1: _cuda.GpuMat): _cuda.GpuMat;
     }
 
     export var convertToType: IconvertToType = alvision_module.superres.convertToType;
@@ -105,7 +105,7 @@ import * as _persistence from './../persistence';
     //    //UMat convertToType(const UMat& src, int type, UMat& buf0, UMat& buf1);
     //
     //interface IconvertToType {
-    //    (src: _cuda.cuda.GpuMat, type: _st.int, buf0: _cuda.cuda.GpuMat, buf1: _cuda.cuda.GpuMat ): _cuda.cuda.GpuMat;
+    //    (src: _cuda.GpuMat, type: _st.int, buf0: _cuda.GpuMat, buf1: _cuda.GpuMat ): _cuda.GpuMat;
     //}
     //export var convertToType: IconvertToType = alvision_module.superres.convertToType;
         //cuda::GpuMat convertToType(const cuda::GpuMat& src, int type, cuda::GpuMat& buf0, cuda::GpuMat& buf1);

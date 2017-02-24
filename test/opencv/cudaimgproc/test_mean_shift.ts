@@ -92,7 +92,7 @@ class MeanShift_Filtering extends MeanShift
         alvision.ASSERT_FALSE(img_template.empty());
 
         let d_dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.meanShiftFiltering(alvision.loadMat(this.img), d_dst, this.spatialRad,this. colorRad);
+        alvision.cuda.meanShiftFiltering(alvision.loadMat(this.img), d_dst, this.spatialRad,this. colorRad);
 
         alvision.ASSERT_EQ(alvision.MatrixType.CV_8UC4, d_dst.type());
 
@@ -121,11 +121,11 @@ class MeanShift_Proc extends MeanShift
         alvision.ASSERT_FALSE(spmap_template.empty());
 
         let rmap_filtered = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.meanShiftFiltering(alvision.loadMat(this.img), rmap_filtered, this.spatialRad, this.colorRad);
+        alvision.cuda.meanShiftFiltering(alvision.loadMat(this.img), rmap_filtered, this.spatialRad, this.colorRad);
 
         let rmap = new alvision.cuda.GpuMat();
         let spmap = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.meanShiftProc(alvision.loadMat(this.img), rmap, spmap, this.spatialRad, this.colorRad);
+        alvision.cuda.meanShiftProc(alvision.loadMat(this.img), rmap, spmap, this.spatialRad, this.colorRad);
 
         alvision.ASSERT_EQ(alvision.MatrixType.CV_8UC4, rmap.type());
 
@@ -178,7 +178,7 @@ class MeanShiftSegmentation_Regression extends MeanShiftSegmentation
         alvision.ASSERT_FALSE(dst_gold.empty());
 
         let dst = new alvision.Mat();
-        alvision.cudaimgproc.meanShiftSegmentation(alvision.loadMat(img), dst, 10, 10, this.minsize);
+        alvision.cuda.meanShiftSegmentation(alvision.loadMat(img), dst, 10, 10, this.minsize);
 
         let dst_rgb = new alvision.Mat();
         alvision.cvtColor(dst, dst_rgb, alvision.ColorConversionCodes.COLOR_BGRA2BGR);

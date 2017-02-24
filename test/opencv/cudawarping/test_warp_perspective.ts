@@ -97,7 +97,7 @@ class BuildWarpPerspectiveMaps_Accuracy extends BuildWarpPerspectiveMaps
         var M = createTransfomMatrix(this.size, Math.PI / 4);
 
         var xmap = new alvision.cuda.GpuMat(), ymap = new alvision.cuda.GpuMat ();
-        alvision.cudawarping.buildWarpPerspectiveMaps(M, this.inverse, this.size, xmap, ymap);
+        alvision.cuda.buildWarpPerspectiveMaps(M, this.inverse, this.size, xmap, ymap);
 
         var src = alvision.randomMat(alvision.randomSize(200, 400), alvision.MatrixType.CV_8UC1);
         var interpolation = alvision.InterpolationFlags.INTER_NEAREST;
@@ -237,7 +237,7 @@ class WarpPerspective_Accuracy extends WarpPerspective
         var val = alvision.randomScalar(0.0, 255.0);
 
         var dst = alvision.createMat(this.size, this.type, this.useRoi);
-        alvision.cudawarping.warpPerspective(alvision.loadMat(src, this.useRoi), dst, M, this.size, flags, this.borderType, val);
+        alvision.cuda.warpPerspective(alvision.loadMat(src, this.useRoi), dst, M, this.size, flags, this.borderType, val);
 
         var dst_gold = new alvision.Mat();
         warpPerspectiveGold(src, M, this.inverse, this.size, dst_gold, this.interpolation, this.borderType, val);
@@ -291,7 +291,7 @@ class WarpPerspectiveNPP_Accuracy extends WarpPerspectiveNPP
             flags |= alvision.InterpolationFlags.WARP_INVERSE_MAP;
 
         var dst = new alvision.cuda.GpuMat();
-        alvision.cudawarping.warpPerspective(alvision.loadMat(src), dst, M, src.size(), flags);
+        alvision.cuda.warpPerspective(alvision.loadMat(src), dst, M, src.size(), flags);
 
         var dst_gold = new alvision.Mat();
         warpPerspectiveGold(src, M, this.inverse, src.size(), dst_gold, this.interpolation, alvision.BorderTypes.BORDER_CONSTANT, alvision.Scalar.all(0));

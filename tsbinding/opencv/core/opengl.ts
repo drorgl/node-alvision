@@ -261,7 +261,7 @@ interface Buffer extends _st.IOArray
     unmapHost(): void;
 
     //! map to device memory (blocking)
-    mapDevice(): _cuda.cuda.GpuMat 
+    mapDevice(): _cuda.GpuMat 
     unmapDevice(): void;
 //
 //    /** @brief Maps OpenGL buffer to CUDA device memory.

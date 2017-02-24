@@ -488,9 +488,9 @@ export function makeGray(src: alvision.InputArray, dst: alvision.OutputArray): v
         if (scn == 1)
             dst.setTo(src.getGpuMat());
         else if (scn == 3)
-            alvision.cudaimgproc.cvtColor(src.getGpuMat(), dst.getGpuMatRef(), alvision.ColorConversionCodes.COLOR_BGR2GRAY);
+            alvision.cuda.cvtColor(src.getGpuMat(), dst.getGpuMatRef(), alvision.ColorConversionCodes.COLOR_BGR2GRAY);
         else
-            alvision.cudaimgproc.cvtColor(src.getGpuMat(), dst.getGpuMatRef(), alvision.ColorConversionCodes.COLOR_BGRA2GRAY);
+            alvision.cuda.cvtColor(src.getGpuMat(), dst.getGpuMatRef(), alvision.ColorConversionCodes.COLOR_BGRA2GRAY);
     }
     else {
         if (scn == 1)

@@ -71,7 +71,7 @@ import * as _bgsegm from './../video/background_segm';
  */
 
 //namespace cv {
-export namespace cudabgsegm {
+//export namespace cudabgsegm {
 
     //! @addtogroup cudabgsegm
     //! @{
@@ -187,7 +187,7 @@ export namespace cudabgsegm {
 
 //! @}
 
-}
+//}
 //} // namespace cv { namespace cuda {
 
 //#endif /* __OPENCV_CUDABGSEGM_HPP__ */

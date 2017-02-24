@@ -182,7 +182,7 @@ class Remap_Accuracy extends Remap
         var val = alvision.randomScalar(0.0, 255.0);
 
         var dst = alvision.createMat(this.xmap.size(), this.type, this.useRoi);
-        alvision.cudawarping.remap(alvision.loadMat(src, this.useRoi), dst, alvision.loadMat(this.xmap, this.useRoi), alvision.loadMat(this.ymap, this.useRoi), this.interpolation, this.borderType, val);
+        alvision.cuda.remap(alvision.loadMat(src, this.useRoi), dst, alvision.loadMat(this.xmap, this.useRoi), alvision.loadMat(this.ymap, this.useRoi), this.interpolation, this.borderType, val);
 
         var dst_gold = new alvision.Mat();
         remapGold(src, this.xmap, this.ymap, dst_gold, this.interpolation, this.borderType, val);

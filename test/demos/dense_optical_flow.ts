@@ -44,8 +44,8 @@
 //                FrameSource.image("data/dense_optical_flow_2.jpg")));
 //        }
 
-//        let brox_cpu = new alvision.super_res_optical_flow.BroxOpticalFlow();
-//        let brox = new alvision.BroxOpticalFlow (0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale*/, 10 /*inner_iterations*/, 77 /*outer_iterations*/, 10 /*solver_iterations*/);
+//        let brox_cpu = new alvision.superres.BroxOpticalFlow();
+//        let brox_gpu = new alvision.cuda.BroxOpticalFlow(0.197 /*alpha*/, 50.0 /*gamma*/, 0.8 /*scale*/, 10 /*inner_iterations*/, 77 /*outer_iterations*/, 10 /*solver_iterations*/);
 //        let farneback = new alvision.FarnebackOpticalFlow();
 //        let pyrlk = new alvision.PyrLKOpticalFlow();
 //        pyrlk.winSize = new alvision.Size(13, 13);

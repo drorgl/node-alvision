@@ -91,7 +91,7 @@ class BilateralFilter_Accuracy extends BilateralFilter
         src.convertTo(src, this.type);
         let dst = new alvision.cuda.GpuMat();
 
-        alvision.cudaimgproc.bilateralFilter(alvision.loadMat(src), dst, this.kernel_size, this.sigma_color, this.sigma_spatial);
+        alvision.cuda.bilateralFilter(alvision.loadMat(src), dst, this.kernel_size, this.sigma_color, this.sigma_spatial);
 
         let dst_gold = new alvision.Mat();
         alvision.bilateralFilter(src, dst_gold, this.kernel_size, this.sigma_color, this.sigma_spatial);

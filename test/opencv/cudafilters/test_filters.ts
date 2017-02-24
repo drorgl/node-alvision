@@ -110,7 +110,7 @@ class Blur_Accuracy extends Blur
     TestBody() {
         let src = alvision.randomMat(this.size, this.type);
 
-        let blurFilter = alvision.cudafilters.createBoxFilter(src.type(), -1, this.ksize, this.anchor, this.borderType);
+        let blurFilter = alvision.cuda.createBoxFilter(src.type(), -1, this.ksize, this.anchor, this.borderType);
 
         let dst = alvision.createMat(this.size, this.type, this.useRoi);
         blurFilter.apply(alvision.loadMat(src, this.useRoi), dst);
@@ -167,7 +167,7 @@ class Filter2D_Accuracy extends Filter2D
         let src = alvision.randomMat(this.size, this.type);
         let kernel = alvision.randomMat(new alvision.Size(this.ksize.width, this.ksize.height), alvision.MatrixType.CV_32FC1, 0.0, 1.0);
 
-        let filter2D = alvision.cudafilters.createLinearFilter(src.type(), -1, kernel, this.anchor, this.borderType);
+        let filter2D = alvision.cuda.createLinearFilter(src.type(), -1, kernel, this.anchor, this.borderType);
 
         let dst = alvision.createMat(this.size,this. type,this. useRoi);
         filter2D.apply(alvision.loadMat(src, this.useRoi), dst);
@@ -219,7 +219,7 @@ class Laplacian_Accuracy extends Laplacian
     TestBody() {
         let src = alvision.randomMat(this.size, this.type);
 
-        let laplacian = alvision.cudafilters.createLaplacianFilter(src.type(), -1, this.ksize.width);
+        let laplacian = alvision.cuda.createLaplacianFilter(src.type(), -1, this.ksize.width);
 
         let dst = alvision.createMat(this.size, this.type, this.useRoi);
         laplacian.apply(alvision.loadMat(src, this.useRoi), dst);
@@ -281,7 +281,7 @@ class SeparableLinearFilter_Accuracy extends SeparableLinearFilter
         let rowKernel = alvision.randomMat(new alvision.Size(this.ksize.width, 1), alvision.MatrixType.CV_32FC1, 0.0, 1.0);
         let columnKernel = alvision.randomMat(new alvision.Size(this.ksize.height, 1), alvision.MatrixType.CV_32FC1, 0.0, 1.0);
 
-        let filter = alvision.cudafilters.createSeparableLinearFilter(src.type(), -1, rowKernel, columnKernel, this.anchor, this.borderType);
+        let filter = alvision.cuda.createSeparableLinearFilter(src.type(), -1, rowKernel, columnKernel, this.anchor, this.borderType);
 
         let dst = alvision.createMat(this.size, this.type, this.useRoi);
         filter.apply(alvision.loadMat(src, this.useRoi), dst);
@@ -358,7 +358,7 @@ class Sobel_Accuracy extends Sobel
 
         let src = alvision.randomMat(this.size, this.type);
 
-        let sobel = alvision.cudafilters.createSobelFilter(src.type(), -1, this.dx, this.dy, this.ksize.width, 1.0, this.borderType);
+        let sobel = alvision.cuda.createSobelFilter(src.type(), -1, this.dx, this.dy, this.ksize.width, 1.0, this.borderType);
 
         let dst = alvision.createMat(this.size, this.type, this.useRoi);
         sobel.apply(alvision.loadMat(src, this.useRoi), dst);
@@ -428,7 +428,7 @@ class Scharr_Accuracy extends Scharr
 
         let src = alvision.randomMat(this.size, this.type);
 
-        let scharr = alvision.cudafilters.createScharrFilter(src.type(), -1, this.dx, this.dy, 1.0, this.borderType);
+        let scharr = alvision.cuda.createScharrFilter(src.type(), -1, this.dx, this.dy, 1.0, this.borderType);
 
         let dst = alvision.createMat(this.size,this. type, this.useRoi);
         scharr.apply(alvision.loadMat(src, this.useRoi), dst);
@@ -494,7 +494,7 @@ class GaussianBlur_Accuracy extends GaussianBlur
         let sigma1 = alvision.randomDouble(0.1, 1.0);
         let sigma2 = alvision.randomDouble(0.1, 1.0);
 
-        let gauss = alvision.cudafilters.createGaussianFilter(src.type(), -1, this.ksize, sigma1, sigma2, this.borderType);
+        let gauss = alvision.cuda.createGaussianFilter(src.type(), -1, this.ksize, sigma1, sigma2, this.borderType);
 
         let dst = alvision.createMat(this.size,this. type,this. useRoi);
         gauss.apply(alvision.loadMat(src, this.useRoi), dst);
@@ -565,7 +565,7 @@ class Erode_Accuracy extends Erode
         let src = alvision.randomMat(this.size, this.type);
         let kernel = alvision.Mat.ones(3, 3, alvision.MatrixType.CV_8U).toMat();
 
-        let erode = alvision.cudafilters.createMorphologyFilter(alvision.MorphTypes.MORPH_ERODE, src.type(), kernel, this.anchor, this.iterations);
+        let erode = alvision.cuda.createMorphologyFilter(alvision.MorphTypes.MORPH_ERODE, src.type(), kernel, this.anchor, this.iterations);
 
         let dst = alvision.createMat(this.size, this.type,this. useRoi);
         erode.apply(alvision.loadMat(src, this.useRoi), dst);
@@ -620,7 +620,7 @@ class Dilate_Accuracy extends Dilate
         let src = alvision.randomMat(this.size, this.type);
         let kernel = alvision.Mat.ones(3, 3, alvision.MatrixType.CV_8U).toMat()
 
-        let dilate = alvision.cudafilters.createMorphologyFilter(alvision.MorphTypes.MORPH_DILATE, src.type(), kernel, this.anchor, this.iterations);
+        let dilate = alvision.cuda.createMorphologyFilter(alvision.MorphTypes.MORPH_DILATE, src.type(), kernel, this.anchor, this.iterations);
 
         let dst = alvision.createMat(this.size, this.type, this.useRoi);
         dilate.apply(alvision.loadMat(src, this.useRoi), dst);
@@ -681,7 +681,7 @@ class MorphEx_Accuracy extends MorphEx
         let src = alvision.randomMat(this.size, this.type);
         let kernel = alvision.Mat.ones(3, 3, alvision.MatrixType.CV_8U).toMat();
 
-        let morph = alvision.cudafilters.createMorphologyFilter(this.morphOp, src.type(), kernel, this.anchor, this.iterations);
+        let morph = alvision.cuda.createMorphologyFilter(this.morphOp, src.type(), kernel, this.anchor, this.iterations);
 
         let dst = alvision.createMat(this.size,this. type, this.useRoi);
         morph.apply(alvision.loadMat(src, this.useRoi), dst);

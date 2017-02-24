@@ -76,7 +76,7 @@ import * as _cuda from './../cuda';
  */
 
 //namespace cv {
-export namespace cudaarithm {
+//export namespace cudaarithm {
 
     //! @addtogroup cudaarithm
     //! @{
@@ -99,7 +99,7 @@ export namespace cudaarithm {
      */
 
     interface Iadd {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, dtype?: _st.int /*= -1*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, dtype?: _st.int /*= -1*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var add: Iadd = alvision_module.cuda.add;
@@ -121,7 +121,7 @@ export namespace cudaarithm {
      */
 
     interface Isubtract {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, dtype?: _st.int /*= -1*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, dtype?: _st.int /*= -1*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
 
     export var subtract: Isubtract = alvision_module.cuda.subtract;
@@ -141,7 +141,7 @@ export namespace cudaarithm {
      */
 
     interface Imultiply {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, scale?: _st.double /*= 1*/, dtype?: _st.int /*= -1*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, scale?: _st.double /*= 1*/, dtype?: _st.int /*= -1*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var multiply: Imultiply = alvision_module.cuda.multiply;
@@ -163,7 +163,7 @@ export namespace cudaarithm {
      */
 
     interface Idivide {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, scale?: _st.double /* = 1*/, dtype?: _st.int /*= -1*/, stream?: _cuda.cuda.Stream/*  = Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, scale?: _st.double /* = 1*/, dtype?: _st.int /*= -1*/, stream?: _cuda.Stream/*  = Stream::Null()*/): void;
     }
     export var divide: Idivide = alvision_module.cuda.divide;
     //CV_EXPORTS void divide(InputArray src1, InputArray src2, OutputArray dst, double scale = 1, int dtype = -1, Stream& stream = Stream::Null());
@@ -178,7 +178,7 @@ export namespace cudaarithm {
     @sa absdiff
      */
     interface Iabsdiff {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var absdiff: Iabsdiff = alvision_module.cuda.absdiff;
 
@@ -194,7 +194,7 @@ export namespace cudaarithm {
      */
 
     interface Iabs {
-        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
 
     export var abs: Iabs = alvision_module.cuda.abs;
@@ -208,10 +208,10 @@ export namespace cudaarithm {
      */
 
     interface Isqr {
-        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
 
-    export var sqr: Isqr = alvision_module.sqr;
+    export var sqr: Isqr = alvision_module.cuda.sqr;
     //CV_EXPORTS void sqr(InputArray src, OutputArray dst, Stream& stream = Stream::Null());
 
     /** @brief Computes a square root of each matrix element.
@@ -224,7 +224,7 @@ export namespace cudaarithm {
      */
 
     interface Isqrt {
-        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
 
     export var sqrt: Isqrt = alvision_module.cuda.sqrt;
@@ -239,7 +239,7 @@ export namespace cudaarithm {
     @sa exp
      */
     interface Iexp {
-        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
 
     export var exp: Iexp = alvision_module.cuda.exp;
@@ -255,7 +255,7 @@ export namespace cudaarithm {
     @sa log
      */
     interface Ilog {
-        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var log: Ilog = alvision_module.cuda.log;
 
@@ -276,7 +276,7 @@ export namespace cudaarithm {
      */
 
     interface Ipow {
-        (src: _st.InputArray, power: _st.double, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, power: _st.double, dst: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var pow: Ipow = alvision_module.cuda.pow;
     //CV_EXPORTS void pow(InputArray src, double power, OutputArray dst, Stream& stream = Stream::Null());
@@ -298,7 +298,7 @@ export namespace cudaarithm {
     @sa compare
      */
     interface Icompare {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, cmpop: _st.int, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, cmpop: _st.int, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var compare: Icompare = alvision_module.cuda.compare;
 
@@ -312,7 +312,7 @@ export namespace cudaarithm {
     @param stream Stream for the asynchronous version.
      */
     interface Ibitwise_not {
-        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*  = noArray()*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*  = noArray()*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var bitwise_not: Ibitwise_not = alvision_module.cuda.bitwise_not;
 
@@ -328,7 +328,7 @@ export namespace cudaarithm {
      */
 
     interface Ibitwise_or {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var bitwise_or: Ibitwise_or = alvision_module.cuda.bitwise_or;
@@ -343,7 +343,7 @@ export namespace cudaarithm {
     @param stream Stream for the asynchronous version.
      */
     interface Ibitwise_and {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var bitwise_and: Ibitwise_and = alvision_module.cuda.bitwise_and;
@@ -360,7 +360,7 @@ export namespace cudaarithm {
      */
 
     interface Ibitwise_xor {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var bitwise_xor: Ibitwise_xor = alvision_module.cuda.bitwise_xor;
     //CV_EXPORTS void bitwise_xor(InputArray src1, InputArray src2, OutputArray dst, InputArray mask = noArray(), Stream & stream = Stream::Null());
@@ -374,7 +374,7 @@ export namespace cudaarithm {
      */
 
     interface Irshift {
-        (src: _st.InputArray, val: _types.Scalar_<_st.int>, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, val: _types.Scalar_<_st.int>, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var rshift: Irshift = alvision_module.cuda.rshift;
@@ -390,7 +390,7 @@ export namespace cudaarithm {
     @param stream Stream for the asynchronous version.
      */
     interface Ilshift {
-        (src: _st.InputArray, val: _types.Scalar_<_st.int>, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, val: _types.Scalar_<_st.int>, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var lshift: Ilshift = alvision_module.cuda.lshift;
@@ -407,7 +407,7 @@ export namespace cudaarithm {
      */
 
     interface Imin {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var min: Imin = alvision_module.cuda.min;
@@ -425,7 +425,7 @@ export namespace cudaarithm {
      */
 
     interface Imax {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var max: Imax = alvision_module.cuda.max;
@@ -456,7 +456,7 @@ export namespace cudaarithm {
 
     interface IaddWeighted {
         (src1: _st.InputArray, alpha: _st.double, src2: _st.InputArray, beta: _st.double, gamma: _st.double, dst: _st.OutputArray,
-            dtype?: _st.int /*= -1*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            dtype?: _st.int /*= -1*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var addWeighted: IaddWeighted = alvision_module.cuda.addWeighted;
@@ -465,7 +465,7 @@ export namespace cudaarithm {
 
     //! adds scaled array to another one (dst = alpha*src1 + src2)
 
-    export function scaleAdd(src1: _st.InputArray, alpha: _st.double, src2: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/) {
+    export function scaleAdd(src1: _st.InputArray, alpha: _st.double, src2: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/) {
         addWeighted(src1, alpha, src2, 1.0, 0.0, dst, -1, stream);
     } 
     //static inline void scaleAdd(InputArray src1, double alpha, InputArray src2, OutputArray dst, Stream & stream = Stream::Null())
@@ -487,7 +487,7 @@ export namespace cudaarithm {
      */
 
     interface Ithreshold {
-        (src: _st.InputArray, dst: _st.OutputArray, thresh: _st.double, maxval: _st.double, type: _st.int, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): _st.double;
+        (src: _st.InputArray, dst: _st.OutputArray, thresh: _st.double, maxval: _st.double, type: _st.int, stream?: _cuda.Stream /*= Stream::Null()*/): _st.double;
     }
 
     export var threshold: Ithreshold = alvision_module.cuda.threshold;
@@ -503,7 +503,8 @@ export namespace cudaarithm {
      */
 
     interface Imagnitude {
-        (xy: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (xy: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
+        (x: _st.InputArray, y: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var magnitude: Imagnitude = alvision_module.cuda.magnitude;
 
@@ -517,7 +518,8 @@ export namespace cudaarithm {
      */
 
     interface ImagnitudeSqr {
-        (xy: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (xy: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
+        (x: _st.InputArray, y: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var magnitudeSqr: ImagnitudeSqr = alvision_module.cuda.magnitudeSqr;
@@ -532,10 +534,10 @@ export namespace cudaarithm {
     @param stream Stream for the asynchronous version.
      */
 
-    interface Imagnitude {
-        (x: _st.InputArray, y: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
-    }
-    export var magnitude: Imagnitude = alvision_module.cuda.magnitude;
+    //interface Imagnitude {
+    //    (x: _st.InputArray, y: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
+    //}
+    //export var magnitude: Imagnitude = alvision_module.cuda.magnitude;
 
     //CV_EXPORTS void magnitude(InputArray x, InputArray y, OutputArray magnitude, Stream & stream = Stream::Null());
 
@@ -548,11 +550,11 @@ export namespace cudaarithm {
     @param stream Stream for the asynchronous version.
     */
 
-    interface ImagnitudeSqr {
-        (x: _st.InputArray, y: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
-    }
-
-    export var magnitudeSqr: ImagnitudeSqr = alvision_module.cuda.magnitudeSqr;
+    //interface ImagnitudeSqr {
+    //    (x: _st.InputArray, y: _st.InputArray, magnitude: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
+    //}
+    //
+    //export var magnitudeSqr: ImagnitudeSqr = alvision_module.cuda.magnitudeSqr;
 
     //CV_EXPORTS void magnitudeSqr(InputArray x, InputArray y, OutputArray magnitude, Stream & stream = Stream::Null());
 
@@ -568,7 +570,7 @@ export namespace cudaarithm {
      */
 
     interface Iphase {
-        (x: _st.InputArray, y: _st.InputArray, angle: _st.OutputArray, angleInDegrees?: boolean /*= false*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (x: _st.InputArray, y: _st.InputArray, angle: _st.OutputArray, angleInDegrees?: boolean /*= false*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var phase: Iphase = alvision_module.cuda.phase;
@@ -587,7 +589,7 @@ export namespace cudaarithm {
      */
 
     interface IcartToPolar {
-        (x: _st.InputArray, y: _st.InputArray, magnitude: _st.OutputArray, angle: _st.OutputArray, angleInDegrees?: boolean /*= false*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (x: _st.InputArray, y: _st.InputArray, magnitude: _st.OutputArray, angle: _st.OutputArray, angleInDegrees?: boolean /*= false*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var cartToPolar: IcartToPolar = alvision_module.cuda.cartToPolar;
@@ -605,7 +607,7 @@ export namespace cudaarithm {
      */
 
     interface IpolarToCart {
-        (magnitude: _st.InputArray, angle: _st.InputArray, x: _st.OutputArray, y: _st.OutputArray, angleInDegrees?: boolean /*= false*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (magnitude: _st.InputArray, angle: _st.InputArray, x: _st.OutputArray, y: _st.OutputArray, angleInDegrees?: boolean /*= false*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var polarToCart: IpolarToCart = alvision_module.cuda.polarToCart;
 
@@ -627,18 +629,19 @@ export namespace cudaarithm {
      */
 
     interface Imerge {
-        (src: Array<_cuda.cuda.GpuMat>, n: _st.size_t, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        //(src: Array<_cuda.GpuMat>, n: _st.size_t, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
+        (src: Array<_cuda.GpuMat>, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var merge: Imerge = alvision_module.cuda.merge;
 
     //CV_EXPORTS void merge(const GpuMat* src, size_t n, OutputArray dst, Stream& stream = Stream::Null());
     /** @overload */
 
-    interface Imerge {
-        (src: Array<_cuda.cuda.GpuMat>, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
-    }
-
-    export var merge: Imerge = alvision_module.cuda.merge;
+    //interface Imerge {
+    //    (src: Array<_cuda.GpuMat>, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
+    //}
+    //
+    //export var merge: Imerge = alvision_module.cuda.merge;
 
     //CV_EXPORTS void merge(const std::vector<GpuMat>& src, OutputArray dst, Stream& stream = Stream::Null());
 
@@ -652,17 +655,18 @@ export namespace cudaarithm {
      */
 
     interface Isplit {
-        (src: _st.InputArray, dst: Array<_cuda.cuda.GpuMat>, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, dst: Array<_cuda.GpuMat>, stream?: _cuda.Stream /*= Stream::Null()*/): void;
+
     }
     export var split: Isplit = alvision_module.cuda.split;
 
     //CV_EXPORTS void split(InputArray src, GpuMat * dst, Stream & stream = Stream::Null());
     /** @overload */
-    interface Isplit {
-        (src: _st.InputArray, dst: Array<_cuda.cuda.GpuMat>, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
-    }
-
-    export var split: Isplit = alvision_module.cuda.split;
+    //interface Isplit {
+    //    (src: _st.InputArray, dst: Array<_cuda.GpuMat>, stream?: _cuda.Stream /*= Stream::Null()*/): void;
+    //}
+    //
+    //export var split: Isplit = alvision_module.cuda.split;
 
     //CV_EXPORTS void split(InputArray src, std::vector<GpuMat>& dst, Stream & stream = Stream::Null());
 
@@ -676,7 +680,7 @@ export namespace cudaarithm {
      */
 
     interface Itranspose {
-        (src1: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var transpose: Itranspose = alvision_module.cuda.transpose;
 
@@ -697,7 +701,7 @@ export namespace cudaarithm {
      */
 
     interface Iflip {
-        (src: _st.InputArray, dst: _st.OutputArray, flipCode: _st.int, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, flipCode: _st.int, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var flip: Iflip = alvision_module.cuda.flip;
@@ -714,7 +718,7 @@ export namespace cudaarithm {
         @param dst Destination matrix.
         @param stream Stream for the asynchronous version.
          */
-        transform(src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        transform(src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     };
 
     /** @brief Creates implementation for cuda::LookUpTable .
@@ -748,7 +752,7 @@ export namespace cudaarithm {
 
     interface IcopyMakeBorder {
         (src: _st.InputArray, dst: _st.OutputArray, top: _st.int, bottom: _st.int, left: _st.int, right: _st.int, borderType: _st.int,
-            value?: _types.Scalar /*= Scalar()*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            value?: _types.Scalar /*= Scalar()*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var copyMakeBorder: IcopyMakeBorder = alvision_module.cuda.copyMakeBorder;
@@ -772,6 +776,7 @@ export namespace cudaarithm {
 
     interface Inorm {
         (src1: _st.InputArray, normType: _st.int, mask?: _st.InputArray /*= noArray()*/): _st.double;
+        (src1: _st.InputArray, src2: _st.InputArray, normType?: _st.int /*= NORM_L2*/): _st.double;
     }
 
     export var norm: Inorm = alvision_module.cuda.norm;
@@ -780,7 +785,7 @@ export namespace cudaarithm {
     /** @overload */
 
     interface IcalcNorm {
-        (src: _st.InputArray, dst: _st.OutputArray, normType: _st.int, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, normType: _st.int, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var calcNorm: IcalcNorm = alvision_module.cuda.calcNorm;
@@ -795,17 +800,17 @@ export namespace cudaarithm {
     @sa norm
      */
 
-    interface Inorm {
-        (src1: _st.InputArray, src2: _st.InputArray, normType?: _st.int /*= NORM_L2*/): _st.double;
-    }
-
-    export var norm: Inorm = alvision_module.cuda.norm;
+    //interface Inorm {
+    //    (src1: _st.InputArray, src2: _st.InputArray, normType?: _st.int /*= NORM_L2*/): _st.double;
+    //}
+    //
+    //export var norm: Inorm = alvision_module.cuda.norm;
 
     //CV_EXPORTS double norm(InputArray src1, InputArray src2, int normType= NORM_L2);
     /** @overload */
 
     interface IcalcNormDiff {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, normType?: _st.int /*= NORM_L2*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, normType?: _st.int /*= NORM_L2*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var calcNormDiff: IcalcNormDiff = alvision_module.cuda.calcNormDiff;
@@ -830,7 +835,7 @@ export namespace cudaarithm {
     /** @overload */
 
     interface IcalcSum {
-        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
 
     export var calcSum: IcalcSum = alvision_module.cuda.calcSum;
@@ -853,7 +858,7 @@ export namespace cudaarithm {
     /** @overload */
 
     interface IcalcAbsSum {
-        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
 
     export var calcAbsSum: IcalcAbsSum = alvision_module.cuda.calcAbsSum;
@@ -876,7 +881,7 @@ export namespace cudaarithm {
     /** @overload */
 
     interface IcalcSqrSum {
-        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
 
     export var calcSqrSum: IcalcSqrSum = alvision_module.cuda.calcSqrSum;
@@ -904,7 +909,7 @@ export namespace cudaarithm {
     //CV_EXPORTS void minMax(InputArray src, double * minVal, double * maxVal, InputArray mask = noArray());
     /** @overload */
     interface IfindMinMax {
-        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, mask?: _st.InputArray /* = noArray()*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var findMinMax: IfindMinMax = alvision_module.cuda.findMinMax;
 
@@ -937,7 +942,7 @@ export namespace cudaarithm {
 
     interface IfindMinMaxLoc {
         (src: _st.InputArray, minMaxVals: _st.OutputArray, loc: _st.OutputArray,
-            mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            mask?: _st.InputArray /*= noArray()*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var findMinMaxLoc: IfindMinMaxLoc = alvision_module.cuda.findMinMaxLoc;
@@ -956,6 +961,7 @@ export namespace cudaarithm {
 
     interface IcountNonZero {
         (src: _st.InputArray): _st.int;
+        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
 
     export var countNonZero: IcountNonZero = alvision_module.cuda.countNonZero;
@@ -963,11 +969,11 @@ export namespace cudaarithm {
     //CV_EXPORTS int countNonZero(InputArray src);
     /** @overload */
 
-    interface IcountNonZero {
-        (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
-    }
-
-    export var countNonZero: IcountNonZero = alvision_module.cuda.countNonZero;
+    //interface IcountNonZero {
+    //    (src: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /* = Stream::Null()*/): void;
+    //}
+    //
+    //export var countNonZero: IcountNonZero = alvision_module.cuda.countNonZero;
 
     //CV_EXPORTS void countNonZero(InputArray src, OutputArray dst, Stream & stream = Stream::Null());
 
@@ -999,7 +1005,7 @@ export namespace cudaarithm {
      */
 
     interface Ireduce {
-        (mtx: _st.InputArray, vec: _st.OutputArray, dim: _st.int, reduceOp: _st.int, dtype?: _st.int /*= -1*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (mtx: _st.InputArray, vec: _st.OutputArray, dim: _st.int, reduceOp: _st.int, dtype?: _st.int /*= -1*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var reduce: Ireduce = alvision_module.cuda.reduce;
@@ -1017,6 +1023,7 @@ export namespace cudaarithm {
 
     interface ImeanStdDev {
         (mtx: _st.InputArray, mean: _types.Scalar, stddev: _types.Scalar): void;
+        (mtx: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var meanStdDev: ImeanStdDev = alvision_module.cuda.meanStdDev;
@@ -1024,11 +1031,11 @@ export namespace cudaarithm {
     //CV_EXPORTS void meanStdDev(InputArray mtx, Scalar & mean, Scalar & stddev);
     /** @overload */
 
-    interface ImeanStdDev {
-        (mtx: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
-    }
-
-    export var meanStdDev: ImeanStdDev = alvision_module.cuda.meanStdDev;
+    //interface ImeanStdDev {
+    //    (mtx: _st.InputArray, dst: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
+    //}
+    //
+    //export var meanStdDev: ImeanStdDev = alvision_module.cuda.meanStdDev;
 
     //CV_EXPORTS void meanStdDev(InputArray mtx, OutputArray dst, Stream & stream = Stream::Null());
 
@@ -1042,7 +1049,7 @@ export namespace cudaarithm {
      */
 
     interface IrectStdDev {
-        (src: _st.InputArray, sqr: _st.InputArray, dst: _st.OutputArray, rect: _types.Rect, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, sqr: _st.InputArray, dst: _st.OutputArray, rect: _types.Rect, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var rectStdDev: IrectStdDev = alvision_module.cuda.rectStdDev;
@@ -1069,7 +1076,7 @@ export namespace cudaarithm {
     interface Inormalize {
         (src: _st.InputArray, dst: _st.OutputArray, alpha: _st.double, beta: _st.double,
             norm_type: _st.int, dtype: _st.int, mask?: _st.InputArray /* = noArray()*/,
-            stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var normalize: Inormalize = alvision_module.cuda.normalize;
@@ -1088,7 +1095,7 @@ export namespace cudaarithm {
      */
 
     interface Iintegral {
-        (src: _st.InputArray, sum: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, sum: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var integral: Iintegral = alvision_module.cuda.integral;
@@ -1104,7 +1111,7 @@ export namespace cudaarithm {
      */
 
     interface IsqrIntegral {
-        (src: _st.InputArray, sqsum: _st.OutputArray, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src: _st.InputArray, sqsum: _st.OutputArray, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var sqrIntegral: IsqrIntegral = alvision_module.cuda.sqrIntegral;
@@ -1143,7 +1150,7 @@ export namespace cudaarithm {
      */
     interface Igemm {
         (src1: _st.InputArray, src2: _st.InputArray, alpha: _st.double,
-            src3: _st.InputArray, beta: _st.double, dst: _st.OutputArray, flags?: _st.int /*= 0*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+            src3: _st.InputArray, beta: _st.double, dst: _st.OutputArray, flags?: _st.int /*= 0*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
     export var gemm: Igemm = alvision_module.cuda.gemm;
 
@@ -1165,9 +1172,9 @@ export namespace cudaarithm {
     @sa mulSpectrums
      */
     interface ImulSpectrums {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, flags: _st.int, conjB?: boolean /*= false*/, stream?: _cuda.cuda.Stream  /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, flags: _st.int, conjB?: boolean /*= false*/, stream?: _cuda.Stream  /*= Stream::Null()*/): void;
     }
-    export var mulSpectrums: ImulSpectrums = alvision_module.mulSpectrums;
+    export var mulSpectrums: ImulSpectrums = alvision_module.cuda.mulSpectrums;
     //CV_EXPORTS void mulSpectrums(InputArray src1, InputArray src2, OutputArray dst, int flags, bool conjB=false, Stream& stream = Stream::Null());
 
     /** @brief Performs a per-element multiplication of two Fourier spectrums and scales the result.
@@ -1187,7 +1194,7 @@ export namespace cudaarithm {
      */
 
     interface ImulAndScaleSpectrums {
-        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, flags: _st.int, scale: _st.float, conjB?: boolean/*= false*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        (src1: _st.InputArray, src2: _st.InputArray, dst: _st.OutputArray, flags: _st.int, scale: _st.float, conjB?: boolean/*= false*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     }
 
     export var mulAndScaleSpectrums: ImulAndScaleSpectrums = alvision_module.cuda.mulAndScaleSpectrums;
@@ -1229,7 +1236,7 @@ export namespace cudaarithm {
     @sa dft
      */
     interface Idft {
-        (src: _st.InputArray, dst: _st.OutputArray, dft_size: _types.Size, flags?: _st.int /*= 0*/, stream?: _cuda.cuda.Stream /* = Stream::Null()*/): void;
+        (src: _st.InputArray, dst: _st.OutputArray, dft_size: _types.Size, flags?: _st.int /*= 0*/, stream?: _cuda.Stream /* = Stream::Null()*/): void;
     }
     export var dft: Idft = alvision_module.cuda.dft;
 
@@ -1248,7 +1255,7 @@ export namespace cudaarithm {
         @param ccorr Flags to evaluate cross-correlation instead of convolution.
         @param stream Stream for the asynchronous version.
          */
-        convolve(image: _st.InputArray, templ: _st.InputArray, result: _st.OutputArray, ccorr?: boolean/*= false*/, stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        convolve(image: _st.InputArray, templ: _st.InputArray, result: _st.OutputArray, ccorr?: boolean/*= false*/, stream?: _cuda.Stream /*= Stream::Null()*/): void;
     };
 
     /** @brief Creates implementation for cuda::Convolution .
@@ -1269,7 +1276,7 @@ export namespace cudaarithm {
 
 //! @} cudaarithm
 
-} //namespace cudaarithm
+//} //namespace cudaarithm
 //} // namespace cv { namespace cuda {
 
 //#endif /* __OPENCV_CUDAARITHM_HPP__ */

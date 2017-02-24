@@ -87,7 +87,7 @@ class CvtColor_BGR2RGB extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2RGB);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2RGB);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2RGB);
@@ -103,7 +103,7 @@ class CvtColor_BGR2RGBA extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
@@ -119,7 +119,7 @@ class CvtColor_BGR2BGRA extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
@@ -136,7 +136,7 @@ class CvtColor_BGRA2RGB extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2RGB);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2RGB);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGRA2RGB);
@@ -153,7 +153,7 @@ class CvtColor_BGRA2BGR extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2BGR);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2BGR);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGRA2BGR);
@@ -170,7 +170,7 @@ class CvtColor_BGRA2RGBA extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2RGBA);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2RGBA);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGRA2RGBA);
@@ -186,7 +186,7 @@ class CvtColor_BGR2GRAY extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
@@ -202,7 +202,7 @@ class CvtColor_RGB2GRAY extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2GRAY);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2GRAY);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2GRAY);
@@ -219,7 +219,7 @@ class CvtColor_GRAY2BGR extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_GRAY2BGR);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_GRAY2BGR);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_GRAY2BGR);
@@ -236,7 +236,7 @@ class CvtColor_GRAY2BGRA extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_GRAY2BGRA, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_GRAY2BGRA, 4);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_GRAY2BGRA, 4);
@@ -253,7 +253,7 @@ class CvtColor_BGRA2GRAY extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2GRAY);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2GRAY);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGRA2GRAY);
@@ -270,7 +270,7 @@ class CvtColor_RGBA2GRAY extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGBA2GRAY);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGBA2GRAY);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGBA2GRAY);
@@ -289,7 +289,7 @@ class CvtColor_BGR2BGR565 extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2BGR565);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2BGR565);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2BGR565);
@@ -308,7 +308,7 @@ class CvtColor_RGB2BGR565 extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2BGR565);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2BGR565);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2BGR565);
@@ -328,7 +328,7 @@ class CvtColor_BGR5652BGR extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR565);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652BGR);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652BGR);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5652BGR);
@@ -348,7 +348,7 @@ class CvtColor_BGR5652RGB extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR565);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652RGB);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652RGB);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5652RGB);
@@ -368,7 +368,7 @@ class CvtColor_BGRA2BGR565 extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2BGR565);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2BGR565);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGRA2BGR565);
@@ -388,7 +388,7 @@ class CvtColor_RGBA2BGR565 extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGBA2BGR565);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGBA2BGR565);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGBA2BGR565);
@@ -408,7 +408,7 @@ class CvtColor_BGR5652BGRA extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR565);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652BGRA, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652BGRA, 4);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5652BGRA, 4);
@@ -428,7 +428,7 @@ class CvtColor_BGR5652RGBA extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR565);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652RGBA, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652RGBA, 4);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5652RGBA, 4);
@@ -448,7 +448,7 @@ class CvtColor_GRAY2BGR565 extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_GRAY2BGR565);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_GRAY2BGR565);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_GRAY2BGR565);
@@ -468,7 +468,7 @@ class CvtColor_BGR5652GRAY extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR565);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652GRAY);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5652GRAY);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5652GRAY);
@@ -487,7 +487,7 @@ class CvtColor_BGR2BGR555 extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2BGR555);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2BGR555);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2BGR555);
@@ -506,7 +506,7 @@ class CvtColor_RGB2BGR555 extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2BGR555);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2BGR555);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2BGR555);
@@ -526,7 +526,7 @@ class CvtColor_BGR5552BGR extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR555);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552BGR);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552BGR);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5552BGR);
@@ -546,7 +546,7 @@ class CvtColor_BGR5552RGB extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR555);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552RGB);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552RGB);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5552RGB);
@@ -566,7 +566,7 @@ class CvtColor_BGRA2BGR555 extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2BGR555);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGRA2BGR555);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGRA2BGR555);
@@ -586,7 +586,7 @@ class CvtColor_RGBA2BGR555 extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGBA2BGR555);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGBA2BGR555);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGBA2BGR555);
@@ -606,7 +606,7 @@ class CvtColor_BGR5552BGRA extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR555);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552BGRA, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552BGRA, 4);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5552BGRA, 4);
@@ -626,7 +626,7 @@ class CvtColor_BGR5552RGBA extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR555);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552RGBA, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552RGBA, 4);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5552RGBA, 4);
@@ -646,7 +646,7 @@ class CvtColor_GRAY2BGR555 extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2GRAY);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_GRAY2BGR555);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_GRAY2BGR555);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_GRAY2BGR555);
@@ -666,7 +666,7 @@ class CvtColor_BGR5552GRAY extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGR555);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552GRAY);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR5552GRAY);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR5552GRAY);
@@ -682,7 +682,7 @@ class CvtColor_BGR2XYZ extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2XYZ);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2XYZ);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2XYZ);
@@ -698,7 +698,7 @@ class CvtColor_RGB2XYZ extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2XYZ);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2XYZ);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2XYZ);
@@ -714,7 +714,7 @@ class CvtColor_BGR2XYZ4 extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2XYZ, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2XYZ, 4);
 
         alvision.ASSERT_EQ(4, dst.channels());
 
@@ -739,7 +739,7 @@ class CvtColor_BGRA2XYZ4 extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2BGRA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2XYZ, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2XYZ, 4);
 
         alvision.ASSERT_EQ(4, dst.channels());
 
@@ -764,7 +764,7 @@ class CvtColor_XYZ2BGR extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2XYZ);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_XYZ2BGR);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_XYZ2BGR);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_XYZ2BGR);
@@ -781,7 +781,7 @@ class CvtColor_XYZ2RGB extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2XYZ);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_XYZ2RGB);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_XYZ2RGB);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_XYZ2RGB);
@@ -806,7 +806,7 @@ class CvtColor_XYZ42BGR extends CvtColor
         alvision.merge(channels/*, 4*/, src);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_XYZ2BGR);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_XYZ2BGR);
 
         alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
     }
@@ -828,7 +828,7 @@ class CvtColor_XYZ42BGRA extends CvtColor
         alvision.merge(channels/*, 4*/, src);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_XYZ2BGR, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_XYZ2BGR, 4);
 
         alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
     }
@@ -841,7 +841,7 @@ class CvtColor_BGR2YCrCb extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YCrCb);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YCrCb);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2YCrCb);
@@ -857,7 +857,7 @@ class CvtColor_RGB2YCrCb extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2YCrCb);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2YCrCb);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2YCrCb);
@@ -873,7 +873,7 @@ class CvtColor_BGR2YCrCb4 extends CvtColor
         let src = this.img;
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YCrCb, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YCrCb, 4);
 
         alvision.ASSERT_EQ(4, dst.channels());
 
@@ -898,7 +898,7 @@ class CvtColor_RGBA2YCrCb4 extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YCrCb, 4);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YCrCb, 4);
 
         alvision.ASSERT_EQ(4, dst.channels());
 
@@ -923,7 +923,7 @@ class CvtColor_YCrCb2BGR extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2YCrCb);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YCrCb2BGR);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YCrCb2BGR);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_YCrCb2BGR);
@@ -940,7 +940,7 @@ class CvtColor_YCrCb2RGB extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2YCrCb);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YCrCb2RGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YCrCb2RGB);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_YCrCb2RGB);
@@ -965,7 +965,7 @@ class CvtColor_YCrCb42RGB extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YCrCb2RGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YCrCb2RGB);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
         }
@@ -987,7 +987,7 @@ class CvtColor_YCrCb42RGBA extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YCrCb2RGB, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YCrCb2RGB, 4);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
         }
@@ -1003,7 +1003,7 @@ class CvtColor_BGR2HSV extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2HSV);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2HSV);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2HSV);
@@ -1022,7 +1022,7 @@ class CvtColor_RGB2HSV extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2HSV);
@@ -1041,7 +1041,7 @@ class CvtColor_RGB2HSV4 extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1069,7 +1069,7 @@ class CvtColor_RGBA2HSV4 extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1096,7 +1096,7 @@ class CvtColor_BGR2HLS extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2HLS);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2HLS);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2HLS);
@@ -1115,7 +1115,7 @@ class CvtColor_RGB2HLS extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2HLS);
@@ -1134,7 +1134,7 @@ class CvtColor_RGB2HLS4 extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1162,7 +1162,7 @@ class CvtColor_RGBA2HLS4 extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1190,7 +1190,7 @@ class CvtColor_HSV2BGR extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2HSV);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2BGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_HSV2BGR);
@@ -1210,7 +1210,7 @@ class CvtColor_HSV2RGB extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2HSV);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2RGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2RGB);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_HSV2RGB);
@@ -1238,7 +1238,7 @@ class CvtColor_HSV42BGR extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2BGR);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth == alvision.MatrixType.CV_32F ? 1e-2 : 1);
         }
@@ -1263,7 +1263,7 @@ class CvtColor_HSV42BGRA extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2BGR, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2BGR, 4);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth == alvision.MatrixType.CV_32F ? 1e-2 : 1);
         }
@@ -1280,7 +1280,7 @@ class CvtColor_HLS2BGR extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2HLS);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2BGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_HLS2BGR);
@@ -1300,7 +1300,7 @@ class CvtColor_HLS2RGB extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2HLS);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_HLS2RGB);
@@ -1328,7 +1328,7 @@ class CvtColor_HLS42RGB extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth == alvision.MatrixType.CV_32F ? 1e-2 : 1);
         }
@@ -1354,7 +1354,7 @@ class CvtColor_HLS42RGBA extends CvtColor
 
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB, 4);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth == alvision.MatrixType.CV_32F ? 1e-2 : 1);
         }
@@ -1370,7 +1370,7 @@ class CvtColor_BGR2HSV_FULL extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2HSV_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2HSV_FULL);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2HSV_FULL);
@@ -1389,7 +1389,7 @@ class CvtColor_RGB2HSV_FULL extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV_FULL);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2HSV_FULL);
@@ -1408,7 +1408,7 @@ class CvtColor_RGB2HSV4_FULL extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV_FULL, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV_FULL, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1436,7 +1436,7 @@ class CvtColor_RGBA2HSV4_FULL extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV_FULL, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HSV_FULL, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1463,7 +1463,7 @@ class CvtColor_BGR2HLS_FULL extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2HLS_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2HLS_FULL);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2HLS_FULL);
@@ -1482,7 +1482,7 @@ class CvtColor_RGB2HLS_FULL extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS_FULL);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2HLS_FULL);
@@ -1501,7 +1501,7 @@ class CvtColor_RGB2HLS4_FULL extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS_FULL, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS_FULL, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1529,7 +1529,7 @@ class CvtColor_RGBA2HLS4_FULL extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS_FULL, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2HLS_FULL, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1557,7 +1557,7 @@ class CvtColor_HSV2BGR_FULL extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2HSV_FULL);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2BGR_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2BGR_FULL);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_HSV2BGR_FULL);
@@ -1577,7 +1577,7 @@ class CvtColor_HSV2RGB_FULL extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2HSV_FULL);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2RGB_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2RGB_FULL);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_HSV2RGB_FULL);
@@ -1605,7 +1605,7 @@ class CvtColor_HSV42RGB_FULL extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2RGB_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2RGB_FULL);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth == alvision.MatrixType.CV_32F ? 1e-2 : 1);
         }
@@ -1630,7 +1630,7 @@ class CvtColor_HSV42RGBA_FULL extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2RGB_FULL, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HSV2RGB_FULL, 4);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth == alvision.MatrixType.CV_32F ? 1e-2 : 1);
         }
@@ -1647,7 +1647,7 @@ class CvtColor_HLS2BGR_FULL extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2HLS_FULL);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2BGR_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2BGR_FULL);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_HLS2BGR_FULL);
@@ -1667,7 +1667,7 @@ class CvtColor_HLS2RGB_FULL extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2HLS_FULL);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB_FULL);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_HLS2RGB_FULL);
@@ -1695,7 +1695,7 @@ class CvtColor_HLS42RGB_FULL extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB_FULL);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB_FULL);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth == alvision.MatrixType.CV_32F ? 1e-2 : 1);
         }
@@ -1720,7 +1720,7 @@ class CvtColor_HLS42RGBA_FULL extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB_FULL, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_HLS2RGB_FULL, 4);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, this.depth == alvision.MatrixType.CV_32F ? 1e-2 : 1);
         }
@@ -1733,7 +1733,7 @@ class CvtColor_BGR2YUV extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YUV);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YUV);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2YUV);
@@ -1749,7 +1749,7 @@ class CvtColor_RGB2YUV extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2YUV);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2YUV);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2YUV);
@@ -1766,7 +1766,7 @@ class CvtColor_YUV2BGR extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2YUV);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YUV2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YUV2BGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_YUV2BGR);
@@ -1791,7 +1791,7 @@ class CvtColor_YUV42BGR extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YUV2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YUV2BGR);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
         }
@@ -1813,7 +1813,7 @@ class CvtColor_YUV42BGRA extends CvtColor
             alvision.merge(channels/*, 4*/, src);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YUV2BGR, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YUV2BGR, 4);
 
             alvision.EXPECT_MAT_NEAR(dst_gold, dst, 1e-5);
         }
@@ -1827,7 +1827,7 @@ class CvtColor_YUV2RGB extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_RGB2YUV);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YUV2RGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_YUV2RGB);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_YUV2RGB);
@@ -1843,7 +1843,7 @@ class CvtColor_BGR2YUV4 extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YUV, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2YUV, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1868,7 +1868,7 @@ class CvtColor_RGBA2YUV4 extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2YUV, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2YUV, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1895,7 +1895,7 @@ class CvtColor_BGR2Lab extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2Lab);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2Lab);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2Lab);
@@ -1914,7 +1914,7 @@ class CvtColor_RGB2Lab extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2Lab);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2Lab);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2Lab);
@@ -1934,7 +1934,7 @@ class CvtColor_BGRA2Lab4 extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2Lab, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2Lab, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -1961,7 +1961,7 @@ class CvtColor_LBGR2Lab extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LBGR2Lab);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LBGR2Lab);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_LBGR2Lab);
@@ -1980,7 +1980,7 @@ class CvtColor_LRGB2Lab extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LRGB2Lab);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LRGB2Lab);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_LRGB2Lab);
@@ -2000,7 +2000,7 @@ class CvtColor_LBGRA2Lab4 extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LBGR2Lab, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LBGR2Lab, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -2028,7 +2028,7 @@ class CvtColor_Lab2BGR extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Lab);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2BGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Lab2BGR);
@@ -2048,7 +2048,7 @@ class CvtColor_Lab2RGB extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Lab);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2RGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2RGB);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Lab2RGB);
@@ -2068,7 +2068,7 @@ class CvtColor_Lab2BGRA extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Lab);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2BGR, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2BGR, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -2090,7 +2090,7 @@ class CvtColor_Lab2LBGR extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Lab);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2LBGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2LBGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Lab2LBGR);
@@ -2110,7 +2110,7 @@ class CvtColor_Lab2LRGB extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Lab);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2LRGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2LRGB);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Lab2LRGB);
@@ -2130,7 +2130,7 @@ class CvtColor_Lab2LRGBA extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Lab);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2LRGB, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Lab2LRGB, 4);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Lab2LRGB, 4);
@@ -2149,7 +2149,7 @@ class CvtColor_BGR2Luv extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2Luv);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2Luv);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGR2Luv);
@@ -2168,7 +2168,7 @@ class CvtColor_RGB2Luv extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2Luv);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGB2Luv);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGB2Luv);
@@ -2188,7 +2188,7 @@ class CvtColor_BGRA2Luv4 extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2Luv, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BGR2Luv, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -2215,7 +2215,7 @@ class CvtColor_LBGR2Luv extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LBGR2Luv);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LBGR2Luv);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_LBGR2Luv);
@@ -2234,7 +2234,7 @@ class CvtColor_LRGB2Luv extends CvtColor
             let src = this.img;
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LRGB2Luv);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LRGB2Luv);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_LRGB2Luv);
@@ -2254,7 +2254,7 @@ class CvtColor_LBGRA2Luv4 extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2RGBA);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LBGR2Luv, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_LBGR2Luv, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -2282,7 +2282,7 @@ class CvtColor_Luv2BGR extends CvtColor
         alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Luv);
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2BGR);
+        alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2BGR);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Luv2BGR);
@@ -2302,7 +2302,7 @@ class CvtColor_Luv2RGB extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Luv);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2RGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2RGB);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Luv2RGB);
@@ -2322,7 +2322,7 @@ class CvtColor_Luv2BGRA extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Luv);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2BGR, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2BGR, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -2344,7 +2344,7 @@ class CvtColor_Luv2LBGR extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Luv);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2LBGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2LBGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Luv2LBGR);
@@ -2364,7 +2364,7 @@ class CvtColor_Luv2LRGB extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Luv);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2LRGB);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2LRGB);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Luv2LRGB);
@@ -2384,7 +2384,7 @@ class CvtColor_Luv2LRGBA extends CvtColor
             alvision.cvtColor(this.img, src, alvision.ColorConversionCodes.COLOR_BGR2Luv);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2LRGB, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_Luv2LRGB, 4);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_Luv2LRGB, 4);
@@ -2405,7 +2405,7 @@ class CvtColor_RGBA2mRGBA extends CvtColor
             let src = alvision.randomMat(this.size, alvision.MatrixType.CV_MAKETYPE(this.depth, 4));
 
             let dst = alvision.createMat(src.size(), src.type(), this.useRoi);
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGBA2mRGBA);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_RGBA2mRGBA);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_RGBA2mRGBA);
@@ -2426,7 +2426,7 @@ class CvtColor_BayerBG2BGR extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerBG2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerBG2BGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BayerBG2BGR);
@@ -2445,7 +2445,7 @@ class CvtColor_BayerBG2BGR4 extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerBG2BGR, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerBG2BGR, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -2471,7 +2471,7 @@ class CvtColor_BayerGB2BGR extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGB2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGB2BGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BayerGB2BGR);
@@ -2490,7 +2490,7 @@ class CvtColor_BayerGB2BGR4 extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGB2BGR, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGB2BGR, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -2515,7 +2515,7 @@ class CvtColor_BayerRG2BGR extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerRG2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerRG2BGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BayerRG2BGR);
@@ -2534,7 +2534,7 @@ class CvtColor_BayerRG2BGR4 extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerRG2BGR, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerRG2BGR, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -2559,7 +2559,7 @@ class CvtColor_BayerGR2BGR extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGR2BGR);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGR2BGR);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BayerGR2BGR);
@@ -2578,7 +2578,7 @@ class CvtColor_BayerGR2BGR4 extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGR2BGR, 4);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGR2BGR, 4);
 
             alvision.ASSERT_EQ(4, dst.channels());
 
@@ -2603,7 +2603,7 @@ class CvtColor_BayerBG2Gray extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerBG2GRAY);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerBG2GRAY);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BayerBG2GRAY);
@@ -2622,7 +2622,7 @@ class CvtColor_BayerGB2Gray extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGB2GRAY);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGB2GRAY);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BayerGB2GRAY);
@@ -2641,7 +2641,7 @@ class CvtColor_BayerRG2Gray extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerRG2GRAY);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerRG2GRAY);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BayerRG2GRAY);
@@ -2660,7 +2660,7 @@ class CvtColor_BayerGR2Gray extends CvtColor
             let src = alvision.randomMat(this.size, this.depth);
 
             let dst = new alvision.cuda.GpuMat();
-            alvision.cudaimgproc.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGR2GRAY);
+            alvision.cuda.cvtColor(alvision.loadMat(src, this.useRoi), dst, alvision.ColorConversionCodes.COLOR_BayerGR2GRAY);
 
             let dst_gold = new alvision.Mat();
             alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BayerGR2GRAY);
@@ -2750,7 +2750,7 @@ class Demosaicing_BayerBG2BGR extends Demosaicing
         this.mosaic(img, src, new alvision.Point(1, 1));
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.demosaicing(alvision.loadMat(src), dst, alvision.ColorConversionCodes.COLOR_BayerBG2BGR);
+        alvision.cuda.demosaicing(alvision.loadMat(src), dst, alvision.ColorConversionCodes.COLOR_BayerBG2BGR);
 
         alvision.EXPECT_MAT_SIMILAR(img, dst.getMat(), 2e-2);
     }
@@ -2767,7 +2767,7 @@ class Demosaicing_BayerGB2BGR extends Demosaicing
         this.mosaic(img, src, new alvision.Point(0, 1));
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.demosaicing(alvision.loadMat(src), dst, alvision.ColorConversionCodes.COLOR_BayerGB2BGR);
+        alvision.cuda.demosaicing(alvision.loadMat(src), dst, alvision.ColorConversionCodes.COLOR_BayerGB2BGR);
 
         alvision.EXPECT_MAT_SIMILAR(img, dst.getMat(), 2e-2);
     }
@@ -2784,7 +2784,7 @@ class Demosaicing_BayerRG2BGR extends Demosaicing
         this.mosaic(img, src, new alvision.Point(0, 0));
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.demosaicing(alvision.loadMat(src), dst, alvision.ColorConversionCodes.COLOR_BayerRG2BGR);
+        alvision.cuda.demosaicing(alvision.loadMat(src), dst, alvision.ColorConversionCodes.COLOR_BayerRG2BGR);
 
         alvision.EXPECT_MAT_SIMILAR(img, dst.getMat(), 2e-2);
     }
@@ -2801,7 +2801,7 @@ class Demosaicing_BayerGR2BGR extends Demosaicing
         this.mosaic(img, src, new alvision.Point(1, 0));
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.demosaicing(alvision.loadMat(src), dst, alvision.ColorConversionCodes.COLOR_BayerGR2BGR);
+        alvision.cuda.demosaicing(alvision.loadMat(src), dst, alvision.ColorConversionCodes.COLOR_BayerGR2BGR);
 
         alvision.EXPECT_MAT_SIMILAR(img, dst.getMat(), 2e-2);
     }
@@ -2818,7 +2818,7 @@ class Demosaicing_BayerBG2BGR_MHT extends Demosaicing
         this.mosaic(img, src, new alvision.Point(1, 1));
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.demosaicing(alvision.loadMat(src), dst, alvision.cudaimgproc.DemosaicTypes.COLOR_BayerBG2BGR_MHT);
+        alvision.cuda.demosaicing(alvision.loadMat(src), dst, alvision.cuda.DemosaicTypes.COLOR_BayerBG2BGR_MHT);
 
         alvision.EXPECT_MAT_SIMILAR(img, dst.getMat(), 5e-3);
     }
@@ -2835,7 +2835,7 @@ class Demosaicing_BayerGB2BGR_MHT extends Demosaicing
         this.mosaic(img, src, new alvision.Point(0, 1));
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.demosaicing(alvision.loadMat(src), dst, alvision.cudaimgproc.DemosaicTypes.COLOR_BayerGB2BGR_MHT);
+        alvision.cuda.demosaicing(alvision.loadMat(src), dst, alvision.cuda.DemosaicTypes.COLOR_BayerGB2BGR_MHT);
 
         alvision.EXPECT_MAT_SIMILAR(img, dst.getMat(), 5e-3);
     }
@@ -2852,7 +2852,7 @@ class Demosaicing_BayerRG2BGR_MHT extends Demosaicing
         this.mosaic(img, src, new alvision.Point(0, 0));
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.demosaicing(alvision.loadMat(src), dst, alvision.cudaimgproc.DemosaicTypes.COLOR_BayerRG2BGR_MHT);
+        alvision.cuda.demosaicing(alvision.loadMat(src), dst, alvision.cuda.DemosaicTypes.COLOR_BayerRG2BGR_MHT);
 
         alvision.EXPECT_MAT_SIMILAR(img, dst.getMat(), 5e-3);
     }
@@ -2869,7 +2869,7 @@ class Demosaicing_BayerGR2BGR_MHT extends Demosaicing
         this.mosaic(img, src, new alvision.Point(1, 0));
 
         let dst = new alvision.cuda.GpuMat();
-        alvision.cudaimgproc.demosaicing(alvision.loadMat(src), dst, alvision.cudaimgproc.DemosaicTypes.COLOR_BayerGR2BGR_MHT);
+        alvision.cuda.demosaicing(alvision.loadMat(src), dst, alvision.cuda.DemosaicTypes.COLOR_BayerGR2BGR_MHT);
 
         alvision.EXPECT_MAT_SIMILAR(img, dst.getMat(), 5e-3);
     }
@@ -2907,7 +2907,7 @@ class SwapChannels_Accuracy extends SwapChannels
         let d_src = alvision.loadMat(src, this.useRoi);
 
         const dstOrder = [2, 1, 0, 3];
-        alvision.cudaimgproc.swapChannels(d_src, dstOrder);
+        alvision.cuda.swapChannels(d_src, dstOrder);
 
         let dst_gold = new alvision.Mat();
         alvision.cvtColor(src, dst_gold, alvision.ColorConversionCodes.COLOR_BGRA2RGBA);

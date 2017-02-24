@@ -70,7 +70,7 @@ import * as _persistence from './../persistence';
  */
 
 //namespace cv {
-export    namespace cudaobjdetect {
+//export    namespace cudaobjdetect {
 
 //! @addtogroup cudaobjdetect
 //! @{
@@ -208,7 +208,7 @@ export interface HOG extends _core.Algorithm
      */
     compute(img: _st.InputArray ,
         descriptors: _st.OutputArray ,
-        stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        stream?: _cuda.Stream /*= Stream::Null()*/): void;
 };
 export var HOG: HOGStatic = alvision_module.cuda.HOG;
 //
@@ -294,7 +294,7 @@ interface CascadeClassifier extends _core.Algorithm
      */
     detectMultiScale(image: _st.InputArray ,
         objects: _st.OutputArray ,
-        stream?: _cuda.cuda.Stream /*= Stream::Null()*/): void;
+        stream?: _cuda.Stream /*= Stream::Null()*/): void;
 
     /** @brief Converts objects array from internal representation to standard vector.
 
@@ -309,7 +309,7 @@ interface CascadeClassifier extends _core.Algorithm
 
 //! @}
 
-}
+//}
 //} // namespace cv { namespace cuda {
 
 //#endif /* __OPENCV_CUDAOBJDETECT_HPP__ */

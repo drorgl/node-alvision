@@ -93,7 +93,7 @@ class CornerHarris_Accuracy extends CornerHarris
 
         let k = alvision.randomDouble(0.1, 0.9);
 
-        let harris = alvision.cudaimgproc.createHarrisCorner(src.type(), this.blockSize, this.apertureSize, k, this.borderType);
+        let harris = alvision.cuda.createHarrisCorner(src.type(), this.blockSize, this.apertureSize, k, this.borderType);
 
         let dst = new alvision.cuda.GpuMat();
         harris.compute(alvision.loadMat(src), dst);
@@ -144,7 +144,7 @@ class CornerMinEigen_Accuracy extends CornerMinEigen
         let src = alvision.readImageType("stereobm/aloe-L.png", this.type);
         alvision.ASSERT_FALSE(src.empty());
 
-        let minEigenVal = alvision.cudaimgproc.createMinEigenValCorner(src.type(), this.blockSize, this.apertureSize, this.borderType);
+        let minEigenVal = alvision.cuda.createMinEigenValCorner(src.type(), this.blockSize, this.apertureSize, this.borderType);
 
         let dst = new alvision.cuda.GpuMat();
         minEigenVal.compute(alvision.loadMat(src), dst);
