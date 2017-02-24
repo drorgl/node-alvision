@@ -182,7 +182,7 @@ import * as _cuda from './../cuda';
             useInitialFlow?: boolean/*= false*/): SparsePyrLKOpticalFlow
 
     }
-    interface SparsePyrLKOpticalFlow extends SparseOpticalFlow {
+    export interface SparsePyrLKOpticalFlow extends SparseOpticalFlow {
         //public:
         //    virtual Size getWinSize() const = 0;
         //    virtual void setWinSize(Size winSize) = 0;
@@ -205,7 +205,21 @@ import * as _cuda from './../cuda';
     The class can calculate an optical flow for a dense optical flow using the
     iterative Lucas-Kanade method with pyramids.
      */
-    interface DensePyrLKOpticalFlow extends DenseOpticalFlow {
+
+    interface DensePyrLKOpticalFlowStatic {
+        create(
+            winSize?: _types.Size /*= Size(13, 13)*/,
+            maxLevel?: _st.int /*  = 3*/,
+            iters?: _st.int /* = 30*/,
+            useInitialFlow?: boolean /*  = false*/
+        ): DensePyrLKOpticalFlow;
+        //    static Ptr<DensePyrLKOpticalFlow> create(
+        //            Size winSize = Size(13, 13),
+        //            int maxLevel = 3,
+        //            int iters = 30,
+        //            bool useInitialFlow = false);
+    }
+    export interface DensePyrLKOpticalFlow extends DenseOpticalFlow {
         //public:
         //    virtual Size getWinSize() const = 0;
         //    virtual void setWinSize(Size winSize) = 0;
@@ -219,12 +233,10 @@ import * as _cuda from './../cuda';
         //    virtual bool getUseInitialFlow() const = 0;
         //    virtual void setUseInitialFlow(bool useInitialFlow) = 0;
         //
-        //    static Ptr<DensePyrLKOpticalFlow> create(
-        //            Size winSize = Size(13, 13),
-        //            int maxLevel = 3,
-        //            int iters = 30,
-        //            bool useInitialFlow = false);
+        
     };
+
+export var DensePyrLKOpticalFlow: DensePyrLKOpticalFlowStatic = alvision_module.cuda.DensePyrLKOpticalFlow;
 
     //
     // FarnebackOpticalFlow
@@ -244,7 +256,7 @@ import * as _cuda from './../cuda';
             flags?: _st.int /*= 0*/): FarnebackOpticalFlow;
 
     }
-    interface FarnebackOpticalFlow extends DenseOpticalFlow {
+    export interface FarnebackOpticalFlow extends DenseOpticalFlow {
         //public:
         getNumLevels(): _st.int;
         setNumLevels(numLevels: _st.int): void;

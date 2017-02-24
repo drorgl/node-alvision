@@ -67,7 +67,6 @@ import * as _persistence from './../persistence';
             collectGarbage(): void;
         };
 
-
         export interface FarnebackOpticalFlow extends DenseOpticalFlowExt
         {
             /** @see setPyrScale */
