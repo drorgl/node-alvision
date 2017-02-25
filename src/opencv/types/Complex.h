@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 template <typename T>
-class Complex_ : public or::ObjectWrap {
+class Complex_ : public overres::ObjectWrap {
 public:
 	static std::string Complex_<T>::name;
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {

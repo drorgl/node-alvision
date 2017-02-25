@@ -3,7 +3,7 @@
 
 #include "../../alvision.h"
 
-class QtFont : public or ::ObjectWrap{
+class QtFont : public overres::ObjectWrap{
 public:
 	static std::string name;
 

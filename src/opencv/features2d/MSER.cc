@@ -86,7 +86,7 @@ MSER::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload)
 //			std::vector<Rect>& bboxes) = 0;
 	overload->addOverload("mser", "MSER", "detectRegions", {
 		make_param<IOArray*>("image","IOArray"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (msers : Array<Array<_types.Point>>) = > void,
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// : (msers : Array<Array<_types.Point>>) = > void,
 		make_param<std::shared_ptr<std::vector<Rect*>>>("bboxes","Array<Rect>")
 	}, detectRegions);
 //	

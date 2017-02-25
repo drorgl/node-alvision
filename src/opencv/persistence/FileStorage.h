@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class FileStorage: public or::ObjectWrap {
+class FileStorage: public overres::ObjectWrap {
 public:
 	static std::string name;
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

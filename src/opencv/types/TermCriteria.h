@@ -3,7 +3,7 @@
 
 #include "../../alvision.h"
 
-class TermCriteria : public or ::ObjectWrap{
+class TermCriteria : public overres::ObjectWrap{
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class RNG_MT19937 : public or ::ObjectWrap{
+class RNG_MT19937 : public overres::ObjectWrap{
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

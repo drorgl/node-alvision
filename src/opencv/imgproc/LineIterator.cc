@@ -100,7 +100,7 @@ LineIterator::Init(Handle<Object> target, std::shared_ptr<overload_resolution> o
 ////        */
 ////        Point pos() const;
 //    each(cb : (pos: _types.Point) => void);
-	overload->addOverload("lineiterator", "LineIterator", "each", {make_param<std::shared_ptr<or::Callback>>("cb","Function")}, each);
+	overload->addOverload("lineiterator", "LineIterator", "each", {make_param<std::shared_ptr<overres::Callback>>("cb","Function")}, each);
 ////
 ////        uchar * ptr;
 ////        const uchar* ptr0;

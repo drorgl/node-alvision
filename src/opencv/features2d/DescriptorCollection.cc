@@ -63,7 +63,7 @@ DescriptorCollection::Init(Handle<Object> target, std::shared_ptr<overload_resol
 //		void getLocalIdx(int globalDescIdx, int& imgIdx, int& localDescIdx) const;
 	overload->addOverload("descriptorcollection", "DescriptorCollection", "getLocalIdx", {
 		make_param<int>("globalDescIdx","int"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function") //int& imgIdx, 	int& localDescIdx
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function") //int& imgIdx, 	int& localDescIdx
 	}, getLocalIdx);
 //	
 //		int size() const;

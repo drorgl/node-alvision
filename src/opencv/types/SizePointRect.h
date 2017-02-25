@@ -15,7 +15,7 @@ class Rect_;
 
 
 template <typename T>
-class Size_ : public or ::ObjectWrap{
+class Size_ : public overres::ObjectWrap{
 public:
 	typedef typename T::value_type TVT;
 	typedef typename Point_<cv::Point_<TVT>> PointT;
@@ -75,7 +75,7 @@ public:
 
 
 template <typename T>
-class Point_ : public or ::ObjectWrap{
+class Point_ : public overres::ObjectWrap{
 public:
 	typedef typename T CVT;
 	typedef typename T::value_type value_type;
@@ -162,7 +162,7 @@ public:
 
 
 template <typename T>
-class Rect_ : public or ::ObjectWrap{
+class Rect_ : public overres::ObjectWrap{
 public:
 	typedef typename T::value_type TVT;
 	typedef typename Point_<cv::Point_<TVT>> PointT;

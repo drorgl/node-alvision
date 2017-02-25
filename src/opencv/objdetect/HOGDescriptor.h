@@ -3,7 +3,7 @@
 
 #include "../../alvision.h"
 
-class HOGDescriptor : public or::ObjectWrap{
+class HOGDescriptor : public overres::ObjectWrap{
 public:
 	static std::string name;
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

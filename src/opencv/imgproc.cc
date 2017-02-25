@@ -2779,7 +2779,7 @@ overload->addOverload("imgproc", "", "phaseCorrelate", {
 	make_param<IOArray*>("src1","IOArray"),
 	make_param<IOArray*>("src2","IOArray"),
 	make_param<IOArray*>("window","IOArray", IOArray::noArray()),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function")// ? : (response : _st.double) = > void
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function")// ? : (response : _st.double) = > void
 }, phaseCorrelate);
 Nan::SetMethod(target, "phaseCorrelate", imgproc_general_callback::callback);
 
@@ -3715,7 +3715,7 @@ overload->addOverload("imgproc", "", "EMD", {
 	make_param<int>("distType","int"),
 	make_param<IOArray*>("cost","IOArray", IOArray::noArray()),
 	make_param<float>("lowerBound","float",0),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function",nullptr),// ? : (lowerBound : _st.float) = > void,
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function",nullptr),// ? : (lowerBound : _st.float) = > void,
 	make_param<IOArray*>("flow","IOArray", IOArray:: noArray())
 }, EMD);
 Nan::SetMethod(target, "EMD", imgproc_general_callback::callback);
@@ -4106,7 +4106,7 @@ overload->addOverload("imgproc", "", "floodFill", {
 	make_param<IOArray*>( "mask","IOArray"),
 	make_param<Point*>("seedPoint",Point::name), 
 	make_param<Scalar*>("newVal",Scalar::name),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (rect : _types.Rect) = > void,
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// : (rect : _types.Rect) = > void,
 	make_param<Scalar*>("loDiff",Scalar::name, Scalar::create()),
 	make_param<Scalar*>("upDiff",Scalar::name, Scalar::create()),
 	make_param<int>("flags","int", 4)
@@ -4117,7 +4117,7 @@ overload->addOverload("imgproc", "", "floodFill", {
 	make_param<IOArray*>("image","IOArray"),
 	make_param<Point*>("seedPoint",Point::name), 
 	make_param<Scalar*>("newVal",Scalar::name), 
-	make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (rect : _types.Rect) = > void,
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// : (rect : _types.Rect) = > void,
 	make_param<Scalar*>("loDiff",Scalar::name, Scalar::create()),
 	make_param<Scalar*>("upDiff",Scalar::name, Scalar::create()),
 	make_param<int>("flags","int", 4)
@@ -4682,7 +4682,7 @@ Nan::SetMethod(target, "boxPoints", imgproc_general_callback::callback);
 
 overload->addOverload("imgproc", "", "minEnclosingCircle", {
 	make_param<IOArray*>("points","IOArray"),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (center : _types.Point2f,radius : _st.float) = > void
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function")// : (center : _types.Point2f,radius : _st.float) = > void
 }, minEnclosingCircle);
 Nan::SetMethod(target, "minEnclosingCircle", imgproc_general_callback::callback);
 
@@ -5756,7 +5756,7 @@ overload->addOverload("imgproc", "", "clipLine", {
 	make_param<Size*>("imgSize",Size::name), 
 	make_param<Point*>("pt1",Point::name),
 		make_param<Point*>("pt2",Point::name),
-		make_param<std::shared_ptr< or ::Callback>>("cb","Function")// ? : (pt1 : _types.Point, pt2 : _types.Point) = > void
+		make_param<std::shared_ptr< overres::Callback>>("cb","Function")// ? : (pt1 : _types.Point, pt2 : _types.Point) = > void
 },clipLine_size );
 Nan::SetMethod(target, "clipLine", imgproc_general_callback::callback);
 
@@ -5764,7 +5764,7 @@ overload->addOverload("imgproc", "", "clipLine", {
 	make_param<Rect*>("imgRect",Rect::name),
 	make_param<Point*>("pt1",Point::name), 
 	make_param<Point*>("pt2",Point::name), 
-	make_param<std::shared_ptr<or::Callback>>("cb","Function")// ? : (pt1 : _types.Point, pt2 : _types.Point) = > void
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function")// ? : (pt1 : _types.Point, pt2 : _types.Point) = > void
 
 },clipLine_rect );
 
@@ -5814,7 +5814,7 @@ overload->addOverload("imgproc", "", "ellipse2Poly", {
 		make_param<int>("arcStart","int"), 
 		make_param<int>("arcEnd","int"), 
 		make_param<int>("delta","int"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (pts : Array<_types.Point>) = > void
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function")// : (pts : Array<_types.Point>) = > void
 }, ellipse2Poly);
 Nan::SetMethod(target, "ellipse2Poly", imgproc_general_callback::callback);
 
@@ -5928,7 +5928,7 @@ overload->addOverload("imgproc", "", "getTextSize", {
 	make_param<int>("fontFace","HersheyFonts"),
 	make_param<double>("fontScale","double"), 
 	make_param<int>("thickness","int"),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (baseLine : _st.int) = > void
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function")// : (baseLine : _st.int) = > void
 }, getTextSize);
 Nan::SetMethod(target, "getTextSize", imgproc_general_callback::callback);
 

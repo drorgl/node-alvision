@@ -3,7 +3,7 @@
 
 #include "../../alvision.h"
 
-class Subdiv2D : public or ::ObjectWrap{
+class Subdiv2D : public overres::ObjectWrap{
 public:
 	static std::string name;
 

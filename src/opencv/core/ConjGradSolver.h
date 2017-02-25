@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class ConjGradSolver: public or::ObjectWrap {
+class ConjGradSolver: public overres::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

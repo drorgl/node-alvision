@@ -121,7 +121,7 @@ CascadeClassifier::Init(Handle<Object> target, std::shared_ptr<overload_resoluti
 //	*/
 	overload->addOverload("cascadeclassifier", "CascadeClassifier", "detectMultiScale", {
 		make_param<IOArray*>("image","InputArray"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (objects : Array<_types.Rect>,rejectLevels : Array<_st.int>,levelWeights : Array<_st.double>) = >void,
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// : (objects : Array<_types.Rect>,rejectLevels : Array<_st.int>,levelWeights : Array<_st.double>) = >void,
 		make_param<double>("scaleFactor","double", 1.1),
 		make_param<int>("minNeighbors","int", 3),
 		make_param<int>("flags","int", 0),

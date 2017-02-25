@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 #include "../core/Algorithm.h"
 
-class LineIterator : public or ::ObjectWrap{
+class LineIterator : public overres::ObjectWrap{
 public:
 	static std::string name;
 

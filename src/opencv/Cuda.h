@@ -2,7 +2,7 @@
 #define _ALVISION_CUDA_H_
 #include "../alvision.h"
 
-class Cuda : public or::ObjectWrap {
+class Cuda : public overres::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 	static Nan::Persistent<Object> cudaObject;

@@ -75,7 +75,7 @@ namespace cuda {
 		/** @brief Blocks the current CPU thread until all operations in the stream are complete.
 		*/
 		overload->addOverload("stream", "Stream", "waitForCompletion", {
-			make_param<std::shared_ptr< or ::AsyncCallback>>("cb","Function")
+			make_param<std::shared_ptr< overres::AsyncCallback>>("cb","Function")
 		}, waitForCompletion);
 		//waitForCompletion(cb: () = > void) : void;
 
@@ -93,7 +93,7 @@ namespace cuda {
 		serialized.
 		*/
 		overload->addOverload("stream", "Stream", "enqueueHostCallback", {
-			make_param<std::shared_ptr< or ::AsyncCallback>>("cb","Function")
+			make_param<std::shared_ptr< overres::AsyncCallback>>("cb","Function")
 		}, enqueueHostCallback);
 		//enqueueHostCallback(callback: (status: _st.int, userData : any) = > void, userData: any) : void;
 		//

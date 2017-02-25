@@ -279,7 +279,7 @@ POLY_METHOD(SVD::backSubst){
 
 
 NAN_GETTER(SVD::u_getter){
-	auto this_ = or ::ObjectWrap::Unwrap<SVD>(info.This())->_svd;
+	auto this_ = overres::ObjectWrap::Unwrap<SVD>(info.This())->_svd;
 	auto ret = new Matrix();
 	ret->_mat = std::make_shared<cv::Mat>(this_->u);
 	info.GetReturnValue().Set(ret->Wrap());
@@ -290,7 +290,7 @@ NAN_SETTER(SVD::u_setter){
 }
 
 NAN_GETTER(SVD::w_getter){
-	auto this_ = or ::ObjectWrap::Unwrap<SVD>(info.This())->_svd;
+	auto this_ = overres::ObjectWrap::Unwrap<SVD>(info.This())->_svd;
 	auto ret = new Matrix();
 	ret->_mat = std::make_shared<cv::Mat>(this_->w);
 	info.GetReturnValue().Set(ret->Wrap());
@@ -300,7 +300,7 @@ NAN_SETTER(SVD::w_setter){
 }
 
 NAN_GETTER(SVD::vt_getter){
-	auto this_ = or ::ObjectWrap::Unwrap<SVD>(info.This())->_svd;
+	auto this_ = overres::ObjectWrap::Unwrap<SVD>(info.This())->_svd;
 	auto ret = new Matrix();
 	ret->_mat = std::make_shared<cv::Mat>(this_->vt);
 	info.GetReturnValue().Set(ret->Wrap());

@@ -6,7 +6,7 @@
 //#ifdef HAVE_CUDA
 namespace cuda {
 
-	class Event : public or ::ObjectWrap{
+	class Event : public overres::ObjectWrap{
 	public:
 		static std::string name;
 

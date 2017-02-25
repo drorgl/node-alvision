@@ -394,7 +394,7 @@ POLY_METHOD(FileStorage::New) {
 
 
  NAN_GETTER(FileStorage::nodes_getter){
-	 auto this_ = or ::ObjectWrap::Unwrap<FileStorage>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<FileStorage>(info.This());
 	 auto ret = new FileNode();
 	 ret->_fileNode = std::make_shared<cv::FileNode>(this_->_fileStorage->root());
 
@@ -403,7 +403,7 @@ POLY_METHOD(FileStorage::New) {
 
  NAN_PROPERTY_GETTER(FileStorage::indexed_getter){
 	 try {
-		 auto this_ = or ::ObjectWrap::Unwrap<FileStorage>(info.This());
+		 auto this_ = overres::ObjectWrap::Unwrap<FileStorage>(info.This());
 		 if (property->IsString()) {
 			auto property_name = *Nan::Utf8String(property);
 
@@ -423,13 +423,13 @@ POLY_METHOD(FileStorage::New) {
 	 info.GetReturnValue().Set(info.This()->GetPrototype()->ToObject()->Get(property));
  }
  NAN_PROPERTY_SETTER(FileStorage::indexed_setter){
-	 auto this_ = or ::ObjectWrap::Unwrap<FileStorage>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<FileStorage>(info.This());
 	 
 	 if (filestorage_general_callback::overload->get_type(value) != "FileNode") {
 		 return Nan::ThrowTypeError("only FileNode is valid");
 	 }
 	 
-	 auto alvision_value = or ::ObjectWrap::Unwrap<FileNode>(value.As<v8::Object>());
+	 auto alvision_value = overres::ObjectWrap::Unwrap<FileNode>(value.As<v8::Object>());
 	 (*this_->_fileStorage)[*Nan::Utf8String(property)] = *alvision_value->_fileNode;
  }
 

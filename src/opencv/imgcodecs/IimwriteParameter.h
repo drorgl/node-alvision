@@ -27,7 +27,7 @@ public:
 	int flag;
 	int value;
 
-	virtual bool verify(or::type_system * ovres, v8::Local<v8::Value> obj);
+	virtual bool verify(overres::type_system * ovres, v8::Local<v8::Value> obj);
 	virtual bool parse(v8::Local<v8::Value> obj);
 
 	 v8::Local<v8::Value> ToObject();

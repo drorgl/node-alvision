@@ -155,7 +155,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<IOArray*>("cameraMatrix","IOArray"),
 	  make_param<IOArray*>("distCoeffs","IOArray"),
 	  make_param<std::shared_ptr<std::vector<Point2f*>>>("imagePoints","Array<Point2f>"),
-	  make_param<std::shared_ptr<or::Callback>>("cb","Function"), //imagePoints: Array<Point2f>
+	  make_param<std::shared_ptr<overres::Callback>>("cb","Function"), //imagePoints: Array<Point2f>
 	  make_param<IOArray*>("jacobian","IOArray",IOArray::noArray()),
 	  make_param<double>("aspectRatio","double",0)
   }, projectPoints_vec_points);
@@ -250,7 +250,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<Size*>("imageSize",Size::name),
 	  make_param<double>("apertureWidth","double"),
 	  make_param<double>("apertureHeight","double"),
-	  make_param<std::shared_ptr< or ::Callback>>("cb","Function")// : (fovx : _st.double, fovy : _st.double, focalLength : _st.double, principalPoint : _types.Point2d, aspectRatio : _st.double) = >void
+	  make_param<std::shared_ptr< overres::Callback>>("cb","Function")// : (fovx : _st.double, fovy : _st.double, focalLength : _st.double, principalPoint : _types.Point2d, aspectRatio : _st.double) = >void
   }, calibrationMatrixValues);
   Nan::SetMethod(target, "calibrationMatrixValues", calib3d_general_callback::callback);
 
@@ -289,7 +289,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<int>("flags","CALIB",cv::CALIB_ZERO_DISPARITY),
 		make_param<double>("alpha","double",-1),
 		make_param<Size*>("newImageSize",Size::name,std::make_shared<Size>()),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function")// ? : (validPixROI1 : _types.Rect, validPixROI2 : _types.Rect) = > void
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function")// ? : (validPixROI1 : _types.Rect, validPixROI2 : _types.Rect) = > void
   }, stereoRectify);
   Nan::SetMethod(target, "stereoRectify", calib3d_general_callback::callback);
 
@@ -328,7 +328,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("Q","IOArray"),
 		make_param<double>("alpha","double"),
 		make_param<Size*>("newImgSize",Size::name),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (roi1 : _types.Rect, roi2 : _types.Rect) = > void, 
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// : (roi1 : _types.Rect, roi2 : _types.Rect) = > void, 
 		make_param<int>("flags","int")
   }, calib3d::rectify3Collinear);
   Nan::SetMethod(target, "rectify3Collinear", calib3d_general_callback::callback);
@@ -339,7 +339,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<Size*>("imageSize",Size::name),
 		make_param<double>("alpha","double"),
 		make_param<Size*>("newImgSize",Size::name, Size::Empty()),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// ? : (validPixROI : _types.Rect) = > void,
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// ? : (validPixROI : _types.Rect) = > void,
 		make_param<bool>("centerPrincipalPoint","bool",false)
   }, getOptimalNewCameraMatrix);
   Nan::SetMethod(target, "getOptimalNewCameraMatrix", calib3d_general_callback::callback);
@@ -689,7 +689,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  auto cameraMatrix = info.at<IOArray*>(3)->GetInputArray();
 	  auto distCoeffs = info.at<IOArray*>(4)->GetInputArray();
 	  auto imagePoints = info.at<std::shared_ptr<std::vector<Point2f*>>>(5);
-	  auto cb = info.at<std::shared_ptr< or ::Callback>>(6);
+	  auto cb = info.at<std::shared_ptr< overres::Callback>>(6);
 	  auto jacobian = info.at<IOArray*>(7)->GetOutputArray();
 	  auto aspectRatio = info.at<double>(8);
 
@@ -883,7 +883,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto imageSize		= info.at<Size*>(1)->_size;
 		auto apertureWidth	= info.at<double>(2); 
 		auto apertureHeight = info.at<double>(3);
-		auto cb  = info.at<std::shared_ptr<or::Callback>>(4); //(fovx : _st.double, fovy : _st.double, focalLength : _st.double, principalPoint : _types.Point2d, aspectRatio : _st.double) = >void
+		auto cb  = info.at<std::shared_ptr<overres::Callback>>(4); //(fovx : _st.double, fovy : _st.double, focalLength : _st.double, principalPoint : _types.Point2d, aspectRatio : _st.double) = >void
 
 		double fovx;
 		double fovy;
@@ -896,7 +896,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto principal_point = new Point2d();
 		principal_point->_point = std::make_shared<cv::Point2d>(principalPoint);
 
-		cb->Call({ or ::make_value(fovx), or::make_value(fovy), or::make_value(focalLength), or::make_value(principal_point), or::make_value(aspectRatio) });
+		cb->Call({ overres::make_value(fovx), overres::make_value(fovy), overres::make_value(focalLength), overres::make_value(principal_point), overres::make_value(aspectRatio) });
   }
 
   POLY_METHOD(calib3d::stereoCalibrate) {
@@ -950,7 +950,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto flags				= info.at<int>(12);
 		auto alpha				= info.at<double>(13);
 		auto newImageSize		= info.at<Size*>(14)->_size;
-		auto cb 				= info.at<std::shared_ptr<or::Callback>>(15);// (validPixROI1 : _types.Rect, validPixROI2 : _types.Rect) = > void) : void;
+		auto cb 				= info.at<std::shared_ptr<overres::Callback>>(15);// (validPixROI1 : _types.Rect, validPixROI2 : _types.Rect) = > void) : void;
 
 		cv::Rect validPixROI1;
 		cv::Rect validPixROI2;
@@ -970,7 +970,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto rect2 = new Rect();
 		rect2->_rect = std::make_shared<cv::Rect>(validPixROI2);
 
-		cb->Call({or::make_value(rect1), or::make_value(rect2)});
+		cb->Call({overres::make_value(rect1), overres::make_value(rect2)});
   }
 
   POLY_METHOD(calib3d::stereoRectifyUncalibrated) {
@@ -1017,7 +1017,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		auto Q					= info.at<IOArray*>(19)->GetOutputArray(); 
 		auto alpha				= info.at<double>(20);
 		auto newImgSize			= info.at<Size*>(21)->_size;
-		auto cb					= info.at<std::shared_ptr<or::Callback>>(22);// (roi1 : _types.Rect, roi2 : _types.Rect) = > void, 
+		auto cb					= info.at<std::shared_ptr<overres::Callback>>(22);// (roi1 : _types.Rect, roi2 : _types.Rect) = > void, 
 		auto flags				= info.at<int>(23);
 		
 		cv::Rect cvroi1;
@@ -1053,7 +1053,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		//  auto imageSize = info.at<Size*>(2)->_size;
 	  //auto alpha = info.at<double>(3);
 	  //auto newImgSize = info.at<Size*>(4)->_size;
-	  //auto cb = info.at<std::shared_ptr< or ::Callback>>(5);// (validPixROI : _types.Rect) = > void,
+	  //auto cb = info.at<std::shared_ptr< overres::Callback>>(5);// (validPixROI : _types.Rect) = > void,
 	  //auto centerPrincipalPoint = info.at<bool>(6);
 	  //
 	  ///*auto ret = cv::getOptimalNewCameraMatrix(

@@ -6,7 +6,7 @@
 
 
 
-class highgui : public or::ObjectWrap {
+class highgui : public overres::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 	//static NAN_METHOD(destroyAllWindows);

@@ -327,25 +327,25 @@ template <typename T>
 
 	template <typename T>
 	NAN_GETTER(Size_<T>::width_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<Size_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Size_<T>>(info.This());
 		info.GetReturnValue().Set(this_->_size->width);
 	}
 
 	template <typename T>
 	NAN_SETTER(Size_<T>::width_setter) {
-		auto this_ = or ::ObjectWrap::Unwrap<Size_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Size_<T>>(info.This());
 		this_->_size->width = value->NumberValue();
 	}
 
 
 	template <typename T>
 	NAN_GETTER(Size_<T>::height_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<Size_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Size_<T>>(info.This());
 		info.GetReturnValue().Set(this_->_size->height);
 	}
 	template <typename T>
 	NAN_SETTER(Size_<T>::height_setter) {
-		auto this_ = or ::ObjectWrap::Unwrap<Size_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Size_<T>>(info.This());
 		this_->_size->height = value->NumberValue();
 	}
 	

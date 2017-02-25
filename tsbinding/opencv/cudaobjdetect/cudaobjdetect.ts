@@ -225,6 +225,7 @@ export var HOG: HOGStatic = alvision_module.cuda.HOG;
  */
 
 interface CascadeClassifierStatic {
+    new (): CascadeClassifier;
     /** @brief Loads the classifier from a file. Cascade type is detected automatically by constructor parameter.
 
     @param filename Name of the file from which the classifier is loaded. Only the old haar classifier
@@ -236,7 +237,7 @@ interface CascadeClassifierStatic {
      */
     create(file: _persistence.FileStorage): CascadeClassifier;
     }
-interface CascadeClassifier extends _core.Algorithm
+export interface CascadeClassifier extends _core.Algorithm
 {
     //! Maximum possible object size. Objects larger than that are ignored. Used for
     //! second signature and supported only for LBP cascades.

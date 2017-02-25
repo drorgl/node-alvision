@@ -3,7 +3,7 @@
 
 #include "../alvision.h"
 
-class imgproc : public or ::ObjectWrap{
+class imgproc : public overres::ObjectWrap{
  public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

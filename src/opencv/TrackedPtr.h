@@ -10,7 +10,7 @@ namespace trackedptr_general_callback {
 }
 
 template <typename T>
-class TrackedPtr : public or::ObjectWrap {
+class TrackedPtr : public overres::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		trackedptr_general_callback::overload = overload;
@@ -47,13 +47,13 @@ public:
 	std::shared_ptr<array_accessor_base> _from;
 
 	static NAN_GETTER(index_length) {
-		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
+		auto this_ = overres::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
 		auto length = this_->_from->length();
 		info.GetReturnValue().Set(length);
 	}
 
 	static NAN_INDEX_SETTER(indexed_setter) {
-		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
+		auto this_ = overres::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
 		if ((index > this_->_from->length()) || (index < 0)) {
 			Nan::ThrowRangeError("index out of range");
 		}
@@ -69,7 +69,7 @@ public:
 	}
 
 	static NAN_INDEX_GETTER(indexed_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
+		auto this_ = overres::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
 		if ((index > this_->_from->length()) || (index < 0)) {
 			Nan::ThrowRangeError("index out of range");
 		}

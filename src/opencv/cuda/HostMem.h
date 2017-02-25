@@ -6,7 +6,7 @@ namespace cuda {
 	//#ifdef HAVE_CUDA
 
 
-	class HostMem : public or ::ObjectWrap{
+	class HostMem : public overres::ObjectWrap{
 	public:
 		static std::string name;
 

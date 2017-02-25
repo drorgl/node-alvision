@@ -7,7 +7,7 @@
 //#ifdef HAVE_CUDA
 namespace cuda {
 
-	class DeviceInfo : public or ::ObjectWrap{
+	class DeviceInfo : public overres::ObjectWrap{
 	public:
 
 		static void Register(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

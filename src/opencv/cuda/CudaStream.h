@@ -7,7 +7,7 @@
 
 namespace cuda {
 
-	class Stream : public or ::ObjectWrap{
+	class Stream : public overres::ObjectWrap{
 	public:
 		static std::string name;
 

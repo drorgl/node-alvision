@@ -632,7 +632,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 
 	template <typename T>
 	NAN_GETTER(Vec<T>::data_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<VecT>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<VecT>(info.This());
 		auto vec = this_->_vec;
 
 		auto data = Nan::New<v8::Array>();

@@ -6,13 +6,13 @@ std::vector<std::shared_ptr<overload_info>> IimwriteParameter::_definition = {
 };
 
 
-bool IimwriteParameter::verify(or ::type_system * ovres, v8::Local<v8::Value> obj) {
+bool IimwriteParameter::verify(overres ::type_system * ovres, v8::Local<v8::Value> obj) {
 	return ovres->verifyObject(IimwriteParameter::_definition, obj);
 }
 
 bool IimwriteParameter::parse(v8::Local<v8::Value> obj) {
-	this->flag = or ::type_system::GetFromObject(obj, "flag").ToLocalChecked()->NumberValue();
-	this->value = or ::type_system::GetFromObject(obj, "value").ToLocalChecked()->NumberValue();
+	this->flag =  overres ::type_system::GetFromObject(obj, "flag").ToLocalChecked()->NumberValue();
+	this->value = overres ::type_system::GetFromObject(obj, "value").ToLocalChecked()->NumberValue();
 
 	return true;
 }

@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class DownhillSolver: public or::ObjectWrap {
+class DownhillSolver: public overres::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

@@ -56,7 +56,7 @@ overload->addOverload("basecascadeclassifier", "BaseCascadeClassifier", "load", 
 
 overload->addOverload("basecascadeclassifier", "BaseCascadeClassifier", "detectMultiScale", {
 	make_param<IOArray*>("image","InputArray"),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function"),
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function"),
 	//make_param<std::shared_ptr<std::vector<Rect*>>>( "objects","Array<Rect>"),
 	//make_param<std::shared_ptr<std::vector<int>>>(   "rejectLevels","Array<int>"),
 	//make_param<std::shared_ptr<std::vector<double>>>("levelWeights","Array<double>")

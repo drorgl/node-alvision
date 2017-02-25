@@ -2,7 +2,7 @@ import * as alvision from "../../tsbinding/alvision";
 import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource,makeGray } from "./utility";
 import path = require('path')
 
-const base_path = "gpu_demos_pack/demos/denoising";
+const base_path = "gpu_demos_pack/demos/dense_optical_flow";
 
 enum Method
 {
@@ -46,8 +46,8 @@ class App extends BaseApp
         else {
             console.log("Using default frames source... ");
 
-            this.pairSources_.push(PairFrameSource.create_framesource(FrameSource.image("data/dense_optical_flow_1.jpg"),
-                FrameSource.image("data/dense_optical_flow_2.jpg")));
+            this.pairSources_.push(PairFrameSource.create_framesource(FrameSource.image(path.join(opencv_extra,base_path, "data/dense_optical_flow_1.jpg")),
+                FrameSource.image(path.join(opencv_extra,base_path, "data/dense_optical_flow_2.jpg"))));
         }
 
 
@@ -441,7 +441,7 @@ class App extends BaseApp
             console.log("N - switch source");
     }
 
-    private pairSources_: Array<PairFrameSource>;
+    private pairSources_: Array<PairFrameSource> = [];
 
     private method_: Method;
     private curSource_: number;

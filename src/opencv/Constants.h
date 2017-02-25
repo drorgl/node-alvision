@@ -1,6 +1,6 @@
 #include "../alvision.h"
 
-class Constants: public or::ObjectWrap {
+class Constants: public overres::ObjectWrap {
  public:
     static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

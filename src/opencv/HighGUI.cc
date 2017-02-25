@@ -161,7 +161,7 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 	overload->addOverload("highgui", "", "setMouseCallback", { 
 		make_param<std::string>("winname","String"), 
-		make_param<std::shared_ptr<or::AsyncCallback>>("onMouse","Function"),
+		make_param<std::shared_ptr<overres::AsyncCallback>>("onMouse","Function"),
 		make_param("userdata","Object",Nan::Null())
 	}, highgui::setMouseCallback);
 	Nan::SetMethod(target, "setMouseCallback", highgui_general_callback::callback);
@@ -175,7 +175,7 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<std::string>("trackbarname","String"),
 		make_param<std::string>("winname","String"),
 		make_param<int>("count","int"),
-		make_param<std::shared_ptr<or::AsyncCallback>>("onChange","Function", nullptr),
+		make_param<std::shared_ptr<overres::AsyncCallback>>("onChange","Function", nullptr),
 		make_param<int>("value","int",0),
 		make_param("userdata","Object",Nan::Null()) 
 	}, highgui::createTrackbar);
@@ -223,7 +223,7 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 	overload->addOverload("highgui", "", "setOpenGlDrawCallback", {
 		make_param<std::string>("winname","String"), 
-		make_param<std::shared_ptr<or::AsyncCallback>>("onOpenGlDraw","Function"), 
+		make_param<std::shared_ptr<overres::AsyncCallback>>("onOpenGlDraw","Function"), 
 		make_param("userdata","Object",Nan::Null())
 	}, highgui::setOpenGlDrawCallback);
 	Nan::SetMethod(target, "setOpenGlDrawCallback", highgui_general_callback::callback);
@@ -280,7 +280,7 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	Nan::SetMethod(target, "loadWindowParameters", highgui_general_callback::callback);
 
 	overload->addOverload("highgui", "", "startLoop", { 
-		make_param<std::shared_ptr<or::AsyncCallback>>("pt2Func","Function")
+		make_param<std::shared_ptr<overres::AsyncCallback>>("pt2Func","Function")
 	}, highgui::startLoop);
 	Nan::SetMethod(target, "startLoop", highgui_general_callback::callback);
 
@@ -289,7 +289,7 @@ highgui::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 
 	overload->addOverload("highgui", "", "createButton", {
 		make_param<std::string>("bar_name","String"),
-		make_param<std::shared_ptr<or::AsyncCallback>>("on_change","Function"),
+		make_param<std::shared_ptr<overres::AsyncCallback>>("on_change","Function"),
 		make_param("userdata","Object",Nan::Null()),
 		make_param<int>("type","int",cv::QT_PUSH_BUTTON),
 		make_param<bool>("initial_button_state","bool",false)
@@ -449,7 +449,7 @@ POLY_METHOD(highgui::stopLoop) {
 
 POLY_METHOD(highgui::createButton) {
 	//auto bar_name				= info.at<std::string>(0);
-	//auto on_change				= info.at<std::shared_ptr<or::Callback>>(1);
+	//auto on_change				= info.at<std::shared_ptr<overres::Callback>>(1);
 	//auto userData				= info.at<????>(2);
 	//auto type					= info.at<int>(3);
 	//auto initial_button_state	= info.at<bool>(4);

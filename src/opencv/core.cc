@@ -574,7 +574,7 @@ overload->addOverload("core", "", "normalize", {
 
 overload->addOverload("core", "", "minMaxIdx", {
 	make_param<IOArray*>("src","IOArray"),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function"),
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function"),
 	make_param<IOArray*>("mask","IOArray",IOArray:: noArray())
 }, minMaxIdx);
 Nan::SetMethod(target, "minMaxIdx", core_general_callback::callback);
@@ -597,13 +597,13 @@ Nan::SetMethod(target, "minMaxIdx", core_general_callback::callback);
 
 overload->addOverload("core", "", "minMaxLoc", {
 	make_param<SparseMat*>("a","SparseMat"),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function"),
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function"),
 }, minMaxLoc_sparse);
 
 Nan::SetMethod(target, "minMaxLoc", core_general_callback::callback);
 overload->addOverload("core", "", "minMaxLoc", {
 	make_param<IOArray*>("src","IOArray"),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function"),
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function"),
 	make_param<IOArray*>("mask","IOArray",IOArray::noArray())
 }, minMaxLoc);
 
@@ -1573,7 +1573,7 @@ Nan::SetMethod(target, "polarToCart", core_general_callback::callback);
 	overload->addOverload("core", "", "checkRange", {
 			make_param<IOArray*>("a","IOArray"),
 			make_param<bool>("quiet","bool", true),
-			make_param<std::shared_ptr<or::Callback>>("cb","Function"),
+			make_param<std::shared_ptr<overres::Callback>>("cb","Function"),
 			make_param<double>("minVal","double",-DBL_MAX), 
 			make_param<double>("maxVal","double", DBL_MAX)
 	}, checkRange);

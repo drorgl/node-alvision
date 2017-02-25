@@ -12,7 +12,7 @@ class Vec;
 
 
 template <typename T>
-class Matx : public or ::ObjectWrap{
+class Matx : public overres::ObjectWrap{
 public:
 	typedef typename T::value_type TVT;
 	enum {

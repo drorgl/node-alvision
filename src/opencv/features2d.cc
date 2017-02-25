@@ -49,7 +49,7 @@ features2d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> ove
 /** @overload */
 	overload->addOverload("features2d", "", "FAST", {
 		make_param<IOArray*>("image","IOArray"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (keypoints : Array<_types.KeyPoint>) = > void,
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// : (keypoints : Array<_types.KeyPoint>) = > void,
 		make_param<int>("threshold","int"),
 		make_param<bool>("nonmaxSuppression","bool",true)
 	}, FAST_a);
@@ -84,7 +84,7 @@ detection, use cv2.FAST.detect() method.
 
 overload->addOverload("features2d", "", "FAST", {
 	make_param<IOArray*>("image","IOArray"),
-	make_param<std::shared_ptr< or ::Callback>>("cb","Function"),// : (keypoints : Array<_types.KeyPoint>) = >void,
+	make_param<std::shared_ptr< overres::Callback>>("cb","Function"),// : (keypoints : Array<_types.KeyPoint>) = >void,
 	make_param<int>("threshold","int"),
 	make_param<bool>("nonmaxSuppression","bool"),
 	make_param<int>("type","int")
@@ -102,7 +102,7 @@ FastFeatureDetector::Init(target, overload);
 /** @overload */
 overload->addOverload("features2d", "", "AGAST", {
 	make_param<IOArray*>("image","IOArray"),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (keypoints : Array<_types.KeyPoint>) = > void,
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// : (keypoints : Array<_types.KeyPoint>) = > void,
 	make_param<int>("threshold","int"),
 	make_param<bool>("nonmaxSuppression","bool", true)
 }, AGAST_a);
@@ -132,7 +132,7 @@ Detects corners using the AGAST algorithm by @cite mair2010_agast .
  */
 overload->addOverload("features2d", "", "AGAST", {
 	make_param<IOArray*>("image","IOArray"),
-	make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (keypoints : Array<_types.KeyPoint>) = >void,
+	make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// : (keypoints : Array<_types.KeyPoint>) = >void,
 	make_param<int>("threshold","int"),
 	make_param<bool>("nonmaxSuppression","bool"),
 	make_param<int>("type","AgastFeatureDetectorTypes")

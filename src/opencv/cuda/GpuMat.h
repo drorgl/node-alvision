@@ -7,7 +7,7 @@
 //#ifdef HAVE_CUDA
 namespace cuda {
 
-	class GpuMat : public or ::ObjectWrap{
+	class GpuMat : public overres::ObjectWrap{
 	public:
 		static std::string name;
 

@@ -130,7 +130,7 @@ Subdiv2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 //        locate(pt: _types.Point2f ,cb : (edge : _st.int, vertex : _st.int) => void) : _st.int;
 	overload->addOverload("subdiv2d", "Subdiv2D", "locate", {
 		make_param<Point2f*>("pt",Point2f::name) ,
-		make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (edge : _st.int, vertex : _st.int) = > void
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function")// : (edge : _st.int, vertex : _st.int) = > void
 	},locate );
 //
 //        /** @brief Finds the subdivision vertex closest to the given point.
@@ -148,7 +148,7 @@ Subdiv2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 //        findNearest(pt: _types.Point2f, cb : (nearestPt : _types.Point2f) => void) : _st.int;
 	overload->addOverload("subdiv2d", "Subdiv2D", "findNearest", {
 		make_param<Point2f*>("pt",Point2f::name),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (nearestPt : _types.Point2f) = > void
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function")// : (nearestPt : _types.Point2f) = > void
 	}, findNearest);
 //
 //        /** @brief Returns a list of all edges.
@@ -160,7 +160,7 @@ Subdiv2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 //         */
 //        getEdgeList(cb: (edgeList : Array<_matx.Vec4f>) => void) : void;
 	overload->addOverload("subdiv2d", "Subdiv2D", "getEdgeList", {
-		make_param<std::shared_ptr<or::Callback>>("cb","Function") //(edgeList : Array<_matx.Vec4f>) => void
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function") //(edgeList : Array<_matx.Vec4f>) => void
 	}, getEdgeList);
 //
 //        /** @brief Returns a list of all triangles.
@@ -172,7 +172,7 @@ Subdiv2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 //         */
 //        getTriangleList(cb : (triangleList : _matx.Vec6f) => void) : void;
 	overload->addOverload("subdiv2d", "Subdiv2D", "getTriangleList", {
-		make_param<std::shared_ptr< or ::Callback>>("cb","Function") //(triangleList : _matx.Vec6f) => void
+		make_param<std::shared_ptr< overres::Callback>>("cb","Function") //(triangleList : _matx.Vec6f) => void
 	}, getTriangleList);
 //
 //        /** @brief Returns a list of all Voroni facets.
@@ -185,7 +185,7 @@ Subdiv2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 //        getVoronoiFacetList(idx: Array<_st.int>, cb: (facetList: Array<_types.Point2f>, facetCenters: Array<_types.Point2f>) => void): void;
 	overload->addOverload("subdiv2d", "Subdiv2D", "getVoronoiFacetList", {
 		make_param<std::shared_ptr<std::vector<int>>>("idx","Array<int>"),
-		make_param<std::shared_ptr< or ::Callback>>("cb","Function") //(facetList: Array<_types.Point2f>, facetCenters: Array<_types.Point2f>) => void
+		make_param<std::shared_ptr< overres::Callback>>("cb","Function") //(facetList: Array<_types.Point2f>, facetCenters: Array<_types.Point2f>) => void
 	}, getVoronoiFacetList);
 //
 //        /** @brief Returns vertex location from vertex ID.
@@ -198,7 +198,7 @@ Subdiv2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 //        getVertex(vertex: _st.int, cb: (firstEdge: _st.int,vertex :  _types.Point2f) => void) : void;
 	overload->addOverload("subdiv2d", "Subdiv2D", "getVertex", {
 		make_param<int>("vertex","int"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (firstEdge : _st.int,vertex : _types.Point2f) = > void
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function")// : (firstEdge : _st.int,vertex : _types.Point2f) = > void
 	}, getVertex);
 //
 //        /** @brief Returns one of the edges related to the given edge.
@@ -269,7 +269,7 @@ Subdiv2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 //        edgeOrg(edge: _st.int, cb: (orgpt: _types.Point2f, vertexId: _st.int) => void): void;
 	overload->addOverload("subdiv2d", "Subdiv2D", "edgeOrg", {
 		make_param<int>("edge","int"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (orgpt : _types.Point2f, vertexId : _st.int) = > void
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function")// : (orgpt : _types.Point2f, vertexId : _st.int) = > void
 	}, edgeOrg);
 //
 //        /** @brief Returns the edge destination.
@@ -282,7 +282,7 @@ Subdiv2D::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 //        edgeDst(edge: _st.int, cb: (dstpt: _types.Point2f, vertexId: _st.int)=>void) : void;
 	overload->addOverload("subdiv2d", "Subdiv2D", "edgeDst", {
 		make_param<int>("edge","int"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function")// : (dstpt : _types.Point2f, vertexId : _st.int) = >void
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function")// : (dstpt : _types.Point2f, vertexId : _st.int) = >void
 	}, edgeDst);
 //
 //        //protected:

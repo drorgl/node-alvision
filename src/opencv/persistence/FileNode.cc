@@ -302,7 +302,7 @@ POLY_METHOD(FileNode::New_node){
 }
 			
 NAN_GETTER(FileNode::nodes_getter){
-	auto this_ = or ::ObjectWrap::Unwrap<FileNode>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<FileNode>(info.This());
 
 	auto arr = Nan::New<v8::Object>();
 	
@@ -319,7 +319,7 @@ NAN_GETTER(FileNode::nodes_getter){
 	info.GetReturnValue().Set(arr);
 }
 NAN_GETTER(FileNode::data_getter){
-	auto this_ = or ::ObjectWrap::Unwrap<FileNode>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<FileNode>(info.This());
 
 	auto arr = Nan::New<v8::Array>();
 	int i = 0;

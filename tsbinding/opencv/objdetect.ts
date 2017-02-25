@@ -265,7 +265,7 @@ interface CascadeClassifierStatic {
 
 }
 
-interface CascadeClassifier
+export interface CascadeClassifier
 {
 //public:
     /** @brief Checks whether the classifier has been loaded.

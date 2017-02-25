@@ -3,7 +3,7 @@
 
 #include "../../../alvision.h"
 
-class Arrays : public or::ObjectWrap {
+class Arrays : public overres::ObjectWrap {
 public:
 	static std::string name;
 

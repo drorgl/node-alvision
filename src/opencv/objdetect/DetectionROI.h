@@ -3,7 +3,7 @@
 
 #include "../../alvision.h"
 
-class DetectionROI : public or ::ObjectWrap{
+class DetectionROI : public overres::ObjectWrap{
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

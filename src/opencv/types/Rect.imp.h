@@ -212,56 +212,56 @@ template <typename T>
 
 	template <typename T>
 	NAN_GETTER(Rect_<T>::x_getter			){
-		auto this_ = or ::ObjectWrap::Unwrap<Rect_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Rect_<T>>(info.This());
 
 		info.GetReturnValue().Set(this_->_rect->x);
 	}
 
 	template <typename T>
 	NAN_SETTER(Rect_<T>::x_setter			){
-		auto this_ = or ::ObjectWrap::Unwrap<Rect_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Rect_<T>>(info.This());
 
 		this_->_rect->x = value->NumberValue();
 	}
 
 	template <typename T>
 	NAN_GETTER(Rect_<T>::y_getter			){
-		auto this_ = or ::ObjectWrap::Unwrap<Rect_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Rect_<T>>(info.This());
 
 		info.GetReturnValue().Set(this_->_rect->y);
 	}
 
 	template <typename T>
 	NAN_SETTER(Rect_<T>::y_setter			){
-		auto this_ = or ::ObjectWrap::Unwrap<Rect_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Rect_<T>>(info.This());
 
 		this_->_rect->y = value->NumberValue();
 	}
 
 	template <typename T>
 	NAN_GETTER(Rect_<T>::width_getter		){
-		auto this_ = or ::ObjectWrap::Unwrap<Rect_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Rect_<T>>(info.This());
 
 		info.GetReturnValue().Set(this_->_rect->width);
 	}
 
 	template <typename T>
 	NAN_SETTER(Rect_<T>::width_setter		){
-		auto this_ = or ::ObjectWrap::Unwrap<Rect_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Rect_<T>>(info.This());
 
 		this_->_rect->width = value->NumberValue();
 	}
 
 	template <typename T>
 	NAN_GETTER(Rect_<T>::height_getter		){
-		auto this_ = or ::ObjectWrap::Unwrap<Rect_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Rect_<T>>(info.This());
 
 		info.GetReturnValue().Set(this_->_rect->height);
 	}
 
 	template <typename T>
 	NAN_SETTER(Rect_<T>::height_setter		){
-		auto this_ = or ::ObjectWrap::Unwrap<Rect_<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Rect_<T>>(info.This());
 
 		this_->_rect->height = value->NumberValue();
 	}

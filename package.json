@@ -26,7 +26,8 @@
 	"test-tmp" : "ts-node test/tmp.ts",
 	"demo-pedestrian_detection" : "ts-node test/demos/pedestrian_detection.ts",
 	"demo-background_subtraction" : "ts-node test/demos/background_subtraction.ts",
-	"demo-denoising" : "ts-node test/demos/denoising.ts"
+	"demo-denoising" : "ts-node test/demos/denoising.ts",
+	"demo-dense_optical_flow" : "ts-node test/demos/dense_optical_flow.ts"
   },
   "keywords": [
     "opencv",

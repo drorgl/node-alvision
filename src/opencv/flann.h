@@ -5,7 +5,7 @@
 
 //#include "cuda/DeviceInfo.h"
 
-class flann : public or::ObjectWrap {
+class flann : public overres::ObjectWrap {
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 	static Nan::Persistent<Object> flannObject;

@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class background_segm : public or ::ObjectWrap{
+class background_segm : public overres::ObjectWrap{
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 };

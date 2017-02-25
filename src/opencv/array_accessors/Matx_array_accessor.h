@@ -15,7 +15,7 @@ class Matx_array_accessor : public array_accessor_base {
 
 public:
 	std::shared_ptr<T> _matx;
-	std::unique_ptr< or ::value_converter<TVT>> _converter;
+	std::unique_ptr< overres::value_converter<TVT>> _converter;
 	std::string _type;
 
 	int _max_size;
@@ -26,7 +26,7 @@ public:
 		//calculate maximum byte size for mat
 		_max_size = T::rows * T::cols;
 
-		_converter = std::make_unique < or ::value_converter<TVT>>();
+		_converter = std::make_unique < overres::value_converter<TVT>>();
 	}
 
 	virtual int length() {

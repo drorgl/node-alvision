@@ -3,7 +3,7 @@
 
 #include "../../alvision.h"
 
-class SimpleBlobDetectorParams : public or ::ObjectWrap{
+class SimpleBlobDetectorParams : public overres::ObjectWrap{
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 

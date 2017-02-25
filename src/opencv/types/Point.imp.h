@@ -484,26 +484,26 @@ void Point_<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<ov
 
 	 template <typename T>
 	 NAN_GETTER(Point_<T>::x_getter){
-		 auto this_ = or ::ObjectWrap::Unwrap<Point_<T>>(info.This());
+		 auto this_ = overres::ObjectWrap::Unwrap<Point_<T>>(info.This());
 		 info.GetReturnValue().Set(this_->_point->x);
 	 }
 
 	 template <typename T>
 	 NAN_SETTER(Point_<T>::x_setter){
-		 auto this_ = or ::ObjectWrap::Unwrap<Point_<T>>(info.This());
+		 auto this_ = overres::ObjectWrap::Unwrap<Point_<T>>(info.This());
 		 this_->_point->x = value->NumberValue();
 		 info.GetReturnValue().Set(this_->_point->x);
 	 }
 
 	 template <typename T>
 	 NAN_GETTER(Point_<T>::y_getter){
-		 auto this_ = or ::ObjectWrap::Unwrap<Point_<T>>(info.This());
+		 auto this_ = overres::ObjectWrap::Unwrap<Point_<T>>(info.This());
 		 info.GetReturnValue().Set(this_->_point->y);
 	 }
 
 	 template <typename T>
 	 NAN_SETTER(Point_<T>::y_setter){
-		 auto this_ = or ::ObjectWrap::Unwrap<Point_<T>>(info.This());
+		 auto this_ = overres::ObjectWrap::Unwrap<Point_<T>>(info.This());
 		 this_->_point->y = value->NumberValue();
 		 info.GetReturnValue().Set(this_->_point->y);
 	 }

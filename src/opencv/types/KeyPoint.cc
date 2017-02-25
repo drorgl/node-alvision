@@ -190,7 +190,7 @@ POLY_METHOD(KeyPoint::overlap) {
 }
 
 NAN_GETTER(KeyPoint::pt_getter) {
-	auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 
 	auto newpt = new Point2f();
 	newpt->_point = std::make_shared<cv::Point2f>(this_->_keyPoint->pt);
@@ -198,61 +198,61 @@ NAN_GETTER(KeyPoint::pt_getter) {
 	info.GetReturnValue().Set(newpt->Wrap());
  }
 NAN_SETTER(KeyPoint::pt_setter) {
-	auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 
-	auto pt = or ::ObjectWrap::Unwrap<Point2f>(value.As<v8::Object>());
+	auto pt = overres::ObjectWrap::Unwrap<Point2f>(value.As<v8::Object>());
 
 	this_->_keyPoint->pt = *pt->_point;
  }
 
 
 NAN_GETTER(KeyPoint::size_getter) {
-	auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 	info.GetReturnValue().Set(this_->_keyPoint->size);
  }
 NAN_SETTER(KeyPoint::size_setter) {
-	auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 
 	this_->_keyPoint->size = value->NumberValue();
  }
 
  NAN_GETTER(KeyPoint::angle_getter) {
-	 auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 
 	 info.GetReturnValue().Set(this_->_keyPoint->angle);
  }
  NAN_SETTER(KeyPoint::angle_setter) {
-	 auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 	 this_->_keyPoint->angle = value->NumberValue();
  }
 
 
  NAN_GETTER(KeyPoint::response_getter) {
-	 auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 
 	 info.GetReturnValue().Set(this_->_keyPoint->response);
  }
  NAN_SETTER(KeyPoint::response_setter) {
-	 auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 	 this_->_keyPoint->response = value->NumberValue();
  }
 
  NAN_GETTER(KeyPoint::octave_getter) {
-	 auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 
 	 info.GetReturnValue().Set(this_->_keyPoint->octave);
  }
  NAN_SETTER(KeyPoint::octave_setter) {
-	 auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 	 this_->_keyPoint->octave = value->IntegerValue();
  }
 
  NAN_GETTER(KeyPoint::class_id_getter) {
-	 auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 
 	 info.GetReturnValue().Set(this_->_keyPoint->class_id);
  }
  NAN_SETTER(KeyPoint::class_id_setter) {
-	 auto this_ = or ::ObjectWrap::Unwrap<KeyPoint>(info.This());
+	 auto this_ = overres::ObjectWrap::Unwrap<KeyPoint>(info.This());
 	 this_->_keyPoint->class_id = value->IntegerValue();
  }

@@ -1530,6 +1530,8 @@ POLY_METHOD(Matrix::ptr) {
 	auto tptr = new TrackedPtr<Matrix>();
 	tptr->_from = std::make_shared<Matrix_array_accessor>( mat, info.at<std::string>(0), info.at<int>(1), info.at<int>(2), info.at<int>(3));
 	info.SetReturnValue(tptr);
+	//auto xx = cv::InputArray(mat);
+	//xx.kind()
 }
 POLY_METHOD(Matrix::at) {
 	auto mat = info.This<Matrix*>()->_mat;
@@ -1541,7 +1543,7 @@ POLY_METHOD(Matrix::at) {
 }
 
 NAN_PROPERTY_GETTER(Matrix::dims) {
-	auto mat = or ::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = overres::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
 	info.GetReturnValue().Set(mat->dims);
 }
 
@@ -1577,7 +1579,7 @@ POLY_METHOD(Matrix::size) {
 }
 
 NAN_PROPERTY_GETTER(Matrix::step) {
-	auto mat = or ::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+	auto mat = overres::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
 
 	auto ret = Nan::New<v8::Array>();
 	for (auto i = 0; i < mat->dims; i++) {
@@ -1588,7 +1590,7 @@ NAN_PROPERTY_GETTER(Matrix::step) {
 
 NAN_GETTER(Matrix::data) {
 	try {
-		auto mat = or ::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
+		auto mat = overres::ObjectWrap::Unwrap<Matrix>(info.This())->_mat;
 		uchar depth = mat->depth();
 		uchar channels = mat->channels();
 

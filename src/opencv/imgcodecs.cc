@@ -123,7 +123,7 @@ imgcodecs::Init(Handle<Object> target, std::shared_ptr<overload_resolution> over
 
 	overload->addOverload("imgcodecs", "", "imreadmulti", {
 		make_param<std::string>("filename","String"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),// : (mats : Array<_mat.Mat>) = >void, 
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),// : (mats : Array<_mat.Mat>) = >void, 
 		make_param<int>("flags","ImreadModes",cv::IMREAD_ANYCOLOR)
 	}, imreadmulti);
 	Nan::SetMethod(target, "imreadmulti", imgcodecs_general_callback::callback);

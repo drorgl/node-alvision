@@ -3,7 +3,7 @@
 
 #include "../alvision.h"
 
-class shape: public or::ObjectWrap {
+class shape: public overres::ObjectWrap {
  public:
     static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 	static NAN_METHOD(createShapeContextDistanceExtractor);

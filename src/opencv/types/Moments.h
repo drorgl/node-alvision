@@ -3,7 +3,7 @@
 
 #include "../../alvision.h"
 
-class Moments : public or ::ObjectWrap{
+class Moments : public overres::ObjectWrap{
 public:
 	static std::string name;
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

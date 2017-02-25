@@ -10,7 +10,7 @@ namespace point3_general_callback {
 }
 
 template <typename T>
-class Point3_ : public or::ObjectWrap {
+class Point3_ : public overres::ObjectWrap {
 public:
 	typedef typename T CVT;
 	typedef typename T::value_type TVT;
@@ -600,29 +600,29 @@ public:
 	}
 
 	static NAN_GETTER(x_getter){
-		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
+		auto this_ = overres::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
 		info.GetReturnValue().Set(this_->_point3->x);
 	}
 	static NAN_SETTER(x_setter){
-		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
+		auto this_ = overres::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
 		this_->_point3->x = value->NumberValue();
 		info.GetReturnValue().Set(this_->_point3->x);
 	}
 	static NAN_GETTER(y_getter){
-		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
+		auto this_ = overres::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
 		info.GetReturnValue().Set(this_->_point3->y);
 	}
 	static NAN_SETTER(y_setter){
-		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
+		auto this_ = overres::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
 		this_->_point3->y = value->NumberValue();
 		info.GetReturnValue().Set(this_->_point3->y);
 	}
 	static NAN_GETTER(z_getter){
-		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
+		auto this_ = overres::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
 		info.GetReturnValue().Set(this_->_point3->z);
 	}
 	static NAN_SETTER(z_setter){
-		auto this_ = or ::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
+		auto this_ = overres::ObjectWrap::Unwrap<Point3_<T>>(info.Holder());
 		this_->_point3->z = value->NumberValue();
 		info.GetReturnValue().Set(this_->_point3->z);
 	}

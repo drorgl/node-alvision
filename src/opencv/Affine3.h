@@ -16,7 +16,7 @@ namespace affine3_general_callback {
 }
 
 template <typename T>
-class Affine3 : public or::ObjectWrap {
+class Affine3 : public overres::ObjectWrap {
 public:
 	typedef cv::Matx<typename T::float_type, 4, 4> cvMatx4;
 	typedef Matx<cvMatx4> Matx4;
@@ -410,7 +410,7 @@ public:
 
 	static NAN_GETTER(matrix_getter) {
 		//TODO: add validation / move handling to overload-resolution
-		auto this_ = or ::ObjectWrap::Unwrap<Affine3<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Affine3<T>>(info.This());
 
 		auto matx = new Matx4();
 		matx->_matx = std::make_shared<cvMatx4>(this_->_affine3->matrix);
@@ -419,9 +419,9 @@ public:
 	}
 	static NAN_SETTER(matrix_setter) {
 		//TODO: add validation / move handling to overload-resolution
-		auto this_ = or ::ObjectWrap::Unwrap<Affine3<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Affine3<T>>(info.This());
 
-		this_->_affine3->matrix = *or::ObjectWrap::Unwrap<Matx4>(value.As<v8::Object>())->_matx;
+		this_->_affine3->matrix = *overres::ObjectWrap::Unwrap<Matx4>(value.As<v8::Object>())->_matx;
 	}
 	
 };

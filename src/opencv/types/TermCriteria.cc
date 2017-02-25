@@ -81,14 +81,14 @@ POLY_METHOD(TermCriteria::New) {
 }
 
 NAN_GETTER(TermCriteria::type_getter) {
-	auto this_ = or ::ObjectWrap::Unwrap<TermCriteria>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<TermCriteria>(info.This());
 	info.GetReturnValue().Set(this_->_termCriteria->type);
 }
 NAN_GETTER(TermCriteria::maxCount_getter) {
-	auto this_ = or ::ObjectWrap::Unwrap<TermCriteria>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<TermCriteria>(info.This());
 	info.GetReturnValue().Set(this_->_termCriteria->maxCount);
 }
 NAN_GETTER(TermCriteria::epsilon_getter) {
-	auto this_ = or ::ObjectWrap::Unwrap<TermCriteria>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<TermCriteria>(info.This());
 	info.GetReturnValue().Set(this_->_termCriteria->epsilon);
 }

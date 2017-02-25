@@ -190,6 +190,6 @@ POLY_METHOD(RNG::gaussian){
 }
 
 NAN_GETTER(RNG::state_getter){
-	auto this_ = or::ObjectWrap::Unwrap<RNG>(info.This())->_rng;
+	auto this_ = overres::ObjectWrap::Unwrap<RNG>(info.This())->_rng;
 	info.GetReturnValue().Set((double)this_->state);
 }

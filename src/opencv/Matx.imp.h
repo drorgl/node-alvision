@@ -344,7 +344,7 @@ template <typename T>
 		//			inv(method ? : _base.DecompTypes /*= DECOMP_LU*//*, bool * p_is_ok = NULL*/) : Matx<T>
 		overload->addOverload("matx", name, "inv",{
 			make_param<int>("method","DecompTypes",cv::DECOMP_LU),
-			make_param<std::shared_ptr< or ::Callback>>("cb","Function", nullptr)
+			make_param<std::shared_ptr< overres::Callback>>("cb","Function", nullptr)
 		}, inv_method);
 		Nan::SetPrototypeMethod(ctor, "inv", matx_general_callback::callback);
 		//
@@ -823,7 +823,7 @@ template <typename T>
 
 	template <typename T>
 	NAN_GETTER(Matx<T>::depth_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<Matx<T>>(info.This())->_matx;
+		auto this_ = overres::ObjectWrap::Unwrap<Matx<T>>(info.This())->_matx;
 		info.GetReturnValue().Set(Nan::New(this_->depth));
 	}
 
@@ -841,7 +841,7 @@ template <typename T>
 
 	template <typename T>
 	NAN_GETTER(Matx<T>::channels_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<Matx<T>>(info.This())->_matx;
+		auto this_ = overres::ObjectWrap::Unwrap<Matx<T>>(info.This())->_matx;
 		info.GetReturnValue().Set(Nan::New(this_->channels));
 	}
 
@@ -868,7 +868,7 @@ template <typename T>
 
 	template <typename T>
 	NAN_GETTER(Matx<T>::val_getter) {
-		auto this_ = or ::ObjectWrap::Unwrap<Matx<T>>(info.This());
+		auto this_ = overres::ObjectWrap::Unwrap<Matx<T>>(info.This());
 
 		auto tptr = new TrackedPtr<T>();
 		tptr->_from = std::make_shared<Matx_array_accessor<T,TVT>>(this_->_matx, GetTypeName<TVT>());
@@ -976,13 +976,13 @@ public:
 	static POLY_METHOD(run) {
 		auto this_ = info.This<Matx<T>*>()->_matx;
 		bool p_is_ok;
-		auto p_is_ok_cb = info.at<std::shared_ptr< or ::Callback>>(1);
+		auto p_is_ok_cb = info.at<std::shared_ptr< overres::Callback>>(1);
 		auto res = this_->inv(info.at<int>(0), &p_is_ok);
 
 		auto ret = new Matx<T>();
 		ret->_matx = std::make_shared<T>(res);
 
-		p_is_ok_cb->Call({ or ::make_value(p_is_ok) });
+		p_is_ok_cb->Call({ overres::make_value(p_is_ok) });
 
 		info.SetReturnValue(ret);
 	}

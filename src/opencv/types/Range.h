@@ -3,7 +3,7 @@
 //#include "OpenCV.h"
 #include "../../alvision.h"
 
-class Range : public or::ObjectWrap {
+class Range : public overres::ObjectWrap {
 public:
 	static std::string name;
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {

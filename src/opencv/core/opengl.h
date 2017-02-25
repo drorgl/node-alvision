@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class opengl : public or ::ObjectWrap{
+class opengl : public overres::ObjectWrap{
 public:
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 };

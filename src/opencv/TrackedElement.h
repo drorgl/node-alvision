@@ -10,7 +10,7 @@ namespace trackedelement_general_callback {
 }
 
 template <typename T>
-class TrackedElement : public or ::ObjectWrap{
+class TrackedElement : public overres::ObjectWrap{
 public:
 	static std::string name;
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {

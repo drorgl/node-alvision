@@ -333,7 +333,7 @@ cv_test::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<Matrix*>("refdata",Matrix::name),
 		make_param<double>("success_err_level","double"),
 		make_param<bool>("element_wise_relative_error","bool"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function")
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function")
 	}, cmpEps);
 	Nan::SetMethod(testns, "cmpEps", cvtest_general_callback::callback);
 	//
@@ -798,13 +798,13 @@ POLY_METHOD(cv_test::cmpEps) {
 	auto refdata = info.at<Matrix*>(1)->_mat;
 	auto success_err_level = info.at<double>(2);
 	auto element_wise_relative_error = info.at<bool>(3);
-	auto cb = info.at<std::shared_ptr< or ::Callback>>(4);  // (idx: Array<_st.int>, max_diff : _st.double) = > void): CMP_EPS_CODE
+	auto cb = info.at<std::shared_ptr< overres::Callback>>(4);  // (idx: Array<_st.int>, max_diff : _st.double) = > void): CMP_EPS_CODE
 
 	auto idx = std::make_shared<std::vector<int>>();
 	double max_diff;
 
 	auto ret = cvtest::cmpEps(*data, *refdata, &max_diff, success_err_level, idx.get(), element_wise_relative_error);
-	cb->Call({ or::make_value(idx), or::make_value(max_diff) });
+	cb->Call({ overres::make_value(idx), overres::make_value(max_diff) });
 
 	info.SetReturnValue(ret);
 

@@ -4,7 +4,7 @@
 #include "../alvision.h"
 #include <memory>
 
-class IOArray : public or::ObjectWrap {
+class IOArray : public overres::ObjectWrap {
 public:
 	static std::string name;
 

@@ -145,7 +145,7 @@ HOGDescriptor::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 
 	overload->addOverload("hogdescriptor", "HOGDescriptor", "compute", {
 		make_param<IOArray*>("img","InputArray"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),//"CV_OUT std::vector<float>& descriptors,
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),//"CV_OUT std::vector<float>& descriptors,
 		make_param<Size*>("winStride",Size::name,Size::create()), 
 		make_param<Size*>("padding",Size::name,Size::create()),
 		make_param<std::shared_ptr<std::vector<Point*>>>("locations","Array<Point>",nullptr)
@@ -160,7 +160,7 @@ HOGDescriptor::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 
 	overload->addOverload("hogdescriptor", "HOGDescriptor", "detect", {
 		make_param<Matrix*>("img",Matrix::name),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),//"CV_OUT std::vector<Point>& foundLocations,CV_OUT std::vector<double>& weights,
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),//"CV_OUT std::vector<Point>& foundLocations,CV_OUT std::vector<double>& weights,
 		make_param<double>("hitThreshold","double", 0),
 		make_param<Size*>("winStride",Size ::name,Size::create()),
 		make_param<Size*>("padding",Size ::name,Size::create()),
@@ -184,7 +184,7 @@ HOGDescriptor::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 
 	overload->addOverload("hogdescriptor", "HOGDescriptor", "detectMultiScale", {
 		make_param<IOArray*>("img","InputArray"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),//CV_OUT std::vector<Rect>& foundLocations,CV_OUT std::vector<double>& foundWeights,
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),//CV_OUT std::vector<Rect>& foundLocations,CV_OUT std::vector<double>& foundWeights,
 		make_param<double>("hitThreshold","double", 0),
 		make_param<Size*>("winStride",Size ::name, Size::create()),
 		make_param<Size*>("padding",Size ::name, Size::create()),
@@ -277,7 +277,7 @@ HOGDescriptor::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 	overload->addOverload("hogdescriptor", "HOGDescriptor", "detectROI", {
 		make_param<Matrix*>("img",Matrix::name),
 		make_param<std::shared_ptr<std::vector<Point*>>>("locations","Array<Point>"),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),//CV_OUT std::vector<cv::Point>& foundLocations, CV_OUT std::vector<double>& confidences,
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),//CV_OUT std::vector<cv::Point>& foundLocations, CV_OUT std::vector<double>& confidences,
 		make_param<double>("hitThreshold","double", 0),
 		make_param<Size*>("winStride",Size::name, Size::create()),
 		make_param<Size*>("padding",Size::name,Size::create()),
@@ -291,7 +291,7 @@ HOGDescriptor::Init(Handle<Object> target, std::shared_ptr<overload_resolution> 
 	//    //! evaluate specified ROI and return confidence value for each location in multiple scales
 	overload->addOverload("hogdescriptor", "HOGDescriptor", "detectMultiScaleROI", {
 		make_param<Matrix*>("img",Matrix::name),
-		make_param<std::shared_ptr<or::Callback>>("cb","Function"),//"CV_OUT std::vector<cv::Rect>& foundLocations,
+		make_param<std::shared_ptr<overres::Callback>>("cb","Function"),//"CV_OUT std::vector<cv::Rect>& foundLocations,
 		make_param<std::shared_ptr<std::vector<DetectionROI*>>>("locations","Array<DetectionROI>"),
 		make_param<double>("hitThreshold","double", 0),
 		make_param<int>("groupThreshold","int", 0)
@@ -406,7 +406,7 @@ POLY_METHOD(HOGDescriptor::compute){throw std::exception("not implemented");}
 POLY_METHOD(HOGDescriptor::detect){throw std::exception("not implemented");}
 POLY_METHOD(HOGDescriptor::detectMultiScale){
 		auto img					= info.at<IOArray*>(0)->GetInputArray();
-		auto cb						= info.at<std::shared_ptr< or ::Callback>>(1);
+		auto cb						= info.at<std::shared_ptr< overres::Callback>>(1);
 		auto hitThreshold			= info.at<double>(2);
 		auto winStride				= *info.at<Size*>(3)->_size;
 		auto padding				= *info.at<Size*>(4)->_size;
@@ -427,7 +427,7 @@ POLY_METHOD(HOGDescriptor::detectMultiScale){
 		});
 
 
-		cb->Call({ or::make_value(v8_rect), or::make_value(weights) });
+		cb->Call({ overres::make_value(v8_rect), overres::make_value(weights) });
 
 
 }
@@ -466,11 +466,11 @@ NAN_SETTER(HOGDescriptor::oclSvmDetector_setter){return Nan::ThrowError("not imp
 NAN_GETTER(HOGDescriptor::free_coef_getter){return Nan::ThrowError("not implemented");}
 NAN_SETTER(HOGDescriptor::free_coef_setter){return Nan::ThrowError("not implemented");}
 NAN_GETTER(HOGDescriptor::nlevels_getter){
-	auto this_ = or ::ObjectWrap::Unwrap<HOGDescriptor>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<HOGDescriptor>(info.This());
 	info.GetReturnValue().Set(this_->_hogDescriptor->nlevels);
 }
 NAN_SETTER(HOGDescriptor::nlevels_setter){
-	auto this_ = or ::ObjectWrap::Unwrap<HOGDescriptor>(info.This());
+	auto this_ = overres::ObjectWrap::Unwrap<HOGDescriptor>(info.This());
 	this_->_hogDescriptor->nlevels = value->IntegerValue();
 }
 NAN_GETTER(HOGDescriptor::signedGradient_getter){return Nan::ThrowError("not implemented");}

@@ -4,7 +4,7 @@
 #include "../../alvision.h"
 
 
-class RotatedRect : public or ::ObjectWrap{
+class RotatedRect : public overres::ObjectWrap{
 public:
 	static std::string name;
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
