@@ -4,7 +4,7 @@ namespace detectionroi_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("detectionroi_general_callback is empty");
+			throw std::runtime_error("detectionroi_general_callback is empty");
 		}
 		return overload->execute("detectionroi", info);
 	}

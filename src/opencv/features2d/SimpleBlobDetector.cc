@@ -4,7 +4,7 @@ namespace simpleblobdetector_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("simpleblobdetector_general_callback is empty");
+			throw std::runtime_error("simpleblobdetector_general_callback is empty");
 		}
 		return overload->execute("simpleblobdetector", info);
 	}
@@ -131,4 +131,4 @@ POLY_METHOD(SimpleBlobDetector::New) {
 	info.GetReturnValue().Set(info.Holder());
 }
 
-POLY_METHOD(SimpleBlobDetector::create) { throw std::exception("not implemented"); }
+POLY_METHOD(SimpleBlobDetector::create) { throw std::runtime_error("not implemented"); }

@@ -4,7 +4,7 @@ namespace stereosgbm_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("stereosgbm_general_callback is empty");
+			throw std::runtime_error("stereosgbm_general_callback is empty");
 		}
 		return overload->execute("matrix", info);
 	}

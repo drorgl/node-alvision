@@ -6,7 +6,7 @@ namespace generalizedhoughguil_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("generalizedhoughguil_general_callback is empty");
+			throw std::runtime_error("generalizedhoughguil_general_callback is empty");
 		}
 		return overload->execute("generalizedhoughguil", info);
 	}
@@ -122,28 +122,28 @@ v8::Local<v8::Function> GeneralizedHoughGuil::get_constructor() {
 
 
 
-POLY_METHOD(GeneralizedHoughGuil::setXi){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getXi){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setLevels){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getLevels){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setAngleEpsilon){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getAngleEpsilon){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setMinAngle){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getMinAngle){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setMaxAngle){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getMaxAngle){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setAngleStep){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getAngleStep){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setAngleThresh){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getAngleThresh){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setMinScale){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getMinScale){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setMaxScale){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getMaxScale){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setScaleStep){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getScaleStep){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setScaleThresh){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getScaleThresh){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::setPosThresh){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughGuil::getPosThresh){throw std::exception("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setXi){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getXi){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setLevels){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getLevels){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setAngleEpsilon){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getAngleEpsilon){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setMinAngle){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getMinAngle){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setMaxAngle){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getMaxAngle){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setAngleStep){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getAngleStep){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setAngleThresh){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getAngleThresh){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setMinScale){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getMinScale){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setMaxScale){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getMaxScale){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setScaleStep){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getScaleStep){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setScaleThresh){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getScaleThresh){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::setPosThresh){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughGuil::getPosThresh){throw std::runtime_error("not implemented");}
 

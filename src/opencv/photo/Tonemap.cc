@@ -7,7 +7,7 @@ namespace tonemap_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("tonemap_general_callback is empty");
+			throw std::runtime_error("tonemap_general_callback is empty");
 		}
 		return overload->execute("tonemap", info);
 	}
@@ -86,9 +86,9 @@ v8::Local<v8::Function> Tonemap::get_constructor() {
 
 
 
-POLY_METHOD(Tonemap::New){throw std::exception("not implemented");}
-POLY_METHOD(Tonemap::process){throw std::exception("not implemented");}
-POLY_METHOD(Tonemap::getGamma){throw std::exception("not implemented");}
-POLY_METHOD(Tonemap::setGamma){throw std::exception("not implemented");}
-POLY_METHOD(Tonemap::createTonemap){throw std::exception("not implemented");}
+POLY_METHOD(Tonemap::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(Tonemap::process){throw std::runtime_error("not implemented");}
+POLY_METHOD(Tonemap::getGamma){throw std::runtime_error("not implemented");}
+POLY_METHOD(Tonemap::setGamma){throw std::runtime_error("not implemented");}
+POLY_METHOD(Tonemap::createTonemap){throw std::runtime_error("not implemented");}
 

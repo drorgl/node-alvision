@@ -7,7 +7,7 @@ namespace pca_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("pca_general_callback is empty");
+			throw std::runtime_error("pca_general_callback is empty");
 		}
 		return overload->execute("pca", info);
 	}
@@ -242,54 +242,54 @@ POLY_METHOD(PCA::New){
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(PCA::New_maxComponents){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(PCA::New_retainedVariance){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(PCA::pca_maxComponents){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(PCA::pca_retainedVariance){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(PCA::project){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(PCA::project_result){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(PCA::backProject){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(PCA::backProject_result){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(PCA::write){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(PCA::read){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 NAN_GETTER(PCA::eigenvectors_getter){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 NAN_SETTER(PCA::eigenvectors_setter){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 NAN_GETTER(PCA::eigenvalues_getter){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 NAN_SETTER(PCA::eigenvalues_setter){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 NAN_GETTER(PCA::mean_getter){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 NAN_SETTER(PCA::mean_setter){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 

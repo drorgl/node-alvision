@@ -6,7 +6,7 @@
 template <typename T>
 class Complex_ : public overres::ObjectWrap {
 public:
-	static std::string Complex_<T>::name;
+	static std::string name;
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		Complex_<T>::name = name;
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(Complex_::New);
@@ -70,7 +70,7 @@ template <typename T>
 std::string Complex_<T>::name;
 
 
-typedef typename Complex_<cv::Complexd> Complexd;
-typedef typename Complex_<cv::Complexf> Complexf;
+typedef Complex_<cv::Complexd> Complexd;
+typedef Complex_<cv::Complexf> Complexf;
 
 #endif

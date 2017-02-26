@@ -438,7 +438,7 @@ overload->addOverload("mat_", name, "Element", {
 		static POLY_METHOD(New_size_value			){
 			auto mat = new Mat_<T,TVT>();
 			auto size = *info.at<Size*>(0)->_size;
-			auto value = *value_adapter<std::remove_reference< TVT>::type,std::remove_reference<TVAL>::type>::from(info.at<TVT>(1));
+			auto value = *value_adapter<typename std::remove_reference< TVT>::type,typename std::remove_reference<TVAL>::type>::from(info.at<TVT>(1));
 			mat->_mat = std::make_shared<T>(size,value );
 
 			mat->Wrap(info.Holder());
@@ -451,9 +451,9 @@ overload->addOverload("mat_", name, "Element", {
 
 			mat->_mat = std::make_shared<T>(info.at<int>(0), info.at<int>(1));
 
-			for (auto i = 0; i < srcdata.size(); i++) {
-				auto value = *value_adapter<std::remove_reference< TVT>::type, TVAL>::from(srcdata[i]);
-				mat->_mat->at<TVAL>(i) = value;
+			for (size_t i = 0; i < srcdata.size(); i++) {
+				auto value = *value_adapter<typename std::remove_reference< TVT>::type, TVAL>::from(srcdata[i]);
+				mat->_mat->template at<TVAL>(i) = value;
 			}
 
 
@@ -468,7 +468,7 @@ overload->addOverload("mat_", name, "Element", {
 			mat->Wrap(info.Holder());
 			info.GetReturnValue().Set(info.Holder());
 		}
-		static POLY_METHOD(New_vec					){throw std::exception("not implemented");}
+		static POLY_METHOD(New_vec					){throw std::runtime_error("not implemented");}
 		static POLY_METHOD(zeros_rows_cols			){
 			auto mat = new Mat_<T, TVT>();
 			mat->_mat = std::make_shared<T>(T::zeros(info.at<int>(0), info.at<int>(1)));
@@ -481,7 +481,7 @@ overload->addOverload("mat_", name, "Element", {
 
 			info.SetReturnValue(mat);
 		}
-		static POLY_METHOD(zeros_ndims				){throw std::exception("not implemented");}
+		static POLY_METHOD(zeros_ndims				){throw std::runtime_error("not implemented");}
 		static POLY_METHOD(ones_rows_cols			){
 			auto mat = new Mat_<T, TVT>();
 			mat->_mat = std::make_shared<T>(T::ones(info.at<int>(0), info.at<int>(1)));
@@ -495,7 +495,7 @@ overload->addOverload("mat_", name, "Element", {
 
 			info.SetReturnValue(mat);
 		}
-		static POLY_METHOD(ones_ndims				){throw std::exception("not implemented");}
+		static POLY_METHOD(ones_ndims				){throw std::runtime_error("not implemented");}
 		static POLY_METHOD(eye_rows_cols			){
 			auto mat = new Mat_<T, TVT>();
 			mat->_mat = std::make_shared<T>(T::eye(info.at<int>(0), info.at<int>(1)));
@@ -508,37 +508,37 @@ overload->addOverload("mat_", name, "Element", {
 
 			info.SetReturnValue(mat);
 		}
-		static POLY_METHOD(create_rows_cols_type	){throw std::exception("not implemented");}
-		static POLY_METHOD(create_size_type			){throw std::exception("not implemented");}
-		static POLY_METHOD(create_ndims_type		){throw std::exception("not implemented");}
-		static POLY_METHOD(create_rows_cols			){throw std::exception("not implemented");}
-		static POLY_METHOD(create_size				){throw std::exception("not implemented");}
-		static POLY_METHOD(create_ndims				){throw std::exception("not implemented");}
-		static POLY_METHOD(Element_idx0				){throw std::exception("not implemented");}
-		static POLY_METHOD(Element_idx0_idx1		){throw std::exception("not implemented");}
-		static POLY_METHOD(Element_idx0_idx1_idx2	){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Addition_mat_ 		){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Addition_scalar		){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Addition_double		){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Substraction_mat_ 	){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Substraction_scalar	){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Substraction_double	){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Multiplication_mat_ 	){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Multiplication_scalar	){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Multiplication_double	){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Division_mat_ 		){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Division_scalar		){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Division_double		){throw std::exception("not implemented");}
-		static POLY_METHOD(op_And_mat_ 				){throw std::exception("not implemented");}
-		static POLY_METHOD(op_And_scalar			){throw std::exception("not implemented");}
-		static POLY_METHOD(op_And_double			){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Or_mat_ 				){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Or_scalar				){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Or_double				){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Xor_mat_ 				){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Xor_scalar			){throw std::exception("not implemented");}
-		static POLY_METHOD(op_Xor_double			){throw std::exception("not implemented");}
-		static POLY_METHOD(op_BinaryNot				){throw std::exception("not implemented");}
+		static POLY_METHOD(create_rows_cols_type	){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(create_size_type			){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(create_ndims_type		){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(create_rows_cols			){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(create_size				){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(create_ndims				){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(Element_idx0				){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(Element_idx0_idx1		){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(Element_idx0_idx1_idx2	){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Addition_mat_ 		){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Addition_scalar		){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Addition_double		){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Substraction_mat_ 	){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Substraction_scalar	){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Substraction_double	){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Multiplication_mat_ 	){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Multiplication_scalar	){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Multiplication_double	){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Division_mat_ 		){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Division_scalar		){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Division_double		){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_And_mat_ 				){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_And_scalar			){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_And_double			){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Or_mat_ 				){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Or_scalar				){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Or_double				){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Xor_mat_ 				){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Xor_scalar			){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_Xor_double			){throw std::runtime_error("not implemented");}
+		static POLY_METHOD(op_BinaryNot				){throw std::runtime_error("not implemented");}
 
 
 
@@ -583,7 +583,7 @@ template<>
 class New_rows_cols_value_imp<cv::Mat_<cv::Point2f>, Point_<cv::Point2f>*> {
 public:
 	static POLY_METHOD(execute) {
-		throw std::exception("this constructor is not implemented for Mat_<Point2f>");
+		throw std::runtime_error("this constructor is not implemented for Mat_<Point2f>");
 	}
 
 };

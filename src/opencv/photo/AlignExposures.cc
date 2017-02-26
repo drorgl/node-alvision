@@ -6,7 +6,7 @@ namespace alignexposures_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("alignexposures_general_callback is empty");
+			throw std::runtime_error("alignexposures_general_callback is empty");
 		}
 		return overload->execute("alignexposures", info);
 	}
@@ -63,6 +63,6 @@ v8::Local<v8::Function> AlignExposures::get_constructor() {
 }
 
 
-POLY_METHOD(AlignExposures::New){throw std::exception("not implemented");}
-POLY_METHOD(AlignExposures::process){throw std::exception("not implemented");}
+POLY_METHOD(AlignExposures::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignExposures::process){throw std::runtime_error("not implemented");}
 

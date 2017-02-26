@@ -257,7 +257,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -275,7 +275,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -293,7 +293,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1_v2) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -311,7 +311,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1_v2_v3) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -329,7 +329,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1_v2_v3_v4) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 		Vec<T>::TVT values[T::channels];
 		for (auto i = 0; i < T::channels; i++) {
@@ -346,7 +346,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1_v2_v3_v4_v5) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -364,7 +364,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1_v2_v3_v4_v5_v6) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -382,7 +382,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1_v2_v3_v4_v5_v6_v7) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -400,7 +400,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1_v2_v3_v4_v5_v6_v7_v8) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -418,7 +418,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -436,7 +436,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_v0_v1_v2_v3_v4_v5_v6_v7_v8_v9_v10_v11_v12_v13) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 		Vec<T>::TVT values[T::channels];
@@ -454,7 +454,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 	template <typename T>
 	POLY_METHOD(Vec<T>::New_values) {
 		if (info.Length() < T::channels) {
-			throw std::exception((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
+			throw std::runtime_error((std::string("constructor for Vec with ") + std::to_string(T::channels) + " should be called with the appropriate number of parameters").c_str());
 		}
 
 
@@ -464,7 +464,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 
 		auto len = T::channels;
 		std::vector<Vec<T>::TVT> values(len);
-		for (auto i = 0; i < vparams.size(); i++) {
+		for (size_t i = 0; i < vparams.size(); i++) {
 			values[i] = vparams[i];
 		}
 		for (auto i = vparams.size(); i < len; i++) {
@@ -657,7 +657,7 @@ void Vec<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<overl
 
 template<typename T>
 POLY_METHOD(Vec<T>::conj) {
-	throw std::exception("not implemented for type, only implemented for Vec<float,2>, Vec<double,2>, Vec<float,4>, Vec<double,4>");
+	throw std::runtime_error("not implemented for type, only implemented for Vec<float,2>, Vec<double,2>, Vec<float,4>, Vec<double,4>");
 }
 
 template<typename T>
@@ -675,14 +675,14 @@ template<typename T, int TCN>
 class cross_vec_imp {
 public:
 	static POLY_METHOD(execute) {
-		throw std::exception("cross-product is valid only for 3 channels");
+		throw std::runtime_error("cross-product is valid only for 3 channels");
 	}
 };
 
 template<typename T>
 class cross_vec_imp<T, 3> {
 public:
-	typedef typename Vec<cv::Vec<T, 3>> VecT;
+	typedef Vec<cv::Vec<T, 3>> VecT;
 	static POLY_METHOD(execute) {
 		auto vec = new VecT();
 		vec->_vec = std::make_shared<cv::Vec<T, 3>>(info.This<VecT*>()->_vec->cross(*info.at<VecT*>(0)->_vec));

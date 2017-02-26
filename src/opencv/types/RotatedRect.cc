@@ -6,7 +6,7 @@ namespace rotatedrect_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("rotatedrect_general_callback is empty");
+			throw std::runtime_error("rotatedrect_general_callback is empty");
 		}
 		return overload->execute("rotatedrect", info);
 	}
@@ -92,17 +92,17 @@ v8::Local<v8::Function> RotatedRect::get_constructor() {
 }
 
 
-POLY_METHOD(RotatedRect::New){throw std::exception("not implemented");}
-POLY_METHOD(RotatedRect::New_center){throw std::exception("not implemented");}
-POLY_METHOD(RotatedRect::New_points){throw std::exception("not implemented");}
-POLY_METHOD(RotatedRect::points){throw std::exception("not implemented");}
-POLY_METHOD(RotatedRect::boundingRect){throw std::exception("not implemented");}
+POLY_METHOD(RotatedRect::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(RotatedRect::New_center){throw std::runtime_error("not implemented");}
+POLY_METHOD(RotatedRect::New_points){throw std::runtime_error("not implemented");}
+POLY_METHOD(RotatedRect::points){throw std::runtime_error("not implemented");}
+POLY_METHOD(RotatedRect::boundingRect){throw std::runtime_error("not implemented");}
 
 
-NAN_GETTER(RotatedRect::center_getter){throw std::exception("not implemented");}
-NAN_SETTER(RotatedRect::center_setter){throw std::exception("not implemented");}
-NAN_GETTER(RotatedRect::size_getter){throw std::exception("not implemented");}
-NAN_SETTER(RotatedRect::size_setter){throw std::exception("not implemented");}
-NAN_GETTER(RotatedRect::angle_getter){throw std::exception("not implemented");}
-NAN_SETTER(RotatedRect::angle_setter){throw std::exception("not implemented");}
+NAN_GETTER(RotatedRect::center_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(RotatedRect::center_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(RotatedRect::size_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(RotatedRect::size_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(RotatedRect::angle_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(RotatedRect::angle_setter){throw std::runtime_error("not implemented");}
 

@@ -18,7 +18,7 @@ template <typename T>
 class Size_ : public overres::ObjectWrap{
 public:
 	typedef typename T::value_type TVT;
-	typedef typename Point_<cv::Point_<TVT>> PointT;
+	typedef Point_<cv::Point_<TVT>> PointT;
 
 
 	static std::string name;
@@ -77,14 +77,14 @@ public:
 template <typename T>
 class Point_ : public overres::ObjectWrap{
 public:
-	typedef typename T CVT;
+	typedef T CVT;
 	typedef typename T::value_type value_type;
-	typedef typename Size_<cv::Size_<value_type>> SizeT;
-	typedef typename Vec<cv::Vec<value_type, 2>> VecT;
-	typedef typename Matx<cv::Matx<value_type, 2, 2>> MatxT;
-	typedef typename Rect_<cv::Rect_<value_type>> RectT;
+	typedef Size_<cv::Size_<value_type>> SizeT;
+	typedef Vec<cv::Vec<value_type, 2>> VecT;
+	typedef Matx<cv::Matx<value_type, 2, 2>> MatxT;
+	typedef Rect_<cv::Rect_<value_type>> RectT;
 
-	static std::string Point_<T>::name;
+	static std::string name;
 	static void Register(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload);
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload);
 
@@ -165,8 +165,8 @@ template <typename T>
 class Rect_ : public overres::ObjectWrap{
 public:
 	typedef typename T::value_type TVT;
-	typedef typename Point_<cv::Point_<TVT>> PointT;
-	typedef typename Size_<cv::Size_<TVT>> SizeT;
+	typedef Point_<cv::Point_<TVT>> PointT;
+	typedef Size_<cv::Size_<TVT>> SizeT;
 	static std::string name;
 	static void Register(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload);
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload);

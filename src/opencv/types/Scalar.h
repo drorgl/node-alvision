@@ -14,7 +14,7 @@ template <class T>
 class Scalar_ : public Vec<cv::Vec<typename T::value_type, 4>>{
 public:
 	typedef typename T::value_type TVT;
-	typedef typename Vec<cv::Vec<TVT, 4>> TVEC;
+	typedef Vec<cv::Vec<TVT, 4>> TVEC;
 
 	//static std::string Scalar_<T>::name;
 
@@ -263,7 +263,7 @@ Nan::Persistent<FunctionTemplate> Scalar_<T>::constructor;
 
 
 
-typedef typename Scalar_<cv::Scalar_<double>> Scalar;
+typedef Scalar_<cv::Scalar_<double>> Scalar;
 
 namespace ScalarInit {
 	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

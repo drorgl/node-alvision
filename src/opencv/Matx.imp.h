@@ -10,6 +10,7 @@
 #include <class_typename.h>
 #include "IOArray.h"
 #include "array_accessors/Matx_array_accessor.h"
+#include "TrackedPtr.h"
 
 namespace matx_general_callback {
 	extern std::shared_ptr<overload_resolution> overload;
@@ -794,8 +795,6 @@ template <typename T>
 
 	template <typename T>
 	POLY_METHOD(Matx<T>::op_Equals_matx_matx) {
-		auto matx = new Matx<T>();
-
 		auto a = *info.at<Matx<T>*>(0)->_matx;
 		auto b = *info.at<Matx<T>*>(1)->_matx;
 
@@ -804,8 +803,6 @@ template <typename T>
 
 	template <typename T>
 	POLY_METHOD(Matx<T>::op_NotEquals_matx_matx) {
-		auto matx = new Matx<T>();
-
 		auto a = *info.at<Matx<T>*>(0)->_matx;
 		auto b = *info.at<Matx<T>*>(1)->_matx;
 
@@ -814,8 +811,6 @@ template <typename T>
 
 	template <typename T>
 	POLY_METHOD(Matx<T>::norm_matx) {
-		auto matx = new Matx<T>();
-
 		auto m = *info.at<Matx<T>*>(0)->_matx;
 
 		info.SetReturnValue(cv::norm(m));
@@ -863,8 +858,8 @@ template <typename T>
 		info.SetReturnValue(this_->ddot(*info.at<Matx<T>*>(0)->_matx));
 	}
 
-	template <typename T>
-	POLY_METHOD(Matx<T>::inv_method);
+	/*template <typename T>
+	POLY_METHOD(Matx<T>::inv_method);*/
 
 	template <typename T>
 	NAN_GETTER(Matx<T>::val_getter) {
@@ -966,7 +961,7 @@ template<typename T, typename MAT_TYPE, class = void>
 class inv_imp {
 public:
 	static POLY_METHOD(run) {
-		throw std::exception("inv is unavailable for this type");
+		throw std::runtime_error("inv is unavailable for this type");
 	}
 };
 
@@ -990,7 +985,7 @@ public:
 
 template<typename T>
 POLY_METHOD(Matx<T>::inv_method) {
-	inv_imp<T, T::mat_type>::run(info);
+	inv_imp<T,typename T::mat_type>::run(info);
 }
 
 #endif

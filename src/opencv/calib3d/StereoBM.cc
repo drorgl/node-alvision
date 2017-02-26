@@ -5,7 +5,7 @@ namespace stereobm_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("stereobm_general_callback is empty");
+			throw std::runtime_error("stereobm_general_callback is empty");
 		}
 		return overload->execute("stereobm", info);
 	}

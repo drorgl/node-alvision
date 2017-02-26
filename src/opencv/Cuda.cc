@@ -11,7 +11,7 @@ namespace cuda_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("cuda_general_callback is empty");
+			throw std::runtime_error("cuda_general_callback is empty");
 		}
 		return overload->execute("cuda", info);
 	}
@@ -256,19 +256,19 @@ Cuda::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload)
 };
 
 
-POLY_METHOD(Cuda::ensureSizeIsEnough) { throw std::exception("not implemented"); }
-POLY_METHOD(Cuda::setBufferPoolConfig) { throw std::exception("not implemented"); }
-POLY_METHOD(Cuda::setBufferPoolUsage){throw std::exception("not implemented");}
-POLY_METHOD(Cuda::registerPageLocked){throw std::exception("not implemented");}
-POLY_METHOD(Cuda::unregisterPageLocked){throw std::exception("not implemented");}
+POLY_METHOD(Cuda::ensureSizeIsEnough) { throw std::runtime_error("not implemented"); }
+POLY_METHOD(Cuda::setBufferPoolConfig) { throw std::runtime_error("not implemented"); }
+POLY_METHOD(Cuda::setBufferPoolUsage){throw std::runtime_error("not implemented");}
+POLY_METHOD(Cuda::registerPageLocked){throw std::runtime_error("not implemented");}
+POLY_METHOD(Cuda::unregisterPageLocked){throw std::runtime_error("not implemented");}
 POLY_METHOD(Cuda::getCudaEnabledDeviceCount){
 	auto res = cv::cuda::getCudaEnabledDeviceCount();
 	info.SetReturnValue(res);
 }
-POLY_METHOD(Cuda::setDevice){throw std::exception("not implemented");}
-POLY_METHOD(Cuda::getDevice){throw std::exception("not implemented");}
-POLY_METHOD(Cuda::resetDevice){throw std::exception("not implemented");}
-POLY_METHOD(Cuda::deviceSupports){throw std::exception("not implemented");}
-POLY_METHOD(Cuda::printCudaDeviceInfo){throw std::exception("not implemented");}
-POLY_METHOD(Cuda::printShortCudaDeviceInfo){throw std::exception("not implemented");}
+POLY_METHOD(Cuda::setDevice){throw std::runtime_error("not implemented");}
+POLY_METHOD(Cuda::getDevice){throw std::runtime_error("not implemented");}
+POLY_METHOD(Cuda::resetDevice){throw std::runtime_error("not implemented");}
+POLY_METHOD(Cuda::deviceSupports){throw std::runtime_error("not implemented");}
+POLY_METHOD(Cuda::printCudaDeviceInfo){throw std::runtime_error("not implemented");}
+POLY_METHOD(Cuda::printShortCudaDeviceInfo){throw std::runtime_error("not implemented");}
 

@@ -7,7 +7,7 @@ namespace cuda {
 		std::shared_ptr<overload_resolution> overload;
 		NAN_METHOD(callback) {
 			if (overload == nullptr) {
-				throw std::exception("deviceinfo_general_callback is empty");
+				throw std::runtime_error("deviceinfo_general_callback is empty");
 			}
 			return overload->execute("deviceinfo", info);
 		}
@@ -367,64 +367,64 @@ namespace cuda {
 		ret->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
-	POLY_METHOD(DeviceInfo::deviceID) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::name) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::totalGlobalMem) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::sharedMemPerBlock) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::regsPerBlock) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::warpSize) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::memPitch) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxThreadsPerBlock) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxThreadsDim) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxGridSize) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::clockRate) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::totalConstMem) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::majorVersion) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::minorVersion) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::textureAlignment) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::texturePitchAlignment) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::multiProcessorCount) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::kernelExecTimeoutEnabled) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::integrated) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::canMapHostMemory) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::computeMode) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture1D) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture1DMipmap) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture1DLinear) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture2D) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture2DMipmap) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture2DLinear) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture2DGather) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture3D) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTextureCubemap) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture1DLayered) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTexture2DLayered) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxTextureCubemapLayered) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxSurface1D) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxSurface2D) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxSurface3D) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxSurface1DLayered) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxSurface2DLayered) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxSurfaceCubemap) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxSurfaceCubemapLayered) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::surfaceAlignment) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::concurrentKernels) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::ECCEnabled) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::pciBusID) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::pciDeviceID) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::pciDomainID) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::tccDriver) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::asyncEngineCount) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::unifiedAddressing) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::memoryClockRate) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::memoryBusWidth) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::l2CacheSize) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::maxThreadsPerMultiProcessor) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::queryMemory) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::freeMemory) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::totalMemory) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::supports) { throw std::exception("not implemented"); }
-	POLY_METHOD(DeviceInfo::isCompatible) { throw std::exception("not implemented"); }
+	POLY_METHOD(DeviceInfo::deviceID) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::name) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::totalGlobalMem) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::sharedMemPerBlock) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::regsPerBlock) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::warpSize) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::memPitch) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxThreadsPerBlock) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxThreadsDim) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxGridSize) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::clockRate) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::totalConstMem) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::majorVersion) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::minorVersion) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::textureAlignment) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::texturePitchAlignment) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::multiProcessorCount) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::kernelExecTimeoutEnabled) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::integrated) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::canMapHostMemory) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::computeMode) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture1D) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture1DMipmap) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture1DLinear) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture2D) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture2DMipmap) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture2DLinear) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture2DGather) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture3D) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTextureCubemap) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture1DLayered) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTexture2DLayered) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxTextureCubemapLayered) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxSurface1D) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxSurface2D) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxSurface3D) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxSurface1DLayered) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxSurface2DLayered) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxSurfaceCubemap) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxSurfaceCubemapLayered) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::surfaceAlignment) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::concurrentKernels) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::ECCEnabled) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::pciBusID) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::pciDeviceID) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::pciDomainID) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::tccDriver) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::asyncEngineCount) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::unifiedAddressing) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::memoryClockRate) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::memoryBusWidth) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::l2CacheSize) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::maxThreadsPerMultiProcessor) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::queryMemory) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::freeMemory) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::totalMemory) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::supports) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(DeviceInfo::isCompatible) { throw std::runtime_error("not implemented"); }
 
 };
 //#endif

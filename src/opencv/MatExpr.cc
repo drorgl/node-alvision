@@ -7,7 +7,7 @@ namespace matexpr_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("matexpr_general_callback is empty");
+			throw std::runtime_error("matexpr_general_callback is empty");
 		}
 		return overload->execute("matexpr", info);
 	}
@@ -321,16 +321,16 @@ cv::_InputArray			MatExpr::GetInputArrayOfArrays() {
 	return *_matExpr;
 }
 cv::_OutputArray					MatExpr::GetOutputArray() {
-	return *_matExpr;
+	throw std::runtime_error("unable to convert MatExpr to OutputArray, doesn't make sense");
 }
 cv::_OutputArray			MatExpr::GetOutputArrayOfArrays() {
-	return *_matExpr;
+	throw std::runtime_error("unable to convert MatExpr to OutputArrayOfArrays, doesn't make sense");
 }
 cv::_InputOutputArray			MatExpr::GetInputOutputArray() {
-	return *_matExpr;
+	throw std::runtime_error("unable to convert MatExpr to InputOutputArray, doesn't make sense");
 }
 cv::_InputOutputArray	MatExpr::GetInputOutputArrayOfArrays() {
-	return *_matExpr;
+	throw std::runtime_error("unable to convert MatExpr to InputOutputArrayOfArrays, doesn't make sense");
 }
 
 
@@ -354,7 +354,7 @@ POLY_METHOD(MatExpr::New_mat) {
 
 //new (_op: MatOp, _flags : _st.int, _a ? : Mat, _b ? : Mat) : MatExpr{ }
 POLY_METHOD(MatExpr::New_matop_int_mat_mat) {
-	throw std::exception("matop not implemented");
+	throw std::runtime_error("matop not implemented");
 	//auto op	= info.at<MatOp*>(0);
 	//auto flags = info.at<int>(1);
 	//auto a		= info.at<Matrix*>(2); 
@@ -595,7 +595,7 @@ POLY_METHOD(MatExpr::op_Multiplication_static_mat_mat) {
 	info.SetReturnValue(matexpr);
 }
 POLY_METHOD(MatExpr::op_Multiplication_static_mat_scalar) { 
-	throw std::exception("Mat and Scalar multiplication is not supported");
+	throw std::runtime_error("Mat and Scalar multiplication is not supported");
 	//auto a = *info.at<Matrix*>(0)->_mat;
 	//auto b = *info.at<Scalar*>(1)->_scalar;
 	//
@@ -628,7 +628,7 @@ POLY_METHOD(MatExpr::op_Multiplication_static_matexpr_mat) {
 	info.SetReturnValue(matexpr);
 }
 POLY_METHOD(MatExpr::op_Multiplication_static_matexpr_scalar) {
-	throw std::exception("MatExpr and Scalar multiplication is not supported");
+	throw std::runtime_error("MatExpr and Scalar multiplication is not supported");
 	//auto a = *info.at<MatExpr*>(0)->_matExpr;
 	//auto b = *info.at<Scalar*>(1)->_scalar;
 	//
@@ -653,7 +653,7 @@ POLY_METHOD(MatExpr::op_Multiplication_static_matexpr_double) {
 	info.SetReturnValue(matexpr);
 }
 POLY_METHOD(MatExpr::op_Multiplication_static_scalar_matexpr) { 
-	throw std::exception("Scalar and MatExpr multiplication is not supported");
+	throw std::runtime_error("Scalar and MatExpr multiplication is not supported");
 	//auto a = *info.at<Scalar*>(0)->_scalar;
 	//auto b = *info.at<MatExpr*>(1)->_matExpr;
 	//
@@ -662,7 +662,7 @@ POLY_METHOD(MatExpr::op_Multiplication_static_scalar_matexpr) {
 	//info.SetReturnValue(matexpr);
 }
 POLY_METHOD(MatExpr::op_Multiplication_static_scalar_mat) { 
-	throw std::exception("Scalar and Matrix multiplication is not supported");
+	throw std::runtime_error("Scalar and Matrix multiplication is not supported");
 	//auto a = *info.at<Scalar*>(0)->_scalar;
 	//auto b = *info.at<Matrix*>(1)->_mat;
 	//
@@ -698,7 +698,7 @@ POLY_METHOD(MatExpr::op_Division_static_mat_mat) {
 	info.SetReturnValue(matexpr);
 }
 POLY_METHOD(MatExpr::op_Division_static_mat_scalar) { 
-	throw std::exception("Mat and Scalar division is not supported");
+	throw std::runtime_error("Mat and Scalar division is not supported");
 	//auto a = *info.at<Matrix*>(0)->_mat;
 	//auto b = *info.at<Scalar*>(1)->_scalar;
 	//
@@ -731,7 +731,7 @@ POLY_METHOD(MatExpr::op_Division_static_matexpr_mat) {
 	info.SetReturnValue(matexpr);
 }
 POLY_METHOD(MatExpr::op_Division_static_matexpr_scalar) {
-	throw std::exception("MatExpr and Scalar division is not supported");
+	throw std::runtime_error("MatExpr and Scalar division is not supported");
 	//auto a = *info.at<MatExpr*>(0)->_matExpr;
 	//auto b = *info.at<Scalar*>(1)->_scalar;
 	//
@@ -756,7 +756,7 @@ POLY_METHOD(MatExpr::op_Division_static_matexpr_double) {
 	info.SetReturnValue(matexpr);
 }
 POLY_METHOD(MatExpr::op_Division_static_scalar_matexpr) {
-	throw std::exception("Scalar and MatExpr division is not supported");
+	throw std::runtime_error("Scalar and MatExpr division is not supported");
 	//auto a = *info.at<Scalar*>(0)->_scalar;
 	//auto b = *info.at<MatExpr*>(1)->_matExpr;
 	//
@@ -765,7 +765,7 @@ POLY_METHOD(MatExpr::op_Division_static_scalar_matexpr) {
 	//info.SetReturnValue(matexpr);
 }
 POLY_METHOD(MatExpr::op_Division_static_scalar_mat) { 
-	throw std::exception("Scalar and Mat division is not supported");
+	throw std::runtime_error("Scalar and Mat division is not supported");
 	//auto a = *info.at<Scalar*>(0)->_scalar;
 	//auto b = *info.at<Matrix*>(1)->_mat;
 	//
@@ -1248,7 +1248,7 @@ POLY_METHOD(MatExpr::op_Multiplication_matexpr) {
 	info.SetReturnValue(ret);
 }
 POLY_METHOD(MatExpr::op_Multiplication_scalar) { 
-	throw std::exception("Scalar multiplication is not supported");
+	throw std::runtime_error("Scalar multiplication is not supported");
 	//auto this_ = *info.This<MatExpr*>()->_matExpr;
 	//auto scalar = *info.at<Scalar*>(0)->_scalar;
 	//
@@ -1275,7 +1275,7 @@ POLY_METHOD(MatExpr::op_Division_matexpr) {
 	info.SetReturnValue(ret);
 }
 POLY_METHOD(MatExpr::op_Division_scalar) {
-	throw std::exception("Scalar division is not supported");
+	throw std::runtime_error("Scalar division is not supported");
 	//auto this_ = *info.This<MatExpr*>()->_matExpr;
 	//auto scalar = *info.at<Scalar*>(0)->_scalar;
 	//

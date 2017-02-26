@@ -5,7 +5,7 @@ namespace videowriter_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("videowriter_general_callback is empty");
+			throw std::runtime_error("videowriter_general_callback is empty");
 		}
 		return overload->execute("videowriter", info);
 	}
@@ -223,7 +223,7 @@ POLY_METHOD(VideoWriter::fourcc) {
 	auto c4 = info.at<std::string>(3);
 
 	if (c1.size() != 1 || c2.size() != 1 || c3.size() != 1 || c4.size() != 1) {
-		throw std::exception("c1-c4 must be one character");
+		throw std::runtime_error("c1-c4 must be one character");
 	}
 
 	auto res = cv::VideoWriter::fourcc(c1[0], c2[0], c3[0], c4[0]);

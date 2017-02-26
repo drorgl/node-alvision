@@ -6,7 +6,7 @@ namespace mergeexposures_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("mergeexposures_general_callback is empty");
+			throw std::runtime_error("mergeexposures_general_callback is empty");
 		}
 		return overload->execute("mergeexposures", info);
 	}
@@ -63,6 +63,6 @@ v8::Local<v8::Function> MergeExposures::get_constructor() {
 	return Nan::New(constructor)->GetFunction();
 }
 
-POLY_METHOD(MergeExposures::New){throw std::exception("not implemented");}
-POLY_METHOD(MergeExposures::process){throw std::exception("not implemented");}
+POLY_METHOD(MergeExposures::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeExposures::process){throw std::runtime_error("not implemented");}
 

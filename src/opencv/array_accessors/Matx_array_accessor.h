@@ -34,14 +34,14 @@ public:
 	}
 	virtual v8::Local<v8::Value> get(int index) {
 		if (index >= _max_size || index < 0) {
-			throw std::exception("index out of bounds");
+			throw std::runtime_error("index out of bounds");
 		}
 
 		return _converter->convert(_matx->val[index]);
 	}
 	virtual void set(int index, v8::Local<v8::Value> value) {
 		if (index >= _max_size || index < 0) {
-			throw std::exception("index out of bounds");
+			throw std::runtime_error("index out of bounds");
 		}
 
 		_matx->val[index] = _converter->convert(value);

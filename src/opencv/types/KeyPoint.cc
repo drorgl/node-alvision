@@ -6,7 +6,7 @@ namespace keypoint_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("keypoint_general_callback is empty");
+			throw std::runtime_error("keypoint_general_callback is empty");
 		}
 		return overload->execute("keypoint", info);
 	}
@@ -161,7 +161,7 @@ POLY_METHOD(KeyPoint::hash) {
 	info.SetReturnValue((int)this_->_keyPoint->hash());
 }
 POLY_METHOD(KeyPoint::convert_keypoint) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 	//TODO: the conversio is for reference, so current overload does not fulfil the conditions....
 	//auto keypoints = info.at<std::shared_ptr<std::vector<KeyPoint>>>(0);
 	//auto points2f = info.at<std::shared_ptr<std::vector<Point2f>>>(1);
@@ -170,7 +170,7 @@ POLY_METHOD(KeyPoint::convert_keypoint) {
 	//cv::KeyPoint::convert(...)
 }
 POLY_METHOD(KeyPoint::convert_point2f) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 	//TODO: the conversio is for reference, so current overload does not fulfil the conditions....
 	//auto  points2f = info.at<std::shared_ptr<std::vector<std::shared_ptr<Point2f>>>>(0);
 	//auto  keypoints = info.at<std::shared_ptr<std::vector<std::shared_ptr<KeyPoint>>>>(1);

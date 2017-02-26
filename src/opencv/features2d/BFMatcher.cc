@@ -4,7 +4,7 @@ namespace bfmatcher_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("bfmatcher_general_callback is empty");
+			throw std::runtime_error("bfmatcher_general_callback is empty");
 		}
 		return overload->execute("bfmatcher", info);
 	}
@@ -86,7 +86,7 @@ v8::Local<v8::Function> BFMatcher::get_constructor() {
 }
 
 
-POLY_METHOD(BFMatcher::New){throw std::exception("not implemented");}
-POLY_METHOD(BFMatcher::isMaskSupported){throw std::exception("not implemented");}
-POLY_METHOD(BFMatcher::clone){throw std::exception("not implemented");}
+POLY_METHOD(BFMatcher::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(BFMatcher::isMaskSupported){throw std::runtime_error("not implemented");}
+POLY_METHOD(BFMatcher::clone){throw std::runtime_error("not implemented");}
 

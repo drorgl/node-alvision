@@ -7,7 +7,7 @@ namespace tonemapdrago_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("tonemapdrago_general_callback is empty");
+			throw std::runtime_error("tonemapdrago_general_callback is empty");
 		}
 		return overload->execute("tonemapdrago", info);
 	}
@@ -90,9 +90,9 @@ v8::Local<v8::Function> TonemapDrago::get_constructor() {
 
 
 
-POLY_METHOD(TonemapDrago::New){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDrago::getSaturation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDrago::setSaturation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDrago::getBias){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDrago::setBias){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDrago::createTonemapDrago){throw std::exception("not implemented");}
+POLY_METHOD(TonemapDrago::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDrago::getSaturation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDrago::setSaturation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDrago::getBias){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDrago::setBias){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDrago::createTonemapDrago){throw std::runtime_error("not implemented");}

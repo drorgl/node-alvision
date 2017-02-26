@@ -30,7 +30,7 @@ namespace features2d_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("features2d_general_callback is empty");
+			throw std::runtime_error("features2d_general_callback is empty");
 		}
 		return overload->execute("features2d", info);
 	}
@@ -387,10 +387,10 @@ BOWImgDescriptorExtractor::Init(target, overload);
 
 
 
-POLY_METHOD(features2d::FAST_a){throw std::exception("not implemented");}
-POLY_METHOD(features2d::FAST_b){throw std::exception("not implemented");}
-POLY_METHOD(features2d::AGAST_a){throw std::exception("not implemented");}
-POLY_METHOD(features2d::AGAST_b){throw std::exception("not implemented");}
+POLY_METHOD(features2d::FAST_a){throw std::runtime_error("not implemented");}
+POLY_METHOD(features2d::FAST_b){throw std::runtime_error("not implemented");}
+POLY_METHOD(features2d::AGAST_a){throw std::runtime_error("not implemented");}
+POLY_METHOD(features2d::AGAST_b){throw std::runtime_error("not implemented");}
 POLY_METHOD(features2d::drawKeypoints){
 	auto image		= info.at<IOArray*>(0)->GetInputArray();
 	auto keypoints	= *info.at<std::shared_ptr<std::vector<KeyPoint*>>>(1);
@@ -403,10 +403,10 @@ POLY_METHOD(features2d::drawKeypoints){
 
 	cv::drawKeypoints(image, *vec_kp, outImage, *color, flags);
 }
-POLY_METHOD(features2d::drawMatches){throw std::exception("not implemented");}
-POLY_METHOD(features2d::drawMatchesKnn){throw std::exception("not implemented");}
-POLY_METHOD(features2d::evaluateFeatureDetector){throw std::exception("not implemented");}
-POLY_METHOD(features2d::computeRecallPrecisionCurve){throw std::exception("not implemented");}
-POLY_METHOD(features2d::getRecall){throw std::exception("not implemented");}
-POLY_METHOD(features2d::getNearestPoint){throw std::exception("not implemented");}
+POLY_METHOD(features2d::drawMatches){throw std::runtime_error("not implemented");}
+POLY_METHOD(features2d::drawMatchesKnn){throw std::runtime_error("not implemented");}
+POLY_METHOD(features2d::evaluateFeatureDetector){throw std::runtime_error("not implemented");}
+POLY_METHOD(features2d::computeRecallPrecisionCurve){throw std::runtime_error("not implemented");}
+POLY_METHOD(features2d::getRecall){throw std::runtime_error("not implemented");}
+POLY_METHOD(features2d::getNearestPoint){throw std::runtime_error("not implemented");}
 

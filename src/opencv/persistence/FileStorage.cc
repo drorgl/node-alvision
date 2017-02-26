@@ -12,7 +12,7 @@ namespace filestorage_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("filestorage_general_callback is empty");
+			throw std::runtime_error("filestorage_general_callback is empty");
 		}
 		return overload->execute("filestorage", info);
 	}
@@ -460,8 +460,8 @@ POLY_METHOD(FileStorage::New) {
 	 auto this_ = info.This<FileStorage*>();
 	 *this_->_fileStorage << info.at<std::string>(0) << *info.at<SparseMat*>(1)->_sparseMat;
  }
- POLY_METHOD(FileStorage::write_KeyPoints){throw std::exception("not implemented");}
- POLY_METHOD(FileStorage::write_Dmatches){throw std::exception("not implemented");}
+ POLY_METHOD(FileStorage::write_KeyPoints){throw std::runtime_error("not implemented");}
+ POLY_METHOD(FileStorage::write_Dmatches){throw std::runtime_error("not implemented");}
  POLY_METHOD(FileStorage::writeScalar_int){
 	 auto this_ = info.This<FileStorage*>();
 	 *this_->_fileStorage << info.at<int>(0);

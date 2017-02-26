@@ -8,7 +8,7 @@ namespace hostmem_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("hostmem_general_callback is empty");
+			throw std::runtime_error("hostmem_general_callback is empty");
 		}
 		return overload->execute("hostmem", info);
 	}
@@ -225,28 +225,28 @@ namespace cuda {
 
 
 
-	POLY_METHOD(HostMem::New_alloc_type) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::New_hostmem) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::New_rows_cols_type_alloc_type) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::New_size_type_alloc_type) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::New_ioarray_alloc_type) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::swap) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::clone) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::create_rows_cols_type) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::create_size_type) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::reshape) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::release) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::createMatHeader) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::createGpuMatHeader) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::isContinuous) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::elemSize) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::elemSize1) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::type) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::depth) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::channels) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::step1) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::size) { throw std::exception("not implemented"); }
-	POLY_METHOD(HostMem::empty) { throw std::exception("not implemented"); }
+	POLY_METHOD(HostMem::New_alloc_type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::New_hostmem) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::New_rows_cols_type_alloc_type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::New_size_type_alloc_type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::New_ioarray_alloc_type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::swap) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::clone) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::create_rows_cols_type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::create_size_type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::reshape) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::release) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::createMatHeader) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::createGpuMatHeader) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::isContinuous) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::elemSize) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::elemSize1) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::depth) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::channels) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::step1) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::size) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(HostMem::empty) { throw std::runtime_error("not implemented"); }
 
 
 	NAN_GETTER(HostMem::flags_getter) { return Nan::ThrowError("not implemented"); }

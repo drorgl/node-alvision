@@ -23,7 +23,7 @@ namespace calib3d_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("calib3d_general_callback is empty");
+			throw std::runtime_error("calib3d_general_callback is empty");
 		}
 		return overload->execute("calib3d", info);
 	}
@@ -1046,7 +1046,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
   }
 
   POLY_METHOD(calib3d::getOptimalNewCameraMatrix) {
-	  throw std::exception("not implemented");
+	  throw std::runtime_error("not implemented");
 
 	  //auto cameraMatrix = info.at<IOArray*>(0)->GetInputArray();
 	  //auto distCoeffs = info.at<IOArray*>(1)->GetInputArray();

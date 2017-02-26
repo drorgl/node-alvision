@@ -12,9 +12,9 @@ namespace point3_general_callback {
 template <typename T>
 class Point3_ : public overres::ObjectWrap {
 public:
-	typedef typename T CVT;
+	typedef T CVT;
 	typedef typename T::value_type TVT;
-	typedef typename Vec<cv::Vec<typename T::value_type,3>> Vec3T;
+	typedef Vec<cv::Vec<typename T::value_type,3>> Vec3T;
 
 	static std::string name;
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
@@ -551,7 +551,7 @@ public:
 
 	static POLY_METHOD(op_Multiplication_a_pt) {
 		
-		auto a = info.at<double>(0);
+		//auto a = info.at<double>(0);
 		auto pt2 = *info.at<Point3_<T>*>(1)->_point3;
 
 		auto ret = new Point3_<T>();
@@ -718,9 +718,9 @@ template <typename T>
 std::string Point3_<T>::name;
 
 
-typedef typename Point3_<cv::Point3i> Point3i;
-typedef typename Point3_<cv::Point3f> Point3f;
-typedef typename Point3_<cv::Point3d> Point3d;
+typedef Point3_<cv::Point3i> Point3i;
+typedef Point3_<cv::Point3f> Point3f;
+typedef Point3_<cv::Point3d> Point3d;
 
 namespace Point3Init {
 	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

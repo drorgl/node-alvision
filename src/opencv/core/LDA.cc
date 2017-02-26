@@ -6,7 +6,7 @@ namespace lda_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("lda_general_callback is empty");
+			throw std::runtime_error("lda_general_callback is empty");
 		}
 		return overload->execute("lda", info);
 	}
@@ -145,40 +145,40 @@ POLY_METHOD(LDA::New_num) {
 }
 
  POLY_METHOD(LDA::New_array){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
 
  POLY_METHOD(LDA::subspaceProject){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::subspaceReconstruct){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::save){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::load){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::save_filestorage){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::load_filestorage){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::compute){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::project){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::reconstruct){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::eigenvectors){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
  POLY_METHOD(LDA::eigenvalues){
-	 throw std::exception("not implemented");
+	 throw std::runtime_error("not implemented");
  }
 

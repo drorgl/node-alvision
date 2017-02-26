@@ -6,7 +6,7 @@ namespace tonemapmantiuk_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("tonemapmantiuk_general_callback is empty");
+			throw std::runtime_error("tonemapmantiuk_general_callback is empty");
 		}
 		return overload->execute("tonemapmantiuk", info);
 	}
@@ -88,10 +88,10 @@ v8::Local<v8::Function> TonemapMantiuk::get_constructor() {
 
 
 
-POLY_METHOD(TonemapMantiuk::New){throw std::exception("not implemented");}
-POLY_METHOD(TonemapMantiuk::getScale){throw std::exception("not implemented");}
-POLY_METHOD(TonemapMantiuk::setScale){throw std::exception("not implemented");}
-POLY_METHOD(TonemapMantiuk::getSaturation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapMantiuk::setSaturation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapMantiuk::createTonemapMantiuk){throw std::exception("not implemented");}
+POLY_METHOD(TonemapMantiuk::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapMantiuk::getScale){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapMantiuk::setScale){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapMantiuk::getSaturation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapMantiuk::setSaturation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapMantiuk::createTonemapMantiuk){throw std::runtime_error("not implemented");}
 

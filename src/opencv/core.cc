@@ -27,7 +27,7 @@ namespace core_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("core_general_callback is empty");
+			throw std::runtime_error("core_general_callback is empty");
 		}
 		return overload->execute("core", info);
 	}
@@ -2852,37 +2852,37 @@ pass them with the ( flags = KMEANS_USE_INITIAL_LABELS ) flag, and then choose t
 /////////////////////////////// Formatted output of cv::Mat ///////////////////////////
 
 /** @todo document */
-interface Formatted
-{
- //   public:
- //   virtual const char* next() = 0;
- //   virtual void reset() = 0;
- //   virtual ~Formatted();
-};
+//interface Formatted
+//{
+// //   public:
+// //   virtual const char* next() = 0;
+// //   virtual void reset() = 0;
+// //   virtual ~Formatted();
+//};
 
 /** @todo document */
-interface Formatter
-{
- //   public:
- //   enum { FMT_DEFAULT = 0,
- //       FMT_MATLAB = 1,
- //       FMT_CSV = 2,
- //       FMT_PYTHON = 3,
- //       FMT_NUMPY = 4,
- //       FMT_C = 5
- //   };
- //
- //   virtual ~Formatter();
- //
- //   virtual Ptr< Formatted > format(const Mat& mtx) const = 0;
- //
- //   virtual void set32fPrecision(int p = 8) = 0;
- //   virtual void set64fPrecision(int p = 16) = 0;
- //   virtual void setMultiline(bool ml = true) = 0;
- //
- //   static Ptr < Formatter > get(int fmt = FMT_DEFAULT);
-
-};
+//interface Formatter
+//{
+// //   public:
+// //   enum { FMT_DEFAULT = 0,
+// //       FMT_MATLAB = 1,
+// //       FMT_CSV = 2,
+// //       FMT_PYTHON = 3,
+// //       FMT_NUMPY = 4,
+// //       FMT_C = 5
+// //   };
+// //
+// //   virtual ~Formatter();
+// //
+// //   virtual Ptr< Formatted > format(const Mat& mtx) const = 0;
+// //
+// //   virtual void set32fPrecision(int p = 8) = 0;
+// //   virtual void set64fPrecision(int p = 16) = 0;
+// //   virtual void setMultiline(bool ml = true) = 0;
+// //
+// //   static Ptr < Formatter > get(int fmt = FMT_DEFAULT);
+//
+//};
 
 //static inline
 //String & operator << (String & out, Ptr < Formatted > fmtd)
@@ -3070,10 +3070,10 @@ interface Formatter
 
 
 
-POLY_METHOD(core::swap_mat){throw std::exception("not implemented");}
-POLY_METHOD(core::swap_umat){throw std::exception("not implemented");}
-POLY_METHOD(core::borderInterpolate){throw std::exception("not implemented");}
-POLY_METHOD(core::copyMakeBorder){throw std::exception("not implemented");}
+POLY_METHOD(core::swap_mat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::swap_umat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::borderInterpolate){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::copyMakeBorder){throw std::runtime_error("not implemented");}
 POLY_METHOD(core::add){
 	auto src1 = info.at<IOArray*>(0)->GetInputArray();
 	auto src2 = info.at<IOArray*>(1)->GetInputArray();
@@ -3084,11 +3084,11 @@ POLY_METHOD(core::add){
 	cv::add(src1, src2, dst, mask, dtype);
 
 }
-POLY_METHOD(core::subtract){throw std::exception("not implemented");}
-POLY_METHOD(core::multiply){throw std::exception("not implemented");}
-POLY_METHOD(core::divide_mat){throw std::exception("not implemented");}
-POLY_METHOD(core::divide_scale){throw std::exception("not implemented");}
-POLY_METHOD(core::scaleAdd){throw std::exception("not implemented");}
+POLY_METHOD(core::subtract){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::multiply){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::divide_mat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::divide_scale){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::scaleAdd){throw std::runtime_error("not implemented");}
 POLY_METHOD(core::addWeighted){
 	auto src1 = info.at<IOArray*>(0)->GetInputArray();
 	auto alpha = info.at<double>(1);
@@ -3100,13 +3100,13 @@ POLY_METHOD(core::addWeighted){
 
 	cv::addWeighted(src1, alpha, src2, beta, gamma, dst, dtype);
 }
-POLY_METHOD(core::convertScaleAbs){throw std::exception("not implemented");}
-POLY_METHOD(core::LUT){throw std::exception("not implemented");}
-POLY_METHOD(core::sum){throw std::exception("not implemented");}
-POLY_METHOD(core::countNonZero){throw std::exception("not implemented");}
-POLY_METHOD(core::findNonZero){throw std::exception("not implemented");}
-POLY_METHOD(core::mean){throw std::exception("not implemented");}
-POLY_METHOD(core::meanStdDev){throw std::exception("not implemented");}
+POLY_METHOD(core::convertScaleAbs){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::LUT){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::sum){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::countNonZero){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::findNonZero){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::mean){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::meanStdDev){throw std::runtime_error("not implemented");}
 POLY_METHOD(core::norm){
 	auto src1		= info.at<IOArray*>(0)->GetInputArray();
 	auto normType = info.at<int>(1);
@@ -3127,37 +3127,37 @@ POLY_METHOD(core::norm_simple){
 	auto normType	= info.at<int>(1);
 	info.SetReturnValue(cv::norm(src, normType));
 }
-POLY_METHOD(core::PSNR){throw std::exception("not implemented");}
-POLY_METHOD(core::batchDistance){throw std::exception("not implemented");}
-POLY_METHOD(core::normalize){throw std::exception("not implemented");}
-POLY_METHOD(core::normalize_sparse){throw std::exception("not implemented");}
-POLY_METHOD(core::minMaxIdx){throw std::exception("not implemented");}
-POLY_METHOD(core::minMaxLoc_sparse){throw std::exception("not implemented");}
-POLY_METHOD(core::minMaxLoc){throw std::exception("not implemented");}
-POLY_METHOD(core::reduce){throw std::exception("not implemented");}
-POLY_METHOD(core::merge_arr){throw std::exception("not implemented");}
-POLY_METHOD(core::merge_size){throw std::exception("not implemented");}
-POLY_METHOD(core::split_array){throw std::exception("not implemented");}
-POLY_METHOD(core::split_mat){throw std::exception("not implemented");}
-POLY_METHOD(core::mixChannels_arr_npairs){throw std::exception("not implemented");}
-POLY_METHOD(core::mixChannels_arr){throw std::exception("not implemented");}
-POLY_METHOD(core::mixChannels_mat_npairs){throw std::exception("not implemented");}
-POLY_METHOD(core::mixChannels_mat){throw std::exception("not implemented");}
-POLY_METHOD(core::extractChannel){throw std::exception("not implemented");}
-POLY_METHOD(core::insertChannel){throw std::exception("not implemented");}
-POLY_METHOD(core::flip){throw std::exception("not implemented");}
-POLY_METHOD(core::repeat){throw std::exception("not implemented");}
-POLY_METHOD(core::repeat_mat){throw std::exception("not implemented");}
-POLY_METHOD(core::hconcat_mat){throw std::exception("not implemented");}
-POLY_METHOD(core::hconcat_inputarray){throw std::exception("not implemented");}
-POLY_METHOD(core::hconcat_arrayorarrays){throw std::exception("not implemented");}
-POLY_METHOD(core::vconcat_array){throw std::exception("not implemented");}
-POLY_METHOD(core::vconcat_2src){throw std::exception("not implemented");}
-POLY_METHOD(core::vconcat_matrix_array){throw std::exception("not implemented");}
-POLY_METHOD(core::bitwise_and){throw std::exception("not implemented");}
-POLY_METHOD(core::bitwise_or){throw std::exception("not implemented");}
-POLY_METHOD(core::bitwise_xor){throw std::exception("not implemented");}
-POLY_METHOD(core::bitwise_not){throw std::exception("not implemented");}
+POLY_METHOD(core::PSNR){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::batchDistance){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::normalize){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::normalize_sparse){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::minMaxIdx){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::minMaxLoc_sparse){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::minMaxLoc){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::reduce){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::merge_arr){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::merge_size){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::split_array){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::split_mat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::mixChannels_arr_npairs){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::mixChannels_arr){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::mixChannels_mat_npairs){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::mixChannels_mat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::extractChannel){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::insertChannel){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::flip){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::repeat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::repeat_mat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::hconcat_mat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::hconcat_inputarray){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::hconcat_arrayorarrays){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::vconcat_array){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::vconcat_2src){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::vconcat_matrix_array){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::bitwise_and){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::bitwise_or){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::bitwise_xor){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::bitwise_not){throw std::runtime_error("not implemented");}
 POLY_METHOD(core::absdiff){
 	auto src1 = info.at<IOArray*>(0)->GetInputArray();
 	auto src2 = info.at<IOArray*>(1)->GetInputArray();
@@ -3165,56 +3165,56 @@ POLY_METHOD(core::absdiff){
 	cv::absdiff(src1, src2, dst);
 
 }
-POLY_METHOD(core::inRange){throw std::exception("not implemented");}
-POLY_METHOD(core::compare){throw std::exception("not implemented");}
-POLY_METHOD(core::compare_number){throw std::exception("not implemented");}
-POLY_METHOD(core::min_array){throw std::exception("not implemented");}
-POLY_METHOD(core::min_mat){throw std::exception("not implemented");}
-POLY_METHOD(core::min_umat){throw std::exception("not implemented");}
-POLY_METHOD(core::max_array){throw std::exception("not implemented");}
-POLY_METHOD(core::max_mat){throw std::exception("not implemented");}
-POLY_METHOD(core::max_umat){throw std::exception("not implemented");}
-POLY_METHOD(core::sqrt){throw std::exception("not implemented");}
-POLY_METHOD(core::pow){throw std::exception("not implemented");}
-POLY_METHOD(core::exp){throw std::exception("not implemented");}
-POLY_METHOD(core::log){throw std::exception("not implemented");}
-POLY_METHOD(core::polarToCart){throw std::exception("not implemented");}
-POLY_METHOD(core::cartToPolar){throw std::exception("not implemented");}
-POLY_METHOD(core::phase){throw std::exception("not implemented");}
-POLY_METHOD(core::magnitude){throw std::exception("not implemented");}
-POLY_METHOD(core::checkRange){throw std::exception("not implemented");}
-POLY_METHOD(core::patchNaNs){throw std::exception("not implemented");}
-POLY_METHOD(core::gemm){throw std::exception("not implemented");}
-POLY_METHOD(core::mulTransposed){throw std::exception("not implemented");}
-POLY_METHOD(core::transpose){throw std::exception("not implemented");}
-POLY_METHOD(core::transform){throw std::exception("not implemented");}
-POLY_METHOD(core::perspectiveTransform){throw std::exception("not implemented");}
-POLY_METHOD(core::completeSymm){throw std::exception("not implemented");}
-POLY_METHOD(core::setIdentity){throw std::exception("not implemented");}
-POLY_METHOD(core::determinant){throw std::exception("not implemented");}
-POLY_METHOD(core::trace){throw std::exception("not implemented");}
-POLY_METHOD(core::invert){throw std::exception("not implemented");}
-POLY_METHOD(core::solve){throw std::exception("not implemented");}
-POLY_METHOD(core::sort){throw std::exception("not implemented");}
-POLY_METHOD(core::sortIdx){throw std::exception("not implemented");}
-POLY_METHOD(core::solveCubic){throw std::exception("not implemented");}
-POLY_METHOD(core::solvePoly){throw std::exception("not implemented");}
-POLY_METHOD(core::eigen){throw std::exception("not implemented");}
-POLY_METHOD(core::calcCovarMatrix_array){throw std::exception("not implemented");}
-POLY_METHOD(core::calcCovarMatrix_mat){throw std::exception("not implemented");}
-POLY_METHOD(core::PCACompute_variance){throw std::exception("not implemented");}
-POLY_METHOD(core::PCACompute_maxComponents){throw std::exception("not implemented");}
-POLY_METHOD(core::PCAProject){throw std::exception("not implemented");}
-POLY_METHOD(core::PCABackProject){throw std::exception("not implemented");}
-POLY_METHOD(core::SVDecomp){throw std::exception("not implemented");}
-POLY_METHOD(core::SVBackSubst){throw std::exception("not implemented");}
-POLY_METHOD(core::Mahalanobis){throw std::exception("not implemented");}
-POLY_METHOD(core::dft){throw std::exception("not implemented");}
-POLY_METHOD(core::idft){throw std::exception("not implemented");}
-POLY_METHOD(core::dct){throw std::exception("not implemented");}
-POLY_METHOD(core::idct){throw std::exception("not implemented");}
-POLY_METHOD(core::mulSpectrums){throw std::exception("not implemented");}
-POLY_METHOD(core::getOptimalDFTSize){throw std::exception("not implemented");}
+POLY_METHOD(core::inRange){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::compare){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::compare_number){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::min_array){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::min_mat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::min_umat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::max_array){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::max_mat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::max_umat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::sqrt){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::pow){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::exp){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::log){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::polarToCart){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::cartToPolar){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::phase){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::magnitude){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::checkRange){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::patchNaNs){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::gemm){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::mulTransposed){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::transpose){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::transform){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::perspectiveTransform){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::completeSymm){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::setIdentity){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::determinant){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::trace){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::invert){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::solve){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::sort){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::sortIdx){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::solveCubic){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::solvePoly){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::eigen){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::calcCovarMatrix_array){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::calcCovarMatrix_mat){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::PCACompute_variance){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::PCACompute_maxComponents){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::PCAProject){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::PCABackProject){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::SVDecomp){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::SVBackSubst){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::Mahalanobis){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::dft){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::idft){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::dct){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::idct){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::mulSpectrums){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::getOptimalDFTSize){throw std::runtime_error("not implemented");}
 POLY_METHOD(core::theRNG){
 	auto rng = new RNG();
 	rng->_rng = std::make_shared<cv::RNG>(cv::theRNG());
@@ -3234,7 +3234,7 @@ POLY_METHOD(core::randu_number){
 	auto high = info.at<double>(2);
 	cv::randu(dst, low, high);
 }
-POLY_METHOD(core::randn){throw std::exception("not implemented");}
-POLY_METHOD(core::randShuffle){throw std::exception("not implemented");}
-POLY_METHOD(core::kmeans){throw std::exception("not implemented");}
+POLY_METHOD(core::randn){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::randShuffle){throw std::runtime_error("not implemented");}
+POLY_METHOD(core::kmeans){throw std::runtime_error("not implemented");}
 

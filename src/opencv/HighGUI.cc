@@ -10,7 +10,7 @@ namespace highgui_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("highgui_general_callback is empty");
+			throw std::runtime_error("highgui_general_callback is empty");
 		}
 		return overload->execute("highgui", info);
 	}
@@ -440,7 +440,7 @@ POLY_METHOD(highgui::loadWindowParameters) {
 }
 
 POLY_METHOD(highgui::startLoop) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 POLY_METHOD(highgui::stopLoop) {
@@ -457,6 +457,6 @@ POLY_METHOD(highgui::createButton) {
 	//auto ret = cv::createButton(bar_name, on_change, userData, type, initial_button_state);
 	//info.SetReturnValue(ret);
 
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 

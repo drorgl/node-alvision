@@ -5,7 +5,7 @@ namespace gfttdetector_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("gfttdetector_general_callback is empty");
+			throw std::runtime_error("gfttdetector_general_callback is empty");
 		}
 		return overload->execute("gfttdetector", info);
 	}
@@ -90,16 +90,16 @@ v8::Local<v8::Function> GFTTDetector::get_constructor() {
 	return Nan::New(constructor)->GetFunction();
 }
 
-POLY_METHOD(GFTTDetector::create){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::setMaxFeatures){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::getMaxFeatures){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::setQualityLevel){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::getQualityLevel){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::setMinDistance){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::getMinDistance){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::setBlockSize){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::getBlockSize){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::setHarrisDetector){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::getHarrisDetector){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::setK){throw std::exception("not implemented");}
-POLY_METHOD(GFTTDetector::getK){throw std::exception("not implemented");}
+POLY_METHOD(GFTTDetector::create){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::setMaxFeatures){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::getMaxFeatures){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::setQualityLevel){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::getQualityLevel){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::setMinDistance){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::getMinDistance){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::setBlockSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::getBlockSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::setHarrisDetector){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::getHarrisDetector){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::setK){throw std::runtime_error("not implemented");}
+POLY_METHOD(GFTTDetector::getK){throw std::runtime_error("not implemented");}

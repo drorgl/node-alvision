@@ -4,7 +4,7 @@ namespace rng19937_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("rng19937_general_callback is empty");
+			throw std::runtime_error("rng19937_general_callback is empty");
 		}
 		return overload->execute("rng19937", info);
 	}
@@ -112,12 +112,12 @@ POLY_METHOD(RNG_MT19937::New) {
 	info.GetReturnValue().Set(info.Holder());
 }
 
-POLY_METHOD(RNG_MT19937::New_seed){throw std::exception("not implemented");}
-POLY_METHOD(RNG_MT19937::next){throw std::exception("not implemented");}
-POLY_METHOD(RNG_MT19937::next_int){throw std::exception("not implemented");}
-POLY_METHOD(RNG_MT19937::next_unsigned){throw std::exception("not implemented");}
-POLY_METHOD(RNG_MT19937::next_float){throw std::exception("not implemented");}
-POLY_METHOD(RNG_MT19937::next_double){throw std::exception("not implemented");}
-POLY_METHOD(RNG_MT19937::run_n){throw std::exception("not implemented");}
-POLY_METHOD(RNG_MT19937::run){throw std::exception("not implemented");}
-POLY_METHOD(RNG_MT19937::uniform){throw std::exception("not implemented");}
+POLY_METHOD(RNG_MT19937::New_seed){throw std::runtime_error("not implemented");}
+POLY_METHOD(RNG_MT19937::next){throw std::runtime_error("not implemented");}
+POLY_METHOD(RNG_MT19937::next_int){throw std::runtime_error("not implemented");}
+POLY_METHOD(RNG_MT19937::next_unsigned){throw std::runtime_error("not implemented");}
+POLY_METHOD(RNG_MT19937::next_float){throw std::runtime_error("not implemented");}
+POLY_METHOD(RNG_MT19937::next_double){throw std::runtime_error("not implemented");}
+POLY_METHOD(RNG_MT19937::run_n){throw std::runtime_error("not implemented");}
+POLY_METHOD(RNG_MT19937::run){throw std::runtime_error("not implemented");}
+POLY_METHOD(RNG_MT19937::uniform){throw std::runtime_error("not implemented");}

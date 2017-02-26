@@ -6,7 +6,7 @@ namespace lineiterator_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("lineiterator_general_callback is empty");
+			throw std::runtime_error("lineiterator_general_callback is empty");
 		}
 		return overload->execute("lineiterator", info);
 	}
@@ -172,6 +172,6 @@ v8::Local<v8::Function> LineIterator::get_constructor() {
 }
 
 
-POLY_METHOD(LineIterator::New_pt){throw std::exception("not implemented");}
-POLY_METHOD(LineIterator::each){throw std::exception("not implemented");}
+POLY_METHOD(LineIterator::New_pt){throw std::runtime_error("not implemented");}
+POLY_METHOD(LineIterator::each){throw std::runtime_error("not implemented");}
 

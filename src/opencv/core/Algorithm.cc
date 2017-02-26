@@ -6,7 +6,7 @@ namespace algorithm_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("algorithm_general_callback is empty");
+			throw std::runtime_error("algorithm_general_callback is empty");
 		}
 		return overload->execute("algorithm", info);
 	}
@@ -137,29 +137,29 @@ POLY_METHOD(Algorithm::New) {
 }
 
 POLY_METHOD(Algorithm::read){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Algorithm::load){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Algorithm::loadFromString){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Algorithm::clear){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Algorithm::write){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Algorithm::read_member){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Algorithm::empty){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Algorithm::save){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Algorithm::getDefaultName){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }

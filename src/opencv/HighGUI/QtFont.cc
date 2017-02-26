@@ -4,7 +4,7 @@ namespace qtfont_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("qtfont_general_callback is empty");
+			throw std::runtime_error("qtfont_general_callback is empty");
 		}
 		return overload->execute("qtfont", info);
 	}
@@ -66,29 +66,29 @@ v8::Local<v8::Function> QtFont::get_constructor() {
 }
 
 
-NAN_GETTER(QtFont::nameFont_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::nameFont_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::color_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::color_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::font_face_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::font_face_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::ascii_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::ascii_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::greek_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::greek_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::cyrillic_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::cyrillic_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::hscale_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::hscale_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::vscale_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::vscale_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::shear_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::shear_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::thickness_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::thickness_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::dx_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::dx_setter){throw std::exception("not implemented");}
-NAN_GETTER(QtFont::line_type_getter){throw std::exception("not implemented");}
-NAN_SETTER(QtFont::line_type_setter){throw std::exception("not implemented");}
+NAN_GETTER(QtFont::nameFont_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::nameFont_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::color_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::color_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::font_face_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::font_face_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::ascii_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::ascii_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::greek_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::greek_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::cyrillic_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::cyrillic_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::hscale_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::hscale_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::vscale_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::vscale_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::shear_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::shear_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::thickness_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::thickness_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::dx_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::dx_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(QtFont::line_type_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(QtFont::line_type_setter){throw std::runtime_error("not implemented");}
 
 

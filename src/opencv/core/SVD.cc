@@ -8,7 +8,7 @@ namespace svd_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("svd_general_callback is empty");
+			throw std::runtime_error("svd_general_callback is empty");
 		}
 		return overload->execute("svd", info);
 	}
@@ -274,7 +274,7 @@ POLY_METHOD(SVD::backSubst){
 	//auto dst  = info.at<IOArray*>(1)->GetOutputArray();
 	//
 	//this_.backSubst()
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 
@@ -286,7 +286,7 @@ NAN_GETTER(SVD::u_getter){
 
 }
 NAN_SETTER(SVD::u_setter){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 NAN_GETTER(SVD::w_getter){
@@ -296,7 +296,7 @@ NAN_GETTER(SVD::w_getter){
 	info.GetReturnValue().Set(ret->Wrap());
 }
 NAN_SETTER(SVD::w_setter){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 NAN_GETTER(SVD::vt_getter){
@@ -306,5 +306,5 @@ NAN_GETTER(SVD::vt_getter){
 	info.GetReturnValue().Set(ret->Wrap());
 }
 NAN_SETTER(SVD::vt_setter){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }

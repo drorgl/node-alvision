@@ -4,7 +4,7 @@ namespace linesegmentdetector_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("linesegmentdetector_general_callback is empty");
+			throw std::runtime_error("linesegmentdetector_general_callback is empty");
 		}
 		return overload->execute("linesegmentdetector", info);
 	}
@@ -98,8 +98,8 @@ v8::Local<v8::Function> LineSegmentDetector::get_constructor() {
 
 
 
-POLY_METHOD(LineSegmentDetector::New){throw std::exception("not implemented");}
-POLY_METHOD(LineSegmentDetector::detect){throw std::exception("not implemented");}
-POLY_METHOD(LineSegmentDetector::drawSegments){throw std::exception("not implemented");}
-POLY_METHOD(LineSegmentDetector::compareSegments){throw std::exception("not implemented");}
+POLY_METHOD(LineSegmentDetector::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(LineSegmentDetector::detect){throw std::runtime_error("not implemented");}
+POLY_METHOD(LineSegmentDetector::drawSegments){throw std::runtime_error("not implemented");}
+POLY_METHOD(LineSegmentDetector::compareSegments){throw std::runtime_error("not implemented");}
 

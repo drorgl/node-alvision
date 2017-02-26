@@ -54,7 +54,7 @@ public:
 
 	static NAN_INDEX_SETTER(indexed_setter) {
 		auto this_ = overres::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
-		if ((index > this_->_from->length()) || (index < 0)) {
+		if ((index > (uint32_t)this_->_from->length()) || (index < 0)) {
 			Nan::ThrowRangeError("index out of range");
 		}
 
@@ -70,7 +70,7 @@ public:
 
 	static NAN_INDEX_GETTER(indexed_getter) {
 		auto this_ = overres::ObjectWrap::Unwrap<TrackedPtr<T>>(info.Holder());
-		if ((index > this_->_from->length()) || (index < 0)) {
+		if ((index > (uint32_t)this_->_from->length()) || (index < 0)) {
 			Nan::ThrowRangeError("index out of range");
 		}
 

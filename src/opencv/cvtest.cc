@@ -11,7 +11,7 @@ namespace cvtest_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("cvtest_general_callback is empty");
+			throw std::runtime_error("cvtest_general_callback is empty");
 		}
 		return overload->execute("cvtest", info);
 	}

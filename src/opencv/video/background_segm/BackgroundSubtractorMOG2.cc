@@ -5,7 +5,7 @@ namespace backgroundsubtractormog2_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("backgroundsubtractormog2_general_callback is empty");
+			throw std::runtime_error("backgroundsubtractormog2_general_callback is empty");
 		}
 		return overload->execute("backgroundsubtractormog2", info);
 	}
@@ -372,7 +372,7 @@ POLY_METHOD(BackgroundSubtractorMOG2::getShadowThreshold){
 	info.SetReturnValue(res);
 }
 POLY_METHOD(BackgroundSubtractorMOG2::setShadowThreshold){
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 

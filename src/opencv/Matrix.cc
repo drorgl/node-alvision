@@ -22,7 +22,7 @@ namespace matrix_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("matrix_general_callback is empty");
+			throw std::runtime_error("matrix_general_callback is empty");
 		}
 		return overload->execute("matrix", info);
 	}
@@ -384,10 +384,10 @@ POLY_METHOD(Matrix::New_size_type_scalar) {
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_ndims_sizes_type) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::New_ndims_sizes_type_scalar) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::New_mat) {
 	Matrix *mat = new Matrix();
@@ -398,13 +398,13 @@ POLY_METHOD(Matrix::New_mat) {
 	info.GetReturnValue().Set(info.Holder());
 }
 POLY_METHOD(Matrix::New_rows_cols_type_data_step) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::New_size_type_data_step) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::New_array_copyData) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 
 POLY_METHOD(Matrix::New_vec_Vec2b_copyData) {
@@ -782,7 +782,7 @@ POLY_METHOD(Matrix::New_point3_Point3d_copyData){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec2b){
-	typedef typename Vec2b VecCV;
+	typedef Vec2b VecCV;
 	auto mat = new Matrix();
 	
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -796,7 +796,7 @@ POLY_METHOD(Matrix::New_vector_Vec2b){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec3b){
-	typedef typename Vec3b VecCV;
+	typedef Vec3b VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -812,7 +812,7 @@ POLY_METHOD(Matrix::New_vector_Vec3b){
 
 
 POLY_METHOD(Matrix::New_vector_Vec4b){
-	typedef typename Vec4b VecCV;
+	typedef Vec4b VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -826,7 +826,7 @@ POLY_METHOD(Matrix::New_vector_Vec4b){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec2s){
-	typedef typename Vec2s VecCV;
+	typedef Vec2s VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -840,7 +840,7 @@ POLY_METHOD(Matrix::New_vector_Vec2s){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec3s){
-	typedef typename Vec3s VecCV;
+	typedef Vec3s VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -854,7 +854,7 @@ POLY_METHOD(Matrix::New_vector_Vec3s){
 
 
 POLY_METHOD(Matrix::New_vector_Vec4s){
-	typedef typename Vec4s VecCV;
+	typedef Vec4s VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -868,7 +868,7 @@ POLY_METHOD(Matrix::New_vector_Vec4s){
 
 
 POLY_METHOD(Matrix::New_vector_Vec2w){
-	typedef typename Vec2w VecCV;
+	typedef Vec2w VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -883,7 +883,7 @@ POLY_METHOD(Matrix::New_vector_Vec2w){
 
 
 POLY_METHOD(Matrix::New_vector_Vec3w){
-	typedef typename Vec3w VecCV;
+	typedef Vec3w VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -896,7 +896,7 @@ POLY_METHOD(Matrix::New_vector_Vec3w){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec4w){
-	typedef typename Vec4w VecCV;
+	typedef Vec4w VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -909,7 +909,7 @@ POLY_METHOD(Matrix::New_vector_Vec4w){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec2i){
-	typedef typename Vec2i VecCV;
+	typedef Vec2i VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -922,7 +922,7 @@ POLY_METHOD(Matrix::New_vector_Vec2i){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec3i){
-	typedef typename Vec3i VecCV;
+	typedef Vec3i VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -935,7 +935,7 @@ POLY_METHOD(Matrix::New_vector_Vec3i){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec4i){
-	typedef typename Vec4i VecCV;
+	typedef Vec4i VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -948,7 +948,7 @@ POLY_METHOD(Matrix::New_vector_Vec4i){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec6i){
-	typedef typename Vec6i VecCV;
+	typedef Vec6i VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -962,7 +962,7 @@ POLY_METHOD(Matrix::New_vector_Vec6i){
 
 
 POLY_METHOD(Matrix::New_vector_Vec8i){
-	typedef typename Vec8i VecCV;
+	typedef Vec8i VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -976,7 +976,7 @@ POLY_METHOD(Matrix::New_vector_Vec8i){
 
 
 POLY_METHOD(Matrix::New_vector_Vec2f){
-	typedef typename Vec2f VecCV;
+	typedef Vec2f VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -990,7 +990,7 @@ POLY_METHOD(Matrix::New_vector_Vec2f){
 
 
 POLY_METHOD(Matrix::New_vector_Vec3f){
-	typedef typename Vec3f VecCV;
+	typedef Vec3f VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -1004,7 +1004,7 @@ POLY_METHOD(Matrix::New_vector_Vec3f){
 
 
 POLY_METHOD(Matrix::New_vector_Vec4f){
-	typedef typename Vec4f VecCV;
+	typedef Vec4f VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -1018,7 +1018,7 @@ POLY_METHOD(Matrix::New_vector_Vec4f){
 
 
 POLY_METHOD(Matrix::New_vector_Vec6f){
-	typedef typename Vec6f VecCV;
+	typedef Vec6f VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -1032,7 +1032,7 @@ POLY_METHOD(Matrix::New_vector_Vec6f){
 
 
 POLY_METHOD(Matrix::New_vector_Vec2d){
-	typedef typename Vec2d VecCV;
+	typedef Vec2d VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -1047,7 +1047,7 @@ POLY_METHOD(Matrix::New_vector_Vec2d){
 
 
 POLY_METHOD(Matrix::New_vector_Vec3d){
-	typedef typename Vec3d VecCV;
+	typedef Vec3d VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -1060,7 +1060,7 @@ POLY_METHOD(Matrix::New_vector_Vec3d){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec4d){
-	typedef typename Vec4d VecCV;
+	typedef Vec4d VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -1073,7 +1073,7 @@ POLY_METHOD(Matrix::New_vector_Vec4d){
 }
 
 POLY_METHOD(Matrix::New_vector_Vec6d){
-	typedef typename Vec6d VecCV;
+	typedef Vec6d VecCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<VecCV*>>>(0);
@@ -1086,7 +1086,7 @@ POLY_METHOD(Matrix::New_vector_Vec6d){
 }
 
 POLY_METHOD(Matrix::New_vector_Point2i) {
-	typedef typename Point2i PointCV;
+	typedef Point2i PointCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
@@ -1099,7 +1099,7 @@ POLY_METHOD(Matrix::New_vector_Point2i) {
 }
 
 POLY_METHOD(Matrix::New_vector_Point2f){
-	typedef typename Point2f PointCV;
+	typedef Point2f PointCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
@@ -1112,7 +1112,7 @@ POLY_METHOD(Matrix::New_vector_Point2f){
 }
 
 POLY_METHOD(Matrix::New_vector_Point2d){
-	typedef typename Point2d PointCV;
+	typedef Point2d PointCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
@@ -1125,7 +1125,7 @@ POLY_METHOD(Matrix::New_vector_Point2d){
 }
 
 POLY_METHOD(Matrix::New_vector_Point3i){
-	typedef typename Point3i PointCV;
+	typedef Point3i PointCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
@@ -1138,7 +1138,7 @@ POLY_METHOD(Matrix::New_vector_Point3i){
 }
 
 POLY_METHOD(Matrix::New_vector_Point3f){
-	typedef typename Point3f PointCV;
+	typedef Point3f PointCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
@@ -1151,7 +1151,7 @@ POLY_METHOD(Matrix::New_vector_Point3f){
 }
 
 POLY_METHOD(Matrix::New_vector_Point3d){
-	typedef typename Point3d PointCV;
+	typedef Point3d PointCV;
 	auto mat = new Matrix();
 
 	auto vec = *info.at < std::shared_ptr<std::vector<PointCV*>>>(0);
@@ -1177,7 +1177,7 @@ POLY_METHOD(Matrix::New_gpuMat) {
 #endif
 
 POLY_METHOD(Matrix::New_buffer) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::zeros_rows_cols_type) {
 	auto retval = new MatExpr();
@@ -1200,7 +1200,7 @@ POLY_METHOD(Matrix::zeros_size_type) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::zeros_ndims_sz_type) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::ones_rows_cols_type) {
 	auto retval = new MatExpr();
@@ -1225,7 +1225,7 @@ POLY_METHOD(Matrix::ones_size_type) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::ones_ndims_sz_type) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::eye_rows_cols_type) {
 	auto retval = new MatExpr();
@@ -1267,7 +1267,7 @@ POLY_METHOD(Matrix::from_matexpr) {
 	info.GetReturnValue().Set(wrapped);
 }
 POLY_METHOD(Matrix::getUMat) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::row) {
 	auto mat = info.This<Matrix*>()->_mat;
@@ -1463,13 +1463,13 @@ POLY_METHOD(Matrix::create_size) {
 	mat->create(size, info.at<int>(1));
 }
 POLY_METHOD(Matrix::create_matsize) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::create_ndims_size) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::create_ndims_matsize) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::resize) {
 	auto mat = info.This<Matrix*>()->_mat;
@@ -1490,7 +1490,7 @@ POLY_METHOD(Matrix::roi_rect) {
 	info.SetReturnValue(retval);
 }
 POLY_METHOD(Matrix::roi_ranges) {
-	throw std::exception("not implemented");
+	throw std::runtime_error("not implemented");
 }
 POLY_METHOD(Matrix::isContinuous) {
 	auto mat = info.This<Matrix*>()->_mat;

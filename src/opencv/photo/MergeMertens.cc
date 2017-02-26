@@ -6,7 +6,7 @@ namespace mergemertens_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("mergemertens_general_callback is empty");
+			throw std::runtime_error("mergemertens_general_callback is empty");
 		}
 		return overload->execute("mergemertens", info);
 	}
@@ -114,15 +114,15 @@ v8::Local<v8::Function> MergeMertens::get_constructor() {
 }
 
 
-POLY_METHOD(MergeMertens::New){throw std::exception("not implemented");}
-POLY_METHOD(MergeMertens::process_times_response){throw std::exception("not implemented");}
-POLY_METHOD(MergeMertens::process){throw std::exception("not implemented");}
-POLY_METHOD(MergeMertens::getContrastWeight){throw std::exception("not implemented");}
-POLY_METHOD(MergeMertens::setContrastWeight){throw std::exception("not implemented");}
-POLY_METHOD(MergeMertens::getSaturationWeight){throw std::exception("not implemented");}
-POLY_METHOD(MergeMertens::setSaturationWeight){throw std::exception("not implemented");}
-POLY_METHOD(MergeMertens::getExposureWeight){throw std::exception("not implemented");}
-POLY_METHOD(MergeMertens::setExposureWeight){throw std::exception("not implemented");}
-POLY_METHOD(MergeMertens::createMergeMertens){throw std::exception("not implemented");}
+POLY_METHOD(MergeMertens::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeMertens::process_times_response){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeMertens::process){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeMertens::getContrastWeight){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeMertens::setContrastWeight){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeMertens::getSaturationWeight){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeMertens::setSaturationWeight){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeMertens::getExposureWeight){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeMertens::setExposureWeight){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeMertens::createMergeMertens){throw std::runtime_error("not implemented");}
 
 

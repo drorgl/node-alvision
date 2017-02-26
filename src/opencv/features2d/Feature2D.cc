@@ -7,7 +7,7 @@ namespace feature2d_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("feature2d_general_callback is empty");
+			throw std::runtime_error("feature2d_general_callback is empty");
 		}
 		return overload->execute("feature2d", info);
 	}
@@ -245,11 +245,11 @@ POLY_METHOD(Feature2D::detect_a) {
 
 	cb->Call({ overres::make_value( new_kp) });
 }
-POLY_METHOD(Feature2D::detect_b) {throw std::exception("not implemented");}
-POLY_METHOD(Feature2D::compute_a) {throw std::exception("not implemented");}
-POLY_METHOD(Feature2D::compute_b) {throw std::exception("not implemented");}
-POLY_METHOD(Feature2D::detectAndCompute) {throw std::exception("not implemented");}
-POLY_METHOD(Feature2D::descriptorSize) {throw std::exception("not implemented");}
-POLY_METHOD(Feature2D::descriptorType) {throw std::exception("not implemented");}
-POLY_METHOD(Feature2D::defaultNorm) {throw std::exception("not implemented");}
-POLY_METHOD(Feature2D::empty) {throw std::exception("not implemented");}
+POLY_METHOD(Feature2D::detect_b) {throw std::runtime_error("not implemented");}
+POLY_METHOD(Feature2D::compute_a) {throw std::runtime_error("not implemented");}
+POLY_METHOD(Feature2D::compute_b) {throw std::runtime_error("not implemented");}
+POLY_METHOD(Feature2D::detectAndCompute) {throw std::runtime_error("not implemented");}
+POLY_METHOD(Feature2D::descriptorSize) {throw std::runtime_error("not implemented");}
+POLY_METHOD(Feature2D::descriptorType) {throw std::runtime_error("not implemented");}
+POLY_METHOD(Feature2D::defaultNorm) {throw std::runtime_error("not implemented");}
+POLY_METHOD(Feature2D::empty) {throw std::runtime_error("not implemented");}

@@ -5,7 +5,7 @@ namespace backgroundsubtractorknn_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("backgroundsubtractorknn_general_callback is empty");
+			throw std::runtime_error("backgroundsubtractorknn_general_callback is empty");
 		}
 		return overload->execute("backgroundsubtractorknn", info);
 	}

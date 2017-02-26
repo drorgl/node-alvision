@@ -4,7 +4,7 @@ namespace moments_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("moments_general_callback is empty");
+			throw std::runtime_error("moments_general_callback is empty");
 		}
 		return overload->execute("moments", info);
 	}
@@ -120,55 +120,55 @@ v8::Local<v8::Function> Moments::get_constructor() {
 
 
 
-POLY_METHOD(Moments::New){throw std::exception("not implemented");}
-POLY_METHOD(Moments::New_m){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m00_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m00_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m10_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m10_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m01_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m01_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m20_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m20_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m11_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m11_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m02_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m02_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m30_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m30_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m21_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m21_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m12_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m12_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::m03_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::m03_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::mu20_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::mu20_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::mu11_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::mu11_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::mu02_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::mu02_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::mu30_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::mu30_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::mu21_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::mu21_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::mu12_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::mu12_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::mu03_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::mu03_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::nu20_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::nu20_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::nu11_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::nu11_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::nu02_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::nu02_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::nu30_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::nu30_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::nu21_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::nu21_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::nu12_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::nu12_setter){throw std::exception("not implemented");}
-NAN_GETTER(Moments::nu03_getter){throw std::exception("not implemented");}
-NAN_SETTER(Moments::nu03_setter){throw std::exception("not implemented");}
+POLY_METHOD(Moments::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(Moments::New_m){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m00_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m00_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m10_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m10_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m01_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m01_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m20_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m20_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m11_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m11_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m02_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m02_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m30_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m30_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m21_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m21_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m12_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m12_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::m03_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::m03_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::mu20_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::mu20_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::mu11_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::mu11_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::mu02_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::mu02_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::mu30_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::mu30_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::mu21_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::mu21_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::mu12_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::mu12_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::mu03_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::mu03_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::nu20_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::nu20_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::nu11_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::nu11_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::nu02_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::nu02_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::nu30_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::nu30_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::nu21_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::nu21_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::nu12_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::nu12_setter){throw std::runtime_error("not implemented");}
+NAN_GETTER(Moments::nu03_getter){throw std::runtime_error("not implemented");}
+NAN_SETTER(Moments::nu03_setter){throw std::runtime_error("not implemented");}
 
 

@@ -6,7 +6,7 @@ namespace tonemapdurand_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("tonemapdurand_general_callback is empty");
+			throw std::runtime_error("tonemapdurand_general_callback is empty");
 		}
 		return overload->execute("tonemapdurand", info);
 	}
@@ -103,14 +103,14 @@ v8::Local<v8::Function> TonemapDurand::get_constructor() {
 }
 
 
-POLY_METHOD(TonemapDurand::New){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDurand::getSaturation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDurand::setSaturation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDurand::getContrast){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDurand::setContrast){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDurand::getSigmaSpace){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDurand::setSigmaSpace){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDurand::getSigmaColor){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDurand::setSigmaColor){throw std::exception("not implemented");}
-POLY_METHOD(TonemapDurand::createTonemapDurand){throw std::exception("not implemented");}
+POLY_METHOD(TonemapDurand::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDurand::getSaturation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDurand::setSaturation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDurand::getContrast){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDurand::setContrast){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDurand::getSigmaSpace){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDurand::setSigmaSpace){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDurand::getSigmaColor){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDurand::setSigmaColor){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapDurand::createTonemapDurand){throw std::runtime_error("not implemented");}
 

@@ -11,7 +11,7 @@ namespace hogdescriptor_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("hogdescriptor_general_callback is empty");
+			throw std::runtime_error("hogdescriptor_general_callback is empty");
 		}
 		return overload->execute("hogdescriptor", info);
 	}
@@ -386,10 +386,10 @@ POLY_METHOD(HOGDescriptor::New_file){
 	ret->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
-POLY_METHOD(HOGDescriptor::getDescriptorSize){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::checkDetectorSize){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::getWinSigma){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::setSVMDetector_ioarray) { throw std::exception("not implemented"); }
+POLY_METHOD(HOGDescriptor::getDescriptorSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::checkDetectorSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::getWinSigma){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::setSVMDetector_ioarray) { throw std::runtime_error("not implemented"); }
 POLY_METHOD(HOGDescriptor::setSVMDetector_float) { 
 	auto this_ = info.This<HOGDescriptor*>();
 	auto detector = info.at< std::shared_ptr<std::vector<float>>>(0);
@@ -397,13 +397,13 @@ POLY_METHOD(HOGDescriptor::setSVMDetector_float) {
 	this_->_hogDescriptor->setSVMDetector(*detector);
 
 }
-POLY_METHOD(HOGDescriptor::read){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::write){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::load){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::save){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::copyTo){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::compute){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::detect){throw std::exception("not implemented");}
+POLY_METHOD(HOGDescriptor::read){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::write){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::load){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::save){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::copyTo){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::compute){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::detect){throw std::runtime_error("not implemented");}
 POLY_METHOD(HOGDescriptor::detectMultiScale){
 		auto img					= info.at<IOArray*>(0)->GetInputArray();
 		auto cb						= info.at<std::shared_ptr< overres::Callback>>(1);
@@ -431,13 +431,13 @@ POLY_METHOD(HOGDescriptor::detectMultiScale){
 
 
 }
-POLY_METHOD(HOGDescriptor::computeGradient){throw std::exception("not implemented");}
+POLY_METHOD(HOGDescriptor::computeGradient){throw std::runtime_error("not implemented");}
 POLY_METHOD(HOGDescriptor::getDefaultPeopleDetector){
 	auto res = std::make_shared<std::vector<float>>(cv::HOGDescriptor::getDefaultPeopleDetector());
 
 	info.SetReturnValue(res);
 }
-POLY_METHOD(HOGDescriptor::getDaimlerPeopleDetector){throw std::exception("not implemented");}
+POLY_METHOD(HOGDescriptor::getDaimlerPeopleDetector){throw std::runtime_error("not implemented");}
 
 NAN_GETTER(HOGDescriptor::winSize_getter){return Nan::ThrowError("not implemented");}
 NAN_SETTER(HOGDescriptor::winSize_setter){return Nan::ThrowError("not implemented");}
@@ -476,9 +476,9 @@ NAN_SETTER(HOGDescriptor::nlevels_setter){
 NAN_GETTER(HOGDescriptor::signedGradient_getter){return Nan::ThrowError("not implemented");}
 NAN_SETTER(HOGDescriptor::signedGradient_setter){return Nan::ThrowError("not implemented");}
 
-POLY_METHOD(HOGDescriptor::detectROI){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::detectMultiScaleROI){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::readALTModel){throw std::exception("not implemented");}
-POLY_METHOD(HOGDescriptor::groupRectangles){throw std::exception("not implemented");}
+POLY_METHOD(HOGDescriptor::detectROI){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::detectMultiScaleROI){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::readALTModel){throw std::runtime_error("not implemented");}
+POLY_METHOD(HOGDescriptor::groupRectangles){throw std::runtime_error("not implemented");}
 
 

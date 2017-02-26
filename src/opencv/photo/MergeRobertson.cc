@@ -6,7 +6,7 @@ namespace mergerobertson_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("mergerobertson_general_callback is empty");
+			throw std::runtime_error("mergerobertson_general_callback is empty");
 		}
 		return overload->execute("mergerobertson", info);
 	}
@@ -80,9 +80,9 @@ v8::Local<v8::Function> MergeRobertson::get_constructor() {
 }
 
 
-POLY_METHOD(MergeRobertson::New){throw std::exception("not implemented");}
-POLY_METHOD(MergeRobertson::process_response){throw std::exception("not implemented");}
-POLY_METHOD(MergeRobertson::process){throw std::exception("not implemented");}
-POLY_METHOD(MergeRobertson::createMergeRobertson){throw std::exception("not implemented");}
+POLY_METHOD(MergeRobertson::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeRobertson::process_response){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeRobertson::process){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeRobertson::createMergeRobertson){throw std::runtime_error("not implemented");}
 
 

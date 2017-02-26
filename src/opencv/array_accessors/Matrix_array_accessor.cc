@@ -351,13 +351,13 @@ int Matrix_array_accessor::length() {
 
 v8::Local<v8::Value> Matrix_array_accessor::get(int index) {
 	if (index > ((_max_size - _pre_index) / _sizeof)) {
-		throw std::exception("index out of bounds");
+		throw std::runtime_error("index out of bounds");
 	}
 
 	auto byte_index = (index * _sizeof);
 
 	if ((byte_index + _pre_index) > _max_size) {
-		throw std::exception("index out of bounds for type specified");
+		throw std::runtime_error("index out of bounds for type specified");
 	}
 
 	return _get_accessors[_type](index, *_mat);
@@ -365,13 +365,13 @@ v8::Local<v8::Value> Matrix_array_accessor::get(int index) {
 
 void Matrix_array_accessor::set(int index, v8::Local<v8::Value> value) {
 	if (index > ((_max_size - _pre_index) / _sizeof)) {
-		throw std::exception("index out of bounds");
+		throw std::runtime_error("index out of bounds");
 	}
 
 	auto byte_index = (index * _sizeof);
 
 	if ((byte_index + _pre_index) > _max_size) {
-		throw std::exception("index out of bounds for type specified");
+		throw std::runtime_error("index out of bounds for type specified");
 	}
 
 	_set_accessors[_type](*_mat,index, value);

@@ -18,7 +18,7 @@ public:
 
 	template<typename... Args>
 	static std::shared_ptr<LineIterator> create(Args&&... args) {
-		auto val = std::make_shared<Moments>();
+		auto val = std::make_shared<LineIterator>();
 		val->_lineiterator = std::shared_ptr<cv::LineIterator>(new cv::LineIterator(std::forward<Args>(args)...));
 		return val;
 	}

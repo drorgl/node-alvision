@@ -6,7 +6,7 @@ namespace mergedebevec_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("mergedebevec_general_callback is empty");
+			throw std::runtime_error("mergedebevec_general_callback is empty");
 		}
 		return overload->execute("mergedebevec", info);
 	}
@@ -80,8 +80,8 @@ v8::Local<v8::Function> MergeDebevec::get_constructor() {
 }
 
 
-POLY_METHOD(MergeDebevec::New){throw std::exception("not implemented");}
-POLY_METHOD(MergeDebevec::process_response){throw std::exception("not implemented");}
-POLY_METHOD(MergeDebevec::process){throw std::exception("not implemented");}
-POLY_METHOD(MergeDebevec::createMergeDebevec){throw std::exception("not implemented");}
+POLY_METHOD(MergeDebevec::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeDebevec::process_response){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeDebevec::process){throw std::runtime_error("not implemented");}
+POLY_METHOD(MergeDebevec::createMergeDebevec){throw std::runtime_error("not implemented");}
 

@@ -767,7 +767,7 @@
 			],
 		}],
 		['OS in "linux android"',{
-			'cflags':['-fexceptions','-std=c++11'],
+			'cflags':['-fexceptions'],
 			'cflags!' : [ '-fno-exceptions'],
 			'cflags_cc!': [ '-fno-rtti',  '-fno-exceptions'],
 			'ldflags' : ['-Wl,--rpath=\$ORIGIN'],

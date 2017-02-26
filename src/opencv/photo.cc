@@ -22,7 +22,7 @@ namespace photo_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("photo_general_callback is empty");
+			throw std::runtime_error("photo_general_callback is empty");
 		}
 		return overload->execute("photo", info);
 	}
@@ -794,9 +794,9 @@ photo::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload
 }
 
 
-POLY_METHOD(photo::inpaint){throw std::exception("not implemented");}
-POLY_METHOD(photo::fastNlMeansDenoising_h_arr){throw std::exception("not implemented");}
-POLY_METHOD(photo::fastNlMeansDenoising){throw std::exception("not implemented");}
+POLY_METHOD(photo::inpaint){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::fastNlMeansDenoising_h_arr){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::fastNlMeansDenoising){throw std::runtime_error("not implemented");}
 POLY_METHOD(photo::fastNlMeansDenoisingColored){
 	auto src = info.at<IOArray*>(0)->GetInputArray();
 	auto dst = info.at<IOArray*>(1)->GetOutputArray();
@@ -808,17 +808,17 @@ POLY_METHOD(photo::fastNlMeansDenoisingColored){
 	cv::fastNlMeansDenoisingColored(src, dst, h, hColor, templateWindowSize, searchWindowSize);
 
 }
-POLY_METHOD(photo::fastNlMeansDenoisingMulti_h_array){throw std::exception("not implemented");}
-POLY_METHOD(photo::fastNlMeansDenoisingMulti){throw std::exception("not implemented");}
-POLY_METHOD(photo::fastNlMeansDenoisingColoredMulti){throw std::exception("not implemented");}
-POLY_METHOD(photo::denoise_TVL1){throw std::exception("not implemented");}
-POLY_METHOD(photo::decolor){throw std::exception("not implemented");}
-POLY_METHOD(photo::seamlessClone){throw std::exception("not implemented");}
-POLY_METHOD(photo::colorChange){throw std::exception("not implemented");}
-POLY_METHOD(photo::illuminationChange){throw std::exception("not implemented");}
-POLY_METHOD(photo::textureFlattening){throw std::exception("not implemented");}
-POLY_METHOD(photo::edgePreservingFilter){throw std::exception("not implemented");}
-POLY_METHOD(photo::detailEnhance){throw std::exception("not implemented");}
-POLY_METHOD(photo::pencilSketch){throw std::exception("not implemented");}
-POLY_METHOD(photo::stylization){throw std::exception("not implemented");}
+POLY_METHOD(photo::fastNlMeansDenoisingMulti_h_array){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::fastNlMeansDenoisingMulti){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::fastNlMeansDenoisingColoredMulti){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::denoise_TVL1){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::decolor){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::seamlessClone){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::colorChange){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::illuminationChange){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::textureFlattening){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::edgePreservingFilter){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::detailEnhance){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::pencilSketch){throw std::runtime_error("not implemented");}
+POLY_METHOD(photo::stylization){throw std::runtime_error("not implemented");}
 

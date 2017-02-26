@@ -70,7 +70,7 @@
 extern "C"{ 
 void
 init(Handle<Object> target) {
-	assert(false);
+	//assert(false);
 	tracer::Init(target);
 
 	auto overload = std::make_shared<overload_resolution>();

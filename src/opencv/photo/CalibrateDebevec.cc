@@ -6,7 +6,7 @@ namespace calibratedebevec_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("calibratedebevec_general_callback is empty");
+			throw std::runtime_error("calibratedebevec_general_callback is empty");
 		}
 		return overload->execute("calibratedebevec", info);
 	}
@@ -87,13 +87,13 @@ v8::Local<v8::Function> CalibrateDebevec::get_constructor() {
 }
 
 
-POLY_METHOD(CalibrateDebevec::New){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateDebevec::getLambda){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateDebevec::setLambda){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateDebevec::getSamples){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateDebevec::setSamples){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateDebevec::getRandom){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateDebevec::setRandom){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateDebevec::createCalibrateDebevec){throw std::exception("not implemented");}
+POLY_METHOD(CalibrateDebevec::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateDebevec::getLambda){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateDebevec::setLambda){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateDebevec::getSamples){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateDebevec::setSamples){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateDebevec::getRandom){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateDebevec::setRandom){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateDebevec::createCalibrateDebevec){throw std::runtime_error("not implemented");}
 
 

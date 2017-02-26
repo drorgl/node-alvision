@@ -6,7 +6,7 @@ namespace generalizedhoughballard_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("generalizedhoughballard_general_callback is empty");
+			throw std::runtime_error("generalizedhoughballard_general_callback is empty");
 		}
 		return overload->execute("generalizedhoughballard", info);
 	}
@@ -61,9 +61,9 @@ v8::Local<v8::Function> GeneralizedHoughBallard::get_constructor() {
 
 
 
-POLY_METHOD(GeneralizedHoughBallard::setLevels){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughBallard::getLevels){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughBallard::setVotesThreshold){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHoughBallard::getVotesThreshold){throw std::exception("not implemented");}
+POLY_METHOD(GeneralizedHoughBallard::setLevels){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughBallard::getLevels){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughBallard::setVotesThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHoughBallard::getVotesThreshold){throw std::runtime_error("not implemented");}
 
 

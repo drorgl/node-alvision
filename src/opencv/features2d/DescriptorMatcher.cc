@@ -8,7 +8,7 @@ namespace descriptormatcher_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("descriptormatcher_general_callback is empty");
+			throw std::runtime_error("descriptormatcher_general_callback is empty");
 		}
 		return overload->execute("descriptormatcher", info);
 	}
@@ -297,20 +297,20 @@ v8::Local<v8::Function> DescriptorMatcher::get_constructor() {
 }
 
 
-POLY_METHOD(DescriptorMatcher::add){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::getTrainDescriptors){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::clear){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::empty){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::isMaskSupported){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::train){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::match_train){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::knnMatch_train){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::radiusMatch_train){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::match){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::knnMatch){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::radiusMatch){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::read){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::write){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::clone){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorMatcher::create){throw std::exception("not implemented");}
+POLY_METHOD(DescriptorMatcher::add){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::getTrainDescriptors){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::clear){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::empty){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::isMaskSupported){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::train){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::match_train){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::knnMatch_train){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::radiusMatch_train){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::match){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::knnMatch){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::radiusMatch){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::read){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::write){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::clone){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorMatcher::create){throw std::runtime_error("not implemented");}
 

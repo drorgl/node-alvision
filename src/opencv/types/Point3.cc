@@ -4,7 +4,7 @@ namespace point3_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("point3_general_callback is empty");
+			throw std::runtime_error("point3_general_callback is empty");
 		}
 		return overload->execute("point3", info);
 	}

@@ -7,7 +7,7 @@ namespace imgcodecs_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("imgcodecs_general_callback is empty");
+			throw std::runtime_error("imgcodecs_general_callback is empty");
 		}
 		return overload->execute("imgcodecs", info);
 	}
@@ -314,8 +314,8 @@ POLY_METHOD(imgcodecs::imread) {
 	mat->_mat = std::make_shared<cv::Mat>(cv::imread(filename, flags));
 	info.SetReturnValue(mat);
 }
-POLY_METHOD(imgcodecs::imreadmulti) { throw std::exception("not implemented"); }
-POLY_METHOD(imgcodecs::imwrite) { throw std::exception("not implemented"); }
-POLY_METHOD(imgcodecs::imdecode_dst) { throw std::exception("not implemented"); }
-POLY_METHOD(imgcodecs::imdecode) { throw std::exception("not implemented"); }
-POLY_METHOD(imgcodecs::imencode) { throw std::exception("not implemented"); }
+POLY_METHOD(imgcodecs::imreadmulti) { throw std::runtime_error("not implemented"); }
+POLY_METHOD(imgcodecs::imwrite) { throw std::runtime_error("not implemented"); }
+POLY_METHOD(imgcodecs::imdecode_dst) { throw std::runtime_error("not implemented"); }
+POLY_METHOD(imgcodecs::imdecode) { throw std::runtime_error("not implemented"); }
+POLY_METHOD(imgcodecs::imencode) { throw std::runtime_error("not implemented"); }

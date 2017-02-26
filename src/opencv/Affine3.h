@@ -31,7 +31,7 @@ public:
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 		affine3_general_callback::overload = overload;
 		Affine3<T>::name = name;
-		auto float_type = GetTypeName<T::float_type>();
+		auto float_type = GetTypeName<typename T::float_type>();
 		auto array_float_type = "Array<"s + float_type + ">"s;
 		Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(affine3_general_callback::callback);
 		constructor.Reset(ctor);
@@ -68,7 +68,7 @@ public:
 
 		////! From 16th element array
 		//new (vals: Array<T>) : Affine3<T>;
-		overload->addOverloadConstructor("affine3", name, { make_param<std::shared_ptr<std::vector<T::float_type>>>("vals",array_float_type) }, New_array_T);
+		overload->addOverloadConstructor("affine3", name, { make_param<std::shared_ptr<std::vector<typename T::float_type>>>("vals",array_float_type) }, New_array_T);
 
 		////! Create identity transform
 		//Identity() : Affine3<T>
@@ -256,9 +256,9 @@ public:
 	}
 
 	static POLY_METHOD(New_array_T) {
-		auto vals = info.at<std::shared_ptr<std::vector<T::float_type>>>(0);
+		auto vals = info.at<std::shared_ptr<std::vector<typename T::float_type>>>(0);
 		if (vals->size() != 16) {
-			throw std::exception("Affine3 from array works only with 16 values");
+			throw std::runtime_error("Affine3 from array works only with 16 values");
 		}
 		auto aff = new Affine3<T>();
 		aff->_affine3 = std::make_shared<T>(&((*vals)[0]));

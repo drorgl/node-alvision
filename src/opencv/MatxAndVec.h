@@ -24,7 +24,7 @@ public:
 
 	std::shared_ptr<T> _matx;
 
-	static std::string Matx<T>::name;
+	static std::string name;
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
@@ -146,10 +146,13 @@ public:
 template <typename T>
 class Vec : public Matx<T> {
 public:
-	typedef typename T CVT;
-	typedef typename Vec<T> VecT;
+	typedef T CVT;
+	typedef Vec<T> VecT;
 	typedef typename T::value_type TVT;
 	typedef typename T::mat_type mat_type;
+	enum {
+		TCOLS = T::cols
+	};
 
 	static void Register(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload);
 	static void Init(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload);

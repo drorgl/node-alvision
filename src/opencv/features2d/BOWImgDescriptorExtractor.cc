@@ -8,7 +8,7 @@ namespace bowimgdescriptorextractor_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("bowimgdescriptorextractor_general_callback is empty");
+			throw std::runtime_error("bowimgdescriptorextractor_general_callback is empty");
 		}
 		return overload->execute("bowimgdescriptorextractor", info);
 	}
@@ -154,13 +154,13 @@ v8::Local<v8::Function> BOWImgDescriptorExtractor::get_constructor() {
 }
 
 
-POLY_METHOD(BOWImgDescriptorExtractor::New){throw std::exception("not implemented");}
-POLY_METHOD(BOWImgDescriptorExtractor::New_dmatcher){throw std::exception("not implemented");}
-POLY_METHOD(BOWImgDescriptorExtractor::setVocabulary){throw std::exception("not implemented");}
-POLY_METHOD(BOWImgDescriptorExtractor::getVocabulary){throw std::exception("not implemented");}
-POLY_METHOD(BOWImgDescriptorExtractor::compute_img){throw std::exception("not implemented");}
-POLY_METHOD(BOWImgDescriptorExtractor::compute_kp){throw std::exception("not implemented");}
-POLY_METHOD(BOWImgDescriptorExtractor::compute2){throw std::exception("not implemented");}
-POLY_METHOD(BOWImgDescriptorExtractor::descriptorSize){throw std::exception("not implemented");}
-POLY_METHOD(BOWImgDescriptorExtractor::descriptorType){throw std::exception("not implemented");}
+POLY_METHOD(BOWImgDescriptorExtractor::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWImgDescriptorExtractor::New_dmatcher){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWImgDescriptorExtractor::setVocabulary){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWImgDescriptorExtractor::getVocabulary){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWImgDescriptorExtractor::compute_img){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWImgDescriptorExtractor::compute_kp){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWImgDescriptorExtractor::compute2){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWImgDescriptorExtractor::descriptorSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWImgDescriptorExtractor::descriptorType){throw std::runtime_error("not implemented");}
 

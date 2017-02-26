@@ -6,7 +6,7 @@ namespace basecascadeclassifier_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("hogdescriptor_general_callback is empty");
+			throw std::runtime_error("hogdescriptor_general_callback is empty");
 		}
 		return overload->execute("basecascadeclassifier", info);
 	}
@@ -128,11 +128,11 @@ POLY_METHOD(BaseCascadeClassifier::New) {
 }
 
 
-POLY_METHOD(BaseCascadeClassifier::empty){throw std::exception("not implemented");}
-POLY_METHOD(BaseCascadeClassifier::load){throw std::exception("not implemented");}
-POLY_METHOD(BaseCascadeClassifier::detectMultiScale){throw std::exception("not implemented");}
-POLY_METHOD(BaseCascadeClassifier::isOldFormatCascade){throw std::exception("not implemented");}
-POLY_METHOD(BaseCascadeClassifier::getOriginalWindowSize){throw std::exception("not implemented");}
-POLY_METHOD(BaseCascadeClassifier::getFeatureType){throw std::exception("not implemented");}
-POLY_METHOD(BaseCascadeClassifier::getOldCascade){throw std::exception("not implemented");}
+POLY_METHOD(BaseCascadeClassifier::empty){throw std::runtime_error("not implemented");}
+POLY_METHOD(BaseCascadeClassifier::load){throw std::runtime_error("not implemented");}
+POLY_METHOD(BaseCascadeClassifier::detectMultiScale){throw std::runtime_error("not implemented");}
+POLY_METHOD(BaseCascadeClassifier::isOldFormatCascade){throw std::runtime_error("not implemented");}
+POLY_METHOD(BaseCascadeClassifier::getOriginalWindowSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(BaseCascadeClassifier::getFeatureType){throw std::runtime_error("not implemented");}
+POLY_METHOD(BaseCascadeClassifier::getOldCascade){throw std::runtime_error("not implemented");}
 

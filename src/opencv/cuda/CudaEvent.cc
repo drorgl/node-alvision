@@ -7,7 +7,7 @@ namespace event_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("event_general_callback is empty");
+			throw std::runtime_error("event_general_callback is empty");
 		}
 		return overload->execute("event", info);
 	}
@@ -99,10 +99,10 @@ namespace cuda {
 		return Nan::New(constructor)->GetFunction();
 	}
 
-	POLY_METHOD(Event::New) { throw std::exception("not implemented"); }
-	POLY_METHOD(Event::record) { throw std::exception("not implemented"); }
-	POLY_METHOD(Event::queryIfComplete) { throw std::exception("not implemented"); }
-	POLY_METHOD(Event::waitForCompletion) { throw std::exception("not implemented"); }
-	POLY_METHOD(Event::elapsedTime) { throw std::exception("not implemented"); }
+	POLY_METHOD(Event::New) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(Event::record) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(Event::queryIfComplete) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(Event::waitForCompletion) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(Event::elapsedTime) { throw std::runtime_error("not implemented"); }
 
 };

@@ -6,7 +6,7 @@ namespace mser_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("mser_general_callback is empty");
+			throw std::runtime_error("mser_general_callback is empty");
 		}
 		return overload->execute("mser", info);
 	}
@@ -127,14 +127,14 @@ v8::Local<v8::Function> MSER::get_constructor() {
 }
 
 
-POLY_METHOD(MSER::create){throw std::exception("not implemented");}
-POLY_METHOD(MSER::detectRegions){throw std::exception("not implemented");}
-POLY_METHOD(MSER::setDelta){throw std::exception("not implemented");}
-POLY_METHOD(MSER::getDelta){throw std::exception("not implemented");}
-POLY_METHOD(MSER::setMinArea){throw std::exception("not implemented");}
-POLY_METHOD(MSER::getMinArea){throw std::exception("not implemented");}
-POLY_METHOD(MSER::setMaxArea){throw std::exception("not implemented");}
-POLY_METHOD(MSER::getMaxArea){throw std::exception("not implemented");}
-POLY_METHOD(MSER::setPass2Only){throw std::exception("not implemented");}
-POLY_METHOD(MSER::getPass2Only){throw std::exception("not implemented");}
+POLY_METHOD(MSER::create){throw std::runtime_error("not implemented");}
+POLY_METHOD(MSER::detectRegions){throw std::runtime_error("not implemented");}
+POLY_METHOD(MSER::setDelta){throw std::runtime_error("not implemented");}
+POLY_METHOD(MSER::getDelta){throw std::runtime_error("not implemented");}
+POLY_METHOD(MSER::setMinArea){throw std::runtime_error("not implemented");}
+POLY_METHOD(MSER::getMinArea){throw std::runtime_error("not implemented");}
+POLY_METHOD(MSER::setMaxArea){throw std::runtime_error("not implemented");}
+POLY_METHOD(MSER::getMaxArea){throw std::runtime_error("not implemented");}
+POLY_METHOD(MSER::setPass2Only){throw std::runtime_error("not implemented");}
+POLY_METHOD(MSER::getPass2Only){throw std::runtime_error("not implemented");}
 

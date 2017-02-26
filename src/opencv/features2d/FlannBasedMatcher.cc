@@ -8,7 +8,7 @@ namespace flannbasedmatcher_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("flannbasedmatcher_general_callback is empty");
+			throw std::runtime_error("flannbasedmatcher_general_callback is empty");
 		}
 		return overload->execute("flannbasedmatcher", info);
 	}
@@ -102,12 +102,12 @@ v8::Local<v8::Function> FlannBasedMatcher::get_constructor() {
 }
 
 
-POLY_METHOD(FlannBasedMatcher::New){throw std::exception("not implemented");}
-POLY_METHOD(FlannBasedMatcher::add){throw std::exception("not implemented");}
-POLY_METHOD(FlannBasedMatcher::clear){throw std::exception("not implemented");}
-POLY_METHOD(FlannBasedMatcher::read){throw std::exception("not implemented");}
-POLY_METHOD(FlannBasedMatcher::write){throw std::exception("not implemented");}
-POLY_METHOD(FlannBasedMatcher::train){throw std::exception("not implemented");}
-POLY_METHOD(FlannBasedMatcher::isMaskSupported){throw std::exception("not implemented");}
-POLY_METHOD(FlannBasedMatcher::clone){throw std::exception("not implemented");}
+POLY_METHOD(FlannBasedMatcher::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(FlannBasedMatcher::add){throw std::runtime_error("not implemented");}
+POLY_METHOD(FlannBasedMatcher::clear){throw std::runtime_error("not implemented");}
+POLY_METHOD(FlannBasedMatcher::read){throw std::runtime_error("not implemented");}
+POLY_METHOD(FlannBasedMatcher::write){throw std::runtime_error("not implemented");}
+POLY_METHOD(FlannBasedMatcher::train){throw std::runtime_error("not implemented");}
+POLY_METHOD(FlannBasedMatcher::isMaskSupported){throw std::runtime_error("not implemented");}
+POLY_METHOD(FlannBasedMatcher::clone){throw std::runtime_error("not implemented");}
 

@@ -232,7 +232,7 @@ namespace alvision{
 				//pixelformat =
 
 				if (mat->_mat->cols != width || mat->_mat->rows != height) {
-					throw std::exception("mat rows or cols do not match the stream");
+					throw std::runtime_error("mat rows or cols do not match the stream");
 				}
 
 				if (self->_converter == nullptr){

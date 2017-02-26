@@ -11,7 +11,7 @@ namespace filenode_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("filenode_general_callback is empty");
+			throw std::runtime_error("filenode_general_callback is empty");
 		}
 		return overload->execute("filenode", info);
 	}
@@ -454,9 +454,9 @@ POLY_METHOD(FileNode::readSparseMat){
 	ret->_sparseMat = std::make_shared<cv::SparseMat>(i);
 	info.SetReturnValue(ret);
 }
-POLY_METHOD(FileNode::readKeyPoint){throw std::exception("not implemented");}
-POLY_METHOD(FileNode::readDMatch){throw std::exception("not implemented");}
-POLY_METHOD(FileNode::readPoint2d){throw std::exception("not implemented");}
-POLY_METHOD(FileNode::readPoint3d){throw std::exception("not implemented");}
-POLY_METHOD(FileNode::readArray){throw std::exception("not implemented");}
+POLY_METHOD(FileNode::readKeyPoint){throw std::runtime_error("not implemented");}
+POLY_METHOD(FileNode::readDMatch){throw std::runtime_error("not implemented");}
+POLY_METHOD(FileNode::readPoint2d){throw std::runtime_error("not implemented");}
+POLY_METHOD(FileNode::readPoint3d){throw std::runtime_error("not implemented");}
+POLY_METHOD(FileNode::readArray){throw std::runtime_error("not implemented");}
 

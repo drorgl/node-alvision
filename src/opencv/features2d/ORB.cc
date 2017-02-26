@@ -4,7 +4,7 @@ namespace orb_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("orb_general_callback is empty");
+			throw std::runtime_error("orb_general_callback is empty");
 		}
 		return overload->execute("orb", info);
 	}
@@ -151,23 +151,23 @@ v8::Local<v8::Function> ORB::get_constructor() {
 }
 
 
-POLY_METHOD(ORB::create){throw std::exception("not implemented");}
-POLY_METHOD(ORB::setMaxFeatures){throw std::exception("not implemented");}
-POLY_METHOD(ORB::getMaxFeatures){throw std::exception("not implemented");}
-POLY_METHOD(ORB::setScaleFactor){throw std::exception("not implemented");}
-POLY_METHOD(ORB::getScaleFactor){throw std::exception("not implemented");}
-POLY_METHOD(ORB::setNLevels){throw std::exception("not implemented");}
-POLY_METHOD(ORB::getNLevels){throw std::exception("not implemented");}
-POLY_METHOD(ORB::setEdgeThreshold){throw std::exception("not implemented");}
-POLY_METHOD(ORB::getEdgeThreshold){throw std::exception("not implemented");}
-POLY_METHOD(ORB::setFirstLevel){throw std::exception("not implemented");}
-POLY_METHOD(ORB::getFirstLevel){throw std::exception("not implemented");}
-POLY_METHOD(ORB::setWTA_K){throw std::exception("not implemented");}
-POLY_METHOD(ORB::getWTA_K){throw std::exception("not implemented");}
-POLY_METHOD(ORB::setScoreType){throw std::exception("not implemented");}
-POLY_METHOD(ORB::getScoreType){throw std::exception("not implemented");}
-POLY_METHOD(ORB::setPatchSize){throw std::exception("not implemented");}
-POLY_METHOD(ORB::getPatchSize){throw std::exception("not implemented");}
-POLY_METHOD(ORB::setFastThreshold){throw std::exception("not implemented");}
-POLY_METHOD(ORB::getFastThreshold){throw std::exception("not implemented");}
+POLY_METHOD(ORB::create){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::setMaxFeatures){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::getMaxFeatures){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::setScaleFactor){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::getScaleFactor){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::setNLevels){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::getNLevels){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::setEdgeThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::getEdgeThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::setFirstLevel){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::getFirstLevel){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::setWTA_K){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::getWTA_K){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::setScoreType){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::getScoreType){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::setPatchSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::getPatchSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::setFastThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(ORB::getFastThreshold){throw std::runtime_error("not implemented");}
 

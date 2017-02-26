@@ -7,7 +7,7 @@ namespace videocapture_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("videocapture_general_callback is empty");
+			throw std::runtime_error("videocapture_general_callback is empty");
 		}
 		return overload->execute("videocapture", info);
 	}

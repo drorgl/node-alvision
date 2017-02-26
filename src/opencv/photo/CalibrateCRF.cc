@@ -6,7 +6,7 @@ namespace calibratecrf_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("calibratecrf_general_callback is empty");
+			throw std::runtime_error("calibratecrf_general_callback is empty");
 		}
 		return overload->execute("calibratecrf", info);
 	}
@@ -57,6 +57,6 @@ v8::Local<v8::Function> CalibrateCRF::get_constructor() {
 }
 
 
-POLY_METHOD(CalibrateCRF::New){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateCRF::process){throw std::exception("not implemented");}
+POLY_METHOD(CalibrateCRF::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateCRF::process){throw std::runtime_error("not implemented");}
 

@@ -6,7 +6,7 @@ namespace texture2d_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("texture2d_general_callback is empty");
+			throw std::runtime_error("texture2d_general_callback is empty");
 		}
 		return overload->execute("texture2d", info);
 	}

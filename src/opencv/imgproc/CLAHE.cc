@@ -6,7 +6,7 @@ namespace clahe_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("clahe_general_callback is empty");
+			throw std::runtime_error("clahe_general_callback is empty");
 		}
 		return overload->execute("clahe", info);
 	}
@@ -60,9 +60,9 @@ v8::Local<v8::Function> CLAHE::get_constructor() {
 }
 
 
-POLY_METHOD(CLAHE::apply){throw std::exception("not implemented");}
-POLY_METHOD(CLAHE::setClipLimit){throw std::exception("not implemented");}
-POLY_METHOD(CLAHE::getClipLimit){throw std::exception("not implemented");}
-POLY_METHOD(CLAHE::setTilesGridSize){throw std::exception("not implemented");}
-POLY_METHOD(CLAHE::getTilesGridSize){throw std::exception("not implemented");}
-POLY_METHOD(CLAHE::collectGarbage){throw std::exception("not implemented");}
+POLY_METHOD(CLAHE::apply){throw std::runtime_error("not implemented");}
+POLY_METHOD(CLAHE::setClipLimit){throw std::runtime_error("not implemented");}
+POLY_METHOD(CLAHE::getClipLimit){throw std::runtime_error("not implemented");}
+POLY_METHOD(CLAHE::setTilesGridSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(CLAHE::getTilesGridSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(CLAHE::collectGarbage){throw std::runtime_error("not implemented");}

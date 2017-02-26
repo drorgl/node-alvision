@@ -58,7 +58,7 @@ public:
 	static POLY_METHOD(get) {
 		auto this_ = info.This<TrackedElement<T>*>();
 		if (this_->_from == nullptr) {
-			throw std::exception("TrackedElement is empty");
+			throw std::runtime_error("TrackedElement is empty");
 		}
 		info.GetReturnValue().Set(this_->_from->get(0));
 	}
@@ -67,11 +67,11 @@ public:
 		auto this_ = info.This<TrackedElement<T>*>();
 
 		if (this_->_from == nullptr) {
-			throw std::exception("TrackedElement is empty");
+			throw std::runtime_error("TrackedElement is empty");
 		}
 
 		if (info.Length() != 1) {
-			throw std::exception("set should be passed a value");
+			throw std::runtime_error("set should be passed a value");
 		}
 
 

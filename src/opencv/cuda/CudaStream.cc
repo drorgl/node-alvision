@@ -7,7 +7,7 @@ namespace stream_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("stream_general_callback is empty");
+			throw std::runtime_error("stream_general_callback is empty");
 		}
 		return overload->execute("stream", info);
 	}
@@ -141,10 +141,10 @@ namespace cuda {
 		ret->Wrap(info.Holder());
 		info.GetReturnValue().Set(info.Holder());
 	}
-	POLY_METHOD(Stream::queryIfComplete) { throw std::exception("not implemented"); }
-	POLY_METHOD(Stream::waitForCompletion) { throw std::exception("not implemented"); }
-	POLY_METHOD(Stream::waitEvent) { throw std::exception("not implemented"); }
-	POLY_METHOD(Stream::enqueueHostCallback) { throw std::exception("not implemented"); }
-	POLY_METHOD(Stream::Null) { throw std::exception("not implemented"); }
+	POLY_METHOD(Stream::queryIfComplete) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(Stream::waitForCompletion) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(Stream::waitEvent) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(Stream::enqueueHostCallback) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(Stream::Null) { throw std::runtime_error("not implemented"); }
 
 };

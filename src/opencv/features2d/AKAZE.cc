@@ -4,7 +4,7 @@ namespace akaze_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("akaze_general_callback is empty");
+			throw std::runtime_error("akaze_general_callback is empty");
 		}
 		return overload->execute("akaze", info);
 	}
@@ -127,19 +127,19 @@ v8::Local<v8::Function> AKAZE::get_constructor() {
 }
 
 
-POLY_METHOD(AKAZE::create){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::setDescriptorType){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::getDescriptorType){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::setDescriptorSize){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::getDescriptorSize){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::setDescriptorChannels){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::getDescriptorChannels){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::setThreshold){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::getThreshold){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::setNOctaves){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::getNOctaves){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::setNOctaveLayers){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::getNOctaveLayers){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::setDiffusivity){throw std::exception("not implemented");}
-POLY_METHOD(AKAZE::getDiffusivity){throw std::exception("not implemented");}
+POLY_METHOD(AKAZE::create){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::setDescriptorType){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::getDescriptorType){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::setDescriptorSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::getDescriptorSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::setDescriptorChannels){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::getDescriptorChannels){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::setThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::getThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::setNOctaves){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::getNOctaves){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::setNOctaveLayers){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::getNOctaveLayers){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::setDiffusivity){throw std::runtime_error("not implemented");}
+POLY_METHOD(AKAZE::getDiffusivity){throw std::runtime_error("not implemented");}
 

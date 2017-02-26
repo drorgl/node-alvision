@@ -6,7 +6,7 @@ namespace generalizedhough_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("generalizedhough_general_callback is empty");
+			throw std::runtime_error("generalizedhough_general_callback is empty");
 		}
 		return overload->execute("generalizedhough", info);
 	}
@@ -116,17 +116,17 @@ v8::Local<v8::Function> GeneralizedHough::get_constructor() {
 	return Nan::New(constructor)->GetFunction();
 }
 
-POLY_METHOD(GeneralizedHough::setTemplate){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::setTemplate_edge){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::detect){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::detect_edge){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::setCannyLowThresh){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::getCannyLowThresh){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::setCannyHighThresh){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::getCannyHighThresh){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::setMinDist){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::getMinDist){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::setDp){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::getDp){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::setMaxBufferSize){throw std::exception("not implemented");}
-POLY_METHOD(GeneralizedHough::getMaxBufferSize){throw std::exception("not implemented");}
+POLY_METHOD(GeneralizedHough::setTemplate){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::setTemplate_edge){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::detect){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::detect_edge){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::setCannyLowThresh){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::getCannyLowThresh){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::setCannyHighThresh){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::getCannyHighThresh){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::setMinDist){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::getMinDist){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::setDp){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::getDp){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::setMaxBufferSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(GeneralizedHough::getMaxBufferSize){throw std::runtime_error("not implemented");}

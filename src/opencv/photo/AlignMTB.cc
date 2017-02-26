@@ -7,7 +7,7 @@ namespace alignmtb_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("alignmtb_general_callback is empty");
+			throw std::runtime_error("alignmtb_general_callback is empty");
 		}
 		return overload->execute("alignmtb", info);
 	}
@@ -145,17 +145,17 @@ v8::Local<v8::Function> AlignMTB::get_constructor() {
 }
 
 
-POLY_METHOD(AlignMTB::New){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::process_times_response){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::process){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::calculateShift){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::shiftMat){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::computeBitmaps){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::getMaxBits){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::setMaxBits){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::getExcludeRange){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::setExcludeRange){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::getCut){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::setCut){throw std::exception("not implemented");}
-POLY_METHOD(AlignMTB::createAlignMTB){throw std::exception("not implemented");}
+POLY_METHOD(AlignMTB::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::process_times_response){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::process){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::calculateShift){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::shiftMat){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::computeBitmaps){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::getMaxBits){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::setMaxBits){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::getExcludeRange){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::setExcludeRange){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::getCut){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::setCut){throw std::runtime_error("not implemented");}
+POLY_METHOD(AlignMTB::createAlignMTB){throw std::runtime_error("not implemented");}
 

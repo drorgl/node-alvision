@@ -4,7 +4,7 @@ namespace fastfeaturedetector_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("fastfeaturedetector_general_callback is empty");
+			throw std::runtime_error("fastfeaturedetector_general_callback is empty");
 		}
 		return overload->execute("fastfeaturedetector", info);
 	}
@@ -99,10 +99,10 @@ v8::Local<v8::Function> FastFeatureDetector::get_constructor() {
 }
 
 
-POLY_METHOD(FastFeatureDetector::create){throw std::exception("not implemented");}
-POLY_METHOD(FastFeatureDetector::setThreshold){throw std::exception("not implemented");}
-POLY_METHOD(FastFeatureDetector::getThreshold){throw std::exception("not implemented");}
-POLY_METHOD(FastFeatureDetector::setNonmaxSuppression){throw std::exception("not implemented");}
-POLY_METHOD(FastFeatureDetector::getNonmaxSuppression){throw std::exception("not implemented");}
-POLY_METHOD(FastFeatureDetector::setType){throw std::exception("not implemented");}
-POLY_METHOD(FastFeatureDetector::getType){throw std::exception("not implemented");}
+POLY_METHOD(FastFeatureDetector::create){throw std::runtime_error("not implemented");}
+POLY_METHOD(FastFeatureDetector::setThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(FastFeatureDetector::getThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(FastFeatureDetector::setNonmaxSuppression){throw std::runtime_error("not implemented");}
+POLY_METHOD(FastFeatureDetector::getNonmaxSuppression){throw std::runtime_error("not implemented");}
+POLY_METHOD(FastFeatureDetector::setType){throw std::runtime_error("not implemented");}
+POLY_METHOD(FastFeatureDetector::getType){throw std::runtime_error("not implemented");}

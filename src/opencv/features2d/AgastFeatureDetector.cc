@@ -4,7 +4,7 @@ namespace agastfeaturedetector_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("agastfeaturedetector_general_callback is empty");
+			throw std::runtime_error("agastfeaturedetector_general_callback is empty");
 		}
 		return overload->execute("agastfeaturedetector", info);
 	}
@@ -88,10 +88,10 @@ v8::Local<v8::Function> AgastFeatureDetector::get_constructor() {
 	return Nan::New(constructor)->GetFunction();
 }
 
-POLY_METHOD(AgastFeatureDetector::create){throw std::exception("not implemented");}
-POLY_METHOD(AgastFeatureDetector::setThreshold){throw std::exception("not implemented");}
-POLY_METHOD(AgastFeatureDetector::getThreshold){throw std::exception("not implemented");}
-POLY_METHOD(AgastFeatureDetector::setNonmaxSuppression){throw std::exception("not implemented");}
-POLY_METHOD(AgastFeatureDetector::getNonmaxSuppression){throw std::exception("not implemented");}
-POLY_METHOD(AgastFeatureDetector::setType){throw std::exception("not implemented");}
-POLY_METHOD(AgastFeatureDetector::getType){throw std::exception("not implemented");}
+POLY_METHOD(AgastFeatureDetector::create){throw std::runtime_error("not implemented");}
+POLY_METHOD(AgastFeatureDetector::setThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(AgastFeatureDetector::getThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(AgastFeatureDetector::setNonmaxSuppression){throw std::runtime_error("not implemented");}
+POLY_METHOD(AgastFeatureDetector::getNonmaxSuppression){throw std::runtime_error("not implemented");}
+POLY_METHOD(AgastFeatureDetector::setType){throw std::runtime_error("not implemented");}
+POLY_METHOD(AgastFeatureDetector::getType){throw std::runtime_error("not implemented");}

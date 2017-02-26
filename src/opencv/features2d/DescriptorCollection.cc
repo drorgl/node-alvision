@@ -5,7 +5,7 @@ namespace descriptorcollection_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("descriptorcollection_general_callback is empty");
+			throw std::runtime_error("descriptorcollection_general_callback is empty");
 		}
 		return overload->execute("descriptorcollection", info);
 	}
@@ -89,13 +89,13 @@ v8::Local<v8::Function> DescriptorCollection::get_constructor() {
 }
 
 
-POLY_METHOD(DescriptorCollection::New_collection){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorCollection::New){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorCollection::set){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorCollection::clear){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorCollection::getDescriptors){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorCollection::getDescriptor_local){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorCollection::getDescriptor){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorCollection::getLocalIdx){throw std::exception("not implemented");}
-POLY_METHOD(DescriptorCollection::size){throw std::exception("not implemented");}
+POLY_METHOD(DescriptorCollection::New_collection){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorCollection::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorCollection::set){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorCollection::clear){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorCollection::getDescriptors){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorCollection::getDescriptor_local){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorCollection::getDescriptor){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorCollection::getLocalIdx){throw std::runtime_error("not implemented");}
+POLY_METHOD(DescriptorCollection::size){throw std::runtime_error("not implemented");}
 

@@ -6,7 +6,7 @@ namespace keypointsfilter_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("keypointsfilter_general_callback is empty");
+			throw std::runtime_error("keypointsfilter_general_callback is empty");
 		}
 		return overload->execute("keypointsfilter", info);
 	}
@@ -100,10 +100,10 @@ v8::Local<v8::Function> KeyPointsFilter::get_constructor() {
 
 
 
-POLY_METHOD(KeyPointsFilter::New){throw std::exception("not implemented");}
-POLY_METHOD(KeyPointsFilter::runByImageBorder){throw std::exception("not implemented");}
-POLY_METHOD(KeyPointsFilter::runByKeypointSize){throw std::exception("not implemented");}
-POLY_METHOD(KeyPointsFilter::runByPixelsMask){throw std::exception("not implemented");}
-POLY_METHOD(KeyPointsFilter::removeDuplicated){throw std::exception("not implemented");}
-POLY_METHOD(KeyPointsFilter::retainBest){throw std::exception("not implemented");}
+POLY_METHOD(KeyPointsFilter::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(KeyPointsFilter::runByImageBorder){throw std::runtime_error("not implemented");}
+POLY_METHOD(KeyPointsFilter::runByKeypointSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(KeyPointsFilter::runByPixelsMask){throw std::runtime_error("not implemented");}
+POLY_METHOD(KeyPointsFilter::removeDuplicated){throw std::runtime_error("not implemented");}
+POLY_METHOD(KeyPointsFilter::retainBest){throw std::runtime_error("not implemented");}
 

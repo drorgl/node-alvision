@@ -6,7 +6,7 @@ namespace simpleblobdetectorparams_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("simpleblobdetectorparams_general_callback is empty");
+			throw std::runtime_error("simpleblobdetectorparams_general_callback is empty");
 		}
 		return overload->execute("simpleblobdetectorparams", info);
 	}
@@ -85,7 +85,7 @@ std::shared_ptr<SimpleBlobDetectorParams> SimpleBlobDetectorParams::create() {
 }
 
 
-POLY_METHOD(SimpleBlobDetectorParams::New) { throw std::exception("not implemented"); }
+POLY_METHOD(SimpleBlobDetectorParams::New) { throw std::runtime_error("not implemented"); }
 
 NAN_GETTER(SimpleBlobDetectorParams::thresholdStep_getter) { return Nan::ThrowError("not implemented"); }
 NAN_SETTER(SimpleBlobDetectorParams::thresholdStep_setter){ return Nan::ThrowError("not implemented"); }
@@ -145,5 +145,5 @@ NAN_GETTER(SimpleBlobDetectorParams::maxConvexity_getter){return Nan::ThrowError
 NAN_SETTER(SimpleBlobDetectorParams::maxConvexity_setter){return Nan::ThrowError("not implemented");}
 
 
-POLY_METHOD(SimpleBlobDetectorParams::read) { throw std::exception("not implemented"); }
-POLY_METHOD(SimpleBlobDetectorParams::write) { throw std::exception("not implemented"); }
+POLY_METHOD(SimpleBlobDetectorParams::read) { throw std::runtime_error("not implemented"); }
+POLY_METHOD(SimpleBlobDetectorParams::write) { throw std::runtime_error("not implemented"); }

@@ -10,7 +10,7 @@ namespace gpumat_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("gpumat_general_callback is empty");
+			throw std::runtime_error("gpumat_general_callback is empty");
 		}
 		return overload->execute("gpumat", info);
 	}
@@ -473,59 +473,59 @@ namespace cuda {
 	}
 
 
-	POLY_METHOD(GpuMat::New) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_rows_cols_type) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_size_type) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_rows_cols_type_scalar) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_size_type_scalar) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_gpumat) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_rows_cols_type_data) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_size_type_data) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_GpuMat_range) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_GpuMat_Rect) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::New_ioarray) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::create_rows_cols) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::create_size_type) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::release) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::swap) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::upload_ioarray) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::upload_ioarray_stream) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::download_ioarray) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::download_ioarray_stream) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::clone) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::copyTo_ioarray) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::copyTo_ioarray_stream) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::copyTo_ioarray_mask) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::copyTo_ioarray_mask_stream) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::setTo_scalar) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::setTo_scalar_stream) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::setTo_scalar_mask) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::setTo_scalar_mask_stream) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::convertTo_ioarray_rtype) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::convertTo_ioarray_rtype_stream) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::convertTo_ioarray_rtype_alpha_beta) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::convertTo_ioarray_rtype_alpha_stream) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::convertTo_ioarray_rtype_alpha_beta_stream) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::assignTo) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::ptr) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::row) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::col) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::rowRange_rows) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::rowRange_range) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::colRange_cols) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::colRange_range) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::roi_range) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::roi_rect) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::elemSize) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::elemSize1) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::type) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::depth) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::channels) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::step1) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::size) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::empty) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::rows) { throw std::exception("not implemented"); }
-	POLY_METHOD(GpuMat::cols) { throw std::exception("not implemented"); }
+	POLY_METHOD(GpuMat::New) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_rows_cols_type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_size_type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_rows_cols_type_scalar) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_size_type_scalar) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_gpumat) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_rows_cols_type_data) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_size_type_data) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_GpuMat_range) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_GpuMat_Rect) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::New_ioarray) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::create_rows_cols) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::create_size_type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::release) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::swap) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::upload_ioarray) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::upload_ioarray_stream) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::download_ioarray) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::download_ioarray_stream) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::clone) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::copyTo_ioarray) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::copyTo_ioarray_stream) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::copyTo_ioarray_mask) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::copyTo_ioarray_mask_stream) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::setTo_scalar) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::setTo_scalar_stream) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::setTo_scalar_mask) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::setTo_scalar_mask_stream) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::convertTo_ioarray_rtype) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::convertTo_ioarray_rtype_stream) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::convertTo_ioarray_rtype_alpha_beta) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::convertTo_ioarray_rtype_alpha_stream) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::convertTo_ioarray_rtype_alpha_beta_stream) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::assignTo) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::ptr) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::row) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::col) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::rowRange_rows) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::rowRange_range) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::colRange_cols) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::colRange_range) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::roi_range) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::roi_rect) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::elemSize) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::elemSize1) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::type) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::depth) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::channels) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::step1) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::size) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::empty) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::rows) { throw std::runtime_error("not implemented"); }
+	POLY_METHOD(GpuMat::cols) { throw std::runtime_error("not implemented"); }
 
 
 	NAN_GETTER(GpuMat::step_getter) { return Nan::ThrowError("not implemented"); }

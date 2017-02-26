@@ -21,7 +21,7 @@ namespace imgproc_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("imgproc_general_callback is empty");
+			throw std::runtime_error("imgproc_general_callback is empty");
 		}
 		return overload->execute("imgproc", info);
 	}
@@ -5984,13 +5984,13 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
 
 
 
- POLY_METHOD(imgproc::createLineSegmentDetector){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getGaussianKernel){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getDerivKernels) { throw std::exception("not implemented"); }
- POLY_METHOD(imgproc::getGaborKernel){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::morphologyDefaultBorderValue){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getStructuringElement){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::medianBlur){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::createLineSegmentDetector){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getGaussianKernel){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getDerivKernels) { throw std::runtime_error("not implemented"); }
+ POLY_METHOD(imgproc::getGaborKernel){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::morphologyDefaultBorderValue){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getStructuringElement){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::medianBlur){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::GaussianBlur){
 	 auto src			=info.at<IOArray*>(0)->GetInputArray();
 	 auto dst			=info.at<IOArray*>(1)->GetOutputArray();
@@ -6007,16 +6007,16 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
 		 sigmaY,
 		 borderType);
  }
- POLY_METHOD(imgproc::bilateralFilter){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::boxFilter){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::sqrBoxFilter){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::blur){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::filter2D){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::sepFilter2D){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::Sobel){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::spatialGradient){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::Scharr){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::Laplacian){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::bilateralFilter){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::boxFilter){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::sqrBoxFilter){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::blur){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::filter2D){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::sepFilter2D){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::Sobel){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::spatialGradient){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::Scharr){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::Laplacian){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::Canny){
 		auto image			=info.at<IOArray*>(0)->GetInputArray();
 		auto edges			=info.at<IOArray*>(1)->GetOutputArray();
@@ -6028,18 +6028,18 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
 		cv::Canny(image, edges, threshold1, threshold2, apertureSize, L2gradient);
 
  }
- POLY_METHOD(imgproc::cornerMinEigenVal){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::cornerHarris){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::cornerEigenValsAndVecs){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::preCornerDetect){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::cornerSubPix){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::goodFeaturesToTrack){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::HoughLines){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::HoughLinesP){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::HoughCircles){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::erode){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::dilate){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::morphologyEx){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::cornerMinEigenVal){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::cornerHarris){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::cornerEigenValsAndVecs){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::preCornerDetect){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::cornerSubPix){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::goodFeaturesToTrack){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::HoughLines){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::HoughLinesP){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::HoughCircles){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::erode){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::dilate){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::morphologyEx){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::resize){
 	 auto src			= info.at<IOArray*>(0)->GetInputArray();
 	 auto dst			= info.at<IOArray*>(1)->GetOutputArray();
@@ -6050,55 +6050,55 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
 
 	 cv::resize(src, dst, dsize, fx, fy, interpolation);
  }
- POLY_METHOD(imgproc::warpAffine){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::warpPerspective){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::remap){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::convertMaps){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getRotationMatrix2D){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::invertAffineTransform){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getPerspectiveTransform_mat){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getPerspectiveTransform_point){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getAffineTransform_mat){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getAffineTransform_point){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getRectSubPix){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::logPolar) { throw std::exception("not implemented"); }
- POLY_METHOD(imgproc::linearPolar){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::integral_tilted){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::integral_squared){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::integral){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::accumulate){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::accumulateSquare){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::accumulateProduct){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::accumulateWeighted){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::phaseCorrelate){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::createHanningWindow){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::threshold){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::adaptiveThreshold){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::pyrDown){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::pyrUp){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::buildPyramid){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::undistort){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::initUndistortRectifyMap){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::initWideAngleProjMap){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getDefaultNewCameraMatrix){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::undistortPoints){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::calcHist_array){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::calcHist_sparsemat){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::calcHist_mat){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::calcBackProject){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::calcBackProject_sparsemat){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::calcBackProject_arrayofarrays){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::compareHist){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::compareHist_sparsemat){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::equalizeHist){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::EMD){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::watershed){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::pyrMeanShiftFiltering){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::grabCut){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::distanceTransform){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::distanceTransform_labels){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::floodFill_mask){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::floodFill){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::warpAffine){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::warpPerspective){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::remap){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::convertMaps){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getRotationMatrix2D){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::invertAffineTransform){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getPerspectiveTransform_mat){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getPerspectiveTransform_point){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getAffineTransform_mat){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getAffineTransform_point){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getRectSubPix){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::logPolar) { throw std::runtime_error("not implemented"); }
+ POLY_METHOD(imgproc::linearPolar){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::integral_tilted){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::integral_squared){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::integral){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::accumulate){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::accumulateSquare){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::accumulateProduct){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::accumulateWeighted){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::phaseCorrelate){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::createHanningWindow){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::threshold){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::adaptiveThreshold){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::pyrDown){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::pyrUp){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::buildPyramid){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::undistort){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::initUndistortRectifyMap){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::initWideAngleProjMap){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getDefaultNewCameraMatrix){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::undistortPoints){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::calcHist_array){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::calcHist_sparsemat){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::calcHist_mat){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::calcBackProject){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::calcBackProject_sparsemat){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::calcBackProject_arrayofarrays){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::compareHist){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::compareHist_sparsemat){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::equalizeHist){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::EMD){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::watershed){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::pyrMeanShiftFiltering){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::grabCut){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::distanceTransform){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::distanceTransform_labels){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::floodFill_mask){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::floodFill){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::cvtColor){
 		auto src	= info.at<IOArray*>(0)->GetInputArray();
 		auto dst	= info.at<IOArray*>(1)->GetOutputArray();
@@ -6107,15 +6107,15 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
 		
 		cv::cvtColor(src, dst, code, dstCn);
  }
- POLY_METHOD(imgproc::demosaicing){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::moments){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::HuMoments_array){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::HuMoments){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::matchTemplate){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::connectedComponents){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::connectedComponentsWithStats){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::findContours_hierarchy){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::findContours){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::demosaicing){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::moments){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::HuMoments_array){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::HuMoments){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::matchTemplate){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::connectedComponents){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::connectedComponentsWithStats){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::findContours_hierarchy){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::findContours){throw std::runtime_error("not implemented");}
  
 POLY_METHOD(imgproc::approxPolyDP){
 	auto curve			= info.at<IOArray*>(0)->GetInputArray();
@@ -6126,29 +6126,29 @@ POLY_METHOD(imgproc::approxPolyDP){
 	cv::approxPolyDP(curve, approxCurve, epsilon, closed);
  }
 
- POLY_METHOD(imgproc::arcLength){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::boundingRect){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::contourArea){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::minAreaRect){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::boxPoints){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::minEnclosingCircle){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::minEnclosingTriangle){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::matchShapes){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::convexHull){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::convexityDefects){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::isContourConvex){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::intersectConvexConvex){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::fitEllipse){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::fitLine){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::pointPolygonTest){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::rotatedRectangleIntersection){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::createCLAHE){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::createGeneralizedHoughBallard){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::createGeneralizedHoughGuil){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::blendLinear){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::applyColorMap){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::line){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::arrowedLine){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::arcLength){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::boundingRect){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::contourArea){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::minAreaRect){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::boxPoints){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::minEnclosingCircle){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::minEnclosingTriangle){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::matchShapes){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::convexHull){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::convexityDefects){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::isContourConvex){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::intersectConvexConvex){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::fitEllipse){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::fitLine){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::pointPolygonTest){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::rotatedRectangleIntersection){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::createCLAHE){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::createGeneralizedHoughBallard){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::createGeneralizedHoughGuil){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::blendLinear){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::applyColorMap){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::line){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::arrowedLine){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::rectangle){
 	 auto img = *info.at<Matrix*>(0)->_mat;
 	 auto rec = *info.at<Rect*>(1)->_rect;
@@ -6160,7 +6160,7 @@ POLY_METHOD(imgproc::approxPolyDP){
 	 cv::rectangle(img, rec, color, thickness, lineType, shift);
  
  }
- POLY_METHOD(imgproc::rectangle_points){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::rectangle_points){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::circle){
 	 auto img		=info.at<IOArray*>(0)->GetInputOutputArray();
 	 auto center	=info.at<Point*>(1)->_point;
@@ -6172,15 +6172,15 @@ POLY_METHOD(imgproc::approxPolyDP){
 	 cv::circle(img, *center, radius, *color, thickness, lineType, shift);
 
  }
- POLY_METHOD(imgproc::ellipse){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::ellipse_center){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::drawMarker){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::fillConvexPoly){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::fillConvexPoly_mat){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::fillPoly){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::fillPoly_mat){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::polylines){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::polylines_mat){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::ellipse){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::ellipse_center){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::drawMarker){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::fillConvexPoly){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::fillConvexPoly_mat){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::fillPoly){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::fillPoly_mat){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::polylines){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::polylines_mat){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::drawContours){
 		auto image		= info.at<IOArray*>(0)->GetInputOutputArray();
 		auto contours	= info.at<IOArray*>(1)->GetInputArrayOfArrays();
@@ -6204,8 +6204,8 @@ POLY_METHOD(imgproc::approxPolyDP){
 			offset
 		);
 }
- POLY_METHOD(imgproc::clipLine_size){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::clipLine_rect){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::ellipse2Poly){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::putText){throw std::exception("not implemented");}
- POLY_METHOD(imgproc::getTextSize){throw std::exception("not implemented");}
+ POLY_METHOD(imgproc::clipLine_size){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::clipLine_rect){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::ellipse2Poly){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::putText){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::getTextSize){throw std::runtime_error("not implemented");}

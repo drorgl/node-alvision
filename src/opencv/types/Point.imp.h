@@ -5,6 +5,12 @@
 #include "Point.h"
 #include "Size.h"
 #include "Rect.h"
+
+namespace point_general_callback {
+	extern std::shared_ptr<overload_resolution> overload;
+	NAN_METHOD(callback);
+}
+
 template <typename T>
 void Point_<T>::Register(Handle<Object> target, std::string name, std::shared_ptr<overload_resolution> overload) {
 	Point_<T>::name = name;
@@ -435,7 +441,7 @@ void Point_<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<ov
 
 	 template <typename T>
 	 POLY_METHOD(Point_<T>::op_Multiplication_vec_point							){
-		 throw std::exception("not implemented");
+		 throw std::runtime_error("not implemented");
 		 /*auto a = *info.at<VecT*>(0)->_vec;
 		 auto b = *info.at<Point_<T>*>(1)->_point;
 
@@ -555,7 +561,7 @@ void Point_<T>::Init(Handle<Object> target, std::string name, std::shared_ptr<ov
 
 	 template <typename T>
 	 POLY_METHOD(Point_<T>::op_Multiplication_other_matx		){
-		 throw std::exception("not implemented");
+		 throw std::runtime_error("not implemented");
 		 /*auto this_ = *info.This<Point_<T>*>()->_point;
 		 auto other = *info.at<MatxT*>(0)->_matx;
 
@@ -608,11 +614,6 @@ Nan::Persistent<FunctionTemplate> Point_<T>::constructor;
 template <typename T>
 std::string Point_<T>::name;
 
-
-typedef typename Point_<cv::Point2i> Point2i;
-typedef typename Point_<cv::Point2f> Point2f;
-typedef typename Point_<cv::Point2d> Point2d;
-typedef typename Point2i   Point;
 
 namespace PointInit {
 	void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);

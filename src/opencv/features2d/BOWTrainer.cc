@@ -5,7 +5,7 @@ namespace bowtrainer_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("bowtrainer_general_callback is empty");
+			throw std::runtime_error("bowtrainer_general_callback is empty");
 		}
 		return overload->execute("bowtrainer", info);
 	}
@@ -110,11 +110,11 @@ v8::Local<v8::Function> BOWTrainer::get_constructor() {
 
 
 
-POLY_METHOD(BOWTrainer::New){throw std::exception("not implemented");}
-POLY_METHOD(BOWTrainer::add){throw std::exception("not implemented");}
-POLY_METHOD(BOWTrainer::getDescriptors){throw std::exception("not implemented");}
-POLY_METHOD(BOWTrainer::descriptorsCount){throw std::exception("not implemented");}
-POLY_METHOD(BOWTrainer::clear){throw std::exception("not implemented");}
-POLY_METHOD(BOWTrainer::cluster){throw std::exception("not implemented");}
-POLY_METHOD(BOWTrainer::cluster_descriptors){throw std::exception("not implemented");}
+POLY_METHOD(BOWTrainer::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWTrainer::add){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWTrainer::getDescriptors){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWTrainer::descriptorsCount){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWTrainer::clear){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWTrainer::cluster){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWTrainer::cluster_descriptors){throw std::runtime_error("not implemented");}
 

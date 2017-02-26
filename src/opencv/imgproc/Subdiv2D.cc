@@ -6,7 +6,7 @@ namespace subdiv2d_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("subdiv2d_general_callback is empty");
+			throw std::runtime_error("subdiv2d_general_callback is empty");
 		}
 		return overload->execute("subdiv2d", info);
 	}
@@ -335,39 +335,39 @@ v8::Local<v8::Function> Subdiv2D::get_constructor() {
 }
 
 
- POLY_METHOD(Subdiv2D::New){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::New_rect){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::initDelaunay){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::insert){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::insert_array){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::locate){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::findNearest){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::getEdgeList){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::getTriangleList){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::getVoronoiFacetList){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::getVertex){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::getEdge){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::nextEdge){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::rotateEdge){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::symEdge){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::edgeOrg){throw std::exception("not implemented");}
- POLY_METHOD(Subdiv2D::edgeDst){throw std::exception("not implemented");}
+ POLY_METHOD(Subdiv2D::New){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::New_rect){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::initDelaunay){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::insert){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::insert_array){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::locate){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::findNearest){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::getEdgeList){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::getTriangleList){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::getVoronoiFacetList){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::getVertex){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::getEdge){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::nextEdge){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::rotateEdge){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::symEdge){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::edgeOrg){throw std::runtime_error("not implemented");}
+ POLY_METHOD(Subdiv2D::edgeDst){throw std::runtime_error("not implemented");}
 
 
- NAN_GETTER(Subdiv2D::vtx_getter){throw std::exception("not implemented");}
- NAN_SETTER(Subdiv2D::vtx_setter){throw std::exception("not implemented");}
- NAN_GETTER(Subdiv2D::qedges_getter){throw std::exception("not implemented");}
- NAN_SETTER(Subdiv2D::qedges_setter){throw std::exception("not implemented");}
- NAN_GETTER(Subdiv2D::freeQEdge_getter){throw std::exception("not implemented");}
- NAN_SETTER(Subdiv2D::freeQEdge_setter){throw std::exception("not implemented");}
- NAN_GETTER(Subdiv2D::freePoint_getter){throw std::exception("not implemented");}
- NAN_SETTER(Subdiv2D::freePoint_setter){throw std::exception("not implemented");}
- NAN_GETTER(Subdiv2D::validGeometry_getter){throw std::exception("not implemented");}
- NAN_SETTER(Subdiv2D::validGeometry_setter){throw std::exception("not implemented");}
- NAN_GETTER(Subdiv2D::recentEdge_getter){throw std::exception("not implemented");}
- NAN_SETTER(Subdiv2D::recentEdge_setter){throw std::exception("not implemented");}
- NAN_GETTER(Subdiv2D::topLeft_getter){throw std::exception("not implemented");}
- NAN_SETTER(Subdiv2D::topLeft_setter){throw std::exception("not implemented");}
- NAN_GETTER(Subdiv2D::bottomRight_getter){throw std::exception("not implemented");}
- NAN_SETTER(Subdiv2D::bottomRight_setter){throw std::exception("not implemented");}
+ NAN_GETTER(Subdiv2D::vtx_getter){throw std::runtime_error("not implemented");}
+ NAN_SETTER(Subdiv2D::vtx_setter){throw std::runtime_error("not implemented");}
+ NAN_GETTER(Subdiv2D::qedges_getter){throw std::runtime_error("not implemented");}
+ NAN_SETTER(Subdiv2D::qedges_setter){throw std::runtime_error("not implemented");}
+ NAN_GETTER(Subdiv2D::freeQEdge_getter){throw std::runtime_error("not implemented");}
+ NAN_SETTER(Subdiv2D::freeQEdge_setter){throw std::runtime_error("not implemented");}
+ NAN_GETTER(Subdiv2D::freePoint_getter){throw std::runtime_error("not implemented");}
+ NAN_SETTER(Subdiv2D::freePoint_setter){throw std::runtime_error("not implemented");}
+ NAN_GETTER(Subdiv2D::validGeometry_getter){throw std::runtime_error("not implemented");}
+ NAN_SETTER(Subdiv2D::validGeometry_setter){throw std::runtime_error("not implemented");}
+ NAN_GETTER(Subdiv2D::recentEdge_getter){throw std::runtime_error("not implemented");}
+ NAN_SETTER(Subdiv2D::recentEdge_setter){throw std::runtime_error("not implemented");}
+ NAN_GETTER(Subdiv2D::topLeft_getter){throw std::runtime_error("not implemented");}
+ NAN_SETTER(Subdiv2D::topLeft_setter){throw std::runtime_error("not implemented");}
+ NAN_GETTER(Subdiv2D::bottomRight_getter){throw std::runtime_error("not implemented");}
+ NAN_SETTER(Subdiv2D::bottomRight_setter){throw std::runtime_error("not implemented");}
 

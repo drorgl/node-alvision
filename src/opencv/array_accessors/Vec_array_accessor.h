@@ -24,7 +24,7 @@ public:
 
 	Vec_array_accessor(std::shared_ptr<T> vec, int i0 = 0, int i1 = 0, int i2 = 0) : _vec(vec), _i0(i0), _i1(i1), _i2(i2) {
 		//if (_get_accessors.count(type) == 0) {
-		//	throw std::exception("type is not implemented");
+		//	throw std::runtime_error("type is not implemented");
 		//}
 
 		_max_size = _vec->channels;
@@ -45,7 +45,7 @@ public:
 	}
 	virtual v8::Local<v8::Value> get(int index) {
 		if ((_pre_index + index) >= _max_size) {
-			throw std::exception("index out of bounds");
+			throw std::runtime_error("index out of bounds");
 		}
 
 		return Nan::New((*_vec)[(_pre_index + index)]);

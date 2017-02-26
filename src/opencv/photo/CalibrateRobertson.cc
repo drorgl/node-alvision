@@ -6,7 +6,7 @@ namespace calibraterobertson_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("calibraterobertson_general_callback is empty");
+			throw std::runtime_error("calibraterobertson_general_callback is empty");
 		}
 		return overload->execute("calibraterobertson", info);
 	}
@@ -82,12 +82,12 @@ v8::Local<v8::Function> CalibrateRobertson::get_constructor() {
 }
 
 
-POLY_METHOD(CalibrateRobertson::New){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateRobertson::getMaxIter){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateRobertson::setMaxIter){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateRobertson::getThreshold){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateRobertson::setThreshold){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateRobertson::getRadiance){throw std::exception("not implemented");}
-POLY_METHOD(CalibrateRobertson::createCalibrateRobertson){throw std::exception("not implemented");}
+POLY_METHOD(CalibrateRobertson::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateRobertson::getMaxIter){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateRobertson::setMaxIter){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateRobertson::getThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateRobertson::setThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateRobertson::getRadiance){throw std::runtime_error("not implemented");}
+POLY_METHOD(CalibrateRobertson::createCalibrateRobertson){throw std::runtime_error("not implemented");}
 
 

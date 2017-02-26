@@ -7,7 +7,7 @@ namespace bowmeanstrainer_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("bowmeanstrainer_general_callback is empty");
+			throw std::runtime_error("bowmeanstrainer_general_callback is empty");
 		}
 		return overload->execute("bowmeanstrainer", info);
 	}
@@ -79,7 +79,7 @@ v8::Local<v8::Function> BOWKMeansTrainer::get_constructor() {
 }
 
 
-POLY_METHOD(BOWKMeansTrainer::New){throw std::exception("not implemented");}
-POLY_METHOD(BOWKMeansTrainer::cluster){throw std::exception("not implemented");}
-POLY_METHOD(BOWKMeansTrainer::cluster_descriptors){throw std::exception("not implemented");}
+POLY_METHOD(BOWKMeansTrainer::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWKMeansTrainer::cluster){throw std::runtime_error("not implemented");}
+POLY_METHOD(BOWKMeansTrainer::cluster_descriptors){throw std::runtime_error("not implemented");}
 

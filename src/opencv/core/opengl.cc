@@ -7,7 +7,7 @@ namespace opengl_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("opengl_general_callback is empty");
+			throw std::runtime_error("opengl_general_callback is empty");
 		}
 		return overload->execute("opengl", info);
 	}

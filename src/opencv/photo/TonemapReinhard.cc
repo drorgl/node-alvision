@@ -6,7 +6,7 @@ namespace tonemapreinhard_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("tonemapreinhard_general_callback is empty");
+			throw std::runtime_error("tonemapreinhard_general_callback is empty");
 		}
 		return overload->execute("tonemapreinhard", info);
 	}
@@ -93,12 +93,12 @@ v8::Local<v8::Function> TonemapReinhard::get_constructor() {
 }
 
 
-POLY_METHOD(TonemapReinhard::New){throw std::exception("not implemented");}
-POLY_METHOD(TonemapReinhard::getIntensity){throw std::exception("not implemented");}
-POLY_METHOD(TonemapReinhard::setIntensity){throw std::exception("not implemented");}
-POLY_METHOD(TonemapReinhard::getLightAdaptation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapReinhard::setLightAdaptation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapReinhard::getColorAdaptation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapReinhard::setColorAdaptation){throw std::exception("not implemented");}
-POLY_METHOD(TonemapReinhard::createTonemapReinhard){throw std::exception("not implemented");}
+POLY_METHOD(TonemapReinhard::New){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapReinhard::getIntensity){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapReinhard::setIntensity){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapReinhard::getLightAdaptation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapReinhard::setLightAdaptation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapReinhard::getColorAdaptation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapReinhard::setColorAdaptation){throw std::runtime_error("not implemented");}
+POLY_METHOD(TonemapReinhard::createTonemapReinhard){throw std::runtime_error("not implemented");}
 

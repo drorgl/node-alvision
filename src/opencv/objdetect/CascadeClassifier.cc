@@ -7,7 +7,7 @@ namespace cascadeclassifier_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("cascadeclassifier_general_callback is empty");
+			throw std::runtime_error("cascadeclassifier_general_callback is empty");
 		}
 		return overload->execute("cascadeclassifier", info);
 	}
@@ -187,13 +187,13 @@ POLY_METHOD(CascadeClassifier::New) {
 }
 
 
-POLY_METHOD(CascadeClassifier::New_file){throw std::exception("not implemented");}
-POLY_METHOD(CascadeClassifier::empty){throw std::exception("not implemented");}
-POLY_METHOD(CascadeClassifier::load){throw std::exception("not implemented");}
-POLY_METHOD(CascadeClassifier::read){throw std::exception("not implemented");}
-POLY_METHOD(CascadeClassifier::detectMultiScale){throw std::exception("not implemented");}
-POLY_METHOD(CascadeClassifier::isOldFormatCascade){throw std::exception("not implemented");}
-POLY_METHOD(CascadeClassifier::getOriginalWindowSize){throw std::exception("not implemented");}
-POLY_METHOD(CascadeClassifier::getFeatureType){throw std::exception("not implemented");}
-POLY_METHOD(CascadeClassifier::convert){throw std::exception("not implemented");}
+POLY_METHOD(CascadeClassifier::New_file){throw std::runtime_error("not implemented");}
+POLY_METHOD(CascadeClassifier::empty){throw std::runtime_error("not implemented");}
+POLY_METHOD(CascadeClassifier::load){throw std::runtime_error("not implemented");}
+POLY_METHOD(CascadeClassifier::read){throw std::runtime_error("not implemented");}
+POLY_METHOD(CascadeClassifier::detectMultiScale){throw std::runtime_error("not implemented");}
+POLY_METHOD(CascadeClassifier::isOldFormatCascade){throw std::runtime_error("not implemented");}
+POLY_METHOD(CascadeClassifier::getOriginalWindowSize){throw std::runtime_error("not implemented");}
+POLY_METHOD(CascadeClassifier::getFeatureType){throw std::runtime_error("not implemented");}
+POLY_METHOD(CascadeClassifier::convert){throw std::runtime_error("not implemented");}
 

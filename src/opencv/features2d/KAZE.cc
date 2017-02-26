@@ -5,7 +5,7 @@ namespace kaze_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("kaze_callback is empty");
+			throw std::runtime_error("kaze_callback is empty");
 		}
 		return overload->execute("kaze", info);
 	}
@@ -125,17 +125,17 @@ v8::Local<v8::Function> KAZE::get_constructor() {
 }
 
 
-POLY_METHOD(KAZE::create){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::setExtended){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::getExtended){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::setUpright){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::getUpright){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::setThreshold){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::getThreshold){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::setNOctaves){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::getNOctaves){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::setNOctaveLayers){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::getNOctaveLayers){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::setDiffusivity){throw std::exception("not implemented");}
-POLY_METHOD(KAZE::getDiffusivity){throw std::exception("not implemented");}
+POLY_METHOD(KAZE::create){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::setExtended){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::getExtended){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::setUpright){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::getUpright){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::setThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::getThreshold){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::setNOctaves){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::getNOctaves){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::setNOctaveLayers){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::getNOctaveLayers){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::setDiffusivity){throw std::runtime_error("not implemented");}
+POLY_METHOD(KAZE::getDiffusivity){throw std::runtime_error("not implemented");}
 

@@ -4,7 +4,7 @@ namespace vec_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("vec_general_callback is empty");
+			throw std::runtime_error("vec_general_callback is empty");
 		}
 		return overload->execute("vec", info);
 	}

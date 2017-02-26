@@ -4,7 +4,7 @@ namespace mat__general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
 		if (overload == nullptr) {
-			throw std::exception("mat__general_callback is empty");
+			throw std::runtime_error("mat__general_callback is empty");
 		}
 		return overload->execute("mat_", info);
 	}
