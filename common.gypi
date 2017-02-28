@@ -4,7 +4,7 @@
 	},
 	'target_defaults' : {
 		 # enable exceptions for all targets
-		 
+		
 		'conditions' : [
 			['1==1', {
 					'configurations': {
@@ -70,7 +70,10 @@
 			}],
 			
 			['OS in "linux freebsd openbsd solaris android aix"', {
-					'cflags_cc!' : ['-fno-rtti', '-fno-exceptions', '-std=gnu++0x', '-std=c++11']
+					'cflags_cc!' : ['-fno-rtti', '-fno-exceptions', '-std=gnu++0x', '-std=c++11'],
+					'ldflags':[
+						'-Wl,-rpath=\$$ORIGIN'
+					],
 			}],
 			['OS=="mac"', {
 					'xcode_settings' : {

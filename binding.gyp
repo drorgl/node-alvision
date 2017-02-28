@@ -318,9 +318,29 @@
 		, "src/opencv/Vec.cc"
 		, "src/opencv/Vec.h"
 		, "src/opencv/Vec.imp.h"
+		, "src/opencv/Vec/Vec_double.cc"
+		, "src/opencv/Vec/Vec_double.h"
+		, "src/opencv/Vec/Vec_float.cc"
+		, "src/opencv/Vec/Vec_float.h"
+		, "src/opencv/Vec/Vec_int.cc"
+		, "src/opencv/Vec/Vec_int.h"
+		, "src/opencv/Vec/Vec_short.cc"
+		, "src/opencv/Vec/Vec_short.h"
+		, "src/opencv/Vec/Vec_uchar.cc"
+		, "src/opencv/Vec/Vec_uchar.h"
+		, "src/opencv/Vec/Vec_ushort.cc"
+		, "src/opencv/Vec/Vec_ushort.h"
+		
 		, "src/opencv/Matx.cc"
 		, "src/opencv/Matx.h"
 		, "src/opencv/Matx.imp.h"
+		, "src/opencv/Matx/Matx_double.cc"
+		, "src/opencv/Matx/Matx_double.h"
+		, "src/opencv/Matx/Matx_float.cc"
+		, "src/opencv/Matx/Matx_float.h"
+		, "src/opencv/Matx/Matx_int.cc"
+		, "src/opencv/Matx/Matx_int.h"	
+		
 		, "src/opencv/MatxAndVec.h"
 
 		, "src/opencv/video/background_segm/BackgroundSubtractor.cc"
@@ -770,8 +790,8 @@
 			'cflags':['-fexceptions'],
 			'cflags!' : [ '-fno-exceptions'],
 			'cflags_cc!': [ '-fno-rtti',  '-fno-exceptions'],
-			'ldflags' : ['-Wl,--rpath=\$ORIGIN'],
-			'ldflags_cc':['-Wl,--rpath=\$ORIGIN'],
+			#'ldflags' : ['-Wl,--rpath=\$ORIGIN'],
+			#'ldflags_cc':['-Wl,--rpath=\$ORIGIN'],
 		}],
         #['OS=="mac"', {
         #  # cflags on OS X are stupid and have to be defined like this
