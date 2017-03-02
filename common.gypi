@@ -70,7 +70,8 @@
 			}],
 			
 			['OS in "linux freebsd openbsd solaris android aix"', {
-					'cflags_cc!' : ['-fno-rtti', '-fno-exceptions', '-std=gnu++0x', '-std=c++11'],
+					'cflags_cc!' : ['-fno-rtti', '-fno-exceptions', '-std=gnu++0x', '-std=c++11', '-Wno-sign-compare'],
+					'cflags_cc' : ['-std=c++14'],
 					'ldflags':[
 						'-Wl,-rpath=\$$ORIGIN'
 					],
