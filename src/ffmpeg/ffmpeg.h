@@ -48,7 +48,7 @@ namespace alvision{
 		/*ffmpeg logger callback*/
 		static void _ffmpeg_logger(std::string module, int level, std::string message);
 		/*async callback for sending the messages on the main event loop*/
-		static void _async_logger_callback(uv_async_t *handle, int status /*UNUSED*/);
+		static void _async_logger_callback(uv_async_t *handle);
 		/*a queue for log messages*/
 		static threadsafe_queue<log_message> _log_messages;
 		/*uv async synchronizer for main event loop*/

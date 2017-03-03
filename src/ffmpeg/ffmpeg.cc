@@ -108,7 +108,7 @@ namespace alvision{
 		info.GetReturnValue().Set(Nan::Undefined());
 	}
 
-	void ffmpeg::_async_logger_callback(uv_async_t *handle, int status /*UNUSED*/)
+	void ffmpeg::_async_logger_callback(uv_async_t *handle)
 	{
 		
 		log_message lm;
