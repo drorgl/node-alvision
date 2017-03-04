@@ -528,3 +528,11 @@ HOGDescriptor.DEFAULT_NLEVELS = 64;
 //
 //
 //#endif
+
+
+export enum HAAR_FLAGS {
+    DO_CANNY_PRUNING    =1,
+    SCALE_IMAGE         =2,
+    FIND_BIGGEST_OBJECT =4,
+    DO_ROUGH_SEARCH     =8
+};

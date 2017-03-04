@@ -91,13 +91,13 @@ class App extends BaseApp
 
                 proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
 
-                if (detections_num == 0)
-                    faces.length = 0;
-                else {
-                    faces.length = detections_num;
-                    let facesMat = new alvision.Mat (1, detections_num, DataType<Rect>::type, &faces[0]);
-                    facesBuf_gpu.colRange(0, detections_num).download(facesMat);
-                }
+                //if (detections_num == 0)
+                //    faces.length = 0;
+                //else {
+                //    faces.length = detections_num;
+                //    let facesMat = new alvision.Mat (1, detections_num,/* DataType<Rect>::type,*/ faces);
+                //    facesBuf_gpu.colRange(0, detections_num).download(facesMat);
+                //}
             }
             else {
                 makeGray(frame_cpu, gray_cpu);
@@ -106,7 +106,7 @@ class App extends BaseApp
 
                 const proc_start = alvision.getTickCount();
 
-                cascade_cpu.detectMultiScale(gray_cpu, faces, 1.2, 4, CV_HAAR_SCALE_IMAGE, minSize);
+                cascade_cpu.detectMultiScale(gray_cpu, (objs) => faces = objs, 1.2, 4, alvision.HAAR_FLAGS.SCALE_IMAGE, minSize);
 
                 proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
             }
@@ -133,7 +133,7 @@ class App extends BaseApp
                 break;
 
             case 'M':
-                this.method_ = ((this.method_ + 1) % METHOD_MAX);
+                this.method_ = ((this.method_ + 1) % Method.METHOD_MAX);
                 this.reloadCascade_ = true;
                 console.log("Switch method to ", method_str[this.method_.valueOf()]);
                 break;
