@@ -46,7 +46,7 @@
 import alvision_module from "../bindings";
 
 import * as _mat from './mat'
-import * as _matx from './matx'
+import * as _matx from './Matx'
 //import * as _st from './Constants'
 import * as _st from './static'
 import * as _types from './types'

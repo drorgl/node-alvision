@@ -7,7 +7,7 @@
     "nan": "^2.4.0",
     "source-map-support": "^0.4.2",
     "ts-node": "^1.3.0",
-    "typescript": "^2.0.0"
+    "typescript": "2.0.0"
   },
   "version": "1.0.0",
   "devDependencies": {
@@ -22,6 +22,7 @@
     "arm": "./build_android_alvision",
     "linux": "build_linux_alvision",
     "test": "ts-node test/unit.ts",
+	"build" : "tsc",
 	"test-opencv" : "ts-node test/opencv.ts",
 	"test-tmp" : "ts-node test/tmp.ts",
 	"demo-pedestrian_detection" : "ts-node test/demos/pedestrian_detection.ts",

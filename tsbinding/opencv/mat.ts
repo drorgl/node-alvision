@@ -44,7 +44,7 @@
 import alvision_module from "../bindings";
 import * as _st from './static';
 import * as _types from './types';
-import * as _matx from './matx';
+import * as _matx from './Matx';
 import * as _cuda from './cuda';
 import * as _cvdef from './cvdef';
 import * as _base from './base';

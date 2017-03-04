@@ -6,7 +6,7 @@ import alvision_module from "../bindings";
 
 import * as ffmpeg from './ffmpeg'
 import * as packet from './packet'
-import * as matrix from '../opencv/Mat'
+import * as matrix from '../opencv/mat'
 
 //export module alvision {
     export interface stream extends ffmpeg.IStreamInfo, ffmpeg.IVideoStreamInfo, ffmpeg.IAudioStreamInfo {
