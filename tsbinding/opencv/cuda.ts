@@ -46,10 +46,10 @@ import alvision_module from "../bindings";
 
 //import * as _constants from './Constants'
 import * as _st from './static';
-import * as _mat from './Mat';
-import * as _types from './Types';
+import * as _mat from './mat';
+import * as _types from './types';
 //import * as _core from './Core';
-import * as _base from './Base';
+import * as _base from './tase';
 //import * as _scalar from './Scalar'
 
 //#ifndef __OPENCV_CORE_CUDA_HPP__
