@@ -2003,24 +2003,24 @@ export interface StereoMatcher extends _core.Algorithm
      */
     compute(left: _st.InputArray, right: _st.InputArray ,
         disparity: _st.OutputArray ): void;
-//
-//    CV_WRAP virtual int getMinDisparity() const = 0;
-//    CV_WRAP virtual void setMinDisparity(int minDisparity) = 0;
-//
-//    CV_WRAP virtual int getNumDisparities() const = 0;
-//    CV_WRAP virtual void setNumDisparities(int numDisparities) = 0;
-//
-//    CV_WRAP virtual int getBlockSize() const = 0;
-//    CV_WRAP virtual void setBlockSize(int blockSize) = 0;
-//
-//    CV_WRAP virtual int getSpeckleWindowSize() const = 0;
-//    CV_WRAP virtual void setSpeckleWindowSize(int speckleWindowSize) = 0;
-//
-//    CV_WRAP virtual int getSpeckleRange() const = 0;
-//    CV_WRAP virtual void setSpeckleRange(int speckleRange) = 0;
-//
-//    CV_WRAP virtual int getDisp12MaxDiff() const = 0;
-//    CV_WRAP virtual void setDisp12MaxDiff(int disp12MaxDiff) = 0;
+    
+    getMinDisparity(): _st.int;
+    setMinDisparity(minDisparity: _st.int): void;
+    
+    getNumDisparities(): _st.int;
+    setNumDisparities(numDisparities: _st.int ): void;
+    
+    getBlockSize(): _st.int;
+    setBlockSize(blockSize: _st.int ): void;
+    
+    getSpeckleWindowSize(): _st.int;
+    setSpeckleWindowSize(speckleWindowSize: _st.int ): void;
+    
+    getSpeckleRange(): _st.int;
+    setSpeckleRange(speckleRange: _st.int ): void;
+    
+    getDisp12MaxDiff(): _st.int;
+    setDisp12MaxDiff(disp12MaxDiff: _st.int ): void;
 };
 
 
@@ -2051,30 +2051,30 @@ export interface StereoBM extends StereoMatcher
 //           PREFILTER_XSOBEL              = 1
 //         };
 //
-//    CV_WRAP virtual int getPreFilterType() const = 0;
-//    CV_WRAP virtual void setPreFilterType(int preFilterType) = 0;
-//
-//    CV_WRAP virtual int getPreFilterSize() const = 0;
-//    CV_WRAP virtual void setPreFilterSize(int preFilterSize) = 0;
-//
-//    CV_WRAP virtual int getPreFilterCap() const = 0;
-//    CV_WRAP virtual void setPreFilterCap(int preFilterCap) = 0;
-//
-//    CV_WRAP virtual int getTextureThreshold() const = 0;
-//    CV_WRAP virtual void setTextureThreshold(int textureThreshold) = 0;
-//
-//    CV_WRAP virtual int getUniquenessRatio() const = 0;
-//    CV_WRAP virtual void setUniquenessRatio(int uniquenessRatio) = 0;
-//
-//    CV_WRAP virtual int getSmallerBlockSize() const = 0;
-//    CV_WRAP virtual void setSmallerBlockSize(int blockSize) = 0;
-//
-//    CV_WRAP virtual Rect getROI1() const = 0;
-//    CV_WRAP virtual void setROI1(Rect roi1) = 0;
-//
-//    CV_WRAP virtual Rect getROI2() const = 0;
-//    CV_WRAP virtual void setROI2(Rect roi2) = 0;
-//
+    getPreFilterType(): _st.int;
+    setPreFilterType(preFilterType: _st.int): void;
+    
+    getPreFilterSize(): _st.int;
+    setPreFilterSize(preFilterSize: _st.int ): void;
+    
+    getPreFilterCap(): _st.int;
+    setPreFilterCap(preFilterCap: _st.int): void;
+    
+    getTextureThreshold(): _st.int;
+    setTextureThreshold(textureThreshold: _st.int): void;
+    
+    getUniquenessRatio(): _st.int;
+    setUniquenessRatio(uniquenessRatio: _st.int): void;
+    
+    getSmallerBlockSize(): _st.int;
+    setSmallerBlockSize(blockSize: _st.int): void;
+    
+    getROI1(): _types.Rect;
+    setROI1(roi1: _types.Rect): void;
+    
+    getROI2(): _types.Rect;
+    setROI2(roi2: _types.Rect): void;
+                        
 
 };
 
@@ -2155,23 +2155,23 @@ interface StereoSGBMStatic {
 
 interface StereoSGBM extends StereoMatcher
 {
-//
-//    CV_WRAP virtual int getPreFilterCap() const = 0;
-//    CV_WRAP virtual void setPreFilterCap(int preFilterCap) = 0;
-//
-//    CV_WRAP virtual int getUniquenessRatio() const = 0;
-//    CV_WRAP virtual void setUniquenessRatio(int uniquenessRatio) = 0;
-//
-//    CV_WRAP virtual int getP1() const = 0;
-//    CV_WRAP virtual void setP1(int P1) = 0;
-//
-//    CV_WRAP virtual int getP2() const = 0;
-//    CV_WRAP virtual void setP2(int P2) = 0;
-//
-//    CV_WRAP virtual int getMode() const = 0;
-//    CV_WRAP virtual void setMode(int mode) = 0;
-//
 
+    getPreFilterCap(): _st.int;
+    setPreFilterCap(preFilterCap: _st.int): void;
+    
+    getUniquenessRatio(): _st.int;
+    setUniquenessRatio(uniquenessRatio: _st.int): void;
+    
+    getP1(): _st.int;
+    setP1(P1: _st.int): void;
+    
+    getP2(): _st.int;
+    setP2(P2: _st.int): void;
+    
+    getMode(): _st.int;
+    setMode(mode: _st.int): void;
+    
+                          
 };
 
 export var StereoSGBM: StereoSGBMStatic = alvision_module.StereoSGBM;

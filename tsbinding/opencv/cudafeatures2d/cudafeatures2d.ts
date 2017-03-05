@@ -101,7 +101,7 @@ BRIEF).
         createBFMatcher(normType?: _st.int  /*= cv::NORM_L2*/): DescriptorMatcher;
     }
 
-    interface DescriptorMatcher extends _core.Algorithm {
+    export interface DescriptorMatcher extends _core.Algorithm {
         //public:
         //
         // Factories

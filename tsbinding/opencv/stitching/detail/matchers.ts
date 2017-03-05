@@ -67,7 +67,7 @@ import * as _affine from './../../Affine'
 
 //export import detail = _affine;
 
-export namespace detail_matchers {
+//export namespace detail_matchers {
     //import * as _affine from './../../Affine';
     //export * from './../../Affine';
     
@@ -157,13 +157,14 @@ interface OrbFeaturesFinder extends FeaturesFinder
 
 
 //#ifdef HAVE_OPENCV_XFEATURES2D
-interface SurfFeaturesFinderGpu extends FeaturesFinder
+export interface SurfFeaturesFinderGpu extends FeaturesFinder
 {
 //public:
 //    SurfFeaturesFinderGpu(double hess_thresh = 300., int num_octaves = 3, int num_layers = 4,
 //                          int num_octaves_descr = 4, int num_layers_descr = 2);
 //
-//    void collectGarbage();
+    collectGarbage(): void;
+
 //
 //private:
 //    void find(InputArray image, ImageFeatures &features);
@@ -293,7 +294,7 @@ interface BestOf2NearestRangeMatcher extends BestOf2NearestMatcher
 
 //! @} stitching_match
 
-} // namespace detail.matchers
+//} // namespace detail.matchers
 //} // namespace cv
 
 //#endif // __OPENCV_STITCHING_MATCHERS_HPP__

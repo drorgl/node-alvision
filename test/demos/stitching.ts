@@ -1,5 +1,5 @@
 //import * as alvision from "../../tsbinding/alvision";
-//import { BaseApp, RUN_APP, FrameSource, opencv_extra } from "./utility";
+//import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource, makeGray, printText } from "./utility";
 //import path = require('path')
 
 //const base_path = "gpu_demos_pack/demos/denoising";

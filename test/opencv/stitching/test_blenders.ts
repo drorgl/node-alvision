@@ -71,7 +71,7 @@ alvision.cvtest.TEST('MultiBandBlender', 'CanBlendTwoImages', () => {
     mask2.roi(new alvision.Rect(0, 0, mask2.cols().valueOf() / 2, mask2.rows())).setTo(0);
     mask2.roi(new alvision.Rect(mask2.cols().valueOf() / 2, 0, mask2.cols().valueOf() - mask2.cols().valueOf() / 2, mask2.rows())).setTo(255);
 
-    var blender = new alvision.detail_blenders.MultiBandBlender(false, 5);
+    var blender = new alvision.detail.MultiBandBlender(false, 5);
     //detail::MultiBandBlender blender(false, 5);
 
     blender.prepare(new alvision.Rect(0, 0, Math.max(image1s.cols().valueOf(), image2s.cols().valueOf()), Math.max(image1s.rows().valueOf(), image2s.rows().valueOf())));

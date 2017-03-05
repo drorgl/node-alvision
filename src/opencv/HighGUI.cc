@@ -353,7 +353,15 @@ POLY_METHOD(highgui::getMouseWheelDelta){
 }
 
 POLY_METHOD(highgui::createTrackbar) {
-	int val;
+	//auto trackbarname = info.at<std::string>(0);
+	//auto winname = info.at<std::string>(1);
+	//auto count = info.at<int>(2);
+	//auto onChange = info.at<std::shared_ptr<overres::AsyncCallback>>(3);
+	//auto value = info.at<int>(4);
+	//auto userData = info[5];
+	//
+	//cv::createTrackbar(trackbarname,winname, &value,count,
+	
 	//auto retval = cv::createTrackbar(info.at<std::string>(0),info.at<std::string>(1),&val,)
 	return Nan::ThrowError("not implemented");
 }

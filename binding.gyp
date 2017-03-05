@@ -526,6 +526,7 @@
 		
 		,'tsbinding/opencv/stitching.ts'
 		,'tsbinding/opencv/stitching/warpers.ts'
+		,'tsbinding/opencv/stitching/detail.ts'
 		,'tsbinding/opencv/stitching/detail/blenders.ts'
 		,'tsbinding/opencv/stitching/detail/camera.ts'
 		,'tsbinding/opencv/stitching/detail/exposure_compensate.ts'

@@ -1152,7 +1152,7 @@ interface BFMatcherStatic {
 
 }
 
-interface BFMatcher extends DescriptorMatcher {
+export interface BFMatcher extends DescriptorMatcher {
     //public:
     //
     isMaskSupported(): boolean;

@@ -1,5 +1,5 @@
 import * as alvision from "../../tsbinding/alvision";
-import { BaseApp, RUN_APP, FrameSource, opencv_extra } from "./utility";
+import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource, makeGray, printText } from "./utility";
 import path = require('path')
 
 const base_path = "gpu_demos_pack/demos/background_subtraction";
@@ -183,22 +183,25 @@ class App extends BaseApp
     private displayState(outImg: alvision.Mat, proc_fps: alvision.double, total_fps: alvision.double): void {
         const fontColorRed = alvision.CV_RGB(255, 0, 0);
 
-        console.log("Source size: ", outImg.cols().valueOf() / 2, 'x', outImg.rows());
-        //printText(outImg, txt.str(), i++);
+        let txt: string;
+        let i = 0;
 
-        console.log("Method: ", method_str[this.method_.valueOf()], (this.useGpu_ ? " CUDA" : " CPU"));
-        //printText(outImg, txt.str(), i++);
+        txt = "Source size: " + outImg.cols().valueOf() / 2 + 'x' + outImg.rows();
+        printText(outImg, txt, i++);
 
-        console.log("FPS (BG only): ", proc_fps);
-        //printText(outImg, txt.str(), i++);
+        txt = "Method: " + method_str[this.method_] + (this.useGpu_ ? " CUDA" : " CPU");
+        printText(outImg, txt, i++);
 
-        console.log("FPS (Total): ", total_fps);
-        //printText(outImg, txt.str(), i++);
+        txt = "FPS (BG only): " + proc_fps;
+        printText(outImg, txt, i++);
 
-        console.log("Space - switch CUDA / CPU mode", fontColorRed);
+        txt = "FPS (Total): " + total_fps;
+        printText(outImg, txt, i++);
 
-        if (this.sources_)
-            console.log("N - switch source", fontColorRed);
+        printText(outImg, "Space - switch CUDA / CPU mode", i++, fontColorRed);
+
+        if (this.sources_.length > 1)
+            printText(outImg, "N - switch source", i++, fontColorRed);
 
     }
 

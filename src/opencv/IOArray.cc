@@ -30,6 +30,9 @@ void IOArray::Register(Handle<Object> target, std::shared_ptr<overload_resolutio
 	overload->register_type<IOArray>(ctor, "ioarray", "IOArray");
 
 	overload->addOverloadConstructor("ioarray", "IOArray", {}, IOArray::New);
+
+	overload->addOverload("ioarray", "IOArray", "kind", {}, Kind);
+	Nan::SetPrototypeMethod(ctor, "kind", general_callback::ioarray_callback);
 }
 
 void IOArray::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
@@ -81,6 +84,12 @@ cv::_InputOutputArray			IOArray::GetInputOutputArray() {
 }
 cv::_InputOutputArray	IOArray::GetInputOutputArrayOfArrays() {
 	return *_ioarray;
+}
+
+POLY_METHOD(IOArray::Kind) {
+	auto this_ = info.This<IOArray*>();
+	auto res = this_->GetInputArray().kind();
+	info.SetReturnValue(res);
 }
 
 //

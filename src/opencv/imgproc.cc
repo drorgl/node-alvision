@@ -5851,7 +5851,7 @@ Nan::SetMethod(target, "ellipse2Poly", imgproc_general_callback::callback);
 
 
 overload->addOverload("imgproc", "", "putText", {
-	make_param<IOArray*>("img","IOArray"),
+	make_param<IOArray*>("img","InputOutputArray"),
 	make_param<std::string>("text","String"),
 	make_param<Point*>("org",Point::name),
 	make_param<int>("fontFace","int"),
@@ -6207,5 +6207,38 @@ POLY_METHOD(imgproc::approxPolyDP){
  POLY_METHOD(imgproc::clipLine_size){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::clipLine_rect){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::ellipse2Poly){throw std::runtime_error("not implemented");}
- POLY_METHOD(imgproc::putText){throw std::runtime_error("not implemented");}
- POLY_METHOD(imgproc::getTextSize){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::putText){
+	 auto img = info.at<IOArray*>(0)->GetInputOutputArray();
+	 auto text = info.at<std::string>(1);
+	 auto org = *info.at<Point*>(2)->_point;
+	 auto fontFace = info.at<int>(3);
+	 auto fontScale = info.at<double>(4);
+	 auto color = *info.at<Scalar*>(5)->_scalar;
+	 auto thickness = info.at<int>(6);
+	 auto lineType = info.at<int>(7);
+	 auto bottomLeftOrigin = info.at<bool>(8);
+
+	 cv::putText(img, text, org, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin);
+ }
+
+ POLY_METHOD(imgproc::getTextSize){
+	 auto text = info.at<std::string>(0);
+	 auto fontFace = info.at<int>(1);
+	 auto fontScale = info.at<double>(2);
+	 auto thickness = info.at<int>(3);
+	 auto cb = info.at < std::shared_ptr<overres::Callback>>(4);
+
+	 int baseLine;
+
+	 auto res = cv::getTextSize(text, fontFace, fontScale, thickness, &baseLine);
+
+	 if (cb != nullptr) {
+		 cb->Call({ overres::make_value(baseLine) });
+	 }
+
+	 auto size = new Size();
+	 size->_size = std::make_shared<cv::Size>(res);
+
+	 info.SetReturnValue(size);
+
+ }

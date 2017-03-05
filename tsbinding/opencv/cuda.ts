@@ -49,7 +49,7 @@ import * as _st from './static';
 import * as _mat from './mat';
 import * as _types from './types';
 //import * as _core from './Core';
-import * as _base from './tase';
+import * as _base from './base';
 //import * as _scalar from './Scalar'
 
 //#ifndef __OPENCV_CORE_CUDA_HPP__

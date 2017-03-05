@@ -4,7 +4,7 @@
 ////#else
 
 //import * as alvision from "../../tsbinding/alvision";
-//import { BaseApp, RUN_APP, FrameSource, opencv_extra } from "./utility";
+//import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource, makeGray, printText, THROW_EXCEPTION } from "./utility";
 //import path = require('path')
 
 //const base_path = "gpu_demos_pack/demos/denoising";
@@ -40,10 +40,11 @@
 //{
 //    constructor() {
 //        super();
-//        this.gpu_surf_ = (500);
-//        this.cpu_surf_ = (500);
-//        this.cpu_matcher_ = (alvision.NormTypes.NORM_L2);
-//        this.gpu_matcher_ = (alvision.NormTypes.NORM_L2);
+//        //TODO: find these values
+//        //this.gpu_surf_ = (500);
+//        //this.cpu_surf_ = (500);
+//        //this.cpu_matcher_ = (alvision.NormTypes.NORM_L2);
+//        //this.gpu_matcher_ = (alvision.NormTypes.NORM_L2);
 //        this.useGpu_ = true;
 //        this.showCorrespondences_ = true;
 //        this.curSource_ = 0;
@@ -261,7 +262,7 @@
 //            ++i;
 
 //            if (i >= argc)
-//                THROW_EXCEPTION("Missing file name after " << arg);
+//                THROW_EXCEPTION("Missing file name after " + arg);
 
 //            let rng = alvision.theRNG();
 //            this.objects_.push(new FeatureObject(argv[i], alvision.imread(argv[i]), alvision.CV_RGB(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255))));
@@ -280,10 +281,10 @@
 //    private calcKeypoints(img: alvision.Mat, d_img: alvision.cuda.GpuMat, keypoints: Array<alvision.KeyPoint>, descriptors: alvision.Mat, d_descriptors: alvision.cuda.GpuMat): void {
 //        keypoints.length = 0;
 
-//        if (this/useGpu_)
-//            gpu_surf_(d_img, new alvision.cuda.GpuMat(), keypoints, d_descriptors);
+//        if (this.useGpu_)
+//            this.gpu_surf_.run (d_img, new alvision.cuda.GpuMat(), keypoints, d_descriptors);
 //        else
-//            cpu_surf_(img, noArray(), keypoints, descriptors);
+//            this.cpu_surf_.run(img,null, keypoints, descriptors);
 //    }
 
 //    private match(descriptors1: alvision.Mat, d_descriptors1: alvision.cuda.GpuMat ,
@@ -316,23 +317,29 @@
 //    }
 
 //    private displayState(outImg: alvision.Mat, size: alvision.Size, detect_fps: alvision.double, match_fps: alvision.double, total_fps: alvision.double): void {
-//        const  fontColorRed = alvision.CV_RGB(255, 0, 0);
+//        const fontColorRed = alvision.CV_RGB(255, 0, 0);
 
-        
-//        console.log("Source size: ");
+//        let txt: string;
+//        let i = 0;
 
-//        console.log(this.useGpu_ ? "Mode: CUDA" : "Mode: CPU");
+//        txt = "Source size: " + size;
+//        printText(outImg, txt, i++);
 
-//        console.log("FPS (Detect only): ", detect_fps);
+//        printText(outImg, this.useGpu_ ? "Mode: CUDA" : "Mode: CPU", i++);
 
-//        console.log("FPS (Match only): ", match_fps);
+//        txt = "FPS (Detect only): " + detect_fps;
+//        printText(outImg, txt, i++);
 
-//        console.log("FPS (Total): ", total_fps);
+//        txt + "FPS (Match only): " + match_fps;
+//        printText(outImg, txt, i++);
 
-//        console.log("Space - switch CUDA / CPU mode");
-//        console.log("S - show / hide correspondences");
+//        txt + "FPS (Total): " + total_fps;
+//        printText(outImg, txt, i++);
+
+//        printText(outImg, "Space - switch CUDA / CPU mode", i++, fontColorRed);
+//        printText(outImg, "S - show / hide correspondences", i++, fontColorRed);
 //        if (this.sources_.length > 1)
-//            console.log("N - switch source");
+//            printText(outImg, "N - switch source", i++, fontColorRed);
 //    }
 
 //    private objects_: Array<FeatureObject>;
@@ -342,12 +349,14 @@
 //    private curSource_: alvision.int;
 //    private fullscreen_: boolean;
 
-//    private cpu_surf_: alvision.SURF;
-//    private gpu_surf_: alvision.SURF_GPU;
+//    private cpu_surf_: alvision.detail.SurfFeaturesFinder;
+//    private gpu_surf_: alvision.detail.SurfFeaturesFinderGpu;
 
 //    private cpu_matcher_: alvision.BFMatcher;
-//    private gpu_matcher_: alvision.BFMatcher_GPU;
-//    private trainIdx_: alvision.cuda.GpuMat, distance_: alvision.cuda.GpuMat, allDist_: alvision.cuda.GpuMat;
+//    private gpu_matcher_: alvision.cuda.DescriptorMatcher;
+//    private trainIdx_: alvision.cuda.GpuMat;
+//    private distance_: alvision.cuda.GpuMat;
+//    private allDist_: alvision.cuda.GpuMat;
 
 //    private matchesTbl_: Array<Array<alvision.DMatch>>;
 //};

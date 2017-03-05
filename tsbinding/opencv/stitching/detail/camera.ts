@@ -57,7 +57,7 @@ import * as _affine from './../../Affine'
 //#include "opencv2/core.hpp"
 //
 //namespace cv {
-export namespace detail_camera {
+//export namespace detail_camera {
 
 //! @addtogroup stitching
 //! @{
@@ -83,7 +83,7 @@ class CameraParams
 
 //! @}
 
-} // namespace detail.camera
+//} // namespace detail.camera
 //} // namespace cv
 
 //#endif // #ifndef __OPENCV_STITCHING_CAMERA_HPP__

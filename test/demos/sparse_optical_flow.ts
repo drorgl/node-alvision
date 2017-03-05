@@ -1,5 +1,5 @@
 //import * as alvision from "../../tsbinding/alvision";
-//import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource } from "./utility";
+//import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource, makeGray, printText } from "./utility";
 //import path = require('path')
 
 //const base_path = "gpu_demos_pack/demos/denoising";
@@ -137,25 +137,25 @@
 
 
 //    private displayState(outImg: alvision.Mat, proc_fps: alvision.double, total_fps: alvision.double): void {
-//        const fontColorRed = alvision.CV_RGB(255, 0, 0);
-
-//        ostringstream txt;
-//        int i = 0;
-
-//        txt.str(""); txt << "Source size: " << outImg.cols << 'x' << outImg.rows;
-//        printText(outImg, txt.str(), i++);
-
-//        printText(outImg, useGpu_ ? "Mode: CUDA" : "Mode: CPU", i++);
-
-//        txt.str(""); txt << "FPS (OptFlow only): " << fixed << setprecision(1) << proc_fps;
-//        printText(outImg, txt.str(), i++);
-
-//        txt.str(""); txt << "FPS (total): " << fixed << setprecision(1) << total_fps;
-//        printText(outImg, txt.str(), i++);
-
-//        printText(outImg, "Space - switch CUDA / CPU mode", i++, fontColorRed);
-//        if (pairSources_.size() > 1)
-//            printText(outImg, "N - next source", i++, fontColorRed);
+//const Scalar fontColorRed = CV_RGB(255, 0, 0);
+//
+//ostringstream txt;
+//int i = 0;
+//
+//txt.str(""); txt << "Source size: " << outImg.cols << 'x' << outImg.rows;
+//printText(outImg, txt.str(), i++);
+//
+//printText(outImg, useGpu_ ? "Mode: CUDA" : "Mode: CPU", i++);
+//
+//txt.str(""); txt << "FPS (OptFlow only): " << fixed << setprecision(1) << proc_fps;
+//printText(outImg, txt.str(), i++);
+//
+//txt.str(""); txt << "FPS (total): " << fixed << setprecision(1) << total_fps;
+//printText(outImg, txt.str(), i++);
+//
+//printText(outImg, "Space - switch CUDA / CPU mode", i++, fontColorRed);
+//if (pairSources_.size() > 1)
+//    printText(outImg, "N - next source", i++, fontColorRed);
 //    }
 
 //    private pairSources_: Array<PairFrameSource>;

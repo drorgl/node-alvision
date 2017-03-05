@@ -85,7 +85,7 @@ import * as _calib3d from './../calib3d';
     
     @sa StereoBM
      */
-    interface StereoBM extends _calib3d.StereoBM// : public cv::StereoBM
+    export interface StereoBM extends _calib3d.StereoBM// : public cv::StereoBM
     {
         //public:
         //using cv::StereoBM::compute;
@@ -245,21 +245,28 @@ export var StereoBeliefPropagation: StereoBeliefPropagationStatic = alvision_mod
     \f[10  \cdot 2^{levels-1}  \cdot max \_ data \_ term < SHRT \_ MAX\f]
     
      */
-    interface StereoConstantSpaceBP extends StereoBeliefPropagation// : public cuda::StereoBeliefPropagation
-    {
-        //public:
-        //    //! number of active disparity on the first level
-        //    virtual int getNrPlane() const = 0;
-        //    virtual void setNrPlane(int nr_plane) = 0;
-        //
-        //    virtual bool getUseLocalInitDataCost() const = 0;
-        //    virtual void setUseLocalInitDataCost(bool use_local_init_data_cost) = 0;
-        //
+    interface StereoConstantSpaceBPStatic {
+         //
         //    /** @brief Uses a heuristic method to compute parameters (ndisp, iters, levelsand nrplane) for the specified
         //    image size (widthand height).
         //     */
         //    static void estimateRecommendedParams(int width, int height, int& ndisp, int& iters, int& levels, int& nr_plane);
+        estimateRecommendedParams(width: _st.int, height: _st.int, cb: (ndisp: _st.int, iters: _st.int, levels: _st.int, nr_plane: _st.int)=>void): void;
+    }
+
+    interface StereoConstantSpaceBP extends StereoBeliefPropagation// : public cuda::StereoBeliefPropagation
+    {
+        //public:
+        //    //! number of active disparity on the first level
+        getNrPlane(): _st.int;
+        setNrPlane(nr_plane: _st.int): void;
+        
+        getUseLocalInitDataCost(): boolean;
+        setUseLocalInitDataCost( use_local_init_data_cost : boolean): void;
+       
     };
+
+    export var StereoConstantSpaceBP: StereoConstantSpaceBPStatic = alvision_module.cuda.StereoConstantSpaceBP;
 
     /** @brief Creates StereoConstantSpaceBP object.
     

@@ -31,29 +31,67 @@ StereoBM::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overl
 	SetObjectProperty(STEREOBM_PREFILTER, "PREFILTER_NORMALIZED_RESPONSE", 0);
 	SetObjectProperty(STEREOBM_PREFILTER, "PREFILTER_XSOBEL", 1);
 
-	overload->addStaticOverload("", "", "create", {
+	overload->addOverloadConstructor("stereobm", "StereoBM", {
+		make_param<int>("numDisparities","int", 0),
+		make_param<int>("blockSize","int", 21)
+	}, New);
+
+	overload->addStaticOverload("stereobm", "StereoBM", "create", {
 		make_param<int>("numDisparities","int", 0),
 		make_param<int>("blockSize","int", 21)
 
 	}, create);
+	Nan::SetMethod(ctor, "create", stereobm_general_callback::callback);
 
-	overload->addOverload("stereobm", "", "", {}, getPreFilterType);
-	overload->addOverload("stereobm", "", "", { make_param<int>("preFilterType","int") }, setPreFilterType);
-	overload->addOverload("stereobm", "", "", {}, getPreFilterSize);
-	overload->addOverload("stereobm", "", "", { make_param<int>("preFilterSize","int") }, setPreFilterSize);
-	overload->addOverload("stereobm", "", "", {}, getPreFilterCap);
-	overload->addOverload("stereobm", "", "", { make_param<int>("preFilterCap","int") }, setPreFilterCap);
-	overload->addOverload("stereobm", "", "", {}, getTextureThreshold);
-	overload->addOverload("stereobm", "", "", { make_param<int>("textureThreshold","int") }, setTextureThreshold);
-	overload->addOverload("stereobm", "", "", {}, getUniquenessRatio);
-	overload->addOverload("stereobm", "", "", { make_param<int>("uniquenessRatio","int") }, setUniquenessRatio);
-	overload->addOverload("stereobm", "", "", {}, getSmallerBlockSize);
-	overload->addOverload("stereobm", "", "", { make_param<int>("blockSize","int") }, setSmallerBlockSize);
-	overload->addOverload("stereobm", "", "", {}, getROI1);
-	overload->addOverload("stereobm", "", "", { make_param<Rect*>("roi1",Rect::name) }, setROI1);
-	overload->addOverload("stereobm", "", "", {}, getROI2);
-	overload->addOverload("stereobm", "", "", { make_param<Rect*>("roi2",Rect::name) }, setROI2);
+	overload->addOverload("stereobm", "StereoBM", "getPreFilterType", {}, getPreFilterType);
+	Nan::SetPrototypeMethod(ctor, "getPreFilterType", stereobm_general_callback::callback);
 
+	overload->addOverload("stereobm", "StereoBM", "setPreFilterType", { make_param<int>("preFilterType","int") }, setPreFilterType);
+	Nan::SetPrototypeMethod(ctor, "setPreFilterType", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "getPreFilterSize", {}, getPreFilterSize);
+	Nan::SetPrototypeMethod(ctor, "getPreFilterSize", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "setPreFilterSize", { make_param<int>("preFilterSize","int") }, setPreFilterSize);
+	Nan::SetPrototypeMethod(ctor, "setPreFilterSize", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "getPreFilterCap", {}, getPreFilterCap);
+	Nan::SetPrototypeMethod(ctor, "getPreFilterCap", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "setPreFilterCap", { make_param<int>("preFilterCap","int") }, setPreFilterCap);
+	Nan::SetPrototypeMethod(ctor, "setPreFilterCap", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "getTextureThreshold", {}, getTextureThreshold);
+	Nan::SetPrototypeMethod(ctor, "getTextureThreshold", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "setTextureThreshold", { make_param<int>("textureThreshold","int") }, setTextureThreshold);
+	Nan::SetPrototypeMethod(ctor, "setTextureThreshold", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "getUniquenessRatio", {}, getUniquenessRatio);
+	Nan::SetPrototypeMethod(ctor, "getUniquenessRatio", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "setUniquenessRatio", { make_param<int>("uniquenessRatio","int") }, setUniquenessRatio);
+	Nan::SetPrototypeMethod(ctor, "setUniquenessRatio", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "getSmallerBlockSize", {}, getSmallerBlockSize);
+	Nan::SetPrototypeMethod(ctor, "getSmallerBlockSize", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "setSmallerBlockSize", { make_param<int>("blockSize","int") }, setSmallerBlockSize);
+	Nan::SetPrototypeMethod(ctor, "setSmallerBlockSize", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "getROI1", {}, getROI1);
+	Nan::SetPrototypeMethod(ctor, "getROI1", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "setROI1", { make_param<Rect*>("roi1",Rect::name) }, setROI1);
+	Nan::SetPrototypeMethod(ctor, "setROI1", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "getROI2", {}, getROI2);
+	Nan::SetPrototypeMethod(ctor, "getROI2", stereobm_general_callback::callback);
+
+	overload->addOverload("stereobm", "StereoBM", "setROI2", { make_param<Rect*>("roi2",Rect::name) }, setROI2);
+	Nan::SetPrototypeMethod(ctor, "setROI2", stereobm_general_callback::callback);
+
+	target->Set(Nan::New("StereoBM").ToLocalChecked(), ctor->GetFunction());
 
 };
 
@@ -62,6 +100,13 @@ v8::Local<v8::Function> StereoBM::get_constructor() {
 	return Nan::New(constructor)->GetFunction();
 }
 
+POLY_METHOD(StereoBM::New) {
+	auto ret = new StereoBM();
+	ret->_algorithm = cv::StereoBM::create(info.at<int>(0), info.at<int>(1));
+
+	ret->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
 
 POLY_METHOD(StereoBM::create) {
 	auto ret = new StereoBM();

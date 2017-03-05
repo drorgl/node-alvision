@@ -311,6 +311,10 @@ class FFMPEGSource extends FrameSource {
         while (this.ffm.ReadPacket(this.ffpacket)) {
             let stream = this.ffstreams[this.ffpacket.streamid];
             if (stream.mediatype == alvision.mediatype.video) {
+                if (stream.width != frame.cols() || stream.height != frame.rows()) {
+                    frame.create(stream.height, stream.width, alvision.MatrixType.CV_8UC3);
+                }
+
                 if (stream.Decode(this.ffpacket, stream, frame)) {
                     return true;
                 }
@@ -502,9 +506,9 @@ export function makeGray(src: alvision.InputArray, dst: alvision.OutputArray): v
     }
 }
 
-function printText(img: alvision.Mat, msg: string, lineOffsY: alvision.int, fontColor: alvision.Scalar = alvision.CV_RGB(118, 185, 0), fontScale: alvision.double = 0.8): void {
+export function printText(img: alvision.Mat, msg: string, lineOffsY: alvision.int, fontColor: alvision.Scalar = alvision.CV_RGB(118, 185, 0), fontScale: alvision.double = 0.5): void {
     const fontFace = alvision.HersheyFonts.FONT_HERSHEY_DUPLEX;
-    const fontThickness = 2;
+    const fontThickness = 1;
 
     const fontSize = alvision.getTextSize("T[]", fontFace, fontScale, fontThickness, null);
 

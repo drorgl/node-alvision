@@ -1,5 +1,5 @@
 import * as alvision from "../../tsbinding/alvision";
-import { BaseApp, RUN_APP, FrameSource, opencv_extra} from "./utility";
+import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource, makeGray, printText } from "./utility";
 import path = require('path')
 
 const base_path = "gpu_demos_pack/demos/pedestrian_detection";
@@ -167,34 +167,26 @@ class App extends BaseApp
     }
 
     private displayState(outImg: alvision.Mat, proc_fps: alvision.double, total_fps: alvision.double): void {
-        const  fontColorRed = alvision.CV_RGB(255, 0, 0);
+        const fontColorRed = alvision.CV_RGB(255, 0, 0);
 
-        //ostringstream txt;
-        //int i = 0;
-        //
-        //txt.str(""); txt << "Source size: " << outImg.cols << 'x' << outImg.rows;
-        console.log("Source size: " , outImg.cols() , 'x' , outImg.rows());
-        //printText(outImg, txt.str(), i++);
-        //
-        //printText(outImg, useGpu_ ? "Mode: CUDA" : "Mode: CPU", i++);
-        console.log(this.useGpu_ ? "Mode: CUDA" : "Mode: CPU");
-        //
-        //txt.str(""); txt << "FPS (PD only): " << fixed << setprecision(1) << proc_fps;
-        console.log("FPS (PD only): "  , proc_fps);
-        //printText(outImg, txt.str(), i++);
-        //
-        //txt.str(""); txt << "FPS (total): " << fixed << setprecision(1) << total_fps;
-        console.log("FPS (total): " , total_fps);
-        //printText(outImg, txt.str(), i++);
-        //
-        //printText(outImg, "Space - switch CUDA / CPU mode", i++, fontColorRed);
-        console.log("Space - switch CUDA / CPU mode");
-        //printText(outImg, "C - switch Color / Gray mode", i++, fontColorRed);
-        console.log("C - switch Color / Gray mode");
-        //if (sources_.size() > 1)
-        //    printText(outImg, "N - switch source", i++, fontColorRed);
+        let txt: string;
+        let i = 0;
+
+        txt = "Source size: " + outImg.cols() + 'x' + outImg.rows();
+        printText(outImg, txt, i++);
+
+        printText(outImg, this.useGpu_ ? "Mode: CUDA" : "Mode: CPU", i++);
+
+        txt = "FPS (PD only): " + proc_fps;
+        printText(outImg, txt, i++);
+
+        txt = "FPS (total): " + total_fps;
+        printText(outImg, txt, i++);
+
+        printText(outImg, "Space - switch CUDA / CPU mode", i++, fontColorRed);
+        printText(outImg, "C - switch Color / Gray mode", i++, fontColorRed);
         if (this.sources_.length > 1)
-            console.log("N - switch source");
+            printText(outImg, "N - switch source", i++, fontColorRed);
     }
 
     private useGpu_: boolean;

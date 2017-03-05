@@ -53,13 +53,10 @@ import * as _affine from './Affine'
 import * as _features2d from './features2d'
 
 export * from './stitching/warpers';
-export * from './stitching/detail/blenders';
-export * from './stitching/detail/camera';
-export * from './stitching/detail/exposure_compensate';
-export * from './stitching/detail/matchers';
-export * from './stitching/detail/motion_estimators';
-export * from './stitching/detail/seam_finders';
 
+
+import * as detail_local from './stitching/detail';
+export import detail = detail_local;
 
 //#ifndef __OPENCV_STITCHING_STITCHER_HPP__
 //#define __OPENCV_STITCHING_STITCHER_HPP__

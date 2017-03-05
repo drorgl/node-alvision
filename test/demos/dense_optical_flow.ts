@@ -1,5 +1,5 @@
 import * as alvision from "../../tsbinding/alvision";
-import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource,makeGray } from "./utility";
+import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource, makeGray, printText } from "./utility";
 import path = require('path')
 
 const base_path = "gpu_demos_pack/demos/dense_optical_flow";
@@ -425,20 +425,26 @@ class App extends BaseApp
 
 
     private displayState(outImg: alvision.Mat, proc_fps: alvision.double, total_fps: alvision.double): void {
+        const fontColorRed = alvision.CV_RGB(255, 0, 0);
 
-        const fontColorRed =alvision. CV_RGB(255, 0, 0);
+        let txt: string;
+        let i = 0;
 
-        console.log("Source size: " , outImg.cols() , 'x' , outImg.rows());
+        txt = "Source size: " + outImg.cols() + 'x' + outImg.rows();
+        printText(outImg, txt, i++);
 
-        console.log("Method: ", method_str[this.method_]);
+        txt = "Method: " + method_str[this.method_];
+        printText(outImg, txt, i++);
 
-        console.log("FPS (OptFlow only): ", proc_fps);
+        txt = "FPS (OptFlow only): " + proc_fps;
+        printText(outImg, txt, i++);
 
-        console.log("FPS (total): ", total_fps);
+        txt = "FPS (total): " + total_fps;
+        printText(outImg, txt, i++);
 
-        console.log("Space - switch method");
+        printText(outImg, "Space - switch method", i++, fontColorRed);
         if (this.pairSources_.length > 1)
-            console.log("N - switch source");
+            printText(outImg, "N - switch source", i++, fontColorRed);
     }
 
     private pairSources_: Array<PairFrameSource> = [];

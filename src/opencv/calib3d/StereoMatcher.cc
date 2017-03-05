@@ -32,25 +32,49 @@ void StereoMatcher::Init(Handle<Object> target, std::shared_ptr<overload_resolut
 
 
 
-	overload->addStaticOverload("stereomatcher", "", "compute", {
+	overload->addOverload("stereomatcher", "StereoMatcher", "compute", {
 			make_param<IOArray*>("left","IOArray"),
 			make_param<IOArray*>("right","IOArray"),
 			make_param<IOArray*>("disparity","IOArray")
 	}, StereoMatcher::compute);
+	Nan::SetPrototypeMethod(ctor, "compute", stereomatcher_general_callback::callback);
 
 
-	overload->addOverload("stereomatcher", "", "getMinDisparity", {}, StereoMatcher::getMinDisparity);
-	overload->addOverload("stereomatcher", "", "setMinDisparity", { make_param<int>("minDisparity","int") }, StereoMatcher::setMinDisparity);
-	overload->addOverload("stereomatcher", "", "getNumDisparities", {}, StereoMatcher::getNumDisparities);
-	overload->addOverload("stereomatcher", "", "setNumDisparities", { make_param<int>("minDisparities","int") }, StereoMatcher::setNumDisparities);
-	overload->addOverload("stereomatcher", "", "getBlockSize", {}, StereoMatcher::getBlockSize);
-	overload->addOverload("stereomatcher", "", "setBlockSize", { make_param<int>("blockSize","int") }, StereoMatcher::setBlockSize);
-	overload->addOverload("stereomatcher", "", "getSpeckleWindowSize", {}, StereoMatcher::getSpeckleWindowSize);
-	overload->addOverload("stereomatcher", "", "setSpeckleWindowSize", { make_param<int>("speckleWindowSize","int") }, StereoMatcher::setSpeckleWindowSize);
-	overload->addOverload("stereomatcher", "", "getSpeckleRange", {}, StereoMatcher::getSpeckleRange);
-	overload->addOverload("stereomatcher", "", "setSpeckleRange", { make_param<int>("speckleRange","int") }, StereoMatcher::setSpeckleRange);
-	overload->addOverload("stereomatcher", "", "getDisp12MaxDiff", {}, StereoMatcher::getDisp12MaxDiff);
-	overload->addOverload("stereomatcher", "", "setDisp12MaxDiff", { make_param<int>("disp12MaxDiff","int") }, StereoMatcher::setDisp12MaxDiff);
+	overload->addOverload("stereomatcher", "StereoMatcher", "getMinDisparity", {}, StereoMatcher::getMinDisparity);
+	Nan::SetPrototypeMethod(ctor, "getMinDisparity", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "setMinDisparity", { make_param<int>("minDisparity","int") }, StereoMatcher::setMinDisparity);
+	Nan::SetPrototypeMethod(ctor, "setMinDisparity", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "getNumDisparities", {}, StereoMatcher::getNumDisparities);
+	Nan::SetPrototypeMethod(ctor, "getNumDisparities", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "setNumDisparities", { make_param<int>("minDisparities","int") }, StereoMatcher::setNumDisparities);
+	Nan::SetPrototypeMethod(ctor, "setNumDisparities", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "getBlockSize", {}, StereoMatcher::getBlockSize);
+	Nan::SetPrototypeMethod(ctor, "getBlockSize", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "setBlockSize", { make_param<int>("blockSize","int") }, StereoMatcher::setBlockSize);
+	Nan::SetPrototypeMethod(ctor, "setBlockSize", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "getSpeckleWindowSize", {}, StereoMatcher::getSpeckleWindowSize);
+	Nan::SetPrototypeMethod(ctor, "getSpeckleWindowSize", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "setSpeckleWindowSize", { make_param<int>("speckleWindowSize","int") }, StereoMatcher::setSpeckleWindowSize);
+	Nan::SetPrototypeMethod(ctor, "setSpeckleWindowSize", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "getSpeckleRange", {}, StereoMatcher::getSpeckleRange);
+	Nan::SetPrototypeMethod(ctor, "getSpeckleRange", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "setSpeckleRange", { make_param<int>("speckleRange","int") }, StereoMatcher::setSpeckleRange);
+	Nan::SetPrototypeMethod(ctor, "setSpeckleRange", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "getDisp12MaxDiff", {}, StereoMatcher::getDisp12MaxDiff);
+	Nan::SetPrototypeMethod(ctor, "getDisp12MaxDiff", stereomatcher_general_callback::callback);
+
+	overload->addOverload("stereomatcher", "StereoMatcher", "setDisp12MaxDiff", { make_param<int>("disp12MaxDiff","int") }, StereoMatcher::setDisp12MaxDiff);
+	Nan::SetPrototypeMethod(ctor, "setDisp12MaxDiff", stereomatcher_general_callback::callback);
 
 	target->Set(Nan::New("StereoMatcher").ToLocalChecked(), ctor->GetFunction());
 }

@@ -1,5 +1,5 @@
 import * as alvision from "../../tsbinding/alvision";
-import { BaseApp, RUN_APP, FrameSource, opencv_extra } from "./utility";
+import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource, makeGray, printText } from "./utility";
 import path = require('path')
 
 const base_path = "gpu_demos_pack/demos/denoising";
@@ -137,26 +137,26 @@ class App extends BaseApp
     }
 
     private displayState(outImg: alvision.Mat, proc_fps: alvision.double, total_fps: alvision.double): void {
-        const  fontColorRed = alvision.CV_RGB(255, 0, 0);
+        const fontColorRed = alvision.CV_RGB(255, 0, 0);
 
-        //ostringstream txt;
-        //int i = 0;
+        let txt: string;
+        let i = 0;
 
-        console.log("Source size: ", outImg.cols().valueOf() / 2, 'x', outImg.rows());
-        //printText(outImg, txt.str(), i++);
+        txt = "Source size: " + outImg.cols().valueOf() / 2 + 'x' + outImg.rows();
+        printText(outImg, txt, i++);
 
-        console.log(this.useGpu_ ? "Mode: CUDA" : "Mode: CPU");
+        printText(outImg, this.useGpu_ ? "Mode: CUDA" : "Mode: CPU", i++);
 
-        console.log("FPS (Denoising only): ", proc_fps);
-        //printText(outImg, txt.str(), i++);
+        txt = "FPS (Denoising only): " + proc_fps;
+        printText(outImg, txt, i++);
 
-        console.log("FPS (total): ", total_fps);
-        //printText(outImg, txt.str(), i++);
+        txt = "FPS (total): " + total_fps;
+        printText(outImg, txt, i++);
 
-        console.log("Space - switch CUDA / CPU mode");
-        console.log("C - switch Color / Gray mode");
+        printText(outImg, "Space - switch CUDA / CPU mode", i++, fontColorRed);
+        printText(outImg, "C - switch Color / Gray mode", i++, fontColorRed);
         if (this.sources_.length > 1)
-            console.log("N - switch source");
+            printText(outImg, "N - switch source", i++, fontColorRed);
     }
     private addGaussNoise(image: alvision.Mat, sigma: alvision.double): void {
         this.noise_.create(image.size(), alvision.MatrixType.CV_MAKETYPE(alvision.MatrixType.CV_32F, image.channels()));

@@ -28,6 +28,8 @@ public:
 	virtual cv::_InputOutputArray GetInputOutputArray();
 	virtual cv::_InputOutputArray GetInputOutputArrayOfArrays();
 
+	static POLY_METHOD(Kind);
+
 	/*static POLY_METHOD(New_vector_Point2i);
 	static POLY_METHOD(New_vector_Point2f);
 	static POLY_METHOD(New_vector_Point2d);

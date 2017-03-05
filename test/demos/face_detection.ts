@@ -1,5 +1,5 @@
 import * as alvision from "../../tsbinding/alvision";
-import { BaseApp, RUN_APP, FrameSource, opencv_extra, makeGray } from "./utility";
+import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource, makeGray, printText } from "./utility";
 import path = require('path')
 
 const base_path = "gpu_demos_pack/demos/denoising";
@@ -171,20 +171,25 @@ class App extends BaseApp
     private displayState(outImg: alvision.Mat, proc_fps: alvision.double, total_fps: alvision.double): void {
         const fontColorRed = alvision.CV_RGB(255, 0, 0);
 
+        let txt: string;
+        let i = 0;
 
-        console.log("Source size: " , outImg.cols() , 'x' , outImg.rows());
-        
+        txt = "Source size: " + outImg.cols() + 'x' + outImg.rows();
+        printText(outImg, txt, i++);
 
-        console.log("Method: ", method_str[this.method_.valueOf()], (this.useGpu_ ? " CUDA" : " CPU"));
+        txt = "Method: " + method_str[this.method_] + (this.useGpu_ ? " CUDA" : " CPU");
+        printText(outImg, txt, i++);
 
-        console.log("FPS (FD only): ", proc_fps);
+        txt = "FPS (FD only): " + proc_fps;
+        printText(outImg, txt, i++);
 
-        console.log("FPS (total): ", total_fps);
+        txt = "FPS (total): " + total_fps;
+        printText(outImg, txt, i++);
 
-        console.log("Space - switch CUDA / CPU mode");
-        console.log("M - switch method");
+        printText(outImg, "Space - switch CUDA / CPU mode", i++, fontColorRed);
+        printText(outImg, "M - switch method", i++, fontColorRed);
         if (this.sources_.length > 1)
-            console.log("N - switch source");
+            printText(outImg, "N - switch source", i++, fontColorRed);
     }
 
     private haarCascadeName_: string;
