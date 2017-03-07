@@ -251,7 +251,7 @@ It provides easy interface to:
     };
 
     //! Qt "button" type
-    enum QtButtonTypes {
+    export enum QtButtonTypes {
         QT_PUSH_BUTTON = 0, //!< Push button.
         QT_CHECKBOX = 1, //!< Checkbox button.
         QT_RADIOBOX = 2  //!< Radiobox button.

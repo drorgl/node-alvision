@@ -170,4 +170,26 @@ test.createStream({ objectMode: true }).on('data', (row) => {
 //}
 
 
+const winname = "TestMouse";
+let testmat = new alvision.Mat(200, 200, alvision.MatrixType.CV_8UC3);
+alvision.namedWindow(winname);
 
+alvision.setMouseCallback(winname, (event, x, y, flags, userdata) => {
+    console.log("mouse callback", event, x, y, flags, userdata);
+}, "dummyuserdata");
+alvision.createTrackbar("tbname", winname, 255, (pos) => {
+    console.log("trackbar callback", pos);
+}, 120, "userdata");
+
+//alvision.createButton("bar_name1", (state) => {
+//    console.log("button", state);
+//}, "dummy", alvision.QtButtonTypes.QT_PUSH_BUTTON, false);
+
+alvision.imshow(winname, testmat);
+
+let wait = () => {
+    alvision.waitKey(10);
+    setImmediate(wait);
+}
+
+setImmediate(wait);

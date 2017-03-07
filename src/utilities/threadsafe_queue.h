@@ -4,6 +4,8 @@
 #include <queue>
 #include <atomic>
 
+#include "atomic_lock_guard.h"
+
 template<typename T>
 class threadsafe_queue
 {
@@ -19,21 +21,24 @@ public:
 
 	void enqueue(T item)
 	{
-		while (_lock.test_and_set(std::memory_order_acquire));
+		atomic_lock_guard lock(_lock);
+
 		_queue.push(item);
-		_lock.clear(std::memory_order_release);
 	}
 	bool dequeue(T &itemref)
 	{
 		bool val = false;
-		while (_lock.test_and_set(std::memory_order_acquire));
+		
+		atomic_lock_guard lock(_lock);
+
 		if (!_queue.empty()){
 			T item = _queue.front();
 			itemref = item;
 			_queue.pop();
 			val = true;
 		}
-		_lock.clear(std::memory_order_release);
+		
+
 		return val;
 	}
 

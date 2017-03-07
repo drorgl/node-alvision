@@ -6,6 +6,20 @@
 #include "HighGUI/QtFont.h"
 #include "core/opengl/Texture2D.h"
 
+#include "../utilities/threadsafe_unordered_map.h"
+
+struct AsyncCallbackInfo {
+	std::shared_ptr<overres::AsyncCallback> callback;
+	Nan::Persistent<v8::Object> user_data;
+	std::string winname;
+	int value;
+};
+
+
+threadsafe_unordered_map<std::string, std::shared_ptr<AsyncCallbackInfo>> _mouse_callbacks;
+threadsafe_unordered_map<std::string, std::shared_ptr<AsyncCallbackInfo>> _button_callbacks;
+threadsafe_unordered_map<std::string, std::shared_ptr< threadsafe_unordered_map<std::string, std::shared_ptr<AsyncCallbackInfo>>>> _trackbar_callbacks;
+
 namespace highgui_general_callback {
 	std::shared_ptr<overload_resolution> overload;
 	NAN_METHOD(callback) {
@@ -304,10 +318,17 @@ POLY_METHOD(highgui::namedWindow) {
 }
 
 POLY_METHOD(highgui::destroyWindow) {
-	cv::destroyWindow(info.at<std::string>(0));
+	//TODO: since AsyncCallbackInfo is referenced as a pointer in the callbacks, need to make sure it won't be called after destroy
+	auto winname = info.at<std::string>(0);
+	//_mouse_callbacks.remove(winname);
+	//_trackbar_callbacks.remove(winname);
+	cv::destroyWindow(winname);
 }
 
 POLY_METHOD(highgui::destroyAllWindows) {
+	//TODO: since AsyncCallbackInfo is referenced as a pointer in the callbacks, need to make sure it won't be called after destroy
+	//_mouse_callbacks.clear();
+	//_trackbar_callbacks.clear();
 	cv::destroyAllWindows();
 }
 
@@ -342,9 +363,27 @@ POLY_METHOD(highgui::getWindowProperty) {
 	info.GetReturnValue().Set(retval);
 }
 
+static void LocalMouseCallback(int event, int x, int y, int flags, void* userdata) {
+	auto cbinfo = (AsyncCallbackInfo*)userdata;
+
+	cbinfo->callback->Call({ overres::make_value(event), overres::make_value(x), overres::make_value(flags)/*, overres::make_value(cbinfo->user_data) TODO: find a way to pass a Persistent value*/ });
+}
+
 POLY_METHOD(highgui::setMouseCallback) {
-	return Nan::ThrowError("not implemented");
-	//cv::setMouseCallback(info.at<std::string>(0), ..., ...);
+	auto winname = info.at<std::string>(0);
+	auto cb = info.at<std::shared_ptr<overres::AsyncCallback>>(1);
+	auto userData = info[2];
+
+	auto cbinfo = std::make_shared<AsyncCallbackInfo>();
+	cb->set_ref(false);
+
+	cbinfo->winname = winname;
+	cbinfo->callback = cb;
+	cbinfo->user_data.Reset(userData.As<v8::Object>());
+
+	_mouse_callbacks.set(winname, cbinfo);
+
+	cv::setMouseCallback(winname, LocalMouseCallback,cbinfo.get());
 }
 
 POLY_METHOD(highgui::getMouseWheelDelta){
@@ -352,18 +391,37 @@ POLY_METHOD(highgui::getMouseWheelDelta){
 	info.GetReturnValue().Set(retval);
 }
 
+static void LocalTrackbarCallback(int pos, void* userdata) {
+	auto cbinfo = (AsyncCallbackInfo*)userdata;
+
+	cbinfo->callback->Call({ overres::make_value(pos) /*, TODO: pass userdata*/ });
+}
+
 POLY_METHOD(highgui::createTrackbar) {
-	//auto trackbarname = info.at<std::string>(0);
-	//auto winname = info.at<std::string>(1);
-	//auto count = info.at<int>(2);
-	//auto onChange = info.at<std::shared_ptr<overres::AsyncCallback>>(3);
-	//auto value = info.at<int>(4);
-	//auto userData = info[5];
-	//
-	//cv::createTrackbar(trackbarname,winname, &value,count,
+	auto trackbarname = info.at<std::string>(0);
+	auto winname = info.at<std::string>(1);
+	auto count = info.at<int>(2);
+	auto onChange = info.at<std::shared_ptr<overres::AsyncCallback>>(3);
+	auto value = info.at<int>(4);
+	auto userData = info[5];
+
+	auto cbinfo = std::make_shared<AsyncCallbackInfo>();
+	onChange->set_ref(false);
+
+	cbinfo->winname = winname;
+	cbinfo->value = value;
+	cbinfo->callback = onChange;
+	cbinfo->user_data.Reset(userData.As<v8::Object>());
+
+	std::shared_ptr< threadsafe_unordered_map<std::string, std::shared_ptr<AsyncCallbackInfo>>> tbmap;
+	if (!_trackbar_callbacks.get(winname, tbmap)) {
+		tbmap = std::make_shared< threadsafe_unordered_map<std::string, std::shared_ptr<AsyncCallbackInfo>>>();
+		_trackbar_callbacks.set(winname, tbmap);
+	}
+
+	tbmap->set(trackbarname, cbinfo);
 	
-	//auto retval = cv::createTrackbar(info.at<std::string>(0),info.at<std::string>(1),&val,)
-	return Nan::ThrowError("not implemented");
+	cv::createTrackbar(trackbarname, winname, &cbinfo->value, count, LocalTrackbarCallback, cbinfo.get());
 }
 
 POLY_METHOD(highgui::getTrackbarPos) {
@@ -455,16 +513,29 @@ POLY_METHOD(highgui::stopLoop) {
 	cv::stopLoop();
 }
 
-POLY_METHOD(highgui::createButton) {
-	//auto bar_name				= info.at<std::string>(0);
-	//auto on_change				= info.at<std::shared_ptr<overres::Callback>>(1);
-	//auto userData				= info.at<????>(2);
-	//auto type					= info.at<int>(3);
-	//auto initial_button_state	= info.at<bool>(4);
-	//
-	//auto ret = cv::createButton(bar_name, on_change, userData, type, initial_button_state);
-	//info.SetReturnValue(ret);
+static void LocalButtonCallback(int state, void* userdata){
+	auto cbinfo = (AsyncCallbackInfo*)userdata;
 
-	throw std::runtime_error("not implemented");
+	cbinfo->callback->Call({ overres::make_value(state) });
+}
+
+
+POLY_METHOD(highgui::createButton) {
+	auto bar_name				= info.at<std::string>(0);
+	auto on_change				= info.at<std::shared_ptr<overres::AsyncCallback>>(1);
+	auto userData				= info[2];
+	auto type					= info.at<int>(3);
+	auto initial_button_state	= info.at<bool>(4);
+
+	auto cbinfo = std::make_shared<AsyncCallbackInfo>();
+	on_change->set_ref(false);
+
+	cbinfo->callback = on_change;
+	cbinfo->user_data.Reset(userData.As<v8::Object>());
+
+	_mouse_callbacks.set(bar_name, cbinfo);
+
+	auto ret = cv::createButton(bar_name, LocalButtonCallback, cbinfo.get(), type, initial_button_state);
+	info.SetReturnValue(ret);
 }
 
