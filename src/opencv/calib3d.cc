@@ -241,7 +241,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<IOArray*>("rvecs","IOArray"),
 	  make_param<IOArray*>("tvecs","IOArray"),
 	  make_param<int>("flags","int",0),
-	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::New(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON))
+	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::create(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, DBL_EPSILON))
   }, calibrateCamera);
   Nan::SetMethod(target, "calibrateCamera", calib3d_general_callback::callback);
 
@@ -269,7 +269,7 @@ calib3d::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 	  make_param<IOArray*>("E","IOArray"),
 	  make_param<IOArray*>("F","IOArray"),
 	  make_param<int>("flags","CALIB",cv::CALIB_FIX_INTRINSIC),
-	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::New(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, 1e-6))
+	  make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::create(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 30, 1e-6))
   }, stereoCalibrate);
   Nan::SetMethod(target, "stereoCalibrate", calib3d_general_callback::callback);
 

@@ -44,7 +44,7 @@ BOWKMeansTrainer::Init(Handle<Object> target, std::shared_ptr<overload_resolutio
 //			int attempts = 3, int flags = KMEANS_PP_CENTERS);
 	overload->addOverloadConstructor("bowmeanstrainer", "BOWKMeansTrainer", {
 		make_param<int>("clusterCount","int"),
-		make_param<TermCriteria*>("termcrit","TermCriteria", TermCriteria::New()),
+		make_param<TermCriteria*>("termcrit","TermCriteria", TermCriteria::create()),
 		make_param<int>("attempts","int", 3),
 		make_param<int>("flags","int",cv:: KMEANS_PP_CENTERS)
 	}, New);

@@ -2,12 +2,12 @@
 #define _ALVISION_CUDA_GPUMAT_H_
 //#include "OpenCV.h"
 #include "../../alvision.h"
-
+#include "../IOArray.h"
 
 //#ifdef HAVE_CUDA
 namespace cuda {
 
-	class GpuMat : public overres::ObjectWrap{
+	class GpuMat : public IOArray{
 	public:
 		static std::string name;
 

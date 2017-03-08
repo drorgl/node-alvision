@@ -1488,12 +1488,12 @@ overload->addOverload("imgproc", "", "cornerSubPix", {
      */
 
 overload->addOverload("imgproc", "", "goodFeaturesToTrack", {
-		make_param<IOArray*>("image","IOArray"),
-		make_param<IOArray*>("corners","IOArray"),
+		make_param<IOArray*>("image","InputArray"),
+		make_param<IOArray*>("corners","OutputArray"),
 		make_param<int>("maxCorners","int"),
 		make_param<double>("qualityLevel","double"),
 		make_param<double>("minDistance","double"),
-		make_param<IOArray*>("mask","IOArray",IOArray:: noArray()),
+		make_param<IOArray*>("mask","InputArray",IOArray:: noArray()),
 		make_param<int>("blockSize","int", 3),
 		make_param<bool>("useHarrisDetector","bool", false),
 		make_param<double>("k","double", 0.04)
@@ -3826,7 +3826,7 @@ overload->addOverload("imgproc", "", "pyrMeanShiftFiltering", {
 	make_param<double>("sp","double"), 
 	make_param<double>("sr","double"), 
 	make_param<int>("maxLevel","int", 1),
-	make_param<TermCriteria*>("termCriteria","TermCriteria",TermCriteria::New(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 5, 1))
+	make_param<TermCriteria*>("termCriteria","TermCriteria",TermCriteria::create(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 5, 1))
 }, pyrMeanShiftFiltering);
 Nan::SetMethod(target, "pyrMeanShiftFiltering", imgproc_general_callback::callback);
 
@@ -5147,7 +5147,7 @@ overload->add_type_alias("ColormapTypes", "int");
 
 
 overload->addOverload("imgproc", "", "line", {
-	make_param<IOArray*>("img","IOArray"),
+	make_param<IOArray*>("img","InputOutputArray"),
 	make_param<Point*>("pt1",Point::name), 
 	make_param<Point*>("pt2",Point::name), 
 	make_param<Scalar*>("color",Scalar::name),
@@ -6033,7 +6033,30 @@ SetObjectProperty(ShapeOrientation, "COUNTER_CLOCKWISE", 2);
  POLY_METHOD(imgproc::cornerEigenValsAndVecs){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::preCornerDetect){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::cornerSubPix){throw std::runtime_error("not implemented");}
- POLY_METHOD(imgproc::goodFeaturesToTrack){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::goodFeaturesToTrack){
+		auto image				= info.at<IOArray*>(0)->GetInputArray();
+		auto corners			= info.at<IOArray*>(1)->GetOutputArray();
+		auto maxCorners			= info.at<int>(2);
+		auto qualityLevel		= info.at<double>(3);
+		auto minDistance		= info.at<double>(4);
+		auto mask				= info.at<IOArray*>(5)->GetInputArray();
+		auto blockSize			= info.at<int>(6);
+		auto useHarrisDetector	= info.at<bool>(7);
+		auto k					= info.at<double>(8);
+
+		cv::goodFeaturesToTrack(
+			image,
+			corners,
+			maxCorners,
+			qualityLevel,
+			minDistance,
+			mask,
+			blockSize,
+			useHarrisDetector,
+			k
+		);
+
+ }
  POLY_METHOD(imgproc::HoughLines){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::HoughLinesP){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::HoughCircles){throw std::runtime_error("not implemented");}
@@ -6147,7 +6170,17 @@ POLY_METHOD(imgproc::approxPolyDP){
  POLY_METHOD(imgproc::createGeneralizedHoughGuil){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::blendLinear){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::applyColorMap){throw std::runtime_error("not implemented");}
- POLY_METHOD(imgproc::line){throw std::runtime_error("not implemented");}
+ POLY_METHOD(imgproc::line){
+	auto img		= info.at<IOArray*>(0)->GetInputOutputArray();
+	auto pt1		= *info.at<Point*>(1)->_point;
+	auto pt2		= *info.at<Point*>(2)->_point;
+	auto color		= *info.at<Scalar*>(3)->_scalar;
+	auto thickness	= info.at<int>(4);
+	auto lineType	= info.at<int>(5);
+	auto shift		= info.at<int>(6);
+
+	cv::line(img, pt1, pt2, color, thickness, lineType, shift);
+ }
  POLY_METHOD(imgproc::arrowedLine){throw std::runtime_error("not implemented");}
  POLY_METHOD(imgproc::rectangle){
 	 auto img = *info.at<Matrix*>(0)->_mat;

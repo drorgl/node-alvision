@@ -120,7 +120,7 @@ fisheye::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("rvecs","IOArray"),
 		make_param<IOArray*>("tvecs","IOArray"),
 		make_param<int>("flags","int", 0),
-		make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::New(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 100, DBL_EPSILON))
+		make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::create(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 100, DBL_EPSILON))
 	}, calibrate);
 
 
@@ -157,7 +157,7 @@ fisheye::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overlo
 		make_param<IOArray*>("R","IOArray"),
 		make_param<IOArray*>("T","IOArray"),
 		make_param<int>("flags","FISHEYE_CALIB",cv::fisheye::CALIB_FIX_INTRINSIC),
-		make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::New(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 100, DBL_EPSILON))
+		make_param<TermCriteria*>("criteria","TermCriteria",TermCriteria::create(cv::TermCriteria::COUNT + cv::TermCriteria::EPS, 100, DBL_EPSILON))
 	}, stereoCalibrate);
 
 }

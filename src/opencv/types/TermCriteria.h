@@ -5,14 +5,15 @@
 
 class TermCriteria : public overres::ObjectWrap{
 public:
+	static std::string name;
 	static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
 	std::shared_ptr<cv::TermCriteria> _termCriteria;
 
-	static std::shared_ptr<TermCriteria> New();
-	static std::shared_ptr<TermCriteria> New(int type, int maxCount, double epsilon);
+	static std::shared_ptr<TermCriteria> create();
+	static std::shared_ptr<TermCriteria> create(int type, int maxCount, double epsilon);
 
 	virtual v8::Local<v8::Function> get_constructor(); 
 

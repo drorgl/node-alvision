@@ -165,120 +165,136 @@ class App extends BaseApp
                 this.pairSources_[this.curSource_.valueOf()].next(frame0, frame1);
 
                 frame0.convertTo(frame0_32F,alvision.MatrixType. CV_32F, 1.0 / 255.0);
-                frame1.convertTo(frame1_32F,alvision.MatrixType. CV_32F, 1.0 / 255.0);
+                frame1.convertTo(frame1_32F, alvision.MatrixType.CV_32F, 1.0 / 255.0);
+
+                frame0.copyTo(flowFieldForward);
+                frame1.copyTo(flowFieldBackward);
+
+                let prev = new alvision.Mat();
+                let next = new alvision.Mat();
+                let status = new alvision.Mat();
+                let errors = new alvision.Mat();
 
                 switch (this.method_) {
                     case Method.BROX_GPU: {
-                        makeGray(frame0_32F, gray0_32F);
-                        makeGray(frame1_32F, gray1_32F);
+                        if (this.has_gpu) {
+                            makeGray(frame0_32F, gray0_32F);
+                            makeGray(frame1_32F, gray1_32F);
 
-                        d_frame0_32F.upload(gray0_32F);
-                        d_frame1_32F.upload(gray1_32F);
+                            d_frame0_32F.upload(gray0_32F);
+                            d_frame1_32F.upload(gray1_32F);
 
-                        let proc_start = alvision.getTickCount();
+                            let proc_start = alvision.getTickCount();
 
-                        brox.calc(d_frame0_32F, d_frame1_32F, d_flow_forward);
-                        brox.calc(d_frame1_32F, d_frame0_32F, d_flow_backward);
+                            brox.calc(d_frame0_32F, d_frame1_32F, d_flow_forward);
+                            brox.calc(d_frame1_32F, d_frame0_32F, d_flow_backward);
 
-                        proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
+                            proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
 
-                        d_flow_forward.download(flow_forward);
-                        d_flow_backward.download(flow_backward);
+                            d_flow_forward.download(flow_forward);
+                            d_flow_backward.download(flow_backward);
 
-                        draw_flow(flow_forward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
-                        draw_flow(flow_backward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                            draw_flow(flow_forward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                            draw_flow(flow_backward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                        }
                     }
                         break;
                     case Method.DENSE_PYR_LK_GPU: {
-                        makeGray(frame0, gray0);
-                        makeGray(frame1, gray1);
+                        if (this.has_gpu) {
+                            makeGray(frame0, gray0);
+                            makeGray(frame1, gray1);
 
-                        d_frame0.upload(gray0);
-                        d_frame1.upload(gray1);
+                            d_frame0.upload(gray0);
+                            d_frame1.upload(gray1);
 
-                        let proc_start = alvision.getTickCount();
+                            let proc_start = alvision.getTickCount();
 
-                        pyrlk.calc(d_frame0, d_frame1, d_flow_forward);
-                        pyrlk.calc(d_frame1, d_frame0, d_flow_backward);
+                            pyrlk.calc(d_frame0, d_frame1, d_flow_forward);
+                            pyrlk.calc(d_frame1, d_frame0, d_flow_backward);
 
-                        proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
+                            proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
 
-                        d_flow_forward.download(flow_forward);
-                        d_flow_backward.download(flow_backward);
+                            d_flow_forward.download(flow_forward);
+                            d_flow_backward.download(flow_backward);
 
-                        draw_flow(flow_forward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
-                        draw_flow(flow_backward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
-
+                            draw_flow(flow_forward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                            draw_flow(flow_backward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                        }
                     }
                         break;
                     case Method.FARNEBACK_GPU: {
-                        makeGray(frame0, gray0);
-                        makeGray(frame1, gray1);
+                        if (this.has_gpu) {
+                            makeGray(frame0, gray0);
+                            makeGray(frame1, gray1);
 
-                        d_frame0.upload(gray0);
-                        d_frame1.upload(gray1);
+                            d_frame0.upload(gray0);
+                            d_frame1.upload(gray1);
 
-                        let proc_start = alvision.getTickCount();
+                            let proc_start = alvision.getTickCount();
 
-                        farneback.calc(d_frame0, d_frame1, d_flow_forward);
-                        farneback.calc(d_frame1, d_frame0, d_flow_backward);
+                            farneback.calc(d_frame0, d_frame1, d_flow_forward);
+                            farneback.calc(d_frame1, d_frame0, d_flow_backward);
 
-                        proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
+                            proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
 
-                        d_flow_forward.download(flow_forward);
-                        d_flow_backward.download(flow_backward);
+                            d_flow_forward.download(flow_forward);
+                            d_flow_backward.download(flow_backward);
 
-                        draw_flow(flow_forward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
-                        draw_flow(flow_backward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                            draw_flow(flow_forward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                            draw_flow(flow_backward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                        }
                     }
                         break;
                     case Method.DUAL_TVL1_GPU: {
-                        makeGray(frame0, gray0);
-                        makeGray(frame1, gray1);
+                        if (this.has_gpu) {
+                            makeGray(frame0, gray0);
+                            makeGray(frame1, gray1);
 
-                        d_frame0.upload(gray0);
-                        d_frame1.upload(gray1);
+                            d_frame0.upload(gray0);
+                            d_frame1.upload(gray1);
 
-                        let proc_start = alvision.getTickCount();
+                            let proc_start = alvision.getTickCount();
 
-                        dual_tvl1.calc(d_frame0, d_frame1, d_flow_forward);
-                        dual_tvl1.calc(d_frame1, d_frame0, d_flow_backward);
+                            dual_tvl1.calc(d_frame0, d_frame1, d_flow_forward);
+                            dual_tvl1.calc(d_frame1, d_frame0, d_flow_backward);
 
-                        proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
+                            proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
 
-                        d_flow_forward.download(flow_forward);
-                        d_flow_backward.download(flow_backward);
+                            d_flow_forward.download(flow_forward);
+                            d_flow_backward.download(flow_backward);
 
-                        draw_flow(flow_forward, flowFieldForward,10,alvision.CV_RGB(0,255,0));
-                        draw_flow(flow_backward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                            draw_flow(flow_forward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                            draw_flow(flow_backward, flowFieldForward, 10, alvision.CV_RGB(0, 255, 0));
+                        }
                     }
 
                         break;
                     case Method.SPARSE_PYR_LK_GPU: {
-                        let prev = new alvision.Mat();
-                        let next = new alvision.Mat();
-                        let status = new alvision.Mat();
-                        let errors = new alvision.Mat();
+                        if (this.has_gpu) {
+                            let prev = new alvision.Mat();
+                            let next = new alvision.Mat();
+                            let status = new alvision.Mat();
+                            let errors = new alvision.Mat();
 
-                        makeGray(frame0, gray0);
-                        makeGray(frame1, gray1);
+                            makeGray(frame0, gray0);
+                            makeGray(frame1, gray1);
 
-                        d_frame0.upload(gray0);
-                        d_frame1.upload(gray1);
+                            d_frame0.upload(gray0);
+                            d_frame1.upload(gray1);
 
-                        let proc_start = alvision.getTickCount();
+                            let proc_start = alvision.getTickCount();
 
-                        sparse_pyrlk.calc(d_frame0, d_frame1, prev,next,status,errors);
-                        sparse_pyrlk.calc(d_frame1, d_frame0, prev, next, status, errors);
+                            sparse_pyrlk.calc(d_frame0, d_frame1, prev, next, status, errors);
+                            sparse_pyrlk.calc(d_frame1, d_frame0, prev, next, status, errors);
 
-                        proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
+                            proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
 
-                        draw_flow_field(flowFieldForward, prev, next, status, errors);
-                        draw_flow_field(flowFieldBackward, next, prev, status, errors);
+                            draw_flow_field(flowFieldForward, prev, next, status, errors);
+                            draw_flow_field(flowFieldBackward, next, prev, status, errors);
 
-                        //d_flow_forward.download(flow_forward);
-                        //d_flow_backward.download(flow_backward);
-
+                            //d_flow_forward.download(flow_forward);
+                            //d_flow_backward.download(flow_backward);
+                        }
                     }
                         break;
                     
@@ -288,36 +304,34 @@ class App extends BaseApp
 
                         const proc_start = alvision.getTickCount();
 
-                        alvision.calcOpticalFlowFarneback(gray0, gray1, d_flow_forward, 0.5, 3, 15, 3, 5, 1.2, 0);
-                        alvision.calcOpticalFlowFarneback(gray1, gray0, d_flow_backward, 0.5, 3, 15, 3, 5, 1.2, 0);
+                        alvision.calcOpticalFlowFarneback(gray0, gray1, flow_forward, 0.5, 1, 12, 2, 7, 1.5, 0);
+                        alvision.calcOpticalFlowFarneback(gray1, gray0, flow_backward, 0.5, 1, 12, 2, 7, 1.5, 0);
 
                         proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
 
-                        //let uv_planes = Array<alvision.Mat>(2);
-                        //uv_planes[0] = fu;
-                        //uv_planes[1] = fv;
-                        //alvision.split(fuv, uv_planes);
-                        //uv_planes[0] = bu;
-                        //uv_planes[1] = bv;
-                        //alvision.split(buv, uv_planes);
-
-                        //d_fu.upload(fu);
-                        //d_fv.upload(fv);
-                        //d_bu.upload(bu);
-                        //d_bv.upload(bv);
+                        draw_flow(flow_forward, flowFieldForward, 20, alvision.CV_RGB(0, 255, 0));
+                        draw_flow(flow_backward, flowFieldBackward, 20, alvision.CV_RGB(0, 255, 0));
 
                         break;
 
                     case Method.LK_CPU:
-                        let prev = new alvision.Mat();
-                        let next = new alvision.Mat();
-                        let status = new alvision.Mat();
-                        let errors = new alvision.Mat();
+                        makeGray(frame0, gray0);
+                        makeGray(frame1, gray1);
 
-                        alvision.calcOpticalFlowPyrLK(gray0, gray1, prev, next, status, errors);
+                        let forwardFeatures = new alvision.Mat();
+                        let backwardFeatures = new alvision.Mat();
+                        alvision.goodFeaturesToTrack(gray0, forwardFeatures, 500, 0.01, 2);
+                        alvision.goodFeaturesToTrack(gray1, backwardFeatures, 500, 0.01, 2);
 
-                        draw_flow_field(flowFieldForward, prev, next, status, errors);
-                        draw_flow_field(flowFieldBackward, next, prev, status, errors);
+                        let forwardCorners = new alvision.Mat();
+                        let backwardCorners = new alvision.Mat();
+
+                        alvision.calcOpticalFlowPyrLK(gray0, gray1, forwardFeatures, forwardCorners, status, errors);
+                        alvision.calcOpticalFlowPyrLK(gray1, gray0, backwardFeatures, backwardCorners, status, errors);
+
+                        draw_features_flow(flowFieldForward, forwardFeatures, forwardCorners, alvision.CV_RGB(255, 0, 0));
+                        draw_features_flow(flowFieldBackward, backwardFeatures, backwardCorners, alvision.CV_RGB(255, 0, 0));
+                      
 
                         break;
                 };
@@ -355,7 +369,7 @@ class App extends BaseApp
                 //    frames.push(newFrame.clone());
                 //}
 
-                //frames.push(frame1_32F.clone());
+                frames.push(frame1_32F.clone());
 
                 currentFrame = 0;
                 forward = true;
@@ -376,9 +390,13 @@ class App extends BaseApp
             flowFieldForward.copyTo(left);
             flowFieldBackward.copyTo(right);
 
+            //alvision.imshow("left flow", flowFieldForward);
+            //alvision.imshow("right flow", flowFieldBackward);
+
             alvision.imshow("Frames", framesImg);
             alvision.imshow("Flows", flowsImg);
 
+            //console.log("frames", frames.length, currentFrame);
             frames[currentFrame].convertTo(outImg,alvision.MatrixType. CV_8U, 255.0);
 
             this.displayState(outImg, proc_fps, total_fps);
@@ -540,6 +558,8 @@ function draw_flow_field(flowField: alvision.Mat, prev: alvision.Mat, next: alvi
     let nextPos = next.ptr<alvision.Point2f>("Point2f");
     let found = status.ptr<alvision.uchar>("uchar");
 
+    console.log("prevPos", prevPos.length, "nextPos", nextPos.length, "found", found.length);
+
     for (let i= 0; i < nextPos.length; i++){
         if (found[i]) {
             alvision.line(flowField, prevPos[i], nextPos[i], new alvision.Scalar(0, 0, 255));
@@ -551,11 +571,23 @@ function draw_flow(flow: alvision.Mat, cflowmap: alvision.Mat, step: alvision.in
     for (let y = 0; y < cflowmap.rows(); y += step.valueOf())
         for (let x = 0; x < cflowmap.cols(); x += step.valueOf()) {
             const fxy = flow.at<alvision.Point2f>("Point2f", y, x).get();
+            //console.log(x,y,fxy);
             alvision.line(cflowmap, new alvision.Point(x, y), new alvision.Point((x + fxy.x.valueOf()), (y + fxy.y.valueOf())), color);
             alvision.circle(cflowmap, new alvision.Point((x + fxy.x.valueOf()), (y + fxy.y.valueOf())), 1, color, -1);
         }
 }
 
+function draw_features_flow(flowmap: alvision.Mat, from_corners: alvision.Mat, to_corners: alvision.Mat,color: alvision.Scalar): void {
+
+    let r = 3;
+    for (let i = 0; i < from_corners.rows(); i++) {
+        let prev_point = from_corners.at<alvision.Point2f>("Point2f", i).get();
+        let next_point = to_corners.at<alvision.Point2f>("Point2f", i).get();
+
+        alvision.line(flowmap, new alvision.Point(prev_point.x, prev_point.y), new alvision.Point(next_point.x, next_point.y), color);
+    }      
+
+}
 
 //function getFlowField(u: alvision.Mat, v: alvision.Mat, flowField: alvision.Mat, maxrad  : alvision.float= -1) :  void 
 //{

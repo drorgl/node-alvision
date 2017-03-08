@@ -133,7 +133,7 @@ init(Handle<Object> target) {
 	Matrix::Init(target, overload);
 	UMatrix::Init(target, overload);
 	TrackedPtr<Matrix>::Init(target, "TrackedPtr_Mat", overload);
-	//TrackedElement<Matrix>::Init(target, overload);
+	TrackedElement<Matrix>::Init(target, "TrackedElement_Matrix", overload);
 
 	alvision::ffmpeg::Init(target, overload);
 	alvision::packet::Init(target, overload);

@@ -11,9 +11,10 @@ namespace termcriteria_general_callback {
 }
 
 Nan::Persistent<FunctionTemplate> TermCriteria::constructor;
-
+std::string TermCriteria::name;
 
 void TermCriteria::Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload) {
+	TermCriteria::name = "TermCriteria";
 	termcriteria_general_callback::overload = overload;
 	Local<FunctionTemplate> ctor = Nan::New<FunctionTemplate>(termcriteria_general_callback::callback);
 	constructor.Reset(ctor);
@@ -53,14 +54,14 @@ v8::Local<v8::Function> TermCriteria::get_constructor() {
 	return Nan::New(constructor)->GetFunction();
 }
 
-std::shared_ptr<TermCriteria> TermCriteria::New() {
+std::shared_ptr<TermCriteria> TermCriteria::create() {
 	auto ret = std::make_shared<TermCriteria>();
 	ret->_termCriteria = std::make_shared<cv::TermCriteria>();
 	return ret;
 }
 
 
-std::shared_ptr<TermCriteria> TermCriteria::New(int type, int maxCount, double epsilon) {
+std::shared_ptr<TermCriteria> TermCriteria::create(int type, int maxCount, double epsilon) {
 	auto ret = std::make_shared<TermCriteria>();
 	ret->_termCriteria = std::make_shared<cv::TermCriteria>(type, maxCount, epsilon);
 	return ret;

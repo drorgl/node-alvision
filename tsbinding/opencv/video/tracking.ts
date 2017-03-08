@@ -313,7 +313,7 @@ export var estimateRigidTransform: IestimateRigidTransform = alvision_module.est
 //CV_EXPORTS_W Mat estimateRigidTransform( InputArray src, InputArray dst, bool fullAffine );
 
 
-enum MOTION
+export enum MOTION
 {
     MOTION_TRANSLATION = 0,
     MOTION_EUCLIDEAN   = 1,
@@ -589,7 +589,21 @@ interface DualTVL1OpticalFlow extends DenseOpticalFlow
 */
 
 interface IcreateOptFlow_DualTVL1 {
-    ():DualTVL1OpticalFlow;
+    (
+        tau?: _st.double /*= 0.25*/,
+        lambda?: _st.double /* = 0.15*/,
+        theta?: _st.double /* = 0.3*/,
+        nscales?: _st.int /* = 5*/,
+        warps?: _st.int /* = 5*/,
+        epsilon?: _st.double /* = 0.01*/,
+        innnerIterations?: _st.int /* = 30*/,
+        outerIterations?: _st.int /* = 10*/,
+        scaleStep?: _st.double /* = 0.8*/,
+        gamma?: _st.double /* = 0.0*/,
+        medianFiltering?: _st.int /* = 5*/,
+        useInitialFlow?: boolean /* = false*/
+
+    ): DualTVL1OpticalFlow;
 }
 
 export var createOptFlow_DualTVL1: IcreateOptFlow_DualTVL1 = alvision_module.createOptFlow_DualTVL1;
