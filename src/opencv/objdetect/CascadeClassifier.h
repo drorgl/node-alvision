@@ -9,6 +9,8 @@ public:
 
 	static Nan::Persistent<FunctionTemplate> constructor;
 
+	std::shared_ptr<cv::CascadeClassifier> _cascadeClassifier;
+
 	virtual v8::Local<v8::Function> get_constructor();
 
 

@@ -1,7 +1,12 @@
 #include "CascadeClassifier.h"
+
+#include <iterator>
+
 #include "../IOArray.h"
 #include "../types/Size.h"
+#include "../types/Rect.h"
 #include "../persistence/FileNode.h"
+
 
 namespace cascadeclassifier_general_callback {
 	std::shared_ptr<overload_resolution> overload;
@@ -50,7 +55,8 @@ CascadeClassifier::Init(Handle<Object> target, std::shared_ptr<overload_resoluti
 //	//public:
 //	/** @brief Checks whether the classifier has been loaded.
 //	*/
-	overload->addOverload("cascadeclassifier", "CascadeClassifier","", {}, empty);
+	overload->addOverload("cascadeclassifier", "CascadeClassifier","empty", {}, empty);
+	Nan::SetPrototypeMethod(ctor, "empty", cascadeclassifier_general_callback::callback);
 //	empty() : boolean;
 //	/** @brief Loads a classifier from a file.
 //
@@ -59,12 +65,14 @@ CascadeClassifier::Init(Handle<Object> target, std::shared_ptr<overload_resoluti
 //	traincascade application.
 //	*/
 	overload->addOverload("cascadeclassifier", "CascadeClassifier", "load", {make_param<std::string>("filename","String")}, load);
+	Nan::SetPrototypeMethod(ctor, "load", cascadeclassifier_general_callback::callback);
 //	load(filename : string) : boolean;
 //	/** @brief Reads a classifier from a FileStorage node.
 //
 //	@note The file may contain a new cascade classifier (trained traincascade application) only.
 //	*/
 	overload->addOverload("cascadeclassifier", "CascadeClassifier", "read", {make_param<FileNode*>("node","FileNode")}, read);
+	Nan::SetPrototypeMethod(ctor, "read", cascadeclassifier_general_callback::callback);
 //	read(node: _persistence.FileNode) : boolean;
 //
 //	/** @brief Detects objects of different sizes in the input image. The detected objects are returned as a list
@@ -129,6 +137,7 @@ CascadeClassifier::Init(Handle<Object> target, std::shared_ptr<overload_resoluti
 		make_param<Size*>("maxSize",Size::name, Size::create()),
 		make_param<bool>("outputRejectLevels","bool", false)
 	}, detectMultiScale);
+	Nan::SetPrototypeMethod(ctor, "detectMultiScale", cascadeclassifier_general_callback::callback);
 //	detectMultiScale(image: _st.InputArray,
 //		cb : (objects : Array<_types.Rect>,
 //			rejectLevels : Array<_st.int>,
@@ -140,17 +149,21 @@ CascadeClassifier::Init(Handle<Object> target, std::shared_ptr<overload_resoluti
 //		outputRejectLevels ? : boolean /*= false*/) : void;
 //
 	overload->addOverload("cascadeclassifier", "CascadeClassifier", "isOldFormatCascade", {}, isOldFormatCascade);
+	Nan::SetPrototypeMethod(ctor, "isOldFormatCascade", cascadeclassifier_general_callback::callback);
 //	isOldFormatCascade() : boolean;
 
 	overload->addOverload("cascadeclassifier", "CascadeClassifier", "getOriginalWindowSize", {}, getOriginalWindowSize);
+	Nan::SetPrototypeMethod(ctor, "getOriginalWindowSize", cascadeclassifier_general_callback::callback);
 //	getOriginalWindowSize() : _types.Size;
 
 	overload->addOverload("cascadeclassifier", "CascadeClassifier", "getFeatureType", {}, getFeatureType);
+	Nan::SetPrototypeMethod(ctor, "getFeatureType", cascadeclassifier_general_callback::callback);
 //	getFeatureType() : _st.int;
 //
 //	//getOldCascade(): any; //??????
 //
 	overload->addOverload("cascadeclassifier", "CascadeClassifier", "convert", {make_param<std::string>("oldcascade","String"), make_param<std::string>("newcascade","String")}, convert);
+	Nan::SetPrototypeMethod(ctor, "convert", cascadeclassifier_general_callback::callback);
 //	convert(oldcascade: string, newcascade : string) : boolean;
 //
 //	//setMaskGenerator(const Ptr<BaseCascadeClassifier::MaskGenerator>& maskGenerator) : void;
@@ -180,20 +193,83 @@ v8::Local<v8::Function> CascadeClassifier::get_constructor() {
 
 POLY_METHOD(CascadeClassifier::New) {
 	auto ret = new CascadeClassifier();
-	//ret->_algorithm = cv::makePtr<cv::CascadeClassifier>();
+	ret->_cascadeClassifier = std::make_shared<cv::CascadeClassifier>();
 
 	ret->Wrap(info.Holder());
 	info.GetReturnValue().Set(info.Holder());
 }
 
 
-POLY_METHOD(CascadeClassifier::New_file){throw std::runtime_error("not implemented");}
-POLY_METHOD(CascadeClassifier::empty){throw std::runtime_error("not implemented");}
-POLY_METHOD(CascadeClassifier::load){throw std::runtime_error("not implemented");}
-POLY_METHOD(CascadeClassifier::read){throw std::runtime_error("not implemented");}
-POLY_METHOD(CascadeClassifier::detectMultiScale){throw std::runtime_error("not implemented");}
-POLY_METHOD(CascadeClassifier::isOldFormatCascade){throw std::runtime_error("not implemented");}
-POLY_METHOD(CascadeClassifier::getOriginalWindowSize){throw std::runtime_error("not implemented");}
-POLY_METHOD(CascadeClassifier::getFeatureType){throw std::runtime_error("not implemented");}
-POLY_METHOD(CascadeClassifier::convert){throw std::runtime_error("not implemented");}
+POLY_METHOD(CascadeClassifier::New_file){
+	auto ret = new CascadeClassifier();
+	ret->_cascadeClassifier = std::make_shared<cv::CascadeClassifier>(info.at<std::string>(0));
+
+	ret->Wrap(info.Holder());
+	info.GetReturnValue().Set(info.Holder());
+}
+POLY_METHOD(CascadeClassifier::empty){
+	auto this_ = info.This<CascadeClassifier*>();
+	auto ret = this_->_cascadeClassifier->empty();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(CascadeClassifier::load){
+	auto this_ = info.This<CascadeClassifier*>();
+	auto ret = this_->_cascadeClassifier->load(info.at<std::string>(0));
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(CascadeClassifier::read){
+	auto this_ = info.This<CascadeClassifier*>();
+	auto node = *info.at<FileNode*>(0)->_fileNode;
+	auto ret = this_->_cascadeClassifier->read(node);
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(CascadeClassifier::detectMultiScale){
+	auto this_ = info.This<CascadeClassifier*>();
+
+	auto image				= info.at<IOArray*>(0)->GetInputArray();
+	auto cb					= info.at<std::shared_ptr<overres::Callback>>(1);// : (objects : Array<_types.Rect>,rejectLevels : Array<_st.int>,levelWeights : Array<_st.double>) = >void,
+	auto scaleFactor		= info.at<double>(2);
+	auto minNeighbors		= info.at<int>(3);
+	auto flags				= info.at<int>(4);
+	auto minSize			= *info.at<Size*>(5)->_size;
+	auto maxSize			= *info.at<Size*>(6)->_size;
+	auto outputRejectLevels = info.at<bool>(7);
+
+	auto objects = std::make_shared<std::vector<cv::Rect>>();
+	auto reject_levels = std::make_shared<std::vector<int>>();
+	auto level_weights = std::make_shared<std::vector<double>>();
+
+	this_->_cascadeClassifier->detectMultiScale(image, *objects, *reject_levels, *level_weights, scaleFactor, minNeighbors, flags, minSize, maxSize, outputRejectLevels);
+
+	auto v8_objects = std::make_shared<std::vector<Rect*>>();
+	std::transform(std::begin(*objects), std::end(*objects), std::back_inserter(*v8_objects), [](const cv::Rect& val) {
+		auto rec = new Rect();
+		rec->_rect = std::make_shared <cv::Rect>(val);
+		return rec;
+	});
+
+	cb->Call({overres::make_value(v8_objects), overres::make_value(reject_levels), overres::make_value(level_weights)});
+}
+POLY_METHOD(CascadeClassifier::isOldFormatCascade){
+	auto this_ = info.This<CascadeClassifier*>();
+	auto ret = this_->_cascadeClassifier->isOldFormatCascade();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(CascadeClassifier::getOriginalWindowSize){
+	auto this_ = info.This<CascadeClassifier*>();
+	auto windowSize = this_->_cascadeClassifier->getOriginalWindowSize();
+	auto ret = new Size();
+	ret->_size = std::make_shared<cv::Size>(windowSize);
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(CascadeClassifier::getFeatureType){
+	auto this_ = info.This<CascadeClassifier*>();
+	auto ret = this_->_cascadeClassifier->getFeatureType();
+	info.SetReturnValue(ret);
+}
+POLY_METHOD(CascadeClassifier::convert){
+	auto this_ = info.This<CascadeClassifier*>();
+	auto ret = this_->_cascadeClassifier->convert(info.at<std::string>(0), info.at<std::string>(1));
+	info.SetReturnValue(ret);
+}
 

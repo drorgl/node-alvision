@@ -29,7 +29,8 @@
 	"demo-background_subtraction" : "ts-node test/demos/background_subtraction.ts",
 	"demo-denoising" : "ts-node test/demos/denoising.ts",
 	"demo-dense_optical_flow" : "ts-node test/demos/dense_optical_flow.ts",
-	"demo-stereo_matching" : "ts-node test/demos/stereo_matching.ts"
+	"demo-stereo_matching" : "ts-node test/demos/stereo_matching.ts",
+	"demo-face_detection" : "ts-node test/demos/face_detection.ts"
   },
   "keywords": [
     "opencv",

@@ -2,7 +2,7 @@ import * as alvision from "../../tsbinding/alvision";
 import { BaseApp, RUN_APP, FrameSource, opencv_extra, PairFrameSource, makeGray, printText } from "./utility";
 import path = require('path')
 
-const base_path = "gpu_demos_pack/demos/denoising";
+const base_path = "gpu_demos_pack/demos/face_detection";
 
 
 
@@ -37,7 +37,7 @@ class App extends BaseApp
     protected runAppLogic(): void {
         if (this.sources_.length == 0) {
             console.log("Using default frames source... ");
-            this.sources_.push(FrameSource.video("data/face_detection.avi"));
+            this.sources_.push(FrameSource.video(path.join(opencv_extra, base_path, "data/face_detection.avi")));
         }
 
         let cascade_cpu: alvision.CascadeClassifier;
@@ -64,8 +64,10 @@ class App extends BaseApp
         while (this.isActive()) {
             if (this.reloadCascade_) {
                 const cascadeName = this.method_ == Method.HAAR ? this.haarCascadeName_ : this.lbpCascadeName_;
-                cascade_gpu  = alvision.cuda.CascadeClassifier.create(cascadeName);
-                cascade_cpu = new alvision.CascadeClassifier(cascadeName);
+                if (this.has_gpu) {
+                    cascade_gpu = alvision.cuda.CascadeClassifier.create(cascadeName);
+                }
+                cascade_cpu = new alvision.CascadeClassifier(path.join(opencv_extra,base_path, cascadeName));
                 this.reloadCascade_ = false;
             }
 
@@ -102,11 +104,11 @@ class App extends BaseApp
             else {
                 makeGray(frame_cpu, gray_cpu);
 
-                const minSize = cascade_gpu.getClassifierSize();
+                const minSize = new alvision.Size(10,10);//cascade_gpu.getClassifierSize();
 
                 const proc_start = alvision.getTickCount();
 
-                cascade_cpu.detectMultiScale(gray_cpu, (objs) => faces = objs, 1.2, 4, alvision.HAAR_FLAGS.SCALE_IMAGE, minSize);
+                cascade_cpu.detectMultiScale(gray_cpu, (objs) => faces = objs, 1.2, 0, alvision.HAAR_FLAGS.SCALE_IMAGE, minSize);
 
                 proc_fps = alvision.getTickFrequency() / (alvision.getTickCount() - proc_start);
             }
