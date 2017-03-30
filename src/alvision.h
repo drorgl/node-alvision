@@ -16,23 +16,27 @@
 
 #include "utilities/stacktrace.h"
 
+#include "overload_resolution.h"
+#include <fstream>
 
 
 using namespace v8;
 //using namespace node;
 
-//#define REQ_FUN_ARG(I, VAR)                                             \
-//if (args.Length() <= (I) || !args[I]->IsFunction())                   \
-//	return NanThrowTypeError("Argument " #I " must be a function");  \
-//	Local<Function> VAR = Local<Function>::Cast(args[I]);
-//
+/*
+#define REQ_FUN_ARG(I, VAR)                                             \
+if (args.Length() <= (I) || !args[I]->IsFunction())                   \
+	return NanThrowTypeError("Argument " #I " must be a function");  \
+	Local<Function> VAR = Local<Function>::Cast(args[I]);
+*/
+
 #define SETUP_FUNCTION(TYP)	\
 			\
 	TYP *self = Nan::ObjectWrap::Unwrap<TYP>(info.This());
 
 #define REQ_FUN_ARG(I, VAR)                                             \
   if (info.Length() <= (I) || !info[I]->IsFunction())                   \
-    return Nan::ThrowTypeError("Argument " #I " must be a function");  \
+	return Nan::ThrowTypeError("Argument " #I " must be a function");  \
   Local<Function> VAR = Local<Function>::Cast(info[I]);
 //
 #define JSFUNC(NAME) \
@@ -44,31 +48,78 @@ using namespace v8;
 //
 #define JSTHROW(ERR) \
 	Nan::ThrowError(ERR);
-//
-//
-//#define INT_FROM_ARGS(NAME, IND) \
-//if (args[IND]->IsInt32()){
-//\
-//	NAME = args[IND]->Uint32Value(); \
-//}
-//
-//#define DOUBLE_FROM_ARGS(NAME, IND) \
-//if (args[IND]->IsInt32()){
-//\
-//	NAME = args[IND]->NumberValue(); \
-//}
-//
-//class OpenCV : public node::ObjectWrap{
-//public:
-//	static void Init(Handle<Object> target);
-//
-//	static NAN_METHOD(ReadImage);
-//};
-//
-//
-//
 
 
+/*
+#define INT_FROM_ARGS(NAME, IND) \
+if (args[IND]->IsInt32()){
+\
+	NAME = args[IND]->Uint32Value(); \
+}
+
+#define DOUBLE_FROM_ARGS(NAME, IND) \
+if (args[IND]->IsInt32()){
+\
+	NAME = args[IND]->NumberValue(); \
+}
+
+class OpenCV : public node::ObjectWrap{
+public:
+	static void Init(Handle<Object> target);
+
+	static NAN_METHOD(ReadImage);
+};
+
+*/
+
+
+inline v8::Local<v8::Object> CreateNamedObject(v8::Handle<v8::Object> target, std::string objectName) {
+	auto obj = Nan::New<v8::Object>();
+	target->Set(Nan::New(objectName).ToLocalChecked(), obj);
+	return obj;
+}
+
+inline void SetObjectProperty(v8::Local<v8::Object> obj, std::string propertyName, v8::Local<v8::Value> val) {
+	obj->Set(Nan::New(propertyName).ToLocalChecked(), val);
+}
+
+inline void SetObjectProperty(v8::Local<v8::Object> obj, std::string propertyName, int val) {
+	SetObjectProperty(obj, propertyName, Nan::New(val));
+}
+
+inline void SetObjectProperty(v8::Local<v8::Object> obj, std::string propertyName, std::string val) {
+	SetObjectProperty(obj, propertyName, Nan::New(val).ToLocalChecked());
+}
+
+//inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, v8::Local<v8::Value> defaultValue = Nan::Undefined()) {
+//	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+//}
+//
+//inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, int defaultValue) {
+//	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+//}
+//
+//inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, double defaultValue) {
+//	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+//}
+//
+//inline std::shared_ptr<overload_info> make_param(const std::string parameterName, const std::string type, std::string defaultValue) {
+//	return std::make_shared<overload_info>(parameterName, type, defaultValue);
+//}
+
+inline bool file_exists(const std::string& name) {
+	std::ifstream f(name.c_str());
+	return f.good();
+}
+
+inline std::string string_replace(std::string subject, const std::string& search, const std::string& replace) {
+	size_t pos = 0;
+	while ((pos = subject.find(search, pos)) != std::string::npos) {
+		subject.replace(pos, search.length(), replace);
+		pos += replace.length();
+	}
+	return subject;
+}
 
 #endif
 

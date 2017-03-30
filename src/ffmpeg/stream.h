@@ -15,7 +15,7 @@ namespace alvision{
 
 
 	public:
-		static void Init(Handle<Object> target);
+		static void Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target, std::shared_ptr<overload_resolution> overload);
 
 		std::string _streamid;
 		std::weak_ptr<ffmpegcpp::stream> _stream;

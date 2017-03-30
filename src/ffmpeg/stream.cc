@@ -1,10 +1,10 @@
-#include "stream.h"
+#include "./stream.h"
 
 namespace alvision{
 
 	Nan::Persistent<FunctionTemplate> stream::constructor;
 
-	void stream::Init(Handle<Object> target) {
+	void stream::Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target, std::shared_ptr<overload_resolution> overload){
 		
 
 		//Class
@@ -230,6 +230,10 @@ namespace alvision{
 				int width = streamInfo->Get(Nan::New("width").ToLocalChecked())->Int32Value();
 				int height = streamInfo->Get(Nan::New("height").ToLocalChecked())->Int32Value();
 				//pixelformat =
+
+				if (mat->_mat->cols != width || mat->_mat->rows != height) {
+					throw std::runtime_error("mat rows or cols do not match the stream");
+				}
 
 				if (self->_converter == nullptr){
 					self->_converter = ffmpegcpp::swscale::fromVideoCodec(stream->getCodec(), width, height);

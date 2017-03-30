@@ -28,6 +28,7 @@ npm install
 or
 npm install --no-bin-links
 
+typings install
 
 You must get node-gyp from this location:
 https://github.com/drorgl/node-gyp

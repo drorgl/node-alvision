@@ -8,7 +8,7 @@ namespace alvision{
 	private:
 
 	public:
-		static void Init(Handle<Object> target);
+		static void Init(Nan::ADDON_REGISTER_FUNCTION_ARGS_TYPE target, std::shared_ptr<overload_resolution> overload);
 
 		std::shared_ptr<ffmpegcpp::packet> _packet;
 

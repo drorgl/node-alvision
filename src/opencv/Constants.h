@@ -1,8 +1,8 @@
 #include "../alvision.h"
 
-class Constants: public Nan::ObjectWrap {
+class Constants: public overres::ObjectWrap {
  public:
-    static void Init(Handle<Object> target);
+    static void Init(Handle<Object> target, std::shared_ptr<overload_resolution> overload);
 
 	static NAN_METHOD(cvMakeType);
 

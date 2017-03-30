@@ -1,3 +1,4 @@
+npm-debug.log.*
 
 /build/
 /node_modules/
@@ -7,3 +8,16 @@
 *.suo
 *.sdf
 /npm-debug.log
+
+/test/**/*.cpp
+/test/**/*.cu
+/test/**/*.js
+/test/**/*.map
+
+/tsbinding/**/*.js
+/tsbinding/**/*.map
+
+/typings/
+/node-overload-resolution/
+/node-addon-tracer/
+/.vscode/
