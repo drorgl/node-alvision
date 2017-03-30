@@ -18,6 +18,9 @@ This library has been tested with NDK/Linux32/Linux64/Win32/Win64 platforms and 
 
 Please note that this project doesn't use the standard node-gyp but a slightly modified version in my repos ([node-gyp](https://github.com/drorgl/node-gyp)), the change is designed to pass parameters along, so attempting this command on a regular node-gyp will fail since no parameters can be passed to gyp from the standard node-gyp.
 
+dependencies:
+sudo apt-get install libv4l-dev
+
 ```
 Depending on your file system:
 
