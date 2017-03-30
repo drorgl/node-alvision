@@ -1,13 +1,16 @@
 {
   "name": "node-alvision",
-  "description": "Node Vision for FFMPEG,OpenCV and OpenBR",
+  "description": "Node Vision for FFMPEG,OpenCV",
   "author": "Dror Gluska <drorgl@yahoo.com>",
   "dependencies": {
     "buffers": "0.1.1",
     "nan": "^2.4.0",
     "source-map-support": "^0.4.2",
     "ts-node": "^1.3.0",
-    "typescript": "2.1.4"
+    "typescript": "2.1.4",
+    "ffmpegcpp.module": "drorgl/ffmpegcpp.module#nnbu",
+    "node-gyp": "drorgl/node-gyp",
+    "node-native-build-utilities": "drorgl/node-native-build-utilities"
   },
   "version": "1.0.0",
   "devDependencies": {
@@ -17,32 +20,36 @@
   },
   "license": "MIT",
   "scripts": {
-    "install": "echo Please build the package with node-gyp arm/linux/windows",
-    "windows": "build_windows_alvision.bat",
-    "arm": "./build_android_alvision",
-    "linux": "build_linux_alvision",
+    "configure-source": "nnbu-configure --force source",
+    "configure": "nnbu-configure",
+    "gyp-configure": "node-gyp configure -- -Dwin_delay_load_hook=false --no-duplicate-basename-check ",
+    "install": "nnbu-configure && node-gyp configure -- -Dwin_delay_load_hook=false --no-duplicate-basename-check && node-gyp build",
     "test": "ts-node test/unit.ts",
-	"build" : "tsc",
-	"test-opencv" : "ts-node test/opencv.ts",
-	"test-tmp" : "ts-node test/tmp.ts",
-	"demo-pedestrian_detection" : "ts-node test/demos/pedestrian_detection.ts",
-	"demo-background_subtraction" : "ts-node test/demos/background_subtraction.ts",
-	"demo-denoising" : "ts-node test/demos/denoising.ts",
-	"demo-dense_optical_flow" : "ts-node test/demos/dense_optical_flow.ts",
-	"demo-stereo_matching" : "ts-node test/demos/stereo_matching.ts",
-	"demo-face_detection" : "ts-node test/demos/face_detection.ts"
+    "build": "tsc",
+    "test-opencv": "ts-node test/opencv.ts",
+    "test-tmp": "ts-node test/tmp.ts",
+    "demo-pedestrian_detection": "ts-node test/demos/pedestrian_detection.ts",
+    "demo-background_subtraction": "ts-node test/demos/background_subtraction.ts",
+    "demo-denoising": "ts-node test/demos/denoising.ts",
+    "demo-dense_optical_flow": "ts-node test/demos/dense_optical_flow.ts",
+    "demo-stereo_matching": "ts-node test/demos/stereo_matching.ts",
+    "demo-face_detection": "ts-node test/demos/face_detection.ts"
   },
   "keywords": [
     "opencv",
-    "ffmpeg",
-    "openbr"
+    "ffmpeg"
   ],
   "main": "lib/bindings.js",
-  "_repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/drorgl/node-alvision.git"
   },
+  "bugs": {
+    "url": "https://github.com/drorgl/node-alvision/issues"
+  },
+  "homepage": "https://github.com/drorgl/node-alvision#readme.md",
   "engines": {
     "node": ">=0.12"
-  }
+  },
+  "gypfile": true,
 }

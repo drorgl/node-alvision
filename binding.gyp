@@ -90,24 +90,26 @@
         
         ]
 	  , 'dependencies':[
-			'../ffmpegcpp.module/ffmpegcpp.gyp:ffmpegcpp',
-			'../opencv.module/opencv.gyp:core',
-			'../opencv.module/opencv.gyp:hal',
-			'../opencv.module/opencv.gyp:imgproc',
-			'../opencv.module/opencv.gyp:photo',
-			'../opencv.module/opencv.gyp:video',
-			'../opencv.module/opencv.gyp:features2d',
-			'../opencv.module/opencv.gyp:objdetect',
-			'../opencv.module/opencv.gyp:calib3d',
-			'../opencv.module/opencv.gyp:imgcodecs',
-			'../opencv.module/opencv.gyp:videoio',
-			'../opencv.module/opencv.gyp:highgui',
-			'../opencv.module/opencv.gyp:ml',
-			'../opencv.module/opencv.gyp:flann',
-			'../opencv.module/opencv.gyp:shape',
-			'../opencv.module/opencv.gyp:stitching',
-			'../opencv.module/opencv.gyp:superres',
-			'../opencv.module/opencv.gyp:videostab',
+			#'../ffmpegcpp.module/ffmpegcpp.gyp:ffmpegcpp',
+			"<!(node -e \"require('nan')\")/ffmpegcpp.gyp:ffmpegcpp"
+			'<!@(nnbu-dependency --dependency opencv)',
+			#'../opencv.module/opencv.gyp:core',
+			#'../opencv.module/opencv.gyp:hal',
+			#'../opencv.module/opencv.gyp:imgproc',
+			#'../opencv.module/opencv.gyp:photo',
+			#'../opencv.module/opencv.gyp:video',
+			#'../opencv.module/opencv.gyp:features2d',
+			#'../opencv.module/opencv.gyp:objdetect',
+			#'../opencv.module/opencv.gyp:calib3d',
+			#'../opencv.module/opencv.gyp:imgcodecs',
+			#'../opencv.module/opencv.gyp:videoio',
+			#'../opencv.module/opencv.gyp:highgui',
+			#'../opencv.module/opencv.gyp:ml',
+			#'../opencv.module/opencv.gyp:flann',
+			#'../opencv.module/opencv.gyp:shape',
+			#'../opencv.module/opencv.gyp:stitching',
+			#'../opencv.module/opencv.gyp:superres',
+			#'../opencv.module/opencv.gyp:videostab',
 			#'../opencv.module/sources/3rdparty/3rdparty.gyp:zlib',
 			#'../ffmpeg/ffmpeg.gyp:compat',
 			#'../ffmpeg/ffmpeg.gyp:avcodec_p1',
@@ -130,11 +132,18 @@
       ## For windows
 	  
       ,'include_dirs': [
-	  
+		'<!@(nnbu-dependency --headers opencv)',
+		
+		
       #    '<!@(pkg-config --cflags opencv64)',
 		#  '<!@(pkg-config --cflags ffmpegcpp64)',
           "<!(node -e \"require('nan')\")"
           ]
+		  ,'link_settings':{
+				'libraries':[
+					'<!@(nnbu-dependency --lib-fix --libs opencv)',
+				],
+			 },
       #
       #, 'cflags': [
       #      '<!@(pkg-config --cflags "opencv64 >= 2.3.1" )'

@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
-		"target": "es6",
+        "target": "es6",
         "module": "commonjs",
         "noImplicitAny": false,
         "removeComments": false,
         "preserveConstEnums": true,
         "sourceMap": true,
-		"moduleResolution":"node",
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     }
 }
