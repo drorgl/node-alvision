@@ -143,7 +143,7 @@
 				'libraries':[
 					'<!@(nnbu-dependency --lib-fix --libs opencv)',
 				],
-			 },
+			 }
       #
       #, 'cflags': [
       #      '<!@(pkg-config --cflags "opencv64 >= 2.3.1" )'

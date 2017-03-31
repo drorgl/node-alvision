@@ -1,0 +1,31 @@
+{
+	"platform": "linux",
+	"arch": "x64",
+	"toolset": "gcc",
+	"toolset_version": "4.9.4",
+	"source_path": "./build.sources",
+	"dependencies": {
+		"opencv": {
+			"source": "source",
+			"gyp_sources": [
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:core",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:hal",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:imgproc",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:photo",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:video",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:features2d",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:objdetect",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:calib3d",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:imgcodecs",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:videoio",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:highgui",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:ml",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:flann",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:shape",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:stitching",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:superres",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:videostab"
+			]
+		}
+	}
+}
