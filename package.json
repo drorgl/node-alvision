@@ -51,5 +51,5 @@
   "engines": {
     "node": ">=0.12"
   },
-  "gypfile": true,
+  "gypfile": true
 }
