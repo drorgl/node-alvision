@@ -27,7 +27,6 @@ install:
   - if [[ "$OPENCV" == "1" ]]; then sudo apt-get install -y libopencv-dev ; fi
   - if [[ "$ZLIB" == "1" ]]; then sudo apt-get install -y zlib1g-dev ; fi
   - npm install
-  - npm run install
 script:
   - npm test
 env:

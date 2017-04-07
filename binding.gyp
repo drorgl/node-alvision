@@ -91,7 +91,8 @@
         ]
 	  , 'dependencies':[
 			#'../ffmpegcpp.module/ffmpegcpp.gyp:ffmpegcpp',
-			"<!(node -e \"require('nan')\")/ffmpegcpp.gyp:ffmpegcpp"
+			#"<!(node -e \"require('nan')\")/ffmpegcpp.gyp:ffmpegcpp"
+			'<!@(nnbu-dependency --dependency ffmpegcpp)',
 			'<!@(nnbu-dependency --dependency opencv)',
 			#'../opencv.module/opencv.gyp:core',
 			#'../opencv.module/opencv.gyp:hal',

@@ -1,96 +1,61 @@
-# node alvision project
+# opencv GYP Module
 
-### *** Experimental ***
+** Experimental **
 
-node-alvision is a computer vision/video processing module for node js.
+expose opencv through gyp
+http://opencv.org/
 
-for some time computer vision was a thing for uber geeks, since node js became a popular platform for developing practically anything I felt I could use this plaform to develop dynamic computer vision applications.
+source: https://github.com/Itseez/opencv
 
-This project is based on Peter Braden's [node-opencv](https://peterbraden.github.io/node-opencv/), the API is substantially different though, so don't expect anything that worked with node-opencv to work with node-alvision.
-
-At the moment no documentation is available but the code is pretty self explanatory, the biggest issue is actually building the binaries which could take about ~70MB and close to 30 minutes in some instances not including the time needed to set up the build environment.
-
-You can find some usage in the test/unit.js.
-
-This library has been tested with NDK/Linux32/Linux64/Win32/Win64 platforms and appears to work but with no guarantees.
-
-#### building instructions
-
-Please note that this project doesn't use the standard node-gyp but a slightly modified version in my repos ([node-gyp](https://github.com/drorgl/node-gyp)), the change is designed to pass parameters along, so attempting this command on a regular node-gyp will fail since no parameters can be passed to gyp from the standard node-gyp.
-
-dependencies:
-sudo apt-get install libv4l-dev
+- can be used stand alone to compile opencv as static/shared libraries ( / dll) 
+	static/shared library can be changed in the variables section of opencv.gyp
+- can be used as part of a bigger gyp project (which was the original intent):
 
 ```
-Depending on your file system:
-
-npm install
-or
-npm install --no-bin-links
-
-typings install
-
-You must get node-gyp from this location:
-https://github.com/drorgl/node-gyp
-
-And then define an environment variable:
-export NODE_GYP_PATH=/mnt/node-gyp/node-gyp
-or
-set NODE_GYP_PATH=C:\node-gyp/node-gyp.cmd
-
-And then execute the appropriate npm run-script:
-
-Windows
-npm run-script windows
-
-Arm
-To compile node-alvision for arm its a bit more complicated, you need to have the nodejs sources you build node executable from since the headers downloaded automatically by node-gyp cannot be used. The arm build script uses the --nodedir=... argument to point to the right folder.
-npm run-script arm
-
-Linux
-npm run-script linux
-
-To Run tests
-npm tests
-
+'dependencies':[
+	'opencv.module/opencv.gyp:core',
+	'opencv.module/opencv.gyp:calib3d',
+	'opencv.module/opencv.gyp:cudaarithm',
+	'opencv.module/opencv.gyp:cudabgsegm',
+	'opencv.module/opencv.gyp:cudafeatures2d',
+	'opencv.module/opencv.gyp:cudafilters',
+	'opencv.module/opencv.gyp:cudaimgproc',
+	'opencv.module/opencv.gyp:cudaobjdetect',
+	'opencv.module/opencv.gyp:cudastereo',
+	'opencv.module/opencv.gyp:cudawarping',
+	'opencv.module/opencv.gyp:cudev',
+	'opencv.module/opencv.gyp:features2d',
+	'opencv.module/opencv.gyp:flann',
+	'opencv.module/opencv.gyp:highgui',
+	'opencv.module/opencv.gyp:imgcodecs',
+	'opencv.module/opencv.gyp:imgproc',
+	'opencv.module/opencv.gyp:ml',
+	'opencv.module/opencv.gyp:objdetect',
+	'opencv.module/opencv.gyp:photo',
+	'opencv.module/opencv.gyp:shape',
+	'opencv.module/opencv.gyp:stitching',
+	'opencv.module/opencv.gyp:superres',
+	'opencv.module/opencv.gyp:ts',
+	'opencv.module/opencv.gyp:video',
+	'opencv.module/opencv.gyp:videoio',
+	'opencv.module/opencv.gyp:videostab',
+	'opencv.module/opencv.gyp:world',
+	'opencv.module/opencv.gyp:cudalegacy',
+	'opencv.module/opencv.gyp:cudaoptflow',
+	'opencv.module/opencv.gyp:viz',
+]
 ```
 
-#### Dependencies
-node-alvision uses the following modules and their dependencies, in addition you might need nodejs source code if you plan to build for arm. 
-node-alvision build scripts uses a modified [node-gyp](https://github.com/drorgl/node-gyp).
-
-##### ffmpegcpp.module
->
->[https://github.com/drorgl/ffmpegcpp.module](https://github.com/drorgl/ffmpegcpp.module)
->
-
-##### opencv.module
->
->[https://github.com/drorgl/opencv.module](https://github.com/drorgl/opencv.module)
->
 
 
+```
+gyp opencv.gyp -DOS=win -Dtarget_arch=ia32 --depth=. -f msvs -G msvs_version=2013 --generator-output=./build.vs2013/
 
+gyp opencv.gyp -DOS=win -Dtarget_arch=x64 --depth=. -f msvs -G msvs_version=2013 --generator-output=./build.vs2013/
 
-### node alvision license
-node-alvision is copyrighted by Dror Gluska and licensed under the 3-clause BSD license, however, its dependent upon multiple software projects with various licenses, hire a lawyer if you have any questions.
+gyp opencv.gyp -DOS=linux -Dtarget_arch=ia32 --depth=. -f make --generator-output=./build.linux32/
 
-### credits
-Most of the credit goes to ffmpeg, opencv and other major open source projects I've used but also to Peter Braden for giving me a good start, while almost none of his original code is left in this project, I've learned a lot from node-opencv project on how to write node addons.
+gyp opencv.gyp -DOS=linux -Dtarget_arch=x64 --depth=. -f make --generator-output=./build.linux64/
 
-#### Tests
-Tests are in test/unit.js, the tests should cover most if not all of the exposed api.
-
-
-#### Troubleshooting
-Object #<Object> has no method '_extend'
-You have an old version of node or npm, which are probably not supported.
-
-try to update npm:
-
-sudo npm install npm -g
-
-and node:
-
-curl -sL https://deb.nodesource.com/setup | sudo bash -
-
+gyp opencv.gyp -DOS=android -Dtarget_arch=arm --depth=. -f make --generator-output=./build.android/
+```

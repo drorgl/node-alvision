@@ -20,10 +20,10 @@
   },
   "license": "MIT",
   "scripts": {
+    "standalone": "nnbu-configure && node-gyp configure  && node-gyp build",
     "configure-source": "nnbu-configure --force source",
     "configure": "nnbu-configure",
     "gyp-configure": "node-gyp configure -- -Dwin_delay_load_hook=false --no-duplicate-basename-check ",
-    "install": "nnbu-configure && node-gyp configure -- -Dwin_delay_load_hook=false --no-duplicate-basename-check && node-gyp build",
     "test": "ts-node test/unit.ts",
     "build": "tsc",
     "test-opencv": "ts-node test/opencv.ts",
