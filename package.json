@@ -8,7 +8,6 @@
     "source-map-support": "^0.4.2",
     "ts-node": "^1.3.0",
     "typescript": "2.1.4",
-    "ffmpegcpp.module": "drorgl/ffmpegcpp.module#nnbu",
     "node-gyp": "drorgl/node-gyp",
     "node-native-build-utilities": "drorgl/node-native-build-utilities"
   },
@@ -22,6 +21,9 @@
   "scripts": {
     "install": "nnbu-configure && node-gyp configure  && node-gyp build",
     "configure-source": "nnbu-configure --force source",
+	  "xx1": "nnbu-dependency  --headers ffmpeg",
+    "xx2": "nnbu-dependency  --libs ffmpeg",
+    "xx3": "nnbu-dependency  --dependency ffmpeg",
     "configure": "nnbu-configure",
     "gyp-configure": "node-gyp configure -- -Dwin_delay_load_hook=false --no-duplicate-basename-check ",
     "test": "ts-node test/unit.ts",
