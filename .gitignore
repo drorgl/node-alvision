@@ -21,3 +21,4 @@ npm-debug.log.*
 /node-overload-resolution/
 /node-addon-tracer/
 /.vscode/
+/native_configuration.json
