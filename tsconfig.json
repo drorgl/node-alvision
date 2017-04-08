@@ -1,5 +1,8 @@
 {
     "compilerOptions": {
+        "types": [
+            "node"
+        ],
         "target": "es6",
         "module": "commonjs",
         "noImplicitAny": false,
@@ -8,6 +11,9 @@
         "sourceMap": true,
         "moduleResolution": "node",
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "typeRoots": [
+            "./node_modules/@types"
+        ]
     }
 }

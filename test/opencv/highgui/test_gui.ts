@@ -40,7 +40,7 @@
 //
 //M*/
 
-/// <reference path="../../../typings/index.d.ts" />
+
 /// <reference path="../../../tsbinding/alvision.d.ts" />
 /// <reference path="../../../tsbinding/alvision.ts" />
 

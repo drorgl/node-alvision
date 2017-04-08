@@ -5,13 +5,13 @@
   "dependencies": {
     "buffers": "0.1.1",
     "nan": "^2.4.0",
-    "source-map-support": "^0.4.2",
-    "ts-node": "^1.3.0",
-    "typescript": "2.1.4",
+    "node-addon-tracer": "drorgl/node-addon-tracer",
     "node-gyp": "drorgl/node-gyp",
     "node-native-build-utilities": "drorgl/node-native-build-utilities",
-	"node-addon-tracer":"drorgl/node-addon-tracer",
-	"node-overload-resolution":"drorgl/node-overload-resolution"
+    "node-overload-resolution": "drorgl/node-overload-resolution",
+    "source-map-support": "^0.4.2",
+    "ts-node": "^1.3.0",
+    "typescript": "2.1.4"
   },
   "version": "1.0.0",
   "devDependencies": {
@@ -23,7 +23,7 @@
   "scripts": {
     "install": "nnbu-configure && node-gyp configure  && node-gyp build",
     "configure-source": "nnbu-configure --force source",
-	  "xx1": "nnbu-dependency  --headers ffmpeg",
+    "xx1": "nnbu-dependency  --headers ffmpeg",
     "xx2": "nnbu-dependency  --libs ffmpeg",
     "xx3": "nnbu-dependency  --dependency ffmpeg",
     "configure": "nnbu-configure",

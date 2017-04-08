@@ -16,7 +16,6 @@
 			"libraries": {},
 			"sources": [
 				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:core",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:hal",
 				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:imgproc",
 				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:photo",
 				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:video",
@@ -31,11 +30,11 @@
 				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:shape",
 				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:stitching",
 				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:superres",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:videostab"
+				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:videostab",
+				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:ts"
 			]//,
 			// "archived_sources": [
 			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:core",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:hal",
 			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:imgproc",
 			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:photo",
 			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:video",
@@ -50,7 +49,8 @@
 			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:shape",
 			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:stitching",
 			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:superres",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:videostab"
+			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:videostab",
+			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:ts"
 			// ]
 		}
 	}

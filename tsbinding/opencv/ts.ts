@@ -1,4 +1,3 @@
-/// <reference path="../../typings/index.d.ts" />
 import alvision_module from "../bindings";
 
 import * as _st from './static';

@@ -1,5 +1,3 @@
-/// <reference path="../../typings/index.d.ts" />
-
 import alvision_module from "../bindings";
 
 import process = require("process");

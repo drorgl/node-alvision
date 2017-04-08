@@ -50,9 +50,9 @@ namespace alvision{
 		/*async callback for sending the messages on the main event loop*/
 
 #if NODE_MODULE_VERSION >= NODE_0_12_MODULE_VERSION
-		static void _async_logger_callback(uv_async_t *handle/*, int status UNUSED*/)
+		static void _async_logger_callback(uv_async_t *handle/*, int status UNUSED*/);
 #else
-		static void _async_logger_callback(uv_async_t *handle)
+		static void _async_logger_callback(uv_async_t *handle);
 #endif
 
 		/*a queue for log messages*/
