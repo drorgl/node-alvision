@@ -1,4 +1,11 @@
 {
+	"node_gyp_configure_parameters" : "-- --no-duplicate-basename-check",
+    "binary" : {
+        "module_name": "alvision",
+        "module_paths" : ["build/Release/*.node","build/Release/*.dll"] ,
+        "publish_repo" : "dror/ffmpegcpp",
+        "package_name" : "{module_name}-v{version}-{node_abi}-{platform}-{arch}.7z"
+    },
 	"dependencies": {
 		"ffmpegcpp":{
 			"sources":[

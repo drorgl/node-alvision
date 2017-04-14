@@ -23,3 +23,4 @@ npm-debug.log.*
 /.vscode/
 /native_configuration.json
 /build.sources
+/.github-authentication-cache

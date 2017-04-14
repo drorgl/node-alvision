@@ -30,6 +30,7 @@
     "gyp-configure": "node-gyp configure -- -Dwin_delay_load_hook=false --no-duplicate-basename-check ",
     "test": "ts-node test/unit.ts",
     "build": "tsc",
+    "pack": "nnbu-pack --pack-binaries",
     "test-opencv": "ts-node test/opencv.ts",
     "test-tmp": "ts-node test/tmp.ts",
     "demo-pedestrian_detection": "ts-node test/demos/pedestrian_detection.ts",
