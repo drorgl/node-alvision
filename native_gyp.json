@@ -3,13 +3,16 @@
     "binary" : {
         "module_name": "alvision",
         "module_paths" : ["build/Release/*.node","build/Release/*.dll"] ,
-        "publish_repo" : "dror/ffmpegcpp",
+        "publish_repo" : "dror/node-alvision",
         "package_name" : "{module_name}-v{version}-{node_abi}-{platform}-{arch}.7z"
     },
 	"dependencies": {
 		"ffmpegcpp":{
 			"sources":[
-				"https://github.com/drorgl/ffmpegcpp.module.git#nnbu@ffmpegcpp.gyp:ffmpegcpp"
+				"https://github.com/drorgl/ffmpegcpp.module.git@ffmpegcpp.gyp:ffmpegcpp"
+			],
+			"archived_sources": [
+			 	"https://github.com/drorgl/ffmpegcpp.module/releases/download/v0.2.0/ffmpegcpp.module.v0.2.0.7z@ffmpegcpp.gyp:ffmpegcpp"
 			]
 		},
 		"opencv": {
@@ -22,43 +25,43 @@
 			"headers": {},
 			"libraries": {},
 			"sources": [
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:core",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:imgproc",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:photo",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:video",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:features2d",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:objdetect",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:calib3d",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:imgcodecs",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:videoio",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:highgui",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:ml",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:flann",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:shape",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:stitching",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:superres",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:videostab",
-				"https://github.com/drorgl/opencv.module.git#nnbu@opencv.gyp:ts"
-			]//,
-			// "archived_sources": [
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:core",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:imgproc",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:photo",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:video",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:features2d",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:objdetect",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:calib3d",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:imgcodecs",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:videoio",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:highgui",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:ml",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:flann",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:shape",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:stitching",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:superres",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:videostab",
-			// 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:ts"
-			// ]
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:core",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:imgproc",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:photo",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:video",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:features2d",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:objdetect",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:calib3d",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:imgcodecs",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:videoio",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:highgui",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:ml",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:flann",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:shape",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:stitching",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:superres",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:videostab",
+				"https://github.com/drorgl/opencv.module.git@opencv.gyp:ts"
+			],
+			 "archived_sources": [
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:core",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:imgproc",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:photo",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:video",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:features2d",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:objdetect",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:calib3d",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:imgcodecs",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:videoio",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:highgui",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:ml",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:flann",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:shape",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:stitching",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:superres",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:videostab",
+			 	"https://github.com/drorgl/opencv.module/releases/download/v3.2.0/opencv.module.v3.2.0.7z@opencv.gyp:ts"
+			 ]
 		}
 	}
 }
