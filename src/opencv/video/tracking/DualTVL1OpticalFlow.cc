@@ -252,7 +252,7 @@ POLY_METHOD(DualTVL1OpticalFlow::New) {
 	auto scaleStep			= info.at<double>(8);
 	auto gamma				= info.at<double>(9);
 	auto medianFiltering	= info.at<int>(10);
-	auto useInitialFlow		= info.at< boolean>(11);
+	auto useInitialFlow		= info.at<bool>(11);
 
 
 	ret->_algorithm = cv::DualTVL1OpticalFlow::create(
