@@ -2,7 +2,7 @@
 	"node_gyp_configure_parameters" : "-- --no-duplicate-basename-check",
     "binary" : {
         "module_name": "alvision",
-        "module_paths" : ["build/Release/*.node","build/Release/*.dll"] ,
+        "module_paths" : ["build/Release/*.node","build/Release/*.dll","build/Release/*.so"] ,
         "publish_repo" : "dror/node-alvision",
         "package_name" : "{module_name}-v{version}-{node_abi}-{platform}-{arch}.7z"
     },
